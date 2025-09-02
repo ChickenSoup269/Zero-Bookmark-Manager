@@ -123,7 +123,7 @@ body {
   position: sticky;
   top: -4px;
   background-color: transparent;
-  z-index: 1;
+  z-index: 2;
   padding: var(--spacing-xs) 0;
   box-shadow: var(--shadow-sm);
   transition: background-color var(--transition-normal);
@@ -178,15 +178,15 @@ body {
 
 .control-buttons {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 cột */
-  gap: 0.5rem; /* khoảng cách giữa các nút */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
   justify-content: center;
   margin: 0.5rem 0;
 }
 
 .control-buttons .button {
-  width: 100%; /* mỗi nút full chiều ngang của ô */
-  padding: 0.6rem 1rem;
+  width: 100%;
+  padding: 0.6rem 0.2rem;
   font-size: 0.9rem;
   border: none;
   border-radius: var(--border-radius);
@@ -326,6 +326,10 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.settings-button {
+  z-index: -100;
+}
+
 /* title popup */
 #create-folder-title,
 #add-to-folder-title,
@@ -336,8 +340,13 @@ body {
 }
 
 #delete-bookmarks-button {
+  color: white;
+  background: red;
   display: inline-block;
   visibility: visible;
+}
+#delete-bookmarks-button:hover {
+  background-color: var(--danger-color);
 }
 #delete-bookmarks-button.hidden {
   display: none;
@@ -435,7 +444,6 @@ body {
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
-  z-index: 1;
   gap: var(--spacing-xs);
 }
 
@@ -516,8 +524,16 @@ body {
 }
 
 #toggle-checkboxes {
-  font-size: 1em;
   width: auto;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Logo */
@@ -743,6 +759,7 @@ body {
     background-color var(--transition-fast), opacity var(--transition-fast);
   opacity: 1;
   pointer-events: auto;
+  border: none;
 }
 
 .scroll-to-top.hidden {
@@ -754,6 +771,7 @@ body {
   transform: translateY(-2px);
   background-color: var(--text-secondary);
   box-shadow: var(--shadow-lg);
+  cursor: pointer;
 }
 
 .bottom-controls {
@@ -778,6 +796,7 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  z-index: 1;
   margin-left: var(--spacing-sm);
 }
 
@@ -938,7 +957,11 @@ body {
 
 /* Container input */
 .rename-input-container {
+  position: relative;
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
   align-items: center;
   gap: 8px;
   margin-bottom: 20px;
@@ -962,18 +985,24 @@ body {
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
 }
 
-/* Nút clear */
+/* Nút clear nằm chồng cuối input */
 #clear-rename-folder {
-  width: 8px;
-  height: 8px;
-  font-size: 12px;
+  position: absolute;
+  right: 8px;
+  top: 80%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
   cursor: pointer;
-  margin-top: 25px;
-  transition: background 0.2s ease;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease;
 }
+
 #clear-rename-folder:hover {
   color: red;
-  transition: 0.2s ease-in-out;
 }
 
 /* Buttons Save/Cancel */

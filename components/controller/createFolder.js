@@ -12,6 +12,14 @@ export function setupCreateFolderListeners(elements) {
   // Nút mở popup
   elements.createFolderBtn.addEventListener("click", () => {
     const language = localStorage.getItem("appLanguage") || "en"
+    const createFolderTitle = document.getElementById("create-folder-title")
+    if (createFolderTitle) {
+      createFolderTitle.textContent = translations[language].createFolder
+    } else {
+      console.warn(
+        "Create Folder title element (#create-folder-title) not found"
+      )
+    }
     elements.createFolderInput.value = ""
     elements.createFolderInput.classList.remove("error")
     elements.createFolderInput.placeholder =
