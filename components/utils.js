@@ -1,4 +1,4 @@
-// utils.js
+// ./components/utils.js
 export const translations = {
   en: {
     allBookmarks: "All Bookmarks",
@@ -76,7 +76,7 @@ export const translations = {
     selectFolder: "Select Folder",
   },
   vi: {
-    allBookmarks: "Tất cả Dấu trang",
+    allBookmarks: "Tất cả Bookmarks",
     sortDefault: "Sắp xếp: Mặc định",
     sortNew: "Mới đến Cũ",
     sortOld: "Cũ đến Mới",
@@ -87,8 +87,8 @@ export const translations = {
     addToFolder: "Thêm vào Thư mục",
     deleteFolder: "Xóa Thư mục",
     settings: "Cài đặt",
-    exportBookmarks: "Xuất Dấu trang",
-    importBookmarks: "Nhập Dấu trang",
+    exportBookmarks: "Xuất Bookmarks",
+    importBookmarks: "Nhập Bookmarks",
     selectAll: "Chọn Tất cả",
     showCheckboxes: "Hiển thị CheckBox",
     hideCheckboxes: "Ẩn CheckBox",
@@ -104,11 +104,11 @@ export const translations = {
     totalBookmarks: "Tổng Bookmarks",
     scrollToTop: "Cuộn lên Đầu",
     clear: "Xóa",
-    deleteConfirm: "Bạn có chắc chắn muốn xóa dấu trang này không?",
+    deleteConfirm: "Bạn có chắc chắn muốn xóa Bookmark này không?",
     deleteFolderConfirm:
-      "Bạn có chắc chắn muốn xóa thư mục này không? Các dấu trang có trong thư mục khác sẽ được giữ lại.",
+      "Bạn có chắc chắn muốn xóa thư mục này không? Các Bookmark có trong thư mục khác sẽ được giữ lại.",
     discardFolderPrompt: "Bạn đã nhập tên thư mục nhưng chưa lưu. Hủy bỏ nó?",
-    noBookmarks: "Không tìm thấy dấu trang. Vui lòng kiểm tra quyền truy cập.",
+    noBookmarks: "Không tìm thấy Bookmark. Vui lòng kiểm tra quyền truy cập.",
     emptyTitleError: "Tiêu đề không được để trống",
     emptyFolderError: "Tên thư mục không được để trống",
     selectFolderError: "Chọn một thư mục hoặc tạo mới",
@@ -122,12 +122,12 @@ export const translations = {
     renameFolder: "Đổi tên bookmark",
     importSuccess: "Bookmark đã được nhập thành công!",
     importDuplicatePrompt:
-      "Một số dấu trang đã tồn tại (cùng URL). Bạn có muốn nhập các dấu trang không trùng lặp không?",
+      "Một số Bookmark đã tồn tại (cùng URL). Bạn có muốn nhập các Bookmark không trùng lặp không?",
     importInvalidFile:
-      "Định dạng tệp không hợp lệ. Vui lòng chọn tệp JSON dấu trang hợp lệ.",
-    importError: "Không thể nhập dấu trang. Vui lòng thử lại.",
-    addToFolderSuccess: "Dấu trang đã được thêm vào thư mục thành công!",
-    deleteBookmarkSuccess: "Dấu trang đã được xóa thành công!",
+      "Định dạng tệp không hợp lệ. Vui lòng chọn tệp JSON Bookmark hợp lệ.",
+    importError: "Không thể nhập Bookmark. Vui lòng thử lại.",
+    addToFolderSuccess: "Bookmark đã được thêm vào thư mục thành công!",
+    deleteBookmarkSuccess: "Bookmark đã được xóa thành công!",
     exportPrompt:
       "Chọn định dạng xuất: JSON hoặc HTML (dữ liệu sẽ được lưu dưới dạng JSON).",
     createFolderSuccess: "Thư mục được tạo thành công!",
@@ -141,11 +141,11 @@ export const translations = {
     duplicateTitleError: "Tiêu đề đã tồn tại trong thư mục này",
     emptyTitleError: "Vui lòng nhập tiêu đề",
     emptyFolderError: "Vui lòng nhập tên thư mục hoặc chọn một thư mục",
-    noBookmarksSelected: "Không có dấu trang nào được chọn",
+    noBookmarksSelected: "Không có Bookmark nào được chọn",
     selectFolderError: "Vui lòng chọn một thư mục",
     errorUnexpected: "Đã xảy ra lỗi không mong muốn",
-    deleteConfirm: "Bạn có chắc chắn muốn xóa dấu trang này không?",
-    renamePlaceholder: "Nhập tên dấu trang mới",
+    deleteConfirm: "Bạn có chắc chắn muốn xóa Bookmark này không?",
+    renamePlaceholder: "Nhập tên Bookmark mới",
     newFolderPlaceholder: "Nhập tên thư mục",
     selectFolder: "Chọn Thư mục",
   },

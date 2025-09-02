@@ -346,6 +346,108 @@ function handleDeleteBookmark(e, elements) {
   e.target.closest(".dropdown-menu").classList.add("hidden")
 }
 
+function handleBookmarkCheckbox(e, elements) {
+  e.stopPropagation()
+  const bookmarkId = e.target.dataset.id
+  if (!bookmarkId) {
+    console.error("Bookmark ID is undefined in handleBookmarkCheckbox", {
+      checkbox: e.target,
+      dataset: e.target.dataset,
+    })
+    return
+  }
+  console.log(
+    "Checkbox changed, bookmarkId:",
+    bookmarkId,
+    "checked:",
+    e.target.checked
+  )
+  if (e.target.checked) {
+    uiState.selectedBookmarks.add(bookmarkId)
+  } else {
+    uiState.selectedBookmarks.delete(bookmarkId)
+  }
+  console.log(
+    "Updated selectedBookmarks:",
+    Array.from(uiState.selectedBookmarks)
+  )
+  elements.addToFolderButton.classList.toggle(
+    "hidden",
+    uiState.selectedBookmarks.size === 0
+  )
+  elements.deleteBookmarksButton.classList.toggle(
+    "hidden",
+    uiState.selectedBookmarks.size === 0
+  )
+  console.log(
+    "Add to folder button hidden:",
+    elements.addToFolderButton.classList.contains("hidden"),
+    "Delete bookmarks button hidden:",
+    elements.deleteBookmarksButton.classList.contains("hidden")
+  )
+}
+
+export function handleDeleteSelectedBookmarks(elements) {
+  const language = localStorage.getItem("appLanguage") || "en"
+  if (uiState.selectedBookmarks.size === 0) {
+    console.error("No bookmarks selected for deletion")
+    showCustomPopup(
+      translations[language].errorNoBookmarkSelected || "No bookmarks selected",
+      "error",
+      false
+    )
+    return
+  }
+
+  console.log(
+    "handleDeleteSelectedBookmarks called, selectedBookmarks:",
+    Array.from(uiState.selectedBookmarks)
+  )
+  showCustomConfirm(
+    translations[language].deleteBookmarksConfirm ||
+      "Are you sure you want to delete the selected bookmarks?",
+    () => {
+      const deletePromises = Array.from(uiState.selectedBookmarks).map(
+        (bookmarkId) => {
+          return new Promise((resolve) => {
+            safeChromeBookmarksCall("remove", [bookmarkId], () => {
+              console.log("Deleted bookmark ID:", bookmarkId)
+              resolve()
+            })
+          })
+        }
+      )
+
+      Promise.all(deletePromises).then(() => {
+        uiState.selectedBookmarks.clear()
+        elements.addToFolderButton.classList.add("hidden")
+        elements.deleteBookmarksButton.classList.add("hidden")
+        document.querySelectorAll(".bookmark-checkbox").forEach((cb) => {
+          cb.checked = false
+        })
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+            showCustomPopup(
+              translations[language].deleteBookmarksSuccess ||
+                "Bookmarks deleted successfully!",
+              "success"
+            )
+          } else {
+            console.error("Failed to retrieve bookmark tree")
+            showCustomPopup(
+              translations[language].errorUnexpected ||
+                "An unexpected error occurred",
+              "error",
+              false
+            )
+          }
+        })
+      })
+    }
+  )
+}
+
 function handleRenameBookmark(e, elements) {
   e.stopPropagation()
   const bookmarkId = e.target.dataset.id
@@ -427,39 +529,4 @@ function handleRenameBookmark(e, elements) {
   })
 
   e.target.closest(".dropdown-menu").classList.add("hidden")
-}
-
-function handleBookmarkCheckbox(e, elements) {
-  e.stopPropagation()
-  const bookmarkId = e.target.dataset.id
-  if (!bookmarkId) {
-    console.error("Bookmark ID is undefined in handleBookmarkCheckbox", {
-      checkbox: e.target,
-      dataset: e.target.dataset,
-    })
-    return
-  }
-  console.log(
-    "Checkbox changed, bookmarkId:",
-    bookmarkId,
-    "checked:",
-    e.target.checked
-  )
-  if (e.target.checked) {
-    uiState.selectedBookmarks.add(bookmarkId)
-  } else {
-    uiState.selectedBookmarks.delete(bookmarkId)
-  }
-  console.log(
-    "Updated selectedBookmarks:",
-    Array.from(uiState.selectedBookmarks)
-  )
-  elements.addToFolderButton.classList.toggle(
-    "hidden",
-    uiState.selectedBookmarks.size === 0
-  )
-  console.log(
-    "Add to folder button hidden:",
-    elements.addToFolderButton.classList.contains("hidden")
-  )
 }

@@ -8,6 +8,7 @@ import {
 } from "../ui.js"
 import { uiState, saveUIState } from "../state.js"
 import { openRenameFolderPopup } from "./renameFolder.js"
+import { handleDeleteSelectedBookmarks } from "./bookmarkActions.js"
 
 export function setupUIControlListeners(elements) {
   elements.languageSwitcher.addEventListener("change", (e) => {
@@ -42,6 +43,7 @@ export function setupUIControlListeners(elements) {
     if (!uiState.checkboxesVisible) {
       uiState.selectedBookmarks.clear()
       elements.addToFolderButton.classList.add("hidden")
+      elements.deleteBookmarksButton.classList.add("hidden")
       document.querySelectorAll(".bookmark-checkbox").forEach((cb) => {
         cb.checked = false
       })
@@ -145,6 +147,15 @@ export function setupUIControlListeners(elements) {
     openRenameFolderPopup(elements, "")
     elements.settingsMenu.classList.add("hidden")
   })
+
+  // Thêm listener cho nút Delete Bookmarks
+  if (elements.deleteBookmarksButton) {
+    elements.deleteBookmarksButton.addEventListener("click", () => {
+      handleDeleteSelectedBookmarks(elements)
+    })
+  } else {
+    console.error("deleteBookmarksButton element not found")
+  }
 
   document.addEventListener("click", (e) => {
     const renamePopup = document.getElementById("rename-popup")
