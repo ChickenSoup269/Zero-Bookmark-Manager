@@ -46,6 +46,7 @@ export const translations = {
     addToFolderOption: "Add to Folder",
     deleteBookmarkOption: "Delete",
     renameBookmarkOption: "Rename",
+    deleteBookmarks: "Delete bookmark",
     importSuccess: "Bookmarks imported successfully!",
     importDuplicatePrompt:
       "Some bookmarks already exist (same URL). Do you want to import the non-duplicate bookmarks?",
@@ -119,6 +120,7 @@ export const translations = {
     addToFolderOption: "Thêm vào Thư mục",
     deleteBookmarkOption: "Xóa",
     renameBookmarkOption: "Đổi tên",
+    deleteBookmarks: "Xóa bookmark",
     renameFolder: "Đổi tên bookmark",
     importSuccess: "Bookmark đã được nhập thành công!",
     importDuplicatePrompt:
@@ -134,9 +136,9 @@ export const translations = {
     successTitle: "Thành công",
     errorTitle: "Lỗi",
     confirmTitle: "Xác nhận",
-    renameSuccess: "Dấu trang được đổi tên thành công!",
-    deleteBookmarkSuccess: "Dấu trang đã được xóa thành công!",
-    addToFolderSuccess: "Dấu trang được thêm vào thư mục thành công!",
+    renameSuccess: "Bookmark được đổi tên thành công!",
+    deleteBookmarkSuccess: "Bookmark đã được xóa thành công!",
+    addToFolderSuccess: "Bookmark được thêm vào thư mục thành công!",
     createFolderSuccess: "Thư mục được tạo thành công!",
     duplicateTitleError: "Tiêu đề đã tồn tại trong thư mục này",
     emptyTitleError: "Vui lòng nhập tiêu đề",

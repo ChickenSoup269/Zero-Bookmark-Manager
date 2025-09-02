@@ -34,12 +34,20 @@ export function setupUIControlListeners(elements) {
       ? translations[language].hideCheckboxes
       : translations[language].showCheckboxes
     document
-      .querySelectorAll(".bookmark-checkbox, .select-all input")
+      .querySelectorAll(".bookmark-checkbox, #select-all")
       .forEach((checkbox) => {
         checkbox.style.display = uiState.checkboxesVisible
           ? "inline-block"
           : "none"
       })
+    const selectAllContainer = document.querySelector(".select-all")
+    if (selectAllContainer) {
+      selectAllContainer.style.display = uiState.checkboxesVisible
+        ? "block"
+        : "none"
+    } else {
+      console.warn("Select All container (.select-all) not found")
+    }
     if (!uiState.checkboxesVisible) {
       uiState.selectedBookmarks.clear()
       elements.addToFolderButton.classList.add("hidden")
@@ -47,6 +55,12 @@ export function setupUIControlListeners(elements) {
       document.querySelectorAll(".bookmark-checkbox").forEach((cb) => {
         cb.checked = false
       })
+      const selectAllCheckbox = document.getElementById("select-all")
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false
+      } else {
+        console.warn("Select All checkbox (#select-all) not found")
+      }
     }
     saveUIState()
   })
@@ -148,7 +162,6 @@ export function setupUIControlListeners(elements) {
     elements.settingsMenu.classList.add("hidden")
   })
 
-  // Thêm listener cho nút Delete Bookmarks
   if (elements.deleteBookmarksButton) {
     elements.deleteBookmarksButton.addEventListener("click", () => {
       handleDeleteSelectedBookmarks(elements)

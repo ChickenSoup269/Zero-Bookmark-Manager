@@ -4,7 +4,6 @@ import { flattenBookmarks, getFolders, isInFolder } from "./bookmarks.js"
 import {
   saveUIState,
   uiState,
-  selectedBookmarks,
   setBookmarks,
   setFolders,
   setBookmarkTree,
@@ -28,6 +27,7 @@ export function updateUILanguage(elements, language) {
   elements.addToFolderButton.textContent = t.addToFolder
   elements.deleteFolderButton.textContent = t.deleteFolder
   elements.renameFolderButton.textContent = t.renameFolder
+  elements.deleteBookmarksButton.textContent = t.deleteBookmarks
   elements.exportBookmarksOption.textContent = t.exportBookmarks
   elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
     ? t.hideCheckboxes
@@ -109,12 +109,20 @@ export function restoreUIState(elements, callback) {
       ? translations[language].hideCheckboxes
       : translations[language].showCheckboxes
     document
-      .querySelectorAll(".bookmark-checkbox, .select-all input")
+      .querySelectorAll(".bookmark-checkbox, #select-all")
       .forEach((checkbox) => {
         checkbox.style.display = uiState.checkboxesVisible
           ? "inline-block"
           : "none"
       })
+    const selectAllContainer = document.querySelector(".select-all")
+    if (selectAllContainer) {
+      selectAllContainer.style.display = uiState.checkboxesVisible
+        ? "block"
+        : "none"
+    } else {
+      console.warn("Select All container (.select-all) not found")
+    }
   }
 }
 
@@ -190,12 +198,9 @@ function renderBookmarks(bookmarksList, elements) {
   const fragment = document.createDocumentFragment()
   const selectAllDiv = document.createElement("div")
   selectAllDiv.className = "select-all"
-  selectAllDiv.innerHTML = `
-    <input type="checkbox" id="select-all" style="display: ${
-      uiState.checkboxesVisible ? "inline-block" : "none"
-    }">
-    <label for="select-all">${translations[language].selectAll}</label>
-  `
+  selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
+
+  console.log("Rendering Select All, display:", selectAllDiv.style.display)
   fragment.appendChild(selectAllDiv)
 
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
@@ -279,7 +284,7 @@ function createBookmarkElement(bookmark) {
   }
   div.innerHTML = `
     <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${
-    selectedBookmarks.has(bookmark.id) ? "checked" : ""
+    uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
   } style="display: ${uiState.checkboxesVisible ? "inline-block" : "none"}">
     <img src="${favicon}" alt="favicon" class="favicon">
     <a href="${bookmark.url}" target="_blank" class="link">${
@@ -305,8 +310,12 @@ function createBookmarkElement(bookmark) {
 
 function attachSelectAllListener(elements) {
   const selectAllCheckbox = document.getElementById("select-all")
-  selectAllCheckbox.removeEventListener("change", handleSelectAll)
-  selectAllCheckbox.addEventListener("change", handleSelectAll)
+  if (selectAllCheckbox) {
+    selectAllCheckbox.removeEventListener("change", handleSelectAll)
+    selectAllCheckbox.addEventListener("change", handleSelectAll)
+  } else {
+    console.warn("Select All checkbox (#select-all) not found")
+  }
 
   function handleSelectAll(e) {
     console.log("Select all checkbox changed, checked:", e.target.checked)
@@ -317,7 +326,7 @@ function attachSelectAllListener(elements) {
         const bookmarkId = cb.dataset.id
         if (bookmarkId) {
           cb.checked = true
-          selectedBookmarks.add(bookmarkId)
+          uiState.selectedBookmarks.add(bookmarkId)
         } else {
           console.error("Missing data-id on checkbox:", cb)
         }
@@ -325,20 +334,26 @@ function attachSelectAllListener(elements) {
     } else {
       checkboxes.forEach((cb) => {
         cb.checked = false
-        selectedBookmarks.clear()
       })
+      uiState.selectedBookmarks.clear()
     }
     console.log(
       "Updated selectedBookmarks after select all:",
-      Array.from(selectedBookmarks)
+      Array.from(uiState.selectedBookmarks)
     )
     elements.addToFolderButton.classList.toggle(
       "hidden",
-      selectedBookmarks.size === 0
+      uiState.selectedBookmarks.size === 0
+    )
+    elements.deleteBookmarksButton.classList.toggle(
+      "hidden",
+      uiState.selectedBookmarks.size === 0
     )
     console.log(
       "Add to folder button hidden:",
-      elements.addToFolderButton.classList.contains("hidden")
+      elements.addToFolderButton.classList.contains("hidden"),
+      "Delete bookmarks button hidden:",
+      elements.deleteBookmarksButton.classList.contains("hidden")
     )
   }
 }

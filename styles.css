@@ -177,29 +177,25 @@ body {
 }
 
 .control-buttons {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 cột */
   gap: 0.5rem; /* khoảng cách giữa các nút */
   justify-content: center;
-  margin: 0.8rem 0;
+  margin: 0.5rem 0;
 }
 
-/* Buttons */
-.button {
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-size: 0.875rem;
+.control-buttons .button {
+  width: 100%; /* mỗi nút full chiều ngang của ô */
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   transition: all var(--transition-fast);
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-xs);
-  outline: none;
-  text-decoration: none;
-  user-select: none;
 }
 
 .button:focus-visible {
@@ -337,6 +333,14 @@ body {
 #rename-title,
 #custom-popup-title {
   color: var(--text-primary);
+}
+
+#delete-bookmarks-button {
+  display: inline-block;
+  visibility: visible;
+}
+#delete-bookmarks-button.hidden {
+  display: none;
 }
 
 /* Lists and items */
@@ -645,21 +649,6 @@ body {
   }
 }
 
-/* Rename Popup */
-/* .rename-popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  transition: opacity var(--transition-normal);
-} */
-
 .rename-popup.hidden {
   display: none;
   opacity: 0;
@@ -793,6 +782,7 @@ body {
 }
 
 .button.settings:hover {
+  color: white;
   background-color: #70a146;
 }
 
