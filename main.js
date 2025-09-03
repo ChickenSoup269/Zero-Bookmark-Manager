@@ -1,3 +1,4 @@
+// main.js
 import {
   updateTheme,
   restoreUIState,
@@ -8,7 +9,7 @@ import { translations } from "./components/utils.js"
 import { setupEventListeners } from "./components/events.js"
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Lấy tham chiếu DOM
+  // DOM references
   const elements = {
     searchInput: document.getElementById("search"),
     clearSearchButton: document.getElementById("clear-search"),
@@ -63,9 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
     renameFolderOption: document.getElementById("rename-folder-option"),
   }
 
-  // Khởi tạo ứng dụng
+  // Initialize application
   const init = () => {
-    // Thêm tùy chọn import vào menu settings
+    // Add import option to settings menu
     if (!elements.importBookmarksOption) {
       const importBookmarksOption = document.createElement("button")
       importBookmarksOption.id = "import-bookmarks-option"
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.importBookmarksOption = importBookmarksOption
     }
 
-    // Khởi tạo theme và font
+    // Initialize theme and font
     const savedTheme = localStorage.getItem("appTheme") || "system"
     elements.themeSwitcher.value = savedTheme
     updateTheme(elements, savedTheme)
@@ -87,20 +88,49 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add(`font-${savedFont}`)
     elements.fontSwitcher.value = savedFont
 
-    // Khôi phục trạng thái và làm mới bookmark
-    restoreUIState(elements, () => {
+    // Fetch fresh bookmark data first
+    getBookmarkTree((bookmarkTreeNodes) => {
+      if (bookmarkTreeNodes) {
+        // Restore UI state (non-critical) and render after fresh data
+        restoreUIState(elements, () => {
+          renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          setupBookmarkChangeListeners(elements) // Add real-time listeners
+        })
+      } else {
+        const language = localStorage.getItem("appLanguage") || "en"
+        elements.folderListDiv.innerHTML = `<p>${translations[language].noBookmarks}</p>`
+      }
+    })
+
+    // Setup event listeners after DOM is ready
+    setupEventListeners(elements)
+  }
+
+  // Add real-time bookmark change listeners
+  function setupBookmarkChangeListeners(elements) {
+    const refreshBookmarks = debounce(() => {
+      console.log("Bookmark change detected, refreshing...")
       getBookmarkTree((bookmarkTreeNodes) => {
         if (bookmarkTreeNodes) {
           renderFilteredBookmarks(bookmarkTreeNodes, elements)
         } else {
-          const language = localStorage.getItem("appLanguage") || "en"
-          elements.folderListDiv.innerHTML = `<p>${translations[language].noBookmarks}</p>`
+          console.error("Failed to refresh bookmark tree on change")
         }
       })
-    })
+    }, 500)
 
-    // Thiết lập các sự kiện
-    setupEventListeners(elements)
+    chrome.bookmarks.onCreated.addListener(refreshBookmarks)
+    chrome.bookmarks.onRemoved.addListener(refreshBookmarks)
+    chrome.bookmarks.onChanged.addListener(refreshBookmarks)
+    chrome.bookmarks.onMoved.addListener(refreshBookmarks)
+
+    // Clean up listeners on popup close (optional, to prevent memory leaks)
+    window.addEventListener("unload", () => {
+      chrome.bookmarks.onCreated.removeListener(refreshBookmarks)
+      chrome.bookmarks.onRemoved.removeListener(refreshBookmarks)
+      chrome.bookmarks.onChanged.removeListener(refreshBookmarks)
+      chrome.bookmarks.onMoved.removeListener(refreshBookmarks)
+    })
   }
 
   init()

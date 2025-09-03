@@ -345,7 +345,6 @@ function handleDeleteBookmark(e, elements) {
   })
   e.target.closest(".dropdown-menu").classList.add("hidden")
 }
-
 function handleBookmarkCheckbox(e, elements) {
   e.stopPropagation()
   const bookmarkId = e.target.dataset.id

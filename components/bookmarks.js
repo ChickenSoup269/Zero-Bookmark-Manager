@@ -96,16 +96,33 @@ export function moveBookmarksToFolder(
       if (errors.length > 0) {
         console.error("Errors during bookmark move:", errors)
         showCustomPopup(translations[language].errorUnexpected, "error", false)
-      } else {
-        console.log("All bookmarks moved successfully.")
-        getBookmarkTree((bookmarkTreeNodes) => {
+        callback() // Allow retry by keeping popup open
+        return
+      }
+
+      console.log("All bookmarks moved successfully.")
+      // Retry getBookmarkTree up to 3 times with 500ms delay
+      function fetchBookmarkTreeWithRetry(attempts = 3, delay = 500) {
+        safeChromeBookmarksCall("getTree", [], (bookmarkTreeNodes) => {
           if (bookmarkTreeNodes) {
+            setBookmarkTree(bookmarkTreeNodes)
+            setBookmarks(flattenBookmarks(bookmarkTreeNodes))
+            setFolders(getFolders(bookmarkTreeNodes))
             renderFilteredBookmarks(bookmarkTreeNodes, elements)
             selectedBookmarks.clear()
             elements.addToFolderButton.classList.add("hidden")
             showCustomPopup(
               translations[language].addToFolderSuccess,
               "success"
+            )
+            callback() // Only call on success: hides popup, saves state
+          } else if (attempts > 1) {
+            console.warn(
+              `Retrying getBookmarkTree, attempts left: ${attempts - 1}`
+            )
+            setTimeout(
+              () => fetchBookmarkTreeWithRetry(attempts - 1, delay),
+              delay
             )
           } else {
             console.error("Failed to fetch bookmark tree after move.")
@@ -114,14 +131,15 @@ export function moveBookmarksToFolder(
               "error",
               false
             )
+            callback() // Allow retry
           }
-          callback()
         })
       }
+      fetchBookmarkTreeWithRetry()
     })
     .catch((error) => {
       console.error("Unexpected error in movePromises:", error)
       showCustomPopup(translations[language].errorUnexpected, "error", false)
-      callback()
+      callback() // Allow retry
     })
 }

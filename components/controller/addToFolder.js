@@ -82,7 +82,7 @@ export function openAddToFolderPopup(elements, bookmarkIds) {
           "Bookmark(s) moved successfully!",
         "success"
       )
-      saveUIState()
+      saveUIState() // This is fine, as callback only runs on success now
     })
   }
 

@@ -174,16 +174,17 @@ export function safeChromeBookmarksCall(method, args, callback) {
     }
     chrome.bookmarks[method](...args, (result) => {
       if (chrome.runtime.lastError) {
-        console.error(`Error in ${method}:`, chrome.runtime.lastError)
+        console.error(`Error in ${method}:`, chrome.runtime.lastError.message)
         const language = localStorage.getItem("appLanguage") || "en"
         showCustomPopup(translations[language].errorUnexpected, "error", false)
         callback(null)
         return
       }
+      console.log(`Success in ${method}:`, result)
       callback(result)
     })
   } catch (error) {
-    console.error(`Error in ${method}:`, error)
+    console.error(`Unexpected error in ${method}:`, error)
     const language = localStorage.getItem("appLanguage") || "en"
     showCustomPopup(translations[language].errorUnexpected, "error", false)
     callback(null)

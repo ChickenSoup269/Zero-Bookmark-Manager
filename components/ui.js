@@ -98,18 +98,10 @@ export function restoreUIState(elements, callback) {
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
     elements.languageSwitcher.value = savedLanguage
     updateUILanguage(elements, savedLanguage)
-    applyUIState()
-    callback()
-  })
-
-  function applyUIState() {
-    elements.searchInput.value = uiState.searchQuery
-    elements.folderFilter.value = uiState.selectedFolderId
-    elements.sortFilter.value = uiState.sortType
-    const language = localStorage.getItem("appLanguage") || "en"
+    // Apply UI state only for non-critical settings (language, checkboxes)
     elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
-      ? translations[language].hideCheckboxes
-      : translations[language].showCheckboxes
+      ? translations[savedLanguage].hideCheckboxes
+      : translations[savedLanguage].showCheckboxes
     document
       .querySelectorAll(".bookmark-checkbox, #select-all")
       .forEach((checkbox) => {
@@ -125,7 +117,8 @@ export function restoreUIState(elements, callback) {
     } else {
       console.warn("Select All container (.select-all) not found")
     }
-  }
+    callback()
+  })
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
@@ -168,7 +161,13 @@ function populateFolderFilter(folders, elements) {
     option.textContent = folder.title
     elements.folderFilter.appendChild(option)
   })
-  elements.folderFilter.value = uiState.selectedFolderId
+  // Only set folderFilter value if selectedFolderId exists in current folders
+  if (folders.some((f) => f.id === uiState.selectedFolderId)) {
+    elements.folderFilter.value = uiState.selectedFolderId
+  } else {
+    uiState.selectedFolderId = ""
+    elements.folderFilter.value = ""
+  }
 }
 
 function updateBookmarkCount(bookmarks, elements) {
@@ -215,8 +214,14 @@ function renderBookmarks(bookmarksList, elements) {
   elements.folderListDiv.innerHTML = ""
   elements.folderListDiv.appendChild(fragment)
 
+  // Only apply UI state filters after fresh data is rendered
   elements.searchInput.value = uiState.searchQuery
-  elements.folderFilter.value = uiState.selectedFolderId
+  if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
+    elements.folderFilter.value = uiState.selectedFolderId
+  } else {
+    uiState.selectedFolderId = ""
+    elements.folderFilter.value = ""
+  }
   elements.sortFilter.value = uiState.sortType
 
   console.log("Attaching listeners after render")

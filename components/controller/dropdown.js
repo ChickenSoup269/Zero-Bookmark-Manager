@@ -1,4 +1,4 @@
-//
+// ./components/controller/dropdown.js
 export function attachDropdownListeners() {
   // Remove existing listeners to prevent duplicates
   const dropdownButtons = document.querySelectorAll(".dropdown-btn")
