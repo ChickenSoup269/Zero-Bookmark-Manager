@@ -16,7 +16,12 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["fonts/*.ttf", "fonts/*.woff2", "images/*.png"],
+      "resources": [
+        "fonts/*.ttf",
+        "fonts/*.woff2",
+        "images/*.png",
+        "templates/template.html"
+      ],
 
       "matches": ["<all_urls>"]
     }

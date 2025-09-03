@@ -29,6 +29,8 @@ export function updateUILanguage(elements, language) {
   elements.renameFolderButton.textContent = t.renameFolder
   elements.deleteBookmarksButton.textContent = t.deleteBookmarks
   elements.exportBookmarksOption.textContent = t.exportBookmarks
+  elements.importBookmarksOption.textContent = t.importBookmarks
+  elements.renameFolderOption.textContent = t.renameFolder
   elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
     ? t.hideCheckboxes
     : t.showCheckboxes

@@ -75,6 +75,11 @@ export const translations = {
     renamePlaceholder: "Enter new bookmark name",
     newFolderPlaceholder: "Enter folder name",
     selectFolder: "Select Folder",
+    exportTitle: "Export Bookmarks",
+    advancedSettings: "Advanced Settings (only HTML)",
+    includeIconData: "Include icon data (Base64)",
+    includeCreationDates: "Include creation dates",
+    includeFolderModDates: "Include folder modification dates",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -93,8 +98,9 @@ export const translations = {
     selectAll: "Chọn Tất cả",
     showCheckboxes: "Hiển thị CheckBox",
     hideCheckboxes: "Ẩn CheckBox",
-    searchPlaceholder: "Tìm kiếm Boolmarks...",
+    searchPlaceholder: "Tìm kiếm Bookmarks...",
     renameTitle: "Đổi tên",
+    renameFolder: "Đổi tên Thư mục",
     renamePlaceholder: "Nhập tên mới...",
     addToFolderTitle: "Thêm vào Thư mục",
     selectFolder: "Chọn Thư mục",
@@ -121,7 +127,6 @@ export const translations = {
     deleteBookmarkOption: "Xóa",
     renameBookmarkOption: "Đổi tên",
     deleteBookmarks: "Xóa bookmark",
-    renameFolder: "Đổi tên bookmark",
     importSuccess: "Bookmark đã được nhập thành công!",
     importDuplicatePrompt:
       "Một số Bookmark đã tồn tại (cùng URL). Bạn có muốn nhập các Bookmark không trùng lặp không?",
@@ -150,6 +155,11 @@ export const translations = {
     renamePlaceholder: "Nhập tên Bookmark mới",
     newFolderPlaceholder: "Nhập tên thư mục",
     selectFolder: "Chọn Thư mục",
+    exportTitle: "Xuất Bookmarks",
+    advancedSettings: "Cài đặt Nâng cao (chỉ HTML)",
+    includeIconData: "Bao gồm dữ liệu biểu tượng (Base64)",
+    includeCreationDates: "Bao gồm ngày tạo",
+    includeFolderModDates: "Bao gồm ngày chỉnh sửa thư mục",
   },
 }
 

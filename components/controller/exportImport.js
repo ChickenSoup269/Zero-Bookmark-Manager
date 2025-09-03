@@ -8,8 +8,28 @@ import { flattenBookmarks, getFolders } from "../bookmarks.js"
 import { renderFilteredBookmarks } from "../ui.js"
 import { uiState, saveUIState } from "../state.js"
 
+// Hàm chuyển favicon URL thành base64
+async function fetchFaviconAsBase64(url) {
+  try {
+    const response = await fetch(
+      `https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(
+        url
+      )}`
+    )
+    const blob = await response.blob()
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result)
+      reader.readAsDataURL(blob)
+    })
+  } catch (error) {
+    console.error(`Error fetching favicon for ${url}:`, error)
+    return "https://www.google.com/s2/favicons?sz=16&domain=example.com"
+  }
+}
+
 export function setupExportImportListeners(elements) {
-  elements.exportBookmarksOption.addEventListener("click", () => {
+  elements.exportBookmarksOption.addEventListener("click", async () => {
     const language = localStorage.getItem("appLanguage") || "en"
     const currentTheme = document.body.getAttribute("data-theme") || "dark"
     const popup = document.createElement("div")
@@ -22,6 +42,23 @@ export function setupExportImportListeners(elements) {
           <option value="json">JSON</option>
           <option value="html">HTML</option>
         </select>
+        <div id="advancedSettings" style="margin: 10px 0;">
+          <h3>${
+            translations[language].advancedSettings || "Advanced Settings"
+          }</h3>
+          <label><input type="checkbox" id="includeIconData"> ${
+            translations[language].includeIconData ||
+            "Include icon data (Base64)"
+          }</label><br>
+          <label><input type="checkbox" id="includeCreationDates"> ${
+            translations[language].includeCreationDates ||
+            "Include creation dates"
+          }</label><br>
+          <label><input type="checkbox" id="includeFolderModDates"> ${
+            translations[language].includeFolderModDates ||
+            "Include folder modification dates"
+          }</label>
+        </div>
         <button id="confirmExport">${
           translations[language].confirm || "Export"
         }</button>
@@ -32,49 +69,73 @@ export function setupExportImportListeners(elements) {
     `
     document.body.appendChild(popup)
 
-    document.getElementById("confirmExport").addEventListener("click", () => {
-      const exportChoice = document
-        .getElementById("exportFormat")
-        .value.toUpperCase()
-      safeChromeBookmarksCall("getTree", [], (bookmarkTreeNodes) => {
-        if (!bookmarkTreeNodes) {
-          showCustomPopup(
-            translations[language].errorUnexpected ||
-              "Unexpected error occurred",
-            "error",
-            false
-          )
-          document.body.removeChild(popup)
-          return
-        }
+    document
+      .getElementById("confirmExport")
+      .addEventListener("click", async () => {
+        const exportChoice = document
+          .getElementById("exportFormat")
+          .value.toUpperCase()
+        const includeIconData =
+          document.getElementById("includeIconData").checked
+        const includeCreationDates = document.getElementById(
+          "includeCreationDates"
+        ).checked
+        const includeFolderModDates = document.getElementById(
+          "includeFolderModDates"
+        ).checked
 
-        const exportData = {
-          timestamp: new Date().toISOString(),
-          bookmarks: bookmarkTreeNodes,
-        }
+        safeChromeBookmarksCall("getTree", [], async (bookmarkTreeNodes) => {
+          if (!bookmarkTreeNodes) {
+            showCustomPopup(
+              translations[language].errorUnexpected ||
+                "Unexpected error occurred",
+              "error",
+              false
+            )
+            document.body.removeChild(popup)
+            return
+          }
 
-        if (exportChoice === "JSON") {
-          const jsonString = JSON.stringify(exportData, null, 2)
-          const blob = new Blob([jsonString], { type: "application/json" })
-          const url = URL.createObjectURL(blob)
-          const link = document.createElement("a")
-          link.href = url
-          link.download = `bookmarks_${
-            new Date().toISOString().split("T")[0]
-          }.json`
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          URL.revokeObjectURL(url)
-        } else if (exportChoice === "HTML") {
-          const htmlContent = `
+          const exportData = {
+            timestamp: new Date().toISOString(),
+            bookmarks: bookmarkTreeNodes,
+          }
+
+          if (exportChoice === "JSON") {
+            const jsonString = JSON.stringify(exportData, null, 2)
+            const blob = new Blob([jsonString], { type: "application/json" })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement("a")
+            link.href = url
+            link.download = `bookmarks_${
+              new Date().toISOString().split("T")[0]
+            }.json`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(url)
+          } else if (exportChoice === "HTML") {
+            // Lấy favicon base64 nếu được chọn
+            let faviconMap = {}
+            if (includeIconData) {
+              const bookmarksWithUrls = flattenBookmarks(
+                bookmarkTreeNodes
+              ).filter((b) => b.url)
+              for (const bookmark of bookmarksWithUrls) {
+                faviconMap[bookmark.url] = await fetchFaviconAsBase64(
+                  bookmark.url
+                )
+              }
+            }
+
+            // Chuỗi template HTML
+            const htmlTemplate = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Exported Bookmarks</title>
-  <!-- Favicon của trang web -->
   <link rel="icon" type="image/png" href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/icons/icon.png?raw=true">
   <style>
     body { 
@@ -198,14 +259,17 @@ export function setupExportImportListeners(elements) {
     .hidden { 
       display: none; 
     }
+    .meta-info { 
+      font-size: 12px; 
+      color: #666; 
+      margin-left: 24px; 
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="controls">
-      <input type="text" id="searchInput" placeholder="${
-        translations[language].searchPlaceholder || "Search bookmarks..."
-      }">
+      <input type="text" id="searchInput" placeholder="{{searchPlaceholder}}">
       <button class="view-toggle" id="listViewBtn" onclick="toggleView('list')">List View</button>
       <button class="view-toggle" id="gridViewBtn" onclick="toggleView('grid')">Grid View</button>
       <button class="view-toggle" id="treeViewBtn" onclick="toggleView('tree')">Tree View</button>
@@ -216,7 +280,11 @@ export function setupExportImportListeners(elements) {
   </div>
 
   <script>
-    const bookmarks = ${JSON.stringify(bookmarkTreeNodes)};
+    const bookmarks = {{bookmarks}};
+    const includeIconData = {{includeIconData}};
+    const includeCreationDates = {{includeCreationDates}};
+    const includeFolderModDates = {{includeFolderModDates}};
+    const faviconMap = {{faviconMap}};
     const listContainer = document.getElementById("bookmarkList");
     const gridContainer = document.getElementById("bookmarkGrid");
     const treeContainer = document.getElementById("bookmarkTree");
@@ -225,29 +293,58 @@ export function setupExportImportListeners(elements) {
     const gridViewBtn = document.getElementById("gridViewBtn");
     const treeViewBtn = document.getElementById("treeViewBtn");
 
+    function formatDate(timestamp) {
+      return timestamp ? new Date(timestamp).toLocaleString() : "N/A";
+    }
+
     function renderBookmarks(nodes, parent = listContainer, gridParent = gridContainer, treeParent = treeContainer, depth = 0) {
       nodes.forEach(node => {
-        // Render List View
         if (node.url) {
+          const faviconSrc = includeIconData && faviconMap[node.url] 
+            ? faviconMap[node.url]
+            : \`https://www.google.com/s2/favicons?sz=32&domain=\${encodeURIComponent(node.url)}\`;
+          
           const li = document.createElement("li");
           li.className = "bookmark-item";
-          li.innerHTML = \`<img src="https://www.google.com/s2/favicons?sz=16&domain=\${encodeURIComponent(node.url)}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          li.innerHTML = \`<img src="\${faviconSrc}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          if (includeCreationDates) {
+            li.innerHTML += \`<div class="meta-info">Created: \${formatDate(node.dateAdded)}</div>\`;
+          }
           parent.appendChild(li);
 
           const gridItem = document.createElement("div");
           gridItem.className = "bookmark-item";
-          gridItem.innerHTML = \`<img src="https://www.google.com/s2/favicons?sz=16&domain=\${encodeURIComponent(node.url)}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          gridItem.innerHTML = \`<img src="\${faviconSrc}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          if (includeCreationDates) {
+            gridItem.innerHTML += \`<div class="meta-info">Created: \${formatDate(node.dateAdded)}</div>\`;
+          }
           gridParent.appendChild(gridItem);
         }
 
-        // Render Tree View
         const treeItem = document.createElement("li");
         if (node.url) {
           treeItem.className = "bookmark-item";
-          treeItem.innerHTML = \`<img src="https://www.google.com/s2/favicons?sz=16&domain=\${encodeURIComponent(node.url)}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          const faviconSrc = includeIconData && faviconMap[node.url] 
+            ? faviconMap[node.url]
+            : \`https://www.google.com/s2/favicons?sz=32&domain=\${encodeURIComponent(node.url)}\`;
+          treeItem.innerHTML = \`<img src="\${faviconSrc}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          if (includeCreationDates) {
+            treeItem.innerHTML += \`<div class="meta-info">Created: \${formatDate(node.dateAdded)}</div>\`;
+          }
         } else if (node.children) {
           treeItem.className = "folder";
           treeItem.textContent = node.title || "Unnamed Folder";
+          if (includeCreationDates || includeFolderModDates) {
+            const metaDiv = document.createElement("div");
+            metaDiv.className = "meta-info";
+            if (includeCreationDates) {
+              metaDiv.innerHTML += \`Created: \${formatDate(node.dateAdded)}<br>\`;
+            }
+            if (includeFolderModDates) {
+              metaDiv.innerHTML += \`Modified: \${formatDate(node.dateGroupModified)}\`;
+            }
+            treeItem.appendChild(metaDiv);
+          }
           const nestedList = document.createElement("ul");
           nestedList.className = "nested";
           treeItem.appendChild(nestedList);
@@ -300,29 +397,48 @@ export function setupExportImportListeners(elements) {
 
     searchInput.addEventListener("input", filterBookmarks);
     renderBookmarks(bookmarks);
-    // Set default view to List View
     toggleView("list");
   </script>
 </body>
 </html>
           `
-          const blob = new Blob([htmlContent], { type: "text/html" })
-          const url = URL.createObjectURL(blob)
-          const link = document.createElement("a")
-          link.href = url
-          link.download = `bookmarks_${
-            new Date().toISOString().split("T")[0]
-          }.html`
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          URL.revokeObjectURL(url)
-        }
 
-        document.body.removeChild(popup)
-        elements.settingsMenu.classList.add("hidden")
+            // Thay thế placeholder
+            const htmlContent = htmlTemplate
+              .replace("{{bookmarks}}", JSON.stringify(bookmarkTreeNodes))
+              .replace(
+                "{{searchPlaceholder}}",
+                translations[language].searchPlaceholder ||
+                  "Search bookmarks..."
+              )
+              .replace("{{includeIconData}}", JSON.stringify(includeIconData))
+              .replace(
+                "{{includeCreationDates}}",
+                JSON.stringify(includeCreationDates)
+              )
+              .replace(
+                "{{includeFolderModDates}}",
+                JSON.stringify(includeFolderModDates)
+              )
+              .replace("{{faviconMap}}", JSON.stringify(faviconMap))
+
+            const blob = new Blob([htmlContent], { type: "text/html" })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement("a")
+            link.href = url
+            link.download = `bookmarks_${
+              new Date().toISOString().split("T")[0]
+            }.html`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(url)
+          }
+
+          document.body.removeChild(popup)
+          elements.settingsMenu.classList.add("hidden")
+        })
       })
-    })
 
     document.getElementById("cancelExport").addEventListener("click", () => {
       document.body.removeChild(popup)
@@ -351,6 +467,13 @@ export function setupExportImportListeners(elements) {
       .popup-content select, .popup-content button {
         margin: 10px;
         padding: 8px;
+      }
+      #advancedSettings {
+        text-align: left;
+      }
+      #advancedSettings label {
+        display: block;
+        margin: 5px 0;
       }
     `
     document.head.appendChild(style)
