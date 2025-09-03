@@ -74,29 +74,130 @@ export function setupExportImportListeners(elements) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Exported Bookmarks</title>
+  <!-- Favicon của trang web -->
+  <link rel="icon" type="image/png" href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/icons/icon.png?raw=true">
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .container { max-width: 1200px; margin: auto; }
-    .controls { margin-bottom: 20px; }
-    #searchInput { padding: 8px; width: 100%; max-width: 300px; }
-    .view-toggle { margin-left: 20px; }
-    .bookmark-list { list-style: none; padding: 0; }
-    .bookmark-list li { padding: 10px; border-bottom: 1px solid #ddd; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      margin: 20px; 
+      background-color: #f5f5f5; 
+      color: #333; 
+    }
+    .container { 
+      max-width: 1200px; 
+      margin: auto; 
+      background: white; 
+      padding: 20px; 
+      border-radius: 8px; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    }
+    .controls { 
+      margin-bottom: 20px; 
+      display: flex; 
+      gap: 10px; 
+      align-items: center; 
+    }
+    #searchInput { 
+      padding: 10px; 
+      width: 100%; 
+      max-width: 300px; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+      font-size: 14px; 
+    }
+    .view-toggle { 
+      padding: 8px 16px; 
+      border: none; 
+      border-radius: 4px; 
+      background-color: #e0e0e0; 
+      cursor: pointer; 
+      font-size: 14px; 
+      transition: background-color 0.2s, transform 0.1s; 
+    }
+    .view-toggle:hover { 
+      background-color: #d0d0d0; 
+      transform: translateY(-1px); 
+    }
+    .view-toggle.active { 
+      background-color: #007bff; 
+      color: white; 
+    }
+    .bookmark-list { 
+      list-style: none; 
+      padding: 0; 
+    }
+    .bookmark-list li { 
+      padding: 12px; 
+      border-bottom: 1px solid #eee; 
+      transition: background-color 0.2s; 
+    }
+    .bookmark-list li:hover { 
+      background-color: #f8f8f8; 
+    }
     .bookmark-grid { 
       display: grid; 
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-      gap: 20px; 
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+      gap: 15px; 
     }
     .bookmark-grid .bookmark-item { 
-      border: 1px solid #ddd; 
+      border: 1px solid #eee; 
       padding: 15px; 
-      border-radius: 5px; 
+      border-radius: 6px; 
       text-align: center; 
+      background: white; 
+      transition: box-shadow 0.2s; 
     }
-    .bookmark-item a { text-decoration: none; color: #007bff; }
-    .bookmark-item a:hover { text-decoration: underline; }
-    .folder { font-weight: bold; margin-top: 10px; }
-    .hidden { display: none; }
+    .bookmark-grid .bookmark-item:hover { 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+    }
+    .bookmark-item a { 
+      text-decoration: none; 
+      color: #007bff; 
+      font-size: 14px; 
+    }
+    .bookmark-item a:hover { 
+      text-decoration: underline; 
+    }
+    .bookmark-item img { 
+      width: 16px; 
+      height: 16px; 
+      margin-right: 8px; 
+      vertical-align: middle; 
+    }
+    .folder { 
+      font-weight: 600; 
+      margin: 10px 0; 
+      cursor: pointer; 
+      color: #444; 
+      padding: 10px; 
+      border-radius: 4px; 
+      transition: background-color 0.2s; 
+    }
+    .folder:hover { 
+      background-color: #f0f0f0; 
+    }
+    .folder::before { 
+      content: "📁 "; 
+      font-size: 16px; 
+    }
+    .folder.open::before { 
+      content: "📂 "; 
+    }
+    .nested { 
+      padding-left: 30px; 
+      display: none; 
+      transition: all 0.3s ease; 
+    }
+    .open > .nested { 
+      display: block; 
+    }
+    .tree-view { 
+      list-style: none; 
+      padding: 0; 
+    }
+    .hidden { 
+      display: none; 
+    }
   </style>
 </head>
 <body>
@@ -105,69 +206,102 @@ export function setupExportImportListeners(elements) {
       <input type="text" id="searchInput" placeholder="${
         translations[language].searchPlaceholder || "Search bookmarks..."
       }">
-      <button class="view-toggle" onclick="toggleView('list')">List View</button>
-      <button class="view-toggle" onclick="toggleView('grid')">Grid View</button>
+      <button class="view-toggle" id="listViewBtn" onclick="toggleView('list')">List View</button>
+      <button class="view-toggle" id="gridViewBtn" onclick="toggleView('grid')">Grid View</button>
+      <button class="view-toggle" id="treeViewBtn" onclick="toggleView('tree')">Tree View</button>
     </div>
     <ul id="bookmarkList" class="bookmark-list"></ul>
     <div id="bookmarkGrid" class="bookmark-grid hidden"></div>
+    <ul id="bookmarkTree" class="tree-view hidden"></ul>
   </div>
 
   <script>
     const bookmarks = ${JSON.stringify(bookmarkTreeNodes)};
     const listContainer = document.getElementById("bookmarkList");
     const gridContainer = document.getElementById("bookmarkGrid");
+    const treeContainer = document.getElementById("bookmarkTree");
     const searchInput = document.getElementById("searchInput");
+    const listViewBtn = document.getElementById("listViewBtn");
+    const gridViewBtn = document.getElementById("gridViewBtn");
+    const treeViewBtn = document.getElementById("treeViewBtn");
 
-    function renderBookmarks(nodes, parent = listContainer, gridParent = gridContainer, depth = 0) {
+    function renderBookmarks(nodes, parent = listContainer, gridParent = gridContainer, treeParent = treeContainer, depth = 0) {
       nodes.forEach(node => {
+        // Render List View
         if (node.url) {
           const li = document.createElement("li");
           li.className = "bookmark-item";
-          li.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          li.innerHTML = \`<img src="https://www.google.com/s2/favicons?sz=16&domain=\${encodeURIComponent(node.url)}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
           parent.appendChild(li);
 
           const gridItem = document.createElement("div");
           gridItem.className = "bookmark-item";
-          gridItem.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          gridItem.innerHTML = \`<img src="https://www.google.com/s2/favicons?sz=16&domain=\${encodeURIComponent(node.url)}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
           gridParent.appendChild(gridItem);
         }
-        if (node.children) {
-          const folder = document.createElement("li");
-          folder.className = "folder";
-          folder.textContent = node.title || "Unnamed Folder";
-          parent.appendChild(folder);
-          
-          const gridFolder = document.createElement("div");
-          gridFolder.className = "folder bookmark-item";
-          gridFolder.textContent = node.title || "Unnamed Folder";
-          gridParent.appendChild(gridFolder);
 
-          renderBookmarks(node.children, parent, gridParent, depth + 1);
+        // Render Tree View
+        const treeItem = document.createElement("li");
+        if (node.url) {
+          treeItem.className = "bookmark-item";
+          treeItem.innerHTML = \`<img src="https://www.google.com/s2/favicons?sz=16&domain=\${encodeURIComponent(node.url)}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+        } else if (node.children) {
+          treeItem.className = "folder";
+          treeItem.textContent = node.title || "Unnamed Folder";
+          const nestedList = document.createElement("ul");
+          nestedList.className = "nested";
+          treeItem.appendChild(nestedList);
+          treeItem.addEventListener("click", (e) => {
+            e.stopPropagation();
+            treeItem.classList.toggle("open");
+          });
+          renderBookmarks(node.children, parent, gridParent, nestedList, depth + 1);
         }
+        treeParent.appendChild(treeItem);
       });
     }
 
     function toggleView(view) {
+      listContainer.classList.add("hidden");
+      gridContainer.classList.add("hidden");
+      treeContainer.classList.add("hidden");
+      listViewBtn.classList.remove("active");
+      gridViewBtn.classList.remove("active");
+      treeViewBtn.classList.remove("active");
       if (view === "list") {
         listContainer.classList.remove("hidden");
-        gridContainer.classList.add("hidden");
-      } else {
-        listContainer.classList.add("hidden");
+        listViewBtn.classList.add("active");
+      } else if (view === "grid") {
         gridContainer.classList.remove("hidden");
+        gridViewBtn.classList.add("active");
+      } else if (view === "tree") {
+        treeContainer.classList.remove("hidden");
+        treeViewBtn.classList.add("active");
       }
     }
 
     function filterBookmarks() {
       const query = searchInput.value.toLowerCase();
-      const items = document.querySelectorAll(".bookmark-item");
+      const items = document.querySelectorAll(".bookmark-item, .folder");
       items.forEach(item => {
         const text = item.textContent.toLowerCase();
         item.style.display = text.includes(query) ? "" : "none";
+        if (item.classList.contains("folder") && item.querySelector(".bookmark-item")) {
+          const hasVisibleChild = Array.from(item.querySelectorAll(".bookmark-item")).some(child => 
+            child.textContent.toLowerCase().includes(query)
+          );
+          if (hasVisibleChild) {
+            item.style.display = "";
+            item.classList.add("open");
+          }
+        }
       });
     }
 
     searchInput.addEventListener("input", filterBookmarks);
     renderBookmarks(bookmarks);
+    // Set default view to List View
+    toggleView("list");
   </script>
 </body>
 </html>
