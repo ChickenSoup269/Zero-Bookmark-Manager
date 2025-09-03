@@ -234,9 +234,7 @@ export function setupExportImportListeners(elements) {
       border-radius: 4px; 
       transition: background-color 0.2s; 
     }
-    .folder:hover { 
-      background-color: #f0f0f0; 
-    }
+  
     .folder::before { 
       content: "📁 "; 
       font-size: 16px; 
