@@ -505,11 +505,11 @@ body {
 }
 
 /* Select all */
-.select-all {
+/* .select-all {
   margin-bottom: var(--spacing-sm);
-}
+} */
 
-.select-all label {
+/* .select-all label {
   display: flex;
   align-items: center;
   font-size: 1em;
@@ -517,7 +517,7 @@ body {
   cursor: pointer;
   font-weight: 400;
   transition: color var(--transition-fast);
-}
+} */
 
 .select-all label:hover {
   color: var(--text-secondary);
@@ -531,9 +531,6 @@ body {
   cursor: pointer;
   font-weight: 500;
   transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Logo */
