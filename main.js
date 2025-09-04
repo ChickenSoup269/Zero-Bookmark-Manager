@@ -1,11 +1,10 @@
-// main.js
 import {
   updateTheme,
   restoreUIState,
   renderFilteredBookmarks,
 } from "./components/ui.js"
 import { getBookmarkTree } from "./components/bookmarks.js"
-import { translations } from "./components/utils.js"
+import { translations, debounce } from "./components/utils.js" // Added debounce import
 import { setupEventListeners } from "./components/events.js"
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -94,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Restore UI state (non-critical) and render after fresh data
         restoreUIState(elements, () => {
           renderFilteredBookmarks(bookmarkTreeNodes, elements)
-          setupBookmarkChangeListeners(elements) // Add real-time listeners
+          setupBookmarkChangeListeners(elements)
         })
       } else {
         const language = localStorage.getItem("appLanguage") || "en"
@@ -115,6 +114,12 @@ document.addEventListener("DOMContentLoaded", () => {
           renderFilteredBookmarks(bookmarkTreeNodes, elements)
         } else {
           console.error("Failed to refresh bookmark tree on change")
+          const language = localStorage.getItem("appLanguage") || "en"
+          showCustomPopup(
+            translations[language].errorUnexpected,
+            "error",
+            false
+          )
         }
       })
     }, 500)
@@ -124,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.bookmarks.onChanged.addListener(refreshBookmarks)
     chrome.bookmarks.onMoved.addListener(refreshBookmarks)
 
-    // Clean up listeners on popup close (optional, to prevent memory leaks)
+    // Clean up listeners on popup close
     window.addEventListener("unload", () => {
       chrome.bookmarks.onCreated.removeListener(refreshBookmarks)
       chrome.bookmarks.onRemoved.removeListener(refreshBookmarks)

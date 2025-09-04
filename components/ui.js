@@ -98,7 +98,7 @@ export function restoreUIState(elements, callback) {
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
     elements.languageSwitcher.value = savedLanguage
     updateUILanguage(elements, savedLanguage)
-    // Apply UI state only for non-critical settings (language, checkboxes)
+    // Only apply non-critical UI state (language, checkboxes)
     elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
       ? translations[savedLanguage].hideCheckboxes
       : translations[savedLanguage].showCheckboxes
@@ -134,10 +134,16 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
   populateFolderFilter(folders, elements)
   updateBookmarkCount(bookmarks, elements)
   let filtered = bookmarks
-  if (uiState.selectedFolderId) {
+  // Validate selectedFolderId before filtering
+  if (
+    uiState.selectedFolderId &&
+    folders.some((f) => f.id === uiState.selectedFolderId)
+  ) {
     filtered = filtered.filter((bookmark) =>
       isInFolder(bookmark, uiState.selectedFolderId)
     )
+  } else {
+    uiState.selectedFolderId = ""
   }
   if (uiState.searchQuery) {
     filtered = filtered.filter(
@@ -161,7 +167,7 @@ function populateFolderFilter(folders, elements) {
     option.textContent = folder.title
     elements.folderFilter.appendChild(option)
   })
-  // Only set folderFilter value if selectedFolderId exists in current folders
+  // Only set folderFilter value if valid
   if (folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId
   } else {
@@ -214,7 +220,7 @@ function renderBookmarks(bookmarksList, elements) {
   elements.folderListDiv.innerHTML = ""
   elements.folderListDiv.appendChild(fragment)
 
-  // Only apply UI state filters after fresh data is rendered
+  // Apply UI state filters after rendering
   elements.searchInput.value = uiState.searchQuery
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId

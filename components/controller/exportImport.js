@@ -8,26 +8,6 @@ import { flattenBookmarks, getFolders } from "../bookmarks.js"
 import { renderFilteredBookmarks } from "../ui.js"
 import { uiState, saveUIState } from "../state.js"
 
-// Hàm chuyển favicon URL thành base64
-async function fetchFaviconAsBase64(url) {
-  try {
-    const response = await fetch(
-      `https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(
-        url
-      )}`
-    )
-    const blob = await response.blob()
-    return new Promise((resolve) => {
-      const reader = new FileReader()
-      reader.onloadend = () => resolve(reader.result)
-      reader.readAsDataURL(blob)
-    })
-  } catch (error) {
-    console.error(`Error fetching favicon for ${url}:`, error)
-    return "https://www.google.com/s2/favicons?sz=16&domain=example.com"
-  }
-}
-
 export function setupExportImportListeners(elements) {
   elements.exportBookmarksOption.addEventListener("click", async () => {
     const language = localStorage.getItem("appLanguage") || "en"
@@ -115,20 +95,21 @@ export function setupExportImportListeners(elements) {
             document.body.removeChild(link)
             URL.revokeObjectURL(url)
           } else if (exportChoice === "HTML") {
-            // Lấy favicon base64 nếu được chọn
+            // Create faviconMap with URLs instead of Base64 data
             let faviconMap = {}
             if (includeIconData) {
               const bookmarksWithUrls = flattenBookmarks(
                 bookmarkTreeNodes
               ).filter((b) => b.url)
               for (const bookmark of bookmarksWithUrls) {
-                faviconMap[bookmark.url] = await fetchFaviconAsBase64(
+                faviconMap[
                   bookmark.url
-                )
+                ] = `https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(
+                  bookmark.url
+                )}`
               }
             }
 
-            // Chuỗi template HTML
             const htmlTemplate = `
 <!DOCTYPE html>
 <html lang="en">
@@ -234,7 +215,6 @@ export function setupExportImportListeners(elements) {
       border-radius: 4px; 
       transition: background-color 0.2s; 
     }
-  
     .folder::before { 
       content: "📁 "; 
       font-size: 16px; 
@@ -296,15 +276,20 @@ export function setupExportImportListeners(elements) {
     }
 
     function renderBookmarks(nodes, parent = listContainer, gridParent = gridContainer, treeParent = treeContainer, depth = 0) {
+      // Separate folders and bookmarks for tree view
+      const folders = nodes.filter(node => node.children);
+      const bookmarks = nodes.filter(node => node.url);
+
+      // Render for list and grid views
       nodes.forEach(node => {
         if (node.url) {
-          const faviconSrc = includeIconData && faviconMap[node.url] 
-            ? faviconMap[node.url]
-            : \`https://www.google.com/s2/favicons?sz=32&domain=\${encodeURIComponent(node.url)}\`;
-          
           const li = document.createElement("li");
           li.className = "bookmark-item";
-          li.innerHTML = \`<img src="\${faviconSrc}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          if (includeIconData && faviconMap[node.url]) {
+            li.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='https://www.google.com/s2/favicons?sz=32&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          } else {
+            li.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          }
           if (includeCreationDates) {
             li.innerHTML += \`<div class="meta-info">Created: \${formatDate(node.dateAdded)}</div>\`;
           }
@@ -312,20 +297,28 @@ export function setupExportImportListeners(elements) {
 
           const gridItem = document.createElement("div");
           gridItem.className = "bookmark-item";
-          gridItem.innerHTML = \`<img src="\${faviconSrc}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          if (includeIconData && faviconMap[node.url]) {
+            gridItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='https://www.google.com/s2/favicons?sz=32&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          } else {
+            gridItem.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          }
           if (includeCreationDates) {
             gridItem.innerHTML += \`<div class="meta-info">Created: \${formatDate(node.dateAdded)}</div>\`;
           }
           gridParent.appendChild(gridItem);
         }
+      });
 
+      // Render for tree view with folders first
+      [...folders, ...bookmarks].forEach(node => {
         const treeItem = document.createElement("li");
         if (node.url) {
           treeItem.className = "bookmark-item";
-          const faviconSrc = includeIconData && faviconMap[node.url] 
-            ? faviconMap[node.url]
-            : \`https://www.google.com/s2/favicons?sz=32&domain=\${encodeURIComponent(node.url)}\`;
-          treeItem.innerHTML = \`<img src="\${faviconSrc}" onerror="this.src='https://www.google.com/s2/favicons?sz=16&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          if (includeIconData && faviconMap[node.url]) {
+            treeItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='https://www.google.com/s2/favicons?sz=32&domain=example.com'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          } else {
+            treeItem.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+          }
           if (includeCreationDates) {
             treeItem.innerHTML += \`<div class="meta-info">Created: \${formatDate(node.dateAdded)}</div>\`;
           }
@@ -364,7 +357,7 @@ export function setupExportImportListeners(elements) {
       gridViewBtn.classList.remove("active");
       treeViewBtn.classList.remove("active");
       if (view === "list") {
-        listContainer.classList.remove("hidden");
+        listContainer.className = "bookmark-list";
         listViewBtn.classList.add("active");
       } else if (view === "grid") {
         gridContainer.classList.remove("hidden");
@@ -399,9 +392,7 @@ export function setupExportImportListeners(elements) {
   </script>
 </body>
 </html>
-          `
-
-            // Thay thế placeholder
+`
             const htmlContent = htmlTemplate
               .replace("{{bookmarks}}", JSON.stringify(bookmarkTreeNodes))
               .replace(

@@ -96,7 +96,7 @@ export function moveBookmarksToFolder(
       if (errors.length > 0) {
         console.error("Errors during bookmark move:", errors)
         showCustomPopup(translations[language].errorUnexpected, "error", false)
-        callback() // Allow retry by keeping popup open
+        callback() // Keep popup open for retry
         return
       }
 
@@ -111,11 +111,12 @@ export function moveBookmarksToFolder(
             renderFilteredBookmarks(bookmarkTreeNodes, elements)
             selectedBookmarks.clear()
             elements.addToFolderButton.classList.add("hidden")
+            elements.deleteBookmarksButton.classList.add("hidden")
             showCustomPopup(
               translations[language].addToFolderSuccess,
               "success"
             )
-            callback() // Only call on success: hides popup, saves state
+            callback() // Success: hide popup, save state
           } else if (attempts > 1) {
             console.warn(
               `Retrying getBookmarkTree, attempts left: ${attempts - 1}`
@@ -127,11 +128,14 @@ export function moveBookmarksToFolder(
           } else {
             console.error("Failed to fetch bookmark tree after move.")
             showCustomPopup(
-              translations[language].errorUnexpected,
+              translations[language].errorUnexpected +
+                " " +
+                (translations[language].restartExtension ||
+                  "Please try again or restart the extension."),
               "error",
               false
             )
-            callback() // Allow retry
+            callback() // Keep popup open for retry
           }
         })
       }
@@ -139,7 +143,14 @@ export function moveBookmarksToFolder(
     })
     .catch((error) => {
       console.error("Unexpected error in movePromises:", error)
-      showCustomPopup(translations[language].errorUnexpected, "error", false)
-      callback() // Allow retry
+      showCustomPopup(
+        translations[language].errorUnexpected +
+          " " +
+          (translations[language].restartExtension ||
+            "Please try again or restart the extension."),
+        "error",
+        false
+      )
+      callback() // Keep popup open for retry
     })
 }
