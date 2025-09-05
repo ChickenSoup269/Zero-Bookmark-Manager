@@ -20,6 +20,7 @@
   --danger-hover: #cc0000;
   --hover-bg: #555555;
   --focus-outline: #4a90e2;
+  --box-shadow: 0 6px 15px rgb(255, 255, 255, 0.753);
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -56,6 +57,7 @@ body.light-theme {
   --accent-color: #000000;
   --hover-bg: #999999;
   --focus-outline: #4a90e2;
+  --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.753);
 }
 
 /* Reset and base styles */

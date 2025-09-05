@@ -909,14 +909,14 @@ export function setupExportImportListeners(elements) {
     .format-card:hover {
       border-color: var(--accent-color);
       transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--box-shadow);
     }
     
     .format-card.active {
       border-color: var(--accent-color);
       background: var(--text-primary);
       color: var(--bg-primary);
-      box-shadow: 0 6px 15px rgba(255, 255, 255, 1);
+      box-shadow: var(--box-shadow);
     }
     
     .format-card.active h3,
@@ -1038,18 +1038,17 @@ export function setupExportImportListeners(elements) {
     }
     
     .btn-primary {
-      background: var(--text-primary);
-      color: var(--bg-primary);
+      background: #70a146;
+      color: white;
     }
     .btn-primary:hover {
-      background: var(--bg-primary);
-      color: var(--text-primary);
+      transform: translateY(-1px);
     }
     
     .btn-primary:hover:not(:disabled) {
-      background: var(--accent-hover);
       transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(49, 130, 206, 0.4);
+      box-shadow: var(--box-shadow);
+      transition: all 0.2s ease;
     }
     
     .btn-primary:disabled {
@@ -1059,7 +1058,7 @@ export function setupExportImportListeners(elements) {
     }
     
     .btn-secondary {
-      background: var(--bg-tertiary);
+      background: var(--bg-secondary);
       color: var(--text-primary);
       border: 1px solid var(--border-color);
     }
