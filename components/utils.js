@@ -53,7 +53,6 @@ export const translations = {
     importInvalidFile:
       "Invalid file format. Please select a valid JSON bookmark file.",
     importError: "Failed to import bookmarks. Please try again.",
-    addToFolderSuccess: "Bookmark(s) added to folder successfully!",
     deleteBookmarkSuccess: "Bookmark deleted successfully!",
     exportPrompt:
       "Choose export format: JSON or HTML (data will be saved as JSON).",
@@ -63,7 +62,8 @@ export const translations = {
     errorTitle: "Error",
     renameSuccess: "Bookmark renamed successfully!",
     deleteBookmarkSuccess: "Bookmark deleted successfully!",
-    addToFolderSuccess: "Bookmark(s) added to folder successfully!",
+    addToFolderSuccess:
+      "Bookmark(s) added to folder successfully! (Reload to update data)",
     createFolderSuccess: "Folder created successfully!",
     duplicateTitleError: "Title already exists in this folder",
     emptyTitleError: "Please enter a title",
@@ -134,7 +134,6 @@ export const translations = {
     importInvalidFile:
       "Định dạng tệp không hợp lệ. Vui lòng chọn tệp JSON Bookmark hợp lệ.",
     importError: "Không thể nhập Bookmark. Vui lòng thử lại.",
-    addToFolderSuccess: "Bookmark đã được thêm vào thư mục thành công!",
     deleteBookmarkSuccess: "Bookmark đã được xóa thành công!",
     exportPrompt:
       "Chọn định dạng xuất: JSON hoặc HTML (dữ liệu sẽ được lưu dưới dạng JSON).",
@@ -144,7 +143,8 @@ export const translations = {
     confirmTitle: "Xác nhận",
     renameSuccess: "Bookmark được đổi tên thành công!",
     deleteBookmarkSuccess: "Bookmark đã được xóa thành công!",
-    addToFolderSuccess: "Bookmark được thêm vào thư mục thành công!",
+    addToFolderSuccess:
+      "Đã thêm bookmark vào thư mục (Tải lại để cập nhật dữ liệu).",
     createFolderSuccess: "Thư mục được tạo thành công!",
     duplicateTitleError: "Tiêu đề đã tồn tại trong thư mục này",
     emptyTitleError: "Vui lòng nhập tiêu đề",

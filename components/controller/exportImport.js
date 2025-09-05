@@ -11,42 +11,42 @@ import { uiState, saveUIState } from "../state.js"
 export function setupExportImportListeners(elements) {
   elements.exportBookmarksOption.addEventListener("click", async () => {
     const language = localStorage.getItem("appLanguage") || "en"
-    const currentTheme = document.body.getAttribute("data-theme") || "dark"
+    const currentTheme = localStorage.getItem("appTheme") || "dark"
+    console.log("Current theme:", currentTheme)
     const popup = document.createElement("div")
     popup.className = "popup"
     popup.setAttribute("data-theme", currentTheme)
     popup.innerHTML = `
-      <div class="popup-content">
-        <h2>${translations[language].exportTitle || "Export Bookmarks"}</h2>
-        <select id="exportFormat">
-          <option value="json">JSON</option>
-          <option value="html">HTML</option>
-        </select>
-        <div id="advancedSettings" style="margin: 10px 0;">
-          <h3>${
-            translations[language].advancedSettings || "Advanced Settings"
-          }</h3>
-          <label><input type="checkbox" id="includeIconData"> ${
-            translations[language].includeIconData ||
-            "Include icon data (Base64)"
-          }</label><br>
-          <label><input type="checkbox" id="includeCreationDates"> ${
-            translations[language].includeCreationDates ||
-            "Include creation dates"
-          }</label><br>
-          <label><input type="checkbox" id="includeFolderModDates"> ${
-            translations[language].includeFolderModDates ||
-            "Include folder modification dates"
-          }</label>
-        </div>
-        <button id="confirmExport">${
-          translations[language].confirm || "Export"
-        }</button>
-        <button id="cancelExport">${
-          translations[language].cancel || "Cancel"
-        }</button>
+    <div class="popup-content">
+      <h2>${translations[language].exportTitle || "Export Bookmarks"}</h2>
+      <select id="exportFormat">
+        <option value="json">JSON</option>
+        <option value="html">HTML</option>
+      </select>
+      <div id="advancedSettings" style="margin: 10px 0;">
+        <h3>${
+          translations[language].advancedSettings || "Advanced Settings"
+        }</h3>
+        <label><input type="checkbox" id="includeIconData"> ${
+          translations[language].includeIconData || "Include icon data (Base64)"
+        }</label><br>
+        <label><input type="checkbox" id="includeCreationDates"> ${
+          translations[language].includeCreationDates ||
+          "Include creation dates"
+        }</label><br>
+        <label><input type="checkbox" id="includeFolderModDates"> ${
+          translations[language].includeFolderModDates ||
+          "Include folder modification dates"
+        }</label>
       </div>
-    `
+      <button id="confirmExport">${
+        translations[language].confirm || "Export"
+      }</button>
+      <button id="cancelExport">${
+        translations[language].cancel || "Cancel"
+      }</button>
+    </div>
+  `
     document.body.appendChild(popup)
 
     document

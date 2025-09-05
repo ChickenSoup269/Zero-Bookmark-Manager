@@ -33,37 +33,84 @@ export function setupUIControlListeners(elements) {
     elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
       ? translations[language].hideCheckboxes
       : translations[language].showCheckboxes
-    document
-      .querySelectorAll(".bookmark-checkbox, #select-all")
-      .forEach((checkbox) => {
-        checkbox.style.display = uiState.checkboxesVisible
-          ? "inline-block"
-          : "none"
-      })
+
+    // Toggle class hidden cho bookmark-checkbox và select-all
+    const bookmarkCheckboxes = document.querySelectorAll(".bookmark-checkbox")
     const selectAllContainer = document.querySelector(".select-all")
-    if (selectAllContainer) {
-      selectAllContainer.style.display = uiState.checkboxesVisible
-        ? "block"
-        : "none"
+    const selectAllCheckbox = document.getElementById("select-all")
+
+    if (uiState.checkboxesVisible) {
+      // Hiện các checkbox và select-all
+      bookmarkCheckboxes.forEach((checkbox) => {
+        checkbox.style.display = "inline-block" // Đặt lại display trước
+        setTimeout(() => {
+          checkbox.classList.remove("hidden")
+        }, 10) // Delay nhỏ để đảm bảo display được áp dụng trước
+      })
+      if (selectAllContainer) {
+        selectAllContainer.style.display = "flex" // Đặt lại display trước
+        setTimeout(() => {
+          selectAllContainer.classList.remove("hidden")
+        }, 10)
+      } else {
+        console.warn("Select All container (.select-all) not found")
+      }
     } else {
-      console.warn("Select All container (.select-all) not found")
-    }
-    if (!uiState.checkboxesVisible) {
+      // Ẩn các checkbox và select-all
+      bookmarkCheckboxes.forEach((checkbox) => {
+        checkbox.classList.add("hidden")
+        setTimeout(() => {
+          checkbox.style.display = "none" // Áp dụng display: none sau animation
+        }, 250) // Đợi 150ms (bằng --transition-fast)
+      })
+      if (selectAllContainer) {
+        selectAllContainer.classList.add("hidden")
+        setTimeout(() => {
+          selectAllContainer.style.display = "none" // Áp dụng display: none sau animation
+        }, 150)
+      } else {
+        console.warn("Select All container (.select-all) not found")
+      }
+      // Reset trạng thái chọn
       uiState.selectedBookmarks.clear()
       elements.addToFolderButton.classList.add("hidden")
       elements.deleteBookmarksButton.classList.add("hidden")
-      document.querySelectorAll(".bookmark-checkbox").forEach((cb) => {
+      bookmarkCheckboxes.forEach((cb) => {
         cb.checked = false
       })
-      const selectAllCheckbox = document.getElementById("select-all")
       if (selectAllCheckbox) {
         selectAllCheckbox.checked = false
       } else {
         console.warn("Select All checkbox (#select-all) not found")
       }
     }
+
+    // Cập nhật trạng thái hiển thị của các nút
+    updateControlButtons(elements)
     saveUIState()
   })
+
+  // Hàm để cập nhật trạng thái hiển thị của các nút
+  // Trong file uiControls.js
+  function updateControlButtons(elements) {
+    console.log("Updating control buttons:", {
+      hasSelectedFolder: uiState.selectedFolderId,
+      hasSelectedBookmarks: uiState.selectedBookmarks.size,
+    })
+    const hasSelectedFolder =
+      uiState.selectedFolderId &&
+      uiState.selectedFolderId !== "1" &&
+      uiState.selectedFolderId !== "2"
+    const hasSelectedBookmarks = uiState.selectedBookmarks.size > 0
+
+    // Toggle class hidden cho các nút
+    elements.addToFolderButton.classList.toggle("hidden", !hasSelectedBookmarks)
+    elements.deleteBookmarksButton.classList.toggle(
+      "hidden",
+      !hasSelectedBookmarks
+    )
+    elements.deleteFolderButton.classList.toggle("hidden", !hasSelectedFolder)
+  }
 
   elements.scrollToTopButton.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" })

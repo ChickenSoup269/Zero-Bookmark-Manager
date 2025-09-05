@@ -33,7 +33,7 @@
   --border-radius-lg: 8px;
 
   /* Transitions */
-  --transition-fast: 0.15s ease;
+  --transition-fast: 0.3s ease;
   --transition-normal: 0.2s ease;
   --transition-slow: 0.3s ease;
 
@@ -206,6 +206,51 @@ body {
   transform: translateY(1px);
 }
 
+.button.add,
+.button.delete-folder,
+.button.delete-bookmarks {
+  transition: opacity var(--transition-fast), transform var(--transition-fast),
+    height var(--transition-fast);
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1);
+  height: auto;
+  display: flex;
+}
+
+.button.add.hidden,
+.button.delete-folder.hidden,
+.button.delete-bookmarks.hidden {
+  opacity: 0;
+  transform: scale(0.8);
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+  display: none;
+}
+
+@keyframes fadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+    height: 10px;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    height: auto;
+  }
+}
+
+.button.add:not(.hidden),
+.button.delete-folder:not(.hidden),
+.button.delete-bookmarks:not(.hidden),
+.button.rename-folder:not(.hidden),
+.select-all:not(.hidden),
+.bookmark-checkbox:not(.hidden) {
+  animation: fadeScale var(--transition-fast) forwards;
+}
+
 /* Button variants */
 .button.rename-folder,
 .delete-bookmarks,
@@ -232,26 +277,14 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-.button.add.hidden {
-  display: none;
-  opacity: 0;
-  transform: scale(0.8);
-  pointer-events: none;
-}
-
-.button.delete-folder {
+.button.delete-folder,
+.delete-bookmarks {
   background-color: var(--danger-color);
   color: white;
 }
 
-.button.delete-folder.hidden {
-  display: none;
-  opacity: 0;
-  transform: scale(0.8);
-  pointer-events: none;
-}
-
-.button.delete-folder:hover {
+.button.delete-folder:hover,
+.delete-bookmarks:hover {
   background-color: var(--danger-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
@@ -339,15 +372,6 @@ body {
   color: var(--text-primary);
 }
 
-#delete-bookmarks-button {
-  color: white;
-  background: red;
-  display: inline-block;
-  visibility: visible;
-}
-#delete-bookmarks-button:hover {
-  background-color: var(--danger-color);
-}
 #delete-bookmarks-button.hidden {
   display: none;
 }
@@ -504,22 +528,76 @@ body {
   outline-offset: 1px;
 }
 
-/* Select all */
-/* .select-all {
-  margin-bottom: var(--spacing-sm);
-} */
-
-/* .select-all label {
+/* Animation cho select-all */
+.select-all {
   display: flex;
   align-items: center;
-  font-size: 1em;
   gap: var(--spacing-sm);
-  cursor: pointer;
-  font-weight: 400;
-  transition: color var(--transition-fast);
-} */
+  opacity: 1;
+  transform: translateY(0);
+  height: auto;
+  overflow: hidden;
+  transition: opacity var(--transition-fast), transform var(--transition-fast),
+    height var(--transition-fast);
+}
+
+.select-all.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast),
+    height var(--transition-fast);
+}
+
+/* Animation cho bookmark checkboxes */
+.bookmark-checkbox {
+  opacity: 1;
+  transform: scale(1);
+  height: auto;
+  width: auto;
+  transition: opacity var(--transition-fast), transform var(--transition-fast),
+    height var(--transition-fast), width var(--transition-fast);
+}
+
+.bookmark-checkbox.hidden {
+  opacity: 0;
+  transform: scale(0.8);
+  height: 0;
+  width: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast),
+    height var(--transition-fast), width var(--transition-fast);
+}
+
+/* Đảm bảo layout của bottom-controls */
+.bottom-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  width: 100%;
+  transition: height var(--transition-fast);
+}
+
+/* Đảm bảo layout của bookmark-item */
+.bookmark-item {
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  transition: all var(--transition-fast);
+  margin-bottom: 2px;
+}
+
+.bookmark-item:has(.bookmark-checkbox.hidden) {
+  padding-left: var(--spacing-sm); /* Giữ padding đồng đều khi checkbox ẩn */
+}
 
 .select-all label:hover {
+  cursor: pointer;
   color: var(--text-secondary);
 }
 
@@ -777,6 +855,11 @@ body {
   align-items: center;
   padding: var(--spacing-sm);
   width: 100%;
+  transition: height var(--transition-fast);
+}
+.bottom-controls:has(.select-all.hidden) {
+  padding: var(--spacing-sm) var(--spacing-sm) 0 var(--spacing-sm); /* Giảm padding-bottom khi select-all ẩn */
+  height: auto;
 }
 
 .settings-container {
