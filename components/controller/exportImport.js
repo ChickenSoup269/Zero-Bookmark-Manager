@@ -21,7 +21,7 @@ export function setupExportImportListeners(elements) {
     <div class="popup-content enhanced-popup">
       <div class="popup-header">
         <div class="icon-wrapper">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <polyline points="14,2 14,8 20,8"></polyline>
             <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -30,32 +30,42 @@ export function setupExportImportListeners(elements) {
           </svg>
         </div>
         <h2>${translations[language].exportTitle || "Export Bookmarks"}</h2>
-        <p class="popup-subtitle">Choose your preferred export format and settings</p>
+        <p class="popup-subtitle">${
+          translations[language].popupSubtitle ||
+          "Choose your preferred export format and settings"
+        }</p>
       </div>
       
       <div class="form-section">
-        <label class="form-label">Export Format</label>
+        <label class="form-label">${
+          translations[language].exportFormat || "Export Format"
+        }</label>
         <div class="format-options">
           <div class="format-card active" data-format="json">
             <div class="format-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 7v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"></path>
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14,2 148, 20,8"></polyline>
               </svg>
             </div>
             <h3>JSON</h3>
-            <p>Machine readable format</p>
+            <p>${
+              translations[language].jsonDescription ||
+              "Machine readable format"
+            }</p>
           </div>
           <div class="format-card" data-format="html">
             <div class="format-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="16 18 22 12 16 6"></polyline>
                 <polyline points="8 6 2 12 8 18"></polyline>
               </svg>
             </div>
             <h3>HTML</h3>
-            <p>Interactive web page</p>
+            <p>${
+              translations[language].htmlDescription || "Interactive web page"
+            }</p>
           </div>
         </div>
       </div>
@@ -77,7 +87,10 @@ export function setupExportImportListeners(elements) {
                 translations[language].includeIconData ||
                 "Include icon data (Base64)"
               }</h4>
-              <p>Add favicon data to bookmarks</p>
+              <p>${
+                translations[language].includeIconDataDescription ||
+                "Add favicon data to bookmarks"
+              }</p>
             </div>
           </div>
           
@@ -93,7 +106,10 @@ export function setupExportImportListeners(elements) {
                 translations[language].includeCreationDates ||
                 "Include creation dates"
               }</h4>
-              <p>Add creation timestamps</p>
+              <p>${
+                translations[language].includeCreationDatesDescription ||
+                "Add creation timestamps"
+              }</p>
             </div>
           </div>
           
@@ -109,7 +125,10 @@ export function setupExportImportListeners(elements) {
                 translations[language].includeFolderModDates ||
                 "Include folder modification dates"
               }</h4>
-              <p>Add folder timestamps</p>
+              <p>${
+                translations[language].includeFolderModDatesDescription ||
+                "Add folder timestamps"
+              }</p>
             </div>
           </div>
         </div>
@@ -117,19 +136,19 @@ export function setupExportImportListeners(elements) {
       
       <div class="popup-footer">
         <button id="cancelExport" class="btn-secondary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
           ${translations[language].cancel || "Cancel"}
         </button>
         <button id="confirmExport" class="btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          ${translations[language].confirm || "Export"}
+          ${translations[language].exportTitle || "Export"}
         </button>
       </div>
     </div>
@@ -222,11 +241,11 @@ export function setupExportImportListeners(elements) {
             --bg-secondary: ${currentTheme === "dark" ? "#1a1a1a" : "#f8fafc"};
             --bg-tertiary: ${currentTheme === "dark" ? "#2a2a2a" : "#e2e8f0"};
             --bg-card: ${currentTheme === "dark" ? "#1e1e1e" : "#ffffff"};
-            --text-primary: ${currentTheme === "dark" ? "#ffffff" : "#1a202c"};
+            --text-primary: ${currentTheme === "dark" ? "#e2e8f0" : "#1a202c"};
             --text-secondary: ${
-              currentTheme === "dark" ? "#a0aec0" : "#4a5568"
+              currentTheme === "dark" ? "#cbd5e1" : "#4a5568"
             };
-            --text-muted: ${currentTheme === "dark" ? "#718096" : "#718096"};
+            --text-muted: ${currentTheme === "dark" ? "#94a3b8" : "#718096"};
             --border-color: ${currentTheme === "dark" ? "#2d3748" : "#e2e8f0"};
             --accent-color: #3182ce;
             --accent-hover: #2c5aa0;
@@ -436,11 +455,10 @@ export function setupExportImportListeners(elements) {
           }
           
           .nested { 
-            padding-left: 1rem;
-            margin-left: 0.5rem;
+            padding-left: 1.5rem;
+            margin-left: 0;
             border-left: 2px solid var(--border-color);
             display: none;
-            transition: var(--transition);
           }
           
           .open > .nested { 
@@ -463,8 +481,11 @@ export function setupExportImportListeners(elements) {
             list-style: none;
             padding: 0;
             margin: 0;
-            display: flex;
-            flex-direction: column;
+            display: block;
+          }
+          
+          .tree-view li {
+            display: block;
           }
           
           .hidden { 
@@ -618,7 +639,7 @@ export function setupExportImportListeners(elements) {
                     const li = document.createElement("li");
                     li.className = "bookmark-item";
                     if (includeIconData && faviconMap[node.url]) {
-                      li.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg>'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+                      li.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
                     } else {
                       li.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
                     }
@@ -630,7 +651,7 @@ export function setupExportImportListeners(elements) {
                     const gridItem = document.createElement("div");
                     gridItem.className = "bookmark-item";
                     if (includeIconData && faviconMap[node.url]) {
-                      gridItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg>'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+                      gridItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
                     } else {
                       gridItem.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
                     }
@@ -646,7 +667,7 @@ export function setupExportImportListeners(elements) {
                   if (node.url) {
                     treeItem.className = "bookmark-item";
                     if (includeIconData && faviconMap[node.url]) {
-                      treeItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg>'" alt="favicon"><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+                      treeItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg> <a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
                     } else {
                       treeItem.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
                     }
@@ -811,69 +832,74 @@ export function setupExportImportListeners(elements) {
     
     .enhanced-popup {
       background: var(--bg-secondary);
-      border-radius: 1rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      width: 80%;
-      max-width: 450px; /* Reduced from 600px */
-      max-height: 80vh; /* Reduced from 90vh */
+      border-radius: 0.75rem;
+      box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.25);
+      width: 100%;
+      max-width: 310px;
+      max-height: 90vh;
       overflow-y: auto;
       animation: slideUp 0.3s ease-out;
+      padding: 0.5rem;
     }
     
     .popup-header {
       text-align: center;
-      padding: 1.5rem 1.5rem 0.75rem; /* Adjusted padding */
+      padding: 1rem 0.75rem 0.5rem;
       border-bottom: 1px solid var(--border-color);
     }
     
     .icon-wrapper {
-      width: 48px; /* Reduced from 64px */
-      height: 48px;
+      width: 36px;
+      height: 36px;
       background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 0.75rem; /* Adjusted margin */
+      margin: 0 auto 0.5rem;
       color: white;
     }
     
     .popup-header h2 {
-      margin: 0 0 0.3rem; /* Adjusted margin */
+      margin: 0 0 0.2rem;
       color: var(--text-primary);
-      font-size: 1.5rem; /* Reduced from 1.75rem */
+      font-size: 1.25rem;
       font-weight: 700;
     }
     
     .popup-subtitle {
       color: var(--text-secondary);
       margin: 0;
-      font-size: 0.9rem; /* Reduced from 1rem */
+      font-size: 0.8rem;
     }
     
     .form-section {
-      padding: 1rem 1.5rem; /* Adjusted padding */
+      padding: 0.75rem;
     }
     
     .form-label {
       display: block;
       font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 0.75rem; /* Adjusted margin */
-      font-size: 1rem; /* Reduced from 1.1rem */
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
     }
     
     .format-options {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.75rem; /* Reduced from 1rem */
-      margin-bottom: 0.3rem; /* Adjusted margin */
+      gap: 0.5rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .icon {
+      color: var(--text-primary);
     }
     
     .format-card {
-      padding: 1rem; /* Reduced from 1.5rem */
+      padding: 0.75rem;
       border: 2px solid var(--border-color);
-      border-radius: 0.5rem; /* Reduced from 0.75rem */
+      border-radius: 0.4rem;
       cursor: pointer;
       transition: all 0.2s ease;
       text-align: center;
@@ -883,55 +909,62 @@ export function setupExportImportListeners(elements) {
     .format-card:hover {
       border-color: var(--accent-color);
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     }
     
     .format-card.active {
       border-color: var(--accent-color);
-      background: var(--accent-color);
-      color: white;
-      box-shadow: 0 8px 25px rgba(49, 130, 206, 0.3);
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 6px 15px rgba(255, 255, 255, 1);
+    }
+    
+    .format-card.active h3,
+    .format-card.active p,
+    .format-card.active svg
+    {
+      color: var(--bg-primary); 
     }
     
     .format-icon {
-      margin-bottom: 0.5rem; /* Reduced from 0.75rem */
+      margin-bottom: 0.4rem;
     }
     
     .format-card h3 {
-      margin: 0 0 0.3rem; /* Adjusted margin */
-      font-size: 1rem; /* Reduced from 1.1rem */
+      margin: 0 0 0.2rem;
+      font-size: 0.9rem;
       font-weight: 600;
     }
     
     .format-card p {
       margin: 0;
-      font-size: 0.8rem; /* Reduced from 0.9rem */
-      opacity: 0.8;
+      font-size: 0.7rem;
     }
     
     .settings-grid {
       display: grid;
-      gap: 0.75rem; /* Reduced from 1rem */
+      gap: 0.5rem;
     }
     
     .setting-card {
       display: flex;
       align-items: flex-start;
-      gap: 0.75rem; /* Reduced from 1rem */
-      padding: 1rem; /* Reduced from 1.25rem */
+      gap: 0.5rem;
+      padding: 0.75rem;
       background: var(--bg-primary);
       border: 1px solid var(--border-color);
-      border-radius: 0.5rem; /* Reduced from 0.75rem */
+      border-radius: 0.4rem;
       transition: all 0.2s ease;
     }
     
     .setting-card:hover {
       border-color: var(--accent-color);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     }
     
     .setting-toggle {
       flex-shrink: 0;
+      position: relative; /* Ensure toggle is positioned correctly */
     }
     
     .toggle-input {
@@ -939,26 +972,26 @@ export function setupExportImportListeners(elements) {
     }
     
     .toggle-label {
-      display: block;
-      width: 40px; /* Reduced from 48px */
-      height: 20px; /* Reduced from 24px */
+      display: inline-block;
+      width: 32px;
+      height: 16px;
       background: var(--border-color);
-      border-radius: 20px; /* Adjusted */
+      border-radius: 16px;
       cursor: pointer;
       position: relative;
-      transition: all 0.3s ease;
+      transition: background 0.3s ease;
     }
     
     .toggle-slider {
       position: absolute;
       top: 2px;
       left: 2px;
-      width: 16px; /* Reduced from 20px */
-      height: 16px; /* Reduced from 20px */
+      width: 12px;
+      height: 12px;
       background: white;
       border-radius: 50%;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
     
     .toggle-input:checked + .toggle-label {
@@ -966,53 +999,57 @@ export function setupExportImportListeners(elements) {
     }
     
     .toggle-input:checked + .toggle-label .toggle-slider {
-      transform: translateX(20px); /* Adjusted for smaller toggle */
+      transform: translateX(16px);
     }
     
     .setting-info h4 {
-      margin: 0 0 0.2rem; /* Adjusted margin */
+      margin: 0 0 0.15rem;
       color: var(--text-primary);
-      font-size: 0.9rem; /* Reduced from 1rem */
+      font-size: 0.7rem;
       font-weight: 600;
     }
     
     .setting-info p {
       margin: 0;
       color: var(--text-secondary);
-      font-size: 0.8rem; /* Reduced from 0.9rem */
+      font-size: 0.6rem;
     }
     
     .popup-footer {
-      padding: 1rem 1.5rem 1.5rem; /* Adjusted padding */
+      padding: 0.75rem 1rem 1rem;
       display: flex;
-      gap: 0.75rem; /* Reduced from 1rem */
+      gap: 0.5rem;
       justify-content: flex-end;
       border-top: 1px solid var(--border-color);
     }
     
     .btn-primary,
     .btn-secondary {
-      padding: 0.6rem 1.2rem; /* Reduced from 0.75rem 1.5rem */
+      padding: 0.5rem 1rem;
       border: none;
-      border-radius: 0.4rem; /* Reduced from 0.5rem */
+      border-radius: 0.3rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
-      gap: 0.4rem; /* Reduced from 0.5rem */
-      font-size: 0.9rem; /* Reduced from 0.95rem */
+      gap: 0.3rem;
+      font-size: 0.8rem;
     }
     
     .btn-primary {
-      background: var(--accent-color);
-      color: white;
+      background: var(--text-primary);
+      color: var(--bg-primary);
+    }
+    .btn-primary:hover {
+      background: var(--bg-primary);
+      color: var(--text-primary);
     }
     
     .btn-primary:hover:not(:disabled) {
       background: var(--accent-hover);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+      box-shadow: 0 3px 8px rgba(49, 130, 206, 0.4);
     }
     
     .btn-primary:disabled {
@@ -1033,8 +1070,8 @@ export function setupExportImportListeners(elements) {
     }
     
     .loading-spinner {
-      width: 14px; /* Reduced from 16px */
-      height: 14px; /* Reduced from 16px */
+      width: 12px;
+      height: 12px;
       border: 2px solid transparent;
       border-top: 2px solid currentColor;
       border-radius: 50%;
@@ -1045,9 +1082,22 @@ export function setupExportImportListeners(elements) {
       to { transform: rotate(360deg); }
     }
     
+    /* Dark mode specific text contrast adjustments */
+    .popup[data-theme="dark"] .popup-header h2,
+    .popup[data-theme="dark"] .form-label,
+    .popup[data-theme="dark"] .setting-info h4 {
+      color: #e2e8f0;
+    }
+    
+    .popup[data-theme="dark"] .popup-subtitle,
+    .popup[data-theme="dark"] .format-card p,
+    .popup[data-theme="dark"] .setting-info p {
+      color: #cbd5e1;
+    }
+    
     @media (max-width: 640px) {
       .enhanced-popup {
-        width: 95%; /* Increased from 92% for better mobile fit */
+        width: 95%;
         margin: 0.5rem;
       }
       
@@ -1057,25 +1107,25 @@ export function setupExportImportListeners(elements) {
       
       .popup-footer {
         flex-direction: column-reverse;
-        gap: 0.5rem;
+        gap: 0.4rem;
       }
       
       .btn-primary,
       .btn-secondary {
         justify-content: center;
-        padding: 0.6rem 0.8rem; /* Adjusted for smaller screens */
+        padding: 0.5rem 0.7rem;
       }
       
       .popup-header {
-        padding: 1rem 1rem 0.5rem; /* Adjusted for smaller screens */
+        padding: 0.75rem 0.5rem 0.4rem;
       }
       
       .form-section {
-        padding: 0.75rem 1rem; /* Adjusted for smaller screens */
+        padding: 0.5rem 0.75rem;
       }
       
       .popup-footer {
-        padding: 0.5rem 1rem 1rem; /* Adjusted for smaller screens */
+        padding: 0.4rem 0.75rem 0.75rem;
       }
     }
   `

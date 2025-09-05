@@ -53,24 +53,22 @@ Cài đặt Bookmark-Manager
 
 ## Usage/Examples
 
-| Parameter          | Description                                                              |
-| :----------------- | :----------------------------------------------------------------------- |
-| `Tìm kiếm`         | Nhập từ khóa vào ô tìm kiếm.                                             |
-| `Lọc thư mục`      | Chọn thư mục từ dropdown.                                                |
-| `Sắp xếp`          | Chọn tùy chọn sắp xếp.                                                   |
-| `Quản lý bookmark` | Nhấn "⋮" để thêm vào thư mục, đổi tên hoặc xóa.                          |
-| `Xuất/Nhập`        | Sử dụng Cài đặt để xuất dưới dạng JSON hoặc nhập với kiểm tra trùng lặp. |
-| `Tùy chỉnh`        | Điều chỉnh chủ đề, phông chữ, hoặc ngôn ngữ trong Cài đặt.               |
+| Parameter          | Description                                                                   |
+| :----------------- | :---------------------------------------------------------------------------- |
+| `Tìm kiếm`         | Nhập từ khóa vào ô tìm kiếm.                                                  |
+| `Lọc thư mục`      | Chọn thư mục từ dropdown.                                                     |
+| `Sắp xếp`          | Chọn tùy chọn sắp xếp.                                                        |
+| `Quản lý thư mục`  | Hiển thị tạo, sửa, xóa thư mục.                                               |
+| `Quản lý bookmark` | Nhấn "⋮" để thêm vào thư mục, đổi tên hoặc xóa.                               |
+| `Xuất/Nhập`        | Sử dụng Cài đặt để xuất dưới dạng JSON/HTML hoặc nhập với kiểm tra trùng lặp. |
+| `Tùy chỉnh`        | Điều chỉnh chủ đề, phông chữ, hoặc ngôn ngữ trong Cài đặt.                    |
 
 ## Video & screenshots
 
 <p align="center"> <img src="./images/Screenshot.png" alt="Screenshot" width="220"/> </p>
 
 <div style="text-align: center;">
-  <img src="./images/Screenshot.png" alt="Screenshot" width="220"/>
-  <img src="./images/Screenshot2.png" alt="Screenshot" width="220"/>
-  <img src="./images/Screenshot3.png" alt="Screenshot" width="220"/>
-  <img src="./images/Screenshot4.png" alt="Screenshot" width="220"/>
+
 </div>
 
 ## Feedback
