@@ -100,6 +100,7 @@ export const translations = {
     modified: "Modified",
     unnamedFolder: "Unnamed Folder",
     notAvailable: "N/A",
+    scrollToTop: "Scroll to Top",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -191,7 +192,7 @@ export const translations = {
     exporting: "Đang xuất...",
     bookmarksTitle: "Bộ Sưu Tập Bookmarks Của Tôi",
     bookmarksHeader: "Bookmarks Của Tôi",
-    exportedOn: "Đã xuất vào",
+    exportedOn: "Đã in vào ngày",
     loadingBookmarks: "Đang tải bookmarks...",
     generatedBy: "Được tạo bởi Extension Quản lý Bookmark",
     bookmarks: "bookmark",
@@ -200,6 +201,7 @@ export const translations = {
     modified: "Đã chỉnh sửa",
     unnamedFolder: "Thư mục không tên",
     notAvailable: "N/A",
+    scrollToTop: "Cuộn lên Đầu",
   },
 }
 
