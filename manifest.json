@@ -20,6 +20,7 @@
         "fonts/*.ttf",
         "fonts/*.woff2",
         "images/*.png",
+        "images/*.jpg",
         "templates/template.html"
       ],
 

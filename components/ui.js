@@ -274,15 +274,17 @@ function findParentFolder(bookmarkId, nodes) {
 function createBookmarkElement(bookmark) {
   const language = localStorage.getItem("appLanguage") || "en"
 
+  const domain = new URL(bookmark.url).hostname
+
   const div = document.createElement("div")
   div.className = "bookmark-item"
   let favicon
   try {
-    favicon = `https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(
+    favicon = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(
       bookmark.url
     )}`
   } catch (error) {
-    favicon = "./images/default-favicon.png"
+    console.error("Error generating favicon URL for", bookmark.url, error)
   }
   div.innerHTML = `
     <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${
