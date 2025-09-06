@@ -16,7 +16,7 @@ export function setupDeleteFolderListeners(elements) {
 
   // Listener cho nút xóa folder từ dropdown menu
   const deleteFolderButtons = document.querySelectorAll(".delete-folder-btn")
-  console.log("Found delete folder buttons:", deleteFolderButtons.length)
+
   deleteFolderButtons.forEach((button) => {
     button.removeEventListener("click", handleDeleteFolderFromDropdown)
     button.addEventListener("click", (e) =>
@@ -39,7 +39,6 @@ function handleDeleteFolder(folderId, elements) {
 
   const language = localStorage.getItem("appLanguage") || "en"
   showCustomConfirm(translations[language].deleteFolderConfirm, () => {
-    console.log("Deleting folder with ID:", folderId)
     safeChromeBookmarksCall("getSubTree", [folderId], (subTree) => {
       if (!subTree) {
         console.error("Failed to retrieve folder subtree for ID:", folderId)
@@ -103,7 +102,7 @@ function handleDeleteFolder(folderId, elements) {
 function handleDeleteFolderFromDropdown(e, elements) {
   e.stopPropagation()
   const folderId = e.target.dataset.id
-  console.log("handleDeleteFolderFromDropdown called, folderId:", folderId)
+
   if (!folderId) {
     console.error("Folder ID is undefined in handleDeleteFolderFromDropdown")
     const language = localStorage.getItem("appLanguage") || "en"

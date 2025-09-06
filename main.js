@@ -108,7 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add real-time bookmark change listeners
   function setupBookmarkChangeListeners(elements) {
     const refreshBookmarks = debounce(() => {
-      console.log("Bookmark change detected, refreshing...")
       getBookmarkTree((bookmarkTreeNodes) => {
         if (bookmarkTreeNodes) {
           renderFilteredBookmarks(bookmarkTreeNodes, elements)

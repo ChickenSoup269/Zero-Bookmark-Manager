@@ -42,13 +42,13 @@ export function setupUIControlListeners(elements) {
     if (uiState.checkboxesVisible) {
       // Hiện các checkbox và select-all
       bookmarkCheckboxes.forEach((checkbox) => {
-        checkbox.style.display = "inline-block" // Đặt lại display trước
+        checkbox.style.display = "inline-block"
         setTimeout(() => {
           checkbox.classList.remove("hidden")
-        }, 10) // Delay nhỏ để đảm bảo display được áp dụng trước
+        }, 10)
       })
       if (selectAllContainer) {
-        selectAllContainer.style.display = "flex" // Đặt lại display trước
+        selectAllContainer.style.display = "flex"
         setTimeout(() => {
           selectAllContainer.classList.remove("hidden")
         }, 10)
@@ -60,13 +60,13 @@ export function setupUIControlListeners(elements) {
       bookmarkCheckboxes.forEach((checkbox) => {
         checkbox.classList.add("hidden")
         setTimeout(() => {
-          checkbox.style.display = "none" // Áp dụng display: none sau animation
-        }, 250) // Đợi 150ms (bằng --transition-fast)
+          checkbox.style.display = "none"
+        }, 150)
       })
       if (selectAllContainer) {
         selectAllContainer.classList.add("hidden")
         setTimeout(() => {
-          selectAllContainer.style.display = "none" // Áp dụng display: none sau animation
+          selectAllContainer.style.display = "none"
         }, 150)
       } else {
         console.warn("Select All container (.select-all) not found")
@@ -85,18 +85,11 @@ export function setupUIControlListeners(elements) {
       }
     }
 
-    // Cập nhật trạng thái hiển thị của các nút
     updateControlButtons(elements)
     saveUIState()
   })
 
-  // Hàm để cập nhật trạng thái hiển thị của các nút
-  // Trong file uiControls.js
   function updateControlButtons(elements) {
-    console.log("Updating control buttons:", {
-      hasSelectedFolder: uiState.selectedFolderId,
-      hasSelectedBookmarks: uiState.selectedBookmarks.size,
-    })
     const hasSelectedFolder =
       uiState.selectedFolderId &&
       uiState.selectedFolderId !== "1" &&
@@ -231,9 +224,6 @@ export function setupUIControlListeners(elements) {
       (addToFolderPopup && !addToFolderPopup.classList.contains("hidden")) ||
       (customPopup && !customPopup.classList.contains("hidden"))
     ) {
-      console.log(
-        "Popup is open, skipping close of settings menu and dropdowns"
-      )
       return
     }
 
@@ -243,7 +233,6 @@ export function setupUIControlListeners(elements) {
       !e.target.closest(".dropdown-btn") &&
       !e.target.closest(".dropdown-menu")
     ) {
-      console.log("Closing settings menu and dropdowns")
       elements.settingsMenu.classList.add("hidden")
       document.querySelectorAll(".dropdown-menu").forEach((menu) => {
         menu.classList.add("hidden")

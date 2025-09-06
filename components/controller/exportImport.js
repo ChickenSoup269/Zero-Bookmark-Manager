@@ -11,8 +11,6 @@ import { uiState, saveUIState } from "../state.js"
 export function setupExportImportListeners(elements) {
   elements.exportBookmarksOption.addEventListener("click", async () => {
     const language = localStorage.getItem("appLanguage") || "en"
-
-    // Resolve system theme to "light" or "dark"
     let appTheme = localStorage.getItem("appTheme") || "dark"
     const currentTheme =
       appTheme === "system"
@@ -20,8 +18,6 @@ export function setupExportImportListeners(elements) {
           ? "dark"
           : "light"
         : appTheme
-    console.log("Current theme:", currentTheme)
-
     const popup = document.createElement("div")
     popup.className = "popup"
     popup.setAttribute("data-theme", currentTheme)

@@ -122,10 +122,6 @@ export function restoreUIState(elements, callback) {
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
-  console.log(
-    "Starting renderFilteredBookmarks, bookmark count:",
-    bookmarkTreeNodes.length
-  )
   const bookmarks = flattenBookmarks(bookmarkTreeNodes)
   const folders = getFolders(bookmarkTreeNodes)
   setBookmarkTree(bookmarkTreeNodes)
@@ -134,7 +130,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
   populateFolderFilter(folders, elements)
   updateBookmarkCount(bookmarks, elements)
   let filtered = bookmarks
-  // Validate selectedFolderId before filtering
+
   if (
     uiState.selectedFolderId &&
     folders.some((f) => f.id === uiState.selectedFolderId)
@@ -155,7 +151,6 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
   renderBookmarks(filtered, elements)
   toggleFolderButtons(elements)
   saveUIState()
-  console.log("Finished renderFilteredBookmarks")
 }
 
 function populateFolderFilter(folders, elements) {
@@ -167,7 +162,6 @@ function populateFolderFilter(folders, elements) {
     option.textContent = folder.title
     elements.folderFilter.appendChild(option)
   })
-  // Only set folderFilter value if valid
   if (folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId
   } else {
@@ -200,14 +194,12 @@ function toggleFolderButtons(elements) {
 }
 
 function renderBookmarks(bookmarksList, elements) {
-  console.log("Rendering bookmarks, count:", bookmarksList.length)
   const language = localStorage.getItem("appLanguage") || "en"
   const fragment = document.createDocumentFragment()
   const selectAllDiv = document.createElement("div")
   selectAllDiv.className = "select-all"
   selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
 
-  console.log("Rendering Select All, display:", selectAllDiv.style.display)
   fragment.appendChild(selectAllDiv)
 
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
@@ -220,7 +212,6 @@ function renderBookmarks(bookmarksList, elements) {
   elements.folderListDiv.innerHTML = ""
   elements.folderListDiv.appendChild(fragment)
 
-  // Apply UI state filters after rendering
   elements.searchInput.value = uiState.searchQuery
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId
@@ -230,11 +221,9 @@ function renderBookmarks(bookmarksList, elements) {
   }
   elements.sortFilter.value = uiState.sortType
 
-  console.log("Attaching listeners after render")
   attachSelectAllListener(elements)
   attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
-  console.log("Bookmark action listeners attached after render")
 }
 
 function sortBookmarks(bookmarksList, sortType) {
@@ -284,14 +273,13 @@ function findParentFolder(bookmarkId, nodes) {
 
 function createBookmarkElement(bookmark) {
   const language = localStorage.getItem("appLanguage") || "en"
-  console.log("Creating bookmark element:", bookmark.id, bookmark.title)
+
   const div = document.createElement("div")
   div.className = "bookmark-item"
   let favicon
   try {
-    favicon = `https://www.google.com/s2/favicons?sz=32&domain=${
-      new URL(bookmark.url).hostname
-    }`
+    const domain = new URL(bookmark.url).hostname
+    favicon = `https://icons.duckduckgo.com/ip3/${domain}.ico`
   } catch (error) {
     favicon = "./images/default-favicon.png"
   }
@@ -331,9 +319,8 @@ function attachSelectAllListener(elements) {
   }
 
   function handleSelectAll(e) {
-    console.log("Select all checkbox changed, checked:", e.target.checked)
     const checkboxes = document.querySelectorAll(".bookmark-checkbox")
-    console.log("Found checkboxes:", checkboxes.length)
+
     if (e.target.checked) {
       checkboxes.forEach((cb) => {
         const bookmarkId = cb.dataset.id
@@ -350,10 +337,7 @@ function attachSelectAllListener(elements) {
       })
       uiState.selectedBookmarks.clear()
     }
-    console.log(
-      "Updated selectedBookmarks after select all:",
-      Array.from(uiState.selectedBookmarks)
-    )
+
     elements.addToFolderButton.classList.toggle(
       "hidden",
       uiState.selectedBookmarks.size === 0
@@ -361,12 +345,6 @@ function attachSelectAllListener(elements) {
     elements.deleteBookmarksButton.classList.toggle(
       "hidden",
       uiState.selectedBookmarks.size === 0
-    )
-    console.log(
-      "Add to folder button hidden:",
-      elements.addToFolderButton.classList.contains("hidden"),
-      "Delete bookmarks button hidden:",
-      elements.deleteBookmarksButton.classList.contains("hidden")
     )
   }
 }

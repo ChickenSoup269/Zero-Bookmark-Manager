@@ -67,28 +67,28 @@ export function setupBookmarkActionListeners(elements) {
   }
 
   const addToFolderButtons = document.querySelectorAll(".add-to-folder")
-  console.log("Found add-to-folder buttons:", addToFolderButtons.length)
+
   addToFolderButtons.forEach((button) => {
     button.removeEventListener("click", handleAddToFolder)
     button.addEventListener("click", (e) => handleAddToFolder(e, elements))
   })
 
   const deleteButtons = document.querySelectorAll(".delete-btn")
-  console.log("Found delete buttons:", deleteButtons.length)
+
   deleteButtons.forEach((button) => {
     button.removeEventListener("click", handleDeleteBookmark)
     button.addEventListener("click", (e) => handleDeleteBookmark(e, elements))
   })
 
   const renameButtons = document.querySelectorAll(".rename-btn")
-  console.log("Found rename buttons:", renameButtons.length)
+
   renameButtons.forEach((button) => {
     button.removeEventListener("click", handleRenameBookmark)
     button.addEventListener("click", (e) => handleRenameBookmark(e, elements))
   })
 
   const checkboxes = document.querySelectorAll(".bookmark-checkbox")
-  console.log("Found bookmark checkboxes:", checkboxes.length)
+
   checkboxes.forEach((checkbox) => {
     checkbox.removeEventListener("change", handleBookmarkCheckbox)
     checkbox.addEventListener("change", (e) =>
@@ -101,15 +101,8 @@ function handleRenameSave(e, elements) {
   e.stopPropagation()
   const newTitle = elements.renameInput.value.trim()
   const language = localStorage.getItem("appLanguage") || "en"
-  console.log(
-    "handleRenameSave called, currentBookmarkId:",
-    uiState.currentBookmarkId,
-    "newTitle:",
-    newTitle
-  )
 
   if (!newTitle) {
-    console.log("Empty title entered")
     elements.renameInput.classList.add("error")
     elements.renameInput.placeholder = translations[language].emptyTitleError
     elements.renameInput.focus()
@@ -192,7 +185,6 @@ function handleRenameSave(e, elements) {
           sibling.title.toLowerCase() === newTitle.toLowerCase()
       )
       if (isDuplicate) {
-        console.log("Duplicate title found:", newTitle)
         elements.renameInput.classList.add("error")
         elements.renameInput.placeholder =
           translations[language].duplicateTitleError
@@ -220,10 +212,6 @@ function handleRenameSave(e, elements) {
           }
 
           if (result) {
-            console.log(
-              "Bookmark updated successfully, ID:",
-              uiState.currentBookmarkId
-            )
             getBookmarkTree((bookmarkTreeNodes) => {
               if (bookmarkTreeNodes) {
                 renderFilteredBookmarks(bookmarkTreeNodes, elements)
@@ -262,7 +250,7 @@ function handleRenameSave(e, elements) {
 
 function handleRenameCancel(e, elements) {
   e.stopPropagation()
-  console.log("handleRenameCancel called, resetting currentBookmarkId")
+
   elements.renamePopup.classList.add("hidden")
   elements.renameInput.classList.remove("error")
   elements.renameInput.value = ""
@@ -307,7 +295,7 @@ function handleAddToFolder(e, elements) {
     showCustomPopup(translations[language].errorUnexpected, "error", false)
     return
   }
-  console.log("Opening add to folder popup for bookmarkId:", bookmarkId)
+
   openAddToFolderPopup(elements, [bookmarkId])
   e.target.closest(".dropdown-menu").classList.add("hidden")
 }
@@ -355,21 +343,13 @@ function handleBookmarkCheckbox(e, elements) {
     })
     return
   }
-  console.log(
-    "Checkbox changed, bookmarkId:",
-    bookmarkId,
-    "checked:",
-    e.target.checked
-  )
+
   if (e.target.checked) {
     uiState.selectedBookmarks.add(bookmarkId)
   } else {
     uiState.selectedBookmarks.delete(bookmarkId)
   }
-  console.log(
-    "Updated selectedBookmarks:",
-    Array.from(uiState.selectedBookmarks)
-  )
+
   elements.addToFolderButton.classList.toggle(
     "hidden",
     uiState.selectedBookmarks.size === 0
@@ -377,12 +357,6 @@ function handleBookmarkCheckbox(e, elements) {
   elements.deleteBookmarksButton.classList.toggle(
     "hidden",
     uiState.selectedBookmarks.size === 0
-  )
-  console.log(
-    "Add to folder button hidden:",
-    elements.addToFolderButton.classList.contains("hidden"),
-    "Delete bookmarks button hidden:",
-    elements.deleteBookmarksButton.classList.contains("hidden")
   )
 }
 
@@ -398,10 +372,6 @@ export function handleDeleteSelectedBookmarks(elements) {
     return
   }
 
-  console.log(
-    "handleDeleteSelectedBookmarks called, selectedBookmarks:",
-    Array.from(uiState.selectedBookmarks)
-  )
   showCustomConfirm(
     translations[language].deleteBookmarksConfirm ||
       "Are you sure you want to delete the selected bookmarks?",
@@ -410,7 +380,6 @@ export function handleDeleteSelectedBookmarks(elements) {
         (bookmarkId) => {
           return new Promise((resolve) => {
             safeChromeBookmarksCall("remove", [bookmarkId], () => {
-              console.log("Deleted bookmark ID:", bookmarkId)
               resolve()
             })
           })
@@ -451,7 +420,6 @@ function handleRenameBookmark(e, elements) {
   e.stopPropagation()
   const bookmarkId = e.target.dataset.id
   const language = localStorage.getItem("appLanguage") || "en"
-  console.log("handleRenameBookmark called, bookmarkId:", bookmarkId)
 
   if (!bookmarkId) {
     console.error("Bookmark ID is undefined in handleRenameBookmark")
@@ -474,7 +442,6 @@ function handleRenameBookmark(e, elements) {
     return
   }
 
-  console.log("Setting currentBookmarkId:", bookmarkId)
   setCurrentBookmarkId(bookmarkId)
   renameInput.value = ""
   renameInput.classList.remove("error")
@@ -500,7 +467,6 @@ function handleRenameBookmark(e, elements) {
     }
 
     if (bookmark && bookmark[0]) {
-      console.log("Bookmark retrieved:", bookmark[0])
       if (!bookmark[0].url) {
         console.error("Selected item is not a bookmark, ID:", bookmarkId)
         showCustomPopup(
@@ -514,7 +480,6 @@ function handleRenameBookmark(e, elements) {
         return
       }
       renameInput.value = bookmark[0].title || ""
-      console.log("Rename input value set to:", renameInput.value)
     } else {
       console.error("Bookmark not found for ID:", bookmarkId)
       showCustomPopup(

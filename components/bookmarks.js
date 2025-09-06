@@ -25,7 +25,6 @@ export function getBookmarkTree(callback) {
 }
 
 export function flattenBookmarks(nodes) {
-  console.log("Flattening bookmarks, nodes count:", nodes.length)
   let flat = []
   nodes.forEach((node) => {
     if (node.url) flat.push(node)
@@ -62,22 +61,14 @@ export function moveBookmarksToFolder(
   callback
 ) {
   const language = localStorage.getItem("appLanguage") || "en"
-  console.log(
-    "Moving bookmarks to folder:",
-    targetFolderId,
-    "Bookmarks:",
-    bookmarkIds
-  )
 
   const movePromises = bookmarkIds.map((bookmarkId) => {
     return new Promise((resolve, reject) => {
-      console.log(`Moving bookmark ${bookmarkId} to folder ${targetFolderId}`)
       safeChromeBookmarksCall(
         "move",
         [bookmarkId, { parentId: targetFolderId }],
         (result) => {
           if (result) {
-            console.log(`Bookmark ${bookmarkId} moved successfully.`)
             resolve(result)
           } else {
             console.error(`Failed to move bookmark ${bookmarkId}`)
@@ -96,12 +87,10 @@ export function moveBookmarksToFolder(
       if (errors.length > 0) {
         console.error("Errors during bookmark move:", errors)
         showCustomPopup(translations[language].errorUnexpected, "error", false)
-        callback() // Keep popup open for retry
+        callback()
         return
       }
 
-      console.log("All bookmarks moved successfully.")
-      // Retry getBookmarkTree up to 3 times with 500ms delay
       function fetchBookmarkTreeWithRetry(attempts = 3, delay = 500) {
         safeChromeBookmarksCall("getTree", [], (bookmarkTreeNodes) => {
           if (bookmarkTreeNodes) {
@@ -135,7 +124,7 @@ export function moveBookmarksToFolder(
               "error",
               false
             )
-            callback() // Keep popup open for retry
+            callback()
           }
         })
       }
@@ -151,6 +140,6 @@ export function moveBookmarksToFolder(
         "error",
         false
       )
-      callback() // Keep popup open for retry
+      callback()
     })
 }
