@@ -1005,6 +1005,11 @@ export function setupExportImportListeners(elements) {
       text-align: center;
       background: var(--bg-primary);
     }
+
+    .format-card p {
+      margin: 0;
+      font-size: 0.7rem;
+    }
     
     .format-card:hover {
       border-color: var(--accent-color);
@@ -1018,7 +1023,7 @@ export function setupExportImportListeners(elements) {
       color: var(--bg-primary);
       box-shadow: var(--box-shadow);
     }
-    
+  
     .format-card.active h3,
     .format-card.active p,
     .format-card.active svg
@@ -1034,11 +1039,6 @@ export function setupExportImportListeners(elements) {
       margin: 0 0 0.2rem;
       font-size: 0.9rem;
       font-weight: 600;
-    }
-    
-    .format-card p {
-      margin: 0;
-      font-size: 0.7rem;
     }
     
     .settings-grid {
@@ -1189,7 +1189,6 @@ export function setupExportImportListeners(elements) {
     }
     
     .popup[data-theme="dark"] .popup-subtitle,
-    .popup[data-theme="dark"] .format-card p,
     .popup[data-theme="dark"] .setting-info p {
       color: #cbd5e1;
     }
