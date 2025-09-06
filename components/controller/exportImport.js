@@ -244,625 +244,645 @@ export function setupExportImportListeners(elements) {
 
             // Enhanced CSS theme with modern design
             const cssTheme = `
-  :root {
-    --bg-primary: ${currentTheme === "dark" ? "#0a0a0a" : "#ffffff"};
-    --bg-secondary: ${currentTheme === "dark" ? "#1a1a1a" : "#f8fafc"};
-    --bg-tertiary: ${currentTheme === "dark" ? "#2a2a2a" : "#e2e8f0"};
-    --bg-card: ${currentTheme === "dark" ? "#1e1e1e" : "#ffffff"};
-    --text-primary: ${currentTheme === "dark" ? "#ffffffff" : "#1a202c"};
-    --text-secondary: ${currentTheme === "dark" ? "#cbd5e1" : "#4a5568"};
-    --text-muted: ${currentTheme === "dark" ? "#94a3b8" : "#718096"};
-    --border-color: ${currentTheme === "dark" ? "#2d3748" : "#e2e8f0"};
-    --accent-color: ${
-      currentTheme === "dark" ? "#3182ce" : "#000000ff"
-    }; /* Adjusted for dark mode visibility */
-    --accent-hover: #2c5aa0;
-    --success-color: #48bb78;
-    --warning-color: #ed8936;
-    --error-color: #f56565;
-    --hover-bg: ${currentTheme === "dark" ? "#2d3748" : "#f7fafc"};
-    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --border-radius: 0.5rem;
-    --border-radius-lg: 0.75rem;
-    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+              :root {
+                --bg-primary: ${
+                  currentTheme === "dark" ? "#0a0a0a" : "#ffffff"
+                };
+                --bg-secondary: ${
+                  currentTheme === "dark" ? "#1a1a1a" : "#f8fafc"
+                };
+                --bg-tertiary: ${
+                  currentTheme === "dark" ? "#2a2a2a" : "#e2e8f0"
+                };
+                --bg-card: ${currentTheme === "dark" ? "#1e1e1e" : "#ffffff"};
+                --text-primary: ${
+                  currentTheme === "dark" ? "#ffffffff" : "#1a202c"
+                };
+                --text-secondary: ${
+                  currentTheme === "dark" ? "#cbd5e1" : "#4a5568"
+                };
+                --text-muted: ${
+                  currentTheme === "dark" ? "#94a3b8" : "#718096"
+                };
+                --border-color: ${
+                  currentTheme === "dark" ? "#2d3748" : "#e2e8f0"
+                };
+                --accent-color: ${
+                  currentTheme === "dark" ? "#3182ce" : "#000000ff"
+                }; /* Adjusted for dark mode visibility */
+                --accent-hover: #2c5aa0;
+                --success-color: #48bb78;
+                --warning-color: #ed8936;
+                --error-color: #f56565;
+                --hover-bg: ${currentTheme === "dark" ? "#2d3748" : "#f7fafc"};
+                --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+                --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                --border-radius: 0.5rem;
+                --border-radius-lg: 0.75rem;
+                --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+              }
 
-  * {
-    box-sizing: border-box;
-  }
+              * {
+                box-sizing: border-box;
+              }
 
-  body { 
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    margin: 0;
-    padding: 20px;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-    color: var(--text-primary);
-    min-height: 100vh;
-    line-height: 1.6;
-  }
-  
-  .container { 
-    max-width: 1400px;
-    margin: 0 auto;
-    background: var(--bg-card);
-    color: var(--text-primary);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
-    position: relative;
-  }
-  
-  .header {
-    background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);
-    color: white;
-    padding: 2rem;
-    text-align: center;
-  }
-  
-  .header h1 {
-    margin: 0;
-    font-size: 2.5rem;
-    font-weight: 700;
-  }
-  
-  .header p {
-    margin: 0.5rem 0 0;
-    opacity: 0.9;
-    font-size: 1.1rem;
-  }
-  
-  .controls { 
-    padding: 1rem 2rem; /* Reduced padding for compact sticky header */
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    flex-wrap: wrap;
-    position: sticky; /* Make search bar sticky */
-    top: 0;
-    z-index: 10; /* Ensure it stays above content */
-  }
-  
-  #searchInput { 
-    flex: 1;
-    min-width: 300px;
-    padding: 0.75rem 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    background: var(--bg-card);
-    color: var(--text-primary);
-    transition: var(--transition);
-  }
-  
-  #searchInput:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
-  }
-  
-  .view-toggle { 
-    padding: 0.75rem 1.5rem;
-    border: 2px solid var(--border-color);
-    border-radius: var(--border-radius);
-    background: var(--bg-card);
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .view-toggle:hover { 
-    background: var(--hover-bg);
-    transform: translateY(-1px);
-  }
-  
-  .view-toggle.active { 
-    background: var(--accent-hover);
-    color: white;
-  }
-  
-  .content-area {
-    padding: 2rem;
-  }
-  
-  .bookmark-list { 
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .bookmark-list li { 
-    padding: 1rem;
-    margin-bottom: 0.5rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-  }
-  
-  .bookmark-list li:hover { 
-    background: var(--hover-bg);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .bookmark-grid { 
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .bookmark-grid .bookmark-item { 
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    transition: var(--transition);
-    text-align: center;
-  }
-  
-  .bookmark-grid .bookmark-item:hover { 
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--accent-color);
-  }
-  
-  .bookmark-item a { 
-    text-decoration: none;
-    color: var(--text-primary);
-    font-weight: 500;
-    font-size: 1rem;
-    transition: var(--transition);
-  }
-  
-  .bookmark-item a:hover { 
-    color: var(--accent-hover);
-  }
-  
-  .bookmark-item img { 
-    width: 20px;
-    height: 20px;
-    margin-right: 0.75rem;
-    vertical-align: middle;
-    border-radius: 0.25rem;
-  }
-  
-  .folder { 
-    font-weight: 600;
-    margin: 0.5rem 0;
-    cursor: pointer;
-    color: var(--text-primary);
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  
-  .folder::before { 
-    content: "📁";
-    font-size: 1.25rem;
-    transition: var(--transition);
-  }
-  
-  .folder.open::before { 
-    content: "📂";
-    transform: scale(1.1);
-  }
-  
-  .nested { 
-    padding-left: 1.5rem;
-    margin-left: 0;
-    border-left: 2px solid var(--border-color);
-    display: none;
-  }
-  
-  .open > .nested { 
-    display: block;
-    animation: slideDown 0.3s ease-out;
-  }
-  
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .tree-view { 
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: block;
-  }
-  
-  .tree-view li {
-    display: block;
-  }
-  
-  .hidden { 
-    display: none !important;
-  }
-  
-  .meta-info { 
-    font-size: 0.875rem;
-    color: var(--text-muted);
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    background: var(--bg-secondary);
-    border-radius: 0.25rem;
-  }
-  
-  .stats-bar {
-    background: var(--bg-secondary);
-    padding: 1rem 2rem;
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-  }
-  
-  /* Scroll to Top Button */
-  .scroll-to-top {
-    item-align: center;
-    justify-content: center;
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 0.75rem;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.2s ease;
-    z-index: 20;
-  }
-  
-  .scroll-to-top.visible {
-    opacity: 1;
-    visibility: visible;
-  }
-  
-  .scroll-to-top:hover {
-    color: white;
-    background: var(--accent-hover);
-    transform: translateY(-2px);
-  }
-  
-  .scroll-to-top svg {
-    width: 20px;
-    height: 20px;
-  }
-  
-  @media (max-width: 768px) {
-    .controls {
-      flex-direction: column;
-      align-items: stretch;
-      padding: 0.75rem 1rem; /* Adjusted for mobile */
-    }
-    
-    #searchInput {
-      min-width: unset;
-    }
-    
-    .bookmark-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .stats-bar {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    
-    .scroll-to-top {
-      bottom: 1rem;
-      right: 1rem;
-      padding: 0.5rem;
-    }
-  }
-`
+              body { 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+                margin: 0;
+                padding: 20px;
+                background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+                color: var(--text-primary);
+                min-height: 100vh;
+                line-height: 1.6;
+              }
+              
+              .container { 
+                max-width: 1400px;
+                margin: 0 auto;
+                background: var(--bg-card);
+                color: var(--text-primary);
+                border-radius: var(--border-radius-lg);
+                box-shadow: var(--shadow-lg);
+                overflow: hidden;
+                position: relative;
+              }
+              
+              .header {
+                background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);
+                color: white;
+                padding: 2rem;
+                text-align: center;
+              }
+              
+              .header h1 {
+                margin: 0;
+                font-size: 2.5rem;
+                font-weight: 700;
+              }
+              
+              .header p {
+                margin: 0.5rem 0 0;
+                opacity: 0.9;
+                font-size: 1.1rem;
+              }
+              
+              .controls { 
+                padding: 1rem 2rem; /* Reduced padding for compact sticky header */
+                background: var(--bg-secondary);
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+                flex-wrap: wrap;
+                position: sticky; /* Make search bar sticky */
+                top: 0;
+                z-index: 10; /* Ensure it stays above content */
+              }
+              
+              #searchInput { 
+                flex: 1;
+                min-width: 300px;
+                padding: 0.75rem 1rem;
+                border: 2px solid var(--border-color);
+                border-radius: var(--border-radius);
+                font-size: 1rem;
+                background: var(--bg-card);
+                color: var(--text-primary);
+                transition: var(--transition);
+              }
+              
+              #searchInput:focus {
+                outline: none;
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+              }
+              
+              .view-toggle { 
+                padding: 0.75rem 1.5rem;
+                border: 2px solid var(--border-color);
+                border-radius: var(--border-radius);
+                background: var(--bg-card);
+                color: var(--text-primary);
+                cursor: pointer;
+                font-size: 0.9rem;
+                font-weight: 500;
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+              }
+              
+              .view-toggle:hover { 
+                background: var(--hover-bg);
+                transform: translateY(-1px);
+              }
+              
+              .view-toggle.active { 
+                background: var(--accent-hover);
+                color: white;
+              }
+              
+              .content-area {
+                padding: 2rem;
+              }
+              
+              .bookmark-list { 
+                list-style: none;
+                padding: 0;
+                margin: 0;
+              }
+              
+              .bookmark-list li { 
+                padding: 1rem;
+                margin-bottom: 0.5rem;
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius);
+                transition: var(--transition);
+              }
+              
+              .bookmark-list li:hover { 
+                background: var(--hover-bg);
+                transform: translateY(-1px);
+                box-shadow: var(--shadow-md);
+              }
+              
+              .bookmark-grid { 
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 1.5rem;
+                margin: 0;
+                padding: 0;
+              }
+              
+              .bookmark-grid .bookmark-item { 
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius);
+                padding: 1.5rem;
+                transition: var(--transition);
+                text-align: center;
+              }
+              
+              .bookmark-grid .bookmark-item:hover { 
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-lg);
+                border-color: var(--accent-color);
+              }
+              
+              .bookmark-item a { 
+                text-decoration: none;
+                color: var(--text-primary);
+                font-weight: 500;
+                font-size: 1rem;
+                transition: var(--transition);
+              }
+              
+              .bookmark-item a:hover { 
+                color: var(--accent-hover);
+              }
+              
+              .bookmark-item img { 
+                width: 20px;
+                height: 20px;
+                margin-right: 0.75rem;
+                vertical-align: middle;
+                border-radius: 0.25rem;
+              }
+              
+              .folder { 
+                font-weight: 600;
+                margin: 0.5rem 0;
+                cursor: pointer;
+                color: var(--text-primary);
+                padding: 1rem;
+                background: var(--bg-secondary);
+                border-radius: var(--border-radius);
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+              }
+              
+              .folder::before { 
+                content: "📁";
+                font-size: 1.25rem;
+                transition: var(--transition);
+              }
+              
+              .folder.open::before { 
+                content: "📂";
+                transform: scale(1.1);
+              }
+              
+              .nested { 
+                padding-left: 1.5rem;
+                margin-left: 0;
+                border-left: 2px solid var(--border-color);
+                display: none;
+              }
+              
+              .open > .nested { 
+                display: block;
+                animation: slideDown 0.3s ease-out;
+              }
+              
+              @keyframes slideDown {
+                from {
+                  opacity: 0;
+                  transform: translateY(-10px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+              }
+              
+              .tree-view { 
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: block;
+              }
+              
+              .tree-view li {
+                display: block;
+              }
+              
+              .hidden { 
+                display: none !important;
+              }
+              
+              .meta-info { 
+                font-size: 0.875rem;
+                color: var(--text-muted);
+                margin-top: 0.5rem;
+                padding: 0.5rem;
+                background: var(--bg-secondary);
+                border-radius: 0.25rem;
+              }
+              
+              .stats-bar {
+                background: var(--bg-secondary);
+                padding: 1rem 2rem;
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+              }
+              
+              /* Scroll to Top Button */
+              .scroll-to-top {
+                item-align: center;
+                justify-content: center;
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius);
+                padding: 0.75rem;
+                cursor: pointer;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.2s ease;
+                z-index: 20;
+              }
+              
+              .scroll-to-top.visible {
+                opacity: 1;
+                visibility: visible;
+              }
+              
+              .scroll-to-top:hover {
+                color: white;
+                background: var(--accent-hover);
+                transform: translateY(-2px);
+              }
+              
+              .scroll-to-top svg {
+                width: 20px;
+                height: 20px;
+              }
+              
+              @media (max-width: 768px) {
+                .controls {
+                  flex-direction: column;
+                  align-items: stretch;
+                  padding: 0.75rem 1rem; /* Adjusted for mobile */
+                }
+                
+                #searchInput {
+                  min-width: unset;
+                }
+                
+                .bookmark-grid {
+                  grid-template-columns: 1fr;
+                }
+                
+                .stats-bar {
+                  flex-direction: column;
+                  gap: 0.5rem;
+                }
+                
+                .scroll-to-top {
+                  bottom: 1rem;
+                  right: 1rem;
+                  padding: 0.5rem;
+                }
+              }
+            `
 
             const htmlTemplate = `
-  <!DOCTYPE html>
-  <html lang="${language}" data-theme="${currentTheme}">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${
-      translations[language].bookmarksTitle || "My Bookmarks Collection"
-    }</title>
-    <link rel="icon" type="image/png" href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/icons/icon.png?raw=true">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>${cssTheme}</style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h1><i class="far fa-bookmark"></i> ${
-          translations[language].bookmarksHeader || "My Bookmarks"
-        }</h1>
-        <p>${
-          translations[language].exportedOn || "Exported on"
-        } ${new Date().toLocaleDateString(language)}</p>
-      </div>
-      
-      <div class="controls">
-        <input type="text" id="searchInput" placeholder="${
-          translations[language].searchPlaceholder || "Search bookmarks..."
-        }">
-        <button class="view-toggle active" id="listViewBtn" onclick="toggleView('list')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="8" y1="6" x2="21" y2="6"></line>
-            <line x1="8" y1="12" x2="21" y2="12"></line>
-            <line x1="8" y1="18" x2="21" y2="18"></line>
-            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-          </svg>
-          ${translations[language].listView || "List"}
-        </button>
-        <button class="view-toggle" id="gridViewBtn" onclick="toggleView('grid')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-          ${translations[language].gridView || "Grid"}
-        </button>
-        <button class="view-toggle" id="treeViewBtn" onclick="toggleView('tree')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 17a2 2 0 0 1-2 2H3s0-2 9-2 9 2 9 2Z"></path>
-            <path d="M5 17a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5Z"></path>
-          </svg>
-          ${translations[language].treeView || "Tree"}
-        </button>
-      </div>
-      
-      <div class="content-area">
-        <ul id="bookmarkList" class="bookmark-list"></ul>
-        <div id="bookmarkGrid" class="bookmark-grid hidden"></div>
-        <ul id="bookmarkTree" class="tree-view hidden"></ul>
-      </div>
-      
-      <div class="stats-bar">
-        <span id="bookmarkCount">${
-          translations[language].loadingBookmarks || "Loading bookmarks..."
-        }</span>
-        <span>${
-          translations[language].generatedBy ||
-          "Generated by Bookmark Manager Extension"
-        }</span>
-      </div>
-      
-      <button class="scroll-to-top" id="scrollToTop" title="${
-        translations[language].scrollToTop || "Scroll to Top"
-      }">
-        <i class="fas fa-chevron-up"></i>
-      </button>
-    </div>
-    
-    <script>
-      const bookmarks = {{bookmarks}};
-      const includeIconData = {{includeIconData}};
-      const includeCreationDates = {{includeCreationDates}};
-      const includeFolderModDates = {{includeFolderModDates}};
-      const faviconMap = {{faviconMap}};
-      
-      const listContainer = document.getElementById("bookmarkList");
-      const gridContainer = document.getElementById("bookmarkGrid");
-      const treeContainer = document.getElementById("bookmarkTree");
-      const searchInput = document.getElementById("searchInput");
-      const listViewBtn = document.getElementById("listViewBtn");
-      const gridViewBtn = document.getElementById("gridViewBtn");
-      const treeViewBtn = document.getElementById("treeViewBtn");
-      const bookmarkCount = document.getElementById("bookmarkCount");
-      const scrollToTopBtn = document.getElementById("scrollToTop");
-      
-      let totalBookmarks = 0;
-      let totalFolders = 0;
+                <!DOCTYPE html>
+                <html lang="${language}" data-theme="${currentTheme}">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>${
+                    translations[language].bookmarksTitle ||
+                    "My Bookmarks Collection"
+                  }</title>
+                  <link rel="icon" type="image/png" href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/icons/icon.png?raw=true">
+                  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+                  <style>${cssTheme}</style>
+                </head>
+                <body>
+                  <div class="container">
+                    <div class="header">
+                      <h1><i class="far fa-bookmark"></i> ${
+                        translations[language].bookmarksHeader || "My Bookmarks"
+                      }</h1>
+                      <p>${
+                        translations[language].exportedOn || "Exported on"
+                      } ${new Date().toLocaleDateString(language)}</p>
+                    </div>
+                    
+                    <div class="controls">
+                      <input type="text" id="searchInput" placeholder="${
+                        translations[language].searchPlaceholder ||
+                        "Search bookmarks..."
+                      }">
+                      <button class="view-toggle active" id="listViewBtn" onclick="toggleView('list')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="8" y1="6" x2="21" y2="6"></line>
+                          <line x1="8" y1="12" x2="21" y2="12"></line>
+                          <line x1="8" y1="18" x2="21" y2="18"></line>
+                          <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                          <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                        ${translations[language].listView || "List"}
+                      </button>
+                      <button class="view-toggle" id="gridViewBtn" onclick="toggleView('grid')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="3" width="7" height="7"></rect>
+                          <rect x="14" y="3" width="7" height="7"></rect>
+                          <rect x="14" y="14" width="7" height="7"></rect>
+                          <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        ${translations[language].gridView || "Grid"}
+                      </button>
+                      <button class="view-toggle" id="treeViewBtn" onclick="toggleView('tree')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M22 17a2 2 0 0 1-2 2H3s0-2 9-2 9 2 9 2Z"></path>
+                          <path d="M5 17a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5Z"></path>
+                        </svg>
+                        ${translations[language].treeView || "Tree"}
+                      </button>
+                    </div>
+                    
+                    <div class="content-area">
+                      <ul id="bookmarkList" class="bookmark-list"></ul>
+                      <div id="bookmarkGrid" class="bookmark-grid hidden"></div>
+                      <ul id="bookmarkTree" class="tree-view hidden"></ul>
+                    </div>
+                    
+                    <div class="stats-bar">
+                      <span id="bookmarkCount">${
+                        translations[language].loadingBookmarks ||
+                        "Loading bookmarks..."
+                      }</span>
+                      <span>${
+                        translations[language].generatedBy ||
+                        "Generated by Bookmark Manager Extension"
+                      }</span>
+                    </div>
+                    
+                    <button class="scroll-to-top" id="scrollToTop" title="${
+                      translations[language].scrollToTop || "Scroll to Top"
+                    }">
+                      <i class="fas fa-chevron-up"></i>
+                    </button>
+                  </div>
+                  
+                  <script>
+                    const bookmarks = {{bookmarks}};
+                    const includeIconData = {{includeIconData}};
+                    const includeCreationDates = {{includeCreationDates}};
+                    const includeFolderModDates = {{includeFolderModDates}};
+                    const faviconMap = {{faviconMap}};
+                    
+                    const listContainer = document.getElementById("bookmarkList");
+                    const gridContainer = document.getElementById("bookmarkGrid");
+                    const treeContainer = document.getElementById("bookmarkTree");
+                    const searchInput = document.getElementById("searchInput");
+                    const listViewBtn = document.getElementById("listViewBtn");
+                    const gridViewBtn = document.getElementById("gridViewBtn");
+                    const treeViewBtn = document.getElementById("treeViewBtn");
+                    const bookmarkCount = document.getElementById("bookmarkCount");
+                    const scrollToTopBtn = document.getElementById("scrollToTop");
+                    
+                    let totalBookmarks = 0;
+                    let totalFolders = 0;
 
-      function formatDate(timestamp) {
-        return timestamp ? new Date(timestamp).toLocaleString('${language}') : "${
+                    function formatDate(timestamp) {
+                      return timestamp ? new Date(timestamp).toLocaleString('${language}') : "${
               translations[language].notAvailable || "N/A"
             }";
-      }
-      
-      function countBookmarks(nodes) {
-        nodes.forEach(node => {
-          if (node.url) {
-            totalBookmarks++;
-          } else if (node.children) {
-            totalFolders++;
-            countBookmarks(node.children);
-          }
-        });
-      }
+                    }
+                    
+                    function countBookmarks(nodes) {
+                      nodes.forEach(node => {
+                        if (node.url) {
+                          totalBookmarks++;
+                        } else if (node.children) {
+                          totalFolders++;
+                          countBookmarks(node.children);
+                        }
+                      });
+                    }
 
-      function renderBookmarks(nodes, parent = listContainer, gridParent = gridContainer, treeParent = treeContainer, depth = 0) {
-        const folders = nodes.filter(node => node.children);
-        const bookmarksOnly = nodes.filter(node => node.url);
+                    function renderBookmarks(nodes, parent = listContainer, gridParent = gridContainer, treeParent = treeContainer, depth = 0) {
+                      const folders = nodes.filter(node => node.children);
+                      const bookmarksOnly = nodes.filter(node => node.url);
 
-        nodes.forEach(node => {
-          if (node.url) {
-            const li = document.createElement("li");
-            li.className = "bookmark-item";
-            if (includeIconData && faviconMap[node.url]) {
-              li.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
-            } else {
-              li.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
-            }
-            if (includeCreationDates) {
-              li.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> ${
-                translations[language].created || "Created"
-              }: \${formatDate(node.dateAdded)}</div>\`;
-            }
-            parent.appendChild(li);
+                      nodes.forEach(node => {
+                        if (node.url) {
+                          const li = document.createElement("li");
+                          li.className = "bookmark-item";
+                          if (includeIconData && faviconMap[node.url]) {
+                            li.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+                          } else {
+                            li.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+                          }
+                          if (includeCreationDates) {
+                            li.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> ${
+                              translations[language].created || "Created"
+                            }: \${formatDate(node.dateAdded)}</div>\`;
+                          }
+                          parent.appendChild(li);
 
-            const gridItem = document.createElement("div");
-            gridItem.className = "bookmark-item";
-            if (includeIconData && faviconMap[node.url]) {
-              gridItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
-            } else {
-              gridItem.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
-            }
-            if (includeCreationDates) {
-              gridItem.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> ${
-                translations[language].created || "Created"
-              }: \${formatDate(node.dateAdded)}</div>\`;
-            }
-            gridParent.appendChild(gridItem);
-          }
-        });
+                          const gridItem = document.createElement("div");
+                          gridItem.className = "bookmark-item";
+                          if (includeIconData && faviconMap[node.url]) {
+                            gridItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+                          } else {
+                            gridItem.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+                          }
+                          if (includeCreationDates) {
+                            gridItem.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> ${
+                              translations[language].created || "Created"
+                            }: \${formatDate(node.dateAdded)}</div>\`;
+                          }
+                          gridParent.appendChild(gridItem);
+                        }
+                      });
 
-        [...folders, ...bookmarksOnly].forEach(node => {
-          const treeItem = document.createElement("li");
-          if (node.url) {
-            treeItem.className = "bookmark-item";
-            if (includeIconData && faviconMap[node.url]) {
-              treeItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
-            } else {
-              treeItem.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
-            }
-            if (includeCreationDates) {
-              treeItem.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> ${
-                translations[language].created || "Created"
-              }: \${formatDate(node.dateAdded)}</div>\`;
-            }
-          } else if (node.children) {
-            treeItem.className = "folder";
-            treeItem.textContent = node.title || "${
-              translations[language].unnamedFolder || "Unnamed Folder"
-            }";
-            if (includeCreationDates || includeFolderModDates) {
-              const metaDiv = document.createElement("div");
-              metaDiv.className = "meta-info";
-              if (includeCreationDates) {
-                metaDiv.innerHTML += \`${
-                  translations[language].created || "Created"
-                }: \${formatDate(node.dateAdded)}<br>\`;
-              }
-              if (includeFolderModDates) {
-                metaDiv.innerHTML += \`${
-                  translations[language].modified || "Modified"
-                }: \${formatDate(node.dateGroupModified)}\`;
-              }
-              treeItem.appendChild(metaDiv);
-            }
-            const nestedList = document.createElement("ul");
-            nestedList.className = "nested";
-            treeItem.appendChild(nestedList);
-            treeItem.addEventListener("click", (e) => {
-              e.stopPropagation();
-              treeItem.classList.toggle("open");
-            });
-            renderBookmarks(node.children, parent, gridParent, nestedList, depth + 1);
-          }
-          treeParent.appendChild(treeItem);
-        });
-      }
+                      [...folders, ...bookmarksOnly].forEach(node => {
+                        const treeItem = document.createElement("li");
+                        if (node.url) {
+                          treeItem.className = "bookmark-item";
+                          if (includeIconData && faviconMap[node.url]) {
+                            treeItem.innerHTML = \`<img src="\${faviconMap[node.url]}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"/><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"/></svg><a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+                          } else {
+                            treeItem.innerHTML = \`<a href="\${node.url}" target="_blank">\${node.title || node.url}</a>\`;
+                          }
+                          if (includeCreationDates) {
+                            treeItem.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> ${
+                              translations[language].created || "Created"
+                            }: \${formatDate(node.dateAdded)}</div>\`;
+                          }
+                        } else if (node.children) {
+                          treeItem.className = "folder";
+                          treeItem.textContent = node.title || "${
+                            translations[language].unnamedFolder ||
+                            "Unnamed Folder"
+                          }";
+                          if (includeCreationDates || includeFolderModDates) {
+                            const metaDiv = document.createElement("div");
+                            metaDiv.className = "meta-info";
+                            if (includeCreationDates) {
+                              metaDiv.innerHTML += \`${
+                                translations[language].created || "Created"
+                              }: \${formatDate(node.dateAdded)}<br>\`;
+                            }
+                            if (includeFolderModDates) {
+                              metaDiv.innerHTML += \`${
+                                translations[language].modified || "Modified"
+                              }: \${formatDate(node.dateGroupModified)}\`;
+                            }
+                            treeItem.appendChild(metaDiv);
+                          }
+                          const nestedList = document.createElement("ul");
+                          nestedList.className = "nested";
+                          treeItem.appendChild(nestedList);
+                          treeItem.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            treeItem.classList.toggle("open");
+                          });
+                          renderBookmarks(node.children, parent, gridParent, nestedList, depth + 1);
+                        }
+                        treeParent.appendChild(treeItem);
+                      });
+                    }
 
-      function toggleView(view) {
-        listContainer.classList.add("hidden");
-        gridContainer.classList.add("hidden");
-        treeContainer.classList.add("hidden");
-        listViewBtn.classList.remove("active");
-        gridViewBtn.classList.remove("active");
-        treeViewBtn.classList.remove("active");
-        
-        if (view === "list") {
-          listContainer.classList.remove("hidden");
-          listViewBtn.classList.add("active");
-        } else if (view === "grid") {
-          gridContainer.classList.remove("hidden");
-          gridViewBtn.classList.add("active");
-        } else if (view === "tree") {
-          treeContainer.classList.remove("hidden");
-          treeViewBtn.classList.add("active");
-        }
-      }
+                    function toggleView(view) {
+                      listContainer.classList.add("hidden");
+                      gridContainer.classList.add("hidden");
+                      treeContainer.classList.add("hidden");
+                      listViewBtn.classList.remove("active");
+                      gridViewBtn.classList.remove("active");
+                      treeViewBtn.classList.remove("active");
+                      
+                      if (view === "list") {
+                        listContainer.classList.remove("hidden");
+                        listViewBtn.classList.add("active");
+                      } else if (view === "grid") {
+                        gridContainer.classList.remove("hidden");
+                        gridViewBtn.classList.add("active");
+                      } else if (view === "tree") {
+                        treeContainer.classList.remove("hidden");
+                        treeViewBtn.classList.add("active");
+                      }
+                    }
 
-      function filterBookmarks() {
-        const query = searchInput.value.toLowerCase();
-        const items = document.querySelectorAll(".bookmark-item, .folder");
-        let visibleCount = 0;
-        
-        items.forEach(item => {
-          const text = item.textContent.toLowerCase();
-          const isVisible = text.includes(query);
-          item.style.display = isVisible ? "" : "none";
-          
-          if (isVisible && item.classList.contains("bookmark-item")) {
-            visibleCount++;
-          }
-          
-          if (item.classList.contains("folder") && item.querySelector(".bookmark-item")) {
-            const hasVisibleChild = Array.from(item.querySelectorAll(".bookmark-item")).some(child => 
-              child.textContent.toLowerCase().includes(query) && child.style.display !== "none"
-            );
-            if (hasVisibleChild) {
-              item.style.display = "";
-              item.classList.add("open");
-            }
-          }
-        });
-        
-        updateBookmarkCount(query ? visibleCount : totalBookmarks);
-      }
-      
-      function updateBookmarkCount(count = totalBookmarks) {
-        bookmarkCount.textContent = \`\${count} ${
-          translations[language].bookmarks || "bookmarks"
-        } • \${totalFolders} ${translations[language].folders || "folders"}\`;
-      }
+                    function filterBookmarks() {
+                      const query = searchInput.value.toLowerCase();
+                      const items = document.querySelectorAll(".bookmark-item, .folder");
+                      let visibleCount = 0;
+                      
+                      items.forEach(item => {
+                        const text = item.textContent.toLowerCase();
+                        const isVisible = text.includes(query);
+                        item.style.display = isVisible ? "" : "none";
+                        
+                        if (isVisible && item.classList.contains("bookmark-item")) {
+                          visibleCount++;
+                        }
+                        
+                        if (item.classList.contains("folder") && item.querySelector(".bookmark-item")) {
+                          const hasVisibleChild = Array.from(item.querySelectorAll(".bookmark-item")).some(child => 
+                            child.textContent.toLowerCase().includes(query) && child.style.display !== "none"
+                          );
+                          if (hasVisibleChild) {
+                            item.style.display = "";
+                            item.classList.add("open");
+                          }
+                        }
+                      });
+                      
+                      updateBookmarkCount(query ? visibleCount : totalBookmarks);
+                    }
+                    
+                    function updateBookmarkCount(count = totalBookmarks) {
+                      bookmarkCount.textContent = \`\${count} ${
+                        translations[language].bookmarks || "bookmarks"
+                      } • \${totalFolders} ${
+              translations[language].folders || "folders"
+            }\`;
+                    }
 
-      // Scroll to Top functionality
-      function toggleScrollToTop() {
-        if (window.scrollY > 200) {
-          scrollToTopBtn.classList.add("visible");
-        } else {
-          scrollToTopBtn.classList.remove("visible");
-        }
-      }
+                    // Scroll to Top functionality
+                    function toggleScrollToTop() {
+                      if (window.scrollY > 200) {
+                        scrollToTopBtn.classList.add("visible");
+                      } else {
+                        scrollToTopBtn.classList.remove("visible");
+                      }
+                    }
 
-      scrollToTopBtn.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
+                    scrollToTopBtn.addEventListener("click", () => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    });
 
-      window.addEventListener("scroll", toggleScrollToTop);
+                    window.addEventListener("scroll", toggleScrollToTop);
 
-      // Initialize
-      countBookmarks(bookmarks);
-      updateBookmarkCount();
-      searchInput.addEventListener("input", filterBookmarks);
-      renderBookmarks(bookmarks);
-      toggleView("list");
-      toggleScrollToTop();
-    </script>
-  </body>
-  </html>
-`
+                    // Initialize
+                    countBookmarks(bookmarks);
+                    updateBookmarkCount();
+                    searchInput.addEventListener("input", filterBookmarks);
+                    renderBookmarks(bookmarks);
+                    toggleView("list");
+                    toggleScrollToTop();
+                  </script>
+                </body>
+                </html>
+              `
 
             const htmlContent = htmlTemplate
               .replace("{{bookmarks}}", JSON.stringify(bookmarkTreeNodes))
