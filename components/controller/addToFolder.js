@@ -1,14 +1,6 @@
 // ./components/controller/addToFolder.js
-import {
-  translations,
-  safeChromeBookmarksCall,
-  showCustomPopup,
-} from "../utils.js"
-import {
-  getBookmarkTree,
-  getFolders,
-  moveBookmarksToFolder,
-} from "../bookmarks.js"
+import { translations, showCustomPopup } from "../utils.js"
+import { moveBookmarksToFolder } from "../bookmarks.js"
 import { uiState, saveUIState, selectedBookmarks } from "../state.js"
 
 export function openAddToFolderPopup(elements, bookmarkIds) {
