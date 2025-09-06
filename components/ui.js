@@ -278,8 +278,9 @@ function createBookmarkElement(bookmark) {
   div.className = "bookmark-item"
   let favicon
   try {
-    const domain = new URL(bookmark.url).hostname
-    favicon = `https://icons.duckduckgo.com/ip3/${domain}.ico`
+    favicon = `https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(
+      bookmark.url
+    )}`
   } catch (error) {
     favicon = "./images/default-favicon.png"
   }
