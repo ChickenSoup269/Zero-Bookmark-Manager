@@ -12,6 +12,8 @@ English | <a href="https://github.com/ChickenSoup269/Bookmark-Manager/blob/main/
 
 Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bookmark organization. Easily view, search, sort, and manage your bookmarks with a sleek interface. It supports light/dark themes, multilingual display (English/Vietnamese), and export/import functionality for seamless backup and restore.
 
+Link extension: https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en
+
 ## Features
 
 - **View Bookmarks:** Browse bookmarks by folder or as a flat list.
@@ -67,7 +69,9 @@ Install Bookmark-Manager
 </div>
 
 <!-- <Video > -->
+
 video
+
 <!-- image -->
 <p align="center">
   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/Group%2023.png?raw=true" alt="Screenshot" width="520"/>
