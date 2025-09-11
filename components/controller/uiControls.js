@@ -1,4 +1,3 @@
-// ./components/controller/uiControls.js
 import { translations, debounce } from "../utils.js"
 import { isInFolder } from "../bookmarks.js"
 import {
@@ -34,13 +33,13 @@ export function setupUIControlListeners(elements) {
       ? translations[language].hideCheckboxes
       : translations[language].showCheckboxes
 
-    // Toggle class hidden cho bookmark-checkbox và select-all
+    // Toggle class hidden for bookmark-checkbox and select-all
     const bookmarkCheckboxes = document.querySelectorAll(".bookmark-checkbox")
     const selectAllContainer = document.querySelector(".select-all")
     const selectAllCheckbox = document.getElementById("select-all")
 
     if (uiState.checkboxesVisible) {
-      // Hiện các checkbox và select-all
+      // Show checkboxes and select-all
       bookmarkCheckboxes.forEach((checkbox) => {
         checkbox.style.display = "inline-block"
         setTimeout(() => {
@@ -56,7 +55,7 @@ export function setupUIControlListeners(elements) {
         console.warn("Select All container (.select-all) not found")
       }
     } else {
-      // Ẩn các checkbox và select-all
+      // Hide checkboxes and select-all
       bookmarkCheckboxes.forEach((checkbox) => {
         checkbox.classList.add("hidden")
         setTimeout(() => {
@@ -71,7 +70,7 @@ export function setupUIControlListeners(elements) {
       } else {
         console.warn("Select All container (.select-all) not found")
       }
-      // Reset trạng thái chọn
+      // Reset selection state
       uiState.selectedBookmarks.clear()
       elements.addToFolderButton.classList.add("hidden")
       elements.deleteBookmarksButton.classList.add("hidden")
@@ -89,6 +88,18 @@ export function setupUIControlListeners(elements) {
     saveUIState()
   })
 
+  elements.editInNewTabOption = document.getElementById(
+    "edit-in-new-tab-option"
+  )
+  if (elements.editInNewTabOption) {
+    elements.editInNewTabOption.addEventListener("click", () => {
+      chrome.tabs.create({ url: "chrome://bookmarks/" })
+      elements.settingsMenu.classList.add("hidden")
+    })
+  } else {
+    console.error("editInNewTabOption element not found")
+  }
+
   function updateControlButtons(elements) {
     const hasSelectedFolder =
       uiState.selectedFolderId &&
@@ -96,7 +107,7 @@ export function setupUIControlListeners(elements) {
       uiState.selectedFolderId !== "2"
     const hasSelectedBookmarks = uiState.selectedBookmarks.size > 0
 
-    // Toggle class hidden cho các nút
+    // Toggle class hidden for buttons
     elements.addToFolderButton.classList.toggle("hidden", !hasSelectedBookmarks)
     elements.deleteBookmarksButton.classList.toggle(
       "hidden",

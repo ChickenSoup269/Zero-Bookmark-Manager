@@ -1,4 +1,3 @@
-// ./components/ui.js
 import { translations } from "./utils.js"
 import { flattenBookmarks, getFolders, isInFolder } from "./bookmarks.js"
 import {
@@ -31,6 +30,7 @@ export function updateUILanguage(elements, language) {
   elements.exportBookmarksOption.textContent = t.exportBookmarks
   elements.importBookmarksOption.textContent = t.importBookmarks
   elements.renameFolderOption.textContent = t.renameFolder
+  elements.editInNewTabOption.textContent = t.editInNewTabOption
   elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
     ? t.hideCheckboxes
     : t.showCheckboxes
@@ -97,6 +97,9 @@ export function restoreUIState(elements, callback) {
     uiState.checkboxesVisible = data.checkboxesVisible || false
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
     elements.languageSwitcher.value = savedLanguage
+    elements.editInNewTabOption = document.getElementById(
+      "edit-in-new-tab-option"
+    )
     updateUILanguage(elements, savedLanguage)
     // Only apply non-critical UI state (language, checkboxes)
     elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible

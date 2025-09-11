@@ -1,4 +1,3 @@
-// ./components/utils.js
 export const translations = {
   en: {
     allBookmarks: "All Bookmarks",
@@ -46,6 +45,7 @@ export const translations = {
     addToFolderOption: "Add to Folder",
     deleteBookmarkOption: "Delete",
     renameBookmarkOption: "Rename",
+    editInNewTabOption: "Edit in New Tab",
     deleteBookmarks: "Delete bookmark",
     importSuccess: "Bookmarks imported successfully!",
     importDuplicatePrompt:
@@ -147,6 +147,7 @@ export const translations = {
     addToFolderOption: "Thêm vào Thư mục",
     deleteBookmarkOption: "Xóa",
     renameBookmarkOption: "Đổi tên",
+    editInNewTabOption: "Chỉnh sửa trong Tab Mới",
     deleteBookmarks: "Xóa bookmark",
     importSuccess: "Bookmark đã được nhập thành công!",
     importDuplicatePrompt:
@@ -201,7 +202,7 @@ export const translations = {
     modified: "Đã chỉnh sửa",
     unnamedFolder: "Thư mục không tên",
     notAvailable: "N/A",
-    scrollToTop: "Cuộn lên Đầu",
+    scrollToTop: "Scroll to Top",
   },
 }
 
