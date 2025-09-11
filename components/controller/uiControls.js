@@ -93,7 +93,8 @@ export function setupUIControlListeners(elements) {
   )
   if (elements.editInNewTabOption) {
     elements.editInNewTabOption.addEventListener("click", () => {
-      chrome.tabs.create({ url: "chrome://bookmarks/" })
+      const url = chrome.runtime.getURL("bookmarks.html")
+      chrome.tabs.create({ url })
       elements.settingsMenu.classList.add("hidden")
     })
   } else {
