@@ -75,7 +75,9 @@ export function updateTheme(elements, theme) {
   elements.bookmarkCountDiv.classList.toggle("light-theme", !isDarkMode)
   elements.bookmarkCountDiv.classList.toggle("dark-theme", isDarkMode)
   document
-    .querySelectorAll(".input, .select, .button, .rename-popup")
+    .querySelectorAll(
+      ".input, .select, .button, .rename-popup, .folder-item, .folder-title"
+    )
     .forEach((el) => {
       el.classList.toggle("light-theme", !isDarkMode)
       el.classList.toggle("dark-theme", isDarkMode)
@@ -93,15 +95,17 @@ export function restoreUIState(elements, callback) {
       uiState.searchQuery = data.uiState.searchQuery || ""
       uiState.selectedFolderId = data.uiState.selectedFolderId || ""
       uiState.sortType = data.uiState.sortType || "default"
+      uiState.viewMode = data.uiState.viewMode || "flat"
+      uiState.collapsedFolders = new Set(data.uiState.collapsedFolders || [])
     }
     uiState.checkboxesVisible = data.checkboxesVisible || false
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
     elements.languageSwitcher.value = savedLanguage
+    elements.viewSwitcher.value = uiState.viewMode
     elements.editInNewTabOption = document.getElementById(
       "edit-in-new-tab-option"
     )
     updateUILanguage(elements, savedLanguage)
-    // Only apply non-critical UI state (language, checkboxes)
     elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
       ? translations[savedLanguage].hideCheckboxes
       : translations[savedLanguage].showCheckboxes
@@ -147,11 +151,20 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
   if (uiState.searchQuery) {
     filtered = filtered.filter(
       (bookmark) =>
-        bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
-        bookmark.url?.toLowerCase().includes(uiState.searchQuery)
+        bookmark.title
+          ?.toLowerCase()
+          .includes(uiState.searchQuery.toLowerCase()) ||
+        bookmark.url?.toLowerCase().includes(uiState.searchQuery.toLowerCase())
     )
   }
-  renderBookmarks(filtered, elements)
+
+  // Render based on viewMode
+  if (uiState.viewMode === "tree") {
+    renderTreeView(bookmarkTreeNodes, elements)
+  } else {
+    renderBookmarks(filtered, elements)
+  }
+
   toggleFolderButtons(elements)
   saveUIState()
 }
@@ -229,6 +242,204 @@ function renderBookmarks(bookmarksList, elements) {
   setupBookmarkActionListeners(elements)
 }
 
+function renderTreeView(nodes, elements, depth = 0) {
+  const language = localStorage.getItem("appLanguage") || "en"
+  const fragment = document.createDocumentFragment()
+
+  // Early return for empty or invalid nodes
+  if (!nodes || !Array.isArray(nodes) || nodes.length === 0) {
+    console.warn("No nodes to render in renderTreeView", { nodes, depth })
+    return fragment
+  }
+
+  const selectAllDiv = document.createElement("div")
+  selectAllDiv.className = "select-all"
+  selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
+  fragment.appendChild(selectAllDiv)
+
+  nodes.forEach((node) => {
+    // Log node for debugging
+    console.log("Processing node:", {
+      id: node.id,
+      title: node.title,
+      url: node.url,
+      parentId: node.parentId,
+      isFolder: !!node.children,
+      depth,
+    })
+
+    // Ensure folder title is valid
+    const folderTitle =
+      node.title && node.title.trim() !== "" ? node.title : `Folder ${node.id}` // Fallback to unique ID-based title
+
+    const matchesSearch = uiState.searchQuery
+      ? node.title?.toLowerCase().includes(uiState.searchQuery.toLowerCase()) ||
+        node.url?.toLowerCase().includes(uiState.searchQuery.toLowerCase())
+      : true
+
+    // Render bookmark if it matches search and folder filters
+    if (
+      node.url &&
+      matchesSearch &&
+      (uiState.selectedFolderId === "" ||
+        isInFolder(node, uiState.selectedFolderId))
+    ) {
+      console.log("Rendering bookmark:", {
+        id: node.id,
+        title: node.title,
+        url: node.url,
+        matchesSearch,
+        isInFolder: isInFolder(node, uiState.selectedFolderId),
+        selectedFolderId: uiState.selectedFolderId,
+      })
+      fragment.appendChild(createBookmarkElement(node, depth))
+    }
+
+    // Render folder and its children
+    if (node.children && Array.isArray(node.children)) {
+      const isCollapsed = uiState.collapsedFolders.has(node.id)
+      const folderMatchesSearch = uiState.searchQuery
+        ? folderTitle.toLowerCase().includes(uiState.searchQuery.toLowerCase())
+        : true
+      const folderMatchesFolder = uiState.selectedFolderId
+        ? node.id === uiState.selectedFolderId ||
+          isAncestorOf(node, uiState.selectedFolderId) ||
+          isInFolder(
+            { id: node.id, parentId: node.parentId },
+            uiState.selectedFolderId
+          )
+        : true
+      const hasMatchingChildren = node.children.some((child) => {
+        const childMatches = child.url
+          ? (uiState.searchQuery
+              ? child.title
+                  ?.toLowerCase()
+                  .includes(uiState.searchQuery.toLowerCase()) ||
+                child.url
+                  ?.toLowerCase()
+                  .includes(uiState.searchQuery.toLowerCase())
+              : true) &&
+            (uiState.selectedFolderId
+              ? isInFolder(child, uiState.selectedFolderId)
+              : true)
+          : child.children?.some((subChild) =>
+              uiState.searchQuery
+                ? subChild.title
+                    ?.toLowerCase()
+                    .includes(uiState.searchQuery.toLowerCase()) ||
+                  subChild.url
+                    ?.toLowerCase()
+                    .includes(uiState.searchQuery.toLowerCase())
+                : true
+            )
+        console.log("Child check:", {
+          childId: child.id,
+          childTitle: child.title,
+          childUrl: child.url,
+          childMatches,
+          isFolder: !!child.children,
+        })
+        return childMatches
+      })
+
+      // Show folder if it matches search, is in the selected folder hierarchy, or has matching children
+      if (folderMatchesSearch || folderMatchesFolder || hasMatchingChildren) {
+        console.log("Rendering folder:", {
+          id: node.id,
+          title: folderTitle,
+          isCollapsed,
+          folderMatchesSearch,
+          folderMatchesFolder,
+          hasMatchingChildren,
+        })
+        const folderDiv = document.createElement("div")
+        folderDiv.className = "folder-item"
+        folderDiv.dataset.id = node.id
+        folderDiv.style.marginLeft = `${depth * 20}px`
+        folderDiv.innerHTML = `
+          <span class="folder-toggle">${isCollapsed ? "+" : "-"}</span>
+          <span class="folder-title">${folderTitle}</span>
+        `
+        fragment.appendChild(folderDiv)
+        if (!isCollapsed) {
+          fragment.appendChild(
+            renderTreeView(node.children, elements, depth + 1)
+          )
+        }
+      }
+    }
+  })
+
+  elements.folderListDiv.innerHTML = ""
+  elements.folderListDiv.appendChild(fragment)
+
+  // Add event listeners for folder toggle
+  document.querySelectorAll(".folder-toggle").forEach((toggle) => {
+    toggle.addEventListener("click", (e) => {
+      const folderId = e.target.parentElement.dataset.id
+      if (uiState.collapsedFolders.has(folderId)) {
+        uiState.collapsedFolders.delete(folderId)
+        e.target.textContent = "-"
+      } else {
+        uiState.collapsedFolders.add(folderId)
+        e.target.textContent = "+"
+      }
+      console.log("Folder toggle:", {
+        folderId,
+        isCollapsed: uiState.collapsedFolders.has(folderId),
+      })
+      renderFilteredBookmarks(uiState.bookmarkTree, elements)
+      saveUIState()
+    })
+  })
+
+  attachSelectAllListener(elements)
+  attachDropdownListeners(elements)
+  setupBookmarkActionListeners(elements)
+
+  return fragment
+}
+
+function createBookmarkElement(bookmark, depth = 0) {
+  const language = localStorage.getItem("appLanguage") || "en"
+  let favicon
+  try {
+    favicon = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(
+      bookmark.url
+    )}`
+  } catch (error) {
+    console.error("Error generating favicon URL for", bookmark.url, error)
+    favicon = "./images/default-favicon.png"
+  }
+  const div = document.createElement("div")
+  div.className = "bookmark-item"
+  div.style.marginLeft = `${depth * 20}px`
+  div.innerHTML = `
+    <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${
+    uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
+  } style="display: ${uiState.checkboxesVisible ? "inline-block" : "none"}">
+    <img src="${favicon}" alt="favicon" class="favicon">
+    <a href="${bookmark.url}" target="_blank" class="link">${
+    bookmark.title || bookmark.url
+  }</a>
+    <div class="dropdown-btn-group">
+      <button class="dropdown-btn" aria-label="Bookmark options">⋮</button>
+      <div class="dropdown-menu hidden">
+        <button class="menu-item add-to-folder" data-id="${bookmark.id}">${
+    translations[language].addToFolderOption
+  }</button>
+        <button class="menu-item delete-btn" data-id="${bookmark.id}">${
+    translations[language].deleteBookmarkOption
+  }</button>
+        <button class="menu-item rename-btn" data-id="${bookmark.id}">${
+    translations[language].renameBookmarkOption
+  }</button>
+      </div>
+    </div>
+  `
+  return div
+}
+
 function sortBookmarks(bookmarksList, sortType) {
   let sorted = [...bookmarksList]
   switch (sortType) {
@@ -272,47 +483,6 @@ function findParentFolder(bookmarkId, nodes) {
     }
   }
   return null
-}
-
-function createBookmarkElement(bookmark) {
-  const language = localStorage.getItem("appLanguage") || "en"
-
-  const domain = new URL(bookmark.url).hostname
-
-  const div = document.createElement("div")
-  div.className = "bookmark-item"
-  let favicon
-  try {
-    favicon = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(
-      bookmark.url
-    )}`
-  } catch (error) {
-    console.error("Error generating favicon URL for", bookmark.url, error)
-  }
-  div.innerHTML = `
-    <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${
-    uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
-  } style="display: ${uiState.checkboxesVisible ? "inline-block" : "none"}">
-    <img src="${favicon}" alt="favicon" class="favicon">
-    <a href="${bookmark.url}" target="_blank" class="link">${
-    bookmark.title || bookmark.url
-  }</a>
-    <div class="dropdown-btn-group">
-      <button class="dropdown-btn" aria-label="Bookmark options">⋮</button>
-      <div class="dropdown-menu hidden">
-        <button class="menu-item add-to-folder" data-id="${bookmark.id}">${
-    translations[language].addToFolderOption
-  }</button>
-        <button class="menu-item delete-btn" data-id="${bookmark.id}">${
-    translations[language].deleteBookmarkOption
-  }</button>
-        <button class="menu-item rename-btn" data-id="${bookmark.id}">${
-    translations[language].renameBookmarkOption
-  }</button>
-      </div>
-    </div>
-  `
-  return div
 }
 
 function attachSelectAllListener(elements) {

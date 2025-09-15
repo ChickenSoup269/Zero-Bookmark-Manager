@@ -26,6 +26,13 @@ export function setupUIControlListeners(elements) {
     localStorage.setItem("appFont", e.target.value)
   })
 
+  elements.viewSwitcher.addEventListener("change", (e) => {
+    uiState.viewMode = e.target.value
+    localStorage.setItem("appView", e.target.value)
+    renderFilteredBookmarks(uiState.bookmarkTree, elements)
+    saveUIState()
+  })
+
   elements.toggleCheckboxesButton.addEventListener("click", () => {
     uiState.checkboxesVisible = !uiState.checkboxesVisible
     const language = localStorage.getItem("appLanguage") || "en"

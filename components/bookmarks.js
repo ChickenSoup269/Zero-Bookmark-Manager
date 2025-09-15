@@ -16,9 +16,15 @@ import { renderFilteredBookmarks } from "./ui.js"
 export function getBookmarkTree(callback) {
   safeChromeBookmarksCall("getTree", [], (bookmarkTreeNodes) => {
     if (bookmarkTreeNodes) {
+      console.log(
+        "Bookmark Tree fetched:",
+        JSON.stringify(bookmarkTreeNodes, null, 2)
+      )
       setBookmarkTree(bookmarkTreeNodes)
       setBookmarks(flattenBookmarks(bookmarkTreeNodes))
       setFolders(getFolders(bookmarkTreeNodes))
+    } else {
+      console.error("Failed to fetch bookmark tree")
     }
     callback(bookmarkTreeNodes)
   })
@@ -37,20 +43,137 @@ export function getFolders(nodes) {
   let folderList = []
   nodes.forEach((node) => {
     if (node.children) {
-      folderList.push({ id: node.id, title: node.title || "Unnamed Folder" })
+      folderList.push({
+        id: node.id,
+        title:
+          node.title && node.title.trim() !== ""
+            ? node.title
+            : `Folder ${node.id}`,
+      })
       folderList = folderList.concat(getFolders(node.children))
     }
   })
+  console.log("Folders extracted:", folderList)
   return folderList
 }
 
-export function isInFolder(bookmark, folderId) {
-  let node = bookmark
-  while (node && node.parentId) {
-    if (node.parentId === folderId) return true
-    node = uiState.bookmarks.find((b) => b.id === node.parentId) || null
-    if (!node) break
+export function isInFolder(
+  bookmark,
+  folderId,
+  bookmarkTree = uiState.bookmarkTree
+) {
+  if (!bookmark || !bookmark.parentId || !folderId) {
+    console.log(
+      "isInFolder: Allowing node due to no folderId or invalid bookmark",
+      {
+        bookmarkId: bookmark?.id,
+        folderId,
+      }
+    )
+    return true // Allow all nodes when no folder is selected
   }
+  if (bookmark.parentId === folderId) {
+    console.log("isInFolder: Direct match", {
+      bookmarkId: bookmark.id,
+      folderId,
+    })
+    return true
+  }
+
+  // Find a node by ID in the bookmark tree
+  function findNode(nodes, id) {
+    for (const node of nodes) {
+      if (node.id === id) return node
+      if (node.children) {
+        const found = findNode(node.children, id)
+        if (found) return found
+      }
+    }
+    return null
+  }
+
+  // Traverse up the parent chain
+  let currentId = bookmark.parentId
+  while (currentId) {
+    const parentNode = findNode(bookmarkTree, currentId)
+    console.log("isInFolder: Checking parent", {
+      bookmarkId: bookmark.id,
+      currentId,
+      parentNodeId: parentNode?.id,
+      folderId,
+    })
+    if (!parentNode) break
+    if (parentNode.id === folderId) {
+      console.log("isInFolder: Found match in parent chain", {
+        bookmarkId: bookmark.id,
+        folderId,
+      })
+      return true
+    }
+    currentId = parentNode.parentId
+  }
+  console.log("isInFolder: No match found", {
+    bookmarkId: bookmark.id,
+    folderId,
+  })
+  return false
+}
+
+export function isAncestorOf(
+  folder,
+  selectedFolderId,
+  bookmarkTree = uiState.bookmarkTree
+) {
+  if (!folder || !selectedFolderId || !bookmarkTree) {
+    console.log("isAncestorOf: Invalid inputs", {
+      folderId: folder?.id,
+      selectedFolderId,
+    })
+    return false
+  }
+
+  // Find a node by ID in the bookmark tree
+  function findNode(nodes, id) {
+    for (const node of nodes) {
+      if (node.id === id) return node
+      if (node.children) {
+        const found = findNode(node.children, id)
+        if (found) return found
+      }
+    }
+    return null
+  }
+
+  const selectedNode = findNode(bookmarkTree, selectedFolderId)
+  if (!selectedNode) {
+    console.log("isAncestorOf: Selected node not found", { selectedFolderId })
+    return false
+  }
+
+  // Traverse up the parent chain of the selected folder
+  let currentId = selectedNode.parentId
+  while (currentId) {
+    const parentNode = findNode(bookmarkTree, currentId)
+    console.log("isAncestorOf: Checking parent", {
+      folderId: folder.id,
+      currentId,
+      parentNodeId: parentNode?.id,
+      selectedFolderId,
+    })
+    if (!parentNode) break
+    if (parentNode.id === folder.id) {
+      console.log("isAncestorOf: Found ancestor", {
+        folderId: folder.id,
+        selectedFolderId,
+      })
+      return true
+    }
+    currentId = parentNode.parentId
+  }
+  console.log("isAncestorOf: No ancestor found", {
+    folderId: folder.id,
+    selectedFolderId,
+  })
   return false
 }
 

@@ -8,7 +8,9 @@ export const uiState = {
   sortType: "default",
   checkboxesVisible: false,
   currentBookmarkId: null,
+  viewMode: "flat",
   selectedBookmarks: new Set(),
+  collapsedFolders: new Set(), // Thêm để theo dõi thư mục thu gọn
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -35,6 +37,8 @@ export function saveUIState() {
       searchQuery: uiState.searchQuery,
       selectedFolderId: uiState.selectedFolderId,
       sortType: uiState.sortType,
+      viewMode: uiState.viewMode,
+      collapsedFolders: Array.from(uiState.collapsedFolders), // Chuyển Set thành Array để lưu
     },
     checkboxesVisible: uiState.checkboxesVisible,
   }

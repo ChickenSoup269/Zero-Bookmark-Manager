@@ -4,8 +4,9 @@ import {
   renderFilteredBookmarks,
 } from "./components/ui.js"
 import { getBookmarkTree } from "./components/bookmarks.js"
-import { translations, debounce } from "./components/utils.js" // Added debounce import
+import { translations, debounce } from "./components/utils.js"
 import { setupEventListeners } from "./components/events.js"
+import { uiState } from "./components/state.js"
 
 document.addEventListener("DOMContentLoaded", () => {
   // DOM references
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     languageSwitcher: document.getElementById("language-switcher"),
     themeSwitcher: document.getElementById("theme-switcher"),
     fontSwitcher: document.getElementById("font-switcher"),
+    viewSwitcher: document.getElementById("view-switcher"), // Added view-switcher
     renamePopup: document.getElementById("rename-popup"),
     renameInput: document.getElementById("rename-input"),
     renameSave: document.getElementById("rename-save"),
@@ -78,19 +80,29 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.importBookmarksOption = importBookmarksOption
     }
 
-    // Initialize theme and font
+    // Initialize theme, font, and view
     const savedTheme = localStorage.getItem("appTheme") || "system"
     elements.themeSwitcher.value = savedTheme
-    updateTheme(elements, savedTheme)
+    if (typeof updateTheme === "function") {
+      updateTheme(elements, savedTheme)
+    } else {
+      console.error(
+        "updateTheme function is not defined. Check imports in main.js."
+      )
+    }
 
     const savedFont = localStorage.getItem("appFont") || "normal"
     document.body.classList.add(`font-${savedFont}`)
     elements.fontSwitcher.value = savedFont
 
+    const savedView = localStorage.getItem("appView") || "flat"
+    elements.viewSwitcher.value = savedView
+    uiState.viewMode = savedView
+
     // Fetch fresh bookmark data first
     getBookmarkTree((bookmarkTreeNodes) => {
       if (bookmarkTreeNodes) {
-        // Restore UI state (non-critical) and render after fresh data
+        // Restore UI state and render after fresh data
         restoreUIState(elements, () => {
           renderFilteredBookmarks(bookmarkTreeNodes, elements)
           setupBookmarkChangeListeners(elements)
@@ -114,11 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           console.error("Failed to refresh bookmark tree on change")
           const language = localStorage.getItem("appLanguage") || "en"
-          showCustomPopup(
-            translations[language].errorUnexpected,
-            "error",
-            false
-          )
+          // Placeholder for showCustomPopup
+          console.error(translations[language].errorUnexpected)
         }
       })
     }, 500)
