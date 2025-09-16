@@ -1,3 +1,4 @@
+// components/ui.js
 import { translations } from "./utils.js"
 import { flattenBookmarks, getFolders, isInFolder } from "./bookmarks.js"
 import {
@@ -97,14 +98,21 @@ export function restoreUIState(elements, callback) {
       uiState.sortType = data.uiState.sortType || "default"
       uiState.viewMode = data.uiState.viewMode || "flat"
       uiState.collapsedFolders = new Set(data.uiState.collapsedFolders || [])
+      // Loại bỏ root và folder mặc định khỏi collapsedFolders
+      ;["0", "1", "2"].forEach((id) => {
+        if (uiState.collapsedFolders.has(id)) {
+          uiState.collapsedFolders.delete(id)
+          console.log(`Removed folder ${id} from collapsedFolders`)
+        }
+      })
     }
     uiState.checkboxesVisible = data.checkboxesVisible || false
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
     elements.languageSwitcher.value = savedLanguage
     elements.viewSwitcher.value = uiState.viewMode
-    elements.editInNewTabOption = document.getElementById(
-      "edit-in-new-tab-option"
-    )
+    elements.folderFilter.value = uiState.selectedFolderId
+    elements.sortFilter.value = uiState.sortType
+    elements.searchInput.value = uiState.searchQuery
     updateUILanguage(elements, savedLanguage)
     elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
       ? translations[savedLanguage].hideCheckboxes
@@ -158,9 +166,10 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     )
   }
 
-  // Render based on viewMode
   if (uiState.viewMode === "tree") {
-    renderTreeView(bookmarkTreeNodes, elements)
+    // Start from root's children to skip untitled root
+    const rootChildren = bookmarkTreeNodes[0]?.children || []
+    renderTreeView(rootChildren, elements)
   } else {
     renderBookmarks(filtered, elements)
   }
@@ -246,156 +255,138 @@ function renderTreeView(nodes, elements, depth = 0) {
   const language = localStorage.getItem("appLanguage") || "en"
   const fragment = document.createDocumentFragment()
 
-  // Early return for empty or invalid nodes
   if (!nodes || !Array.isArray(nodes) || nodes.length === 0) {
     console.warn("No nodes to render in renderTreeView", { nodes, depth })
     return fragment
   }
 
-  const selectAllDiv = document.createElement("div")
-  selectAllDiv.className = "select-all"
-  selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
-  fragment.appendChild(selectAllDiv)
+  // Clear container + thêm select-all chỉ khi ở cấp root
+  if (depth === 0) {
+    elements.folderListDiv.innerHTML = ""
 
-  nodes.forEach((node) => {
-    // Log node for debugging
-    console.log("Processing node:", {
-      id: node.id,
-      title: node.title,
-      url: node.url,
-      parentId: node.parentId,
-      isFolder: !!node.children,
-      depth,
+    const selectAllDiv = document.createElement("div")
+    selectAllDiv.className = "select-all"
+    selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
+    fragment.appendChild(selectAllDiv)
+
+    // Sort lại Other Bookmarks: folder trước, bookmark sau (chỉ áp dụng cho ID '1' như trước)
+    nodes = nodes.map((n) => {
+      if (n.id === "1" && n.children) {
+        n.children.sort((a, b) => {
+          const aIsFolder = !!a.children
+          const bIsFolder = !!b.children
+          if (aIsFolder && !bIsFolder) return -1
+          if (!aIsFolder && bIsFolder) return 1
+          return a.title.localeCompare(b.title)
+        })
+      }
+      return n
     })
+  }
 
-    // Ensure folder title is valid
+  // Sắp xếp node tại cấp độ hiện tại: folder trước, bookmark sau
+  const sortedNodes = [...nodes].sort((a, b) => {
+    const aIsFolder = !!a.children
+    const bIsFolder = !!b.children
+    if (aIsFolder && !bIsFolder) return -1
+    if (!aIsFolder && bIsFolder) return 1
+    return a.title.localeCompare(b.title) // Sắp xếp alphabet trong cùng loại
+  })
+
+  sortedNodes.forEach((node) => {
     const folderTitle =
-      node.title && node.title.trim() !== "" ? node.title : `Folder ${node.id}` // Fallback to unique ID-based title
+      node.title && node.title.trim() !== "" ? node.title : `Folder ${node.id}`
 
     const matchesSearch = uiState.searchQuery
       ? node.title?.toLowerCase().includes(uiState.searchQuery.toLowerCase()) ||
         node.url?.toLowerCase().includes(uiState.searchQuery.toLowerCase())
       : true
 
-    // Render bookmark if it matches search and folder filters
-    if (
-      node.url &&
-      matchesSearch &&
-      (uiState.selectedFolderId === "" ||
-        isInFolder(node, uiState.selectedFolderId))
-    ) {
-      console.log("Rendering bookmark:", {
-        id: node.id,
-        title: node.title,
-        url: node.url,
-        matchesSearch,
-        isInFolder: isInFolder(node, uiState.selectedFolderId),
-        selectedFolderId: uiState.selectedFolderId,
-      })
-      fragment.appendChild(createBookmarkElement(node, depth))
+    const matchesFolder = uiState.selectedFolderId
+      ? isInFolder(node, uiState.selectedFolderId) ||
+        isAncestorOf(node, uiState.selectedFolderId)
+      : true
+
+    // Nếu là bookmark
+    if (node.url && matchesSearch && matchesFolder) {
+      const bookmarkElement = createBookmarkElement(node, depth)
+      bookmarkElement.style.marginLeft = `${depth * 5}px`
+      fragment.appendChild(bookmarkElement)
     }
 
-    // Render folder and its children
+    // Nếu là folder
     if (node.children && Array.isArray(node.children)) {
-      const isCollapsed = uiState.collapsedFolders.has(node.id)
-      const folderMatchesSearch = uiState.searchQuery
-        ? folderTitle.toLowerCase().includes(uiState.searchQuery.toLowerCase())
-        : true
-      const folderMatchesFolder = uiState.selectedFolderId
-        ? node.id === uiState.selectedFolderId ||
-          isAncestorOf(node, uiState.selectedFolderId) ||
-          isInFolder(
-            { id: node.id, parentId: node.parentId },
-            uiState.selectedFolderId
-          )
-        : true
+      let isCollapsed = uiState.collapsedFolders.has(node.id)
+
       const hasMatchingChildren = node.children.some((child) => {
-        const childMatches = child.url
-          ? (uiState.searchQuery
-              ? child.title
-                  ?.toLowerCase()
-                  .includes(uiState.searchQuery.toLowerCase()) ||
-                child.url
-                  ?.toLowerCase()
-                  .includes(uiState.searchQuery.toLowerCase())
-              : true) &&
-            (uiState.selectedFolderId
-              ? isInFolder(child, uiState.selectedFolderId)
-              : true)
-          : child.children?.some((subChild) =>
-              uiState.searchQuery
-                ? subChild.title
-                    ?.toLowerCase()
-                    .includes(uiState.searchQuery.toLowerCase()) ||
-                  subChild.url
-                    ?.toLowerCase()
-                    .includes(uiState.searchQuery.toLowerCase())
-                : true
-            )
-        console.log("Child check:", {
-          childId: child.id,
-          childTitle: child.title,
-          childUrl: child.url,
-          childMatches,
-          isFolder: !!child.children,
-        })
-        return childMatches
+        const childMatchesSearch = uiState.searchQuery
+          ? child.title
+              ?.toLowerCase()
+              .includes(uiState.searchQuery.toLowerCase()) ||
+            child.url?.toLowerCase().includes(uiState.searchQuery.toLowerCase())
+          : true
+        const childMatchesFolder = uiState.selectedFolderId
+          ? isInFolder(child, uiState.selectedFolderId)
+          : true
+        return childMatchesSearch && childMatchesFolder
       })
 
-      // Show folder if it matches search, is in the selected folder hierarchy, or has matching children
-      if (folderMatchesSearch || folderMatchesFolder || hasMatchingChildren) {
-        console.log("Rendering folder:", {
-          id: node.id,
-          title: folderTitle,
-          isCollapsed,
-          folderMatchesSearch,
-          folderMatchesFolder,
-          hasMatchingChildren,
-        })
+      if (matchesSearch || matchesFolder || hasMatchingChildren) {
         const folderDiv = document.createElement("div")
         folderDiv.className = "folder-item"
         folderDiv.dataset.id = node.id
-        folderDiv.style.marginLeft = `${depth * 20}px`
-        folderDiv.innerHTML = `
-          <span class="folder-toggle">${isCollapsed ? "+" : "-"}</span>
-          <span class="folder-title">${folderTitle}</span>
-        `
+        folderDiv.style.marginLeft = `${depth * 5}px`
+
+        const toggleHTML = `<span class="folder-toggle" style="cursor: pointer; margin-right: 5px;">${
+          isCollapsed ? "+" : "-"
+        }</span>`
+
+        folderDiv.innerHTML = `${toggleHTML}<span class="folder-title">${folderTitle}</span>`
         fragment.appendChild(folderDiv)
+
+        const childrenContainer = document.createElement("div")
+        childrenContainer.className = "folder-children"
+        childrenContainer.style.marginLeft = `${(depth + 1) * 5}px`
+        childrenContainer.style.display = isCollapsed ? "none" : "block"
+
         if (!isCollapsed) {
-          fragment.appendChild(
-            renderTreeView(node.children, elements, depth + 1)
+          const childrenFragment = renderTreeView(
+            node.children,
+            elements,
+            depth + 1
           )
+          childrenContainer.appendChild(childrenFragment)
         }
+
+        fragment.appendChild(childrenContainer)
       }
     }
   })
 
-  elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.appendChild(fragment)
+  if (depth === 0) {
+    elements.folderListDiv.appendChild(fragment)
 
-  // Add event listeners for folder toggle
-  document.querySelectorAll(".folder-toggle").forEach((toggle) => {
-    toggle.addEventListener("click", (e) => {
-      const folderId = e.target.parentElement.dataset.id
-      if (uiState.collapsedFolders.has(folderId)) {
-        uiState.collapsedFolders.delete(folderId)
-        e.target.textContent = "-"
-      } else {
-        uiState.collapsedFolders.add(folderId)
-        e.target.textContent = "+"
+    document.querySelectorAll(".folder-toggle").forEach((toggle) => {
+      toggle.onclick = (e) => {
+        const folderId = e.target.parentElement.dataset.id
+        const childrenContainer = e.target.parentElement.nextElementSibling
+
+        if (uiState.collapsedFolders.has(folderId)) {
+          uiState.collapsedFolders.delete(folderId)
+          e.target.textContent = "-"
+          if (childrenContainer) childrenContainer.style.display = "block"
+        } else {
+          uiState.collapsedFolders.add(folderId)
+          e.target.textContent = "+"
+          if (childrenContainer) childrenContainer.style.display = "none"
+        }
       }
-      console.log("Folder toggle:", {
-        folderId,
-        isCollapsed: uiState.collapsedFolders.has(folderId),
-      })
-      renderFilteredBookmarks(uiState.bookmarkTree, elements)
-      saveUIState()
     })
-  })
 
-  attachSelectAllListener(elements)
-  attachDropdownListeners(elements)
-  setupBookmarkActionListeners(elements)
+    attachSelectAllListener(elements)
+    attachDropdownListeners(elements)
+    setupBookmarkActionListeners(elements)
+  }
 
   return fragment
 }

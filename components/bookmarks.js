@@ -63,13 +63,10 @@ export function isInFolder(
   bookmarkTree = uiState.bookmarkTree
 ) {
   if (!bookmark || !bookmark.parentId || !folderId) {
-    console.log(
-      "isInFolder: Allowing node due to no folderId or invalid bookmark",
-      {
-        bookmarkId: bookmark?.id,
-        folderId,
-      }
-    )
+    console.log("isInFolder: Allowing node due to invalid inputs", {
+      bookmarkId: bookmark?.id,
+      folderId,
+    })
     return true // Allow all nodes when no folder is selected
   }
   if (bookmark.parentId === folderId) {
@@ -80,7 +77,6 @@ export function isInFolder(
     return true
   }
 
-  // Find a node by ID in the bookmark tree
   function findNode(nodes, id) {
     for (const node of nodes) {
       if (node.id === id) return node
@@ -92,7 +88,6 @@ export function isInFolder(
     return null
   }
 
-  // Traverse up the parent chain
   let currentId = bookmark.parentId
   while (currentId) {
     const parentNode = findNode(bookmarkTree, currentId)
@@ -118,7 +113,6 @@ export function isInFolder(
   })
   return false
 }
-
 export function isAncestorOf(
   folder,
   selectedFolderId,
@@ -132,7 +126,6 @@ export function isAncestorOf(
     return false
   }
 
-  // Find a node by ID in the bookmark tree
   function findNode(nodes, id) {
     for (const node of nodes) {
       if (node.id === id) return node
@@ -150,7 +143,6 @@ export function isAncestorOf(
     return false
   }
 
-  // Traverse up the parent chain of the selected folder
   let currentId = selectedNode.parentId
   while (currentId) {
     const parentNode = findNode(bookmarkTree, currentId)
