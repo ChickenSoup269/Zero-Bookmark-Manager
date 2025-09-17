@@ -81,6 +81,13 @@ body {
     color var(--transition-normal);
 }
 
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
 /* Container */
 .container {
   padding: var(--spacing-md);
@@ -123,25 +130,25 @@ body {
 
 .sticky-search {
   position: sticky;
-  top: -4px;
+  top: 1px;
   background-color: transparent;
   z-index: 2;
   padding: var(--spacing-xs) 0;
-  box-shadow: var(--shadow-sm);
   transition: background-color var(--transition-normal);
+  border-radius: 10px;
 }
 
 /* Form elements */
 .input {
   width: 100%;
   padding: 0.8rem 2.1rem 0.8rem 0.8rem;
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--text-primary);
   border-radius: var(--border-radius);
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  color: var(--accent-color);
   font-size: 0.8rem;
   transition: all var(--transition-fast);
-  outline: none;
+  box-shadow: var(--shadow-lg);
 }
 
 .input:focus {
@@ -326,7 +333,7 @@ body {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 0.75rem;
   padding: var(--spacing-xs);
@@ -335,7 +342,7 @@ body {
 }
 
 .button.clear:hover {
-  color: var(--text-primary);
+  color: var(--focus-outline);
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -406,8 +413,10 @@ body {
 
 .bookmark-item:hover,
 .folder-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
   background-color: rgba(255, 255, 255, 0.05);
-  transform: translateY(-1.5px);
+  z-index: 100;
 }
 
 [data-theme="light"] .bookmark-item:hover,
@@ -867,8 +876,8 @@ body {
 .settings-container {
   position: fixed;
   top: 10px;
-  right: 10px;
-  z-index: 1000;
+  right: 5px;
+  z-index: 0;
 }
 
 .button.settings {
@@ -876,10 +885,10 @@ body {
   color: var(--text-primary);
   padding: 8px 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-fast);
   cursor: pointer;
   z-index: 1;
-  margin-left: var(--spacing-sm);
 }
 
 .button.settings:hover {
