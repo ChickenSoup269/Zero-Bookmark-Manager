@@ -5,14 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zero Bookmark Manager</title>
-    <link rel="stylesheet" href="styles2.css">
+    <link rel="stylesheet" href="./styles/styles2.css">
+    <link rel="stylesheet" href="./styles/chat.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
     <div class="container">
-        <div class="header">
+        <div class="sidebar">
             <img src="./images/logo.png" alt="logo" class="logo">
+            <div class="controls">
+                <select id="folder-filter" class="select">
+                    <option value="">All Bookmarks</option>
+                </select>
+                <select id="sort-filter" class="select">
+                    <option value="default">Sort: Default</option>
+                    <option value="new">New to Old</option>
+                    <option value="old">Old to New</option>
+                    <option value="last-opened">By Last Opened</option>
+                    <option value="a-z">A to Z</option>
+                    <option value="z-a">Z to A</option>
+                </select>
+                <div class="control-buttons">
+                    <button id="create-folder" class="button create">Create Folder</button>
+                    <button id="rename-folder" class="button rename-folder hidden">Rename Folder</button>
+                    <button id="add-to-folder" class="button add hidden">Add to Folder</button>
+                    <button id="delete-folder" class="button delete-folder hidden">Delete Folder</button>
+                    <button id="delete-bookmarks-button" class="button delete-bookmarks hidden">Delete
+                        Bookmarks</button>
+                </div>
+            </div>
+            <div class="bottom-controls">
+                <div class="select-all">
+                    <input type="checkbox" id="select-all">
+                    <label for="select-all">Select All</label>
+                </div>
+                <button id="toggle-checkboxes" class="button toggle small">Show Checkboxes</button>
+            </div>
+            <div class="search-container">
+                <input type="text" id="search" placeholder="Search bookmarks..." class="input">
+                <button id="clear-search" class="button clear">✖</button>
+            </div>
+        </div>
+        <div class="header">
+            <button id="toggle-sidebar" class="button toggle-sidebar" title="Toggle Sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
             <div class="settings-container">
                 <button id="settings-button" class="button settings" title="Settings">⋮</button>
                 <div id="settings-menu" class="dropdown-menu-2 hidden">
@@ -40,38 +78,7 @@
                 </div>
             </div>
         </div>
-        <div class="controls">
-            <select id="folder-filter" class="select">
-                <option value="">All Bookmarks</option>
-            </select>
-            <select id="sort-filter" class="select">
-                <option value="default">Sort: Default</option>
-                <option value="new">New to Old</option>
-                <option value="old">Old to New</option>
-                <option value="last-opened">By Last Opened</option>
-                <option value="a-z">A to Z</option>
-                <option value="z-a">Z to A</option>
-            </select>
-            <div class="control-buttons">
-                <button id="create-folder" class="button create">Create Folder</button>
-                <button id="rename-folder" class="button rename-folder hidden">Rename Folder</button>
-                <button id="add-to-folder" class="button add hidden">Add to Folder</button>
-                <button id="delete-folder" class="button delete-folder hidden">Delete Folder</button>
-                <button id="delete-bookmarks-button" class="button delete-bookmarks hidden">Delete Bookmarks</button>
-            </div>
-        </div>
         <div id="bookmark-count" class="count">Total Bookmarks: 0</div>
-        <div class="bottom-controls">
-            <div class="select-all">
-                <input type="checkbox" id="select-all">
-                <label for="select-all">Select All</label>
-            </div>
-            <button id="toggle-checkboxes" class="button toggle small">Show Checkboxes</button>
-        </div>
-        <div class="search-container sticky-search">
-            <input type="text" id="search" placeholder="Search bookmarks..." class="input">
-            <button id="clear-search" class="button clear">✖</button>
-        </div>
         <div id="folder-list" class="folder-list">
             <!-- Bookmark cards will be dynamically inserted here -->
         </div>
@@ -147,8 +154,27 @@
         <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
             <i class="fas fa-caret-up"></i>
         </button>
+        <button id="chat-toggle" class="button chat-toggle" title="Open Chat" aria-label="Open Chat">
+            <i class="fas fa-comment"></i>
+        </button>
+        <div id="chatbox" class="chatbox hidden" role="dialog" aria-labelledby="chatbox-title">
+            <div class="chatbox-content">
+                <h3 id="chatbox-title">Chat with Us</h3>
+                <div class="chatbox-messages" id="chatbox-messages">
+                    <!-- Messages will be dynamically inserted here -->
+                </div>
+                <div class="chatbox-input-container">
+                    <input type="text" id="chat-input" class="input" placeholder="Type your message..."
+                        aria-label="Chat input" maxlength="255">
+                    <button id="chat-send" class="button send">Send</button>
+                    <button id="chat-clear" class="button clear">✖</button>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="main.js" type="module"></script>
+    <script src="./components/sidebar.js" type="module"></script>
+    <script src="./components/chat.js" type="module"></script>
 </body>
 
 </html>

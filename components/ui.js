@@ -263,7 +263,7 @@ function renderTreeView(nodes, elements, depth = 0) {
   // Clear container + thêm select-all chỉ khi ở cấp root
   if (depth === 0) {
     elements.folderListDiv.innerHTML = ""
-
+    elements.folderListDiv.classList.add("tree-view")
     const selectAllDiv = document.createElement("div")
     selectAllDiv.className = "select-all"
     selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"

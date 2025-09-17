@@ -1,4 +1,3 @@
-// ./components/state.js
 export const uiState = {
   bookmarks: [],
   bookmarkTree: [],
@@ -8,9 +7,9 @@ export const uiState = {
   sortType: "default",
   checkboxesVisible: false,
   currentBookmarkId: null,
-  viewMode: "flat",
+  viewMode: "flat", // flat | tree
   selectedBookmarks: new Set(),
-  collapsedFolders: new Set(), // Thêm để theo dõi thư mục thu gọn
+  collapsedFolders: new Set(),
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -38,7 +37,7 @@ export function saveUIState() {
       selectedFolderId: uiState.selectedFolderId,
       sortType: uiState.sortType,
       viewMode: uiState.viewMode,
-      collapsedFolders: Array.from(uiState.collapsedFolders), // Chuyển Set thành Array để lưu
+      collapsedFolders: Array.from(uiState.collapsedFolders),
     },
     checkboxesVisible: uiState.checkboxesVisible,
   }
@@ -46,5 +45,20 @@ export function saveUIState() {
     if (chrome.runtime.lastError) {
       console.error("Error saving state:", chrome.runtime.lastError)
     }
+  })
+}
+
+export function loadUIState(callback) {
+  chrome.storage.local.get(["uiState", "checkboxesVisible"], (result) => {
+    if (result.uiState) {
+      uiState.searchQuery = result.uiState.searchQuery || ""
+      uiState.selectedFolderId = result.uiState.selectedFolderId || ""
+      uiState.sortType = result.uiState.sortType || "default"
+      uiState.viewMode = result.uiState.viewMode || "flat"
+      uiState.collapsedFolders = new Set(result.uiState.collapsedFolders || [])
+    }
+    uiState.checkboxesVisible = result.checkboxesVisible || false
+
+    if (callback) callback()
   })
 }

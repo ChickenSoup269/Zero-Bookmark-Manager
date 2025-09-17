@@ -50,7 +50,7 @@ export function setupExportImportListeners(elements) {
               <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 7v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"></path>
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14,2 148, 20,8"></polyline>
+                <polyline points="14,2 14,8 20,8"></polyline>
               </svg>
             </div>
             <h3>JSON</h3>
@@ -69,6 +69,19 @@ export function setupExportImportListeners(elements) {
             <h3>HTML</h3>
             <p>${
               translations[language].htmlDescription || "Interactive web page"
+            }</p>
+          </div>
+          <div class="format-card" data-format="csv">
+            <div class="format-icon">
+              <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18V3H3z"></path>
+                <path d="M12 3v18"></path>
+                <path d="M3 12h18"></path>
+              </svg>
+            </div>
+            <h3>CSV</h3>
+            <p>${
+              translations[language].csvDescription || "Spreadsheet format"
             }</p>
           </div>
         </div>
@@ -904,6 +917,49 @@ export function setupExportImportListeners(elements) {
             link.click()
             document.body.removeChild(link)
             URL.revokeObjectURL(url)
+          } else if (exportChoice === "CSV") {
+            // CSV Export functionality
+            const allBookmarks = flattenBookmarks(bookmarkTreeNodes).filter(
+              (b) => b.url
+            )
+
+            // Create CSV headers
+            let csvContent =
+              "Title,URL,Date Added,Date Group Modified,Folder Path\n"
+
+            allBookmarks.forEach((bookmark) => {
+              // Get folder path
+              const folderPath = getFolderPath(
+                bookmarkTreeNodes,
+                bookmark.id || bookmark.parentId
+              )
+              const title = `"${(bookmark.title || "").replace(/"/g, '""')}"`
+              const url = `"${(bookmark.url || "").replace(/"/g, '""')}"`
+              const dateAdded =
+                includeCreationDates && bookmark.dateAdded
+                  ? `"${new Date(bookmark.dateAdded).toLocaleString()}"`
+                  : ""
+              const dateModified =
+                includeFolderModDates && bookmark.dateGroupModified
+                  ? `"${new Date(bookmark.dateGroupModified).toLocaleString()}"`
+                  : ""
+
+              csvContent += `${title},${url},${dateAdded},${dateModified},"${folderPath}"\n`
+            })
+
+            const blob = new Blob([csvContent], {
+              type: "text/csv;charset=utf-8;",
+            })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement("a")
+            link.href = url
+            link.download = `bookmarks_${
+              new Date().toISOString().split("T")[0]
+            }.csv`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(url)
           }
 
           // Reset button state
@@ -913,6 +969,13 @@ export function setupExportImportListeners(elements) {
           elements.settingsMenu.classList.add("hidden")
         })
       })
+
+    // Close popup when clicking outside
+    popup.addEventListener("click", (e) => {
+      if (e.target === popup) {
+        document.body.removeChild(popup)
+      }
+    })
 
     document.getElementById("cancelExport").addEventListener("click", () => {
       document.body.removeChild(popup)
@@ -951,7 +1014,7 @@ export function setupExportImportListeners(elements) {
       border-radius: 0.75rem;
       box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.25);
       width: 100%;
-      max-width: 310px;
+      max-width: 400px;
       max-height: 90vh;
       overflow-y: auto;
       animation: slideUp 0.3s ease-out;
@@ -1003,7 +1066,7 @@ export function setupExportImportListeners(elements) {
     
     .format-options {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
       gap: 0.5rem;
       margin-bottom: 0.2rem;
     }
@@ -1024,7 +1087,8 @@ export function setupExportImportListeners(elements) {
 
     .format-card p {
       margin: 0;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
+      line-height: 1.2;
     }
     
     .format-card:hover {
@@ -1053,7 +1117,7 @@ export function setupExportImportListeners(elements) {
     
     .format-card h3 {
       margin: 0 0 0.2rem;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
     }
     
@@ -1080,7 +1144,7 @@ export function setupExportImportListeners(elements) {
     
     .setting-toggle {
       flex-shrink: 0;
-      position: relative; /* Ensure toggle is positioned correctly */
+      position: relative;
     }
     
     .toggle-input {
@@ -1157,14 +1221,10 @@ export function setupExportImportListeners(elements) {
       background: #70a146;
       color: white;
     }
-    .btn-primary:hover {
-      transform: translateY(-1px);
-    }
     
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: var(--box-shadow);
-      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
     }
     
     .btn-primary:disabled {
@@ -1326,6 +1386,27 @@ export function setupExportImportListeners(elements) {
     input.click()
     elements.settingsMenu.classList.add("hidden")
   })
+}
+
+// Helper function to get folder path for CSV export
+function getFolderPath(bookmarkTreeNodes, bookmarkId) {
+  const getPath = (nodes, id, path = []) => {
+    for (const node of nodes) {
+      if (node.id === id && node.children) {
+        return [...path, node.title || "Unnamed Folder"].join(" / ")
+      }
+      if (node.children) {
+        const result = getPath(node.children, id, [
+          ...path,
+          node.title || "Unnamed Folder",
+        ])
+        if (result) return result
+      }
+    }
+    return path.join(" / ") || "Bookmarks"
+  }
+
+  return getPath(bookmarkTreeNodes, bookmarkId)
 }
 
 function importNonDuplicateBookmarks(bookmarksToImport, elements) {
