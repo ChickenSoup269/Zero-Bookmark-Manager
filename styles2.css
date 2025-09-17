@@ -81,6 +81,14 @@ body {
     color var(--transition-normal);
 }
 
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
 /* Container */
 .container {
   padding: var(--spacing-md);
@@ -110,9 +118,10 @@ body {
 /* Layout */
 .controls {
   display: flex;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-xs);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .search-container {
@@ -163,8 +172,8 @@ body {
   cursor: pointer;
   transition: all var(--transition-fast);
   outline: none;
-
-  min-width: 120px;
+  min-width: 150px;
+  height: 40px;
 }
 
 .select:focus {
@@ -179,25 +188,31 @@ body {
 }
 
 .control-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
+  display: flex;
+  gap: var(--spacing-md);
   justify-content: center;
-  margin: 0.5rem 0;
+  margin: var(--spacing-md) 0;
 }
 
 .control-buttons .button {
-  width: 100%;
-  padding: 0.6rem 0.2rem;
-  font-size: 0.9rem;
+  flex: 1; /* co giãn đều nhau */
+  min-width: 120px; /* chiều rộng tối thiểu */
+  padding: 0.8rem;
+  font-size: 1rem;
   border: none;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-md);
   cursor: pointer;
   font-weight: 500;
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.control-buttons .button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .button:focus-visible {
@@ -260,12 +275,13 @@ body {
   background-color: var(--accent-color);
   color: var(--bg-primary);
 }
+
 .button.rename-folder:hover,
 .delete-bookmarks:hover,
 .button.create:hover {
   background-color: var(--text-secondary);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .button.add {
@@ -275,8 +291,8 @@ body {
 
 .button.add:hover {
   background-color: var(--text-secondary);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .button.delete-folder,
@@ -288,8 +304,8 @@ body {
 .button.delete-folder:hover,
 .delete-bookmarks:hover {
   background-color: var(--danger-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .button.toggle {
@@ -300,8 +316,8 @@ body {
 
 .button.toggle:hover {
   background-color: var(--text-secondary);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .button.toggle i {
@@ -315,8 +331,8 @@ body {
 
 .button.back:hover {
   background-color: var(--hover-bg);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .button.clear {
@@ -346,8 +362,8 @@ body {
 
 .button.save:hover {
   background-color: var(--text-secondary);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .button.cancel {
@@ -357,12 +373,33 @@ body {
 
 .button.cancel:hover {
   background-color: var(--hover-bg);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.settings-container {
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+.button.settings {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 12px;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all var(--transition-fast);
   box-shadow: var(--shadow-sm);
 }
 
-.settings-button {
-  z-index: -100;
+.button.settings:hover {
+  background-color: #70a146;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 /* title popup */
@@ -378,7 +415,7 @@ body {
   display: none;
 }
 
-/* Lists and items */
+/* Bookmark Cards */
 .folder-list {
   width: 100%;
   background-color: var(--bg-secondary);
@@ -387,28 +424,30 @@ body {
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   transition: background-color var(--transition-normal);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--spacing-md);
 }
 
 .bookmark-item,
 .folder-item {
-  padding: var(--spacing-sm);
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
   transition: all var(--transition-fast);
-  margin-bottom: 2px;
-}
-
-.bookmark-item:last-child,
-.folder-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  position: relative;
 }
 
 .bookmark-item:hover,
 .folder-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
   background-color: rgba(255, 255, 255, 0.05);
-  transform: translateY(-1.5px);
 }
 
 [data-theme="light"] .bookmark-item:hover,
@@ -417,22 +456,69 @@ body {
 }
 
 .bookmark-checkbox {
-  margin-right: var(--spacing-sm);
+  position: absolute;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
   cursor: pointer;
   transform: scale(1.1);
 }
 
 .favicon {
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-right: var(--spacing-sm);
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 5px;
   object-fit: cover;
   transition: transform var(--transition-fast);
 }
 
 .favicon:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
+}
+
+.bookmark-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.bookmark-title {
+  flex-grow: 1;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bookmark-title:hover {
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.bookmark-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  justify-content: flex-end;
+}
+
+.bookmark-action-btn {
+  padding: var(--spacing-xs);
+  font-size: 0.8rem;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.bookmark-action-btn:hover {
+  background-color: var(--hover-bg);
+  transform: translateY(-1px);
 }
 
 /* Links */
@@ -486,9 +572,9 @@ body {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  min-width: 120px;
-  margin-top: 4px;
-  padding: var(--spacing-xs);
+  min-width: 150px;
+  margin: 120px 80px 0px 0px;
+  padding: var(--spacing-sm);
   box-shadow: var(--shadow-lg);
   opacity: 0;
   transform: translateY(-10px);
@@ -587,16 +673,15 @@ body {
 
 /* Đảm bảo layout của bookmark-item */
 .bookmark-item {
-  padding: var(--spacing-sm);
-  display: flex;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto; /* checkbox | favicon | link | 3 chấm */
   align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  transition: all var(--transition-fast);
-  margin-bottom: 2px;
+  gap: 6px;
+  padding: 6px 8px;
 }
 
 .bookmark-item:has(.bookmark-checkbox.hidden) {
-  padding-left: var(--spacing-sm); /* Giữ padding đồng đều khi checkbox ẩn */
+  padding-left: var(--spacing-md);
 }
 
 .select-all label:hover {
@@ -618,8 +703,6 @@ body {
 .logo {
   width: 320px;
   height: 100px;
-  margin: 0 auto var(--spacing-sm);
-  display: block;
   object-fit: contain;
   transition: transform var(--transition-normal);
 }
@@ -702,8 +785,15 @@ body {
     max-width: 360px;
   }
 
+  .header {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
   .controls {
     flex-direction: column;
+    gap: var(--spacing-sm);
   }
 
   .search-container {
@@ -713,6 +803,18 @@ body {
   .logo {
     width: 280px;
     height: 88px;
+  }
+
+  .folder-list {
+    grid-template-columns: 1fr;
+  }
+
+  .control-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-container {
+    align-self: flex-end;
   }
 }
 
@@ -860,32 +962,10 @@ body {
   width: 100%;
   transition: height var(--transition-fast);
 }
+
 .bottom-controls:has(.select-all.hidden) {
-  padding: var(--spacing-sm) var(--spacing-sm) 0 var(--spacing-sm); /* Giảm padding-bottom khi select-all ẩn */
+  padding: var(--spacing-sm) var(--spacing-sm) 0 var(--spacing-sm);
   height: auto;
-}
-
-.settings-container {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-}
-
-.button.settings {
-  background: transparent;
-  color: var(--text-primary);
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-  margin-left: var(--spacing-sm);
-}
-
-.button.settings:hover {
-  color: white;
-  background-color: #70a146;
 }
 
 #theme-switcher {
@@ -897,7 +977,6 @@ body {
 }
 
 /* popup content export */
-
 .popup[data-theme="dark"] .popup-content {
   background: #1e1e1e;
   color: #fff;
@@ -974,8 +1053,8 @@ body {
 
 .rename-input-container {
   display: flex;
-  flex-direction: column; /* 👈 Chuyển thành dọc */
-  gap: 10px; /* Khoảng cách giữa select và input */
+  flex-direction: column;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
@@ -988,7 +1067,6 @@ body {
   font-size: 14px;
 }
 
-/* Input */
 .rename-input-container .input {
   width: 100%;
   padding: 10px 12px;
@@ -1035,7 +1113,6 @@ body {
   font-size: 20px;
   font-weight: 600;
   color: #333;
-  text-align: center;
 }
 
 /* Container input */
@@ -1108,6 +1185,7 @@ body {
   background: #4a90e2;
   color: #fff;
 }
+
 .rename-popup-buttons .save:hover {
   background: #357ab8;
   transform: scale(1.05);
@@ -1117,6 +1195,7 @@ body {
   background: #eee;
   color: #333;
 }
+
 .rename-popup-buttons .cancel:hover {
   background: #ddd;
   transform: scale(1.05);
