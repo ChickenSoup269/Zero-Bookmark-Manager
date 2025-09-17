@@ -131,15 +131,14 @@ body {
 
 /* Toggle Sidebar Button */
 .toggle-sidebar {
-  background: var(--bg-secondary);
+  background: transparent;
   color: var(--text-primary);
-  padding: 12px;
+  padding: 8px 12px;
   border: none;
   border-radius: var(--border-radius-md);
-  cursor: pointer;
-  font-size: 1.2rem;
   transition: all var(--transition-fast);
-  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  z-index: 1;
 }
 
 .toggle-sidebar:hover {
@@ -174,6 +173,7 @@ body {
 
 .count {
   margin: 0 auto;
+  justify-content: center;
   text-align: center;
   font-size: 0.9rem;
   margin-top: 10px;
@@ -436,15 +436,14 @@ body {
 }
 
 .button.settings {
-  background: var(--bg-secondary);
+  background: transparent;
   color: var(--text-primary);
-  padding: 12px;
+  padding: 8px 12px;
   border: none;
   border-radius: var(--border-radius-md);
-  cursor: pointer;
-  font-size: 1.2rem;
   transition: all var(--transition-fast);
-  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  z-index: 1;
 }
 
 .button.settings:hover {
@@ -1385,4 +1384,15 @@ body {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.footer {
+  text-align: center;
+  padding: var(--spacing-sm);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.footer span {
+  color: var(--accent-color);
+  text-decoration: none;
 }

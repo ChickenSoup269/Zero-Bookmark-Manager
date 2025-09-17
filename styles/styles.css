@@ -132,7 +132,7 @@ body {
   position: sticky;
   top: 1px;
   background-color: transparent;
-  z-index: 2;
+  z-index: 1;
   padding: var(--spacing-xs) 0;
   transition: background-color var(--transition-normal);
   border-radius: 10px;
@@ -170,7 +170,6 @@ body {
   cursor: pointer;
   transition: all var(--transition-fast);
   outline: none;
-
   min-width: 120px;
 }
 
@@ -502,7 +501,7 @@ body {
   transform: translateY(-10px);
   transition: all var(--transition-fast);
   pointer-events: none;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .dropdown-menu:not(.hidden) {
@@ -888,7 +887,6 @@ body {
   border-radius: var(--border-radius-md);
   transition: all var(--transition-fast);
   cursor: pointer;
-  z-index: 1;
 }
 
 .button.settings:hover {
@@ -1140,4 +1138,15 @@ body {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.footer {
+  text-align: center;
+  padding: var(--spacing-sm);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.footer span {
+  color: var(--accent-color);
+  text-decoration: none;
 }

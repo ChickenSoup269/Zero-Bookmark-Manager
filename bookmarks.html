@@ -14,6 +14,7 @@
     <div class="container">
         <div class="sidebar">
             <img src="./images/logo.png" alt="logo" class="logo">
+            <div id="bookmark-count" class="count">Total Bookmarks: 0</div>
             <div class="controls">
                 <select id="folder-filter" class="select">
                     <option value="">All Bookmarks</option>
@@ -26,6 +27,10 @@
                     <option value="a-z">A to Z</option>
                     <option value="z-a">Z to A</option>
                 </select>
+                <div class="search-container">
+                    <input type="text" id="search" placeholder="Search bookmarks..." class="input">
+                    <button id="clear-search" class="button clear">✖</button>
+                </div>
                 <div class="control-buttons">
                     <button id="create-folder" class="button create">Create Folder</button>
                     <button id="rename-folder" class="button rename-folder hidden">Rename Folder</button>
@@ -42,15 +47,13 @@
                 </div>
                 <button id="toggle-checkboxes" class="button toggle small">Show Checkboxes</button>
             </div>
-            <div class="search-container">
-                <input type="text" id="search" placeholder="Search bookmarks..." class="input">
-                <button id="clear-search" class="button clear">✖</button>
-            </div>
+
         </div>
         <div class="header">
             <button id="toggle-sidebar" class="button toggle-sidebar" title="Toggle Sidebar">
                 <i class="fas fa-bars"></i>
             </button>
+            <img src="./images/logo.png" alt="logo" class="logo">
             <div class="settings-container">
                 <button id="settings-button" class="button settings" title="Settings">⋮</button>
                 <div id="settings-menu" class="dropdown-menu-2 hidden">
@@ -78,7 +81,6 @@
                 </div>
             </div>
         </div>
-        <div id="bookmark-count" class="count">Total Bookmarks: 0</div>
         <div id="folder-list" class="folder-list">
             <!-- Bookmark cards will be dynamically inserted here -->
         </div>
@@ -183,10 +185,17 @@
                 </div>
             </div>
         </div>
+        <div class="footer">
+            <p class="footer-text">
+                <span id="year"></span>
+                <span class="my-name"> &copy; chickensoup</span> - version: 1.1.0
+            </p>
+        </div>
     </div>
     <script src="main.js" type="module"></script>
     <script src="./components/sidebar.js" type="module"></script>
     <script src="./components/chat.js" type="module"></script>
+    <script src="./components/year.js" type="module"></script>
 </body>
 
 </html>
