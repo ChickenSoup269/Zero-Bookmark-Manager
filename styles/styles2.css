@@ -1112,7 +1112,7 @@ body {
 .scroll-to-top {
   position: fixed;
   bottom: 8px;
-  right: 8px;
+  right: 0px;
   width: 32px;
   height: 32px;
   border-radius: 50%;

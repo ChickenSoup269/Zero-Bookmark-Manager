@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatSend = document.getElementById("chat-send")
   const chatClear = document.getElementById("chat-clear")
   const chatMessages = document.getElementById("chatbox-messages")
+  const chatClose = document.getElementById("chat-close")
+  const chatMaximize = document.getElementById("chat-maximize")
 
   // Toggle chatbox visibility
   chatToggle.addEventListener("click", () => {
@@ -12,6 +14,27 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!chatbox.classList.contains("hidden")) {
       chatInput.focus()
     }
+  })
+
+  // Close chatbox
+  chatClose.addEventListener("click", () => {
+    chatbox.classList.add("hidden")
+  })
+
+  // Maximize/Minimize chatbox
+  let isMaximized = false
+  chatMaximize.addEventListener("click", () => {
+    if (isMaximized) {
+      chatbox.style.width = "320px"
+      chatbox.style.height = "400px"
+      chatMaximize.innerHTML = '<i class="fas fa-expand"></i>'
+    } else {
+      chatbox.style.width = "500px"
+      chatbox.style.height = "600px"
+      chatMaximize.innerHTML = '<i class="fas fa-compress"></i>'
+    }
+    isMaximized = !isMaximized
+    chatMessages.scrollTop = chatMessages.scrollHeight
   })
 
   // Send message

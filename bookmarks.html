@@ -159,7 +159,19 @@
         </button>
         <div id="chatbox" class="chatbox hidden" role="dialog" aria-labelledby="chatbox-title">
             <div class="chatbox-content">
-                <h3 id="chatbox-title">Chat with Us</h3>
+                <div class="chatbox-header">
+                    <h3 id="chatbox-title">Chat with Us</h3>
+                    <div class="chatbox-header-buttons">
+                        <button id="chat-maximize" class="chatbox-header-button" title="Maximize/Minimize"
+                            aria-label="Maximize or Minimize Chatbox">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button id="chat-close" class="chatbox-header-button" title="Close Chat"
+                            aria-label="Close Chatbox">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
                 <div class="chatbox-messages" id="chatbox-messages">
                     <!-- Messages will be dynamically inserted here -->
                 </div>
