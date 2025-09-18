@@ -112,7 +112,7 @@ body {
 .container {
   margin-left: var(--sidebar-width);
   padding: var(--spacing-md);
-  max-width: calc(1200px - var(--sidebar-width));
+  max-width: calc(1380px - var(--sidebar-width));
   transition: margin-left var(--transition-fast);
 }
 
@@ -468,6 +468,7 @@ body {
 
 /* Bookmark Cards */
 .folder-list {
+  display: flex;
   width: 100%;
   background-color: var(--bg-secondary);
   padding: var(--spacing-md);
@@ -558,10 +559,6 @@ body {
   border-radius: 5px;
   object-fit: cover;
   transition: transform var(--transition-fast);
-}
-
-.favicon:hover {
-  transform: scale(1.1);
 }
 
 .bookmark-content {

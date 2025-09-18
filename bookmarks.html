@@ -47,7 +47,6 @@
                 </div>
                 <button id="toggle-checkboxes" class="button toggle small">Show Checkboxes</button>
             </div>
-
         </div>
         <div class="header">
             <button id="toggle-sidebar" class="button toggle-sidebar" title="Toggle Sidebar">
@@ -153,35 +152,67 @@
                 </div>
             </div>
         </div>
+        <div id="ai-config-popup" class="rename-popup hidden" role="dialog" aria-labelledby="ai-config-title">
+            <div class="rename-popup-content">
+                <h3 id="ai-config-title">Configure AI Chatbot</h3>
+                <div class="ai-config-container">
+                    <select id="ai-model-select" class="select" aria-label="Select AI model">
+                        <option value="">Select AI Model</option>
+                        <option value="gemini">Gemini</option>
+                        <option value="gpt">GPT</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="rename-input-container">
+                        <input type="text" id="api-key-input" class="input" placeholder="Enter API key..."
+                            aria-label="API key" maxlength="255">
+                        <button id="clear-api-key" class="button clear" aria-label="Clear API key input">✖</button>
+                    </div>
+                    <div class="rename-input-container">
+                        <textarea id="curl-input" class="input" placeholder="Enter cURL command..." rows="4"
+                            aria-label="cURL command"></textarea>
+                        <button id="clear-curl" class="button clear" aria-label="Clear cURL input">✖</button>
+                    </div>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="ai-config-save" class="button save">Save</button>
+                    <button id="ai-config-cancel" class="button cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
         <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
             <i class="fas fa-caret-up"></i>
         </button>
-        <button id="chat-toggle" class="button chat-toggle" title="Open Chat" aria-label="Open Chat">
+        <button id="chat-toggle" class="chat-toggle" title="Open Chat" aria-label="Open Chat">
             <i class="fas fa-comment"></i>
         </button>
-        <div id="chatbox" class="chatbox hidden" role="dialog" aria-labelledby="chatbox-title">
+        <div id="chatbox" class="chatbox hidden">
             <div class="chatbox-content">
-                <div class="chatbox-header">
-                    <h3 id="chatbox-title">Chat with Us</h3>
-                    <div class="chatbox-header-buttons">
-                        <button id="chat-maximize" class="chatbox-header-button" title="Maximize/Minimize"
-                            aria-label="Maximize or Minimize Chatbox">
+                <h3>
+                    ChatBot <span id="chat-model-name"></span>
+                    <div class="chatbox-header-controlers">
+                        <button id="chat-maximize" class="chatbox-header-button" title="Maximize/Minimize">
                             <i class="fas fa-expand"></i>
                         </button>
-                        <button id="chat-close" class="chatbox-header-button" title="Close Chat"
-                            aria-label="Close Chatbox">
+                        <button id="chat-edit-config" class="chatbox-header-button" title="Edit AI Config">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <button id="chat-close" class="chatbox-header-button" title="Close">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
-                </div>
-                <div class="chatbox-messages" id="chatbox-messages">
-                    <!-- Messages will be dynamically inserted here -->
-                </div>
+                </h3>
+                <div id="chatbox-messages" class="chatbox-messages"></div>
+                <button id="chat-scroll-bottom" class="chat-scroll-bottom" title="Scroll to Bottom"
+                    aria-label="Scroll to Bottom">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
                 <div class="chatbox-input-container">
-                    <input type="text" id="chat-input" class="input" placeholder="Type your message..."
-                        aria-label="Chat input" maxlength="255">
+                    <div class="input-wrapper">
+                        <input type="text" id="chat-input" class="input" placeholder="Type a message..."
+                            aria-label="Chat input">
+                        <button id="chat-clear" class="clear" aria-label="Clear input">✖</button>
+                    </div>
                     <button id="chat-send" class="button send">Send</button>
-                    <button id="chat-clear" class="button clear">✖</button>
                 </div>
             </div>
         </div>
