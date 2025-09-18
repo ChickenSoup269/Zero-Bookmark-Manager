@@ -647,14 +647,18 @@ body {
   box-shadow: var(--shadow-lg);
   opacity: 0;
   pointer-events: none;
+  z-index: 1000;
 }
 
 .dropdown-menu.hidden {
   display: none;
 }
+.dropdown-menu:not(.hidden) {
+  opacity: 1;
+  pointer-events: auto;
+}
 
 /* Menu settings */
-
 .dropdown-menu-2 {
   position: absolute;
   top: 1%;

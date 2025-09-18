@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle bookmark commands
   // Trong hàm handleBookmarkCommand, thêm case cho "count"
+  // Trong hàm handleBookmarkCommand, thêm logic phân tích câu hỏi tự nhiên
   async function handleBookmarkCommand(message) {
     const loadingMessage = document.createElement("div")
     loadingMessage.className = "chatbox-message bot loading"
@@ -138,12 +139,72 @@ document.addEventListener("DOMContentLoaded", () => {
     chatMessages.scrollTop = chatMessages.scrollHeight
 
     try {
-      const commandParts = message.toLowerCase().split(" ")
+      const lowerMessage = message.toLowerCase()
+      const commandParts = lowerMessage.split(" ")
       const action = commandParts[1]
       const urlMatch = message.match(/(https?:\/\/[^\s]+)/)
       const url = urlMatch ? urlMatch[1] : null
 
-      if (action === "add" && url) {
+      // Xử lý câu hỏi tự nhiên
+      if (
+        lowerMessage.includes("how many bookmarks") ||
+        lowerMessage.includes("bao nhiêu bookmark") ||
+        lowerMessage.includes("số lượng bookmark")
+      ) {
+        chrome.bookmarks.getTree((bookmarkTree) => {
+          let count = 0
+          function countBookmarks(nodes) {
+            nodes.forEach((node) => {
+              if (node.url) count++ // Chỉ đếm node có url (bookmark)
+              if (node.children) countBookmarks(node.children) // Đệ quy cho folder
+            })
+          }
+          countBookmarks(bookmarkTree[0].children)
+          loadingMessage.remove()
+          const botMessage = document.createElement("div")
+          botMessage.className = "chatbox-message bot"
+          botMessage.innerHTML = `Bạn có ${count} bookmark.<span class="timestamp">${new Date().toLocaleTimeString(
+            [],
+            { hour: "2-digit", minute: "2-digit" }
+          )}</span>`
+          chatMessages.appendChild(botMessage)
+          chatMessages.scrollTop = chatMessages.scrollHeight
+        })
+      } else if (
+        lowerMessage.includes("list bookmarks") ||
+        lowerMessage.includes("danh sách bookmark")
+      ) {
+        chrome.bookmarks.getTree((bookmarkTree) => {
+          const bookmarks = []
+          function collectBookmarks(nodes) {
+            nodes.forEach((node) => {
+              if (node.url) {
+                bookmarks.push({ title: node.title || node.url, url: node.url })
+              }
+              if (node.children) collectBookmarks(node.children)
+            })
+          }
+          collectBookmarks(bookmarkTree[0].children)
+          loadingMessage.remove()
+          const botMessage = document.createElement("div")
+          botMessage.className = "chatbox-message bot"
+          botMessage.innerHTML = bookmarks.length
+            ? `Danh sách bookmark của bạn:<br>${bookmarks
+                .map((b) => `<a href="${b.url}" target="_blank">${b.title}</a>`)
+                .join(
+                  "<br>"
+                )}<span class="timestamp">${new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}</span>`
+            : `Bạn chưa có bookmark nào.<span class="timestamp">${new Date().toLocaleTimeString(
+                [],
+                { hour: "2-digit", minute: "2-digit" }
+              )}</span>`
+          chatMessages.appendChild(botMessage)
+          chatMessages.scrollTop = chatMessages.scrollHeight
+        })
+      } else if (action === "add" && url) {
         const folderMatch = message.match(/to folder (\w+)/)
         const titleMatch = message.match(/title ([^\s].+)/)
         let folder = folderMatch ? folderMatch[1] : null
@@ -163,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
             loadingMessage.remove()
             const botMessage = document.createElement("div")
             botMessage.className = "chatbox-message bot"
-            botMessage.innerHTML = `Bookmark added to ${folder}: <a href="${url}" target="_blank">${title}</a><span class="timestamp">${new Date().toLocaleTimeString(
+            botMessage.innerHTML = `Bookmark đã được thêm vào ${folder}: <a href="${url}" target="_blank">${title}</a><span class="timestamp">${new Date().toLocaleTimeString(
               [],
               { hour: "2-digit", minute: "2-digit" }
             )}</span>`
@@ -177,7 +238,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const newTitle = titleMatch ? titleMatch[1] : null
         const newFolder = folderMatch ? folderMatch[1] : null
         if (!newTitle && !newFolder) {
-          throw new Error("Please specify a new title or folder to edit.")
+          throw new Error(
+            "Vui lòng chỉ định tiêu đề mới hoặc thư mục để chỉnh sửa."
+          )
         }
         chrome.bookmarks.search({ url }, (results) => {
           if (results.length) {
@@ -199,9 +262,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   loadingMessage.remove()
                   const botMessage = document.createElement("div")
                   botMessage.className = "chatbox-message bot"
-                  botMessage.innerHTML = `Bookmark updated: <a href="${url}" target="_blank">${
+                  botMessage.innerHTML = `Bookmark đã được cập nhật: <a href="${url}" target="_blank">${
                     updatedBookmark.title
-                  }</a> in folder ${folderName}<span class="timestamp">${new Date().toLocaleTimeString(
+                  }</a> trong thư mục ${folderName}<span class="timestamp">${new Date().toLocaleTimeString(
                     [],
                     { hour: "2-digit", minute: "2-digit" }
                   )}</span>`
@@ -211,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
               )
             })
           } else {
-            throw new Error(`Bookmark not found: ${url}`)
+            throw new Error(`Không tìm thấy bookmark: ${url}`)
           }
         })
       } else if (action === "delete" && url) {
@@ -221,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
               loadingMessage.remove()
               const botMessage = document.createElement("div")
               botMessage.className = "chatbox-message bot"
-              botMessage.innerHTML = `Bookmark deleted: ${url}<span class="timestamp">${new Date().toLocaleTimeString(
+              botMessage.innerHTML = `Bookmark đã bị xóa: ${url}<span class="timestamp">${new Date().toLocaleTimeString(
                 [],
                 { hour: "2-digit", minute: "2-digit" }
               )}</span>`
@@ -229,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
               chatMessages.scrollTop = chatMessages.scrollHeight
             })
           } else {
-            throw new Error(`Bookmark not found: ${url}`)
+            throw new Error(`Không tìm thấy bookmark: ${url}`)
           }
         })
       } else if (action === "search" && commandParts[2]) {
@@ -239,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const botMessage = document.createElement("div")
           botMessage.className = "chatbox-message bot"
           botMessage.innerHTML = results.length
-            ? `Found ${results.length} bookmarks:<br>${results
+            ? `Tìm thấy ${results.length} bookmark:<br>${results
                 .map(
                   (b) =>
                     `<a href="${b.url}" target="_blank">${b.title || b.url}</a>`
@@ -250,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 hour: "2-digit",
                 minute: "2-digit",
               })}</span>`
-            : `No bookmarks found for "${keyword}".<span class="timestamp">${new Date().toLocaleTimeString(
+            : `Không tìm thấy bookmark nào cho "${keyword}".<span class="timestamp">${new Date().toLocaleTimeString(
                 [],
                 { hour: "2-digit", minute: "2-digit" }
               )}</span>`
@@ -262,15 +325,15 @@ document.addEventListener("DOMContentLoaded", () => {
           let count = 0
           function countBookmarks(nodes) {
             nodes.forEach((node) => {
-              if (node.url) count++ // Chỉ đếm node có url (bookmark)
-              if (node.children) countBookmarks(node.children) // Đệ quy cho folder
+              if (node.url) count++
+              if (node.children) countBookmarks(node.children)
             })
           }
           countBookmarks(bookmarkTree[0].children)
           loadingMessage.remove()
           const botMessage = document.createElement("div")
           botMessage.className = "chatbox-message bot"
-          botMessage.innerHTML = `You have ${count} bookmarks.<span class="timestamp">${new Date().toLocaleTimeString(
+          botMessage.innerHTML = `Bạn có ${count} bookmark.<span class="timestamp">${new Date().toLocaleTimeString(
             [],
             { hour: "2-digit", minute: "2-digit" }
           )}</span>`
@@ -279,14 +342,14 @@ document.addEventListener("DOMContentLoaded", () => {
         })
       } else {
         throw new Error(
-          "Invalid bookmark command. Use: add bookmark <URL> [title <title>] [to folder <folder>], edit bookmark <URL> [title <new_title>] [to folder <new_folder>], delete bookmark <URL>, search bookmark <keyword>, or bookmark count"
+          "Lệnh bookmark không hợp lệ. Sử dụng: add bookmark <URL> [title <title>] [to folder <folder>], edit bookmark <URL> [title <new_title>] [to folder <new_folder>], delete bookmark <URL>, search bookmark <keyword>, bookmark count, hoặc câu hỏi tự nhiên như 'Tôi có bao nhiêu bookmark?'"
         )
       }
     } catch (error) {
       loadingMessage.remove()
       const errorMessage = document.createElement("div")
       errorMessage.className = "chatbox-message bot error"
-      errorMessage.innerHTML = `Error: ${
+      errorMessage.innerHTML = `Lỗi: ${
         error.message
       }<span class="timestamp">${new Date().toLocaleTimeString([], {
         hour: "2-digit",
@@ -296,6 +359,8 @@ document.addEventListener("DOMContentLoaded", () => {
       chatMessages.scrollTop = chatMessages.scrollHeight
     }
   }
+
+  // Giữ nguyên các hàm khác (getAiConfig, saveAiConfig, parseCurlCommand, suggestBookmarkDetails, findFolderId, getFolderName) và sự kiện khác
 
   // Giữ nguyên các hàm khác (getAiConfig, saveAiConfig, parseCurlCommand, suggestBookmarkDetails, findFolderId, getFolderName) và sự kiện khác như trong code trước
   // Show AI config popup
