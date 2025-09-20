@@ -358,11 +358,11 @@ body {
 }
 
 .dropdown-btn.favorited {
-  color: #ffd700; /* Gold color for star icon */
+  color: #ffd700;
 }
 
 .dropdown-btn.favorited:hover {
-  color: #ffc107; /* Slightly darker gold on hover */
+  color: #ffc107;
 }
 
 .dropdown-btn:hover {
