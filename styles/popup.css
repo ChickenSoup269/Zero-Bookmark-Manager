@@ -1,0 +1,191 @@
+body {
+  width: 360px;
+}
+
+.container {
+  padding: var(--spacing-md);
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.controls {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.sticky-search {
+  position: sticky;
+  top: 1px;
+  background-color: transparent;
+  z-index: 1;
+  padding: var(--spacing-xs) 0;
+  transition: background-color var(--transition-normal);
+  border-radius: 10px;
+}
+
+.control-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.control-buttons .button {
+  width: 100%;
+  padding: 0.6rem 0.2rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-container {
+  position: fixed;
+  top: 10px;
+  right: 5px;
+  z-index: 0;
+}
+
+.button.settings {
+  background: transparent;
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border: none;
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  z-index: 1;
+}
+
+.button.settings:hover {
+  background-color: #70a146;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.folder-list {
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--transition-normal);
+}
+
+.bookmark-item,
+.folder-item {
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  transition: all var(--transition-fast);
+  margin-bottom: 2px;
+}
+
+.bookmark-item:last-child,
+.folder-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.bookmark-item:hover,
+.folder-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  background-color: rgba(255, 255, 255, 0.05);
+  z-index: 100;
+}
+
+[data-theme="light"] .bookmark-item:hover,
+[data-theme="light"] .folder-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.bookmark-checkbox {
+  margin-right: var(--spacing-sm);
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+.favicon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: var(--spacing-sm);
+  border-radius: 5px;
+  object-fit: cover;
+  transition: transform var(--transition-fast);
+}
+
+.favicon:hover {
+  transform: scale(1.05);
+}
+
+.bottom-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  width: 100%;
+  transition: height var(--transition-fast);
+}
+
+.bookmark-item:has(.bookmark-checkbox.hidden) {
+  padding-left: var(--spacing-sm);
+}
+
+.select-all label:hover {
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+#toggle-checkboxes {
+  width: auto;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.logo {
+  width: 320px;
+  height: 100px;
+  margin: 0 auto var(--spacing-sm);
+  display: block;
+  object-fit: contain;
+  transition: transform var(--transition-normal);
+}
+
+.logo:hover {
+  transform: scale(1.02);
+}
+
+@media (max-width: 400px) {
+  body {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .search-container {
+    min-width: auto;
+  }
+
+  .logo {
+    width: 280px;
+    height: 88px;
+  }
+}

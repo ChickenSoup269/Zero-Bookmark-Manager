@@ -1,12 +1,12 @@
-Chat Toggle Button :root {
+:root {
   --w: 30px;
   --h: 30px;
 }
 
 .chat-toggle {
   position: fixed;
-  bottom: 32px;
-  right: 16px;
+  bottom: 10px;
+  right: 10px;
   width: var(--w);
   height: var(--h);
   border-radius: 50%;
@@ -29,10 +29,15 @@ Chat Toggle Button :root {
   box-shadow: var(--shadow-lg);
 }
 
+.chat-toggle i {
+  width: 25px;
+  height: 25px;
+}
+
 /* Chatbox */
 .chatbox {
   position: fixed;
-  bottom: 96px;
+  bottom: 10px;
   right: 16px;
   width: 360px;
   height: 480px;
@@ -267,6 +272,7 @@ Chat Toggle Button :root {
   right: 20px;
   bottom: 92px;
   background: var(--bg-primary);
+  color: var(--text-primary);
   border: 1px solid var(--border-color);
   border-radius: 50%;
   width: 36px;
@@ -409,4 +415,28 @@ Chat Toggle Button :root {
 .chatbox::-webkit-resizer {
   background-color: var(--accent-color);
   border-radius: 4px;
+}
+
+.floating-buttons {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column; /* xếp nút theo cột */
+  gap: 12px; /* khoảng cách giữa các nút */
+  z-index: 1001;
+}
+
+.floating-buttons .button,
+.floating-buttons .chat-toggle {
+  position: static; /* bỏ fixed riêng từng nút */
+  width: var(--w);
+  height: var(--h);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
 }

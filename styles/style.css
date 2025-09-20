@@ -21,7 +21,6 @@
   --hover-bg: #555555;
   --focus-outline: #4a90e2;
   --box-shadow: 0 6px 15px rgb(255, 255, 255, 0.753);
-  --sidebar-width: 250px;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -72,7 +71,6 @@ body.font-gohu * {
 }
 
 body {
-  width: 100%;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   margin: 0;
@@ -82,87 +80,12 @@ body {
     color var(--transition-normal);
 }
 
-/* Sidebar */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: var(--sidebar-width);
-  height: 100%;
-  background-color: var(--bg-secondary);
-  padding: var(--spacing-md);
-  overflow-y: auto;
-  z-index: 100;
-  box-shadow: var(--shadow-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  transition: transform var(--transition-fast);
-}
-
-.sidebar.collapsed {
-  transform: translateX(-100%);
-}
-
-.sidebar:not(.collapsed) {
-  transform: translateX(0);
-}
-
-/* Container */
-.container {
-  margin-left: var(--sidebar-width);
-  padding: var(--spacing-md);
-  max-width: calc(1380px - var(--sidebar-width));
-  transition: margin-left var(--transition-fast);
-}
-
-.container.collapsed {
-  margin-left: 0;
-  max-width: 1200px;
-}
-
-/* Header */
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-md);
 }
 
-/* Toggle Sidebar Button */
-.toggle-sidebar {
-  background: transparent;
-  color: var(--text-primary);
-  padding: 8px 12px;
-  border: none;
-  border-radius: var(--border-radius-md);
-  transition: all var(--transition-fast);
-  cursor: pointer;
-  z-index: 1;
-}
-
-.toggle-sidebar:hover {
-  background-color: #70a146;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-/* Logo */
-.logo {
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-  object-fit: contain;
-  margin-bottom: var(--spacing-md);
-  transition: transform var(--transition-normal);
-}
-
-.logo:hover {
-  transform: scale(1.02);
-}
-
-/* Typography */
 .title {
   font-size: 1.5rem;
   font-weight: 600;
@@ -173,7 +96,6 @@ body {
 
 .count {
   margin: 0 auto;
-  justify-content: center;
   text-align: center;
   font-size: 0.9rem;
   margin-top: 10px;
@@ -182,20 +104,10 @@ body {
   width: 150px;
 }
 
-/* Layout */
-.controls {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  align-items: stretch;
-}
-
 .search-container {
   position: relative;
-  width: 100%;
 }
 
-/* Form elements */
 .input {
   width: 100%;
   padding: 0.8rem 2.1rem 0.8rem 0.8rem;
@@ -218,7 +130,6 @@ body {
 }
 
 .select {
-  width: 100%;
   padding: var(--spacing-sm);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -228,7 +139,6 @@ body {
   cursor: pointer;
   transition: all var(--transition-fast);
   outline: none;
-  height: 40px;
 }
 
 .select:focus {
@@ -239,32 +149,6 @@ body {
 .select.small {
   padding: var(--spacing-xs);
   min-width: 100px;
-}
-
-.control-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.control-buttons .button {
-  width: 100%;
-  padding: 0.8rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  font-weight: 500;
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-sm);
-}
-
-.control-buttons .button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
 }
 
 .button:focus-visible {
@@ -320,7 +204,6 @@ body {
   animation: fadeScale var(--transition-fast) forwards;
 }
 
-/* Button variants */
 .button.rename-folder,
 .delete-bookmarks,
 .button.create {
@@ -332,8 +215,7 @@ body {
 .delete-bookmarks:hover,
 .button.create:hover {
   background-color: var(--text-secondary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .button.add {
@@ -343,8 +225,7 @@ body {
 
 .button.add:hover {
   background-color: var(--text-secondary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .button.delete-folder,
@@ -356,8 +237,7 @@ body {
 .button.delete-folder:hover,
 .delete-bookmarks:hover {
   background-color: var(--danger-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .button.toggle {
@@ -368,8 +248,7 @@ body {
 
 .button.toggle:hover {
   background-color: var(--text-secondary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .button.toggle i {
@@ -383,8 +262,7 @@ body {
 
 .button.back:hover {
   background-color: var(--hover-bg);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .button.clear {
@@ -414,8 +292,7 @@ body {
 
 .button.save:hover {
   background-color: var(--text-secondary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .button.cancel {
@@ -425,35 +302,9 @@ body {
 
 .button.cancel:hover {
   background-color: var(--hover-bg);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
-.settings-container {
-  display: flex;
-  align-items: center;
-  z-index: 100;
-}
-
-.button.settings {
-  background: transparent;
-  color: var(--text-primary);
-  padding: 8px 12px;
-  border: none;
-  border-radius: var(--border-radius-md);
-  transition: all var(--transition-fast);
-  cursor: pointer;
-  z-index: 1;
-}
-
-.button.settings:hover {
-  background-color: #70a146;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-/* title popup */
 #create-folder-title,
 #add-to-folder-title,
 #rename-folder-title,
@@ -466,157 +317,33 @@ body {
   display: none;
 }
 
-/* Bookmark Cards */
-.folder-list {
-  display: flex;
-  width: 100%;
-  background-color: var(--bg-secondary);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  transition: background-color var(--transition-normal);
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--spacing-md);
-}
-
-.bookmark-item,
-.folder-item {
-  background-color: var(--bg-primary);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-fast);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  position: relative;
-}
-
-.bookmark-item:hover,
-.folder-item:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-  background-color: rgba(255, 255, 255, 0.05);
-  z-index: 100;
-}
-
-[data-theme="light"] .bookmark-item:hover,
-[data-theme="light"] .folder-item:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-/* Tree View: bỏ grid, hiển thị dọc */
-
-.folder-list.tree-view {
-  display: block;
-  padding: var(--spacing-md);
-  background-color: var(--bg-secondary);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-}
-
-.folder-list.tree-view .folder-item,
-.folder-list.tree-view .bookmark-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  margin: 4px 0;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
-}
-
-.folder-list.tree-view .folder-item:hover,
-.folder-list.tree-view .bookmark-item:hover {
-  transform: translateX(3px);
-  background-color: rgba(255, 255, 255, 0.05);
-  box-shadow: var(--shadow-md);
-}
-
-.folder-list.tree-view .folder-children {
-  margin-left: 16px;
-  border-left: 1px dashed var(--border-color);
-  padding-left: 8px;
-}
-
-.bookmark-checkbox {
-  position: absolute;
-  top: var(--spacing-sm);
-  left: var(--spacing-sm);
-  cursor: pointer;
-  transform: scale(1.1);
-}
-
-.favicon {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 5px;
-  object-fit: cover;
-  transition: transform var(--transition-fast);
-}
-
-.bookmark-content {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  width: 100%;
-}
-
-.bookmark-title {
+.link {
   flex-grow: 1;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-primary);
+  color: var(--accent-color);
   text-decoration: none;
-  transition: color var(--transition-fast);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  transition: all var(--transition-fast);
+  font-weight: 400;
 }
 
-.bookmark-title:hover {
+.link:hover {
   color: var(--text-secondary);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-.bookmark-actions {
-  display: flex;
-  gap: var(--spacing-xs);
-  justify-content: flex-end;
+.link:focus {
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
-.bookmark-action-btn {
-  padding: var(--spacing-xs);
-  font-size: 0.8rem;
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.bookmark-action-btn:hover {
-  background-color: var(--hover-bg);
-  transform: translateY(-1px);
-}
-
-/* Dropdown trong Bookmark */
 .dropdown-btn-group {
   position: relative;
-  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .dropdown-btn {
-  padding: var(--spacing-xs);
-  font-size: 1rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.875rem;
   background-color: transparent;
   color: var(--text-primary);
   border: none;
@@ -625,9 +352,7 @@ body {
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
+  gap: var(--spacing-xs);
 }
 
 .dropdown-btn:hover {
@@ -642,97 +367,25 @@ body {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  min-width: 150px;
-  padding: var(--spacing-sm);
+  min-width: 120px;
+  margin-top: 4px;
+  padding: var(--spacing-xs);
   box-shadow: var(--shadow-lg);
   opacity: 0;
+  transform: translateY(-10px);
+  transition: all var(--transition-fast);
   pointer-events: none;
   z-index: 1000;
 }
 
-.dropdown-menu.hidden {
-  display: none;
-}
 .dropdown-menu:not(.hidden) {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Menu settings */
-.dropdown-menu-2 {
-  position: absolute;
-  top: 1%;
-  right: 10%;
-  margin-top: 8px;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  min-width: 220px;
-  padding: var(--spacing-sm);
-  box-shadow: var(--shadow-lg);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  transform: translateY(-8px); /* animation slide-in */
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-/* Khi hiện */
-.dropdown-menu-2:not(.hidden) {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-/* Select box style */
-.dropdown-menu-2 .select {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  font-size: 0.9rem;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: background-color 0.25s ease, border-color 0.25s ease,
-    transform 0.15s ease;
-}
-
-.dropdown-menu-2 .select:hover {
-  background-color: var(--bg-secondary);
-  border-color: var(--accent);
-  transform: translateY(-1px); /* hover animation */
-}
-
-/* Menu item buttons */
-.dropdown-menu-2 .menu-item {
-  width: 100%;
-  text-align: left;
-  padding: 0.6rem 0.8rem;
-  font-size: 0.9rem;
-  border: none;
-  border-radius: var(--border-radius-md);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: background-color 0.25s ease, color 0.25s ease,
-    transform 0.15s ease;
-}
-
-.dropdown-menu-2 .menu-item:hover {
-  background-color: var(--bg-tertiary);
-  color: var(--accent);
-  transform: translateY(-1px);
-}
-
-/* Nhóm tùy chọn phân cách */
-.dropdown-menu-2 hr {
-  border: none;
-  border-top: 1px solid var(--border-color);
-  margin: var(--spacing-sm) 0;
+.dropdown-menu.hidden {
+  display: none;
 }
 
 .menu-item {
@@ -759,27 +412,6 @@ body {
   outline-offset: 1px;
 }
 
-/* Links */
-.link {
-  flex-grow: 1;
-  color: var(--accent-color);
-  text-decoration: none;
-  transition: all var(--transition-fast);
-  font-weight: 400;
-}
-
-.link:hover {
-  color: var(--text-secondary);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.link:focus {
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* Animation cho select-all */
 .select-all {
   display: flex;
   align-items: center;
@@ -802,7 +434,6 @@ body {
     height var(--transition-fast);
 }
 
-/* Animation cho bookmark checkboxes */
 .bookmark-checkbox {
   opacity: 1;
   transform: scale(1);
@@ -823,43 +454,6 @@ body {
     height var(--transition-fast), width var(--transition-fast);
 }
 
-/* Đảm bảo layout của bottom-controls */
-.bottom-controls {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-/* Đảm bảo layout của bookmark-item */
-.bookmark-item {
-  display: grid;
-  grid-template-columns: auto auto 1fr auto; /* checkbox | favicon | link | 3 chấm */
-  align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
-}
-
-.bookmark-item:has(.bookmark-checkbox.hidden) {
-  margin: 0;
-  padding-left: var(--spacing-md);
-}
-
-.select-all label:hover {
-  cursor: pointer;
-  color: var(--text-secondary);
-}
-
-#toggle-checkboxes {
-  width: 100%;
-  font-size: 0.8rem;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-weight: 500;
-  transition: all var(--transition-fast);
-}
-
-/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -882,7 +476,6 @@ body {
   background-color: var(--hover-bg);
 }
 
-/* Accessibility improvements */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -891,7 +484,6 @@ body {
   }
 }
 
-/* Focus styles for keyboard navigation */
 .bookmark-item:focus-within,
 .folder-item:focus-within {
   outline: 1px solid var(--text-primary);
@@ -899,7 +491,6 @@ body {
   border-radius: var(--border-radius);
 }
 
-/* Loading state */
 .loading {
   opacity: 0.6;
   pointer-events: none;
@@ -926,81 +517,6 @@ body {
   }
 }
 
-/* Mobile responsiveness */
-@media (max-width: 400px) {
-  body {
-    width: 100%;
-    max-width: 360px;
-  }
-
-  .sidebar {
-    position: static;
-    width: 100%;
-    height: auto;
-    padding: var(--spacing-sm);
-  }
-
-  .sidebar.collapsed {
-    display: none;
-  }
-
-  .container {
-    margin-left: 0;
-    max-width: 100%;
-  }
-
-  .container.collapsed {
-    margin-left: 0;
-    max-width: 100%;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-sm);
-  }
-
-  .controls {
-    gap: var(--spacing-sm);
-  }
-
-  .search-container {
-    min-width: auto;
-  }
-
-  .logo {
-    max-width: 180px;
-    height: auto;
-  }
-
-  .folder-list {
-    grid-template-columns: 1fr;
-  }
-
-  .control-buttons {
-    gap: var(--spacing-sm);
-  }
-
-  .settings-container {
-    align-self: flex-end;
-  }
-
-  .bookmark-content {
-    gap: var(--spacing-xs);
-  }
-
-  .dropdown-btn {
-    width: 20px;
-    height: 20px;
-    font-size: 0.9rem;
-  }
-
-  .toggle-sidebar {
-    align-self: flex-start;
-  }
-}
-
-/* High contrast mode support */
 @media (prefers-contrast: high) {
   :root {
     --border-color: #ffffff;
@@ -1013,23 +529,16 @@ body {
   }
 }
 
-/* Print styles */
 @media print {
   .button,
   .dropdown-btn,
-  .dropdown-menu,
-  .sidebar,
-  .toggle-sidebar {
+  .dropdown-menu {
     display: none !important;
   }
 
   .bookmark-item,
   .folder-item {
     break-inside: avoid;
-  }
-
-  .container {
-    margin-left: 0;
   }
 }
 
@@ -1051,7 +560,6 @@ body {
 .rename-popup-content h3 {
   margin: 0 0 var(--spacing-md);
   font-size: 1.25rem;
-  color: var(--bg-primary);
 }
 
 .rename-input-container {
@@ -1108,7 +616,6 @@ body {
   margin-top: var(--spacing-md);
 }
 
-/* Scroll to Top Button */
 .scroll-to-top {
   position: fixed;
   bottom: 8px;
@@ -1150,7 +657,6 @@ body {
   margin-top: 2px;
 }
 
-/* popup content export */
 .popup[data-theme="dark"] .popup-content {
   background: #1e1e1e;
   color: #fff;
@@ -1161,7 +667,6 @@ body {
   color: #000;
 }
 
-/* styles.css */
 .rename-popup {
   position: fixed;
   top: 0;
@@ -1187,7 +692,6 @@ body {
 .rename-popup-content h3 {
   margin: 0 0 10px;
   font-size: 1.2em;
-  color: var(--text-color);
 }
 
 .rename-popup-content p {
@@ -1232,7 +736,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* Select */
 .rename-input-container .select {
   width: 100%;
   padding: 10px 12px;
@@ -1249,7 +752,6 @@ body {
   font-size: 14px;
 }
 
-/* Popup nền mờ */
 .rename-popup {
   position: fixed;
   top: 0;
@@ -1269,7 +771,6 @@ body {
   pointer-events: none;
 }
 
-/* Khung popup */
 .rename-popup-content {
   background: #fff;
   padding: 24px;
@@ -1280,16 +781,13 @@ body {
   animation: fadeInUp 0.3s ease;
 }
 
-/* Tiêu đề */
 .rename-popup-content h3 {
   margin-top: 0;
   margin-bottom: 16px;
   font-size: 20px;
   font-weight: 600;
-  color: #333;
 }
 
-/* Container input */
 .rename-input-container {
   position: relative;
   display: flex;
@@ -1301,7 +799,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* Select và Input */
 .rename-input-container .select,
 .rename-input-container .input {
   flex: 1;
@@ -1319,7 +816,6 @@ body {
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
 }
 
-/* Nút clear nằm chồng cuối input */
 #clear-rename-folder {
   position: absolute;
   right: 8px;
@@ -1337,13 +833,6 @@ body {
 
 #clear-rename-folder:hover {
   color: red;
-}
-
-/* Buttons Save/Cancel */
-.rename-popup-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
 }
 
 .rename-popup-buttons .button {
@@ -1375,7 +864,6 @@ body {
   transform: scale(1.05);
 }
 
-/* Animation */
 @keyframes fadeInUp {
   from {
     transform: translateY(20px);
@@ -1393,6 +881,7 @@ body {
   font-size: 0.75rem;
   color: var(--text-muted);
 }
+
 .footer span {
   color: var(--accent-color);
   text-decoration: none;

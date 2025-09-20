@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zero Bookmark Manager</title>
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/webview.css">
     <link rel="stylesheet" href="./styles/chat.css">
-    <link rel="stylesheet" href="./styles/styles2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
@@ -154,37 +155,43 @@
         </div>
         <div id="ai-config-popup" class="rename-popup hidden" role="dialog" aria-labelledby="ai-config-title">
             <div class="rename-popup-content">
-                <h3 id="ai-config-title">Configure AI Chatbot</h3>
-                <div class="ai-config-container">
-                    <select id="ai-model-select" class="select" aria-label="Select AI model">
-                        <option value="">Select AI Model</option>
-                        <option value="gemini">Gemini</option>
-                        <option value="gpt">GPT</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <div class="rename-input-container">
-                        <input type="text" id="api-key-input" class="input" placeholder="Enter API key..."
-                            aria-label="API key" maxlength="255">
-                        <button id="clear-api-key" class="button clear" aria-label="Clear API key input">✖</button>
+                <h3 id="ai-config-title" class="ai-title">
+                    <h3 id="ai-config-title" class="ai-title"></h3>
+                    <div class="ai-config-container">
+                        <select id="ai-model-select" class="select" aria-label="Select AI model">
+                            <option value="">Select AI Model</option>
+                            <option value="gemini">Gemini</option>
+                            <option value="gpt">GPT</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="rename-input-container">
+                            <input type="text" id="api-key-input" class="input" placeholder="Enter API key..."
+                                aria-label="API key" maxlength="255">
+                            <button id="clear-api-key" class="button clear" aria-label="Clear API key input">✖</button>
+                        </div>
+                        <div class="rename-input-container">
+                            <textarea id="curl-input" class="input" placeholder="Enter cURL command..." rows="4"
+                                aria-label="cURL command"></textarea>
+                            <button id="clear-curl" class="button clear" aria-label="Clear cURL input">✖</button>
+                        </div>
                     </div>
-                    <div class="rename-input-container">
-                        <textarea id="curl-input" class="input" placeholder="Enter cURL command..." rows="4"
-                            aria-label="cURL command"></textarea>
-                        <button id="clear-curl" class="button clear" aria-label="Clear cURL input">✖</button>
+                    <div class="rename-popup-buttons">
+                        <button id="ai-config-save" class="button save">Save</button>
+                        <button id="ai-config-cancel" class="button cancel">Cancel</button>
                     </div>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="ai-config-save" class="button save">Save</button>
-                    <button id="ai-config-cancel" class="button cancel">Cancel</button>
-                </div>
             </div>
         </div>
-        <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
-            <i class="fas fa-caret-up"></i>
-        </button>
-        <button id="chat-toggle" class="chat-toggle" title="Open Chat" aria-label="Open Chat">
-            <i class="fas fa-comment"></i>
-        </button>
+
+        <div class="floating-buttons">
+            <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
+                <i class="fas fa-caret-up"></i>
+            </button>
+            <button id="chat-toggle" class="chat-toggle" title="Open Chat" aria-label="Open Chat">
+                <i class="far fa-comment-dots"></i>
+            </button>
+        </div>
+
+
         <div id="chatbox" class="chatbox hidden">
             <div class="chatbox-content">
                 <h3>

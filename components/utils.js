@@ -102,6 +102,7 @@ export const translations = {
     unnamedFolder: "Unnamed Folder",
     notAvailable: "N/A",
     scrollToTop: "Scroll to Top",
+    aiTitle: "Configure AI Chatbot",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -205,6 +206,7 @@ export const translations = {
     unnamedFolder: "Thư mục không tên",
     notAvailable: "N/A",
     scrollToTop: "Scroll to Top",
+    aiTitle: "Cấu hình AI Chatbot",
   },
 }
 

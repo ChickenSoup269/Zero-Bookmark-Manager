@@ -252,7 +252,6 @@ function renderBookmarks(bookmarksList, elements) {
 }
 
 function renderTreeView(nodes, elements, depth = 0) {
-  const language = localStorage.getItem("appLanguage") || "en"
   const fragment = document.createDocumentFragment()
 
   if (!nodes || !Array.isArray(nodes) || nodes.length === 0) {
