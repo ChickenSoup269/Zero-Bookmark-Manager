@@ -286,31 +286,18 @@ function renderTreeView(nodes, elements, depth = 0) {
     return fragment
   }
 
-  // Clear container + add select-all only at root level
+  // Root: clear container + add select-all
   if (depth === 0) {
     elements.folderListDiv.innerHTML = ""
     elements.folderListDiv.classList.add("tree-view")
+
     const selectAllDiv = document.createElement("div")
     selectAllDiv.className = "select-all"
     selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
     fragment.appendChild(selectAllDiv)
-
-    // Sort Other Bookmarks: folders first, bookmarks after
-    nodes = nodes.map((n) => {
-      if (n.id === "1" && n.children) {
-        n.children.sort((a, b) => {
-          const aIsFolder = !!a.children
-          const bIsFolder = !!b.children
-          if (aIsFolder && !bIsFolder) return -1
-          if (!aIsFolder && bIsFolder) return 1
-          return a.title.localeCompare(b.title)
-        })
-      }
-      return n
-    })
   }
 
-  // Sort nodes at current level: folders first, bookmarks after
+  // Sort nodes: folders first, bookmarks after
   const sortedNodes = [...nodes].sort((a, b) => {
     const aIsFolder = !!a.children
     const bIsFolder = !!b.children
@@ -336,67 +323,54 @@ function renderTreeView(nodes, elements, depth = 0) {
     const matchesFavorite =
       uiState.sortType === "favorites" ? node.isFavorite : true
 
-    // Render bookmark
+    // --- Bookmark ---
     if (node.url && matchesSearch && matchesFolder && matchesFavorite) {
       const bookmarkElement = createBookmarkElement(node, depth)
       bookmarkElement.style.marginLeft = `${depth * 5}px`
       fragment.appendChild(bookmarkElement)
     }
 
-    // Render folder
+    // --- Folder ---
     if (node.children && Array.isArray(node.children)) {
-      let isCollapsed = uiState.collapsedFolders.has(node.id)
+      const isCollapsed = uiState.collapsedFolders.has(node.id)
 
-      const hasMatchingChildren = node.children.some((child) => {
-        const childMatchesSearch = uiState.searchQuery
-          ? child.title
-              ?.toLowerCase()
-              .includes(uiState.searchQuery.toLowerCase()) ||
-            child.url?.toLowerCase().includes(uiState.searchQuery.toLowerCase())
-          : true
-        const childMatchesFolder = uiState.selectedFolderId
-          ? isInFolder(child, uiState.selectedFolderId)
-          : true
-        const childMatchesFavorite =
-          uiState.sortType === "favorites" ? child.isFavorite : true
-        return childMatchesSearch && childMatchesFolder && childMatchesFavorite
-      })
+      // tạo folder div
+      const folderDiv = document.createElement("div")
+      folderDiv.className = "folder-item"
+      folderDiv.dataset.id = node.id
+      folderDiv.style.marginLeft = `${depth * 5}px`
 
-      if (matchesSearch || matchesFolder || hasMatchingChildren) {
-        const folderDiv = document.createElement("div")
-        folderDiv.className = "folder-item"
-        folderDiv.dataset.id = node.id
-        folderDiv.style.marginLeft = `${depth * 5}px`
+      const toggleHTML = `<span class="folder-toggle" style="cursor:pointer; margin-right:5px;">${
+        isCollapsed ? "+" : "-"
+      }</span>`
 
-        const toggleHTML = `<span class="folder-toggle" style="cursor: pointer; margin-right: 5px;">${
-          isCollapsed ? "+" : "-"
-        }</span>`
+      folderDiv.innerHTML = `${toggleHTML}<span class="folder-title">${folderTitle}</span>`
+      fragment.appendChild(folderDiv)
 
-        folderDiv.innerHTML = `${toggleHTML}<span class="folder-title">${folderTitle}</span>`
-        fragment.appendChild(folderDiv)
+      // tạo children container
+      const childrenContainer = document.createElement("div")
+      childrenContainer.className = "folder-children"
+      childrenContainer.style.marginLeft = `${(depth + 1) * 5}px`
+      childrenContainer.style.display = isCollapsed ? "none" : "block"
 
-        const childrenContainer = document.createElement("div")
-        childrenContainer.className = "folder-children"
-        childrenContainer.style.marginLeft = `${(depth + 1) * 5}px`
-        childrenContainer.style.display = isCollapsed ? "none" : "block"
-
-        if (!isCollapsed) {
-          const childrenFragment = renderTreeView(
-            node.children,
-            elements,
-            depth + 1
-          )
-          childrenContainer.appendChild(childrenFragment)
-        }
-
-        fragment.appendChild(childrenContainer)
+      if (!isCollapsed) {
+        const childrenFragment = renderTreeView(
+          node.children,
+          elements,
+          depth + 1
+        )
+        childrenContainer.appendChild(childrenFragment)
       }
+
+      fragment.appendChild(childrenContainer)
     }
   })
 
+  // --- Root: attach listeners ---
   if (depth === 0) {
     elements.folderListDiv.appendChild(fragment)
 
+    // Toggle expand/collapse
     document.querySelectorAll(".folder-toggle").forEach((toggle) => {
       toggle.onclick = (e) => {
         const folderId = e.target.parentElement.dataset.id
