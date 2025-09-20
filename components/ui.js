@@ -413,7 +413,15 @@ function createBookmarkElement(bookmark, depth = 0) {
     bookmark.title || bookmark.url
   }</a>
     <div class="dropdown-btn-group">
-      <button class="dropdown-btn" aria-label="Bookmark options">⋮</button>
+      <button class="dropdown-btn ${
+        bookmark.isFavorite ? "favorited" : ""
+      }" aria-label="Bookmark options">
+        ${
+          bookmark.isFavorite
+            ? '<i class="fas fa-star"></i>'
+            : '<i class="fas fa-ellipsis-v"></i>'
+        }
+      </button>
       <div class="dropdown-menu hidden">
         <button class="menu-item add-to-folder" data-id="${bookmark.id}">${
     translations[language].addToFolderOption
@@ -423,6 +431,10 @@ function createBookmarkElement(bookmark, depth = 0) {
   }</button>
         <button class="menu-item rename-btn" data-id="${bookmark.id}">${
     translations[language].renameBookmarkOption
+  }</button>
+        <hr/>
+        <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
+    translations[language].favourite
   }</button>
       </div>
     </div>

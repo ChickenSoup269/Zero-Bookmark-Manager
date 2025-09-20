@@ -103,6 +103,7 @@ export const translations = {
     notAvailable: "N/A",
     scrollToTop: "Scroll to Top",
     aiTitle: "Configure AI Chatbot",
+    favourite: "Favourite",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -207,6 +208,7 @@ export const translations = {
     notAvailable: "N/A",
     scrollToTop: "Scroll to Top",
     aiTitle: "Cấu hình AI Chatbot",
+    favourite: "Yêu thích",
   },
 }
 
