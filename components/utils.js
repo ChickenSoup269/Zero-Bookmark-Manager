@@ -7,6 +7,7 @@ export const translations = {
     sortLastOpened: "By Last Opened",
     sortAZ: "A to Z",
     sortZA: "Z to A",
+    sortFavorites: "Favorites",
     createFolder: "Create Folder",
     addToFolder: "Add to Folder",
     deleteFolder: "Delete Folder",
@@ -104,6 +105,8 @@ export const translations = {
     scrollToTop: "Scroll to Top",
     aiTitle: "Configure AI Chatbot",
     favourite: "Favourite",
+    favoriteSuccess: "Bookmark added to favorites!",
+    unfavoriteSuccess: "Bookmark removed from favorites!",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -113,6 +116,7 @@ export const translations = {
     sortLastOpened: "Theo Lần Mở Cuối",
     sortAZ: "A đến Z",
     sortZA: "Z đến A",
+    sortFavorites: "Yêu thích",
     createFolder: "Tạo Thư mục",
     addToFolder: "Thêm vào Thư mục",
     deleteFolder: "Xóa Thư mục",
@@ -209,6 +213,8 @@ export const translations = {
     scrollToTop: "Scroll to Top",
     aiTitle: "Cấu hình AI Chatbot",
     favourite: "Yêu thích",
+    favoriteSuccess: "Đã thêm bookmark vào yêu thích!",
+    unfavoriteSuccess: "Đã xóa bookmark khỏi yêu thích!",
   },
 }
 

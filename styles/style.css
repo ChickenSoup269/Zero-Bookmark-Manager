@@ -342,8 +342,8 @@ body {
 }
 
 .dropdown-btn {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 0.875rem;
+  padding: var(--spacing-xs);
+  font-size: 1rem;
   background-color: transparent;
   color: var(--text-primary);
   border: none;
@@ -352,7 +352,17 @@ body {
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.dropdown-btn.favorited {
+  color: #ffd700; /* Gold color for star icon */
+}
+
+.dropdown-btn.favorited:hover {
+  color: #ffc107; /* Slightly darker gold on hover */
 }
 
 .dropdown-btn:hover {

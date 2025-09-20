@@ -1,4 +1,3 @@
-// ./components/controller/bookmarkActions.js
 import {
   translations,
   safeChromeBookmarksCall,
@@ -11,6 +10,7 @@ import { uiState, setCurrentBookmarkId } from "../state.js"
 import { openAddToFolderPopup } from "./addToFolder.js"
 
 export function setupBookmarkActionListeners(elements) {
+  // Handle rename save
   if (elements.renameSave) {
     elements.renameSave.removeEventListener("click", handleRenameSave)
     elements.renameSave.addEventListener("click", (e) =>
@@ -20,6 +20,7 @@ export function setupBookmarkActionListeners(elements) {
     console.error("renameSave element not found")
   }
 
+  // Handle rename cancel
   if (elements.renameCancel) {
     elements.renameCancel.removeEventListener("click", handleRenameCancel)
     elements.renameCancel.addEventListener("click", (e) =>
@@ -29,6 +30,7 @@ export function setupBookmarkActionListeners(elements) {
     console.error("renameCancel element not found")
   }
 
+  // Handle rename input keypress
   if (elements.renameInput) {
     elements.renameInput.removeEventListener(
       "keypress",
@@ -48,6 +50,7 @@ export function setupBookmarkActionListeners(elements) {
     console.error("renameInput element not found")
   }
 
+  // Handle rename popup click
   if (elements.renamePopup) {
     elements.renamePopup.removeEventListener("click", handleRenamePopupClick)
     elements.renamePopup.addEventListener("click", (e) =>
@@ -57,6 +60,7 @@ export function setupBookmarkActionListeners(elements) {
     console.error("renamePopup element not found")
   }
 
+  // Handle clear rename
   if (elements.clearRenameButton) {
     elements.clearRenameButton.removeEventListener("click", handleClearRename)
     elements.clearRenameButton.addEventListener("click", (e) =>
@@ -66,35 +70,56 @@ export function setupBookmarkActionListeners(elements) {
     console.error("clearRenameButton element not found")
   }
 
-  const addToFolderButtons = document.querySelectorAll(".add-to-folder")
-
-  addToFolderButtons.forEach((button) => {
-    button.removeEventListener("click", handleAddToFolder)
-    button.addEventListener("click", (e) => handleAddToFolder(e, elements))
+  // Handle all menu-item buttons (add-to-folder, delete, rename, favorite)
+  document.querySelectorAll(".menu-item").forEach((button) => {
+    button.removeEventListener("click", handleMenuItemClick)
+    button.addEventListener("click", (e) => handleMenuItemClick(e, elements))
   })
 
-  const deleteButtons = document.querySelectorAll(".delete-btn")
-
-  deleteButtons.forEach((button) => {
-    button.removeEventListener("click", handleDeleteBookmark)
-    button.addEventListener("click", (e) => handleDeleteBookmark(e, elements))
-  })
-
-  const renameButtons = document.querySelectorAll(".rename-btn")
-
-  renameButtons.forEach((button) => {
-    button.removeEventListener("click", handleRenameBookmark)
-    button.addEventListener("click", (e) => handleRenameBookmark(e, elements))
-  })
-
+  // Handle bookmark checkboxes
   const checkboxes = document.querySelectorAll(".bookmark-checkbox")
-
   checkboxes.forEach((checkbox) => {
     checkbox.removeEventListener("change", handleBookmarkCheckbox)
     checkbox.addEventListener("change", (e) =>
       handleBookmarkCheckbox(e, elements)
     )
   })
+}
+
+function handleMenuItemClick(e, elements) {
+  e.stopPropagation()
+  const bookmarkId = e.target.dataset.id
+  const action = e.target.classList.contains("add-to-folder")
+    ? "add-to-folder"
+    : e.target.classList.contains("delete-btn")
+    ? "delete"
+    : e.target.classList.contains("rename-btn")
+    ? "rename"
+    : e.target.classList.contains("favorite-btn")
+    ? "favorite"
+    : null
+
+  if (!bookmarkId || !action) {
+    console.error("Invalid bookmark ID or action", { bookmarkId, action })
+    return
+  }
+
+  switch (action) {
+    case "add-to-folder":
+      handleAddToFolder(e, elements)
+      break
+    case "delete":
+      handleDeleteBookmark(e, elements)
+      break
+    case "rename":
+      handleRenameBookmark(e, elements)
+      break
+    case "favorite":
+      handleFavoriteBookmark(e, elements)
+      break
+  }
+
+  e.target.closest(".dropdown-menu").classList.add("hidden")
 }
 
 function handleRenameSave(e, elements) {
@@ -250,7 +275,6 @@ function handleRenameSave(e, elements) {
 
 function handleRenameCancel(e, elements) {
   e.stopPropagation()
-
   elements.renamePopup.classList.add("hidden")
   elements.renameInput.classList.remove("error")
   elements.renameInput.value = ""
@@ -297,7 +321,6 @@ function handleAddToFolder(e, elements) {
   }
 
   openAddToFolderPopup(elements, [bookmarkId])
-  e.target.closest(".dropdown-menu").classList.add("hidden")
 }
 
 function handleDeleteBookmark(e, elements) {
@@ -331,8 +354,115 @@ function handleDeleteBookmark(e, elements) {
       })
     })
   })
-  e.target.closest(".dropdown-menu").classList.add("hidden")
 }
+
+function handleFavoriteBookmark(e, elements) {
+  e.stopPropagation()
+  const bookmarkId = e.target.dataset.id
+  const language = localStorage.getItem("appLanguage") || "en"
+  if (!bookmarkId) {
+    console.error("Bookmark ID is undefined in handleFavoriteBookmark")
+    showCustomPopup(translations[language].errorUnexpected, "error", false)
+    return
+  }
+
+  safeChromeBookmarksCall("get", [bookmarkId], (bookmarks) => {
+    if (chrome.runtime.lastError) {
+      console.error("Error retrieving bookmark:", chrome.runtime.lastError)
+      showCustomPopup(
+        translations[language].errorUnexpected ||
+          "An unexpected error occurred",
+        "error",
+        false
+      )
+      return
+    }
+
+    const bookmark = bookmarks[0]
+    if (!bookmark) {
+      console.error("Bookmark not found for ID:", bookmarkId)
+      showCustomPopup(
+        translations[language].bookmarkNotFound || "Bookmark not found",
+        "error",
+        false
+      )
+      return
+    }
+
+    if (!bookmark.url) {
+      console.error("Selected item is not a bookmark, ID:", bookmarkId)
+      showCustomPopup(
+        translations[language].errorNotABookmark ||
+          "Selected item is not a bookmark",
+        "error",
+        false
+      )
+      return
+    }
+
+    // Toggle isFavorite in chrome.storage.local
+    chrome.storage.local.get("favoriteBookmarks", (data) => {
+      const favoriteBookmarks = data.favoriteBookmarks || {}
+      const isFavorite = !favoriteBookmarks[bookmarkId] // Toggle state
+      favoriteBookmarks[bookmarkId] = isFavorite
+      chrome.storage.local.set({ favoriteBookmarks }, () => {
+        if (chrome.runtime.lastError) {
+          console.error(
+            "Error saving favorite state:",
+            chrome.runtime.lastError
+          )
+          showCustomPopup(
+            translations[language].errorUnexpected ||
+              "An unexpected error occurred",
+            "error",
+            false
+          )
+          return
+        }
+
+        // Update bookmark tree in memory
+        const updateBookmarkInTree = (nodes) => {
+          for (const node of nodes) {
+            if (node.id === bookmarkId) {
+              node.isFavorite = isFavorite
+              return true
+            }
+            if (node.children) {
+              if (updateBookmarkInTree(node.children)) return true
+            }
+          }
+          return false
+        }
+
+        updateBookmarkInTree(uiState.bookmarkTree)
+
+        // Update the button dynamically
+        const button = document.querySelector(
+          `.dropdown-btn[data-id="${bookmarkId}"]`
+        )
+        if (button) {
+          button.classList.toggle("favorited", isFavorite)
+          button.innerHTML = isFavorite
+            ? '<i class="fas fa-star"></i>'
+            : '<i class="fas fa-ellipsis-v"></i>'
+        }
+
+        // Re-render bookmarks to ensure consistency
+        renderFilteredBookmarks(uiState.bookmarkTree, elements)
+
+        showCustomPopup(
+          isFavorite
+            ? translations[language].favoriteSuccess ||
+                "Bookmark added to favorites!"
+            : translations[language].unfavoriteSuccess ||
+                "Bookmark removed from favorites!",
+          "success"
+        )
+      })
+    })
+  })
+}
+
 function handleBookmarkCheckbox(e, elements) {
   e.stopPropagation()
   const bookmarkId = e.target.dataset.id
@@ -491,6 +621,4 @@ function handleRenameBookmark(e, elements) {
       setCurrentBookmarkId(null)
     }
   })
-
-  e.target.closest(".dropdown-menu").classList.add("hidden")
 }

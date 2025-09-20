@@ -1,4 +1,3 @@
-// components/ui.js
 import { translations } from "./utils.js"
 import { flattenBookmarks, getFolders, isInFolder } from "./bookmarks.js"
 import {
@@ -17,7 +16,7 @@ export function updateUILanguage(elements, language) {
     t.allBookmarks
   elements.sortFilter.innerHTML = `
     <option value="default">${t.sortDefault}</option>
-    <option value="new">${t.sortNew}</option>
+    <option value="favorites">${t.sortFavorites}</option>
     <option value="old">${t.sortOld}</option>
     <option value="last-opened">${t.sortLastOpened}</option>
     <option value="a-z">${t.sortAZ}</option>
@@ -98,7 +97,7 @@ export function restoreUIState(elements, callback) {
       uiState.sortType = data.uiState.sortType || "default"
       uiState.viewMode = data.uiState.viewMode || "flat"
       uiState.collapsedFolders = new Set(data.uiState.collapsedFolders || [])
-      // Loại bỏ root và folder mặc định khỏi collapsedFolders
+      // Remove root and default folders from collapsedFolders
       ;["0", "1", "2"].forEach((id) => {
         if (uiState.collapsedFolders.has(id)) {
           uiState.collapsedFolders.delete(id)
@@ -137,45 +136,71 @@ export function restoreUIState(elements, callback) {
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
-  const bookmarks = flattenBookmarks(bookmarkTreeNodes)
-  const folders = getFolders(bookmarkTreeNodes)
-  setBookmarkTree(bookmarkTreeNodes)
-  setBookmarks(bookmarks)
-  setFolders(folders)
-  populateFolderFilter(folders, elements)
-  updateBookmarkCount(bookmarks, elements)
-  let filtered = bookmarks
+  // Fetch favoriteBookmarks from chrome.storage.local
+  chrome.storage.local.get("favoriteBookmarks", (data) => {
+    const favoriteBookmarks = data.favoriteBookmarks || {}
 
-  if (
-    uiState.selectedFolderId &&
-    folders.some((f) => f.id === uiState.selectedFolderId)
-  ) {
-    filtered = filtered.filter((bookmark) =>
-      isInFolder(bookmark, uiState.selectedFolderId)
-    )
-  } else {
-    uiState.selectedFolderId = ""
-  }
-  if (uiState.searchQuery) {
-    filtered = filtered.filter(
-      (bookmark) =>
-        bookmark.title
-          ?.toLowerCase()
-          .includes(uiState.searchQuery.toLowerCase()) ||
-        bookmark.url?.toLowerCase().includes(uiState.searchQuery.toLowerCase())
-    )
-  }
+    // Add isFavorite to bookmark nodes
+    const addFavoriteStatus = (nodes) => {
+      for (const node of nodes) {
+        if (node.url) {
+          node.isFavorite = !!favoriteBookmarks[node.id]
+        }
+        if (node.children) {
+          addFavoriteStatus(node.children)
+        }
+      }
+    }
 
-  if (uiState.viewMode === "tree") {
-    // Start from root's children to skip untitled root
-    const rootChildren = bookmarkTreeNodes[0]?.children || []
-    renderTreeView(rootChildren, elements)
-  } else {
-    renderBookmarks(filtered, elements)
-  }
+    addFavoriteStatus(bookmarkTreeNodes)
 
-  toggleFolderButtons(elements)
-  saveUIState()
+    const bookmarks = flattenBookmarks(bookmarkTreeNodes)
+    const folders = getFolders(bookmarkTreeNodes)
+    setBookmarkTree(bookmarkTreeNodes)
+    setBookmarks(bookmarks)
+    setFolders(folders)
+    populateFolderFilter(folders, elements)
+    updateBookmarkCount(bookmarks, elements)
+    let filtered = bookmarks
+
+    // Apply favorite filter
+    if (uiState.sortType === "favorites") {
+      filtered = filtered.filter((bookmark) => bookmark.isFavorite)
+    }
+
+    if (
+      uiState.selectedFolderId &&
+      folders.some((f) => f.id === uiState.selectedFolderId)
+    ) {
+      filtered = filtered.filter((bookmark) =>
+        isInFolder(bookmark, uiState.selectedFolderId)
+      )
+    } else {
+      uiState.selectedFolderId = ""
+    }
+    if (uiState.searchQuery) {
+      filtered = filtered.filter(
+        (bookmark) =>
+          bookmark.title
+            ?.toLowerCase()
+            .includes(uiState.searchQuery.toLowerCase()) ||
+          bookmark.url
+            ?.toLowerCase()
+            .includes(uiState.searchQuery.toLowerCase())
+      )
+    }
+
+    if (uiState.viewMode === "tree") {
+      // Start from root's children to skip untitled root
+      const rootChildren = bookmarkTreeNodes[0]?.children || []
+      renderTreeView(rootChildren, elements)
+    } else {
+      renderBookmarks(filtered, elements)
+    }
+
+    toggleFolderButtons(elements)
+    saveUIState()
+  })
 }
 
 function populateFolderFilter(folders, elements) {
@@ -203,6 +228,8 @@ function updateBookmarkCount(bookmarks, elements) {
     count = bookmarks.filter(
       (b) => b.url && isInFolder(b, selectedFolderId)
     ).length
+  } else if (uiState.sortType === "favorites") {
+    count = bookmarks.filter((b) => b.url && b.isFavorite).length
   } else {
     count = bookmarks.filter((b) => b.url).length
   }
@@ -259,7 +286,7 @@ function renderTreeView(nodes, elements, depth = 0) {
     return fragment
   }
 
-  // Clear container + thêm select-all chỉ khi ở cấp root
+  // Clear container + add select-all only at root level
   if (depth === 0) {
     elements.folderListDiv.innerHTML = ""
     elements.folderListDiv.classList.add("tree-view")
@@ -268,7 +295,7 @@ function renderTreeView(nodes, elements, depth = 0) {
     selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
     fragment.appendChild(selectAllDiv)
 
-    // Sort lại Other Bookmarks: folder trước, bookmark sau (chỉ áp dụng cho ID '1' như trước)
+    // Sort Other Bookmarks: folders first, bookmarks after
     nodes = nodes.map((n) => {
       if (n.id === "1" && n.children) {
         n.children.sort((a, b) => {
@@ -283,13 +310,13 @@ function renderTreeView(nodes, elements, depth = 0) {
     })
   }
 
-  // Sắp xếp node tại cấp độ hiện tại: folder trước, bookmark sau
+  // Sort nodes at current level: folders first, bookmarks after
   const sortedNodes = [...nodes].sort((a, b) => {
     const aIsFolder = !!a.children
     const bIsFolder = !!b.children
     if (aIsFolder && !bIsFolder) return -1
     if (!aIsFolder && bIsFolder) return 1
-    return a.title.localeCompare(b.title) // Sắp xếp alphabet trong cùng loại
+    return a.title.localeCompare(b.title)
   })
 
   sortedNodes.forEach((node) => {
@@ -306,14 +333,17 @@ function renderTreeView(nodes, elements, depth = 0) {
         isAncestorOf(node, uiState.selectedFolderId)
       : true
 
-    // Nếu là bookmark
-    if (node.url && matchesSearch && matchesFolder) {
+    const matchesFavorite =
+      uiState.sortType === "favorites" ? node.isFavorite : true
+
+    // Render bookmark
+    if (node.url && matchesSearch && matchesFolder && matchesFavorite) {
       const bookmarkElement = createBookmarkElement(node, depth)
       bookmarkElement.style.marginLeft = `${depth * 5}px`
       fragment.appendChild(bookmarkElement)
     }
 
-    // Nếu là folder
+    // Render folder
     if (node.children && Array.isArray(node.children)) {
       let isCollapsed = uiState.collapsedFolders.has(node.id)
 
@@ -327,7 +357,9 @@ function renderTreeView(nodes, elements, depth = 0) {
         const childMatchesFolder = uiState.selectedFolderId
           ? isInFolder(child, uiState.selectedFolderId)
           : true
-        return childMatchesSearch && childMatchesFolder
+        const childMatchesFavorite =
+          uiState.sortType === "favorites" ? child.isFavorite : true
+        return childMatchesSearch && childMatchesFolder && childMatchesFavorite
       })
 
       if (matchesSearch || matchesFolder || hasMatchingChildren) {
@@ -415,7 +447,7 @@ function createBookmarkElement(bookmark, depth = 0) {
     <div class="dropdown-btn-group">
       <button class="dropdown-btn ${
         bookmark.isFavorite ? "favorited" : ""
-      }" aria-label="Bookmark options">
+      }" data-id="${bookmark.id}" aria-label="Bookmark options">
         ${
           bookmark.isFavorite
             ? '<i class="fas fa-star"></i>'
@@ -445,6 +477,10 @@ function createBookmarkElement(bookmark, depth = 0) {
 function sortBookmarks(bookmarksList, sortType) {
   let sorted = [...bookmarksList]
   switch (sortType) {
+    case "favorites":
+      // Favorites are already filtered, but sort by dateAdded (newest first) for consistency
+      sorted.sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0))
+      break
     case "default":
     case "new":
       sorted.sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0))
