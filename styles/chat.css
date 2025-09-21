@@ -603,3 +603,13 @@
   background-color: var(--accent-color);
   border-radius: 4px;
 }
+
+.short-url {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.short-url:hover {
+  text-decoration: underline;
+}

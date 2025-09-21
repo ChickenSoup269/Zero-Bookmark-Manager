@@ -121,6 +121,8 @@ export const translations = {
     searchFolderResult: "Found folders",
     noFoldersFound: "No folders found for",
     aiBookmarkResponse: "AI Response",
+    notSupported:
+      "Sorry, I can only help with bookmark-related tasks or simple questions like the time or day.",
     systemPrompt: `
         You are a bookmark management assistant integrated into a browser extension. Your role is to help users manage their bookmarks using natural language or specific commands. You have access to Chrome Bookmarks API to perform actions like:
         - Counting bookmarks ("how many bookmarks do I have?").
@@ -301,6 +303,8 @@ export const translations = {
     searchFolderResult: "Các thư mục tìm thấy",
     noFoldersFound: "Không tìm thấy thư mục cho",
     aiBookmarkResponse: "Phản hồi AI",
+    notSupported:
+      "Xin lỗi, tôi chỉ có thể giúp với các tác vụ liên quan đến bookmark hoặc các câu hỏi đơn giản như giờ hoặc ngày.",
     systemPrompt: `
         Bạn là một trợ lý quản lý bookmark trong một tiện ích mở rộng trình duyệt. Vai trò của bạn là giúp người dùng quản lý bookmark bằng ngôn ngữ tự nhiên hoặc các lệnh cụ thể. Bạn có quyền truy cập vào Chrome Bookmarks API để thực hiện các hành động như:
         - Đếm bookmark ("tôi có bao nhiêu bookmark?").

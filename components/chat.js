@@ -30,23 +30,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // System Prompt tích hợp trực tiếp
   const systemPrompt = `
-    You are a bookmark management assistant integrated into a browser extension. Your role is to help users manage their bookmarks using natural language or specific commands. You have access to Chrome Bookmarks API to perform actions like:
-    - Counting bookmarks ("how many bookmarks do I have?").
-    - Listing bookmarks ("list my bookmarks").
-    - Adding bookmarks ("bookmark add <URL> [title <title>] [to folder <folder>]").
-    - Moving bookmarks ("move bookmark 'title' to folder 'folder'").
-    - Editing bookmarks ("edit bookmark <URL> [title <new_title>] [to folder <new_folder>]").
-    - Deleting bookmarks ("delete bookmark <URL>").
-    - Searching bookmarks ("search bookmark <keyword>").
-    - Searching folders ("search folder <keyword>").
-    For natural language queries, interpret the user's intent and provide a JSON response with:
-    - "action": the bookmark action (count, list, add, move, edit, delete, search_bookmark, search_folder).
-    - "params": parameters needed for the action (e.g., { url, title, folder, keyword }).
-    If the query is unclear or not bookmark-related, respond with:
-    - "action": "general".
-    - "response": a helpful text response.
-    Always return JSON format: { "action": string, "params": object, "response": string (optional) }.
-  `
+  You are a bookmark management assistant integrated into a browser extension. Your role is to help users manage their bookmarks using natural language or specific commands. You have access to Chrome Bookmarks API to perform actions like:
+  - Counting bookmarks ("how many bookmarks do I have?").
+  - Listing bookmarks ("list my bookmarks").
+  - Adding bookmarks ("bookmark add <URL> [title <title>] [to folder <folder>]").
+  - Moving bookmarks ("move bookmark 'title' to folder 'folder'").
+  - Editing bookmarks ("edit bookmark <URL> [title <new_title>] [to folder <new_folder>]").
+  - Deleting bookmarks ("delete bookmark <URL>").
+  - Searching bookmarks ("search bookmark <keyword>").
+  - Searching folders ("search folder <keyword>").
+  For natural language queries, interpret the user's intent and provide a JSON response with:
+  - "action": the bookmark action (count, list, add, move, edit, delete, search_bookmark, search_folder).
+  - "params": parameters needed for the action (e.g., { url, title, folder, keyword }).
+  If the query is unclear or not bookmark-related (e.g., asking about the day, time, or general questions), respond with:
+  - "action": "general".
+  - "response": a friendly, conversational response in the same language as the query, avoiding technical jargon. Suggest returning to bookmark-related tasks if appropriate.
+  Always return JSON format: { "action": string, "params": object, "response": string (optional) }.
+  Example for non-bookmark queries:
+  - Query: "What day is it today?"
+    Response: { "action": "general", "response": "Today is [day]. Would you like to manage your bookmarks?" }
+  - Query: "Hello"
+    Response: { "action": "general", "response": "Hi there! I'm here to help with your bookmarks. What would you like to do?" }
+`
 
   // Language support
   const getLanguage = () => localStorage.getItem("appLanguage") || "en"
@@ -134,43 +139,51 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Build API request from URL
-  // Build API request from URL
+  // Fixed buildApiRequest function for Gemini API
   const buildApiRequest = (url, apiKey, model, message) => {
     try {
       let apiUrl = url
       const headers = { "Content-Type": "application/json" }
       let body
 
-      // Fallback cho model không hợp lệ
-      const validModels = {
-        gemini: "gemini-2.0-flash", // Default cho gemini
-        gpt: "gpt-3.5-turbo", // Cho OpenAI
-        other: "default", // Generic
-      }
-      const effectiveModel = validModels[model] || model
-
-      // Xây dựng URL với model đúng (nếu là Gemini)
       if (model === "gemini") {
-        apiUrl = apiUrl.replace(/models\/[^:]+/, `models/${effectiveModel}`) // Thay model trong URL
+        // For Gemini API, ensure proper URL format
+        if (!apiUrl.includes("generateContent")) {
+          // If URL doesn't have the proper endpoint, construct it
+          apiUrl =
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent"
+        }
+
+        // Add API key to URL
         apiUrl = apiUrl.includes("?key=")
           ? apiUrl.replace(/(\?key=)[^&]+/, `$1${apiKey}`)
           : apiUrl + (apiUrl.includes("?") ? "&" : "?") + `key=${apiKey}`
+
+        // Correct request body structure for Gemini API
         body = {
           contents: [
-            { parts: [{ text: systemPrompt }] },
-            { parts: [{ text: message }] },
+            {
+              parts: [{ text: message }],
+            },
           ],
+          systemInstruction: {
+            parts: [{ text: systemPrompt }],
+          },
           generationConfig: {
-            // Thêm config để tránh lỗi token/safety
             maxOutputTokens: 1024,
             temperature: 0.7,
             topP: 0.8,
+            responseMimeType: "application/json",
           },
           safetySettings: [
-            // Giảm safety để tránh block
-            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+            {
+              category: "HARM_CATEGORY_HARASSMENT",
+              threshold: "BLOCK_NONE",
+            },
+            {
+              category: "HARM_CATEGORY_HATE_SPEECH",
+              threshold: "BLOCK_NONE",
+            },
             {
               category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
               threshold: "BLOCK_NONE",
@@ -184,13 +197,15 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (model === "gpt") {
         headers["Authorization"] = `Bearer ${apiKey}`
         body = {
-          model: effectiveModel,
+          model: "gpt-3.5-turbo",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: message },
           ],
+          response_format: { type: "json_object" },
         }
       } else {
+        // Generic API format
         headers["x-api-key"] = apiKey
         body = {
           prompt: `${systemPrompt}\n${message}`,
@@ -199,9 +214,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log("Built API Request:", {
         url: apiUrl,
-        model: effectiveModel,
-        body,
-      }) // Log để debug
+        model,
+        body: JSON.stringify(body, null, 2),
+      })
+
       return { url: apiUrl, headers, body, method: "POST" }
     } catch (error) {
       console.error("Failed to build API request:", error)
@@ -366,7 +382,16 @@ document.addEventListener("DOMContentLoaded", () => {
           })
           botMessage.innerHTML = bookmarks.length
             ? `${t("bookmarks") || "Bookmarks"}:<br>${bookmarks
-                .map((b) => `<a href="${b.url}" target="_blank">${b.title}</a>`)
+                .map(
+                  (b, index) =>
+                    `<span class="bookmark-item">${
+                      index + 1
+                    }. <img src="https://www.google.com/s2/favicons?domain=${
+                      new URL(b.url).hostname
+                    }" class="favicon" alt="Favicon" onerror="this.src='./images/default-favicon.png';"> <a href="${
+                      b.url
+                    }" target="_blank">${b.title}</a></span>`
+                )
                 .join("<br>")}<span class="timestamp">${timestamp}</span>`
             : `${
                 t("noBookmarks") || "No bookmarks found"
@@ -513,8 +538,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 bookmarks.length
               }<br>${bookmarks
                 .map(
-                  (b) =>
-                    `<a href="${b.url}" target="_blank">${b.title || b.url}</a>`
+                  (b, index) =>
+                    `<span class="bookmark-item">${
+                      index + 1
+                    }. <img src="https://www.google.com/s2/favicons?domain=${
+                      new URL(b.url).hostname
+                    }" class="favicon" alt="Favicon" onerror="this.src='./images/default-favicon.png';"> <a href="${
+                      b.url
+                    }" target="_blank">${b.title || b.url}</a></span>`
                 )
                 .join("<br>")}<span class="timestamp">${timestamp}</span>`
             : `${t("noBookmarks") || "No bookmarks found"} "${
@@ -696,6 +727,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const message = chatInput.value.trim()
     if (!message) return
 
+    const formatMessage = (text) => {
+      const urlRegex = /(https?:\/\/[^\s<]+)(?=\s|$|<)/g
+      return text.replace(urlRegex, (url) => {
+        try {
+          const urlObj = new URL(url)
+          const shortText = urlObj.hostname // Hoặc tùy chỉnh cách rút gọn
+          return `<a href="${url}" target="_blank" class="short-url">${shortText}</a>`
+        } catch {
+          return url // Nếu không phải URL hợp lệ, giữ nguyên
+        }
+      })
+    }
+
+    // Add user message
     // Add user message
     const userMessage = document.createElement("div")
     userMessage.className = "chatbox-message user"
@@ -703,7 +748,9 @@ document.addEventListener("DOMContentLoaded", () => {
       hour: "2-digit",
       minute: "2-digit",
     })
-    userMessage.innerHTML = `${message}<span class="timestamp">${timestamp}</span>`
+    userMessage.innerHTML = `${formatMessage(
+      message
+    )}<span class="timestamp">${timestamp}</span>`
     chatMessages.appendChild(userMessage)
     addToChatHistory("user", message, timestamp)
     chatMessages.scrollTop = chatMessages.scrollHeight
