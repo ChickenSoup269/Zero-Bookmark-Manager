@@ -1,6 +1,6 @@
-// components utils.js
 export const translations = {
   en: {
+    // Your translations (unchanged, as they are correct)
     allBookmarks: "All Bookmarks",
     sortDefault: "Sort: Default",
     sortNew: "New to Old",
@@ -113,27 +113,75 @@ export const translations = {
     maximizeMinimize: "Maximize/Minimize",
     editAIConfig: "Edit AI Config",
     closeChat: "Close Chat",
+    chatToggle: "Open Chat",
     noChatHistory: "No chat history available",
     loadingChat: "Processing...",
-    helpGuide: `
-        Settings:
-        1. Add to Folder:
-          - Chat: "bookmark add https://example.com title 'My Site' to folder News"
-          - Or use "Create Folder" in sidebar.
-        2. Organize:
-          - Create folders: "Create Folder" and enter name.
-          - Move: Select bookmarks, use "Add to Folder".
-        3. Search Bookmarks:
-          - Use search bar or "Sort: Default" dropdown.
-          - Chat: "search bookmark keyword" or "how many bookmarks".
-        4. AI Features:
-          - Configure in "Configure AI Chatbot" for suggestions.
-          - Use commands like "list bookmarks".
-        5. Export/Import Bookmarks:
-          - Access via "Settings" menu.
+    moveBookmarkSuccess: "Bookmark moved successfully",
+    moveBookmarkError: "Bookmark not found or invalid folder",
+    searchFolderResult: "Found folders",
+    noFoldersFound: "No folders found for",
+    aiBookmarkResponse: "AI Response",
+    systemPrompt: `
+        You are a bookmark management assistant integrated into a browser extension. Your role is to help users manage their bookmarks using natural language or specific commands. You have access to Chrome Bookmarks API to perform actions like:
+        - Counting bookmarks ("how many bookmarks do I have?").
+        - Listing bookmarks ("list my bookmarks").
+        - Adding bookmarks ("bookmark add <URL> [title <title>] [to folder <folder>]").
+        - Moving bookmarks ("move bookmark 'title' to folder 'folder'").
+        - Editing bookmarks ("edit bookmark <URL> [title <new_title>] [to folder <new_folder>]").
+        - Deleting bookmarks ("delete bookmark <URL>").
+        - Searching bookmarks ("search bookmark <keyword>").
+        - Searching folders ("search folder <keyword>").
+        For natural language queries, interpret the user's intent and provide a JSON response with:
+        - "action": the bookmark action (count, list, add, move, edit, delete, search_bookmark, search_folder).
+        - "params": parameters needed for the action (e.g., { url, title, folder, keyword }).
+        If the query is unclear or not bookmark-related, respond with:
+        - "action": "general".
+        - "response": a helpful text response.
+        Always return JSON format: { "action": string, "params": object, "response": string (optional) }.
         `,
+    helpGuide: `
+      Help Guide:
+
+      1. Natural Language Queries:
+        - Ask freely, e.g., "How many bookmarks do I have?", "Show me my bookmarks", or "Find bookmarks about tech".
+        - The AI will interpret and respond with bookmark actions or answers.
+
+      2. Add a Bookmark:
+        - Command: "bookmark add https://example.com title 'My Site' to folder News"
+        - Or use "Create Folder" in sidebar.
+
+      3. Move a Bookmark:
+        - Command: "move bookmark 'My Site' to folder News"
+        - Or ask: "Move my bookmark titled 'My Site' to News folder".
+
+      4. Search Bookmarks:
+        - Command: "search bookmark keyword" or ask: "Find bookmarks with keyword tech".
+        - Use search bar or "Sort: Default" dropdown for manual search.
+
+      5. Search Folders:
+        - Command: "search folder keyword" or ask: "Which folders have News in the name?".
+
+      6. List Bookmarks:
+        - Command: "list bookmarks" or ask: "What bookmarks do I have?".
+
+      7. Edit a Bookmark:
+        - Command: "edit bookmark https://example.com title 'New Title' to folder Work"
+        - Or ask: "Rename my bookmark https://example.com to New Title".
+
+      8. Delete a Bookmark:
+        - Command: "delete bookmark https://example.com"
+        - Or ask: "Remove my bookmark https://example.com".
+
+      9. AI Features:
+        - Configure in "Configure AI Chatbot" for suggestions.
+        - The AI understands natural questions and commands for bookmark management.
+
+      10. Export/Import Bookmarks:
+          - Access via "Settings" menu.
+      `,
   },
   vi: {
+    // Your vi translations (unchanged, as they are correct)
     allBookmarks: "Tất cả Bookmarks",
     sortDefault: "Sắp xếp: Mặc định",
     sortNew: "Mới đến Cũ",
@@ -245,25 +293,72 @@ export const translations = {
     maximizeMinimize: "Phóng To/Thu Nhỏ",
     editAIConfig: "Chỉnh Sửa Cấu Hình AI",
     closeChat: "Đóng Chat",
+    chatToggle: "Mở Chat",
     noChatHistory: "Không có lịch sử chat",
     loadingChat: "Đang xử lý...",
+    moveBookmarkSuccess: "Đã chuyển bookmark thành công",
+    moveBookmarkError: "Không tìm thấy bookmark hoặc thư mục không hợp lệ",
+    searchFolderResult: "Các thư mục tìm thấy",
+    noFoldersFound: "Không tìm thấy thư mục cho",
+    aiBookmarkResponse: "Phản hồi AI",
+    systemPrompt: `
+        Bạn là một trợ lý quản lý bookmark trong một tiện ích mở rộng trình duyệt. Vai trò của bạn là giúp người dùng quản lý bookmark bằng ngôn ngữ tự nhiên hoặc các lệnh cụ thể. Bạn có quyền truy cập vào Chrome Bookmarks API để thực hiện các hành động như:
+        - Đếm bookmark ("tôi có bao nhiêu bookmark?").
+        - Liệt kê bookmark ("hiển thị danh sách bookmark").
+        - Thêm bookmark ("bookmark add <URL> [title <title>] [to folder <folder>]").
+        - Di chuyển bookmark ("chuyển bookmark 'title' sang thư mục 'folder'").
+        - Sửa bookmark ("edit bookmark <URL> [title <new_title>] [to folder <new_folder>]").
+        - Xóa bookmark ("delete bookmark <URL>").
+        - Tìm kiếm bookmark ("tìm bookmark <từ khóa>").
+        - Tìm kiếm thư mục ("tìm thư mục <từ khóa>").
+        Đối với các câu hỏi bằng ngôn ngữ tự nhiên, hãy diễn giải ý định của người dùng và trả về phản hồi JSON với:
+        - "action": hành động bookmark (count, list, add, move, edit, delete, search_bookmark, search_folder).
+        - "params": các tham số cần thiết (ví dụ: { url, title, folder, keyword }).
+        Nếu câu hỏi không rõ ràng hoặc không liên quan đến bookmark, trả về:
+        - "action": "general".
+        - "response": phản hồi văn bản hữu ích.
+        Luôn trả về định dạng JSON: { "action": string, "params": object, "response": string (optional) }.
+        `,
     helpGuide: `
-    Cài đặt:
-      1. Thêm vào Thư mục:
-        - Chat: "bookmark add https://example.com title 'Trang Của Tôi' to folder Tin Tức"
-        - Hoặc dùng "Tạo Thư mục" trong sidebar.
-      2. Sắp xếp:
-        - Tạo thư mục: "Tạo Thư mục" và nhập tên.
-        - Di chuyển: Chọn bookmark, dùng "Thêm vào Thư mục".
-      3. Tìm kiếm Bookmark:
-        - Dùng thanh tìm kiếm hoặc dropdown "Sắp xếp: Mặc định".
-        - Chat: "search bookmark từ khóa" hoặc "tôi có bao nhiêu bookmark".
-      4. Tính năng AI:
-        - Cấu hình trong "Cấu hình AI Chatbot" để gợi ý.
-        - Dùng lệnh như "danh sách bookmark".
-      5. Xuất/Nhập Bookmark:
-        - Truy cập qua menu "Cài đặt".
-      `,
+        Hướng Dẫn:
+
+        1. Câu hỏi Ngôn ngữ Tự nhiên:
+          - Hỏi tự do, ví dụ: "Tôi có bao nhiêu bookmark?", "Hiển thị bookmark của tôi", hoặc "Tìm bookmark về công nghệ".
+          - AI sẽ diễn giải và trả lời bằng hành động bookmark hoặc câu trả lời.
+
+        2. Thêm Bookmark:
+          - Lệnh: "bookmark add https://example.com title 'Trang Của Tôi' to folder Tin Tức"
+          - Hoặc dùng "Tạo Thư mục" trong sidebar.
+
+        3. Di chuyển Bookmark:
+          - Lệnh: "chuyển bookmark 'Trang Của Tôi' sang thư mục Tin Tức"
+          - Hoặc hỏi: "Chuyển bookmark có tiêu đề 'Trang Của Tôi' sang thư mục Tin Tức".
+
+        4. Tìm kiếm Bookmark:
+          - Lệnh: "tìm bookmark từ khóa" hoặc hỏi: "Tìm bookmark có từ khóa công nghệ".
+          - Dùng thanh tìm kiếm hoặc dropdown "Sắp xếp: Mặc định" để tìm thủ công.
+
+        5. Tìm kiếm Thư mục:
+          - Lệnh: "tìm thư mục từ khóa" hoặc hỏi: "Thư mục nào có từ News trong tên?".
+
+        6. Liệt kê Bookmark:
+          - Lệnh: "danh sách bookmark" hoặc hỏi: "Tôi có những bookmark nào?".
+
+        7. Sửa Bookmark:
+          - Lệnh: "edit bookmark https://example.com title 'Tiêu Đề Mới' to folder Công Việc"
+          - Hoặc hỏi: "Đổi tên bookmark https://example.com thành Tiêu Đề Mới".
+
+        8. Xóa Bookmark:
+          - Lệnh: "delete bookmark https://example.com"
+          - Hoặc hỏi: "Xóa bookmark https://example.com của tôi".
+
+        9. Tính năng AI:
+          - Cấu hình trong "Cấu hình AI Chatbot" để gợi ý.
+          - AI hiểu các câu hỏi và lệnh tự nhiên để quản lý bookmark.
+
+        10. Xuất/Nhập Bookmark:
+            - Truy cập qua menu "Cài đặt".
+        `,
   },
 }
 
@@ -284,7 +379,6 @@ export function safeChromeBookmarksCall(method, args, callback) {
         callback(null)
         return
       }
-
       callback(result)
     })
   } catch (error) {
@@ -339,7 +433,6 @@ export function showCustomPopup(
     popup.classList.remove("hidden")
 
     const isDarkMode = document.body.classList.contains("dark-theme")
-
     popup.classList.toggle("light-theme", !isDarkMode)
     popup.classList.toggle("dark-theme", isDarkMode)
 
@@ -392,7 +485,7 @@ export function showCustomConfirm(message, onConfirm, onCancel) {
   const messageEl = document.getElementById("custom-popup-message")
   const okButton = document.getElementById("custom-popup-ok")
   const language = localStorage.getItem("appLanguage") || "en"
-  const buttonsContainer = popup.querySelector(".rename-popup-buttons")
+  const buttonsContainer = popup?.querySelector(".rename-popup-buttons")
 
   if (!popup || !title || !messageEl || !okButton || !buttonsContainer) {
     console.error("Custom confirm popup elements missing", {
@@ -419,7 +512,6 @@ export function showCustomConfirm(message, onConfirm, onCancel) {
     buttonsContainer.appendChild(cancelButton)
 
     const isDarkMode = document.body.classList.contains("dark-theme")
-
     popup.classList.toggle("light-theme", !isDarkMode)
     popup.classList.toggle("dark-theme", isDarkMode)
 
@@ -430,10 +522,12 @@ export function showCustomConfirm(message, onConfirm, onCancel) {
       }
       document.removeEventListener("keydown", handleKeydown)
     }
+
     okButton.onclick = () => {
       onConfirm()
       closePopup()
     }
+
     cancelButton.onclick = () => {
       if (onCancel) onCancel()
       closePopup()
@@ -459,5 +553,105 @@ export function showCustomConfirm(message, onConfirm, onCancel) {
     document.addEventListener("keydown", handleKeydown)
   } catch (error) {
     console.error("Error in showCustomConfirm:", error)
+  }
+}
+
+export function showCustomGuide() {
+  // Ensure DOM is loaded
+  if (!document.getElementById("custom-guide")) {
+    console.error(
+      "Custom guide popup not found. Waiting for DOMContentLoaded..."
+    )
+    document.addEventListener("DOMContentLoaded", showCustomGuide)
+    return
+  }
+
+  const popup = document.getElementById("custom-guide")
+  const title = document.getElementById("custom-guide-title")
+  const messageEl = document.getElementById("custom-guide-message")
+  const okButton = document.getElementById("custom-guide-ok")
+  const language = localStorage.getItem("appLanguage") || "en"
+
+  // Log missing elements for debugging
+  if (!popup || !title || !messageEl || !okButton) {
+    console.error("Custom guide elements missing:", {
+      popup: !!popup,
+      title: !!title,
+      messageEl: !!messageEl,
+      okButton: !!okButton,
+    })
+    // Display a fallback error message
+    if (document.getElementById("custom-popup")) {
+      showCustomPopup(
+        `${translations[language].errorTitle}: ${
+          translations[language].errorUnexpected || "Unexpected error"
+        }`,
+        "error",
+        true
+      )
+    } else {
+      alert("Error: Help guide cannot be displayed due to missing elements.")
+    }
+    return
+  }
+
+  try {
+    title.textContent = translations[language].helpGuideTitle
+
+    // Parse helpGuide into a list
+    const guideContent = translations[language].helpGuide.trim()
+    const guideItems = guideContent.split("\n\n").map((item) => {
+      const lines = item.trim().split("\n")
+      const title = lines[0].replace(/^\d+\.\s*/, "")
+      const content = lines
+        .slice(1)
+        .map((line) => {
+          const trimmedLine = line.replace(/^\s*-\s*/, "")
+          return `<p>${trimmedLine}</p>`
+        })
+        .join("")
+      return `<li><strong>${title}</strong>${content}</li>`
+    })
+    messageEl.innerHTML = `<ul>${guideItems.join("")}</ul>`
+
+    popup.classList.remove("hidden")
+
+    const isDarkMode = document.body.classList.contains("dark-theme")
+    popup.classList.toggle("light-theme", !isDarkMode)
+    popup.classList.toggle("dark-theme", isDarkMode)
+
+    const closePopup = () => {
+      popup.classList.add("hidden")
+      document.removeEventListener("keydown", handleKeydown)
+    }
+
+    okButton.onclick = () => closePopup()
+
+    popup.onclick = (e) => {
+      if (e.target === popup) {
+        closePopup()
+      }
+    }
+
+    const handleKeydown = (e) => {
+      if (e.key === "Enter" || e.key === "Escape") {
+        closePopup()
+      }
+    }
+
+    document.addEventListener("keydown", handleKeydown)
+  } catch (error) {
+    console.error("Error in showCustomGuide:", error)
+    if (document.getElementById("custom-popup")) {
+      showCustomPopup(
+        `${translations[language].errorTitle}: ${
+          translations[language].errorUnexpected || "Unexpected error"
+        }`,
+        "error",
+        true
+      )
+    } else {
+      alert("Error: Help guide cannot be displayed.")
+    }
   }
 }

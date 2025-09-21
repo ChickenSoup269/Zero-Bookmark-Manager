@@ -4,9 +4,7 @@
 }
 
 .chat-toggle {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
+  position: static;
   width: var(--w);
   height: var(--h);
   border-radius: 50%;
@@ -20,7 +18,6 @@
   transition: all var(--transition-fast);
   border: none;
   cursor: pointer;
-  z-index: 1001;
 }
 
 .chat-toggle:hover {
@@ -313,9 +310,7 @@
 
 /* Scroll to Top */
 .scroll-to-top {
-  position: fixed;
-  bottom: 68px;
-  right: 16px;
+  position: static;
   width: var(--w);
   height: var(--h);
   border-radius: 50%;
@@ -328,7 +323,6 @@
   box-shadow: var(--shadow-md);
   transition: all var(--transition-fast);
   border: none;
-  z-index: 1001;
 }
 
 .scroll-to-top:hover {
@@ -336,31 +330,222 @@
   transform: scale(1.1);
 }
 
-/* Responsive */
+/* Floating Buttons */
+.floating-buttons {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1001;
+}
+
+.floating-buttons .button,
+.floating-buttons .chat-toggle {
+  position: static;
+  width: var(--w);
+  height: var(--h);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.chatbox-header-controlers {
+  display: flex;
+  gap: 5px;
+}
+
+/* Custom Popup */
+.custom-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 90%;
+  max-height: 80vh;
+  width: 400px;
+  padding: var(--spacing-md);
+  z-index: 100001;
+  overflow-y: auto;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.custom-popup.hidden {
+  display: none;
+}
+
+.custom-popup h2 {
+  margin: 0 0 var(--spacing-md);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.custom-popup p {
+  margin: 0 0 var(--spacing-sm);
+}
+
+.custom-popup button {
+  background-color: var(--accent-color);
+  color: var(--bg-primary);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: var(--spacing-md);
+  transition: background-color var(--transition-fast);
+}
+
+.custom-popup button:hover {
+  background-color: var(--hover-bg);
+}
+
+.custom-popup.success {
+  border: 2px solid var(--success-color);
+}
+
+.custom-popup.error {
+  border: 2px solid var(--danger-color);
+}
+
+/* Custom Guide */
+.custom-guide {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 90%;
+  max-height: 80vh;
+  width: 500px;
+  padding: var(--spacing-md);
+  z-index: 100001;
+  overflow-y: auto;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.custom-guide.hidden {
+  display: none;
+}
+
+.custom-guide h2 {
+  margin: 0 0 var(--spacing-md);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.custom-guide ul {
+  list-style-type: none;
+  padding-left: 20px;
+  margin: var(--spacing-sm) 0;
+}
+
+.custom-guide li {
+  margin-bottom: var(--spacing-md);
+  padding-left: 15px;
+  position: relative;
+}
+
+.custom-guide li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--accent-color);
+  font-size: 1.2em;
+}
+
+.custom-guide li strong {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.custom-guide li br + br {
+  display: none;
+}
+
+.custom-guide code {
+  background-color: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.85rem;
+}
+
+.custom-guide button {
+  background-color: var(--accent-color);
+  color: var(--bg-primary);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: var(--spacing-md);
+  transition: background-color var(--transition-fast);
+}
+
+.custom-guide button:hover {
+  background-color: var(--hover-bg);
+}
+
+.custom-guide.dark {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.custom-guide.dark code {
+  background-color: var(--bg-tertiary);
+}
+
 @media (max-width: 400px) {
-  .chatbox {
+  .custom-popup,
+  .custom-guide {
     width: 90%;
-    max-width: 320px;
-    min-width: 240px;
-    bottom: 72px;
-    right: 8px;
-    height: 400px;
-    min-height: 280px;
+    max-width: 300px;
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (prefers-contrast: high) {
+  .custom-popup,
+  .custom-guide {
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #000000;
   }
 
-  .chat-toggle {
-    bottom: 16px;
-    right: 8px;
+  .custom-popup h2,
+  .custom-guide h2 {
+    color: #0055cc;
   }
 
-  .scroll-to-top {
-    bottom: 72px;
-    right: 8px;
+  .custom-popup button,
+  .custom-guide button {
+    background-color: #0055cc;
+    color: #ffffff;
   }
 
-  .chat-scroll-bottom {
-    right: 12px;
-    bottom: 84px;
+  .custom-guide li::before {
+    color: #0055cc;
+  }
+
+  .custom-guide li strong {
+    color: #0055cc;
   }
 }
 
@@ -370,7 +555,9 @@
   .chatbox,
   .scroll-to-top,
   .chat-scroll-bottom,
-  .ai-config-popup {
+  .ai-config-popup,
+  .custom-popup,
+  .custom-guide {
     display: none !important;
   }
 }
@@ -415,133 +602,4 @@
 .chatbox::-webkit-resizer {
   background-color: var(--accent-color);
   border-radius: 4px;
-}
-
-.floating-buttons {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 1001;
-}
-
-.floating-buttons .button,
-.floating-buttons .chat-toggle {
-  position: static;
-  width: var(--w);
-  height: var(--h);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-fast);
-  cursor: pointer;
-}
-
-.chatbox-header-controlers {
-  display: flex;
-  gap: 5px;
-}
-
-/* Custom Popup for Help Guide */
-.custom-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-lg);
-  max-width: 90%;
-  max-height: 80vh;
-  width: 400px;
-  padding: var(--spacing-md);
-  z-index: 100001;
-  overflow-y: auto;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-.custom-popup h2 {
-  margin: 0 0 var(--spacing-md);
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--accent-color);
-}
-
-.custom-popup p {
-  margin: 0 0 var(--spacing-sm);
-}
-
-.custom-popup ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  margin: var(--spacing-sm) 0;
-}
-
-.custom-popup li {
-  margin-bottom: var(--spacing-sm);
-}
-
-.custom-popup pre,
-.custom-popup code {
-  background-color: var(--bg-secondary);
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 0.85rem;
-}
-
-.custom-popup button {
-  background-color: var(--accent-color);
-  color: var(--bg-primary);
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-top: var(--spacing-md);
-  transition: background-color var(--transition-fast);
-}
-
-.custom-popup button:hover {
-  background-color: var(--hover-bg);
-}
-
-.custom-popup.success {
-  border: 2px solid var(--success-color);
-}
-
-.custom-popup.error {
-  border: 2px solid var(--danger-color);
-}
-
-@media (max-width: 400px) {
-  .custom-popup {
-    width: 90%;
-    max-width: 300px;
-    padding: var(--spacing-sm);
-  }
-}
-
-@media (prefers-contrast: high) {
-  .custom-popup {
-    background-color: #ffffff;
-    color: #000000;
-    border: 2px solid #000000;
-  }
-
-  .custom-popup h2 {
-    color: #0055cc;
-  }
-
-  .custom-popup button {
-    background-color: #0055cc;
-    color: #ffffff;
-  }
 }
