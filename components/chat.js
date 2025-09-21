@@ -1,3 +1,4 @@
+// components/chat.js
 import {
   translations,
   showCustomPopup,
@@ -26,6 +27,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatEditConfig = document.getElementById("chat-edit-config")
   const chatHelp = document.getElementById("chat-help")
   const chatHistory = document.getElementById("chat-history")
+
+  // System Prompt tích hợp trực tiếp
+  const systemPrompt = `
+    You are a bookmark management assistant integrated into a browser extension. Your role is to help users manage their bookmarks using natural language or specific commands. You have access to Chrome Bookmarks API to perform actions like:
+    - Counting bookmarks ("how many bookmarks do I have?").
+    - Listing bookmarks ("list my bookmarks").
+    - Adding bookmarks ("bookmark add <URL> [title <title>] [to folder <folder>]").
+    - Moving bookmarks ("move bookmark 'title' to folder 'folder'").
+    - Editing bookmarks ("edit bookmark <URL> [title <new_title>] [to folder <new_folder>]").
+    - Deleting bookmarks ("delete bookmark <URL>").
+    - Searching bookmarks ("search bookmark <keyword>").
+    - Searching folders ("search folder <keyword>").
+    For natural language queries, interpret the user's intent and provide a JSON response with:
+    - "action": the bookmark action (count, list, add, move, edit, delete, search_bookmark, search_folder).
+    - "params": parameters needed for the action (e.g., { url, title, folder, keyword }).
+    If the query is unclear or not bookmark-related, respond with:
+    - "action": "general".
+    - "response": a helpful text response.
+    Always return JSON format: { "action": string, "params": object, "response": string (optional) }.
+  `
 
   // Language support
   const getLanguage = () => localStorage.getItem("appLanguage") || "en"
@@ -103,41 +124,92 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("aiConfig", JSON.stringify({ model, apiKey, curl }))
   }
 
-  // Parse cURL command
-  const parseCurlCommand = (curl, apiKey, model) => {
+  // Validate URL
+  const isValidUrl = (url) => {
     try {
-      const urlMatch = curl.match(/curl\s+['"]?([^'"\s]+)['"]?/)
-      let url = urlMatch ? urlMatch[1] : ""
-      const headers = {}
-      const headersMatch = curl.matchAll(/-(?:H|header)\s+['"]([^'"]+)['"]/g)
-      for (const match of headersMatch) {
-        const [key, value] = match[1].split(/:\s*/)
-        headers[key.trim()] = value.trim()
+      new URL(url)
+      return url.includes("http")
+    } catch {
+      return false
+    }
+  }
+
+  // Build API request from URL
+  // Build API request from URL
+  const buildApiRequest = (url, apiKey, model, message) => {
+    try {
+      let apiUrl = url
+      const headers = { "Content-Type": "application/json" }
+      let body
+
+      // Fallback cho model không hợp lệ
+      const validModels = {
+        gemini: "gemini-2.0-flash", // Default cho gemini
+        gpt: "gpt-3.5-turbo", // Cho OpenAI
+        other: "default", // Generic
       }
-      const bodyMatch =
-        curl.match(/--data(?:-raw)?\s+['"]([^'"]+)['"]/) ||
-        curl.match(/-d\s+['"]([^'"]+)['"]/)
-      let body = {}
-      if (bodyMatch) {
-        try {
-          body = JSON.parse(bodyMatch[1])
-        } catch {
-          body = bodyMatch[1]
-        }
-      }
+      const effectiveModel = validModels[model] || model
+
+      // Xây dựng URL với model đúng (nếu là Gemini)
       if (model === "gemini") {
-        url = url.replace(/(\?key=)[^&]+/, `$1${apiKey}`)
-        if (!url.includes("?key=")) {
-          url += (url.includes("?") ? "&" : "?") + `key=${apiKey}`
+        apiUrl = apiUrl.replace(/models\/[^:]+/, `models/${effectiveModel}`) // Thay model trong URL
+        apiUrl = apiUrl.includes("?key=")
+          ? apiUrl.replace(/(\?key=)[^&]+/, `$1${apiKey}`)
+          : apiUrl + (apiUrl.includes("?") ? "&" : "?") + `key=${apiKey}`
+        body = {
+          contents: [
+            { parts: [{ text: systemPrompt }] },
+            { parts: [{ text: message }] },
+          ],
+          generationConfig: {
+            // Thêm config để tránh lỗi token/safety
+            maxOutputTokens: 1024,
+            temperature: 0.7,
+            topP: 0.8,
+          },
+          safetySettings: [
+            // Giảm safety để tránh block
+            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+            {
+              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+              threshold: "BLOCK_NONE",
+            },
+            {
+              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+              threshold: "BLOCK_NONE",
+            },
+          ],
         }
       } else if (model === "gpt") {
         headers["Authorization"] = `Bearer ${apiKey}`
+        body = {
+          model: effectiveModel,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: message },
+          ],
+        }
       } else {
         headers["x-api-key"] = apiKey
+        body = {
+          prompt: `${systemPrompt}\n${message}`,
+        }
       }
-      return { url, headers, body, method: "POST" }
+
+      console.log("Built API Request:", {
+        url: apiUrl,
+        model: effectiveModel,
+        body,
+      }) // Log để debug
+      return { url: apiUrl, headers, body, method: "POST" }
     } catch (error) {
-      console.error("Failed to parse cURL:", error)
+      console.error("Failed to build API request:", error)
+      showCustomPopup(
+        `${t("errorTitle") || "Error"}: Invalid API URL - ${error.message}`,
+        "error",
+        true
+      )
       return null
     }
   }
@@ -145,26 +217,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // Suggest bookmark details
   async function suggestBookmarkDetails(url) {
     const config = getAiConfig()
-    const parsedCurl = parseCurlCommand(
+    const apiRequest = buildApiRequest(
       config.curl,
       config.apiKey,
-      config.model
+      config.model,
+      `Analyze the website at ${url} and suggest a title and folder for the bookmark. Return JSON: { "title": string, "folder": string }`
     )
-    if (!parsedCurl) {
-      throw new Error(t("errorUnexpected") || "Unexpected error")
+    if (!apiRequest) {
+      throw new Error(t("errorUnexpected") || "Invalid API URL")
     }
-    const prompt = `Analyze the website at ${url} and suggest a title and folder for the bookmark. Return JSON: { "title": string, "folder": string }`
     try {
-      const response = await fetch(parsedCurl.url, {
+      const response = await fetch(apiRequest.url, {
         method: "POST",
-        headers: parsedCurl.headers,
-        body: JSON.stringify({
-          ...parsedCurl.body,
-          contents:
-            config.model === "gemini"
-              ? [{ parts: [{ text: prompt }] }]
-              : [{ role: "user", content: prompt }],
-        }),
+        headers: apiRequest.headers,
+        body: JSON.stringify(apiRequest.body),
       })
       if (!response.ok) {
         throw new Error(
@@ -175,14 +241,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const data = await response.json()
       let result
-      if (config.model === "gemini") {
-        result = JSON.parse(
-          data.candidates?.[0]?.content?.parts?.[0]?.text || "{}"
+      try {
+        if (config.model === "gemini") {
+          result = JSON.parse(
+            data.candidates?.[0]?.content?.parts?.[0]?.text || "{}"
+          )
+        } else if (config.model === "gpt") {
+          result = JSON.parse(data.choices?.[0]?.message?.content || "{}")
+        } else {
+          result = JSON.parse(data.text || "{}")
+        }
+      } catch (parseError) {
+        throw new Error(
+          `${
+            t("errorUnexpected") || "Unexpected error"
+          }: Invalid AI response format`
         )
-      } else if (config.model === "gpt") {
-        result = JSON.parse(data.choices?.[0]?.message?.content || "{}")
-      } else {
-        result = JSON.parse(data.text || "{}")
       }
       return result
     } catch (error) {
@@ -317,11 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
           title = title || suggestions.title || url
         }
         chrome.bookmarks.create(
-          {
-            parentId: await findFolderId(folder),
-            title,
-            url,
-          },
+          { parentId: await findFolderId(folder), title, url },
           (bookmark) => {
             loadingMessage.remove()
             const botMessage = document.createElement("div")
@@ -656,14 +726,14 @@ document.addEventListener("DOMContentLoaded", () => {
         minute: "2-digit",
       })
       errorMessage.innerHTML = `${t("errorTitle") || "Error"}: ${
-        t("errorUnexpected") || "Unexpected error"
-      }<span class="timestamp">${timestamp}</span>`
+        t("aiTitle") || "AI Config"
+      } incomplete<span class="timestamp">${timestamp}</span>`
       chatMessages.appendChild(errorMessage)
       addToChatHistory(
         "bot",
         `${t("errorTitle") || "Error"}: ${
-          t("errorUnexpected") || "Unexpected error"
-        }`,
+          t("aiTitle") || "AI Config"
+        } incomplete`,
         timestamp
       )
       chatMessages.scrollTop = chatMessages.scrollHeight
@@ -671,13 +741,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return
     }
 
-    // Parse cURL and inject API key
-    const parsedCurl = parseCurlCommand(
+    // Build API request
+    const apiRequest = buildApiRequest(
       config.curl,
       config.apiKey,
-      config.model
+      config.model,
+      message
     )
-    if (!parsedCurl) {
+    if (!apiRequest) {
       loadingMessage.remove()
       const errorMessage = document.createElement("div")
       errorMessage.className = "chatbox-message bot error"
@@ -685,15 +756,13 @@ document.addEventListener("DOMContentLoaded", () => {
         hour: "2-digit",
         minute: "2-digit",
       })
-      errorMessage.innerHTML = `${t("errorTitle") || "Error"}: ${
-        t("errorUnexpected") || "Unexpected error"
-      }<span class="timestamp">${timestamp}</span>`
+      errorMessage.innerHTML = `${
+        t("errorTitle") || "Error"
+      }: Invalid API URL<span class="timestamp">${timestamp}</span>`
       chatMessages.appendChild(errorMessage)
       addToChatHistory(
         "bot",
-        `${t("errorTitle") || "Error"}: ${
-          t("errorUnexpected") || "Unexpected error"
-        }`,
+        `${t("errorTitle") || "Error"}: Invalid API URL`,
         timestamp
       )
       chatMessages.scrollTop = chatMessages.scrollHeight
@@ -702,25 +771,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // Combine system prompt with user message
-      const systemPrompt = t("systemPrompt")
-      const combinedPrompt = `${systemPrompt}\nUser message: ${message}`
-      const response = await fetch(parsedCurl.url, {
+      const response = await fetch(apiRequest.url, {
         method: "POST",
-        headers: parsedCurl.headers,
-        body: JSON.stringify({
-          ...parsedCurl.body,
-          contents:
-            config.model === "gemini"
-              ? [
-                  { parts: [{ text: systemPrompt }] },
-                  { parts: [{ text: message }] },
-                ]
-              : [
-                  { role: "system", content: systemPrompt },
-                  { role: "user", content: message },
-                ],
-        }),
+        headers: apiRequest.headers,
+        body: JSON.stringify(apiRequest.body),
       })
 
       if (!response.ok) {
@@ -733,14 +787,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await response.json()
       let aiResult
-      if (config.model === "gemini") {
-        aiResult = JSON.parse(
-          data.candidates?.[0]?.content?.parts?.[0]?.text || "{}"
+      try {
+        if (config.model === "gemini") {
+          aiResult = JSON.parse(
+            data.candidates?.[0]?.content?.parts?.[0]?.text || "{}"
+          )
+        } else if (config.model === "gpt") {
+          aiResult = JSON.parse(data.choices?.[0]?.message?.content || "{}")
+        } else {
+          aiResult = JSON.parse(data.text || "{}")
+        }
+      } catch (parseError) {
+        throw new Error(
+          `${
+            t("errorUnexpected") || "Unexpected error"
+          }: Invalid AI response format`
         )
-      } else if (config.model === "gpt") {
-        aiResult = JSON.parse(data.choices?.[0]?.message?.content || "{}")
-      } else {
-        aiResult = JSON.parse(data.text || "{}")
       }
 
       // Remove loading message
@@ -826,8 +888,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!model || !apiKey || !curl) {
       showCustomPopup(
         `${t("errorTitle") || "Error"}: ${
-          t("errorUnexpected") || "Unexpected error"
-        } - ${t("aiTitle") || "AI Config"} incomplete`,
+          t("aiTitle") || "AI Config"
+        } incomplete`,
+        "error",
+        true
+      )
+      return
+    }
+    if (!isValidUrl(curl)) {
+      showCustomPopup(
+        `${t("errorTitle") || "Error"}: Invalid API URL`,
         "error",
         true
       )

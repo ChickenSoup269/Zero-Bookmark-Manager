@@ -1,6 +1,6 @@
+// components/utils.js
 export const translations = {
   en: {
-    // Your translations (unchanged, as they are correct)
     allBookmarks: "All Bookmarks",
     sortDefault: "Sort: Default",
     sortNew: "New to Old",

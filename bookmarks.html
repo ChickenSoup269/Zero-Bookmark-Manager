@@ -156,30 +156,30 @@
         </div>
         <div id="ai-config-popup" class="rename-popup hidden" role="dialog" aria-labelledby="ai-config-title">
             <div class="rename-popup-content">
-                <h3 id="ai-config-title" class="ai-title">
-                    <h3 id="ai-config-title" class="ai-title"></h3>
-                    <div class="ai-config-container">
-                        <select id="ai-model-select" class="select" aria-label="Select AI model">
-                            <option value="">Select AI Model</option>
-                            <option value="gemini">Gemini</option>
-                            <option value="gpt">GPT</option>
-                            <option value="other">Other</option>
-                        </select>
-                        <div class="rename-input-container">
-                            <input type="text" id="api-key-input" class="input" placeholder="Enter API key..."
-                                aria-label="API key" maxlength="255">
-                            <button id="clear-api-key" class="button clear" aria-label="Clear API key input">✖</button>
-                        </div>
-                        <div class="rename-input-container">
-                            <textarea id="curl-input" class="input" placeholder="Enter cURL command..." rows="4"
-                                aria-label="cURL command"></textarea>
-                            <button id="clear-curl" class="button clear" aria-label="Clear cURL input">✖</button>
-                        </div>
+                <h3 id="ai-config-title" class="ai-title">Configure AI Chatbot</h3>
+                <div class="ai-config-container">
+                    <select id="ai-model-select" class="select" aria-label="Select AI model">
+                        <option value="">Select AI Model</option>
+                        <option value="gemini">Gemini</option>
+                        <option value="gpt">GPT</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="rename-input-container">
+                        <input type="text" id="api-key-input" class="input" placeholder="Enter API key..."
+                            aria-label="API key" maxlength="255">
+                        <button id="clear-api-key" class="button clear" aria-label="Clear API key input">✖</button>
                     </div>
-                    <div class="rename-popup-buttons">
-                        <button id="ai-config-save" class="button save">Save</button>
-                        <button id="ai-config-cancel" class="button cancel">Cancel</button>
+                    <div class="rename-input-container">
+                        <textarea id="curl-input" class="input"
+                            placeholder="Enter API URL (e.g., https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent)"
+                            rows="4" aria-label="API URL"></textarea>
+                        <button id="clear-curl" class="button clear" aria-label="Clear API URL input">✖</button>
                     </div>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="ai-config-save" class="button save">Save</button>
+                    <button id="ai-config-cancel" class="button cancel">Cancel</button>
+                </div>
             </div>
         </div>
 
@@ -191,8 +191,7 @@
                 <i class="far fa-comment-alt"></i>
             </button>
         </div>
-
-
+        <!-- mấy cái điều khiển chatbot thui  -->
         <div id="chatbox" class="chatbox hidden">
             <div class="chatbox-content">
                 <h3>
@@ -230,6 +229,7 @@
                 </div>
             </div>
         </div>
+        <!-- bảng hướng dẫn sử dụng -->
         <div id="custom-guide" class="custom-guide hidden" role="dialog" aria-labelledby="custom-guide-title">
             <div class="rename-popup-content">
                 <h3 id="custom-guide-title">Help Guide</h3>
@@ -239,6 +239,7 @@
                 </div>
             </div>
         </div>
+        <!-- foooter -->
         <div class="footer">
             <p class="footer-text">
                 <span id="year"></span>
