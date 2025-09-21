@@ -419,10 +419,10 @@ body {
 
 .bookmark-checkbox {
   position: absolute;
+  cursor: pointer;
   top: var(--spacing-sm);
   left: var(--spacing-sm);
-  cursor: pointer;
-  transform: scale(1.1);
+  transform: scale(1.5);
 }
 
 .favicon {

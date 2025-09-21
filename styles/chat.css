@@ -422,14 +422,14 @@
   bottom: 16px;
   right: 16px;
   display: flex;
-  flex-direction: column; /* xếp nút theo cột */
-  gap: 12px; /* khoảng cách giữa các nút */
+  flex-direction: column;
+  gap: 12px;
   z-index: 1001;
 }
 
 .floating-buttons .button,
 .floating-buttons .chat-toggle {
-  position: static; /* bỏ fixed riêng từng nút */
+  position: static;
   width: var(--w);
   height: var(--h);
   border-radius: 50%;
@@ -439,4 +439,109 @@
   box-shadow: var(--shadow-md);
   transition: all var(--transition-fast);
   cursor: pointer;
+}
+
+.chatbox-header-controlers {
+  display: flex;
+  gap: 5px;
+}
+
+/* Custom Popup for Help Guide */
+.custom-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 90%;
+  max-height: 80vh;
+  width: 400px;
+  padding: var(--spacing-md);
+  z-index: 100001;
+  overflow-y: auto;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.custom-popup h2 {
+  margin: 0 0 var(--spacing-md);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.custom-popup p {
+  margin: 0 0 var(--spacing-sm);
+}
+
+.custom-popup ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: var(--spacing-sm) 0;
+}
+
+.custom-popup li {
+  margin-bottom: var(--spacing-sm);
+}
+
+.custom-popup pre,
+.custom-popup code {
+  background-color: var(--bg-secondary);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.85rem;
+}
+
+.custom-popup button {
+  background-color: var(--accent-color);
+  color: var(--bg-primary);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: var(--spacing-md);
+  transition: background-color var(--transition-fast);
+}
+
+.custom-popup button:hover {
+  background-color: var(--hover-bg);
+}
+
+.custom-popup.success {
+  border: 2px solid var(--success-color);
+}
+
+.custom-popup.error {
+  border: 2px solid var(--danger-color);
+}
+
+@media (max-width: 400px) {
+  .custom-popup {
+    width: 90%;
+    max-width: 300px;
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (prefers-contrast: high) {
+  .custom-popup {
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #000000;
+  }
+
+  .custom-popup h2 {
+    color: #0055cc;
+  }
+
+  .custom-popup button {
+    background-color: #0055cc;
+    color: #ffffff;
+  }
 }

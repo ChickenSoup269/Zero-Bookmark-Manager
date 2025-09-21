@@ -1,3 +1,4 @@
+// components utils.js
 export const translations = {
   en: {
     allBookmarks: "All Bookmarks",
@@ -107,6 +108,30 @@ export const translations = {
     favourite: "Favourite",
     favoriteSuccess: "Bookmark added to favorites!",
     unfavoriteSuccess: "Bookmark removed from favorites!",
+    helpGuideTitle: "Help Guide",
+    exportChatHistory: "Export Chat History",
+    maximizeMinimize: "Maximize/Minimize",
+    editAIConfig: "Edit AI Config",
+    closeChat: "Close Chat",
+    noChatHistory: "No chat history available",
+    loadingChat: "Processing...",
+    helpGuide: `
+        Settings:
+        1. Add to Folder:
+          - Chat: "bookmark add https://example.com title 'My Site' to folder News"
+          - Or use "Create Folder" in sidebar.
+        2. Organize:
+          - Create folders: "Create Folder" and enter name.
+          - Move: Select bookmarks, use "Add to Folder".
+        3. Search Bookmarks:
+          - Use search bar or "Sort: Default" dropdown.
+          - Chat: "search bookmark keyword" or "how many bookmarks".
+        4. AI Features:
+          - Configure in "Configure AI Chatbot" for suggestions.
+          - Use commands like "list bookmarks".
+        5. Export/Import Bookmarks:
+          - Access via "Settings" menu.
+        `,
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -215,6 +240,30 @@ export const translations = {
     favourite: "Yêu thích",
     favoriteSuccess: "Đã thêm bookmark vào yêu thích!",
     unfavoriteSuccess: "Đã xóa bookmark khỏi yêu thích!",
+    helpGuideTitle: "Hướng Dẫn",
+    exportChatHistory: "Xuất Lịch Sử Chat",
+    maximizeMinimize: "Phóng To/Thu Nhỏ",
+    editAIConfig: "Chỉnh Sửa Cấu Hình AI",
+    closeChat: "Đóng Chat",
+    noChatHistory: "Không có lịch sử chat",
+    loadingChat: "Đang xử lý...",
+    helpGuide: `
+    Cài đặt:
+      1. Thêm vào Thư mục:
+        - Chat: "bookmark add https://example.com title 'Trang Của Tôi' to folder Tin Tức"
+        - Hoặc dùng "Tạo Thư mục" trong sidebar.
+      2. Sắp xếp:
+        - Tạo thư mục: "Tạo Thư mục" và nhập tên.
+        - Di chuyển: Chọn bookmark, dùng "Thêm vào Thư mục".
+      3. Tìm kiếm Bookmark:
+        - Dùng thanh tìm kiếm hoặc dropdown "Sắp xếp: Mặc định".
+        - Chat: "search bookmark từ khóa" hoặc "tôi có bao nhiêu bookmark".
+      4. Tính năng AI:
+        - Cấu hình trong "Cấu hình AI Chatbot" để gợi ý.
+        - Dùng lệnh như "danh sách bookmark".
+      5. Xuất/Nhập Bookmark:
+        - Truy cập qua menu "Cài đặt".
+      `,
   },
 }
 

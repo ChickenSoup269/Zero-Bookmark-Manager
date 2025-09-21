@@ -1,3 +1,5 @@
+import { translations, showCustomPopup, showCustomConfirm } from "./utils.js"
+
 document.addEventListener("DOMContentLoaded", () => {
   const chatToggle = document.getElementById("chat-toggle")
   const chatbox = document.getElementById("chatbox")
@@ -17,19 +19,84 @@ document.addEventListener("DOMContentLoaded", () => {
   const aiConfigSave = document.getElementById("ai-config-save")
   const aiConfigCancel = document.getElementById("ai-config-cancel")
   const chatEditConfig = document.getElementById("chat-edit-config")
+  const chatHelp = document.getElementById("chat-help")
+  const chatHistory = document.getElementById("chat-history")
 
-  // Load saved AI config from localStorage
+  // Language support
+  const getLanguage = () => localStorage.getItem("appLanguage") || "en"
+  const t = (key) => translations[getLanguage()][key] || key
+
+  // Set button titles dynamically
+  if (chatHelp) chatHelp.title = t("helpGuideTitle")
+  if (chatHistory) chatHistory.title = t("exportChatHistory")
+  if (chatMaximize) chatMaximize.title = t("maximizeMinimize")
+  if (chatEditConfig) chatEditConfig.title = t("editAIConfig")
+  if (chatClose) chatClose.title = t("closeChat")
+
+  // Chat history management
+  const CHAT_HISTORY_KEY = "chatHistory"
+  const getChatHistory = () => {
+    const history = localStorage.getItem(CHAT_HISTORY_KEY)
+    return history ? JSON.parse(history) : []
+  }
+
+  const saveChatHistory = (history) => {
+    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history))
+  }
+
+  const addToChatHistory = (type, content, timestamp) => {
+    const history = getChatHistory()
+    history.push({ type, content, timestamp })
+    saveChatHistory(history)
+  }
+
+  const exportChatHistory = () => {
+    const history = getChatHistory()
+    if (history.length === 0) {
+      showCustomPopup(t("noChatHistory"), "error", true)
+      return
+    }
+
+    showCustomConfirm(
+      t("exportPrompt").replace("JSON hoặc HTML", "TXT"),
+      () => {
+        const txtContent = history
+          .map(
+            (msg) =>
+              `[${msg.timestamp}] ${msg.type.toUpperCase()}: ${msg.content}`
+          )
+          .join("\n\n---\n\n")
+        const blob = new Blob([txtContent], { type: "text/plain" })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement("a")
+        a.href = url
+        a.download = `chat-history-${
+          new Date().toISOString().split("T")[0]
+        }.txt`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+        showCustomPopup(t("successTitle"), "success", true)
+      },
+      () => {
+        showCustomPopup(t("cancel"), "success", true)
+      }
+    )
+  }
+
+  // Load saved AI config
   const getAiConfig = () => {
     const config = localStorage.getItem("aiConfig")
     return config ? JSON.parse(config) : { model: "", apiKey: "", curl: "" }
   }
 
-  // Save AI config to localStorage
+  // Save AI config
   const saveAiConfig = (model, apiKey, curl) => {
     localStorage.setItem("aiConfig", JSON.stringify({ model, apiKey, curl }))
   }
 
-  // Parse cURL command and inject API key
+  // Parse cURL command
   const parseCurlCommand = (curl, apiKey, model) => {
     try {
       const urlMatch = curl.match(/curl\s+['"]?([^'"\s]+)['"]?/)
@@ -68,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Suggest bookmark details using AI
+  // Suggest bookmark details
   async function suggestBookmarkDetails(url) {
     const config = getAiConfig()
     const parsedCurl = parseCurlCommand(
@@ -77,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
       config.model
     )
     if (!parsedCurl) {
-      throw new Error("Invalid cURL command for AI suggestion.")
+      throw new Error(t("errorUnexpected"))
     }
     const prompt = `Analyze the website at ${url} and suggest a title and folder for the bookmark. Return JSON: { "title": string, "folder": string }`
     try {
@@ -93,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }),
       })
       if (!response.ok) {
-        throw new Error(`AI API request failed: ${response.statusText}`)
+        throw new Error(`${t("errorUnexpected")}: ${response.statusText}`)
       }
       const data = await response.json()
       let result
@@ -109,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return result
     } catch (error) {
       console.error("AI suggestion failed:", error)
-      return { title: url, folder: "Uncategorized" }
+      return { title: url, folder: t("unnamedFolder") }
     }
   }
 
@@ -128,13 +195,20 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
+  // Get folder name
+  async function getFolderName(folderId) {
+    return new Promise((resolve) => {
+      chrome.bookmarks.get(folderId, (results) => {
+        resolve(results[0]?.title || t("unnamedFolder"))
+      })
+    })
+  }
+
   // Handle bookmark commands
-  // Trong hàm handleBookmarkCommand, thêm case cho "count"
-  // Trong hàm handleBookmarkCommand, thêm logic phân tích câu hỏi tự nhiên
   async function handleBookmarkCommand(message) {
     const loadingMessage = document.createElement("div")
     loadingMessage.className = "chatbox-message bot loading"
-    loadingMessage.textContent = "Processing bookmark command..."
+    loadingMessage.textContent = t("loadingBookmarks")
     chatMessages.appendChild(loadingMessage)
     chatMessages.scrollTop = chatMessages.scrollHeight
 
@@ -145,7 +219,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const urlMatch = message.match(/(https?:\/\/[^\s]+)/)
       const url = urlMatch ? urlMatch[1] : null
 
-      // Xử lý câu hỏi tự nhiên
       if (
         lowerMessage.includes("how many bookmarks") ||
         lowerMessage.includes("bao nhiêu bookmark") ||
@@ -155,19 +228,23 @@ document.addEventListener("DOMContentLoaded", () => {
           let count = 0
           function countBookmarks(nodes) {
             nodes.forEach((node) => {
-              if (node.url) count++ // Chỉ đếm node có url (bookmark)
-              if (node.children) countBookmarks(node.children) // Đệ quy cho folder
+              if (node.url) count++
+              if (node.children) countBookmarks(node.children)
             })
           }
           countBookmarks(bookmarkTree[0].children)
           loadingMessage.remove()
           const botMessage = document.createElement("div")
           botMessage.className = "chatbox-message bot"
-          botMessage.innerHTML = `Bạn có ${count} bookmark.<span class="timestamp">${new Date().toLocaleTimeString(
-            [],
-            { hour: "2-digit", minute: "2-digit" }
-          )}</span>`
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+          botMessage.innerHTML = `${t(
+            "totalBookmarks"
+          )}: ${count}<span class="timestamp">${timestamp}</span>`
           chatMessages.appendChild(botMessage)
+          addToChatHistory("bot", `${t("totalBookmarks")}: ${count}`, timestamp)
           chatMessages.scrollTop = chatMessages.scrollHeight
         })
       } else if (
@@ -188,20 +265,24 @@ document.addEventListener("DOMContentLoaded", () => {
           loadingMessage.remove()
           const botMessage = document.createElement("div")
           botMessage.className = "chatbox-message bot"
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
           botMessage.innerHTML = bookmarks.length
-            ? `Danh sách bookmark của bạn:<br>${bookmarks
+            ? `${t("bookmarks")}:<br>${bookmarks
                 .map((b) => `<a href="${b.url}" target="_blank">${b.title}</a>`)
-                .join(
-                  "<br>"
-                )}<span class="timestamp">${new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}</span>`
-            : `Bạn chưa có bookmark nào.<span class="timestamp">${new Date().toLocaleTimeString(
-                [],
-                { hour: "2-digit", minute: "2-digit" }
-              )}</span>`
+                .join("<br>")}<span class="timestamp">${timestamp}</span>`
+            : `${t("noBookmarks")}<span class="timestamp">${timestamp}</span>`
           chatMessages.appendChild(botMessage)
+          addToChatHistory(
+            "bot",
+            botMessage.textContent
+              .replace(/<[^>]*>/g, "")
+              .replace(timestamp, "")
+              .trim(),
+            timestamp
+          )
           chatMessages.scrollTop = chatMessages.scrollHeight
         })
       } else if (action === "add" && url) {
@@ -211,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let title = titleMatch ? titleMatch[1] : null
         if (!folder || !title) {
           const suggestions = await suggestBookmarkDetails(url)
-          folder = folder || suggestions.folder || "Uncategorized"
+          folder = folder || suggestions.folder || t("unnamedFolder")
           title = title || suggestions.title || url
         }
         chrome.bookmarks.create(
@@ -224,11 +305,23 @@ document.addEventListener("DOMContentLoaded", () => {
             loadingMessage.remove()
             const botMessage = document.createElement("div")
             botMessage.className = "chatbox-message bot"
-            botMessage.innerHTML = `Bookmark đã được thêm vào ${folder}: <a href="${url}" target="_blank">${title}</a><span class="timestamp">${new Date().toLocaleTimeString(
-              [],
-              { hour: "2-digit", minute: "2-digit" }
-            )}</span>`
+            const timestamp = new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+            botMessage.innerHTML = `${t("addToFolderSuccess").replace(
+              "Bookmark(s)",
+              t("bookmarks")
+            )}: <a href="${url}" target="_blank">${title}</a> (${folder})<span class="timestamp">${timestamp}</span>`
             chatMessages.appendChild(botMessage)
+            addToChatHistory(
+              "bot",
+              `${t("addToFolderSuccess").replace(
+                "Bookmark(s)",
+                t("bookmarks")
+              )}: ${title} (${folder})`,
+              timestamp
+            )
             chatMessages.scrollTop = chatMessages.scrollHeight
           }
         )
@@ -238,9 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const newTitle = titleMatch ? titleMatch[1] : null
         const newFolder = folderMatch ? folderMatch[1] : null
         if (!newTitle && !newFolder) {
-          throw new Error(
-            "Vui lòng chỉ định tiêu đề mới hoặc thư mục để chỉnh sửa."
-          )
+          throw new Error(t("emptyTitleError"))
         }
         chrome.bookmarks.search({ url }, (results) => {
           if (results.length) {
@@ -262,19 +353,29 @@ document.addEventListener("DOMContentLoaded", () => {
                   loadingMessage.remove()
                   const botMessage = document.createElement("div")
                   botMessage.className = "chatbox-message bot"
-                  botMessage.innerHTML = `Bookmark đã được cập nhật: <a href="${url}" target="_blank">${
+                  const timestamp = new Date().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                  botMessage.innerHTML = `${t(
+                    "renameSuccess"
+                  )}: <a href="${url}" target="_blank">${
                     updatedBookmark.title
-                  }</a> trong thư mục ${folderName}<span class="timestamp">${new Date().toLocaleTimeString(
-                    [],
-                    { hour: "2-digit", minute: "2-digit" }
-                  )}</span>`
+                  }</a> (${folderName})<span class="timestamp">${timestamp}</span>`
                   chatMessages.appendChild(botMessage)
+                  addToChatHistory(
+                    "bot",
+                    `${t("renameSuccess")}: ${
+                      updatedBookmark.title
+                    } (${folderName})`,
+                    timestamp
+                  )
                   chatMessages.scrollTop = chatMessages.scrollHeight
                 }
               )
             })
           } else {
-            throw new Error(`Không tìm thấy bookmark: ${url}`)
+            throw new Error(`${t("noBookmarks")}: ${url}`)
           }
         })
       } else if (action === "delete" && url) {
@@ -284,15 +385,23 @@ document.addEventListener("DOMContentLoaded", () => {
               loadingMessage.remove()
               const botMessage = document.createElement("div")
               botMessage.className = "chatbox-message bot"
-              botMessage.innerHTML = `Bookmark đã bị xóa: ${url}<span class="timestamp">${new Date().toLocaleTimeString(
-                [],
-                { hour: "2-digit", minute: "2-digit" }
-              )}</span>`
+              const timestamp = new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+              botMessage.innerHTML = `${t(
+                "deleteBookmarkSuccess"
+              )}: ${url}<span class="timestamp">${timestamp}</span>`
               chatMessages.appendChild(botMessage)
+              addToChatHistory(
+                "bot",
+                `${t("deleteBookmarkSuccess")}: ${url}`,
+                timestamp
+              )
               chatMessages.scrollTop = chatMessages.scrollHeight
             })
           } else {
-            throw new Error(`Không tìm thấy bookmark: ${url}`)
+            throw new Error(`${t("noBookmarks")}: ${url}`)
           }
         })
       } else if (action === "search" && commandParts[2]) {
@@ -301,23 +410,29 @@ document.addEventListener("DOMContentLoaded", () => {
           loadingMessage.remove()
           const botMessage = document.createElement("div")
           botMessage.className = "chatbox-message bot"
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
           botMessage.innerHTML = results.length
-            ? `Tìm thấy ${results.length} bookmark:<br>${results
+            ? `${t("bookmarks")}: ${results.length}<br>${results
                 .map(
                   (b) =>
                     `<a href="${b.url}" target="_blank">${b.title || b.url}</a>`
                 )
-                .join(
-                  "<br>"
-                )}<span class="timestamp">${new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}</span>`
-            : `Không tìm thấy bookmark nào cho "${keyword}".<span class="timestamp">${new Date().toLocaleTimeString(
-                [],
-                { hour: "2-digit", minute: "2-digit" }
-              )}</span>`
+                .join("<br>")}<span class="timestamp">${timestamp}</span>`
+            : `${t(
+                "noBookmarks"
+              )} "${keyword}"<span class="timestamp">${timestamp}</span>`
           chatMessages.appendChild(botMessage)
+          addToChatHistory(
+            "bot",
+            botMessage.textContent
+              .replace(/<[^>]*>/g, "")
+              .replace(timestamp, "")
+              .trim(),
+            timestamp
+          )
           chatMessages.scrollTop = chatMessages.scrollHeight
         })
       } else if (action === "count") {
@@ -333,36 +448,41 @@ document.addEventListener("DOMContentLoaded", () => {
           loadingMessage.remove()
           const botMessage = document.createElement("div")
           botMessage.className = "chatbox-message bot"
-          botMessage.innerHTML = `Bạn có ${count} bookmark.<span class="timestamp">${new Date().toLocaleTimeString(
-            [],
-            { hour: "2-digit", minute: "2-digit" }
-          )}</span>`
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+          botMessage.innerHTML = `${t(
+            "totalBookmarks"
+          )}: ${count}<span class="timestamp">${timestamp}</span>`
           chatMessages.appendChild(botMessage)
+          addToChatHistory("bot", `${t("totalBookmarks")}: ${count}`, timestamp)
           chatMessages.scrollTop = chatMessages.scrollHeight
         })
       } else {
         throw new Error(
-          "Lệnh bookmark không hợp lệ. Sử dụng: add bookmark <URL> [title <title>] [to folder <folder>], edit bookmark <URL> [title <new_title>] [to folder <new_folder>], delete bookmark <URL>, search bookmark <keyword>, bookmark count, hoặc câu hỏi tự nhiên như 'Tôi có bao nhiêu bookmark?'"
+          `${t(
+            "errorUnexpected"
+          )}: bookmark add <URL> [title <title>] [to folder <folder>], edit bookmark <URL> [title <new_title>] [to folder <new_folder>], delete bookmark <URL>, search bookmark <keyword>, bookmark count`
         )
       }
     } catch (error) {
       loadingMessage.remove()
       const errorMessage = document.createElement("div")
       errorMessage.className = "chatbox-message bot error"
-      errorMessage.innerHTML = `Lỗi: ${
-        error.message
-      }<span class="timestamp">${new Date().toLocaleTimeString([], {
+      const timestamp = new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
-      })}</span>`
+      })
+      errorMessage.innerHTML = `${t("errorTitle")}: ${
+        error.message
+      }<span class="timestamp">${timestamp}</span>`
       chatMessages.appendChild(errorMessage)
+      addToChatHistory("bot", `${t("errorTitle")}: ${error.message}`, timestamp)
       chatMessages.scrollTop = chatMessages.scrollHeight
     }
   }
 
-  // Giữ nguyên các hàm khác (getAiConfig, saveAiConfig, parseCurlCommand, suggestBookmarkDetails, findFolderId, getFolderName) và sự kiện khác
-
-  // Giữ nguyên các hàm khác (getAiConfig, saveAiConfig, parseCurlCommand, suggestBookmarkDetails, findFolderId, getFolderName) và sự kiện khác như trong code trước
   // Show AI config popup
   const showAiConfigPopup = () => {
     const config = getAiConfig()
@@ -425,11 +545,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add user message
     const userMessage = document.createElement("div")
     userMessage.className = "chatbox-message user"
-    userMessage.innerHTML = `${message}<span class="timestamp">${new Date().toLocaleTimeString(
-      [],
-      { hour: "2-digit", minute: "2-digit" }
-    )}</span>`
+    const timestamp = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    userMessage.innerHTML = `${message}<span class="timestamp">${timestamp}</span>`
     chatMessages.appendChild(userMessage)
+    addToChatHistory("user", message, timestamp)
+    chatMessages.scrollTop = chatMessages.scrollHeight
 
     // Check if message is a bookmark command
     if (message.toLowerCase().startsWith("bookmark ")) {
@@ -438,7 +561,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Show loading state
       const loadingMessage = document.createElement("div")
       loadingMessage.className = "chatbox-message bot loading"
-      loadingMessage.textContent = "Typing..."
+      loadingMessage.textContent = t("loadingChat")
       chatMessages.appendChild(loadingMessage)
       chatMessages.scrollTop = chatMessages.scrollHeight
 
@@ -448,11 +571,19 @@ document.addEventListener("DOMContentLoaded", () => {
         loadingMessage.remove()
         const errorMessage = document.createElement("div")
         errorMessage.className = "chatbox-message bot error"
-        errorMessage.innerHTML = `Error: No API configuration set.<span class="timestamp">${new Date().toLocaleTimeString(
-          [],
-          { hour: "2-digit", minute: "2-digit" }
-        )}</span>`
+        const timestamp = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+        errorMessage.innerHTML = `${t("errorTitle")}: ${t(
+          "errorUnexpected"
+        )}<span class="timestamp">${timestamp}</span>`
         chatMessages.appendChild(errorMessage)
+        addToChatHistory(
+          "bot",
+          `${t("errorTitle")}: ${t("errorUnexpected")}`,
+          timestamp
+        )
         chatMessages.scrollTop = chatMessages.scrollHeight
         chatInput.value = ""
         return
@@ -468,11 +599,19 @@ document.addEventListener("DOMContentLoaded", () => {
         loadingMessage.remove()
         const errorMessage = document.createElement("div")
         errorMessage.className = "chatbox-message bot error"
-        errorMessage.innerHTML = `Error: Invalid cURL command.<span class="timestamp">${new Date().toLocaleTimeString(
-          [],
-          { hour: "2-digit", minute: "2-digit" }
-        )}</span>`
+        const timestamp = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+        errorMessage.innerHTML = `${t("errorTitle")}: ${t(
+          "errorUnexpected"
+        )}<span class="timestamp">${timestamp}</span>`
         chatMessages.appendChild(errorMessage)
+        addToChatHistory(
+          "bot",
+          `${t("errorTitle")}: ${t("errorUnexpected")}`,
+          timestamp
+        )
         chatMessages.scrollTop = chatMessages.scrollHeight
         chatInput.value = ""
         return
@@ -492,7 +631,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
 
         if (!response.ok) {
-          throw new Error(`API request failed: ${response.statusText}`)
+          throw new Error(`${t("errorUnexpected")}: ${response.statusText}`)
         }
 
         const data = await response.json()
@@ -500,13 +639,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (config.model === "gemini") {
           botResponse =
             data.candidates?.[0]?.content?.parts?.[0]?.text ||
-            "Sorry, I couldn't generate a response."
+            t("errorUnexpected")
         } else if (config.model === "gpt") {
           botResponse =
-            data.choices?.[0]?.message?.content ||
-            "Sorry, I couldn't generate a response."
+            data.choices?.[0]?.message?.content || t("errorUnexpected")
         } else {
-          botResponse = data.text || "Sorry, I couldn't generate a response."
+          botResponse = data.text || t("errorUnexpected")
         }
 
         // Remove loading message
@@ -515,30 +653,34 @@ document.addEventListener("DOMContentLoaded", () => {
         // Add bot response
         const botMessage = document.createElement("div")
         botMessage.className = "chatbox-message bot"
-        botMessage.innerHTML = `${botResponse}<span class="timestamp">${new Date().toLocaleTimeString(
-          [],
-          { hour: "2-digit", minute: "2-digit" }
-        )}</span>`
-        chatMessages.appendChild(botMessage)
-      } catch (error) {
-        // Remove loading message
-        loadingMessage.remove()
-
-        // Show error message
-        const errorMessage = document.createElement("div")
-        errorMessage.className = "chatbox-message bot error"
-        errorMessage.innerHTML = `Error: ${
-          error.message
-        }<span class="timestamp">${new Date().toLocaleTimeString([], {
+        const timestamp = new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-        })}</span>`
+        })
+        botMessage.innerHTML = `${botResponse}<span class="timestamp">${timestamp}</span>`
+        chatMessages.appendChild(botMessage)
+        addToChatHistory("bot", botResponse, timestamp)
+        chatMessages.scrollTop = chatMessages.scrollHeight
+      } catch (error) {
+        loadingMessage.remove()
+        const errorMessage = document.createElement("div")
+        errorMessage.className = "chatbox-message bot error"
+        const timestamp = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+        errorMessage.innerHTML = `${t("errorTitle")}: ${
+          error.message
+        }<span class="timestamp">${timestamp}</span>`
         chatMessages.appendChild(errorMessage)
+        addToChatHistory(
+          "bot",
+          `${t("errorTitle")}: ${error.message}`,
+          timestamp
+        )
+        chatMessages.scrollTop = chatMessages.scrollHeight
       }
     }
-
-    // Scroll to bottom
-    chatMessages.scrollTop = chatMessages.scrollHeight
 
     // Clear input
     chatInput.value = ""
@@ -592,8 +734,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiKey = apiKeyInput.value.trim()
     const curl = curlInput.value.trim()
     if (!model || !apiKey || !curl) {
-      alert(
-        "Please select an AI model, enter an API key, and provide a valid cURL command."
+      showCustomPopup(
+        `${t("errorTitle")}: ${t("errorUnexpected")} - ${t(
+          "aiTitle"
+        )} incomplete`,
+        "error",
+        true
       )
       return
     }
@@ -612,4 +758,16 @@ document.addEventListener("DOMContentLoaded", () => {
       chatInput.focus()
     }
   })
+
+  // Help button handler
+  if (chatHelp) {
+    chatHelp.addEventListener("click", () => {
+      showCustomPopup(t("helpGuide"), "success", false, t("helpGuideTitle"))
+    })
+  }
+
+  // Chat history export
+  if (chatHistory) {
+    chatHistory.addEventListener("click", exportChatHistory)
+  }
 })
