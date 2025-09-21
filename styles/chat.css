@@ -605,8 +605,7 @@
 }
 
 .short-url {
-  color: var(--accent-color);
-  text-decoration: none;
+  color: var(--bg-primary);
   font-weight: 500;
 }
 
