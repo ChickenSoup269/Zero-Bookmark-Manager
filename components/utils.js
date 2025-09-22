@@ -123,24 +123,23 @@ export const translations = {
     aiBookmarkResponse: "AI Response",
     notSupported:
       "Sorry, I can only help with bookmark-related tasks or simple questions like the time or day.",
-    systemPrompt: `
-        You are a bookmark management assistant integrated into a browser extension. Your role is to help users manage their bookmarks using natural language or specific commands. You have access to Chrome Bookmarks API to perform actions like:
-        - Counting bookmarks ("how many bookmarks do I have?").
-        - Listing bookmarks ("list my bookmarks").
-        - Adding bookmarks ("bookmark add <URL> [title <title>] [to folder <folder>]").
-        - Moving bookmarks ("move bookmark 'title' to folder 'folder'").
-        - Editing bookmarks ("edit bookmark <URL> [title <new_title>] [to folder <new_folder>]").
-        - Deleting bookmarks ("delete bookmark <URL>").
-        - Searching bookmarks ("search bookmark <keyword>").
-        - Searching folders ("search folder <keyword>").
-        For natural language queries, interpret the user's intent and provide a JSON response with:
-        - "action": the bookmark action (count, list, add, move, edit, delete, search_bookmark, search_folder).
-        - "params": parameters needed for the action (e.g., { url, title, folder, keyword }).
-        If the query is unclear or not bookmark-related, respond with:
-        - "action": "general".
-        - "response": a helpful text response.
-        Always return JSON format: { "action": string, "params": object, "response": string (optional) }.
-        `,
+    youHave: "You have",
+    hereAreYourBookmarks: "Here are your bookmarks",
+    hereAreYourFolders: "Here are your folders",
+    hereAreBookmarksInFolder: "Here are the bookmarks in folder",
+    noBookmarksInFolder: "No bookmarks in this folder",
+    addedBookmarkToFolder: "I've added the bookmark",
+    toFolder: "to the folder",
+    updatedBookmark: "I've updated the bookmark",
+    inFolder: "in",
+    deletedBookmark: "I've deleted the bookmark",
+    foundBookmarks: "I found",
+    bookmarksMatching: "bookmarks matching",
+    noBookmarksFoundFor: "I couldn't find any bookmarks matching",
+    foundFolders: "I found these folders",
+    noFoldersFoundFor: "I couldn't find any folders matching",
+    movedBookmark: "I've moved the bookmark",
+    noFolders: "You don't have any folders yet.",
     helpGuide: `
       Help Guide:
 
@@ -181,6 +180,9 @@ export const translations = {
       10. Export/Import Bookmarks:
           - Access via "Settings" menu.
       `,
+    clarifyBookmark:
+      "I found multiple bookmarks named '{title}'. Please provide the URL or folder to specify which one.",
+    noBookmarks: "I couldn't find a bookmark with {0}.",
   },
   vi: {
     // Your vi translations (unchanged, as they are correct)
@@ -305,24 +307,23 @@ export const translations = {
     aiBookmarkResponse: "Phản hồi AI",
     notSupported:
       "Xin lỗi, tôi chỉ có thể giúp với các tác vụ liên quan đến bookmark hoặc các câu hỏi đơn giản như giờ hoặc ngày.",
-    systemPrompt: `
-        Bạn là một trợ lý quản lý bookmark trong một tiện ích mở rộng trình duyệt. Vai trò của bạn là giúp người dùng quản lý bookmark bằng ngôn ngữ tự nhiên hoặc các lệnh cụ thể. Bạn có quyền truy cập vào Chrome Bookmarks API để thực hiện các hành động như:
-        - Đếm bookmark ("tôi có bao nhiêu bookmark?").
-        - Liệt kê bookmark ("hiển thị danh sách bookmark").
-        - Thêm bookmark ("bookmark add <URL> [title <title>] [to folder <folder>]").
-        - Di chuyển bookmark ("chuyển bookmark 'title' sang thư mục 'folder'").
-        - Sửa bookmark ("edit bookmark <URL> [title <new_title>] [to folder <new_folder>]").
-        - Xóa bookmark ("delete bookmark <URL>").
-        - Tìm kiếm bookmark ("tìm bookmark <từ khóa>").
-        - Tìm kiếm thư mục ("tìm thư mục <từ khóa>").
-        Đối với các câu hỏi bằng ngôn ngữ tự nhiên, hãy diễn giải ý định của người dùng và trả về phản hồi JSON với:
-        - "action": hành động bookmark (count, list, add, move, edit, delete, search_bookmark, search_folder).
-        - "params": các tham số cần thiết (ví dụ: { url, title, folder, keyword }).
-        Nếu câu hỏi không rõ ràng hoặc không liên quan đến bookmark, trả về:
-        - "action": "general".
-        - "response": phản hồi văn bản hữu ích.
-        Luôn trả về định dạng JSON: { "action": string, "params": object, "response": string (optional) }.
-        `,
+    youHave: "Bạn có",
+    hereAreYourBookmarks: "Đây là danh sách bookmark của bạn",
+    hereAreYourFolders: "Đây là danh sách thư mục của bạn",
+    hereAreBookmarksInFolder: "Đây là danh sách bookmark trong thư mục",
+    noBookmarksInFolder: "Không có bookmark trong thư mục này",
+    addedBookmarkToFolder: "Tôi đã thêm bookmark",
+    toFolder: "vào thư mục",
+    updatedBookmark: "Tôi đã cập nhật bookmark",
+    inFolder: "trong",
+    deletedBookmark: "Tôi đã xóa bookmark",
+    foundBookmarks: "Tôi tìm thấy",
+    bookmarksMatching: "bookmark khớp với",
+    noBookmarksFoundFor: "Tôi không tìm thấy bookmark nào khớp với",
+    foundFolders: "Tôi tìm thấy các thư mục sau",
+    noFoldersFoundFor: "Tôi không tìm thấy thư mục nào khớp với",
+    movedBookmark: "Tôi đã chuyển bookmark",
+    noFolders: "Bạn chưa có thư mục nào.",
     helpGuide: `
         Hướng Dẫn:
 
@@ -363,6 +364,9 @@ export const translations = {
         10. Xuất/Nhập Bookmark:
             - Truy cập qua menu "Cài đặt".
         `,
+    clarifyBookmark:
+      "Tui tìm thấy nhiều bookmark tên '{title}'. Bạn muốn chỉnh sửa cái nào? Hãy cung cấp URL hoặc thư mục.",
+    noBookmarks: "Tui không tìm thấy bookmark nào có {0}.",
   },
 }
 
