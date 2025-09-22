@@ -26,9 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const aiConfigCancel = document.getElementById("ai-config-cancel")
   const chatEditConfig = document.getElementById("chat-edit-config")
   const chatHelp = document.getElementById("chat-help")
-  const chatHistoryBtn = document.getElementById("chat-history") // Sửa: Đổi tên biến từ chatHistory thành chatHistoryBtn để tránh xung đột
+  const chatHistoryBtn = document.getElementById("chat-history")
 
-  // System Prompt được cập nhật: thêm list_folders và list_bookmarks_in_folder; giới hạn phản hồi general chỉ một câu cụ thể; khuyến khích phản hồi tự nhiên hơn
+  // Updated System Prompt: Added favorite action and natural language examples
   const systemPrompt = `
 You are a bookmark management assistant integrated into a browser extension. Your role is to help users manage their bookmarks using natural language or specific commands, interpreting their intent as flexibly as possible. Respond in a conversational, natural way in the user's language (e.g., Vietnamese if the query is in Vietnamese). You have access to Chrome Bookmarks API to perform actions like:
 - Counting bookmarks ("how many bookmarks do I have?").
@@ -42,21 +42,23 @@ You are a bookmark management assistant integrated into a browser extension. You
 - Deleting bookmarks ("delete bookmark <URL>" or "delete bookmark titled <title>"). If duplicate URLs or titles, delete all or specify.
 - Searching bookmarks ("search bookmark <keyword>").
 - Searching folders ("search folder <keyword>"). If multiple folders with the same name, report an error.
+- Marking/unmarking bookmarks as favorite ("make bookmark <title> a favorite" or "remove bookmark <title> from favorites"). If multiple bookmarks with the same title, ask for clarification or use folder context.
 For natural language queries, interpret the user's intent and provide a JSON response with:
-- "action": the bookmark action (count, count_folders, list, list_folders, list_bookmarks_in_folder, add, move, edit, delete, search_bookmark, search_folder).
-- "params": parameters needed for the action (e.g., { url, title, folder, keyword }).
-- "response": a conversational response in the user's language, summarizing the action or explaining issues (e.g., "I found two bookmarks named 'ChickenSoup'. Which one do you want to edit?").
-If the query is unclear or not bookmark-related (e.g., asking about the day, time, or vague terms like "hmm"), respond with exactly this one sentence in "response":
-- "I am trained to only answer questions related to bookmarks." (in English) or "Tui chỉ được huấn luyện để trả lời các câu hỏi liên quan đến bookmark." (in Vietnamese, based on user language).
+- "action": the bookmark action (count, count_folders, list, list_folders, list_bookmarks_in_folder, add, move, edit, delete, search_bookmark, search_folder, favorite, general).
+- "params": parameters needed for the action (e.g., { url, title, folder, keyword, favorite }).
+- "response": a conversational response in the user's language, summarizing the action or explaining issues (e.g., "I found two bookmarks named 'ChickenSoup'. Which one do you want to make a favorite?").
+If the query is unclear or not bookmark-related (e.g., "hello", "what time is it?", vague terms like "hmm"), return a conversational fallback response encouraging clarification, like:
+- Vietnamese: "Tui đang cố hiểu bạn muốn gì! Bạn có thể nói rõ hơn không, như 'đổi tên bookmark ChickenSoup thành ChickenSoup2698' hoặc 'làm bookmark ChickenSoup thành yêu thích'?"
+- English: "I'm trying to understand what you want! Could you clarify, like 'change bookmark ChickenSoup to ChickenSoup2698' or 'make bookmark ChickenSoup a favorite'?"
 Always return JSON format: { "action": string, "params": object, "response": string (optional) }.
-Example for non-bookmark queries:
-- Query: "What day is it today?"
-  Response: { "action": "general", "response": "Tui chỉ được huấn luyện để trả lời các câu hỏi liên quan đến bookmark." }
-- Query: "hmm"
-  Response: { "action": "general", "response": "Tui chỉ được huấn luyện để trả lời các câu hỏi liên quan đến bookmark." }
-Example for natural language bookmark query:
-- Query: "Change the name of my ChickenSoup bookmark to ChickenSoup269"
-  Response: { "action": "edit", "params": { "title": "ChickenSoup", "new_title": "ChickenSoup269" }, "response": "Đang tìm bookmark 'ChickenSoup' để đổi thành 'ChickenSoup269'..." }
+Example for non-bookmark or unmatched queries:
+- Query: "What day is it today?" or "hello"
+  Response: { "action": "general", "response": "Tui đang cố hiểu bạn muốn gì! Bạn có thể nói rõ hơn không, như 'đổi tên bookmark ChickenSoup thành ChickenSoup2698' hoặc 'làm bookmark ChickenSoup thành yêu thích'?" }
+Example for favorite bookmark query:
+- Query: "Làm bookmark ChickenSoup thành yêu thích"
+  Response: { "action": "favorite", "params": { "title": "ChickenSoup", "favorite": true }, "response": "Đang tìm bookmark 'ChickenSoup' để đánh dấu là yêu thích..." }
+- Query: "Bỏ yêu thích bookmark ChickenSoup"
+  Response: { "action": "favorite", "params": { "title": "ChickenSoup", "favorite": false }, "response": "Đang tìm bookmark 'ChickenSoup' để bỏ đánh dấu yêu thích..." }
 If multiple bookmarks match the title, return:
 - { "action": "general", "response": "Tui tìm thấy nhiều bookmark tên 'ChickenSoup'. Bạn muốn chỉnh sửa cái nào? Hãy cung cấp URL hoặc thư mục." }
 `
@@ -68,20 +70,20 @@ If multiple bookmarks match the title, return:
   // Set button titles dynamically
   if (chatToggle) chatToggle.title = t("chatToggle")
   if (chatHelp) chatHelp.title = t("helpGuideTitle")
-  if (chatHistoryBtn) chatHistoryBtn.title = t("exportChatHistory") // Sửa: Sử dụng chatHistoryBtn
+  if (chatHistoryBtn) chatHistoryBtn.title = t("exportChatHistory")
   if (chatMaximize) chatMaximize.title = t("maximizeMinimize")
   if (chatEditConfig) chatEditConfig.title = t("editAIConfig")
   if (chatClose) chatClose.title = t("closeChat")
 
-  // Chat history management - Không lưu vào localStorage
-  let chatHistory = [] // Mảng tạm thời để lưu lịch sử chat
+  // Chat history management
+  let chatHistory = []
 
   const getChatHistory = () => {
     return chatHistory
   }
 
   const saveChatHistory = (history) => {
-    chatHistory = history // Cập nhật mảng tạm thời
+    chatHistory = history
   }
 
   const addToChatHistory = (type, content, timestamp) => {
@@ -90,9 +92,8 @@ If multiple bookmarks match the title, return:
     saveChatHistory(history)
   }
 
-  // Xóa lịch sử khi rời khỏi trang
   window.addEventListener("beforeunload", () => {
-    chatHistory = [] // Xóa lịch sử chat
+    chatHistory = []
   })
 
   const exportChatHistory = () => {
@@ -116,16 +117,13 @@ If multiple bookmarks match the title, return:
         const url = URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
-
-        // Tạo tên file tự động dựa trên ngày giờ
         const now = new Date()
         const formattedDateTime = now
           .toISOString()
           .replace(/T/, "-")
           .replace(/:/g, "-")
-          .split(".")[0] // Ví dụ: 2025-09-22-00-26-30
+          .split(".")[0]
         a.download = `chat-history-${formattedDateTime}.txt`
-
         document.body.appendChild(a)
         a.click()
         document.body.removeChild(a)
@@ -159,7 +157,7 @@ If multiple bookmarks match the title, return:
     }
   }
 
-  // Fixed buildApiRequest function for Gemini API
+  // Build API request for Gemini
   const buildApiRequest = (url, apiKey, model, message) => {
     try {
       let apiUrl = url
@@ -354,7 +352,32 @@ If multiple bookmarks match the title, return:
     })
   }
 
-  // Handle bookmark commands - Cập nhật để phản hồi tự nhiên hơn (e.g., "You have X bookmarks" thay vì "Total bookmarks: X")
+  // Toggle favorite status
+  async function toggleFavorite(bookmarkId, favorite) {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get("favoriteBookmarks", (data) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message))
+          return
+        }
+        const favoriteBookmarks = data.favoriteBookmarks || {}
+        if (favorite) {
+          favoriteBookmarks[bookmarkId] = true
+        } else {
+          delete favoriteBookmarks[bookmarkId]
+        }
+        chrome.storage.local.set({ favoriteBookmarks }, () => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message))
+          } else {
+            resolve(favoriteBookmarks)
+          }
+        })
+      })
+    })
+  }
+
+  // Handle bookmark commands
   async function handleBookmarkCommand(action, params, originalMessage) {
     const loadingMessage = document.createElement("div")
     loadingMessage.className = "chatbox-message bot loading"
@@ -665,7 +688,6 @@ If multiple bookmarks match the title, return:
         if (bookmarks.length === 1) {
           const bookmarkId = bookmarks[0].id
           const performUpdates = async () => {
-            // Update title if provided
             if (newTitle) {
               await new Promise((resolve, reject) => {
                 chrome.bookmarks.update(
@@ -681,7 +703,6 @@ If multiple bookmarks match the title, return:
                 )
               })
             }
-            // Move to new folder if provided
             if (newFolder) {
               const folderId = await findFolderId(newFolder)
               await new Promise((resolve, reject) => {
@@ -698,7 +719,6 @@ If multiple bookmarks match the title, return:
                 )
               })
             }
-            // Get the final bookmark state
             const updatedBookmark = await new Promise((resolve) => {
               chrome.bookmarks.get(bookmarkId, (results) => resolve(results[0]))
             })
@@ -747,44 +767,58 @@ If multiple bookmarks match the title, return:
             chatMessages.scrollTop = chatMessages.scrollHeight
           })
         }
-      } else if (action === "delete" && params.url) {
-        const bookmarks = await checkUrlExists(url)
-        if (bookmarks.length > 1) {
-          throw new Error(
-            `${
-              t("duplicateUrlError") || "Multiple bookmarks found with this URL"
-            }: ${url}. Please specify which one.`
-          )
+      } else if (action === "delete" && (params.url || params.title)) {
+        let bookmarks = []
+        if (params.url) {
+          bookmarks = await checkUrlExists(params.url)
+        } else if (params.title) {
+          bookmarks = await searchBookmarksByTitle(params.title)
         }
-        if (bookmarks.length === 1) {
-          chrome.bookmarks.remove(bookmarks[0].id, () => {
-            loadingMessage.remove()
-            const botMessage = document.createElement("div")
-            botMessage.className = "chatbox-message bot"
-            const timestamp = new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-            botMessage.innerHTML = `${
-              t("deletedBookmark") || "I've deleted the bookmark"
-            }: ${params.url}.<span class="timestamp">${timestamp}</span>`
-            chatMessages.appendChild(botMessage)
-            addToChatHistory(
-              "bot",
-              `${t("deletedBookmark") || "I've deleted the bookmark"}: ${
-                params.url
-              }.`,
-              timestamp
-            )
-            chatMessages.scrollTop = chatMessages.scrollHeight
-          })
-        } else {
+        if (bookmarks.length === 0) {
           throw new Error(
-            `${t("noBookmarks") || "I couldn't find a bookmark with URL"}: ${
-              params.url
+            `${t("noBookmarks") || "I couldn't find a bookmark with"} ${
+              params.url ? `URL: ${params.url}` : `title: ${params.title}`
             }.`
           )
         }
+        if (bookmarks.length > 1) {
+          throw new Error(
+            `${
+              t("duplicateBookmarkError") || "Multiple bookmarks found with"
+            } ${
+              params.url ? `URL: ${params.url}` : `title: ${params.title}`
+            }. ${
+              t("clarifyBookmark") ||
+              "Please provide the URL or folder to specify which one."
+            }`
+          )
+        }
+        const bookmarkId = bookmarks[0].id
+        const bookmarkTitle = bookmarks[0].title || bookmarks[0].url
+        chrome.bookmarks.remove(bookmarkId, () => {
+          if (chrome.runtime.lastError) {
+            throw new Error(chrome.runtime.lastError.message)
+          }
+          loadingMessage.remove()
+          const botMessage = document.createElement("div")
+          botMessage.className = "chatbox-message bot"
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+          botMessage.innerHTML = `${
+            t("deletedBookmark") || "I've deleted the bookmark"
+          }: ${bookmarkTitle}.<span class="timestamp">${timestamp}</span>`
+          chatMessages.appendChild(botMessage)
+          addToChatHistory(
+            "bot",
+            `${
+              t("deletedBookmark") || "I've deleted the bookmark"
+            }: ${bookmarkTitle}.`,
+            timestamp
+          )
+          chatMessages.scrollTop = chatMessages.scrollHeight
+        })
       } else if (action === "search_bookmark" && params.keyword) {
         chrome.bookmarks.search(params.keyword, (results) => {
           const bookmarks = results.filter((node) => node.url)
@@ -904,6 +938,67 @@ If multiple bookmarks match the title, return:
           )
           chatMessages.scrollTop = chatMessages.scrollHeight
         })
+      } else if (
+        action === "favorite" &&
+        params.title &&
+        params.hasOwnProperty("favorite")
+      ) {
+        const { title, favorite, folder } = params
+        let bookmarks = await searchBookmarksByTitle(title)
+        if (bookmarks.length === 0) {
+          throw new Error(
+            `${
+              t("noBookmarks") || "I couldn't find a bookmark with"
+            } title: ${title}.`
+          )
+        }
+        if (bookmarks.length > 1) {
+          if (folder) {
+            const folderId = await findFolderId(folder)
+            bookmarks = bookmarks.filter((b) => b.parentId === folderId)
+          }
+          if (bookmarks.length > 1) {
+            throw new Error(
+              `${
+                t("duplicateBookmarkError") ||
+                "Multiple bookmarks found with title"
+              }: ${title}. ${
+                t("clarifyBookmark") ||
+                "Please provide the URL or folder to specify which one."
+              }`
+            )
+          }
+        }
+        const bookmarkId = bookmarks[0].id
+        const bookmarkTitle = bookmarks[0].title || bookmarks[0].url
+        await toggleFavorite(bookmarkId, favorite)
+        loadingMessage.remove()
+        const botMessage = document.createElement("div")
+        botMessage.className = "chatbox-message bot"
+        const timestamp = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+        botMessage.innerHTML = `${
+          favorite
+            ? t("markedFavorite") || "I've marked the bookmark"
+            : t("unmarkedFavorite") ||
+              "I've removed the bookmark from favorites"
+        } <a href="${
+          bookmarks[0].url
+        }" target="_blank">${bookmarkTitle}</a>.<span class="timestamp">${timestamp}</span>`
+        chatMessages.appendChild(botMessage)
+        addToChatHistory(
+          "bot",
+          `${
+            favorite
+              ? t("markedFavorite") || "I've marked the bookmark"
+              : t("unmarkedFavorite") ||
+                "I've removed the bookmark from favorites"
+          } ${bookmarkTitle}.`,
+          timestamp
+        )
+        chatMessages.scrollTop = chatMessages.scrollHeight
       } else if (action === "general" && params.response) {
         loadingMessage.remove()
         const botMessage = document.createElement("div")
@@ -912,9 +1007,9 @@ If multiple bookmarks match the title, return:
           hour: "2-digit",
           minute: "2-digit",
         })
-        botMessage.innerHTML = `${params.response}<span class="timestamp">${timestamp}</span>` // Bỏ prefix để tự nhiên hơn
+        botMessage.innerHTML = `${params.response}<span class="timestamp">${timestamp}</span>`
         chatMessages.appendChild(botMessage)
-        addToChatHistory("bot", `${params.response}`, timestamp)
+        addToChatHistory("bot", params.response, timestamp)
         chatMessages.scrollTop = chatMessages.scrollHeight
       } else {
         loadingMessage.remove()
@@ -926,7 +1021,7 @@ If multiple bookmarks match the title, return:
         })
         const fallbackResponse =
           t("naturalLanguagePrompt") ||
-          "Tui đang cố hiểu bạn muốn gì! Bạn có thể nói rõ hơn không, như 'đổi tên bookmark ChickenSoup thành ChickenSoup2698' hoặc 'thêm bookmark vào thư mục Tin Tức'?"
+          "Tui đang cố hiểu bạn muốn gì! Bạn có thể nói rõ hơn không, như 'đổi tên bookmark ChickenSoup thành ChickenSoup2698' hoặc 'làm bookmark ChickenSoup thành yêu thích'?"
         botMessage.innerHTML = `${fallbackResponse}<span class="timestamp">${timestamp}</span>`
         chatMessages.appendChild(botMessage)
         addToChatHistory("bot", fallbackResponse, timestamp)
@@ -1259,7 +1354,6 @@ If multiple bookmarks match the title, return:
 
   // Chat history export
   if (chatHistoryBtn) {
-    // Sửa: Sử dụng chatHistoryBtn
     chatHistoryBtn.addEventListener("click", exportChatHistory)
   }
 })

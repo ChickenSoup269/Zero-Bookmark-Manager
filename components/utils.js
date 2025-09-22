@@ -183,6 +183,12 @@ export const translations = {
     clarifyBookmark:
       "I found multiple bookmarks named '{title}'. Please provide the URL or folder to specify which one.",
     noBookmarks: "I couldn't find a bookmark with {0}.",
+    updatedBookmark: "I've updated the bookmark",
+    inFolder: "in",
+    naturalLanguagePrompt:
+      "I'm trying to understand what you want! Could you clarify, like 'change bookmark ChickenSoup to ChickenSoup2698' or 'make bookmark ChickenSoup a favorite'?",
+    markedFavorite: "I've marked the bookmark",
+    unmarkedFavorite: "I've removed the bookmark from favorites",
   },
   vi: {
     // Your vi translations (unchanged, as they are correct)
@@ -367,6 +373,12 @@ export const translations = {
     clarifyBookmark:
       "Tui tìm thấy nhiều bookmark tên '{title}'. Bạn muốn chỉnh sửa cái nào? Hãy cung cấp URL hoặc thư mục.",
     noBookmarks: "Tui không tìm thấy bookmark nào có {0}.",
+    updatedBookmark: "Tui đã cập nhật bookmark",
+    inFolder: "trong",
+    naturalLanguagePrompt:
+      "Tui đang cố hiểu bạn muốn gì! Bạn có thể nói rõ hơn không, như 'đổi tên bookmark ChickenSoup thành ChickenSoup2698' hoặc 'làm bookmark ChickenSoup thành yêu thích'?",
+    markedFavorite: "Tui đã đánh dấu bookmark",
+    unmarkedFavorite: "Tui đã bỏ đánh dấu yêu thích cho bookmark",
   },
 }
 
