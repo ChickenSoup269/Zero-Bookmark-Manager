@@ -423,21 +423,33 @@
 
 /* Custom Guide */
 .custom-guide {
+  /* Positioning */
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-lg);
-  max-width: 90%;
+  z-index: 2;
+
+  /* Layout */
+  width: min(900px, 90vw);
   max-height: 80vh;
-  width: 500px;
-  padding: var(--spacing-md);
-  z-index: 100001;
-  overflow-y: auto;
-  color: var(--text-primary);
+  padding: var(--spacing-md, 1.5rem);
+
+  /* Styling */
+  background-color: var(--bg-secondary, #ffffff);
+  border-radius: var(--border-radius-lg, 12px);
+  box-shadow: var(--shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.15));
+
+  /* Content */
+  color: var(--text-primary, #333333);
   font-size: 0.9rem;
+  line-height: 1.6;
+
+  /* Scroll */
+  overflow-y: auto;
+
+  /* Smooth animations */
+  transition: all 0.3s ease;
 }
 
 .custom-guide.hidden {
@@ -464,7 +476,7 @@
 }
 
 .custom-guide li::before {
-  content: "•";
+  content: "-";
   position: absolute;
   left: 0;
   color: var(--accent-color);
@@ -561,6 +573,122 @@
   .custom-guide {
     display: none !important;
   }
+}
+
+/* Định dạng tiêu đề chính */
+#custom-guide-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color, #2c3e50);
+  margin-bottom: 15px;
+  text-align: center;
+  border-bottom: 2px solid var(--primary-color, #3498db);
+  padding-bottom: 8px;
+}
+
+/* Định dạng tiêu đề con trong nội dung */
+#custom-guide-message h4 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-color, #2c3e50);
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+/* Định dạng danh sách có thứ tự */
+#custom-guide-message ol {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+/* Định dạng các mục trong danh sách */
+#custom-guide-message li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* Định dạng tiêu đề con trong các mục */
+#custom-guide-message strong {
+  color: var(--accent-color, #2980b9);
+}
+
+/* Định dạng code block giống Markdown */
+#custom-guide-message code {
+  background-color: var(--code-bg, #f5f5f5);
+  color: var(--code-color, #333);
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 0.95rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--code-border, #ddd);
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Ẩn dấu nháy kép nếu cần */
+#custom-guide-message code::before,
+#custom-guide-message code::after {
+  content: ""; /* Ẩn dấu nháy kép trong hiển thị */
+}
+
+/* Tùy chỉnh cho light theme */
+.light-theme #custom-guide-title {
+  color: #2c3e50;
+  border-bottom-color: #3498db;
+}
+
+.light-theme #custom-guide-message h4 {
+  color: #2c3e50;
+}
+
+.light-theme #custom-guide-message strong {
+  color: #2980b9;
+}
+
+.light-theme #custom-guide-message code {
+  background-color: #f5f5f5;
+  color: #333;
+  border-color: #ddd;
+}
+
+/* Tùy chỉnh cho dark theme */
+.dark-theme #custom-guide-title {
+  color: #ecf0f1;
+  border-bottom-color: #3498db;
+}
+
+.dark-theme #custom-guide-message h4 {
+  color: #ecf0f1;
+}
+
+.dark-theme #custom-guide-message strong {
+  color: #3498db;
+}
+
+.dark-theme #custom-guide-message code {
+  background-color: #2d2d2d;
+  color: #f5f5f5;
+  border-color: #444;
+}
+
+/* Định dạng nút OK */
+#custom-guide-ok {
+  background-color: var(--button-bg, #3498db);
+  color: var(--button-text, #fff);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.light-theme #custom-guide-ok {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.dark-theme #custom-guide-ok {
+  background-color: #2980b9;
+  color: #fff;
 }
 
 /* High contrast */

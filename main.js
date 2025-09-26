@@ -6,7 +6,7 @@ import {
 import { getBookmarkTree } from "./components/bookmarks.js"
 import { translations, debounce } from "./components/utils.js"
 import { setupEventListeners } from "./components/events.js"
-import { uiState } from "./components/state.js"
+import { uiState, saveUIState } from "./components/state.js"
 
 document.addEventListener("DOMContentLoaded", () => {
   // DOM references
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     languageSwitcher: document.getElementById("language-switcher"),
     themeSwitcher: document.getElementById("theme-switcher"),
     fontSwitcher: document.getElementById("font-switcher"),
-    viewSwitcher: document.getElementById("view-switcher"), // Added view-switcher
+    viewSwitcher: document.getElementById("view-switcher"),
     renamePopup: document.getElementById("rename-popup"),
     renameInput: document.getElementById("rename-input"),
     renameSave: document.getElementById("rename-save"),
@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     createFolderCancel: document.getElementById("create-folder-cancel"),
     clearCreateFolder: document.getElementById("clear-create-folder"),
     renameFolderOption: document.getElementById("rename-folder-option"),
+    showBookmarkIdsOption: document.getElementById("show-bookmark-ids-option"), // Thêm tham chiếu
   }
 
   // Initialize application
@@ -80,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.importBookmarksOption = importBookmarksOption
     }
 
-    // Initialize theme, font, and view
+    // Initialize theme, font, view, and showBookmarkIds
     const savedTheme = localStorage.getItem("appTheme") || "system"
     elements.themeSwitcher.value = savedTheme
     if (typeof updateTheme === "function") {
@@ -99,6 +100,17 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.viewSwitcher.value = savedView
     uiState.viewMode = savedView
 
+    // Khôi phục trạng thái showBookmarkIds
+    chrome.storage.local.get(["showBookmarkIds"], (data) => {
+      uiState.showBookmarkIds = data.showBookmarkIds || false
+      if (elements.showBookmarkIdsOption) {
+        const language = localStorage.getItem("appLanguage") || "en"
+        elements.showBookmarkIdsOption.textContent = uiState.showBookmarkIds
+          ? translations[language].hideBookmarkIds
+          : translations[language].showBookmarkIds
+      }
+    })
+
     // Fetch fresh bookmark data first
     getBookmarkTree((bookmarkTreeNodes) => {
       if (bookmarkTreeNodes) {
@@ -115,6 +127,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Setup event listeners after DOM is ready
     setupEventListeners(elements)
+
+    // Thêm sự kiện cho showBookmarkIdsOption
+    if (elements.showBookmarkIdsOption) {
+      elements.showBookmarkIdsOption.addEventListener("click", () => {
+        uiState.showBookmarkIds = !uiState.showBookmarkIds
+        chrome.storage.local.set({ showBookmarkIds: uiState.showBookmarkIds })
+        const language = localStorage.getItem("appLanguage") || "en"
+        elements.showBookmarkIdsOption.textContent = uiState.showBookmarkIds
+          ? translations[language].hideBookmarkIds
+          : translations[language].showBookmarkIds
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          }
+        })
+      })
+    }
   }
 
   // Add real-time bookmark change listeners
@@ -126,7 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           console.error("Failed to refresh bookmark tree on change")
           const language = localStorage.getItem("appLanguage") || "en"
-          // Placeholder for showCustomPopup
           console.error(translations[language].errorUnexpected)
         }
       })

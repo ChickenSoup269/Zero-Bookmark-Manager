@@ -1,6 +1,15 @@
 <!-- ---Extension version---- -->
 
 Changelog:
+[1.1.0] -2025-09-??
+
+- Added web view
+- Added chatbot - gemini
+- Added favourite bookmarks
+- Added tree view [have some bugs]
+- Update export option now have CSV (Excell/Sheets)
+- Update small UI
+
 [1.0.3] - 2025-09-02
 
 - Added light/dark theme switching (auto-detected)
@@ -20,4 +29,9 @@ Changelog:
 - Improved checkbox selection handling for individual and Select All interactions
 
 [1.0.2] - 2025-08-15
-Removed unused "identity" permission from manifest.json.
+
+- Removed unused "identity" permission from manifest.json.
+
+[1.0.1] - 2025-08-12
+
+- Base bookmarks

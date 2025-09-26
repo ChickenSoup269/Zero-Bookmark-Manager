@@ -82,6 +82,10 @@ body {
     color var(--transition-normal);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .header {
   display: flex;
   align-items: center;

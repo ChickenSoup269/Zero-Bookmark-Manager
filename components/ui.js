@@ -421,6 +421,11 @@ function createBookmarkElement(bookmark, depth = 0) {
     <a href="${bookmark.url}" target="_blank" class="link">${
     bookmark.title || bookmark.url
   }</a>
+    ${
+      uiState.showBookmarkIds
+        ? `<span class="bookmark-id">[ID: ${bookmark.id}]</span>`
+        : ""
+    }
     <div class="dropdown-btn-group">
       <button class="dropdown-btn ${
         bookmark.isFavorite ? "favorited" : ""
