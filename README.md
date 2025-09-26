@@ -4,15 +4,16 @@
 <img src="./images/logo.png" alt="logo" width="full">
 </div>
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  <div>
-  English | <a href="https://github.com/ChickenSoup269/Bookmark-Manager/blob/main/README_VN.md">Tiếng Việt</a>
-   
-  </div>
-  <div>
-    <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/CHANGELOG.md">CHANGELOG.md</a>
-  </div>
-</div>
+ <table width="100%">
+  <tr>
+    <td align="left">
+    English | <a href="https://github.com/ChickenSoup269/Bookmark-Manager/blob/main/README_VN.md">Tiếng Việt</a>
+    </td>
+    <td align="right">
+      <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/CHANGELOG.md">CHANGELOG.md</a>
+    </td>
+  </tr>
+</table>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
