@@ -1,4 +1,4 @@
-# Bookmark Manager Extension
+# Bookmark Manager Extension <img src="./icons/icon.png" alt="logoEX" width="30">
 
 <div align="center">
 <img src="./images/logo.png" alt="logo">
