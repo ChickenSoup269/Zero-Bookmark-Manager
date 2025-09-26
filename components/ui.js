@@ -207,10 +207,13 @@ function populateFolderFilter(folders, elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   elements.folderFilter.innerHTML = `<option value="">${translations[language].allBookmarks}</option>`
   folders.forEach((folder) => {
-    const option = document.createElement("option")
-    option.value = folder.id
-    option.textContent = folder.title
-    elements.folderFilter.appendChild(option)
+    if (folder.id !== "0") {
+      // Bỏ qua thư mục gốc
+      const option = document.createElement("option")
+      option.value = folder.id
+      option.textContent = folder.title
+      elements.folderFilter.appendChild(option)
+    }
   })
   if (folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId

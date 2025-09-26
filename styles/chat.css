@@ -49,7 +49,7 @@
   opacity: 0;
   transform: translateY(20px);
   transition: opacity var(--transition-fast), transform var(--transition-fast);
-  z-index: 100000;
+  z-index: 1;
   resize: both;
   overflow: hidden;
 }
@@ -323,6 +323,7 @@
   box-shadow: var(--shadow-md);
   transition: all var(--transition-fast);
   border: none;
+  z-index: 0;
 }
 
 .scroll-to-top:hover {
@@ -338,7 +339,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  z-index: 1001;
+  z-index: 0;
 }
 
 .floating-buttons .button,
