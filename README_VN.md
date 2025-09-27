@@ -12,6 +12,9 @@
     <td align="right">
       <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/CHANGELOG.md">CHANGELOG.md</a>
     </td>
+       <td align="right">
+      <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">Link Extension</a>
+    </td>
   </tr>
 </table>
 
