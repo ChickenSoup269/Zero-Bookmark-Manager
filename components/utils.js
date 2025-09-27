@@ -137,46 +137,48 @@ export const translations = {
     movedBookmark: "I've moved the bookmark",
     noFolders: "You don't have any folders yet.",
     helpGuide: `
-          <h4>Help Guide:</h4>
-      <ol>
-        <li><strong>Natural Language Queries:</strong><br>
-          - Ask freely, e.g., <code>"How many bookmarks do I have?"</code>, <code>"Show my bookmarks"</code>, or <code>"Find bookmarks about technology"</code>.<br>
-          - The AI will interpret and respond with bookmark actions or answers.
-        </li>
-        <li><strong>Add Bookmark:</strong><br>
-          - Command: <code>"bookmark add https://example.com title 'My Page' to folder News"</code><br>
-          - Or use the "Create Folder" button in the sidebar.
-        </li>
-        <li><strong>Move Bookmark:</strong><br>
-          - Command: <code>"move bookmark 'My Page' to folder News"</code><br>
-          - Or ask: <code>"Move the bookmark titled 'My Page' to the News folder"</code>.
-        </li>
-        <li><strong>Search Bookmarks:</strong><br>
-          - Command: <code>"search bookmarks keyword"</code> or ask: <code>"Find bookmarks with the keyword technology"</code>.<br>
-          - Use the search bar or the "Sort: Default" dropdown for manual search.
-        </li>
-        <li><strong>Search Folders:</strong><br>
-          - Command: <code>"search folders keyword"</code> or ask: <code>"Which folders have News in their name?"</code>.
-        </li>
-        <li><strong>List Bookmarks:</strong><br>
-          - Command: <code>"list bookmarks"</code> or ask: <code>"What bookmarks do I have?"</code>.
-        </li>
-        <li><strong>Edit Bookmark:</strong><br>
-          - Command: <code>"edit bookmark https://example.com title 'New Title' to folder Work"</code><br>
-          - Or ask: <code>"Rename the bookmark https://example.com to New Title"</code>.
-        </li>
-        <li><strong>Delete Bookmark:</strong><br>
-          - Command: <code>"delete bookmark https://example.com"</code><br>
-          - Or ask: <code>"Delete my bookmark https://example.com"</code>.
-        </li>
-        <li><strong>AI Features:</strong><br>
-          - Configure in "Configure AI Chatbot" for suggestions.<br>
-          - The AI understands natural questions and commands to manage bookmarks.
-        </li>
-        <li><strong>Export/Import Bookmarks:</strong><br>
-          - Access via the "Settings" menu.
-        </li>
-      </ol>
+        <h4>Help Guide:</h4>
+          <ol>
+            <li><strong>Natural Language Queries:</strong><br>
+              - Ask freely, e.g., <code>"How many bookmarks do I have?"</code>, <code>"Show my bookmarks"</code>, or <code>"Find bookmarks about technology"</code>.<br>
+              - The bot will interpret and respond with bookmark actions or answers.
+            </li>
+            <li><strong>Add Bookmark:</strong><br>
+              - Command: <code>"bookmark add https://example.com title 'My Page' to folder News"</code><br>
+              - Or use the "Create Folder" button in the sidebar.
+            </li>
+            <li><strong>Move Bookmark:</strong><br>
+              - Command: <code>"move bookmark 'My Page' to folder News"</code> or <code>"move bookmark id 123 to folder News"</code>.<br>
+              - Or ask: <code>"Move the bookmark titled 'My Page' to the News folder"</code> or <code>"Move bookmark ID 123 to the News folder"</code>.
+            </li>
+            <li><strong>Search Bookmarks:</strong><br>
+              - Command: <code>"search bookmarks keyword"</code> or ask: <code>"Find bookmarks with the keyword technology"</code>.<br>
+              - Use the search bar or the "Sort: Default" dropdown for manual search.
+            </li>
+            <li><strong>Search Folders:</strong><br>
+              - Command: <code>"search folders keyword"</code> or ask: <code>"Which folders have News in their name?"</code>.
+            </li>
+            <li><strong>List Bookmarks:</strong><br>
+              - Command: <code>"list bookmarks"</code> or ask: <code>"What bookmarks do I have?"</code>.<br>
+              - Results will show the title, URL, and ID of each bookmark.
+            </li>
+            <li><strong>Edit Bookmark:</strong><br>
+              - Command: <code>"edit bookmark https://example.com title 'New Title' to folder Work"</code> or <code>"edit bookmark id 123 title 'New Title' to folder Work"</code>.<br>
+              - Or ask: <code>"Rename the bookmark https://example.com to New Title"</code> or <code>"Edit bookmark ID 123 to title 'New Title' in folder Work"</code>.
+            </li>
+            <li><strong>Delete Bookmark:</strong><br>
+              - Command: <code>"delete bookmark https://example.com"</code>, <code>"delete bookmark titled 'My Page'"</code>, or <code>"delete bookmark id 123"</code>.<br>
+              - Or ask: <code>"Delete my bookmark https://example.com"</code> or <code>"Delete bookmark ID 123"</code>.<br>
+              - <strong>Note:</strong> You will be prompted to confirm before deleting a bookmark.
+            </li>
+            <li><strong>Bot Features:</strong><br>
+              - Configure in "Configure Chatbot" for suggestions.<br>
+              - The bot understands natural questions and commands to manage bookmarks, including by ID.
+            </li>
+            <li><strong>Export/Import Bookmarks:</strong><br>
+              - Access via the "Settings" menu.
+            </li>
+          </ol>
       `,
     clarifyBookmark:
       "I found multiple bookmarks named '{title}'. Please provide the URL or folder to specify which one.",
@@ -326,46 +328,48 @@ export const translations = {
     movedBookmark: "Tôi đã chuyển bookmark",
     noFolders: "Bạn chưa có thư mục nào.",
     helpGuide: `
-          <h4>Hướng Dẫn:</h4>
-      <ol>
-        <li><strong>Câu hỏi Ngôn ngữ Tự nhiên:</strong><br>
-          - Hỏi tự do, ví dụ: <code>"Tôi có bao nhiêu bookmark?"</code>, <code>"Hiển thị bookmark của tôi"</code>, hoặc <code>"Tìm bookmark về công nghệ"</code>.<br>
-          - AI sẽ diễn giải và trả lời bằng hành động bookmark hoặc câu trả lời.
-        </li>
-        <li><strong>Thêm Bookmark:</strong><br>
-          - Lệnh: <code>"bookmark add https://example.com title 'Trang Của Tôi' to folder Tin Tức"</code><br>
-          - Hoặc dùng nút "Tạo Thư mục" trong sidebar.
-        </li>
-        <li><strong>Di chuyển Bookmark:</strong><br>
-          - Lệnh: <code>"chuyển bookmark 'Trang Của Tôi' sang thư mục Tin Tức"</code><br>
-          - Hoặc hỏi: <code>"Chuyển bookmark có tiêu đề 'Trang Của Tôi' sang thư mục Tin Tức"</code>.
-        </li>
-        <li><strong>Tìm kiếm Bookmark:</strong><br>
-          - Lệnh: <code>"tìm bookmark từ khóa"</code> hoặc hỏi: <code>"Tìm bookmark có từ khóa công nghệ"</code>.<br>
-          - Dùng thanh tìm kiếm hoặc dropdown "Sắp xếp: Mặc định" để tìm thủ công.
-        </li>
-        <li><strong>Tìm kiếm Thư mục:</strong><br>
-          - Lệnh: <code>"tìm thư mục từ khóa"</code> hoặc hỏi: <code>"Thư mục nào có từ News trong tên?"</code>.
-        </li>
-        <li><strong>Liệt kê Bookmark:</strong><br>
-          - Lệnh: <code>"danh sách bookmark"</code> hoặc hỏi: <code>"Tôi có những bookmark nào?"</code>.
-        </li>
-        <li><strong>Sửa Bookmark:</strong><br>
-          - Lệnh: <code>"edit bookmark https://example.com title 'Tiêu Đề Mới' to folder Công Việc"</code><br>
-          - Hoặc hỏi: <code>"Đổi tên bookmark https://example.com thành Tiêu Đề Mới"</code>.
-        </li>
-        <li><strong>Xóa Bookmark:</strong><br>
-          - Lệnh: <code>"delete bookmark https://example.com"</code><br>
-          - Hoặc hỏi: <code>"Xóa bookmark https://example.com của tôi"</code>.
-        </li>
-        <li><strong>Tính năng AI:</strong><br>
-          - Cấu hình trong "Cấu hình AI Chatbot" để gợi ý.<br>
-          - AI hiểu các câu hỏi và lệnh tự nhiên để quản lý bookmark.
-        </li>
-        <li><strong>Xuất/Nhập Bookmark:</strong><br>
-          - Truy cập qua menu "Cài đặt".
-        </li>
-      </ol>
+        <h4>Hướng Dẫn:</h4>
+          <ol>
+            <li><strong>Câu hỏi Ngôn ngữ Tự nhiên:</strong><br>
+              - Hỏi tự do, ví dụ: <code>"Tôi có bao nhiêu bookmark?"</code>, <code>"Hiển thị bookmark của tôi"</code>, hoặc <code>"Tìm bookmark về công nghệ"</code>.<br>
+              - AI sẽ diễn giải và trả lời bằng hành động bookmark hoặc câu trả lời.
+            </li>
+            <li><strong>Thêm Bookmark:</strong><br>
+              - Lệnh: <code>"bookmark add https://example.com title 'Trang Của Tôi' to folder Tin Tức"</code><br>
+              - Hoặc dùng nút "Tạo Thư mục" trong sidebar.
+            </li>
+            <li><strong>Di chuyển Bookmark:</strong><br>
+              - Lệnh: <code>"chuyển bookmark 'Trang Của Tôi' sang thư mục Tin Tức"</code> hoặc <code>"chuyển bookmark id 123 sang thư mục Tin Tức"</code>.<br>
+              - Hoặc hỏi: <code>"Chuyển bookmark có tiêu đề 'Trang Của Tôi' sang thư mục Tin Tức"</code> hoặc <code>"Chuyển bookmark ID 123 sang thư mục Tin Tức"</code>.
+            </li>
+            <li><strong>Tìm kiếm Bookmark:</strong><br>
+              - Lệnh: <code>"tìm bookmark từ khóa"</code> hoặc hỏi: <code>"Tìm bookmark có từ khóa công nghệ"</code>.<br>
+              - Dùng thanh tìm kiếm hoặc dropdown "Sắp xếp: Mặc định" để tìm thủ công.
+            </li>
+            <li><strong>Tìm kiếm Thư mục:</strong><br>
+              - Lệnh: <code>"tìm thư mục từ khóa"</code> hoặc hỏi: <code>"Thư mục nào có từ News trong tên?"</code>.
+            </li>
+            <li><strong>Liệt kê Bookmark:</strong><br>
+              - Lệnh: <code>"danh sách bookmark"</code> hoặc hỏi: <code>"Tôi có những bookmark nào?"</code>.<br>
+              - Kết quả sẽ hiển thị tiêu đề, URL và ID của bookmark.
+            </li>
+            <li><strong>Sửa Bookmark:</strong><br>
+              - Lệnh: <code>"edit bookmark https://example.com title 'Tiêu Đề Mới' to folder Công Việc"</code> hoặc <code>"edit bookmark id 123 title 'Tiêu Đề Mới' to folder Công Việc"</code>.<br>
+              - Hoặc hỏi: <code>"Đổi tên bookmark https://example.com thành Tiêu Đề Mới"</code> hoặc <code>"Sửa bookmark ID 123 thành tiêu đề 'Tiêu Đề Mới' trong thư mục Công Việc"</code>.
+            </li>
+            <li><strong>Xóa Bookmark:</strong><br>
+              - Lệnh: <code>"delete bookmark https://example.com"</code>, <code>"delete bookmark titled 'Trang Của Tôi'"</code>, hoặc <code>"delete bookmark id 123"</code>.<br>
+              - Hoặc hỏi: <code>"Xóa bookmark https://example.com của tôi"</code> hoặc <code>"Xóa bookmark ID 123"</code>.<br>
+              - <strong>Lưu ý:</strong> Bạn sẽ được yêu cầu xác nhận trước khi xóa bookmark.
+            </li>
+            <li><strong>Tính năng AI:</strong><br>
+              - Cấu hình trong "Cấu hình AI Chatbot" để gợi ý.<br>
+              - AI hiểu các câu hỏi và lệnh tự nhiên để quản lý bookmark, bao gồm sử dụng ID.
+            </li>
+            <li><strong>Xuất/Nhập Bookmark:</strong><br>
+              - Truy cập qua menu "Cài đặt".
+            </li>
+          </ol>
         `,
     clarifyBookmark:
       "Tui tìm thấy nhiều bookmark tên '{title}'. Bạn muốn chỉnh sửa cái nào? Hãy cung cấp URL hoặc thư mục.",
