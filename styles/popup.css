@@ -74,6 +74,7 @@ body {
 
 .folder-list {
   background-color: var(--bg-secondary);
+  margin-top: 5px;
   padding: var(--spacing-md);
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
@@ -83,26 +84,61 @@ body {
 
 .bookmark-item,
 .folder-item {
-  padding: var(--spacing-sm);
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  transition: all var(--transition-fast);
-  margin-bottom: 2px;
+  justify-content: space-between; /* tách icon/title và các action */
+  padding: 10px 14px;
+  margin: 10px 0;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  border-radius: var(--border-radius-md);
+  transition: transform var(--transition-fast),
+    box-shadow var(--transition-fast), background-color var(--transition-fast);
+  cursor: pointer;
 }
 
-.bookmark-item:last-child,
-.folder-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
+/* Hover effect: nổi nhẹ + đổi màu nền */
 .bookmark-item:hover,
 .folder-item:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-  background-color: rgba(255, 255, 255, 0.05);
-  z-index: 100;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background: rgba(255, 255, 255, 0.07);
+  z-index: 1;
+}
+
+/* Folder/Bookmark icon bên trái */
+.bookmark-item .icon,
+.folder-item .icon {
+  margin-right: 10px;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* Title chiếm hết khoảng trống */
+.bookmark-item .title,
+.folder-item .title {
+  flex-grow: 1;
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Counter (ví dụ số lượng con trong folder) */
+.folder-item .count {
+  background: rgba(112, 161, 70, 0.15);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Bookmark URL dưới title (phụ) */
+.bookmark-item .url {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: 28px; /* thụt để không đè icon */
 }
 
 [data-theme="light"] .bookmark-item:hover,

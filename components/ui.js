@@ -249,7 +249,6 @@ function toggleFolderButtons(elements) {
 }
 
 function renderBookmarks(bookmarksList, elements) {
-  const language = localStorage.getItem("appLanguage") || "en"
   const fragment = document.createDocumentFragment()
   const selectAllDiv = document.createElement("div")
   selectAllDiv.className = "select-all"
@@ -297,6 +296,10 @@ function renderTreeView(nodes, elements, depth = 0) {
     const selectAllDiv = document.createElement("div")
     selectAllDiv.className = "select-all"
     selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
+    selectAllDiv.innerHTML = `
+      <input type="checkbox" id="select-all">
+      <label for="select-all">Select All</label>
+    `
     fragment.appendChild(selectAllDiv)
   }
 
@@ -306,7 +309,7 @@ function renderTreeView(nodes, elements, depth = 0) {
     const bIsFolder = !!b.children
     if (aIsFolder && !bIsFolder) return -1
     if (!aIsFolder && bIsFolder) return 1
-    return a.title.localeCompare(b.title)
+    return (a.title || "").localeCompare(b.title || "")
   })
 
   sortedNodes.forEach((node) => {
@@ -326,35 +329,66 @@ function renderTreeView(nodes, elements, depth = 0) {
     const matchesFavorite =
       uiState.sortType === "favorites" ? node.isFavorite : true
 
-    // --- Bookmark ---
-    if (node.url && matchesSearch && matchesFolder && matchesFavorite) {
-      const bookmarkElement = createBookmarkElement(node, depth)
-      bookmarkElement.style.marginLeft = `${depth * 5}px`
-      fragment.appendChild(bookmarkElement)
-    }
-
     // --- Folder ---
     if (node.children && Array.isArray(node.children)) {
+      // Always show folders, but filter children
       const isCollapsed = uiState.collapsedFolders.has(node.id)
+      const itemCount = countFolderItems(node)
 
-      // tạo folder div
+      // Create folder div with improved styling
       const folderDiv = document.createElement("div")
       folderDiv.className = "folder-item"
       folderDiv.dataset.id = node.id
-      folderDiv.style.marginLeft = `${depth * 5}px`
+      folderDiv.style.marginLeft = `${depth * 20}px`
 
-      const toggleHTML = `<span class="folder-toggle" style="cursor:pointer; margin-right:5px;">${
-        isCollapsed ? "+" : "-"
-      }</span>`
+      const toggleIcon = isCollapsed ? "+" : "−"
+      const folderIcon = isCollapsed ? "📁" : "📂"
 
-      folderDiv.innerHTML = `${toggleHTML}<span class="folder-title">${folderTitle}</span>`
+      folderDiv.innerHTML = `
+        <div class="folder-toggle" style="
+          width: 28px; 
+          height: 28px; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center;
+          background: rgba(112, 161, 70, 0.1);
+          border: 1px solid rgba(112, 161, 70, 0.2);
+          border-radius: 6px;
+          cursor: pointer;
+          margin-right: 8px;
+          font-weight: bold;
+          color: #70a146;
+          transition: all 0.3s ease;
+        ">${toggleIcon}</div>
+        <span class="folder-icon" style="margin-right: 8px; font-size: 18px;">${folderIcon}</span>
+        <span class="folder-title" style="flex-grow: 1; font-weight: 600;">${folderTitle}</span>
+        <span class="folder-count" style="
+          background: rgba(112, 161, 70, 0.2);
+          color: var(--text-primary);
+          padding: 2px 8px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 600;
+        ">${itemCount}</span>
+      `
+
       fragment.appendChild(folderDiv)
 
-      // tạo children container
+      // Create children container
       const childrenContainer = document.createElement("div")
       childrenContainer.className = "folder-children"
-      childrenContainer.style.marginLeft = `${(depth + 1) * 5}px`
-      childrenContainer.style.display = isCollapsed ? "none" : "block"
+      childrenContainer.style.cssText = `
+        margin-left: ${(depth + 1) * 10}px;
+        border-left: 2px solid rgba(112, 161, 70, 0.2);
+        padding-left: 8px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        position: relative;
+        display: ${isCollapsed ? "none" : "block"};
+      `
+
+      // Add connection line gradient
+      childrenContainer.setAttribute("data-depth", depth + 1)
 
       if (!isCollapsed) {
         const childrenFragment = renderTreeView(
@@ -367,36 +401,339 @@ function renderTreeView(nodes, elements, depth = 0) {
 
       fragment.appendChild(childrenContainer)
     }
+
+    // --- Bookmark ---
+    if (node.url && matchesSearch && matchesFolder && matchesFavorite) {
+      const bookmarkElement = createEnhancedBookmarkElement(node, depth)
+      fragment.appendChild(bookmarkElement)
+    }
   })
 
   // --- Root: attach listeners ---
   if (depth === 0) {
     elements.folderListDiv.appendChild(fragment)
-
-    // Toggle expand/collapse
-    document.querySelectorAll(".folder-toggle").forEach((toggle) => {
-      toggle.onclick = (e) => {
-        const folderId = e.target.parentElement.dataset.id
-        const childrenContainer = e.target.parentElement.nextElementSibling
-
-        if (uiState.collapsedFolders.has(folderId)) {
-          uiState.collapsedFolders.delete(folderId)
-          e.target.textContent = "-"
-          if (childrenContainer) childrenContainer.style.display = "block"
-        } else {
-          uiState.collapsedFolders.add(folderId)
-          e.target.textContent = "+"
-          if (childrenContainer) childrenContainer.style.display = "none"
-        }
-      }
-    })
-
-    attachSelectAllListener(elements)
-    attachDropdownListeners(elements)
-    setupBookmarkActionListeners(elements)
+    attachTreeListeners(elements)
   }
 
   return fragment
+}
+
+// Enhanced bookmark element creation
+function createEnhancedBookmarkElement(bookmark, depth = 0) {
+  const language = localStorage.getItem("appLanguage") || "en"
+
+  let favicon
+  try {
+    favicon = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(
+      bookmark.url
+    )}`
+  } catch (error) {
+    console.error("Error generating favicon URL for", bookmark.url, error)
+    favicon = "./images/default-favicon.png"
+  }
+
+  const div = document.createElement("div")
+  div.className = `bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`
+  div.dataset.id = bookmark.id
+  div.style.cssText = `
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 3px 0;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    margin-left: ${depth * 20}px;
+    background: rgba(255, 255, 255, 0.02);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    cursor: pointer;
+  `
+
+  // Add hover effect with CSS
+  div.addEventListener("mouseenter", () => {
+    div.style.transform = "translateX(6px) translateY(-1px)"
+    div.style.background = "rgba(255, 255, 255, 0.05)"
+    div.style.borderColor = "rgba(112, 161, 70, 0.3)"
+    div.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.12)"
+  })
+
+  div.addEventListener("mouseleave", () => {
+    div.style.transform = ""
+    div.style.background = "rgba(255, 255, 255, 0.02)"
+    div.style.borderColor = "transparent"
+    div.style.boxShadow = ""
+  })
+
+  div.innerHTML = `
+    <input type="checkbox" 
+           class="bookmark-checkbox" 
+           data-id="${bookmark.id}" 
+           ${uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""}
+           style="display: ${
+             uiState.checkboxesVisible ? "inline-block" : "none"
+           }; transform: scale(1.2);">
+    
+    <div class="bookmark-favicon" style="
+      width: 20px; 
+      height: 20px; 
+      border-radius: 4px; 
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-tertiary, #404040);
+    ">
+      <img src="${favicon}" 
+           alt="favicon" 
+           style="width: 100%; height: 100%; object-fit: cover;"
+           onerror="this.style.display='none'; this.parentElement.innerHTML='🔗';">
+    </div>
+    
+    <a href="${bookmark.url}" 
+       target="_blank" 
+       class="bookmark-title"
+       style="
+         flex: 1;
+         color: var(--text-primary, #ffffff);
+         text-decoration: none;
+         font-size: 14px;
+         font-weight: 500;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         white-space: nowrap;
+         transition: color 0.3s ease;
+       "
+       title="${bookmark.title || bookmark.url}">
+      ${bookmark.title || bookmark.url}
+    </a>
+
+    <div class="bookmark-url" style="
+      font-size: 11px;
+      color: var(--text-secondary, #b0b0b0);
+      opacity: 0.7;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    ">
+      ${extractDomain(bookmark.url)}
+    </div>
+    
+    ${
+      uiState.showBookmarkIds
+        ? `<span class="bookmark-id" style="font-size: 11px; color: #888;">[${bookmark.id}]</span>`
+        : ""
+    }
+    
+    <div class="dropdown-btn-group" style="position: relative;">
+      <button class="dropdown-btn ${bookmark.isFavorite ? "favorited" : ""}" 
+              data-id="${bookmark.id}" 
+              aria-label="Bookmark options"
+              style="
+                width: 24px; height: 24px; border: none; border-radius: 4px;
+                background: transparent; cursor: pointer;
+                transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+                opacity: 0;
+              ">
+        ${
+          bookmark.isFavorite
+            ? '<i class="fas fa-star"></i>'
+            : '<i class="fas fa-ellipsis-v"></i>'
+        }
+      </button>
+      
+      <div class="dropdown-menu hidden" style="
+        position: absolute; right: 0; top: 100%; margin-top: 4px;
+        background: var(--bg-secondary, #2d2d2d); border: 1px solid var(--border-color, #404040);
+        border-radius: 8px; min-width: 160px; padding: 4px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
+      ">
+        <button class="menu-item add-to-folder" data-id="${bookmark.id}">${
+    translations[language].addToFolderOption
+  }</button>
+        <button class="menu-item delete-btn" data-id="${bookmark.id}">${
+    translations[language].deleteBookmarkOption
+  }</button>
+        <button class="menu-item rename-btn" data-id="${bookmark.id}">${
+    translations[language].renameBookmarkOption
+  }</button>
+        <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;">
+        <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
+    translations[language].favourite
+  }</button>
+      </div>
+    </div>
+  `
+
+  // Show dropdown button on hover
+  div.addEventListener("mouseenter", () => {
+    const dropdownBtn = div.querySelector(".dropdown-btn")
+    if (dropdownBtn) dropdownBtn.style.opacity = "1"
+  })
+
+  div.addEventListener("mouseleave", () => {
+    const dropdownBtn = div.querySelector(".dropdown-btn")
+    if (dropdownBtn) dropdownBtn.style.opacity = "0"
+  })
+
+  return div
+}
+
+// Attach tree-specific event listeners
+function attachTreeListeners(elements) {
+  // Toggle expand/collapse
+  document.querySelectorAll(".folder-toggle").forEach((toggle) => {
+    toggle.onclick = (e) => {
+      e.stopPropagation()
+      const folderDiv = e.target.closest(".folder-item")
+      const folderId = folderDiv.dataset.id
+      const childrenContainer = folderDiv.nextElementSibling
+      const folderIcon = folderDiv.querySelector(".folder-icon")
+
+      if (uiState.collapsedFolders.has(folderId)) {
+        // Expand
+        uiState.collapsedFolders.delete(folderId)
+        e.target.textContent = "−"
+        folderIcon.textContent = "📂"
+
+        if (childrenContainer) {
+          childrenContainer.style.display = "block"
+          // Re-render children if needed
+          if (childrenContainer.innerHTML === "") {
+            const node = findNodeById(folderId, uiState.bookmarkTree)
+            if (node && node.children) {
+              const depth =
+                parseInt(childrenContainer.getAttribute("data-depth")) || 1
+              const childrenFragment = renderTreeView(
+                node.children,
+                elements,
+                depth
+              )
+              childrenContainer.appendChild(childrenFragment)
+            }
+          }
+        }
+      } else {
+        // Collapse
+        uiState.collapsedFolders.add(folderId)
+        e.target.textContent = "+"
+        folderIcon.textContent = "📁"
+
+        if (childrenContainer) {
+          childrenContainer.style.display = "none"
+        }
+      }
+
+      // Add smooth transition
+      e.target.style.transform = "scale(1.1)"
+      setTimeout(() => {
+        e.target.style.transform = ""
+      }, 150)
+
+      saveUIState()
+    }
+
+    // Hover effects for toggle
+    toggle.addEventListener("mouseenter", () => {
+      toggle.style.background = "linear-gradient(135deg, #70a146, #5d8a3a)"
+      toggle.style.color = "white"
+      toggle.style.transform = "scale(1.05)"
+    })
+
+    toggle.addEventListener("mouseleave", () => {
+      toggle.style.background = "rgba(112, 161, 70, 0.1)"
+      toggle.style.color = "#70a146"
+      toggle.style.transform = ""
+    })
+  })
+
+  // Favorite button handlers in dropdown
+  document.querySelectorAll(".menu-item.favorite-btn").forEach((btn) => {
+    btn.onclick = (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      const bookmarkId = btn.dataset.id
+      toggleFavorite(bookmarkId, btn)
+      // Hide dropdown after action
+      const dropdown = btn.closest(".dropdown-menu")
+      if (dropdown) dropdown.classList.add("hidden")
+    }
+  })
+
+  attachSelectAllListener(elements)
+  attachDropdownListeners(elements)
+  setupBookmarkActionListeners(elements)
+}
+
+// Helper functions
+function countFolderItems(node) {
+  if (!node.children) return 0
+  return node.children.reduce((count, child) => {
+    return count + (child.url ? 1 : 0) + countFolderItems(child)
+  }, 0)
+}
+
+function extractDomain(url) {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return url
+  }
+}
+
+function findNodeById(id, nodes) {
+  for (const node of nodes) {
+    if (node.id === id) return node
+    if (node.children) {
+      const found = findNodeById(id, node.children)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+function toggleFavorite(bookmarkId, buttonElement) {
+  chrome.storage.local.get("favoriteBookmarks", (data) => {
+    const favoriteBookmarks = data.favoriteBookmarks || {}
+
+    if (favoriteBookmarks[bookmarkId]) {
+      delete favoriteBookmarks[bookmarkId]
+      buttonElement.classList.remove("favorited")
+      buttonElement.style.color = "var(--text-secondary, #b0b0b0)"
+    } else {
+      favoriteBookmarks[bookmarkId] = true
+      buttonElement.classList.add("favorited")
+      buttonElement.style.color = "#ffd700"
+    }
+
+    chrome.storage.local.set({ favoriteBookmarks }, () => {
+      // Update bookmark item styling
+      const bookmarkItem = buttonElement.closest(".bookmark-item")
+      bookmarkItem.classList.toggle(
+        "favorited",
+        !!favoriteBookmarks[bookmarkId]
+      )
+
+      // Refresh tree if in favorites view
+      if (uiState.sortType === "favorites") {
+        chrome.bookmarks.getTree((tree) => {
+          renderFilteredBookmarks(tree, elements)
+        })
+      }
+    })
+  })
+}
+
+// Check if node is ancestor of target folder
+function isAncestorOf(node, targetFolderId) {
+  if (!node.children) return false
+
+  for (const child of node.children) {
+    if (child.id === targetFolderId) return true
+    if (isAncestorOf(child, targetFolderId)) return true
+  }
+  return false
 }
 
 function createBookmarkElement(bookmark, depth = 0) {

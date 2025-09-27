@@ -196,7 +196,9 @@ body {
 /* ============== IMPROVED TREE VIEW STYLES ============== */
 
 .folder-list.tree-view {
-  display: block;
+  display: flex; /* đổi từ block sang flex */
+  flex-direction: column; /* xếp dọc */
+  gap: var(--spacing-md); /* khoảng cách giữa các item */
   padding: var(--spacing-lg);
   background: linear-gradient(
     135deg,
@@ -210,209 +212,18 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* Folder Items */
-.folder-list.tree-view .folder-item {
+.folder-children {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  margin: 4px 0;
-  padding: 12px 16px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: var(--folder-bg);
-  backdrop-filter: blur(5px);
-  font-weight: 600;
-  color: var(--text-primary);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
+  flex-direction: column;
+  align-items: flex-start;
 
-.folder-list.tree-view .folder-item::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, transparent, rgba(112, 161, 70, 0.1));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
+  width: auto; /* tránh full ngang */
+  max-width: 80%; /* khống chế chiều ngang */
+  margin-left: 20px; /* thụt vào */
+  padding-left: 12px;
+  gap: 8px;
 
-.folder-list.tree-view .folder-item:hover {
-  transform: translateX(8px) translateY(-2px);
-  background: var(--folder-hover-bg);
-  border-color: rgba(112, 161, 70, 0.4);
-  box-shadow: 0 8px 25px rgba(112, 161, 70, 0.2);
-}
-
-.folder-list.tree-view .folder-item:hover::before {
-  opacity: 1;
-}
-
-/* Folder Toggle Button */
-.folder-list.tree-view .folder-toggle {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #70a146;
-  background: linear-gradient(
-    135deg,
-    rgba(112, 161, 70, 0.1),
-    rgba(112, 161, 70, 0.05)
-  );
-  border: 1px solid rgba(112, 161, 70, 0.2);
-  border-radius: 8px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.folder-list.tree-view .folder-toggle:hover {
-  background: linear-gradient(135deg, #70a146, #5d8a3a);
-  color: white;
-  transform: scale(1.1) rotate(180deg);
-  box-shadow: 0 4px 12px rgba(112, 161, 70, 0.3);
-}
-
-/* Folder Icon */
-.folder-list.tree-view .folder-item > .folder-toggle + *::before {
-  content: "📁";
-  font-size: 1.2rem;
-  margin-right: var(--spacing-sm);
-  transition: transform 0.3s ease;
-}
-
-.folder-list.tree-view .folder-item.is-collapsed > .folder-toggle + *::before {
-  content: "📂";
-  transform: scale(1.1);
-}
-
-/* Folder Title */
-.folder-list.tree-view .folder-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  flex-grow: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Bookmark Items */
-.folder-list.tree-view .bookmark-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  margin: 3px 0;
-  padding: 10px 14px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  background: var(--bookmark-bg);
-  backdrop-filter: blur(3px);
-  position: relative;
-}
-
-.folder-list.tree-view .bookmark-item::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 3px;
-  height: 0;
-  background: linear-gradient(to bottom, #70a146, #5d8a3a);
-  border-radius: 0 2px 2px 0;
-  transition: height 0.3s ease;
-  transform: translateY(-50%);
-}
-
-.folder-list.tree-view .bookmark-item:hover {
-  transform: translateX(6px) translateY(-1px);
-  background: var(--bookmark-hover-bg);
-  border-color: rgba(112, 161, 70, 0.3);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-}
-
-.folder-list.tree-view .bookmark-item:hover::before {
-  height: 60%;
-}
-
-/* Favorited Bookmarks */
-.folder-list.tree-view .bookmark-item.favorited {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 215, 0, 0.1),
-    rgba(255, 215, 0, 0.05)
-  );
-  border-left: 3px solid #ffd700;
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
-}
-
-.folder-list.tree-view .bookmark-item.favorited:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 215, 0, 0.15),
-    rgba(255, 215, 0, 0.08)
-  );
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
-}
-
-/* Tree Structure Lines */
-.folder-list.tree-view .folder-children {
-  margin-left: var(--tree-indent);
-  border-left: 2px solid var(--tree-line-color);
-  padding-left: var(--spacing-md);
-  position: relative;
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
-.folder-list.tree-view .folder-children::before {
-  content: "";
-  position: absolute;
-  top: -8px;
-  left: -2px;
-  height: calc(100% + 16px);
-  width: 2px;
-  background: linear-gradient(
-    to bottom,
-    var(--tree-line-color) 0%,
-    var(--tree-line-color) 80%,
-    transparent 100%
-  );
-  border-radius: 1px;
-}
-
-/* Connection dots for tree structure */
-.folder-list.tree-view .folder-children > .folder-item::after,
-.folder-list.tree-view .folder-children > .bookmark-item::after {
-  content: "";
-  position: absolute;
-  left: calc(-1 * var(--spacing-md) - 6px);
-  top: 50%;
-  width: 8px;
-  height: 2px;
-  background: var(--tree-line-color);
-  border-radius: 1px;
-  transform: translateY(-50%);
-}
-
-/* Hover effects for better visual feedback */
-.folder-list.tree-view .folder-item:hover .folder-title {
-  color: #70a146;
-}
-
-.folder-list.tree-view .bookmark-item:hover .bookmark-title {
-  color: #70a146;
+  border-left: 2px solid rgba(112, 161, 70, 0.2);
 }
 
 /* ============== END TREE VIEW STYLES ============== */

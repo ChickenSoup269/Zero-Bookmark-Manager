@@ -116,8 +116,9 @@ html {
 
 .input {
   width: 100%;
-  padding: 0.8rem 2.1rem 0.8rem 0.8rem;
-  border: 1.5px solid var(--text-primary);
+  padding: 0.8rem 2rem 1rem 0.8rem;
+
+  border: 1px solid var(--text-primary);
   border-radius: var(--border-radius);
   background-color: var(--bg-primary);
   color: var(--accent-color);
