@@ -742,7 +742,7 @@
   text-decoration: underline;
 }
 
-.suggested-website {
+/* .suggested-website {
   background-color: var(--bg-tertiary);
   padding: 8px;
   border-radius: 8px;
@@ -759,4 +759,4 @@
 }
 .bookmark-suggestion-button:hover {
   background-color: var(--hover-bg);
-}
+} */

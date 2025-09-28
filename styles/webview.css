@@ -196,9 +196,9 @@ body {
 /* ============== IMPROVED TREE VIEW STYLES ============== */
 
 .folder-list.tree-view {
-  display: flex; /* đổi từ block sang flex */
-  flex-direction: column; /* xếp dọc */
-  gap: var(--spacing-md); /* khoảng cách giữa các item */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
   padding: var(--spacing-lg);
   background: linear-gradient(
     135deg,
@@ -216,10 +216,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
-  width: auto; /* tránh full ngang */
-  max-width: 80%; /* khống chế chiều ngang */
-  margin-left: 20px; /* thụt vào */
+  width: auto;
+  max-width: 80%;
+  margin-left: 20px;
   padding-left: 12px;
   gap: 8px;
 

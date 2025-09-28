@@ -351,19 +351,19 @@ function renderTreeView(nodes, elements, depth = 0) {
           display: flex; 
           align-items: center; 
           justify-content: center;
-          background: rgba(112, 161, 70, 0.1);
-          border: 1px solid rgba(112, 161, 70, 0.2);
+          background: var(--bg-primary);
+          border: 1px solid var(--text-primary);
           border-radius: 6px;
           cursor: pointer;
           margin-right: 8px;
           font-weight: bold;
-          color: #70a146;
+          color: var(--text-primary);
           transition: all 0.3s ease;
         ">${toggleIcon}</div>
         <span class="folder-icon" style="margin-right: 8px; font-size: 18px;">${folderIcon}</span>
         <span class="folder-title" style="flex-grow: 1; font-weight: 600;">${folderTitle}</span>
         <span class="folder-count" style="
-          background: rgba(112, 161, 70, 0.2);
+          background: var(--bg-secondary);
           color: var(--text-primary);
           padding: 2px 8px;
           border-radius: 12px;
@@ -379,7 +379,7 @@ function renderTreeView(nodes, elements, depth = 0) {
       childrenContainer.className = "folder-children"
       childrenContainer.style.cssText = `
         margin-left: ${(depth + 1) * 10}px;
-        border-left: 2px solid rgba(112, 161, 70, 0.2);
+        border-left: 2px solid var(--border-color);
         padding-left: 8px;
         margin-top: 8px;
         margin-bottom: 8px;
@@ -454,7 +454,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
   div.addEventListener("mouseenter", () => {
     div.style.transform = "translateX(6px) translateY(-1px)"
     div.style.background = "rgba(255, 255, 255, 0.05)"
-    div.style.borderColor = "rgba(112, 161, 70, 0.3)"
+    div.style.borderColor = "var(--hover-bg)"
     div.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.12)"
   })
 
@@ -475,19 +475,19 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
            }; transform: scale(1.2);">
     
     <div class="bookmark-favicon" style="
-      width: 20px; 
-      height: 20px; 
+      width: 22px; 
+      height: 22px; 
       border-radius: 4px; 
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--bg-tertiary, #404040);
+      background: white;
     ">
       <img src="${favicon}" 
            alt="favicon" 
-           style="width: 100%; height: 100%; object-fit: cover;"
-           onerror="this.style.display='none'; this.parentElement.innerHTML='🔗';">
+           style="width: 90%; height: 90%; object-fit: cover;"
+           onerror="this.style.display='none'; this.parentElement.innerHTML='';">
     </div>
     
     <a href="${bookmark.url}" 
@@ -495,10 +495,10 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
        class="bookmark-title"
        style="
          flex: 1;
-         color: var(--text-primary, #ffffff);
+         color: var(--text-primary);
          text-decoration: none;
-         font-size: 14px;
-         font-weight: 500;
+         font-size: 10px;
+         font-weight: 200;
          overflow: hidden;
          text-overflow: ellipsis;
          white-space: nowrap;
@@ -510,7 +510,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
 
     <div class="bookmark-url" style="
       font-size: 11px;
-      color: var(--text-secondary, #b0b0b0);
+      color: var(--text-secondary);
       opacity: 0.7;
       max-width: 120px;
       overflow: hidden;
@@ -636,14 +636,14 @@ function attachTreeListeners(elements) {
 
     // Hover effects for toggle
     toggle.addEventListener("mouseenter", () => {
-      toggle.style.background = "linear-gradient(135deg, #70a146, #5d8a3a)"
-      toggle.style.color = "white"
+      toggle.style.background = "var(--text-primary)"
+      toggle.style.color = "var(--bg-primary)"
       toggle.style.transform = "scale(1.05)"
     })
 
     toggle.addEventListener("mouseleave", () => {
-      toggle.style.background = "rgba(112, 161, 70, 0.1)"
-      toggle.style.color = "#70a146"
+      toggle.style.background = "var(--bg-primary)"
+      toggle.style.color = "var(--text-primary)"
       toggle.style.transform = ""
     })
   })
