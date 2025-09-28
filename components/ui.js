@@ -205,11 +205,9 @@ export function restoreUIState(elements, callback) {
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
-  // Fetch favoriteBookmarks from chrome.storage.local
   chrome.storage.local.get("favoriteBookmarks", (data) => {
     const favoriteBookmarks = data.favoriteBookmarks || {}
 
-    // Add isFavorite to bookmark nodes
     const addFavoriteStatus = (nodes) => {
       for (const node of nodes) {
         if (node.url) {
@@ -232,13 +230,13 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     updateBookmarkCount(bookmarks, elements)
     let filtered = bookmarks
 
-    // Apply favorite filter
     if (uiState.sortType === "favorites") {
       filtered = filtered.filter((bookmark) => bookmark.isFavorite)
     }
 
     if (
       uiState.selectedFolderId &&
+      uiState.selectedFolderId !== "0" && // Bỏ qua thư mục gốc
       folders.some((f) => f.id === uiState.selectedFolderId)
     ) {
       filtered = filtered.filter((bookmark) =>
@@ -247,6 +245,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     } else {
       uiState.selectedFolderId = ""
     }
+
     if (uiState.searchQuery) {
       filtered = filtered.filter(
         (bookmark) =>
@@ -260,7 +259,6 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     }
 
     if (uiState.viewMode === "tree") {
-      // Start from root's children to skip untitled root
       const rootChildren = bookmarkTreeNodes[0]?.children || []
       renderTreeView(rootChildren, elements)
     } else {

@@ -86,10 +86,10 @@ body.light-theme {
 [data-theme="dracula"],
 body.dracula-theme {
   --bg-primary: #282a36;
-  --bg-secondary: #44475a;
+  --bg-secondary: #242424;
   --bg-tertiary: #373844;
 
-  --text-primary: #f8f8f2;
+  --text-primary: #ffffff;
   --text-secondary: #50fa7b;
   --text-muted: #6272a4;
 

@@ -6,22 +6,29 @@ import { uiState, saveUIState, selectedBookmarks } from "../state.js"
 export function openAddToFolderPopup(elements, bookmarkIds) {
   const language = localStorage.getItem("appLanguage") || "en"
 
+  // Xóa các tùy chọn hiện có và thêm tùy chọn mặc định
   elements.addToFolderSelect.innerHTML = `<option value="">${translations[language].selectFolder}</option>`
-  uiState.folders.forEach((folder) => {
-    const option = document.createElement("option")
-    option.value = folder.id
-    option.textContent =
-      folder.id === "1"
-        ? translations[language].bookmarksBar || "Bookmarks Bar"
-        : folder.id === "2"
-        ? translations[language].otherBookmarks || "Other Bookmarks"
-        : folder.title || "Unnamed Folder"
-    elements.addToFolderSelect.appendChild(option)
-  })
+
+  // Lọc bỏ thư mục có id === "0" và thêm các thư mục khác
+  uiState.folders
+    .filter((folder) => folder.id !== "0") // Bỏ qua thư mục gốc
+    .forEach((folder) => {
+      const option = document.createElement("option")
+      option.value = folder.id
+      option.textContent =
+        folder.id === "1"
+          ? translations[language].bookmarksBar || "Bookmarks Bar"
+          : folder.id === "2"
+          ? translations[language].otherBookmarks || "Other Bookmarks"
+          : folder.title || "Unnamed Folder"
+      elements.addToFolderSelect.appendChild(option)
+    })
+
+  // Hiển thị popup và focus vào select
   elements.addToFolderPopup.classList.remove("hidden")
   elements.addToFolderSelect.focus()
 
-  // Remove existing listeners to prevent duplicates
+  // Xóa các listener cũ để tránh trùng lặp
   elements.addToFolderSaveButton.removeEventListener("click", handleSave)
   elements.addToFolderSaveButton.addEventListener("click", handleSave)
 
@@ -72,7 +79,7 @@ export function openAddToFolderPopup(elements, bookmarkIds) {
           "Bookmark(s) moved successfully!",
         "success"
       )
-      saveUIState() // This is fine, as callback only runs on success now
+      saveUIState()
     })
   }
 
