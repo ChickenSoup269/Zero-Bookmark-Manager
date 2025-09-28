@@ -85,50 +85,50 @@ body.light-theme {
 
 [data-theme="dracula"],
 body.dracula-theme {
-  --bg-primary: #282a36; /* Nền chính tím than */
-  --bg-secondary: #44475a; /* Nền phụ xám tím */
-  --bg-tertiary: #373844; /* Nền phân tầng */
+  --bg-primary: #282a36;
+  --bg-secondary: #44475a;
+  --bg-tertiary: #373844;
 
-  --text-primary: #f8f8f2; /* Trắng sáng */
-  --text-secondary: #50fa7b; /* Xanh lá neon */
-  --text-muted: #6272a4; /* Xanh tím nhạt */
+  --text-primary: #f8f8f2;
+  --text-secondary: #50fa7b;
+  --text-muted: #6272a4;
 
-  --accent-color: #bd93f9; /* Tím neon */
-  --border-color: #6272a4; /* Xanh tím nhạt */
-  --danger-color: #ff5555; /* Đỏ neon */
+  --accent-color: #bd93f9;
+  --border-color: #6272a4;
+  --danger-color: #ff5555;
   --danger-hover: #ff4444;
 
   --hover-bg: #3a3c4e;
   --focus-outline: #ff79c6; /* Hồng neon */
   --box-shadow: 0 6px 15px rgba(189, 147, 249, 0.3);
 
-  /* --shadow-sm: 0 1px 2px rgba(80, 250, 123, 0.2);
+  --shadow-sm: 0 1px 2px rgba(80, 250, 123, 0.2);
   --shadow-md: 0 4px 6px rgba(80, 250, 123, 0.25);
-  --shadow-lg: 0 10px 15px rgba(80, 250, 123, 0.3); */
+  --shadow-lg: 0 10px 15px rgba(80, 250, 123, 0.3);
 }
 
 [data-theme="onedark"],
 body.onedark-theme {
-  --bg-primary: #282c34; /* Nền chính xanh than */
-  --bg-secondary: #21252b; /* Nền phụ tối hơn */
-  --bg-tertiary: #2c313c; /* Nền phân tầng */
+  --bg-primary: #282c34;
+  --bg-secondary: #21252b;
+  --bg-tertiary: #2c313c;
 
-  --text-primary: #abb2bf; /* Xám sáng */
-  --text-secondary: #61afef; /* Xanh cyan */
-  --text-muted: #5c6370; /* Xám tối */
+  --text-primary: #abb2bf;
+  --text-secondary: #61afef;
+  --text-muted: #5c6370;
 
-  --accent-color: #e5c07b; /* Vàng nhạt */
-  --border-color: #3e4451; /* Xám trung tính */
-  --danger-color: #e06c75; /* Đỏ VSCode */
+  --accent-color: #e5c07b;
+  --border-color: #3e4451;
+  --danger-color: #e06c75;
   --danger-hover: #be5046;
 
   --hover-bg: #323842;
   --focus-outline: #98c379; /* Xanh lá nhạt */
   --box-shadow: 0 6px 15px rgba(97, 175, 239, 0.25);
 
-  /* --shadow-sm: 0 1px 2px rgba(229, 192, 123, 0.2);
+  --shadow-sm: 0 1px 2px rgba(229, 192, 123, 0.2);
   --shadow-md: 0 4px 6px rgba(229, 192, 123, 0.25);
-  --shadow-lg: 0 10px 15px rgba(229, 192, 123, 0.3); */
+  --shadow-lg: 0 10px 15px rgba(229, 192, 123, 0.3);
 }
 
 /* Reset and base styles */
