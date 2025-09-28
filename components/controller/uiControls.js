@@ -22,7 +22,13 @@ export function setupUIControlListeners(elements) {
   })
 
   elements.fontSwitcher.addEventListener("change", (e) => {
-    document.body.classList.remove("font-gohu", "font-normal")
+    document.body.classList.remove(
+      "font-gohu",
+      "font-normal",
+      "font-anonymiceProNerd",
+      "font-proFontWindowsNerdFontPropo",
+      "font-jetBrainsMonoNerdFont"
+    )
     document.body.classList.add(`font-${e.target.value}`)
     localStorage.setItem("appFont", e.target.value)
   })

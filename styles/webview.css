@@ -72,7 +72,7 @@ body {
 }
 
 .toggle-sidebar:hover {
-  background-color: #70a146;
+  background-color: var(--focus-outline);
   color: white;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
@@ -146,7 +146,7 @@ body {
 }
 
 .button.settings:hover {
-  background-color: #70a146;
+  background-color: var(--focus-outline);
   color: white;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
@@ -396,7 +396,7 @@ body {
 
 .dropdown-btn {
   padding: var(--spacing-xs);
-  font-size: 1rem;
+  font-size: 0.6rem;
   background-color: transparent;
   color: var(--text-primary);
   border: none;

@@ -1,6 +1,27 @@
 @font-face {
   font-family: "GohuFont";
-  src: url("/fonts/GohuFont11NerdFontMono-Regular.ttf") format("truetype");
+  src: url("/fonts/GohuFontuni14NerdFontPropo-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-size: small;
+  font-style: normal;
+}
+@font-face {
+  font-family: "AnonymiceProNerdFont";
+  src: url("/fonts/AnonymiceProNerdFont-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-size: small;
+  font-style: normal;
+}
+@font-face {
+  font-family: "ProFontWindowsNerdFontPropo";
+  src: url("/fonts/ProFontWindowsNerdFontPropo-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-size: small;
+  font-style: normal;
+}
+@font-face {
+  font-family: "JetBrainsMonoNerdFont";
+  src: url("/fonts/JetBrainsMonoNerdFont-Regular.ttf") format("truetype");
   font-weight: normal;
   font-size: small;
   font-style: normal;
@@ -62,6 +83,54 @@ body.light-theme {
   --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.753);
 }
 
+[data-theme="dracula"],
+body.dracula-theme {
+  --bg-primary: #282a36; /* Nền chính tím than */
+  --bg-secondary: #44475a; /* Nền phụ xám tím */
+  --bg-tertiary: #373844; /* Nền phân tầng */
+
+  --text-primary: #f8f8f2; /* Trắng sáng */
+  --text-secondary: #50fa7b; /* Xanh lá neon */
+  --text-muted: #6272a4; /* Xanh tím nhạt */
+
+  --accent-color: #bd93f9; /* Tím neon */
+  --border-color: #6272a4; /* Xanh tím nhạt */
+  --danger-color: #ff5555; /* Đỏ neon */
+  --danger-hover: #ff4444;
+
+  --hover-bg: #3a3c4e;
+  --focus-outline: #ff79c6; /* Hồng neon */
+  --box-shadow: 0 6px 15px rgba(189, 147, 249, 0.3);
+
+  /* --shadow-sm: 0 1px 2px rgba(80, 250, 123, 0.2);
+  --shadow-md: 0 4px 6px rgba(80, 250, 123, 0.25);
+  --shadow-lg: 0 10px 15px rgba(80, 250, 123, 0.3); */
+}
+
+[data-theme="onedark"],
+body.onedark-theme {
+  --bg-primary: #282c34; /* Nền chính xanh than */
+  --bg-secondary: #21252b; /* Nền phụ tối hơn */
+  --bg-tertiary: #2c313c; /* Nền phân tầng */
+
+  --text-primary: #abb2bf; /* Xám sáng */
+  --text-secondary: #61afef; /* Xanh cyan */
+  --text-muted: #5c6370; /* Xám tối */
+
+  --accent-color: #e5c07b; /* Vàng nhạt */
+  --border-color: #3e4451; /* Xám trung tính */
+  --danger-color: #e06c75; /* Đỏ VSCode */
+  --danger-hover: #be5046;
+
+  --hover-bg: #323842;
+  --focus-outline: #98c379; /* Xanh lá nhạt */
+  --box-shadow: 0 6px 15px rgba(97, 175, 239, 0.25);
+
+  /* --shadow-sm: 0 1px 2px rgba(229, 192, 123, 0.2);
+  --shadow-md: 0 4px 6px rgba(229, 192, 123, 0.25);
+  --shadow-lg: 0 10px 15px rgba(229, 192, 123, 0.3); */
+}
+
 /* Reset and base styles */
 * {
   box-sizing: border-box;
@@ -70,6 +139,19 @@ body.light-theme {
 body.font-gohu,
 body.font-gohu * {
   font-family: "GohuFont", Arial, sans-serif !important;
+}
+
+body.font-anonymiceProNerd,
+body.font-anonymiceProNerd * {
+  font-family: "AnonymiceProNerdFont", Arial, sans-serif !important;
+}
+body.font-proFontWindowsNerdFontPropo,
+body.font-proFontWindowsNerdFontPropo * {
+  font-family: "ProFontWindowsNerdFontPropo", Arial, sans-serif !important;
+}
+body.font-jetBrainsMonoNerdFont,
+body.font-jetBrainsMonoNerdFont * {
+  font-family: "JetBrainsMonoNerdFont", Arial, sans-serif !important;
 }
 
 body {
@@ -349,7 +431,7 @@ html {
 
 .dropdown-btn {
   padding: var(--spacing-xs);
-  font-size: 1rem;
+  font-size: 0.8rem;
   background-color: transparent;
   color: var(--text-primary);
   border: none;
@@ -871,22 +953,22 @@ html {
 }
 
 .rename-popup-buttons .save {
-  background: #4a90e2;
-  color: #fff;
+  background: var(--text-primary);
+  color: var(--bg-primary);
 }
 
 .rename-popup-buttons .save:hover {
-  background: #357ab8;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   transform: scale(1.05);
 }
 
 .rename-popup-buttons .cancel {
-  background: #eee;
-  color: #333;
+  background: rgb(124, 124, 124);
+  color: var(--bg-primary);
 }
 
 .rename-popup-buttons .cancel:hover {
-  background: #ddd;
   transform: scale(1.05);
 }
 

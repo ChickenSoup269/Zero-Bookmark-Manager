@@ -496,7 +496,6 @@
   background-color: var(--bg-secondary);
   padding: 2px 6px;
   border-radius: 4px;
-  font-family: "Courier New", Courier, monospace;
   font-size: 0.85rem;
 }
 
@@ -579,10 +578,10 @@
 #custom-guide-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: var(--primary-color, #2c3e50);
+  color: var(--text-primary);
   margin-bottom: 15px;
   text-align: center;
-  border-bottom: 2px solid var(--primary-color, #3498db);
+  border-bottom: 2px solid var(--primary-color, var(--focus-outline));
   padding-bottom: 8px;
 }
 
@@ -609,7 +608,7 @@
 
 /* Định dạng tiêu đề con trong các mục */
 #custom-guide-message strong {
-  color: var(--accent-color, #2980b9);
+  color: var(--accent-color, var(--focus-outline));
 }
 
 /* Định dạng code block giống Markdown */
@@ -632,48 +631,28 @@
 }
 
 /* Tùy chỉnh cho light theme */
-.light-theme #custom-guide-title {
-  color: #2c3e50;
-  border-bottom-color: #3498db;
+#custom-guide-title {
+  color: var(--text-primary);
+  border-bottom-color: var(--focus-outline);
 }
 
-.light-theme #custom-guide-message h4 {
-  color: #2c3e50;
+#custom-guide-message h4 {
+  color: var(--text-primary);
 }
 
-.light-theme #custom-guide-message strong {
-  color: #2980b9;
+#custom-guide-message strong {
+  color: var(--focus-outline);
 }
 
-.light-theme #custom-guide-message code {
+#custom-guide-message code {
   background-color: #f5f5f5;
   color: #333;
   border-color: #ddd;
 }
 
-/* Tùy chỉnh cho dark theme */
-.dark-theme #custom-guide-title {
-  color: #ecf0f1;
-  border-bottom-color: #3498db;
-}
-
-.dark-theme #custom-guide-message h4 {
-  color: #ecf0f1;
-}
-
-.dark-theme #custom-guide-message strong {
-  color: #3498db;
-}
-
-.dark-theme #custom-guide-message code {
-  background-color: #2d2d2d;
-  color: #f5f5f5;
-  border-color: #444;
-}
-
 /* Định dạng nút OK */
 #custom-guide-ok {
-  background-color: var(--button-bg, #3498db);
+  background-color: var(--button-bg);
   color: var(--button-text, #fff);
   padding: 8px 16px;
   border: none;
@@ -682,12 +661,12 @@
 }
 
 .light-theme #custom-guide-ok {
-  background-color: #3498db;
+  background-color: var(--focus-outline);
   color: #fff;
 }
 
 .dark-theme #custom-guide-ok {
-  background-color: #2980b9;
+  background-color: var(--focus-outline);
   color: #fff;
 }
 

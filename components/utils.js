@@ -452,12 +452,19 @@ export function showCustomPopup(
         : translations[language].errorTitle
 
     messageEl.textContent = message
-
     popup.classList.remove("hidden")
 
-    const isDarkMode = document.body.classList.contains("dark-theme")
-    popup.classList.toggle("light-theme", !isDarkMode)
-    popup.classList.toggle("dark-theme", isDarkMode)
+    const currentTheme =
+      document.documentElement.getAttribute("data-theme") || "light"
+
+    // Remove all possible theme classes
+    const allThemes = ["light", "dark", "dracula", "onedark"]
+    allThemes.forEach((theme) => {
+      popup.classList.remove(`${theme}-theme`)
+    })
+
+    // Apply current theme to popup
+    popup.classList.add(`${currentTheme}-theme`)
 
     const closePopup = () => {
       popup.classList.add("hidden")

@@ -64,24 +64,93 @@ export function updateUILanguage(elements, language) {
 }
 
 export function updateTheme(elements, theme) {
+  // Define all available themes
+  const availableThemes = ["light", "dark", "dracula", "onedark"]
+
+  // Handle system theme detection for light/dark
   const isDarkMode =
     theme === "dark" ||
     (theme === "system" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches)
-  document.body.classList.toggle("light-theme", !isDarkMode)
-  document.body.classList.toggle("dark-theme", isDarkMode)
-  elements.folderListDiv.classList.toggle("light-theme", !isDarkMode)
-  elements.folderListDiv.classList.toggle("dark-theme", isDarkMode)
-  elements.bookmarkCountDiv.classList.toggle("light-theme", !isDarkMode)
-  elements.bookmarkCountDiv.classList.toggle("dark-theme", isDarkMode)
+
+  // Clear all theme classes first
+  const elementsToUpdate = [
+    document.body,
+    elements.folderListDiv,
+    elements.bookmarkCountDiv,
+  ]
+
+  // Remove all existing theme classes
+  elementsToUpdate.forEach((element) => {
+    if (element) {
+      availableThemes.forEach((themeName) => {
+        element.classList.remove(`${themeName}-theme`)
+      })
+      // Remove old light/dark classes
+      element.classList.remove("light-theme", "dark-theme")
+    }
+  })
+
+  // Apply new theme based on selection
+  let activeTheme
+  switch (theme) {
+    case "light":
+      activeTheme = "light"
+      break
+    case "dark":
+      activeTheme = "dark"
+      break
+    case "system":
+      activeTheme = isDarkMode ? "dark" : "light"
+      break
+    case "dracula":
+      activeTheme = "dracula"
+      break
+    case "onedark":
+      activeTheme = "onedark"
+      break
+    default:
+      activeTheme = "light"
+  }
+
+  // Apply theme classes
+  elementsToUpdate.forEach((element) => {
+    if (element) {
+      element.classList.add(`${activeTheme}-theme`)
+    }
+  })
+
+  // Set data-theme attribute on document root for CSS variables
+  document.documentElement.setAttribute("data-theme", activeTheme)
+
+  // Update all UI elements with theme classes
   document
     .querySelectorAll(
-      ".input, .select, .button, .rename-popup, .folder-item, .folder-title"
+      ".input, .select, .button, .rename-popup, .folder-item, .folder-title, .custom-popup"
     )
     .forEach((el) => {
-      el.classList.toggle("light-theme", !isDarkMode)
-      el.classList.toggle("dark-theme", isDarkMode)
+      // Remove all theme classes
+      availableThemes.forEach((themeName) => {
+        el.classList.remove(`${themeName}-theme`)
+      })
+      el.classList.remove("light-theme", "dark-theme")
+
+      // Add new theme class
+      el.classList.add(`${activeTheme}-theme`)
     })
+
+  // Store current theme in localStorage
+  localStorage.setItem("selectedTheme", theme)
+
+  // Trigger custom event for theme change
+  window.dispatchEvent(
+    new CustomEvent("themeChanged", {
+      detail: {
+        theme: activeTheme,
+        originalSelection: theme,
+      },
+    })
+  )
 }
 
 export function restoreUIState(elements, callback) {

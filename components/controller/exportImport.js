@@ -1175,7 +1175,7 @@ export function setupExportImportListeners(elements) {
     }
     
     .toggle-input:checked + .toggle-label {
-      background: #70a146;
+      background: var(--focus-outline);
     }
     
     .toggle-input:checked + .toggle-label .toggle-slider {
@@ -1218,7 +1218,7 @@ export function setupExportImportListeners(elements) {
     }
     
     .btn-primary {
-      background: #70a146;
+      background: var(--focus-outline);
       color: white;
     }
     
