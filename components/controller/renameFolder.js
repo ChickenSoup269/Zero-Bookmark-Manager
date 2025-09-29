@@ -162,7 +162,7 @@ function openRenameFolderPopup(elements, defaultFolderId) {
   const language = localStorage.getItem("appLanguage") || "en"
   elements.renameFolderSelect.innerHTML = `<option value="">${translations[language].selectFolder}</option>`
   uiState.folders.forEach((folder) => {
-    if (folder.id !== "1" && folder.id !== "2") {
+    if (folder.id !== "0" && folder.id !== "1" && folder.id !== "2") {
       // Chỉ hiển thị thư mục do người dùng tạo
       const option = document.createElement("option")
       option.value = folder.id
@@ -170,6 +170,7 @@ function openRenameFolderPopup(elements, defaultFolderId) {
       elements.renameFolderSelect.appendChild(option)
     }
   })
+
   elements.renameFolderInput.value = ""
   elements.renameFolderInput.classList.remove("error")
   elements.renameFolderInput.placeholder =
