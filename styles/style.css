@@ -67,8 +67,7 @@
 }
 
 /* Light theme variables */
-[data-theme="light"],
-body.light-theme {
+[data-theme="light"] body.light-theme {
   --bg-primary: #ffffff;
   --bg-secondary: #f5f5f5;
   --bg-tertiary: #cfcece;
@@ -89,22 +88,18 @@ body.dracula-theme {
   --bg-secondary: #242424;
   --bg-tertiary: #373844;
 
-  --text-primary: #ffffff;
+  --text-primary: #bd93f9;
   --text-secondary: #50fa7b;
   --text-muted: #6272a4;
 
-  --accent-color: #bd93f9;
+  --accent-color: #ffffff;
   --border-color: #6272a4;
   --danger-color: #ff5555;
   --danger-hover: #ff4444;
 
   --hover-bg: #3a3c4e;
-  --focus-outline: #ff79c6; /* Hồng neon */
+  --focus-outline: #ff79c6;
   --box-shadow: 0 6px 15px rgba(189, 147, 249, 0.3);
-
-  --shadow-sm: 0 1px 2px rgba(80, 250, 123, 0.2);
-  --shadow-md: 0 4px 6px rgba(80, 250, 123, 0.25);
-  --shadow-lg: 0 10px 15px rgba(80, 250, 123, 0.3);
 }
 
 [data-theme="onedark"],
@@ -113,22 +108,18 @@ body.onedark-theme {
   --bg-secondary: #21252b;
   --bg-tertiary: #2c313c;
 
-  --text-primary: #ffffff;
-  --text-secondary: #61afef;
+  --text-primary: #e5c07b;
+  --text-secondary: #98c379;
   --text-muted: #5c6370;
-
-  --accent-color: #e5c07b;
+  /* e5c07b, 61afef, abb2bf */
+  --accent-color: #e0e3e8;
   --border-color: #3e4451;
   --danger-color: #e06c75;
   --danger-hover: #be5046;
 
   --hover-bg: #323842;
-  --focus-outline: #98c379; /* Xanh lá nhạt */
+  --focus-outline: #98c379;
   --box-shadow: 0 6px 15px rgba(97, 175, 239, 0.25);
-
-  --shadow-sm: 0 1px 2px rgba(229, 192, 123, 0.2);
-  --shadow-md: 0 4px 6px rgba(229, 192, 123, 0.25);
-  --shadow-lg: 0 10px 15px rgba(229, 192, 123, 0.3);
 }
 
 /* Reset and base styles */

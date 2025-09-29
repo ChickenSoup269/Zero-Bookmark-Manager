@@ -113,6 +113,26 @@ export function updateTheme(elements, theme) {
       activeTheme = "light"
   }
 
+  const logoSrcMap = {
+    light: "images/logo.png",
+    dark: "images/logo.png",
+    dracula: "images/Dracula_logo.png",
+    onedark: "images/logo-onedark.png",
+  }
+
+  // Nếu đang chạy trong extension, dùng chrome.runtime.getURL:
+  const getAsset = (path) =>
+    typeof chrome !== "undefined" && chrome.runtime?.getURL
+      ? chrome.runtime.getURL(path)
+      : path
+
+  document.querySelectorAll(".logo").forEach((el) => {
+    const src = logoSrcMap[activeTheme] ?? logoSrcMap["light"]
+    el.src = getAsset(src)
+    // đảm bảo alt luôn có
+    if (!el.alt) el.alt = "App logo"
+  })
+
   // Apply theme classes
   elementsToUpdate.forEach((element) => {
     if (element) {
