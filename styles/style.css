@@ -113,7 +113,7 @@ body.onedark-theme {
   --bg-secondary: #21252b;
   --bg-tertiary: #2c313c;
 
-  --text-primary: #abb2bf;
+  --text-primary: #ffffff;
   --text-secondary: #61afef;
   --text-muted: #5c6370;
 
@@ -140,7 +140,6 @@ body.font-gohu,
 body.font-gohu * {
   font-family: "GohuFont", Arial, sans-serif !important;
 }
-
 body.font-anonymiceProNerd,
 body.font-anonymiceProNerd * {
   font-family: "AnonymiceProNerdFont", Arial, sans-serif !important;
@@ -655,21 +654,6 @@ html {
   opacity: 0;
 }
 
-.rename-popup-content {
-  background-color: var(--text-primary);
-  padding: var(--spacing-lg);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-lg);
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-}
-
-.rename-popup-content h3 {
-  margin: 0 0 var(--spacing-md);
-  font-size: 1.25rem;
-}
-
 .rename-input-container {
   position: relative;
   display: flex;
@@ -789,17 +773,18 @@ html {
 }
 
 .rename-popup-content {
-  background: var(--background-color);
+  background: var(--bg-secondary);
   padding: 20px;
   border-radius: 5px;
+  box-shadow: var(--shadow-lg);
   text-align: center;
   max-width: 400px;
   width: 90%;
 }
 
 .rename-popup-content h3 {
-  margin: 0 0 10px;
-  font-size: 1.2em;
+  margin: 0 0 var(--spacing-md);
+  font-size: 1.25rem;
 }
 
 .rename-popup-content p {
@@ -825,16 +810,6 @@ html {
 
 .button.save:hover {
   background-color: var(--primary-hover-color);
-}
-
-.light-theme .rename-popup-content {
-  background: #fff;
-  color: #333;
-}
-
-.dark-theme .rename-popup-content {
-  background: #333;
-  color: #fff;
 }
 
 .rename-input-container {
@@ -877,23 +852,6 @@ html {
 .rename-popup.hidden {
   opacity: 0;
   pointer-events: none;
-}
-
-.rename-popup-content {
-  background: #fff;
-  padding: 24px;
-  border-radius: 12px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  animation: fadeInUp 0.3s ease;
-}
-
-.rename-popup-content h3 {
-  margin-top: 0;
-  margin-bottom: 16px;
-  font-size: 20px;
-  font-weight: 600;
 }
 
 .rename-input-container {
