@@ -7,7 +7,7 @@
 }
 @font-face {
   font-family: "AnonymiceProNerdFont";
-  src: url("/fonts/AnonymiceProNerdFont-Regular.ttf") format("truetype");
+  src: url("/fonts/AnonymiceProNerdFontPropo-Regular.ttf") format("truetype");
   font-weight: normal;
   font-size: small;
   font-style: normal;
@@ -21,7 +21,7 @@
 }
 @font-face {
   font-family: "JetBrainsMonoNerdFont";
-  src: url("/fonts/JetBrainsMonoNerdFont-Regular.ttf") format("truetype");
+  src: url("/fonts/JetBrainsMonoNerdFontPropo-Regular.ttf") format("truetype");
   font-weight: normal;
   font-size: small;
   font-style: normal;
@@ -108,8 +108,8 @@ body.onedark-theme {
   --bg-secondary: #21252b;
   --bg-tertiary: #2c313c;
 
-  --text-primary: #e5c07b;
-  --text-secondary: #98c379;
+  --text-primary: #98c379;
+  --text-secondary: #e5c07b;
   --text-muted: #5c6370;
   /* e5c07b, 61afef, abb2bf */
   --accent-color: #e0e3e8;

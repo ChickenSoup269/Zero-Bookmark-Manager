@@ -116,8 +116,8 @@ export function updateTheme(elements, theme) {
   const logoSrcMap = {
     light: "images/logo.png",
     dark: "images/logo.png",
-    dracula: "images/Dracula_logo.png",
-    onedark: "images/logo-onedark.png",
+    dracula: "images/logo_dracula.png",
+    onedark: "images/logo_onedark.png",
   }
 
   // Nếu đang chạy trong extension, dùng chrome.runtime.getURL:
