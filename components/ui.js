@@ -462,18 +462,17 @@ function renderTreeView(nodes, elements, depth = 0) {
       fragment.appendChild(folderDiv)
 
       // Create children container
-      //     margin-left: ${(depth + 1) * 8}px;
-      // border-left: 2px solid var(--border-color);
-      // padding-left: 8px;
-      // margin-top: 8px;
-      // margin-bottom: 8px;
-      // position: relative;
-      // display: ${isCollapsed ? "none" : "block"};
-      // gap: 8px;
       const childrenContainer = document.createElement("div")
       childrenContainer.className = "folder-children"
       childrenContainer.style.cssText = `
-  
+        margin-left: ${(depth + 1) * 8}px;
+        border-left: 2px solid var(--border-color);
+        padding-left: 8px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        position: relative;
+        display: ${isCollapsed ? "none" : "block"};
+        gap: 8px;
       `
 
       // Add connection line gradient
