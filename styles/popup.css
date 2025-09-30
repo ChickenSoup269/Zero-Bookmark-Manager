@@ -228,3 +228,29 @@ body {
     height: 88px;
   }
 }
+
+/* Folder Count */
+.folder-count {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Folder Children */
+.folder-children {
+  margin-left: 8px;
+  border-left: 2px solid var(--border-color);
+  padding-left: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  position: relative;
+  display: block;
+  gap: 8px;
+}
+
+.folder-children.collapsed {
+  display: none;
+}

@@ -108,11 +108,11 @@ body.onedark-theme {
   --bg-secondary: #21252b;
   --bg-tertiary: #2c313c;
 
-  --text-primary: #98c379;
-  --text-secondary: #e5c07b;
+  --text-primary: #e5c07b;
+  --text-secondary: #98c379;
   --text-muted: #5c6370;
   /* e5c07b, 61afef, abb2bf */
-  --accent-color: #e0e3e8;
+  --accent-color: white;
   --border-color: #3e4451;
   --danger-color: #e06c75;
   --danger-hover: #be5046;
@@ -175,7 +175,7 @@ html {
 .count {
   margin: 0 auto;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   margin-top: 10px;
   margin-bottom: var(--spacing-sm);
   color: var(--text-secondary);
