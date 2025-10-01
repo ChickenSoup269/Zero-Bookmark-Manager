@@ -1,12 +1,6 @@
-/* Root variables from your provided CSS */
+/* Root variables */
 :root {
   --sidebar-width: 250px;
-  --tree-indent: 20px;
-  --tree-line-color: rgba(112, 161, 70, 0.3);
-  --folder-bg: rgba(112, 161, 70, 0.05);
-  --folder-hover-bg: rgba(112, 161, 70, 0.1);
-  --bookmark-bg: rgba(255, 255, 255, 0.02);
-  --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
 body {
@@ -166,7 +160,7 @@ body {
   flex-direction: column; /* Vertical stack for folders */
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
-  background: var(--bg-secondary);
+  background: var(--bg-secondary); /* Restore background */
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-lg);
@@ -174,17 +168,17 @@ body {
 
 /* Webview-specific overrides (simpler look) */
 .webview-mode .folder-list.tree-view {
-  padding: var(--spacing-sm); /* Less padding */
-  background: transparent; /* No background */
-  border: none; /* No border */
-  box-shadow: none; /* No shadow */
-  border-radius: 0; /* No rounded corners */
+  padding: var(--spacing-sm);
+  background: var(--bg-secondary); /* Keep light background for contrast */
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 /* Folder item styling */
 .folder-item {
   display: flex;
-  flex-direction: row; /* Horizontal layout for folder content (toggle, icon, title, count) */
+  flex-direction: row; /* Horizontal layout for folder content */
   align-items: center;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm);
@@ -199,8 +193,8 @@ body {
 }
 
 .webview-mode .folder-item {
-  padding: var(--spacing-xs); /* Simpler padding in webview */
-  background: transparent; /* No background in webview */
+  padding: var(--spacing-xs);
+  background: var(--folder-bg); /* Keep light folder background */
 }
 
 /* Folder children styling */
@@ -208,8 +202,7 @@ body {
   display: flex;
   flex-direction: column; /* Vertical stack for nested folders */
   gap: var(--spacing-sm);
-  margin-left: var(--tree-indent); /* Indentation for hierarchy */
-  border-left: 2px solid var(--tree-line-color); /* Connection line */
+  border-left: 2px solid var(--text-primary);
   padding-left: var(--spacing-md);
   position: relative;
   margin-top: var(--spacing-sm);
@@ -217,7 +210,7 @@ body {
 }
 
 .webview-mode .folder-children {
-  border-left: 1px solid var(--tree-line-color); /* Thinner line in webview */
+  border-left: 1px solid var(--text-primary); /* Thinner but visible line */
   padding-left: var(--spacing-sm);
   margin-left: var(--spacing-sm);
 }
@@ -230,7 +223,7 @@ body {
   gap: 6px;
   padding: 6px 8px;
   border-radius: var(--border-radius-md);
-  background: var(--bookmark-bg);
+  background: var(--bookmark-bg); /* Restore bookmark background */
   border: 1px solid var(--border-color);
   transition: all var(--transition-fast);
 }
@@ -246,8 +239,8 @@ body {
 }
 
 .webview-mode .folder-list.tree-view .bookmark-item {
-  background: transparent; /* Simpler in webview */
-  border: none; /* No border in webview */
+  background: var(--bookmark-bg); /* Keep bookmark background */
+  border: none;
 }
 
 /* Existing bookmark item styles for flat view */

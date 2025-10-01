@@ -400,11 +400,6 @@ function renderTreeView(nodes, elements, depth = 0) {
 
     const selectAllDiv = document.createElement("div")
     selectAllDiv.className = "select-all"
-    selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
-    selectAllDiv.innerHTML = `
-      <input type="checkbox" id="select-all">
-      <label for="select-all">Select All</label>
-    `
     fragment.appendChild(selectAllDiv)
   }
 
@@ -482,7 +477,8 @@ function renderTreeView(nodes, elements, depth = 0) {
       // Create children container (rely on CSS for most styling)
       const childrenContainer = document.createElement("div")
       childrenContainer.className = "folder-children"
-      childrenContainer.style.display = isCollapsed ? "none" : "block" // Only inline display for collapse/expand
+      childrenContainer.style.display = isCollapsed ? "none" : "block"
+
       childrenContainer.setAttribute("data-depth", depth + 1)
 
       if (!isCollapsed) {
