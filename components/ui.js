@@ -173,7 +173,25 @@ export function updateTheme(elements, theme) {
   )
 }
 
+function detectViewContext() {
+  // Check if running in a Chrome extension popup (small window)
+  const isPopup = window.innerWidth <= 800 && window.innerHeight <= 800 // Adjust thresholds as needed
+  const isExtension = typeof chrome !== "undefined" && chrome.runtime?.getURL
+
+  if (!isPopup && isExtension) {
+    document.documentElement.classList.add("webview-mode")
+    console.log("Detected webview mode")
+    return "webview"
+  } else {
+    document.documentElement.classList.remove("webview-mode")
+    console.log("Detected popup mode")
+    return "popup"
+  }
+}
+
 export function restoreUIState(elements, callback) {
+  detectViewContext() // Detect context and apply class early
+
   chrome.storage.local.get(["uiState", "checkboxesVisible"], (data) => {
     if (chrome.runtime.lastError) {
       console.error("Error restoring state:", chrome.runtime.lastError)
@@ -461,21 +479,10 @@ function renderTreeView(nodes, elements, depth = 0) {
 
       fragment.appendChild(folderDiv)
 
-      // Create children container
+      // Create children container (rely on CSS for most styling)
       const childrenContainer = document.createElement("div")
       childrenContainer.className = "folder-children"
-      childrenContainer.style.cssText = `
-        margin-left: ${(depth + 1) * 8}px;
-        border-left: 2px solid var(--border-color);
-        padding-left: 8px;
-        margin-top: 8px;
-        margin-bottom: 8px;
-        position: relative;
-        display: ${isCollapsed ? "none" : "block"};
-        gap: 8px;
-      `
-
-      // Add connection line gradient
+      childrenContainer.style.display = isCollapsed ? "none" : "block" // Only inline display for collapse/expand
       childrenContainer.setAttribute("data-depth", depth + 1)
 
       if (!isCollapsed) {
