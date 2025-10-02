@@ -1,3 +1,4 @@
+// components/year.js
 import { translations } from "./utils.js"
 
 const currentYear = new Date().getFullYear()

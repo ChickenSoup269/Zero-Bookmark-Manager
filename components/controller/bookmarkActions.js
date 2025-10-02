@@ -1,3 +1,4 @@
+// components/controller/bookmarkAction.js
 import {
   translations,
   safeChromeBookmarksCall,

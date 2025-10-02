@@ -1,3 +1,4 @@
+// components/state.js
 export const uiState = {
   bookmarks: [],
   bookmarkTree: [],
