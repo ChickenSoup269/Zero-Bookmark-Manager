@@ -386,11 +386,17 @@ function renderBookmarks(bookmarksList, elements) {
   setupBookmarkActionListeners(elements)
 }
 
-function renderTreeView(nodes, elements, depth = 0) {
+function renderTreeView(nodes, elements, depth = 0, parentFolderId = null) {
   const fragment = document.createDocumentFragment()
 
   if (!nodes || !Array.isArray(nodes) || nodes.length === 0) {
     console.warn("No nodes to render in renderTreeView", { nodes, depth })
+    const emptyMessage = document.createElement("div")
+    emptyMessage.textContent =
+      translations[localStorage.getItem("appLanguage") || "en"].noBookmarks
+    emptyMessage.style.padding = "20px"
+    emptyMessage.style.textAlign = "center"
+    fragment.appendChild(emptyMessage)
     return fragment
   }
 
@@ -401,101 +407,130 @@ function renderTreeView(nodes, elements, depth = 0) {
 
     const selectAllDiv = document.createElement("div")
     selectAllDiv.className = "select-all"
+    selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
     fragment.appendChild(selectAllDiv)
   }
 
-  // Sort nodes: folders first, bookmarks after
-  const sortedNodes = [...nodes].sort((a, b) => {
-    const aIsFolder = !!a.children
-    const bIsFolder = !!b.children
-    if (aIsFolder && !bIsFolder) return -1
-    if (!aIsFolder && bIsFolder) return 1
-    return (a.title || "").localeCompare(b.title || "")
-  })
+  // If a specific folder is selected, start with that folder
+  let nodesToRender = nodes
+  if (
+    depth === 0 &&
+    uiState.selectedFolderId &&
+    uiState.selectedFolderId !== "0"
+  ) {
+    const selectedFolder = findNodeById(
+      uiState.selectedFolderId,
+      uiState.bookmarkTree
+    )
+    if (selectedFolder && selectedFolder.children) {
+      nodesToRender = [selectedFolder]
+    } else {
+      console.warn(`Selected folder ${uiState.selectedFolderId} not found`)
+      nodesToRender = []
+    }
+  }
+
+  // Sort nodes: folders first, then bookmarks (sorted by uiState.sortType)
+  const folders = nodesToRender.filter((node) => node.children)
+  const bookmarks = nodesToRender.filter((node) => node.url)
+  const sortedBookmarks = sortBookmarks(bookmarks, uiState.sortType)
+  const sortedFolders = folders.sort((a, b) =>
+    (a.title || "").localeCompare(b.title || "")
+  )
+  const sortedNodes = [...sortedFolders, ...sortedBookmarks]
 
   sortedNodes.forEach((node) => {
     const folderTitle =
       node.title && node.title.trim() !== "" ? node.title : `Folder ${node.id}`
 
+    // Apply search and favorite filters for bookmarks
     const matchesSearch = uiState.searchQuery
       ? node.title?.toLowerCase().includes(uiState.searchQuery.toLowerCase()) ||
         node.url?.toLowerCase().includes(uiState.searchQuery.toLowerCase())
       : true
-
-    const matchesFolder = uiState.selectedFolderId
-      ? isInFolder(node, uiState.selectedFolderId) ||
-        isAncestorOf(node, uiState.selectedFolderId)
-      : true
-
     const matchesFavorite =
       uiState.sortType === "favorites" ? node.isFavorite : true
 
     // --- Folder ---
     if (node.children && Array.isArray(node.children)) {
-      // Always show folders, but filter children
-      const isCollapsed = uiState.collapsedFolders.has(node.id)
-      const itemCount = countFolderItems(node)
+      // Always show folders unless filtered out by search
+      const hasMatchingChildren = node.children.some((child) =>
+        uiState.searchQuery
+          ? (child.title
+              ?.toLowerCase()
+              .includes(uiState.searchQuery.toLowerCase()) ||
+              child.url
+                ?.toLowerCase()
+                .includes(uiState.searchQuery.toLowerCase())) &&
+            (uiState.sortType !== "favorites" || child.isFavorite)
+          : true
+      )
 
-      // Create folder div with improved styling
-      const folderDiv = document.createElement("div")
-      folderDiv.className = "folder-item"
-      folderDiv.dataset.id = node.id
-      folderDiv.style.marginLeft = `${depth * 20}px`
+      if (matchesSearch || hasMatchingChildren) {
+        const isCollapsed = uiState.collapsedFolders.has(node.id)
+        const itemCount = countFolderItems(node)
 
-      const toggleIcon = isCollapsed ? "+" : "−"
-      const folderIcon = isCollapsed ? "📁" : "📂"
+        const folderDiv = document.createElement("div")
+        folderDiv.className = "folder-item"
+        folderDiv.dataset.id = node.id
+        folderDiv.style.marginLeft = `${depth * 20}px`
 
-      folderDiv.innerHTML = `
-        <div class="folder-toggle" style="
-          width: 28px; 
-          height: 28px; 
-          display: flex; 
-          align-items: center; 
-          justify-content: center;
-          background: var(--bg-primary);
-          border: 1px solid var(--text-primary);
-          border-radius: 6px;
-          cursor: pointer;
-          margin-right: 8px;
-          font-weight: bold;
-          color: var(--text-primary);
-          transition: all 0.3s ease;
-        ">${toggleIcon}</div>
-        <span class="folder-icon" style="margin-right: 8px; font-size: 18px;">${folderIcon}</span>
-        <span class="folder-title" style="flex-grow: 1; font-weight: 600;">${folderTitle}</span>
-        <span class="folder-count" style="
-          background: var(--bg-secondary);
-          color: var(--text-primary);
-          padding: 2px 8px;
-          border-radius: 12px;
-          font-size: 12px;
-          font-weight: 600;
-        ">${itemCount}</span>
-      `
+        const toggleIcon = isCollapsed ? "+" : "−"
+        const folderIcon = isCollapsed ? "📁" : "📂"
 
-      fragment.appendChild(folderDiv)
+        folderDiv.innerHTML = `
+          <div class="folder-toggle" style="
+            width: 28px; 
+            height: 28px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background: var(--bg-primary);
+            border: 1px solid var(--text-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 8px;
+            font-weight: bold;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+          ">${toggleIcon}</div>
+          <span class="folder-icon" style="margin-right: 8px; font-size: 18px;">${folderIcon}</span>
+          <span class="folder-title" style="flex-grow: 1; font-weight: 600;">${folderTitle}</span>
+          <span class="folder-count" style="
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+          ">${itemCount}</span>
+        `
 
-      // Create children container (rely on CSS for most styling)
-      const childrenContainer = document.createElement("div")
-      childrenContainer.className = "folder-children"
-      childrenContainer.style.display = isCollapsed ? "none" : "block"
+        fragment.appendChild(folderDiv)
 
-      childrenContainer.setAttribute("data-depth", depth + 1)
+        // Create children container
+        const childrenContainer = document.createElement("div")
+        childrenContainer.className = "folder-children"
+        childrenContainer.style.display = isCollapsed ? "none" : "block"
+        childrenContainer.setAttribute("data-depth", depth + 1)
 
-      if (!isCollapsed) {
-        const childrenFragment = renderTreeView(
-          node.children,
-          elements,
-          depth + 1
-        )
-        childrenContainer.appendChild(childrenFragment)
+        if (!isCollapsed) {
+          const childrenFragment = renderTreeView(
+            node.children,
+            elements,
+            depth + 1,
+            node.id
+          )
+          childrenContainer.appendChild(childrenFragment)
+        }
+
+        fragment.appendChild(childrenContainer)
       }
-
-      fragment.appendChild(childrenContainer)
     }
 
     // --- Bookmark ---
-    if (node.url && matchesSearch && matchesFolder && matchesFavorite) {
+    if (node.url && matchesSearch && matchesFavorite) {
+      // Only render bookmarks that match filters
       const bookmarkElement = createEnhancedBookmarkElement(node, depth)
       fragment.appendChild(bookmarkElement)
     }
