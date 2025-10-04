@@ -44,12 +44,7 @@
   --hover-bg: #555555;
   --focus-outline: #4a90e2;
   --box-shadow: 0 6px 15px rgb(255, 255, 255, 0.753);
-  --tree-line-color: rgba(
-    255,
-    255,
-    255,
-    0.5
-  ); /* Dựa trên --text-primary, mờ hơn */
+  --tree-line-color: rgba(255, 255, 255, 0.5);
   --folder-bg: var(--bg-primary);
   --folder-hover-bg: rgba(112, 161, 70, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
@@ -92,7 +87,7 @@
   --hover-bg: #999999;
   --focus-outline: #4a90e2;
   --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.753);
-  --tree-line-color: rgba(0, 0, 0, 0.5); /* Dựa trên --text-primary, mờ hơn */
+  --tree-line-color: rgba(0, 0, 0, 0.5);
   --folder-bg: var(--bg-primary);
   --folder-hover-bg: rgba(112, 161, 70, 0.15);
   --bookmark-bg: rgba(0, 0, 0, 0.02);
@@ -143,12 +138,7 @@ body.onedark-theme {
   --hover-bg: #323842;
   --focus-outline: #98c379;
   --box-shadow: 0 6px 15px rgba(97, 175, 239, 0.25);
-  --tree-line-color: rgba(
-    255,
-    255,
-    255,
-    0.5
-  ); /* Dựa trên --text-primary, mờ hơn */
+  --tree-line-color: rgba(255, 255, 255, 0.5);
   --folder-bg: var(--bg-primary);
   --folder-hover-bg: rgba(152, 195, 121, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
