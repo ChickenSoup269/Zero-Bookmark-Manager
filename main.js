@@ -6,7 +6,7 @@ import {
 import { getBookmarkTree } from "./components/bookmarks.js"
 import { translations, debounce } from "./components/utils.js"
 import { setupEventListeners } from "./components/events.js"
-import { uiState, saveUIState } from "./components/state.js"
+import { uiState } from "./components/state.js"
 
 document.addEventListener("DOMContentLoaded", () => {
   // DOM references
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     createFolderCancel: document.getElementById("create-folder-cancel"),
     clearCreateFolder: document.getElementById("clear-create-folder"),
     renameFolderOption: document.getElementById("rename-folder-option"),
-    showBookmarkIdsOption: document.getElementById("show-bookmark-ids-option"), // Thêm tham chiếu
+    showBookmarkIdsOption: document.getElementById("show-bookmark-ids-option"),
   }
 
   // Initialize application

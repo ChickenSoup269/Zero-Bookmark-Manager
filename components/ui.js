@@ -488,7 +488,7 @@ function renderTreeView(nodes, elements, depth = 0) {
           transition: all 0.3s ease;
         ">${toggleIcon}</div>
         <span class="folder-icon" style="margin-right: 8px; font-size: 18px;">${folderIcon}</span>
-        <span class="folder-title" style="flex-grow: 1; font-weight: 600;">${folderTitle}</span>
+        <span class="folder-title" style="flex-grow: 1; font-weight: 600; color: var(--folder-title-color);">${folderTitle}</span>
         <span class="folder-count" style="
           background: var(--bg-secondary);
           color: var(--text-primary);
@@ -560,8 +560,8 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
     padding: 10px 14px;
     border: 1px solid transparent;
     border-radius: 10px;
-    margin-left: ${depth * 20}px;
-    background: rgba(255, 255, 255, 0.02);
+    margin-left: ${depth * 12}px;
+    background: var(--bg-primary);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     cursor: pointer;
@@ -570,14 +570,12 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
   // Add hover effect with CSS
   div.addEventListener("mouseenter", () => {
     div.style.transform = "translateX(6px) translateY(-1px)"
-    div.style.background = "rgba(255, 255, 255, 0.05)"
     div.style.borderColor = "var(--hover-bg)"
     div.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.12)"
   })
 
   div.addEventListener("mouseleave", () => {
     div.style.transform = ""
-    div.style.background = "rgba(255, 255, 255, 0.02)"
     div.style.borderColor = "transparent"
     div.style.boxShadow = ""
   })

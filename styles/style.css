@@ -45,6 +45,8 @@
   --focus-outline: #4a90e2;
   --box-shadow: 0 6px 15px rgb(255, 255, 255, 0.753);
   --tree-line-color: rgba(255, 255, 255, 0.5);
+  /* === */
+  --folder-title-color: #ffffff;
   --folder-bg: var(--bg-primary);
   --folder-hover-bg: rgba(112, 161, 70, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
@@ -88,10 +90,17 @@
   --focus-outline: #4a90e2;
   --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.753);
   --tree-line-color: rgba(0, 0, 0, 0.5);
+  /* ==== */
+  --folder-title-color: #000000;
   --folder-bg: var(--bg-primary);
   --folder-hover-bg: rgba(112, 161, 70, 0.15);
   --bookmark-bg: rgba(0, 0, 0, 0.02);
   --bookmark-hover-bg: rgba(0, 0, 0, 0.05);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(255, 255, 255, 0.1);
+  --shadow-md: 0 4px 6px rgba(212, 212, 212, 0.188);
+  --shadow-lg: 0 10px 15px rgba(255, 255, 255, 0.1);
 }
 
 /* Dracula theme */
@@ -100,7 +109,7 @@ body.dracula-theme {
   --bg-primary: #282a36;
   --bg-secondary: #242424;
   --bg-tertiary: #373844;
-  --text-primary: #bd93f9;
+  --text-primary: #ffffff;
   --text-secondary: #50fa7b;
   --text-muted: #6272a4;
   --accent-color: #ffffff;
@@ -110,12 +119,8 @@ body.dracula-theme {
   --hover-bg: #3a3c4e;
   --focus-outline: #ff79c6;
   --box-shadow: 0 6px 15px rgba(189, 147, 249, 0.3);
-  --tree-line-color: rgba(
-    189,
-    147,
-    249,
-    0.5
-  ); /* Dựa trên --text-primary, mờ hơn */
+  --tree-line-color: rgba(189, 147, 249, 0.5);
+  --folder-title-color: #bd93f9;
   --folder-bg: var(--bg-primary);
   --folder-hover-bg: rgba(80, 250, 123, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
@@ -139,6 +144,8 @@ body.onedark-theme {
   --focus-outline: #98c379;
   --box-shadow: 0 6px 15px rgba(97, 175, 239, 0.25);
   --tree-line-color: rgba(255, 255, 255, 0.5);
+  /* ===== */
+  --folder-title-color: #e5c07b;
   --folder-bg: var(--bg-primary);
   --folder-hover-bg: rgba(152, 195, 121, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);

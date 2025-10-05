@@ -157,10 +157,10 @@ body {
 /* Tree view styling (for both popup and webview) */
 .folder-list.tree-view {
   display: flex;
-  flex-direction: column; /* Vertical stack for folders */
+  flex-direction: column;
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
-  background: var(--bg-secondary); /* Restore background */
+  background: var(--bg-secondary);
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-lg);
@@ -169,7 +169,7 @@ body {
 /* Webview-specific overrides (simpler look) */
 .webview-mode .folder-list.tree-view {
   padding: var(--spacing-sm);
-  background: var(--bg-secondary); /* Keep light background for contrast */
+  background: var(--bg-secondary);
   border: none;
   box-shadow: none;
   border-radius: 0;
@@ -194,13 +194,13 @@ body {
 
 .webview-mode .folder-item {
   padding: var(--spacing-xs);
-  background: var(--folder-bg); /* Keep light folder background */
+  background: var(--folder-bg);
 }
 
 /* Folder children styling */
 .folder-children {
   display: flex;
-  flex-direction: column; /* Vertical stack for nested folders */
+  flex-direction: column;
   gap: var(--spacing-sm);
   border-left: 2px solid var(--text-primary);
   padding-left: var(--spacing-md);
@@ -210,7 +210,7 @@ body {
 }
 
 .webview-mode .folder-children {
-  border-left: 1px solid var(--text-primary); /* Thinner but visible line */
+  border-left: 1px solid var(--text-primary);
   padding-left: var(--spacing-sm);
   margin-left: var(--spacing-sm);
 }
@@ -218,28 +218,23 @@ body {
 /* Bookmark item styling (horizontal/row layout within folders) */
 .folder-list.tree-view .bookmark-item {
   display: flex;
-  flex-direction: row; /* Horizontal layout for bookmarks */
+  flex-direction: row;
   align-items: center;
   gap: 6px;
   padding: 6px 8px;
   border-radius: var(--border-radius-md);
-  background: var(--bookmark-bg); /* Restore bookmark background */
   border: 1px solid var(--border-color);
   transition: all var(--transition-fast);
+  background-color: var(--bg-primary);
 }
 
 .folder-list.tree-view .bookmark-item:hover {
-  background: var(--bookmark-hover-bg);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
-[data-theme="light"] .folder-list.tree-view .bookmark-item:hover {
-  background: var(--bookmark-hover-bg);
-}
-
 .webview-mode .folder-list.tree-view .bookmark-item {
-  background: var(--bookmark-bg); /* Keep bookmark background */
+  background: var(--bookmark-bg);
   border: none;
 }
 
@@ -263,11 +258,6 @@ body {
   box-shadow: var(--shadow-lg);
   background-color: var(--bookmark-hover-bg);
   z-index: 100;
-}
-
-[data-theme="light"] .bookmark-item:hover,
-[data-theme="light"] .folder-item:hover {
-  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .bookmark-checkbox {

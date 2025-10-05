@@ -502,7 +502,7 @@ export function showCustomPopup(
     document.addEventListener("keydown", handleKeydown)
 
     if (type === "success" && autoClose && !onConfirm) {
-      setTimeout(closePopup, 3000)
+      setTimeout(closePopup, 5000)
     }
   } catch (error) {
     console.error("Error in showCustomPopup:", error)

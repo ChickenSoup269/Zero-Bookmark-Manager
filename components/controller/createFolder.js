@@ -9,7 +9,7 @@ import { renderFilteredBookmarks } from "../ui.js"
 import { uiState, saveUIState } from "../state.js"
 
 export function setupCreateFolderListeners(elements) {
-  // Nút mở popup
+  // Open Create Folder Popup
   elements.createFolderBtn.addEventListener("click", () => {
     const language = localStorage.getItem("appLanguage") || "en"
     const createFolderTitle = document.getElementById("create-folder-title")
@@ -28,7 +28,7 @@ export function setupCreateFolderListeners(elements) {
     elements.createFolderInput.focus()
   })
 
-  // Nút Save
+  // Save button
   elements.createFolderSave.addEventListener("click", () => {
     const folderName = elements.createFolderInput.value.trim()
     const language = localStorage.getItem("appLanguage") || "en"

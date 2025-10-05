@@ -3,7 +3,7 @@ import { translations, showCustomPopup } from "../utils.js"
 import { moveBookmarksToFolder } from "../bookmarks.js"
 import { uiState, saveUIState, selectedBookmarks } from "../state.js"
 
-export function openAddToFolderPopup(elements, bookmarkIds) {
+export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
   const language = localStorage.getItem("appLanguage") || "en"
 
   // Xóa các tùy chọn hiện có và thêm tùy chọn mặc định
@@ -74,12 +74,25 @@ export function openAddToFolderPopup(elements, bookmarkIds) {
     moveBookmarksToFolder(bookmarkIds, targetFolderId, elements, () => {
       elements.addToFolderPopup.classList.add("hidden")
       elements.addToFolderSelect.classList.remove("error")
+
+      // Hiển thị thông báo thành công và reload khi nhấn OK
       showCustomPopup(
         translations[language].addToFolderSuccess ||
           "Bookmark(s) moved successfully!",
-        "success"
+        "success",
+        false, // Không tự động đóng
+        () => {
+          // Callback khi nhấn OK - reload trang
+          window.location.reload()
+        }
       )
+
       saveUIState()
+
+      // Gọi callback nếu có (để cập nhật UI trong trường hợp cần)
+      if (onSuccess && typeof onSuccess === "function") {
+        onSuccess()
+      }
     })
   }
 
