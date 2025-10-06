@@ -1,5 +1,5 @@
 // components/ui.js
-import { translations } from "./utils.js"
+import { translations, showCustomPopup } from "./utils.js"
 import { flattenBookmarks, getFolders, isInFolder } from "./bookmarks.js"
 import {
   saveUIState,
@@ -7,14 +7,116 @@ import {
   setBookmarks,
   setFolders,
   setBookmarkTree,
+  setSelectedTag,
 } from "./state.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
 import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
+import {
+  loadTags,
+  addTagToBookmark,
+  removeTagFromBookmark,
+  changeTagColor,
+  getTagsForBookmark,
+  getAllTags,
+} from "./tag.js"
 
 export function updateUILanguage(elements, language) {
   const t = translations[language] || translations.en
-  elements.folderFilter.querySelector('option[value=""]').textContent =
-    t.allBookmarks
+  const requiredElements = [
+    {
+      key: "folderFilter",
+      selector: "#folder-filter",
+      optionText: "allBookmarks",
+    },
+    { key: "tagFilter", selector: "#tag-filter", optionText: "allTags" },
+    { key: "sortFilter", selector: "#sort-filter" },
+    { key: "createFolderButton", selector: "#create-folder-button" },
+    { key: "addToFolderButton", selector: "#add-to-folder-button" },
+    { key: "deleteFolderButton", selector: "#delete-folder-button" },
+    { key: "renameFolderButton", selector: "#rename-folder-button" },
+    { key: "deleteBookmarksButton", selector: "#delete-bookmarks-button" },
+    { key: "exportBookmarksOption", selector: "#export-bookmarks-option" },
+    { key: "importBookmarksOption", selector: "#import-bookmarks-option" },
+    { key: "editInNewTabOption", selector: "#edit-in-new-tab-option" },
+    { key: "toggleCheckboxesButton", selector: "#toggle-checkboxes-button" },
+    {
+      key: "searchInput",
+      selector: "#search-input",
+      placeholder: "searchPlaceholder",
+    },
+    { key: "renamePopup", selector: "#rename-popup" },
+    {
+      key: "renameInput",
+      selector: "#rename-input",
+      placeholder: "renamePlaceholder",
+    },
+    { key: "addToFolderPopup", selector: "#add-to-folder-popup" },
+    {
+      key: "addToFolderSelect",
+      selector: "#add-to-folder-select",
+      optionText: "selectFolder",
+    },
+    { key: "addToFolderSaveButton", selector: "#add-to-folder-save" },
+    { key: "addToFolderCancelButton", selector: "#add-to-folder-cancel" },
+    { key: "bookmarkCountDiv", selector: "#bookmark-count" },
+    { key: "scrollToTopButton", selector: "#scroll-to-top" },
+    { key: "clearRenameButton", selector: "#clear-rename" },
+    { key: "clearSearchButton", selector: "#clear-search" },
+    { key: "settingsButton", selector: "#settings-button" },
+    { key: "renameFolderPopup", selector: "#rename-folder-popup" },
+    {
+      key: "renameFolderSelect",
+      selector: "#rename-folder-select",
+      optionText: "selectFolder",
+    },
+    {
+      key: "renameFolderInput",
+      selector: "#rename-folder-input",
+      placeholder: "renamePlaceholder",
+    },
+    { key: "bookmarkDetailPopup", selector: "#bookmark-detail-popup" },
+    { key: "manageTagsPopup", selector: "#manage-tags-popup" },
+  ]
+
+  let hasError = false
+  requiredElements.forEach(({ key, selector, optionText, placeholder }) => {
+    if (!elements[key]) {
+      console.warn(
+        `${key} element not found in elements object. Attempting to fetch from DOM with selector: ${selector}`
+      )
+      elements[key] = document.querySelector(selector)
+      if (!elements[key]) {
+        console.error(`Failed to find ${key} in DOM with selector: ${selector}`)
+        hasError = true
+        return
+      }
+    }
+    if (optionText && elements[key].tagName === "SELECT") {
+      const option = elements[key].querySelector('option[value=""]')
+      if (option) {
+        option.textContent = t[optionText] || ""
+      } else {
+        console.warn(`Option[value=""] not found for ${key}`)
+        elements[key].innerHTML = `<option value="">${
+          t[optionText] || ""
+        }</option>`
+      }
+    }
+    if (placeholder && elements[key].tagName === "INPUT") {
+      elements[key].placeholder = t[placeholder] || ""
+    }
+  })
+
+  if (hasError) {
+    showCustomPopup(
+      t.errorUnexpected || "An unexpected error occurred",
+      "error",
+      true
+    )
+    return
+  }
+
+  // Update other UI elements
   elements.sortFilter.innerHTML = `
     <option value="default">${t.sortDefault}</option>
     <option value="favorites">${t.sortFavorites}</option>
@@ -30,21 +132,10 @@ export function updateUILanguage(elements, language) {
   elements.deleteBookmarksButton.textContent = t.deleteBookmarks
   elements.exportBookmarksOption.textContent = t.exportBookmarks
   elements.importBookmarksOption.textContent = t.importBookmarks
-  elements.renameFolderOption.textContent = t.renameFolder
   elements.editInNewTabOption.textContent = t.editInNewTabOption
   elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
     ? t.hideCheckboxes
     : t.showCheckboxes
-  elements.searchInput.placeholder = t.searchPlaceholder
-  elements.renamePopup.querySelector("#rename-title").textContent =
-    t.renameTitle
-  elements.renameInput.placeholder = t.renamePlaceholder
-  elements.addToFolderPopup.querySelector("#add-to-folder-title").textContent =
-    t.addToFolderTitle
-  elements.addToFolderSelect.querySelector('option[value=""]').textContent =
-    t.selectFolder
-  elements.addToFolderSaveButton.textContent = t.save
-  elements.addToFolderCancelButton.textContent = t.cancel
   elements.bookmarkCountDiv.textContent = `${t.totalBookmarks}: ${
     elements.bookmarkCountDiv.textContent.match(/\d+$/)?.[0] || 0
   }`
@@ -54,45 +145,121 @@ export function updateUILanguage(elements, language) {
   elements.clearSearchButton.setAttribute("aria-label", t.clearSearchAria)
   elements.settingsButton.setAttribute("aria-label", t.settingsButtonAria)
   elements.renameInput.dataset.errorPlaceholder = t.emptyTitleError
-  elements.renameFolderPopup.querySelector("#rename-folder-title").textContent =
-    t.renameTitle
-  elements.renameFolderSelect.querySelector('option[value=""]').textContent =
-    t.selectFolder
-  elements.renameFolderInput.placeholder = t.renamePlaceholder
   elements.renameFolderInput.dataset.errorPlaceholder = t.emptyFolderError
   elements.renameFolderInput.dataset.selectFolderError = t.selectFolderError
+
+  // Update popup-specific elements with checks
+  const updatePopupElement = (popup, selector, text) => {
+    const element = popup.querySelector(selector)
+    if (element) {
+      element.textContent = text
+    } else {
+      console.warn(`Element ${selector} not found in popup`)
+    }
+  }
+
+  updatePopupElement(elements.renamePopup, "#rename-title", t.renameTitle)
+  updatePopupElement(
+    elements.addToFolderPopup,
+    "#add-to-folder-title",
+    t.addToFolderTitle
+  )
+  updatePopupElement(
+    elements.renameFolderPopup,
+    "#rename-folder-title",
+    t.renameTitle
+  )
+  updatePopupElement(
+    elements.bookmarkDetailPopup,
+    "#detail-title-label",
+    t.detailTitle
+  )
+  updatePopupElement(
+    elements.bookmarkDetailPopup,
+    "#detail-url-label",
+    t.detailUrl
+  )
+  updatePopupElement(
+    elements.bookmarkDetailPopup,
+    "#detail-date-added-label",
+    t.detailDateAdded
+  )
+  updatePopupElement(
+    elements.bookmarkDetailPopup,
+    "#detail-tags-label",
+    t.detailTags
+  )
+  updatePopupElement(
+    elements.manageTagsPopup,
+    "#manage-tags-title",
+    t.manageTags
+  )
+
+  if (elements.manageTagsPopup.querySelector("#new-tag-input")) {
+    elements.manageTagsPopup.querySelector("#new-tag-input").placeholder =
+      t.newTagPlaceholder
+  }
+  if (elements.manageTagsPopup.querySelector("#add-tag-btn")) {
+    elements.manageTagsPopup.querySelector("#add-tag-btn").textContent =
+      t.addTag
+  }
+
   localStorage.setItem("appLanguage", language)
 }
 
-export function updateTheme(elements, theme) {
-  // Define all available themes
-  const availableThemes = ["light", "dark", "dracula", "onedark"]
+export async function populateTagFilter(elements) {
+  const language = localStorage.getItem("appLanguage") || "en"
+  const t = translations[language] || translations.en
+  if (!elements.tagFilter) {
+    console.error("tagFilter element not found in elements object")
+    return
+  }
+  elements.tagFilter.innerHTML = `<option value="">${t.allTags}</option>`
 
-  // Handle system theme detection for light/dark
+  try {
+    const tags = await getAllTags()
+    tags.forEach((tag) => {
+      const option = document.createElement("option")
+      option.value = tag
+      option.textContent = tag
+      option.style.backgroundColor = uiState.tagColors[tag] || "#ccc"
+      option.style.color = "#fff"
+      elements.tagFilter.appendChild(option)
+    })
+    elements.tagFilter.value = uiState.selectedTag || ""
+  } catch (error) {
+    console.error("Error populating tag filter:", error)
+    showCustomPopup(
+      t.errorUnexpected || "An unexpected error occurred",
+      "error",
+      true
+    )
+  }
+}
+
+// Existing functions (unchanged)
+export function updateTheme(elements, theme) {
+  const availableThemes = ["light", "dark", "dracula", "onedark"]
   const isDarkMode =
     theme === "dark" ||
     (theme === "system" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches)
 
-  // Clear all theme classes first
   const elementsToUpdate = [
     document.body,
     elements.folderListDiv,
     elements.bookmarkCountDiv,
   ]
 
-  // Remove all existing theme classes
   elementsToUpdate.forEach((element) => {
     if (element) {
       availableThemes.forEach((themeName) => {
         element.classList.remove(`${themeName}-theme`)
       })
-      // Remove old light/dark classes
       element.classList.remove("light-theme", "dark-theme")
     }
   })
 
-  // Apply new theme based on selection
   let activeTheme
   switch (theme) {
     case "light":
@@ -121,7 +288,6 @@ export function updateTheme(elements, theme) {
     onedark: "images/logo_onedark.png",
   }
 
-  // Nếu đang chạy trong extension, dùng chrome.runtime.getURL:
   const getAsset = (path) =>
     typeof chrome !== "undefined" && chrome.runtime?.getURL
       ? chrome.runtime.getURL(path)
@@ -130,40 +296,31 @@ export function updateTheme(elements, theme) {
   document.querySelectorAll(".logo").forEach((el) => {
     const src = logoSrcMap[activeTheme] ?? logoSrcMap["light"]
     el.src = getAsset(src)
-    // đảm bảo alt luôn có
     if (!el.alt) el.alt = "App logo"
   })
 
-  // Apply theme classes
   elementsToUpdate.forEach((element) => {
     if (element) {
       element.classList.add(`${activeTheme}-theme`)
     }
   })
 
-  // Set data-theme attribute on document root for CSS variables
   document.documentElement.setAttribute("data-theme", activeTheme)
 
-  // Update all UI elements with theme classes
   document
     .querySelectorAll(
       ".input, .select, .button, .rename-popup, .folder-item, .folder-title, .custom-popup"
     )
     .forEach((el) => {
-      // Remove all theme classes
       availableThemes.forEach((themeName) => {
         el.classList.remove(`${themeName}-theme`)
       })
       el.classList.remove("light-theme", "dark-theme")
-
-      // Add new theme class
       el.classList.add(`${activeTheme}-theme`)
     })
 
-  // Store current theme in localStorage
   localStorage.setItem("selectedTheme", theme)
 
-  // Trigger custom event for theme change
   window.dispatchEvent(
     new CustomEvent("themeChanged", {
       detail: {
@@ -174,24 +331,8 @@ export function updateTheme(elements, theme) {
   )
 }
 
-function detectViewContext() {
-  // Check if running in a Chrome extension popup (small window)
-  const isPopup = window.innerWidth <= 800 && window.innerHeight <= 800 // Adjust thresholds as needed
-  const isExtension = typeof chrome !== "undefined" && chrome.runtime?.getURL
-
-  if (!isPopup && isExtension) {
-    document.documentElement.classList.add("webview-mode")
-
-    return "webview"
-  } else {
-    document.documentElement.classList.remove("webview-mode")
-
-    return "popup"
-  }
-}
-
 export function restoreUIState(elements, callback) {
-  detectViewContext() // Detect context and apply class early
+  detectViewContext()
 
   chrome.storage.local.get(["uiState", "checkboxesVisible"], (data) => {
     if (chrome.runtime.lastError) {
@@ -205,7 +346,7 @@ export function restoreUIState(elements, callback) {
       uiState.sortType = data.uiState.sortType || "default"
       uiState.viewMode = data.uiState.viewMode || "flat"
       uiState.collapsedFolders = new Set(data.uiState.collapsedFolders || [])
-      // Remove root and default folders from collapsedFolders
+      uiState.selectedTag = data.uiState.selectedTag || ""
       ;["0", "1", "2"].forEach((id) => {
         if (uiState.collapsedFolders.has(id)) {
           uiState.collapsedFolders.delete(id)
@@ -217,6 +358,7 @@ export function restoreUIState(elements, callback) {
     elements.languageSwitcher.value = savedLanguage
     elements.viewSwitcher.value = uiState.viewMode
     elements.folderFilter.value = uiState.selectedFolderId
+    elements.tagFilter.value = uiState.selectedTag
     elements.sortFilter.value = uiState.sortType
     elements.searchInput.value = uiState.searchQuery
     updateUILanguage(elements, savedLanguage)
@@ -238,26 +380,30 @@ export function restoreUIState(elements, callback) {
     } else {
       console.warn("Select All container (.select-all) not found")
     }
-    callback()
+    loadTags().then(() => {
+      setupTagFilterListener(elements)
+      callback()
+    })
   })
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
-  chrome.storage.local.get("favoriteBookmarks", (data) => {
+  chrome.storage.local.get(["favoriteBookmarks"], (data) => {
     const favoriteBookmarks = data.favoriteBookmarks || {}
 
-    const addFavoriteStatus = (nodes) => {
+    const addFavoriteAndTagsStatus = (nodes) => {
       for (const node of nodes) {
         if (node.url) {
           node.isFavorite = !!favoriteBookmarks[node.id]
+          node.tags = uiState.bookmarkTags[node.id] || []
         }
         if (node.children) {
-          addFavoriteStatus(node.children)
+          addFavoriteAndTagsStatus(node.children)
         }
       }
     }
 
-    addFavoriteStatus(bookmarkTreeNodes)
+    addFavoriteAndTagsStatus(bookmarkTreeNodes)
 
     const bookmarks = flattenBookmarks(bookmarkTreeNodes)
     const folders = getFolders(bookmarkTreeNodes)
@@ -265,8 +411,15 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     setBookmarks(bookmarks)
     setFolders(folders)
     populateFolderFilter(folders, elements)
+    populateTagFilter(elements)
     updateBookmarkCount(bookmarks, elements)
     let filtered = bookmarks
+
+    if (uiState.selectedTag) {
+      filtered = filtered.filter((bookmark) =>
+        bookmark.tags.includes(uiState.selectedTag)
+      )
+    }
 
     if (uiState.sortType === "favorites") {
       filtered = filtered.filter((bookmark) => bookmark.isFavorite)
@@ -274,7 +427,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 
     if (
       uiState.selectedFolderId &&
-      uiState.selectedFolderId !== "0" && // Bỏ qua thư mục gốc
+      uiState.selectedFolderId !== "0" &&
       folders.some((f) => f.id === uiState.selectedFolderId)
     ) {
       filtered = filtered.filter((bookmark) =>
@@ -299,6 +452,8 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     if (uiState.viewMode === "tree") {
       const rootChildren = bookmarkTreeNodes[0]?.children || []
       renderTreeView(rootChildren, elements)
+    } else if (uiState.viewMode === "detail") {
+      renderDetailView(filtered, elements)
     } else {
       renderBookmarks(filtered, elements)
     }
@@ -308,12 +463,41 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
   })
 }
 
+function renderDetailView(bookmarksList, elements) {
+  const fragment = document.createDocumentFragment()
+  const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
+  const language = localStorage.getItem("appLanguage") || "en"
+
+  sortedBookmarks.forEach((bookmark) => {
+    if (bookmark.url) {
+      const bookmarkElement = createDetailBookmarkElement(bookmark)
+      fragment.appendChild(bookmarkElement)
+    }
+  })
+
+  elements.folderListDiv.innerHTML = ""
+  elements.folderListDiv.classList.add("detail-view")
+  elements.folderListDiv.appendChild(fragment)
+
+  elements.searchInput.value = uiState.searchQuery
+  if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
+    elements.folderFilter.value = uiState.selectedFolderId
+  } else {
+    uiState.selectedFolderId = ""
+    elements.folderFilter.value = ""
+  }
+  elements.sortFilter.value = uiState.sortType
+
+  attachSelectAllListener(elements)
+  attachDropdownListeners(elements)
+  setupBookmarkActionListeners(elements)
+}
+
 function populateFolderFilter(folders, elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   elements.folderFilter.innerHTML = `<option value="">${translations[language].allBookmarks}</option>`
   folders.forEach((folder) => {
     if (folder.id !== "0") {
-      // Bỏ qua thư mục gốc
       const option = document.createElement("option")
       option.value = folder.id
       option.textContent = folder.title
@@ -394,7 +578,6 @@ function renderTreeView(nodes, elements, depth = 0) {
     return fragment
   }
 
-  // Root: clear container + add select-all
   if (depth === 0) {
     elements.folderListDiv.innerHTML = ""
     elements.folderListDiv.classList.add("tree-view")
@@ -405,7 +588,6 @@ function renderTreeView(nodes, elements, depth = 0) {
     fragment.appendChild(selectAllDiv)
   }
 
-  // If a folder is selected, only render that folder's contents
   let nodesToRender = nodes
   if (
     depth === 0 &&
@@ -424,14 +606,10 @@ function renderTreeView(nodes, elements, depth = 0) {
     }
   }
 
-  // Separate folders and bookmarks
   const folders = nodesToRender.filter((node) => node.children)
   const bookmarks = nodesToRender.filter((node) => node.url)
 
-  // Sort bookmarks using sortBookmarks
   const sortedBookmarks = sortBookmarks(bookmarks, uiState.sortType)
-
-  // Sort folders alphabetically
   const sortedFolders = folders.sort((a, b) =>
     (a.title || "").localeCompare(b.title || "")
   )
@@ -441,17 +619,18 @@ function renderTreeView(nodes, elements, depth = 0) {
     const folderTitle =
       node.title && node.title.trim() !== "" ? node.title : `Folder ${node.id}`
 
-    // Search filter
     const matchesSearch = uiState.searchQuery
       ? node.title?.toLowerCase().includes(uiState.searchQuery.toLowerCase()) ||
         node.url?.toLowerCase().includes(uiState.searchQuery.toLowerCase())
       : true
 
-    // Favorites filter
     const matchesFavorite =
       uiState.sortType === "favorites" ? node.isFavorite : true
 
-    // --- Folder ---
+    const matchesTag = uiState.selectedTag
+      ? node.tags?.includes(uiState.selectedTag)
+      : true
+
     if (node.children && Array.isArray(node.children)) {
       const isCollapsed = uiState.collapsedFolders.has(node.id)
       const itemCount = countFolderItems(node)
@@ -494,7 +673,6 @@ function renderTreeView(nodes, elements, depth = 0) {
 
       fragment.appendChild(folderDiv)
 
-      // Children container
       const childrenContainer = document.createElement("div")
       childrenContainer.className = "folder-children"
       childrenContainer.style.display = isCollapsed ? "none" : "block"
@@ -512,14 +690,12 @@ function renderTreeView(nodes, elements, depth = 0) {
       fragment.appendChild(childrenContainer)
     }
 
-    // --- Bookmark ---
-    if (node.url && matchesSearch && matchesFavorite) {
+    if (node.url && matchesSearch && matchesFavorite && matchesTag) {
       const bookmarkElement = createEnhancedBookmarkElement(node, depth)
       fragment.appendChild(bookmarkElement)
     }
   })
 
-  // Attach listeners at root
   if (depth === 0) {
     elements.folderListDiv.appendChild(fragment)
     attachTreeListeners(elements)
@@ -528,10 +704,193 @@ function renderTreeView(nodes, elements, depth = 0) {
   return fragment
 }
 
-// Enhanced bookmark element creation
+function createDetailBookmarkElement(bookmark) {
+  const language = localStorage.getItem("appLanguage") || "en"
+  let favicon
+  try {
+    favicon = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(
+      bookmark.url
+    )}`
+  } catch (error) {
+    console.error("Error generating favicon URL for", bookmark.url, error)
+    favicon = "./images/default-favicon.png"
+  }
+
+  const div = document.createElement("div")
+  div.className = `bookmark-item detail-bookmark-item ${
+    bookmark.isFavorite ? "favorited" : ""
+  }`
+  div.dataset.id = bookmark.id
+  div.style.cssText = `
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 12px 0;
+    padding: 16px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 12px;
+    background: var(--bg-primary);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  `
+
+  div.addEventListener("mouseenter", () => {
+    div.style.transform = "translateY(-2px)"
+    div.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.15)"
+  })
+  div.addEventListener("mouseleave", () => {
+    div.style.transform = ""
+    div.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.1)"
+  })
+
+  const tagsHtml = (bookmark.tags || [])
+    .map(
+      (tag) => `
+    <span class="bookmark-tag" style="
+      background-color: ${uiState.tagColors[tag] || "#ccc"};
+      color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      display: inline-block;
+    ">
+      ${tag}
+    </span>
+  `
+    )
+    .join("")
+
+  div.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <input type="checkbox" 
+             class="bookmark-checkbox" 
+             data-id="${bookmark.id}" 
+             ${uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""}
+             style="display: ${
+               uiState.checkboxesVisible ? "inline-block" : "none"
+             }; transform: scale(1.2);">
+      <div class="bookmark-favicon" style="
+        width: 32px; 
+        height: 32px; 
+        border-radius: 6px; 
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+      ">
+        <img src="${favicon}" 
+             alt="favicon" 
+             style="width: 90%; height: 90%; object-fit: cover;"
+             onerror="this.style.display='none'; this.parentElement.innerHTML='';">
+      </div>
+      <a href="${bookmark.url}" 
+         target="_blank" 
+         class="bookmark-title"
+         style="
+           color: var(--text-primary);
+           text-decoration: none;
+           font-size: 16px;
+           font-weight: 600;
+           overflow: hidden;
+           text-overflow: ellipsis;
+           white-space: nowrap;
+         "
+         title="${bookmark.title || bookmark.url}">
+        ${bookmark.title || bookmark.url}
+      </a>
+    </div>
+    <div class="bookmark-url" style="
+      font-size: 12px;
+      color: var(--text-secondary);
+      opacity: 0.8;
+      margin-top: 4px;
+      word-break: break-all;
+    ">
+      ${extractDomain(bookmark.url)}
+    </div>
+    <div class="bookmark-tags" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+      ${tagsHtml}
+    </div>
+    <div class="bookmark-details" style="
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    ">
+      <p><strong>${translations[language].detailDateAdded}:</strong> ${
+    bookmark.dateAdded
+      ? new Date(bookmark.dateAdded).toLocaleString()
+      : translations[language].notAvailable
+  }</p>
+    </div>
+    ${
+      uiState.showBookmarkIds
+        ? `<span class="bookmark-id" style="font-size: 12px; color: var(--text-secondary); opacity: 0.8;">ID: ${bookmark.id}</span>`
+        : ""
+    }
+    <div class="dropdown-btn-group" style="position: absolute; top: 16px; right: 16px;">
+      <button class="dropdown-btn ${bookmark.isFavorite ? "favorited" : ""}" 
+              data-id="${bookmark.id}" 
+              aria-label="Bookmark options"
+              style="
+                width: 32px; height: 32px; border: none; border-radius: 6px;
+                background: transparent; cursor: pointer;
+                transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+                opacity: 0;
+              ">
+        ${
+          bookmark.isFavorite
+            ? '<i class="fas fa-star"></i>'
+            : '<i class="fas fa-ellipsis-v"></i>'
+        }
+      </button>
+      <div class="dropdown-menu hidden" style="
+        position: absolute; right: 0; top: 100%; margin-top: 4px;
+        background: var(--bg-secondary, #2d2d2d); border: 1px solid var(--border-color, #404040);
+        border-radius: 8px; min-width: 160px; padding: 4px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
+      ">
+        <button class="menu-item add-to-folder" data-id="${bookmark.id}">${
+    translations[language].addToFolderOption
+  }</button>
+        <button class="menu-item delete-btn" data-id="${bookmark.id}">${
+    translations[language].deleteBookmarkOption
+  }</button>
+        <button class="menu-item rename-btn" data-id="${bookmark.id}">${
+    translations[language].renameBookmarkOption
+  }</button>
+        <button class="menu-item view-detail-btn" data-id="${bookmark.id}">${
+    translations[language].viewDetail
+  }</button>
+        <button class="menu-item manage-tags-btn" data-id="${bookmark.id}">${
+    translations[language].manageTags
+  }</button>
+        <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;">
+        <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
+    translations[language].favourite
+  }</button>
+      </div>
+    </div>
+  `
+
+  div.addEventListener("mouseenter", () => {
+    const dropdownBtn = div.querySelector(".dropdown-btn")
+    if (dropdownBtn) dropdownBtn.style.opacity = "1"
+  })
+
+  div.addEventListener("mouseleave", () => {
+    const dropdownBtn = div.querySelector(".dropdown-btn")
+    if (dropdownBtn) dropdownBtn.style.opacity = "0"
+  })
+
+  return div
+}
+
 function createEnhancedBookmarkElement(bookmark, depth = 0) {
   const language = localStorage.getItem("appLanguage") || "en"
-
   let favicon
   try {
     favicon = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(
@@ -560,7 +919,6 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
     cursor: pointer;
   `
 
-  // Add hover effect with CSS
   div.addEventListener("mouseenter", () => {
     div.style.transform = "translateX(6px) translateY(-1px)"
     div.style.borderColor = "var(--hover-bg)"
@@ -573,6 +931,18 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
     div.style.boxShadow = ""
   })
 
+  const tagsHtml = (bookmark.tags || [])
+    .map(
+      (tag) => `
+    <span class="bookmark-tag" style="background-color: ${
+      uiState.tagColors[tag] || "#ccc"
+    }; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+      ${tag}
+    </span>
+  `
+    )
+    .join("")
+
   div.innerHTML = `
     <input type="checkbox" 
            class="bookmark-checkbox" 
@@ -581,7 +951,6 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
            style="display: ${
              uiState.checkboxesVisible ? "inline-block" : "none"
            }; transform: scale(1.2);">
-    
     <div class="bookmark-favicon" style="
       width: 22px; 
       height: 22px; 
@@ -597,7 +966,6 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
            style="width: 90%; height: 90%; object-fit: cover;"
            onerror="this.style.display='none'; this.parentElement.innerHTML='';">
     </div>
-    
     <a href="${bookmark.url}" 
        target="_blank" 
        class="bookmark-title"
@@ -615,7 +983,6 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
        title="${bookmark.title || bookmark.url}">
       ${bookmark.title || bookmark.url}
     </a>
-
     <div class="bookmark-url" style="
       font-size: 11px;
       color: var(--text-secondary);
@@ -627,13 +994,14 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
     ">
       ${extractDomain(bookmark.url)}
     </div>
-    
+    <div class="bookmark-tags" style="display: flex; gap: 4px;">
+      ${tagsHtml}
+    </div>
     ${
       uiState.showBookmarkIds
         ? `<span class="bookmark-id" style="font-size: 11px; color: #888;">[${bookmark.id}]</span>`
         : ""
     }
-    
     <div class="dropdown-btn-group" style="position: relative;">
       <button class="dropdown-btn ${bookmark.isFavorite ? "favorited" : ""}" 
               data-id="${bookmark.id}" 
@@ -650,7 +1018,6 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
             : '<i class="fas fa-ellipsis-v"></i>'
         }
       </button>
-      
       <div class="dropdown-menu hidden" style="
         position: absolute; right: 0; top: 100%; margin-top: 4px;
         background: var(--bg-secondary, #2d2d2d); border: 1px solid var(--border-color, #404040);
@@ -666,6 +1033,12 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
         <button class="menu-item rename-btn" data-id="${bookmark.id}">${
     translations[language].renameBookmarkOption
   }</button>
+        <button class="menu-item view-detail-btn" data-id="${bookmark.id}">${
+    translations[language].viewDetail
+  }</button>
+        <button class="menu-item manage-tags-btn" data-id="${bookmark.id}">${
+    translations[language].manageTags
+  }</button>
         <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;">
         <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
     translations[language].favourite
@@ -674,7 +1047,6 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
     </div>
   `
 
-  // Show dropdown button on hover
   div.addEventListener("mouseenter", () => {
     const dropdownBtn = div.querySelector(".dropdown-btn")
     if (dropdownBtn) dropdownBtn.style.opacity = "1"
@@ -688,93 +1060,6 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
   return div
 }
 
-// Attach tree-specific event listeners
-function attachTreeListeners(elements) {
-  // Toggle expand/collapse
-  document.querySelectorAll(".folder-toggle").forEach((toggle) => {
-    toggle.onclick = (e) => {
-      e.stopPropagation()
-      const folderDiv = e.target.closest(".folder-item")
-      const folderId = folderDiv.dataset.id
-      const childrenContainer = folderDiv.nextElementSibling
-      const folderIcon = folderDiv.querySelector(".folder-icon")
-
-      if (uiState.collapsedFolders.has(folderId)) {
-        // Expand
-        uiState.collapsedFolders.delete(folderId)
-        e.target.textContent = "−"
-        folderIcon.textContent = "📂"
-
-        if (childrenContainer) {
-          childrenContainer.style.display = "block"
-          // Re-render children if needed
-          if (childrenContainer.innerHTML === "") {
-            const node = findNodeById(folderId, uiState.bookmarkTree)
-            if (node && node.children) {
-              const depth =
-                parseInt(childrenContainer.getAttribute("data-depth")) || 1
-              const childrenFragment = renderTreeView(
-                node.children,
-                elements,
-                depth
-              )
-              childrenContainer.appendChild(childrenFragment)
-            }
-          }
-        }
-      } else {
-        // Collapse
-        uiState.collapsedFolders.add(folderId)
-        e.target.textContent = "+"
-        folderIcon.textContent = "📁"
-
-        if (childrenContainer) {
-          childrenContainer.style.display = "none"
-        }
-      }
-
-      // Add smooth transition
-      e.target.style.transform = "scale(1.1)"
-      setTimeout(() => {
-        e.target.style.transform = ""
-      }, 150)
-
-      saveUIState()
-    }
-
-    // Hover effects for toggle
-    toggle.addEventListener("mouseenter", () => {
-      toggle.style.background = "var(--text-primary)"
-      toggle.style.color = "var(--bg-primary)"
-      toggle.style.transform = "scale(1.05)"
-    })
-
-    toggle.addEventListener("mouseleave", () => {
-      toggle.style.background = "var(--bg-primary)"
-      toggle.style.color = "var(--text-primary)"
-      toggle.style.transform = ""
-    })
-  })
-
-  // Favorite button handlers in dropdown
-  document.querySelectorAll(".menu-item.favorite-btn").forEach((btn) => {
-    btn.onclick = (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      const bookmarkId = btn.dataset.id
-      toggleFavorite(bookmarkId, btn)
-      // Hide dropdown after action
-      const dropdown = btn.closest(".dropdown-menu")
-      if (dropdown) dropdown.classList.add("hidden")
-    }
-  })
-
-  attachSelectAllListener(elements)
-  attachDropdownListeners(elements)
-  setupBookmarkActionListeners(elements)
-}
-
-// Helper functions
 function countFolderItems(node) {
   if (!node.children) return 0
   return node.children.reduce((count, child) => {
@@ -816,14 +1101,12 @@ function toggleFavorite(bookmarkId, buttonElement) {
     }
 
     chrome.storage.local.set({ favoriteBookmarks }, () => {
-      // Update bookmark item styling
       const bookmarkItem = buttonElement.closest(".bookmark-item")
       bookmarkItem.classList.toggle(
         "favorited",
         !!favoriteBookmarks[bookmarkId]
       )
 
-      // Refresh tree if in favorites view
       if (uiState.sortType === "favorites") {
         chrome.bookmarks.getTree((tree) => {
           renderFilteredBookmarks(tree, elements)
@@ -833,7 +1116,6 @@ function toggleFavorite(bookmarkId, buttonElement) {
   })
 }
 
-// Check if node is ancestor of target folder
 function isAncestorOf(node, targetFolderId) {
   if (!node.children) return false
 
@@ -891,6 +1173,12 @@ function createBookmarkElement(bookmark, depth = 0) {
         <button class="menu-item rename-btn" data-id="${bookmark.id}">${
     translations[language].renameBookmarkOption
   }</button>
+        <button class="menu-item view-detail-btn" data-id="${bookmark.id}">${
+    translations[language].viewDetail
+  }</button>
+        <button class="menu-item manage-tags-btn" data-id="${bookmark.id}">${
+    translations[language].manageTags
+  }</button>
         <hr/>
         <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
     translations[language].favourite
@@ -905,7 +1193,6 @@ function sortBookmarks(bookmarksList, sortType) {
   let sorted = [...bookmarksList]
   switch (sortType) {
     case "favorites":
-      // Favorites are already filtered, but sort by dateAdded (newest first) for consistency
       sorted.sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0))
       break
     case "default":
@@ -989,3 +1276,168 @@ function attachSelectAllListener(elements) {
     )
   }
 }
+
+function showBookmarkDetail(bookmarkId) {
+  const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
+  if (!bookmark) return
+
+  const modal = document.getElementById("bookmark-detail-popup")
+  if (!modal) return
+
+  modal.querySelector("#detail-title").textContent =
+    bookmark.title || bookmark.url
+  modal.querySelector("#detail-url").textContent = bookmark.url
+  modal.querySelector("#detail-date-added").textContent = new Date(
+    bookmark.dateAdded
+  ).toLocaleString()
+  const tagsContainer = modal.querySelector("#detail-tags")
+  tagsContainer.innerHTML = (bookmark.tags || [])
+    .map(
+      (tag) => `
+    <span style="background-color: ${
+      uiState.tagColors[tag] || "#ccc"
+    }; color: white; padding: 4px 8px; border-radius: 6px; margin-right: 4px;">
+      ${tag}
+    </span>
+  `
+    )
+    .join("")
+
+  modal.classList.remove("hidden")
+}
+
+function showManageTagsPopup(bookmarkId) {
+  const modal = document.getElementById("manage-tags-popup")
+  if (!modal) return
+
+  getTagsForBookmark(bookmarkId).then((tags) => {
+    const existingTags = modal.querySelector("#existing-tags")
+    existingTags.innerHTML = tags
+      .map(
+        (tag) => `
+      <div class="tag-item">
+        <span style="background-color: ${
+          uiState.tagColors[tag] || "#ccc"
+        }; color: white; padding: 4px 8px; border-radius: 6px;">${tag}</span>
+        <input type="color" value="${
+          uiState.tagColors[tag] || "#cccccc"
+        }" data-tag="${tag}" class="tag-color-picker">
+        <button class="remove-tag" data-tag="${tag}" data-id="${bookmarkId}">Remove</button>
+      </div>
+    `
+      )
+      .join("")
+
+    modal.querySelectorAll(".tag-color-picker").forEach((picker) => {
+      picker.onchange = (e) => {
+        const tag = e.target.dataset.tag
+        changeTagColor(tag, e.target.value)
+      }
+    })
+
+    modal.querySelectorAll(".remove-tag").forEach((btn) => {
+      btn.onclick = (e) => {
+        const tag = e.target.dataset.tag
+        const id = e.target.dataset.id
+        removeTagFromBookmark(id, tag)
+        showManageTagsPopup(id)
+      }
+    })
+
+    const addBtn = modal.querySelector("#add-tag-btn")
+    const input = modal.querySelector("#new-tag-input")
+    const colorPicker = modal.querySelector("#new-tag-color")
+    addBtn.onclick = () => {
+      const tag = input.value.trim()
+      const color = colorPicker.value
+      if (tag) {
+        addTagToBookmark(bookmarkId, tag, color)
+        input.value = ""
+        colorPicker.value = "#cccccc"
+        showManageTagsPopup(bookmarkId)
+      }
+    }
+
+    modal.classList.remove("hidden")
+  })
+}
+
+function setupTagFilterListener(elements) {
+  elements.tagFilter.addEventListener("change", (e) => {
+    setSelectedTag(e.target.value)
+    saveUIState()
+    chrome.bookmarks.getTree((tree) => {
+      renderFilteredBookmarks(tree, elements)
+    })
+  })
+}
+
+function attachTreeListeners(elements) {
+  document.querySelectorAll(".folder-toggle").forEach((toggle) => {
+    toggle.onclick = (e) => {
+      e.stopPropagation()
+      const folderDiv = e.target.closest(".folder-item")
+      const folderId = folderDiv.dataset.id
+      const childrenContainer = folderDiv.nextElementSibling
+      const folderIcon = folderDiv.querySelector(".folder-icon")
+
+      if (uiState.collapsedFolders.has(folderId)) {
+        uiState.collapsedFolders.delete(folderId)
+        e.target.textContent = "−"
+        folderIcon.textContent = "📂"
+        if (childrenContainer) {
+          childrenContainer.style.display = "block"
+          if (childrenContainer.innerHTML === "") {
+            const node = findNodeById(folderId, uiState.bookmarkTree)
+            if (node && node.children) {
+              const depth =
+                parseInt(childrenContainer.getAttribute("data-depth")) || 1
+              const childrenFragment = renderTreeView(
+                node.children,
+                elements,
+                depth
+              )
+              childrenContainer.appendChild(childrenFragment)
+            }
+          }
+        }
+      } else {
+        uiState.collapsedFolders.add(folderId)
+        e.target.textContent = "+"
+        folderIcon.textContent = "📁"
+        if (childrenContainer) {
+          childrenContainer.style.display = "none"
+        }
+      }
+
+      e.target.style.transform = "scale(1.1)"
+      setTimeout(() => {
+        e.target.style.transform = ""
+      }, 150)
+
+      saveUIState()
+    }
+
+    toggle.addEventListener("mouseenter", () => {
+      toggle.style.background = "var(--text-primary)"
+      toggle.style.color = "var(--bg-primary)"
+      toggle.style.transform = "scale(1.05)"
+    })
+
+    toggle.addEventListener("mouseleave", () => {
+      toggle.style.background = "var(--bg-primary)"
+      toggle.style.color = "var(--text-primary)"
+      toggle.style.transform = ""
+    })
+  })
+
+  attachSelectAllListener(elements)
+  attachDropdownListeners(elements)
+  setupBookmarkActionListeners(elements)
+}
+
+document.querySelectorAll(".close-modal").forEach((btn) => {
+  btn.onclick = () => {
+    btn.closest(".rename-popup").classList.add("hidden")
+  }
+})

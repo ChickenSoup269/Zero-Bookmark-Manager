@@ -198,6 +198,11 @@ export const translations = {
     saveViewMode: "Save View Mode",
     saveCollapsedFolders: "Save Collapsed Folders",
     saveCheckboxesVisible: "Save Checkboxes Visibility",
+    allTags: "All Tags",
+    viewDetail: "View Details",
+    manageTags: "Manage Tags",
+    selectTag: "Select Tag",
+    tagExists: "Tag already exists",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -396,6 +401,11 @@ export const translations = {
     saveViewMode: "Lưu Chế độ Xem",
     saveCollapsedFolders: "Lưu Thư mục Thu gọn",
     saveCheckboxesVisible: "Lưu Hiển thị Hộp kiểm",
+    allTags: "Tất cả Thẻ",
+    viewDetail: "Xem Chi tiết",
+    manageTags: "Quản lý Thẻ",
+    selectTag: "Chọn Thẻ",
+    tagExists: "Thẻ đã tồn tại",
   },
 }
 

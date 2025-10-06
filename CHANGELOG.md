@@ -1,17 +1,18 @@
 <!-- ---Extension version---- -->
 
-Changelog:
-[1.1.0] - 2025-10-08
+## Changelog:
+
+### [1.1.0] - 2025-10-08
 
 - Added web view
-- Added chatbot - gemini
+- Added chatbot - geminiQ
 - Added favourite bookmarks
 - Added tree view
 - Added option local storage settings
 - Update export option now have CSV (Excell/Sheets)
 - Update small UI
 
-[1.0.3] - 2025-09-02
+### [1.0.3] - 2025-09-02
 
 - Added light/dark theme switching (auto-detected)
 - Added English/Vietnamese language support with dynamic UI updates
@@ -29,10 +30,10 @@ Changelog:
 - Fixed missing text for Delete Bookmarks button with proper translation support
 - Improved checkbox selection handling for individual and Select All interactions
 
-[1.0.2] - 2025-08-15
+### [1.0.2] - 2025-08-15
 
 - Removed unused "identity" permission from manifest.json.
 
-[1.0.1] - 2025-08-12
+### [1.0.1] - 2025-08-12
 
 - Base bookmarks

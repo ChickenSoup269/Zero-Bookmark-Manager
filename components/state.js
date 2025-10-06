@@ -1,16 +1,20 @@
 // components/state.js
+
 export const uiState = {
-  bookmarks: [],
   bookmarkTree: [],
+  bookmarks: [],
   folders: [],
-  searchQuery: "",
   selectedFolderId: "",
+  selectedTag: "",
+  searchQuery: "",
   sortType: "default",
-  checkboxesVisible: false,
-  currentBookmarkId: null,
-  viewMode: "flat", // flat | tree
+  viewMode: "flat",
   selectedBookmarks: new Set(),
-  collapsedFolders: new Set(),
+  currentBookmarkId: null,
+  showBookmarkIds: false,
+  checkboxesVisible: false,
+  bookmarkTags: {},
+  tagColors: {},
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -28,11 +32,22 @@ export function setBookmarkTree(bookmarkTree) {
 }
 
 export function setCurrentBookmarkId(id) {
-  uiState.currentBookmarkId = idsubstages
+  uiState.currentBookmarkId = id
 }
 
-// Export saveUIState and loadUIState to allow overriding in option.js
-export let saveUIState = function () {
+export function setBookmarkTags(bookmarkTags) {
+  uiState.bookmarkTags = { ...bookmarkTags }
+}
+
+export function setTagColors(tagColors) {
+  uiState.tagColors = { ...uiState.tagColors, ...tagColors }
+}
+
+export function setSelectedTag(tag) {
+  uiState.selectedTag = tag
+}
+
+export function saveUIState() {
   const state = {
     uiState: {
       searchQuery: uiState.searchQuery,
@@ -40,27 +55,40 @@ export let saveUIState = function () {
       sortType: uiState.sortType,
       viewMode: uiState.viewMode,
       collapsedFolders: Array.from(uiState.collapsedFolders),
+      selectedTag: uiState.selectedTag,
     },
     checkboxesVisible: uiState.checkboxesVisible,
+    bookmarkTags: uiState.bookmarkTags,
+    tagColors: uiState.tagColors,
   }
   chrome.storage.local.set(state, () => {
     if (chrome.runtime.lastError) {
       console.error("Error saving state:", chrome.runtime.lastError)
+    } else {
+      console.log("UI state saved:", state)
     }
   })
 }
 
-export let loadUIState = function (callback) {
-  chrome.storage.local.get(["uiState", "checkboxesVisible"], (result) => {
-    if (result.uiState) {
-      uiState.searchQuery = result.uiState.searchQuery || ""
-      uiState.selectedFolderId = result.uiState.selectedFolderId || ""
-      uiState.sortType = result.uiState.sortType || "default"
-      uiState.viewMode = result.uiState.viewMode || "flat"
-      uiState.collapsedFolders = new Set(result.uiState.collapsedFolders || [])
+export function loadUIState(callback) {
+  chrome.storage.local.get(
+    ["uiState", "checkboxesVisible", "bookmarkTags", "tagColors"],
+    (result) => {
+      if (result.uiState) {
+        uiState.searchQuery = result.uiState.searchQuery || ""
+        uiState.selectedFolderId = result.uiState.selectedFolderId || ""
+        uiState.sortType = result.uiState.sortType || "default"
+        uiState.viewMode = result.uiState.viewMode || "flat"
+        uiState.collapsedFolders = new Set(
+          result.uiState.collapsedFolders || []
+        )
+        uiState.selectedTag = result.uiState.selectedTag || ""
+      }
+      uiState.checkboxesVisible = result.checkboxesVisible || false
+      uiState.bookmarkTags = result.bookmarkTags || {}
+      uiState.tagColors = result.tagColors || {}
+      console.log("UI state loaded:", result)
+      if (callback) callback()
     }
-    uiState.checkboxesVisible = result.checkboxesVisible || false
-
-    if (callback) callback()
-  })
+  )
 }

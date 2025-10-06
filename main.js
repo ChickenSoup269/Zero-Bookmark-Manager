@@ -59,8 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
     createFolderSave: document.getElementById("create-folder-save"),
     createFolderCancel: document.getElementById("create-folder-cancel"),
     clearCreateFolder: document.getElementById("clear-create-folder"),
-    renameFolderOption: document.getElementById("rename-folder-option"),
+    // renameFolderOption: document.getElementById("rename-folder-option"),
     showBookmarkIdsOption: document.getElementById("show-bookmark-ids-option"),
+    tagFilter: document.getElementById("tag-filter"),
   }
 
   // Initialize application

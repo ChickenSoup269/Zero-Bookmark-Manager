@@ -1,4 +1,5 @@
 // components/controller/bookmarkAction.js
+
 import {
   translations,
   safeChromeBookmarksCall,
@@ -71,7 +72,7 @@ export function setupBookmarkActionListeners(elements) {
     console.error("clearRenameButton element not found")
   }
 
-  // Handle all menu-item buttons (add-to-folder, delete, rename, favorite)
+  // Handle all menu-item buttons
   document.querySelectorAll(".menu-item").forEach((button) => {
     button.removeEventListener("click", handleMenuItemClick)
     button.addEventListener("click", (e) => handleMenuItemClick(e, elements))
@@ -98,6 +99,10 @@ function handleMenuItemClick(e, elements) {
     ? "rename"
     : e.target.classList.contains("favorite-btn")
     ? "favorite"
+    : e.target.classList.contains("view-detail-btn")
+    ? "view-detail"
+    : e.target.classList.contains("manage-tags-btn")
+    ? "manage-tags"
     : e.target.id === "localstorage-settings-option" ||
       e.target.id === "export-bookmarks-option" ||
       e.target.id === "import-bookmarks-option" ||
@@ -113,7 +118,6 @@ function handleMenuItemClick(e, elements) {
   }
 
   if (!action) {
-    // Skip processing for non-bookmark actions like localstorage-settings-option
     return
   }
 
@@ -130,11 +134,279 @@ function handleMenuItemClick(e, elements) {
     case "favorite":
       handleFavoriteBookmark(e, elements)
       break
+    case "view-detail":
+      openBookmarkDetailPopup(bookmarkId, elements)
+      break
+    case "manage-tags":
+      openManageTagsPopup(bookmarkId, elements)
+      break
   }
 
   e.target.closest(".dropdown-menu").classList.add("hidden")
 }
 
+// Function to open bookmark detail popup
+function openBookmarkDetailPopup(bookmarkId, elements) {
+  const language = localStorage.getItem("appLanguage") || "en"
+  const popup = document.getElementById("bookmark-detail-popup")
+  const title = document.getElementById("detail-title")
+  const url = document.getElementById("detail-url")
+  const dateAdded = document.getElementById("detail-date-added")
+  const tags = document.getElementById("detail-tags")
+  const closeButton = popup.querySelector(".close-modal")
+
+  if (!popup || !title || !url || !dateAdded || !tags || !closeButton) {
+    console.error("Bookmark detail popup elements missing", {
+      popup: !!popup,
+      title: !!title,
+      url: !!url,
+      dateAdded: !!dateAdded,
+      tags: !!tags,
+      closeButton: !!closeButton,
+    })
+    showCustomPopup(translations[language].errorUnexpected, "error", true)
+    return
+  }
+
+  safeChromeBookmarksCall("get", [bookmarkId], (results) => {
+    if (chrome.runtime.lastError || !results || results.length === 0) {
+      showCustomPopup(translations[language].errorUnexpected, "error", true)
+      return
+    }
+
+    const bookmark = results[0]
+    title.textContent =
+      bookmark.title || bookmark.url || translations[language].notAvailable
+    url.textContent = bookmark.url || translations[language].notAvailable
+    dateAdded.textContent = bookmark.dateAdded
+      ? new Date(bookmark.dateAdded).toLocaleString()
+      : translations[language].notAvailable
+    tags.innerHTML =
+      (uiState.bookmarkTags[bookmarkId] || [])
+        .map(
+          (tag) => `
+        <span class="bookmark-tag" style="
+          background-color: ${uiState.tagColors[tag] || "#ccc"};
+          color: white;
+          padding: 4px 10px;
+          border-radius: 6px;
+          font-size: 12px;
+          margin-right: 8px;
+        ">
+          ${tag}
+        </span>
+      `
+        )
+        .join("") || translations[language].notAvailable
+
+    popup.classList.remove("hidden")
+
+    const closePopup = () => {
+      popup.classList.add("hidden")
+      document.removeEventListener("keydown", handleKeydown)
+    }
+
+    closeButton.onclick = closePopup
+    popup.onclick = (e) => {
+      if (e.target === popup) closePopup()
+    }
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") closePopup()
+    }
+    document.addEventListener("keydown", handleKeydown)
+  })
+}
+
+// Function to open manage tags popup with dropdown for existing tags
+async function openManageTagsPopup(bookmarkId, elements) {
+  const language = localStorage.getItem("appLanguage") || "en"
+  const popup = document.getElementById("manage-tags-popup")
+  const existingTags = document.getElementById("existing-tags")
+  const newTagInput = document.getElementById("new-tag-input")
+  const newTagColor = document.getElementById("new-tag-color")
+  const addTagBtn = document.getElementById("add-tag-btn")
+  const closeButton = popup.querySelector(".close-modal")
+
+  if (
+    !popup ||
+    !existingTags ||
+    !newTagInput ||
+    !newTagColor ||
+    !addTagBtn ||
+    !closeButton
+  ) {
+    console.error("Manage tags popup elements missing", {
+      popup: !!popup,
+      existingTags: !!existingTags,
+      newTagInput: !!newTagInput,
+      newTagColor: !!newTagColor,
+      addTagBtn: !!addTagBtn,
+      closeButton: !!closeButton,
+    })
+    showCustomPopup(translations[language].errorUnexpected, "error", true)
+    return
+  }
+
+  // Create dropdown for existing tags
+  const tagSelect = document.createElement("select")
+  tagSelect.className = "select existing-tags-select"
+  tagSelect.style.cssText = `
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  `
+  tagSelect.innerHTML = `<option value="">${
+    translations[language].selectTag || "Select Tag"
+  }</option>`
+
+  // Populate dropdown with existing tags
+  const tags = await getAllTags()
+  tags.forEach((tag) => {
+    const option = document.createElement("option")
+    option.value = tag
+    option.textContent = tag
+    option.style.backgroundColor = uiState.tagColors[tag] || "#ccc"
+    option.style.color = "#fff"
+    tagSelect.appendChild(option)
+  })
+
+  // Insert dropdown above the add-tag-container
+  const addTagContainer = popup.querySelector(".add-tag-container")
+  addTagContainer.before(tagSelect)
+
+  const renderTags = () => {
+    const tags = uiState.bookmarkTags[bookmarkId] || []
+    existingTags.innerHTML = tags
+      .map(
+        (tag) => `
+        <div class="tag-item" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+          <span class="bookmark-tag" style="
+            background-color: ${uiState.tagColors[tag] || "#ccc"};
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+          ">
+            ${tag}
+          </span>
+          <button class="remove-tag-btn" data-tag="${tag}" style="
+            background: none;
+            border: none;
+            color: var(--text-danger, #ff5555);
+            cursor: pointer;
+            font-size: 12px;
+          ">
+            ✕
+          </button>
+        </div>
+      `
+      )
+      .join("")
+  }
+
+  renderTags()
+
+  popup.classList.remove("hidden")
+
+  // Handle tag selection from dropdown
+  tagSelect.addEventListener("change", () => {
+    const selectedTag = tagSelect.value
+    if (
+      selectedTag &&
+      !uiState.bookmarkTags[bookmarkId]?.includes(selectedTag)
+    ) {
+      if (!uiState.bookmarkTags[bookmarkId]) {
+        uiState.bookmarkTags[bookmarkId] = []
+      }
+      uiState.bookmarkTags[bookmarkId].push(selectedTag)
+      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
+      renderTags()
+      tagSelect.value = "" // Reset dropdown
+    }
+  })
+
+  // Handle adding new tag
+  addTagBtn.onclick = () => {
+    const tag = newTagInput.value.trim()
+    const color = newTagColor.value
+    if (tag) {
+      if (!uiState.bookmarkTags[bookmarkId]) {
+        uiState.bookmarkTags[bookmarkId] = []
+      }
+      if (!uiState.bookmarkTags[bookmarkId].includes(tag)) {
+        uiState.bookmarkTags[bookmarkId].push(tag)
+        uiState.tagColors[tag] = color
+        chrome.storage.local.set({
+          bookmarkTags: uiState.bookmarkTags,
+          tagColors: uiState.tagColors,
+        })
+        renderTags()
+        newTagInput.value = ""
+        newTagColor.value = "#cccccc"
+        // Update dropdown with new tag
+        const option = document.createElement("option")
+        option.value = tag
+        option.textContent = tag
+        option.style.backgroundColor = color
+        option.style.color = "#fff"
+        tagSelect.appendChild(option)
+      } else {
+        showCustomPopup(
+          translations[language].tagExists || "Tag already exists",
+          "error",
+          true
+        )
+      }
+    }
+  }
+
+  existingTags.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-tag-btn")) {
+      const tag = e.target.dataset.tag
+      uiState.bookmarkTags[bookmarkId] = uiState.bookmarkTags[
+        bookmarkId
+      ].filter((t) => t !== tag)
+      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
+      renderTags()
+    }
+  })
+
+  const closePopup = () => {
+    popup.classList.add("hidden")
+    tagSelect.remove() // Clean up dropdown
+    document.removeEventListener("keydown", handleKeydown)
+  }
+
+  closeButton.onclick = closePopup
+  popup.onclick = (e) => {
+    if (e.target === popup) closePopup()
+  }
+
+  const handleKeydown = (e) => {
+    if (e.key === "Escape") closePopup()
+  }
+  document.addEventListener("keydown", handleKeydown)
+}
+
+// Function to get all user-created tags
+async function getAllTags() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(["bookmarkTags"], (data) => {
+      const bookmarkTags = data.bookmarkTags || {}
+      const allTags = new Set()
+      Object.values(bookmarkTags).forEach((tags) => {
+        tags.forEach((tag) => allTags.add(tag))
+      })
+      resolve([...allTags].sort())
+    })
+  })
+}
+
+// Existing functions (unchanged)
 function handleRenameSave(e, elements) {
   e.stopPropagation()
   const newTitle = elements.renameInput.value.trim()
@@ -413,10 +685,9 @@ function handleFavoriteBookmark(e, elements) {
       return
     }
 
-    // Toggle isFavorite in chrome.storage.local
     chrome.storage.local.get("favoriteBookmarks", (data) => {
       const favoriteBookmarks = data.favoriteBookmarks || {}
-      const isFavorite = !favoriteBookmarks[bookmarkId] // Toggle state
+      const isFavorite = !favoriteBookmarks[bookmarkId]
       favoriteBookmarks[bookmarkId] = isFavorite
       chrome.storage.local.set({ favoriteBookmarks }, () => {
         if (chrome.runtime.lastError) {
@@ -433,7 +704,6 @@ function handleFavoriteBookmark(e, elements) {
           return
         }
 
-        // Update bookmark tree in memory
         const updateBookmarkInTree = (nodes) => {
           for (const node of nodes) {
             if (node.id === bookmarkId) {
@@ -449,7 +719,6 @@ function handleFavoriteBookmark(e, elements) {
 
         updateBookmarkInTree(uiState.bookmarkTree)
 
-        // Update the button dynamically
         const button = document.querySelector(
           `.dropdown-btn[data-id="${bookmarkId}"]`
         )
@@ -460,7 +729,6 @@ function handleFavoriteBookmark(e, elements) {
             : '<i class="fas fa-ellipsis-v"></i>'
         }
 
-        // Re-render bookmarks to ensure consistency
         renderFilteredBookmarks(uiState.bookmarkTree, elements)
 
         showCustomPopup(

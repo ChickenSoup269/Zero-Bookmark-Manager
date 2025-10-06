@@ -223,10 +223,10 @@ export function setupUIControlListeners(elements) {
     elements.settingsMenu.classList.toggle("hidden")
   })
 
-  elements.renameFolderOption.addEventListener("click", () => {
-    openRenameFolderPopup(elements, "")
-    elements.settingsMenu.classList.add("hidden")
-  })
+  // elements.renameFolderOption.addEventListener("click", () => {
+  //   openRenameFolderPopup(elements, "")
+  //   elements.settingsMenu.classList.add("hidden")
+  // })
 
   if (elements.deleteBookmarksButton) {
     elements.deleteBookmarksButton.addEventListener("click", () => {

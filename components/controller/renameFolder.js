@@ -15,10 +15,10 @@ export function setupRenameFolderListeners(elements) {
   })
 
   // Rename Folder Option (Settings Menu)
-  elements.renameFolderOption.addEventListener("click", () => {
-    openRenameFolderPopup(elements, "")
-    elements.settingsMenu.classList.add("hidden")
-  })
+  // elements.renameFolderOption.addEventListener("click", () => {
+  //   openRenameFolderPopup(elements, "")
+  //   elements.settingsMenu.classList.add("hidden")
+  // })
 
   // Rename Folder Save
   elements.renameFolderSave.addEventListener("click", () => {

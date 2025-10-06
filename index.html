@@ -21,6 +21,9 @@
                         <option value="en">English</option>
                         <option value="vi">Tiếng Việt</option>
                     </select>
+                    <select id="tag-filter" class="select">
+                        <option value="">All Tags</option>
+                    </select>
                     <select id="theme-switcher" class="select">
                         <option value="system">Theme: System</option>
                         <option value="light">Theme: Light</option>
@@ -38,11 +41,11 @@
                     <select id="view-switcher" class="select">
                         <option value="flat">View: Flat List</option>
                         <option value="tree">View: Tree View</option>
+                        <option value="detail">View: Detail View</option>
                     </select>
                     <hr>
                     <button id="export-bookmarks-option" class="menu-item">Export Bookmarks</button>
                     <button id="import-bookmarks-option" class="menu-item">Import Bookmarks</button>
-                    <button id="rename-folder-option" class="menu-item">Rename Folder</button>
                     <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
                     <button id="edit-in-new-tab-option" class="menu-item">Edit in New Tab</button>
                     <hr>
@@ -143,6 +146,32 @@
                 </div>
             </div>
         </div>
+        <div id="bookmark-detail-popup" class="rename-popup hidden" role="dialog" aria-labelledby="detail-title">
+            <div class="rename-popup-content">
+                <h3 id="detail-title-label">Bookmark Detail</h3>
+                <p><strong id="detail-title-label">Title:</strong> <span id="detail-title"></span></p>
+                <p><strong id="detail-url-label">URL:</strong> <span id="detail-url"></span></p>
+                <p><strong id="detail-date-added-label">Date Added:</strong> <span id="detail-date-added"></span></p>
+                <p><strong id="detail-tags-label">Tags:</strong> <span id="detail-tags"></span></p>
+                <div class="rename-popup-buttons">
+                    <button class="close-modal button cancel">Close</button>
+                </div>
+            </div>
+        </div>
+        <div id="manage-tags-popup" class="rename-popup hidden" role="dialog" aria-labelledby="manage-tags-title">
+            <div class="rename-popup-content">
+                <h3 id="manage-tags-title">Manage Tags</h3>
+                <div id="existing-tags"></div>
+                <div class="add-tag-container">
+                    <input type="text" id="new-tag-input" class="input" placeholder="Enter new tag...">
+                    <input type="color" id="new-tag-color" value="#cccccc" class="tag-color-picker">
+                    <button id="add-tag-btn" class="button save">Add Tag</button>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button class="close-modal button cancel">Close</button>
+                </div>
+            </div>
+        </div>
         <div id="custom-popup" class="rename-popup hidden" role="dialog" aria-labelledby="custom-popup-title">
             <div class="rename-popup-content">
                 <h3 id="custom-popup-title">Notification</h3>
@@ -184,6 +213,7 @@
     </div>
     <script src="main.js" type="module"></script>
     <script src="./components/year.js" type="module"></script>
+    <script src="./components/tag.js" type="module"></script>
 </body>
 
 </html>
