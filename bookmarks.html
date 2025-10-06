@@ -85,12 +85,12 @@
                     <button id="rename-folder-option" class="menu-item">Rename Folder</button>
                     <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
                     <button id="edit-in-new-tab-option" class="menu-item">Edit in New Tab</button>
+                    <hr>
+                    <button id="localstorage-settings-option" class="menu-item">Local Storage Settings</button>
                 </div>
             </div>
         </div>
-        <div id="folder-list" class="folder-list">
-            <!-- Bookmark cards will be dynamically inserted here -->
-        </div>
+        <div id="folder-list" class="folder-list"></div>
         <div id="rename-popup" class="rename-popup hidden" role="dialog" aria-labelledby="rename-title">
             <div class="rename-popup-content">
                 <h3 id="rename-title">Rename</h3>
@@ -160,6 +160,25 @@
                 </div>
             </div>
         </div>
+        <div id="localstorage-settings-popup" class="rename-popup hidden" role="dialog"
+            aria-labelledby="localstorage-settings-title">
+            <div class="rename-popup-content">
+                <h3 id="localstorage-settings-title">Local Storage Settings</h3>
+                <div class="localstorage-settings-container">
+                    <label><input type="checkbox" id="save-searchQuery" checked> Save Search Query</label>
+                    <label><input type="checkbox" id="save-selectedFolderId" checked> Save Selected Folder</label>
+                    <label><input type="checkbox" id="save-sortType" checked> Save Sort Type</label>
+                    <label><input type="checkbox" id="save-viewMode" checked> Save View Mode</label>
+                    <label><input type="checkbox" id="save-collapsedFolders" checked> Save Collapsed Folders</label>
+                    <label><input type="checkbox" id="save-checkboxesVisible" checked> Save Checkboxes
+                        Visibility</label>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="localstorage-settings-save" class="button save">Save</button>
+                    <button id="localstorage-settings-cancel" class="button cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
         <div id="ai-config-popup" class="rename-popup hidden" role="dialog" aria-labelledby="ai-config-title">
             <div class="rename-popup-content">
                 <h3 id="ai-config-title" class="ai-title">Configure AI Chatbot</h3>
@@ -188,7 +207,6 @@
                 </div>
             </div>
         </div>
-
         <div class="floating-buttons">
             <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
                 <i class="fas fa-caret-up"></i>
@@ -197,7 +215,6 @@
                 <i class="far fa-comment-alt"></i>
             </button>
         </div>
-        <!-- mấy cái điều khiển chatbot thui  -->
         <div id="chatbox" class="chatbox hidden">
             <div class="chatbox-content">
                 <h3>
@@ -235,7 +252,6 @@
                 </div>
             </div>
         </div>
-        <!-- bảng hướng dẫn sử dụng -->
         <div id="custom-guide" class="custom-guide hidden" role="dialog" aria-labelledby="custom-guide-title">
             <h3 id="custom-guide-title">Help Guide</h3>
             <div id="custom-guide-message"></div>
@@ -243,7 +259,6 @@
                 <button id="custom-guide-ok" class="button save">OK</button>
             </div>
         </div>
-        <!-- footer -->
         <div class="footer">
             <p class="footer-text">
                 <span id="year"></span>
@@ -255,6 +270,7 @@
     <script src="./components/sidebar.js" type="module"></script>
     <script src="./components/chat.js" type="module"></script>
     <script src="./components/year.js" type="module"></script>
+    <script src="./components/option/option.js" type="module"></script>
 </body>
 
 </html>

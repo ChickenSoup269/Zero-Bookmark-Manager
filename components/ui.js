@@ -181,9 +181,11 @@ function detectViewContext() {
 
   if (!isPopup && isExtension) {
     document.documentElement.classList.add("webview-mode")
+
     return "webview"
   } else {
     document.documentElement.classList.remove("webview-mode")
+
     return "popup"
   }
 }
@@ -353,12 +355,6 @@ function toggleFolderButtons(elements) {
 
 function renderBookmarks(bookmarksList, elements) {
   const fragment = document.createDocumentFragment()
-  const selectAllDiv = document.createElement("div")
-  selectAllDiv.className = "select-all"
-  selectAllDiv.style.display = uiState.checkboxesVisible ? "block" : "none"
-
-  fragment.appendChild(selectAllDiv)
-
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
   sortedBookmarks.forEach((bookmark) => {
     if (bookmark.url) {

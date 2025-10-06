@@ -191,6 +191,13 @@ export const translations = {
     unmarkedFavorite: "I've removed the bookmark from favorites",
     showBookmarkIds: "Show Bookmark IDs",
     hideBookmarkIds: "Hide Bookmark IDs",
+    localStorageSettingsTitle: "Local Storage Settings",
+    saveSearchQuery: "Save Search Query",
+    saveSelectedFolderId: "Save Selected Folder",
+    saveSortType: "Save Sort Type",
+    saveViewMode: "Save View Mode",
+    saveCollapsedFolders: "Save Collapsed Folders",
+    saveCheckboxesVisible: "Save Checkboxes Visibility",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -382,6 +389,13 @@ export const translations = {
     unmarkedFavorite: "Tui đã bỏ đánh dấu yêu thích cho bookmark",
     showBookmarkIds: "Hiển thị ID Bookmark",
     hideBookmarkIds: "Ẩn ID Bookmark",
+    localStorageSettingsTitle: "Cài đặt Bộ nhớ tại web",
+    saveSearchQuery: "Lưu Truy vấn Tìm kiếm",
+    saveSelectedFolderId: "Lưu Thư mục Đã chọn",
+    saveSortType: "Lưu Kiểu Sắp xếp",
+    saveViewMode: "Lưu Chế độ Xem",
+    saveCollapsedFolders: "Lưu Thư mục Thu gọn",
+    saveCheckboxesVisible: "Lưu Hiển thị Hộp kiểm",
   },
 }
 
@@ -683,5 +697,60 @@ export function showCustomGuide() {
     } else {
       alert("Error: Help guide cannot be displayed.")
     }
+  }
+}
+
+export function showLocalStorageSettingsPopup() {
+  const popup = document.getElementById("localstorage-settings-popup")
+  const title = document.getElementById("localstorage-settings-title")
+  const saveButton = document.getElementById("localstorage-settings-save")
+  const cancelButton = document.getElementById("localstorage-settings-cancel")
+  const language = localStorage.getItem("appLanguage") || "en"
+
+  if (!popup || !title || !saveButton || !cancelButton) {
+    console.error("Local storage settings popup elements missing:", {
+      popup: !!popup,
+      title: !!title,
+      saveButton: !!saveButton,
+      cancelButton: !!cancelButton,
+    })
+    showCustomPopup(translations[language].errorUnexpected, "error", true)
+    return
+  }
+
+  // Set multilingual labels
+  title.textContent = translations[language].localStorageSettingsTitle
+  saveButton.textContent = translations[language].save
+  cancelButton.textContent = translations[language].cancel
+
+  // Debug checkbox visibility
+  const checkboxes = document.querySelectorAll(
+    '.localstorage-settings-container input[type="checkbox"]'
+  )
+  console.log(`Found ${checkboxes.length} checkboxes in popup`)
+  checkboxes.forEach((checkbox) => {
+    console.log(
+      `Checkbox ${checkbox.id}: checked=${checkbox.checked}, display=${
+        getComputedStyle(checkbox).display
+      }, visibility=${getComputedStyle(checkbox).visibility}`
+    )
+  })
+
+  popup.classList.remove("hidden")
+  console.log("Local storage settings popup shown")
+
+  // Apply current theme
+  const currentTheme =
+    document.documentElement.getAttribute("data-theme") || "light"
+  const allThemes = ["light", "dark", "dracula", "onedark"]
+  allThemes.forEach((theme) => popup.classList.remove(`${theme}-theme`))
+  popup.classList.add(`${currentTheme}-theme`)
+}
+
+export function hideLocalStorageSettingsPopup() {
+  const popup = document.getElementById("localstorage-settings-popup")
+  if (popup) {
+    popup.classList.add("hidden")
+    console.log("Local storage settings popup hidden")
   }
 }

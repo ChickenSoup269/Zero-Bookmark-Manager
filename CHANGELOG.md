@@ -1,12 +1,13 @@
 <!-- ---Extension version---- -->
 
 Changelog:
-[1.1.0] -2025-09-??
+[1.1.0] - 2025-10-08
 
 - Added web view
 - Added chatbot - gemini
 - Added favourite bookmarks
-- Added tree view [have some bugs]
+- Added tree view
+- Added option local storage settings
 - Update export option now have CSV (Excell/Sheets)
 - Update small UI
 

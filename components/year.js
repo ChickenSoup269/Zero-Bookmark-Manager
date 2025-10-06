@@ -2,9 +2,17 @@
 import { translations } from "./utils.js"
 
 const currentYear = new Date().getFullYear()
-document.getElementById("year").textContent = currentYear
+const yearElement = document.getElementById("year")
+if (yearElement) {
+  yearElement.textContent = currentYear
+} else {
+  console.warn("Element with id 'year' not found in DOM")
+}
 
-// language switcher
 const language = localStorage.getItem("appLanguage") || "en"
-document.getElementById("ai-config-title").textContent =
-  translations[language].aiTitle || "AI Assistant"
+const aiConfigTitle = document.getElementById("ai-config-title")
+if (aiConfigTitle) {
+  aiConfigTitle.textContent = translations[language].aiTitle || "AI Assistant"
+} else {
+  console.warn("Element with id 'ai-config-title' not found in DOM")
+}

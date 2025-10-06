@@ -1,12 +1,9 @@
-import {
-  updateTheme,
-  restoreUIState,
-  renderFilteredBookmarks,
-} from "./components/ui.js"
+import { updateTheme, renderFilteredBookmarks } from "./components/ui.js"
 import { getBookmarkTree } from "./components/bookmarks.js"
 import { translations, debounce } from "./components/utils.js"
 import { setupEventListeners } from "./components/events.js"
 import { uiState } from "./components/state.js"
+import { customLoadUIState } from "./components/option/option.js"
 
 document.addEventListener("DOMContentLoaded", () => {
   // DOM references
@@ -114,8 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch fresh bookmark data first
     getBookmarkTree((bookmarkTreeNodes) => {
       if (bookmarkTreeNodes) {
-        // Restore UI state and render after fresh data
-        restoreUIState(elements, () => {
+        customLoadUIState(() => {
           renderFilteredBookmarks(bookmarkTreeNodes, elements)
           setupBookmarkChangeListeners(elements)
         })

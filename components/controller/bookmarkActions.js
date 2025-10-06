@@ -98,10 +98,22 @@ function handleMenuItemClick(e, elements) {
     ? "rename"
     : e.target.classList.contains("favorite-btn")
     ? "favorite"
+    : e.target.id === "localstorage-settings-option" ||
+      e.target.id === "export-bookmarks-option" ||
+      e.target.id === "import-bookmarks-option" ||
+      e.target.id === "rename-folder-option" ||
+      e.target.id === "show-bookmark-ids-option" ||
+      e.target.id === "edit-in-new-tab-option"
+    ? null
     : null
 
-  if (!bookmarkId || !action) {
-    console.error("Invalid bookmark ID or action", { bookmarkId, action })
+  if (!bookmarkId && action) {
+    console.error("Invalid bookmark ID for action", { bookmarkId, action })
+    return
+  }
+
+  if (!action) {
+    // Skip processing for non-bookmark actions like localstorage-settings-option
     return
   }
 

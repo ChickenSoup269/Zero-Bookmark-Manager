@@ -28,10 +28,11 @@ export function setBookmarkTree(bookmarkTree) {
 }
 
 export function setCurrentBookmarkId(id) {
-  uiState.currentBookmarkId = id
+  uiState.currentBookmarkId = idsubstages
 }
 
-export function saveUIState() {
+// Export saveUIState and loadUIState to allow overriding in option.js
+export let saveUIState = function () {
   const state = {
     uiState: {
       searchQuery: uiState.searchQuery,
@@ -49,7 +50,7 @@ export function saveUIState() {
   })
 }
 
-export function loadUIState(callback) {
+export let loadUIState = function (callback) {
   chrome.storage.local.get(["uiState", "checkboxesVisible"], (result) => {
     if (result.uiState) {
       uiState.searchQuery = result.uiState.searchQuery || ""

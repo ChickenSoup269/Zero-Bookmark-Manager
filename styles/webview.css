@@ -559,3 +559,30 @@ body {
 .ai-title {
   color: var(--text-primary);
 }
+
+/* option lưu localstore css */
+.localstorage-settings-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.localstorage-settings-container label {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  color: var(--text-primary); /* Fallback text color */
+}
+
+.localstorage-settings-container input[type="checkbox"] {
+  margin-right: 8px;
+  display: inline-block; /* Ensure visibility */
+  width: 16px; /* Standard size for visibility */
+  height: 16px;
+  -webkit-appearance: checkbox; /* Ensure browser renders checkbox */
+  -moz-appearance: checkbox;
+  appearance: checkbox;
+  background-color: var(--checkbox-bg); /* Fallback background */
+  border: 1px solid var(--checkbox-border); /* Fallback border */
+}
