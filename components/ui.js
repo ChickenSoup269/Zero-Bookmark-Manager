@@ -181,11 +181,9 @@ function detectViewContext() {
 
   if (!isPopup && isExtension) {
     document.documentElement.classList.add("webview-mode")
-    console.log("Detected webview mode")
     return "webview"
   } else {
     document.documentElement.classList.remove("webview-mode")
-    console.log("Detected popup mode")
     return "popup"
   }
 }
@@ -209,7 +207,6 @@ export function restoreUIState(elements, callback) {
       ;["0", "1", "2"].forEach((id) => {
         if (uiState.collapsedFolders.has(id)) {
           uiState.collapsedFolders.delete(id)
-          console.log(`Removed folder ${id} from collapsedFolders`)
         }
       })
     }

@@ -234,12 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      console.log("Built API Request:", {
-        url: apiUrl,
-        model,
-        body: JSON.stringify(body, null, 2),
-      })
-
       return { url: apiUrl, headers, body, method: "POST" }
     } catch (error) {
       console.error("Failed to build API request:", error)
@@ -1402,7 +1396,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }: Invalid AI response format`
         )
       }
-      console.log("AI Response:", result)
 
       await handleBookmarkCommand(result.action, result.params || {}, message)
     } catch (error) {

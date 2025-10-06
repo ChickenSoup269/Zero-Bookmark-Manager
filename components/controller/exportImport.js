@@ -923,6 +923,33 @@ export function setupExportImportListeners(elements) {
               (b) => b.url
             )
 
+            function getFolderPath(bookmarkTreeNodes, nodeId, path = []) {
+              // Tìm node theo ID
+              const node = findNodeById(bookmarkTreeNodes, nodeId)
+              if (!node) return path.join("/")
+
+              // Nếu node có tiêu đề, thêm vào đầu mảng path
+              if (node.title) path.unshift(node.title)
+
+              // Nếu có parentId thì tiếp tục đệ quy lên
+              if (node.parentId) {
+                return getFolderPath(bookmarkTreeNodes, node.parentId, path)
+              }
+
+              return path.join("/")
+            }
+
+            // Hàm phụ để tìm node theo ID trong cây
+            function findNodeById(nodes, id) {
+              for (const node of nodes) {
+                if (node.id === id) return node
+                if (node.children) {
+                  const found = findNodeById(node.children, id)
+                  if (found) return found
+                }
+              }
+              return null
+            }
             // Create CSV headers
             let csvContent =
               "Title,URL,Date Added,Date Group Modified,Folder Path\n"
