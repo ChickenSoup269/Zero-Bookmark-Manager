@@ -974,3 +974,34 @@ html {
   color: var(--accent-color);
   text-decoration: none;
 }
+
+/* option lưu localstore css */
+#localstorage-settings-popup {
+  z-index: 101;
+}
+
+.localstorage-settings-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.localstorage-settings-container label {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.localstorage-settings-container input[type="checkbox"] {
+  margin-right: 8px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  -webkit-appearance: checkbox;
+  -moz-appearance: checkbox;
+  appearance: checkbox;
+  background-color: var(--focus-outline);
+  border: 1px solid var(--folder-bg);
+}

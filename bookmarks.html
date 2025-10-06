@@ -160,25 +160,6 @@
                 </div>
             </div>
         </div>
-        <div id="localstorage-settings-popup" class="rename-popup hidden" role="dialog"
-            aria-labelledby="localstorage-settings-title">
-            <div class="rename-popup-content">
-                <h3 id="localstorage-settings-title">Local Storage Settings</h3>
-                <div class="localstorage-settings-container">
-                    <label><input type="checkbox" id="save-searchQuery" checked> Save Search Query</label>
-                    <label><input type="checkbox" id="save-selectedFolderId" checked> Save Selected Folder</label>
-                    <label><input type="checkbox" id="save-sortType" checked> Save Sort Type</label>
-                    <label><input type="checkbox" id="save-viewMode" checked> Save View Mode</label>
-                    <label><input type="checkbox" id="save-collapsedFolders" checked> Save Collapsed Folders</label>
-                    <label><input type="checkbox" id="save-checkboxesVisible" checked> Save Checkboxes
-                        Visibility</label>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="localstorage-settings-save" class="button save">Save</button>
-                    <button id="localstorage-settings-cancel" class="button cancel">Cancel</button>
-                </div>
-            </div>
-        </div>
         <div id="ai-config-popup" class="rename-popup hidden" role="dialog" aria-labelledby="ai-config-title">
             <div class="rename-popup-content">
                 <h3 id="ai-config-title" class="ai-title">Configure AI Chatbot</h3>
@@ -186,8 +167,8 @@
                     <select id="ai-model-select" class="select" aria-label="Select AI model">
                         <option value="">Select AI Model</option>
                         <option value="gemini">Gemini</option>
-                        <option value="gpt">GPT</option>
-                        <option value="other">Other</option>
+                        <!-- <option value="gpt">GPT</option>
+                        <option value="other">Other</option> -->
                     </select>
                     <div class="rename-input-container">
                         <input type="text" id="api-key-input" class="input" placeholder="Enter API key..."
@@ -257,6 +238,25 @@
             <div id="custom-guide-message"></div>
             <div class="rename-popup-buttons">
                 <button id="custom-guide-ok" class="button save">OK</button>
+            </div>
+        </div>
+        <div id="localstorage-settings-popup" class="rename-popup hidden" role="dialog"
+            aria-labelledby="localstorage-settings-title">
+            <div class="rename-popup-content">
+                <h3 id="localstorage-settings-title">Local Storage Settings</h3>
+                <div class="localstorage-settings-container">
+                    <label><input type="checkbox" id="save-searchQuery" checked> Save Search Query</label>
+                    <label><input type="checkbox" id="save-selectedFolderId" checked> Save Selected Folder</label>
+                    <label><input type="checkbox" id="save-sortType" checked> Save Sort Type</label>
+                    <label><input type="checkbox" id="save-viewMode" checked> Save View Mode</label>
+                    <label><input type="checkbox" id="save-collapsedFolders" checked> Save Collapsed Folders</label>
+                    <label><input type="checkbox" id="save-checkboxesVisible" checked> Save Checkboxes
+                        Visibility</label>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="localstorage-settings-save" class="button save">Save</button>
+                    <button id="localstorage-settings-cancel" class="button cancel">Cancel</button>
+                </div>
             </div>
         </div>
         <div class="footer">
