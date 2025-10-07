@@ -133,41 +133,43 @@ function saveStorageSettings() {
   })
 }
 
-// Wrap saveUIState to respect storage settings
 function customSaveUIState() {
-  console.log("customSaveUIState called. Current uiState:", uiState)
-  chrome.storage.local.get(["storageSettings"], (result) => {
-    const storageSettings = result.storageSettings || defaultStorageSettings
-    console.log("Using storageSettings for save:", storageSettings)
-    const state = {
-      uiState: {},
-      checkboxesVisible: storageSettings.checkboxesVisible
-        ? uiState.checkboxesVisible
-        : undefined,
-      bookmarkTags: storageSettings.bookmarkTags
-        ? uiState.bookmarkTags
-        : undefined,
-      tagColors: storageSettings.tagColors ? uiState.tagColors : undefined,
-    }
-    if (storageSettings.searchQuery)
-      state.uiState.searchQuery = uiState.searchQuery
-    if (storageSettings.selectedFolderId)
-      state.uiState.selectedFolderId = uiState.selectedFolderId
-    if (storageSettings.sortType) state.uiState.sortType = uiState.sortType
-    if (storageSettings.viewMode) state.uiState.viewMode = uiState.viewMode
-    if (storageSettings.collapsedFolders)
-      state.uiState.collapsedFolders = Array.from(uiState.collapsedFolders)
-    if (storageSettings.selectedTag)
-      state.uiState.selectedTag = uiState.selectedTag
-
-    chrome.storage.local.set(state, () => {
-      if (chrome.runtime.lastError) {
-        console.error("Error saving state:", chrome.runtime.lastError)
-      } else {
-        console.log("UI state saved with settings:", state)
+  let saveTimeout
+  clearTimeout(saveTimeout)
+  saveTimeout = setTimeout(() => {
+    chrome.storage.local.get(["storageSettings"], (result) => {
+      const storageSettings = result.storageSettings || defaultStorageSettings
+      const state = {
+        uiState: {},
+        checkboxesVisible: storageSettings.checkboxesVisible
+          ? uiState.checkboxesVisible
+          : undefined,
+        bookmarkTags: uiState.bookmarkTags, // Luôn lưu
+        tagColors: uiState.tagColors, // Luôn lưu
       }
+      if (storageSettings.searchQuery)
+        state.uiState.searchQuery = uiState.searchQuery
+      if (storageSettings.selectedFolderId)
+        state.uiState.selectedFolderId = uiState.selectedFolderId
+      if (storageSettings.sortType) state.uiState.sortType = uiState.sortType
+      if (storageSettings.viewMode) state.uiState.viewMode = uiState.viewMode
+      if (storageSettings.collapsedFolders)
+        state.uiState.collapsedFolders = Array.from(uiState.collapsedFolders)
+      if (storageSettings.selectedTag)
+        state.uiState.selectedTag = uiState.selectedTag
+
+      chrome.storage.local.set(state, () => {
+        if (chrome.runtime.lastError) {
+          console.error(
+            "Detailed error saving state:",
+            chrome.runtime.lastError
+          )
+        } else {
+          console.log("UI state saved with settings:", state)
+        }
+      })
     })
-  })
+  }, 500) // Chờ 500ms trước khi lưu
 }
 
 // Wrap loadUIState to respect storage settings
@@ -175,7 +177,6 @@ function customLoadUIState(callback) {
   console.log("customLoadUIState called")
   chrome.storage.local.get(["storageSettings"], (result) => {
     const storageSettings = result.storageSettings || defaultStorageSettings
-    console.log("Using storageSettings for load:", storageSettings)
     chrome.storage.local.get(
       ["uiState", "checkboxesVisible", "bookmarkTags", "tagColors"],
       (loadResult) => {
@@ -236,43 +237,9 @@ function customLoadUIState(callback) {
             console.warn("Select All container (.select-all) not found")
           }
         }
-        if (storageSettings.bookmarkTags) {
-          uiState.bookmarkTags = loadResult.bookmarkTags || {}
-        } else {
-          uiState.bookmarkTags = {}
-          console.log(
-            "Cleared bookmarkTags due to storageSettings.bookmarkTags = false"
-          )
-          chrome.storage.local.remove("bookmarkTags", () => {
-            if (chrome.runtime.lastError) {
-              console.error(
-                "Error removing bookmarkTags:",
-                chrome.runtime.lastError
-              )
-            } else {
-              console.log("Removed bookmarkTags from storage")
-            }
-          })
-        }
-        if (storageSettings.tagColors) {
-          uiState.tagColors = loadResult.tagColors || {}
-        } else {
-          uiState.tagColors = {}
-          console.log(
-            "Cleared tagColors due to storageSettings.tagColors = false"
-          )
-          chrome.storage.local.remove("tagColors", () => {
-            if (chrome.runtime.lastError) {
-              console.error(
-                "Error removing tagColors:",
-                chrome.runtime.lastError
-              )
-            } else {
-              console.log("Removed tagColors from storage")
-            }
-          })
-        }
-        // Update UI to reflect loaded tags
+        // Luôn tải bookmarkTags và tagColors
+        uiState.bookmarkTags = loadResult.bookmarkTags || {}
+        uiState.tagColors = loadResult.tagColors || {}
         const elements = {
           tagFilter: document.getElementById("tag-filter"),
           folderListDiv: document.getElementById("folder-list"),
@@ -292,7 +259,7 @@ export { customSaveUIState, customLoadUIState }
 
 // Override original saveUIState to prevent accidental use
 export function saveUIState() {
-  console.warn("Original saveUIState called! Use customSaveUIState instead.")
+  console.warn("Original saveUIState called from:", new Error().stack)
   customSaveUIState()
 }
 

@@ -1306,61 +1306,82 @@ function showBookmarkDetail(bookmarkId) {
   modal.classList.remove("hidden")
 }
 
-function showManageTagsPopup(bookmarkId) {
-  const modal = document.getElementById("manage-tags-popup")
-  if (!modal) return
+// function showManageTagsPopup(bookmarkId) {
+//   const modal = document.getElementById("manage-tags-popup")
+//   if (!modal) return
 
-  getTagsForBookmark(bookmarkId).then((tags) => {
-    const existingTags = modal.querySelector("#existing-tags")
-    existingTags.innerHTML = tags
-      .map(
-        (tag) => `
-      <div class="tag-item">
-        <span style="background-color: ${
-          uiState.tagColors[tag] || "#ccc"
-        }; color: white; padding: 4px 8px; border-radius: 6px;">${tag}</span>
-        <input type="color" value="${
-          uiState.tagColors[tag] || "#cccccc"
-        }" data-tag="${tag}" class="tag-color-picker">
-        <button class="remove-tag" data-tag="${tag}" data-id="${bookmarkId}">Remove</button>
-      </div>
-    `
-      )
-      .join("")
+//   getTagsForBookmark(bookmarkId).then((tags) => {
+//     const existingTags = modal.querySelector("#existing-tags")
+//     existingTags.innerHTML = tags
+//       .map(
+//         (tag) => `
+//       <div class="tag-item">
+//         <span style="background-color: ${
+//           uiState.tagColors[tag] || "#ccc"
+//         }; color: white; padding: 4px 8px; border-radius: 6px;">${tag}</span>
+//         <input type="color" value="${
+//           uiState.tagColors[tag] || "#cccccc"
+//         }" data-tag="${tag}" class="tag-color-picker">
+//         <button class="remove-tag" data-tag="${tag}" data-id="${bookmarkId}">Remove</button>
+//       </div>
+//     `
+//       )
+//       .join("")
 
-    modal.querySelectorAll(".tag-color-picker").forEach((picker) => {
-      picker.onchange = (e) => {
-        const tag = e.target.dataset.tag
-        changeTagColor(tag, e.target.value)
-      }
-    })
+//     modal.querySelectorAll(".tag-color-picker").forEach((picker) => {
+//       picker.onchange = (e) => {
+//         const tag = e.target.dataset.tag
+//         changeTagColor(tag, e.target.value)
+//         customSaveUIState() // Lưu thay đổi
+//         chrome.bookmarks.getTree((tree) => {
+//           renderFilteredBookmarks(tree, {
+//             tagFilter: document.getElementById("tag-filter"),
+//             folderListDiv: document.getElementById("folder-list"),
+//           })
+//         })
+//       }
+//     })
 
-    modal.querySelectorAll(".remove-tag").forEach((btn) => {
-      btn.onclick = (e) => {
-        const tag = e.target.dataset.tag
-        const id = e.target.dataset.id
-        removeTagFromBookmark(id, tag)
-        showManageTagsPopup(id)
-      }
-    })
+//     modal.querySelectorAll(".remove-tag").forEach((btn) => {
+//       btn.onclick = (e) => {
+//         const tag = e.target.dataset.tag
+//         const id = e.target.dataset.id
+//         removeTagFromBookmark(id, tag)
+//         showManageTagsPopup(id)
+//         customSaveUIState() // Lưu thay đổi
+//         chrome.bookmarks.getTree((tree) => {
+//           renderFilteredBookmarks(tree, {
+//             tagFilter: document.getElementById("tag-filter"),
+//             folderListDiv: document.getElementById("folder-list"),
+//           })
+//         })
+//       }
+//     })
 
-    const addBtn = modal.querySelector("#add-tag-btn")
-    const input = modal.querySelector("#new-tag-input")
-    const colorPicker = modal.querySelector("#new-tag-color")
-    addBtn.onclick = () => {
-      const tag = input.value.trim()
-      const color = colorPicker.value
-      if (tag) {
-        addTagToBookmark(bookmarkId, tag, color)
-        input.value = ""
-        colorPicker.value = "#cccccc"
-        showManageTagsPopup(bookmarkId)
-      }
-    }
+//     const addBtn = modal.querySelector("#add-tag-btn")
+//     const input = modal.querySelector("#new-tag-input")
+//     const colorPicker = modal.querySelector("#new-tag-color")
+//     addBtn.onclick = () => {
+//       const tag = input.value.trim()
+//       const color = colorPicker.value
+//       if (tag) {
+//         addTagToBookmark(bookmarkId, tag, color)
+//         input.value = ""
+//         colorPicker.value = "#cccccc"
+//         showManageTagsPopup(bookmarkId)
+//         customSaveUIState() // Lưu thay đổi
+//         chrome.bookmarks.getTree((tree) => {
+//           renderFilteredBookmarks(tree, {
+//             tagFilter: document.getElementById("tag-filter"),
+//             folderListDiv: document.getElementById("folder-list"),
+//           })
+//         })
+//       }
+//     }
 
-    modal.classList.remove("hidden")
-  })
-}
+//     modal.classList.remove("hidden")
+//   })
+// }
 
 function setupTagFilterListener(elements) {
   elements.tagFilter.addEventListener("change", (e) => {
