@@ -20,9 +20,12 @@
                 <select id="folder-filter" class="select">
                     <option value="">All Bookmarks</option>
                 </select>
-                <select id="tag-filter" class="select">
-                    <option value="">All Tags</option>
-                </select>
+                <div id="tag-filter-container" class="tag-filter-container">
+                    <button id="tag-filter-toggle" class="select">Select Tags</button>
+                    <div id="tag-filter-dropdown" class="dropdown-menu hidden">
+                        <div id="tag-filter-options"></div>
+                    </div>
+                </div>
                 <select id="sort-filter" class="select">
                     <option value="default">Sort: Default</option>
                     <option value="new">New to Old</option>

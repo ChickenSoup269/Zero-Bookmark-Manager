@@ -28,7 +28,7 @@ export function updateUILanguage(elements, language) {
       selector: "#folder-filter",
       optionText: "allBookmarks",
     },
-    { key: "tagFilter", selector: "#tag-filter", optionText: "allTags" },
+    { key: "tagFilterContainer", selector: "#tag-filter-container" },
     { key: "sortFilter", selector: "#sort-filter" },
     { key: "createFolderButton", selector: "#create-folder-button" },
     { key: "addToFolderButton", selector: "#add-to-folder-button" },
@@ -114,6 +114,15 @@ export function updateUILanguage(elements, language) {
       true
     )
     return
+  }
+  // Cập nhật nút tag filter
+  const tagFilterToggle =
+    elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
+  if (tagFilterToggle) {
+    tagFilterToggle.textContent =
+      uiState.selectedTags.length > 0
+        ? uiState.selectedTags.join(", ")
+        : t.allTags
   }
 
   // Update other UI elements
@@ -210,23 +219,30 @@ export function updateUILanguage(elements, language) {
 export async function populateTagFilter(elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   const t = translations[language] || translations.en
-  if (!elements.tagFilter) {
-    console.error("tagFilter element not found in elements object")
+  const tagFilterOptions = elements.tagFilterContainer?.querySelector(
+    "#tag-filter-options"
+  )
+  if (!tagFilterOptions) {
+    console.error("tagFilterOptions element not found in elements object")
     return
   }
-  elements.tagFilter.innerHTML = `<option value="">${t.allTags}</option>`
+  tagFilterOptions.innerHTML = ""
 
   try {
     const tags = await getAllTags()
     tags.forEach((tag) => {
-      const option = document.createElement("option")
-      option.value = tag
-      option.textContent = tag
-      option.style.backgroundColor = uiState.tagColors[tag] || "#ccc"
-      option.style.color = "#fff"
-      elements.tagFilter.appendChild(option)
+      const div = document.createElement("div")
+      div.className = "tag-filter-option"
+      div.innerHTML = `
+        <input type="checkbox" value="${tag}" ${
+        uiState.selectedTags.includes(tag) ? "checked" : ""
+      }>
+        <label style="background-color: ${
+          uiState.tagColors[tag] || "#ccc"
+        }; color: #fff; padding: 2px 6px; border-radius: 4px;">${tag}</label>
+      `
+      tagFilterOptions.appendChild(div)
     })
-    elements.tagFilter.value = uiState.selectedTag || ""
   } catch (error) {
     console.error("Error populating tag filter:", error)
     showCustomPopup(
@@ -333,7 +349,6 @@ export function updateTheme(elements, theme) {
 
 export function restoreUIState(elements, callback) {
   detectViewContext()
-
   chrome.storage.local.get(["uiState", "checkboxesVisible"], (data) => {
     if (chrome.runtime.lastError) {
       console.error("Error restoring state:", chrome.runtime.lastError)
@@ -346,7 +361,9 @@ export function restoreUIState(elements, callback) {
       uiState.sortType = data.uiState.sortType || "default"
       uiState.viewMode = data.uiState.viewMode || "flat"
       uiState.collapsedFolders = new Set(data.uiState.collapsedFolders || [])
-      uiState.selectedTag = data.uiState.selectedTag || ""
+      uiState.selectedTags = data.uiState.selectedTags || []
+      uiState.selectedTag =
+        uiState.selectedTags.length === 1 ? uiState.selectedTags[0] : ""
       ;["0", "1", "2"].forEach((id) => {
         if (uiState.collapsedFolders.has(id)) {
           uiState.collapsedFolders.delete(id)
@@ -358,7 +375,6 @@ export function restoreUIState(elements, callback) {
     elements.languageSwitcher.value = savedLanguage
     elements.viewSwitcher.value = uiState.viewMode
     elements.folderFilter.value = uiState.selectedFolderId
-    elements.tagFilter.value = uiState.selectedTag
     elements.sortFilter.value = uiState.sortType
     elements.searchInput.value = uiState.searchQuery
     updateUILanguage(elements, savedLanguage)
@@ -380,10 +396,17 @@ export function restoreUIState(elements, callback) {
     } else {
       console.warn("Select All container (.select-all) not found")
     }
-    loadTags().then(() => {
-      setupTagFilterListener(elements)
+    if (elements.tagFilterContainer) {
+      loadTags().then(() => {
+        console.log("Tags loaded, setting up tag filter listener")
+        populateTagFilter(elements)
+        setupTagFilterListener(elements)
+        callback()
+      })
+    } else {
+      console.error("tagFilterContainer not found, skipping tag filter setup")
       callback()
-    })
+    }
   })
 }
 
@@ -415,9 +438,9 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     updateBookmarkCount(bookmarks, elements)
     let filtered = bookmarks
 
-    if (uiState.selectedTag) {
+    if (uiState.selectedTags.length > 0) {
       filtered = filtered.filter((bookmark) =>
-        bookmark.tags.includes(uiState.selectedTag)
+        uiState.selectedTags.some((tag) => bookmark.tags.includes(tag))
       )
     }
 
@@ -1306,90 +1329,133 @@ function showBookmarkDetail(bookmarkId) {
   modal.classList.remove("hidden")
 }
 
-// function showManageTagsPopup(bookmarkId) {
-//   const modal = document.getElementById("manage-tags-popup")
-//   if (!modal) return
+function showManageTagsPopup(bookmarkId) {
+  const modal = document.getElementById("manage-tags-popup")
+  if (!modal) return
 
-//   getTagsForBookmark(bookmarkId).then((tags) => {
-//     const existingTags = modal.querySelector("#existing-tags")
-//     existingTags.innerHTML = tags
-//       .map(
-//         (tag) => `
-//       <div class="tag-item">
-//         <span style="background-color: ${
-//           uiState.tagColors[tag] || "#ccc"
-//         }; color: white; padding: 4px 8px; border-radius: 6px;">${tag}</span>
-//         <input type="color" value="${
-//           uiState.tagColors[tag] || "#cccccc"
-//         }" data-tag="${tag}" class="tag-color-picker">
-//         <button class="remove-tag" data-tag="${tag}" data-id="${bookmarkId}">Remove</button>
-//       </div>
-//     `
-//       )
-//       .join("")
+  getTagsForBookmark(bookmarkId).then((tags) => {
+    const existingTags = modal.querySelector("#existing-tags")
+    existingTags.innerHTML = tags
+      .map(
+        (tag) => `
+      <div class="tag-item">
+        <span style="background-color: ${
+          uiState.tagColors[tag] || "#ccc"
+        }; color: white; padding: 4px 8px; border-radius: 6px;">${tag}</span>
+        <input type="color" value="${
+          uiState.tagColors[tag] || "#cccccc"
+        }" data-tag="${tag}" class="tag-color-picker">
+        <button class="remove-tag" data-tag="${tag}" data-id="${bookmarkId}">Remove</button>
+      </div>
+    `
+      )
+      .join("")
 
-//     modal.querySelectorAll(".tag-color-picker").forEach((picker) => {
-//       picker.onchange = (e) => {
-//         const tag = e.target.dataset.tag
-//         changeTagColor(tag, e.target.value)
-//         customSaveUIState() // Lưu thay đổi
-//         chrome.bookmarks.getTree((tree) => {
-//           renderFilteredBookmarks(tree, {
-//             tagFilter: document.getElementById("tag-filter"),
-//             folderListDiv: document.getElementById("folder-list"),
-//           })
-//         })
-//       }
-//     })
-
-//     modal.querySelectorAll(".remove-tag").forEach((btn) => {
-//       btn.onclick = (e) => {
-//         const tag = e.target.dataset.tag
-//         const id = e.target.dataset.id
-//         removeTagFromBookmark(id, tag)
-//         showManageTagsPopup(id)
-//         customSaveUIState() // Lưu thay đổi
-//         chrome.bookmarks.getTree((tree) => {
-//           renderFilteredBookmarks(tree, {
-//             tagFilter: document.getElementById("tag-filter"),
-//             folderListDiv: document.getElementById("folder-list"),
-//           })
-//         })
-//       }
-//     })
-
-//     const addBtn = modal.querySelector("#add-tag-btn")
-//     const input = modal.querySelector("#new-tag-input")
-//     const colorPicker = modal.querySelector("#new-tag-color")
-//     addBtn.onclick = () => {
-//       const tag = input.value.trim()
-//       const color = colorPicker.value
-//       if (tag) {
-//         addTagToBookmark(bookmarkId, tag, color)
-//         input.value = ""
-//         colorPicker.value = "#cccccc"
-//         showManageTagsPopup(bookmarkId)
-//         customSaveUIState() // Lưu thay đổi
-//         chrome.bookmarks.getTree((tree) => {
-//           renderFilteredBookmarks(tree, {
-//             tagFilter: document.getElementById("tag-filter"),
-//             folderListDiv: document.getElementById("folder-list"),
-//           })
-//         })
-//       }
-//     }
-
-//     modal.classList.remove("hidden")
-//   })
-// }
-
-function setupTagFilterListener(elements) {
-  elements.tagFilter.addEventListener("change", (e) => {
-    setSelectedTag(e.target.value)
-    saveUIState()
-    chrome.bookmarks.getTree((tree) => {
-      renderFilteredBookmarks(tree, elements)
+    modal.querySelectorAll(".tag-color-picker").forEach((picker) => {
+      picker.onchange = (e) => {
+        const tag = e.target.dataset.tag
+        changeTagColor(tag, e.target.value)
+        customSaveUIState()
+        chrome.bookmarks.getTree((tree) => {
+          renderFilteredBookmarks(tree, {
+            tagFilter: document.getElementById("tag-filter-container"),
+            folderListDiv: document.getElementById("folder-list"),
+          })
+        })
+      }
     })
+
+    modal.querySelectorAll(".remove-tag").forEach((btn) => {
+      btn.onclick = (e) => {
+        const tag = e.target.dataset.tag
+        const id = e.target.dataset.id
+        removeTagFromBookmark(id, tag)
+        showManageTagsPopup(id)
+        customSaveUIState()
+        chrome.bookmarks.getTree((tree) => {
+          renderFilteredBookmarks(tree, {
+            tagFilter: document.getElementById("tag-filter-container"),
+            folderListDiv: document.getElementById("folder-list"),
+          })
+        })
+      }
+    })
+
+    const addBtn = modal.querySelector("#add-tag-btn")
+    const input = modal.querySelector("#new-tag-input")
+    const colorPicker = modal.querySelector("#new-tag-color")
+    addBtn.onclick = () => {
+      const tag = input.value.trim()
+      const color = colorPicker.value
+      if (tag) {
+        // Kiểm tra số lượng tag
+        getTagsForBookmark(bookmarkId).then((currentTags) => {
+          if (currentTags.length >= 10) {
+            const language = localStorage.getItem("appLanguage") || "en"
+            const t = translations[language] || translations.en
+            showCustomPopup(
+              t.tagLimitError || "Cannot add more than 10 tags per bookmark",
+              "error",
+              true
+            )
+            return
+          }
+          addTagToBookmark(bookmarkId, tag, color)
+          input.value = ""
+          colorPicker.value = "#cccccc"
+          showManageTagsPopup(bookmarkId)
+          customSaveUIState()
+          chrome.bookmarks.getTree((tree) => {
+            renderFilteredBookmarks(tree, {
+              tagFilter: document.getElementById("tag-filter-container"),
+              folderListDiv: document.getElementById("folder-list"),
+            })
+          })
+        })
+      }
+    }
+
+    modal.classList.remove("hidden")
+  })
+}
+
+export function setupTagFilterListener(elements) {
+  const tagFilterToggle =
+    elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
+  const tagFilterDropdown = elements.tagFilterContainer?.querySelector(
+    "#tag-filter-dropdown"
+  )
+  if (!tagFilterToggle || !tagFilterDropdown) {
+    console.error("Tag filter toggle or dropdown not found")
+    return
+  }
+
+  tagFilterToggle.addEventListener("click", () => {
+    tagFilterDropdown.classList.toggle("hidden")
+  })
+
+  // Ẩn dropdown khi click bên ngoài
+  document.addEventListener("click", (e) => {
+    if (!elements.tagFilterContainer.contains(e.target)) {
+      tagFilterDropdown.classList.add("hidden")
+    }
+  })
+
+  tagFilterDropdown.addEventListener("change", (e) => {
+    if (e.target.type === "checkbox") {
+      const selectedTags = Array.from(
+        tagFilterDropdown.querySelectorAll('input[type="checkbox"]:checked')
+      ).map((cb) => cb.value)
+      setSelectedTags(selectedTags)
+      tagFilterToggle.textContent =
+        selectedTags.length > 0
+          ? selectedTags.join(", ")
+          : translations[localStorage.getItem("appLanguage") || "en"].allTags
+      customSaveUIState()
+      chrome.bookmarks.getTree((tree) => {
+        renderFilteredBookmarks(tree, elements)
+      })
+    }
   })
 }
 

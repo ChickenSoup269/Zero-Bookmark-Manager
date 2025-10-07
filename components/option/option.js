@@ -14,15 +14,15 @@ import { populateTagFilter, renderFilteredBookmarks } from "../ui.js"
 
 // Default settings for which properties to save (all enabled by default)
 const defaultStorageSettings = {
-  searchQuery: true,
+  searchQuery: false,
   selectedFolderId: true,
   sortType: true,
   viewMode: true,
   collapsedFolders: true,
-  checkboxesVisible: true,
-  selectedTag: true, // Added for tag persistence
-  bookmarkTags: true, // Added for tag persistence
-  tagColors: true, // Added for tag colors
+  checkboxesVisible: false,
+  selectedTags: true, // Thêm để lưu selectedTags
+  bookmarkTags: true,
+  tagColors: true,
 }
 
 // Map checkbox IDs to translation keys
@@ -133,19 +133,21 @@ function saveStorageSettings() {
   })
 }
 
-function customSaveUIState() {
-  let saveTimeout
+let saveTimeout
+export function customSaveUIState() {
   clearTimeout(saveTimeout)
   saveTimeout = setTimeout(() => {
+    console.log("customSaveUIState called. Current uiState:", uiState)
     chrome.storage.local.get(["storageSettings"], (result) => {
       const storageSettings = result.storageSettings || defaultStorageSettings
+      console.log("Using storageSettings for save:", storageSettings)
       const state = {
         uiState: {},
         checkboxesVisible: storageSettings.checkboxesVisible
           ? uiState.checkboxesVisible
           : undefined,
-        bookmarkTags: uiState.bookmarkTags, // Luôn lưu
-        tagColors: uiState.tagColors, // Luôn lưu
+        bookmarkTags: uiState.bookmarkTags,
+        tagColors: uiState.tagColors,
       }
       if (storageSettings.searchQuery)
         state.uiState.searchQuery = uiState.searchQuery
@@ -155,28 +157,25 @@ function customSaveUIState() {
       if (storageSettings.viewMode) state.uiState.viewMode = uiState.viewMode
       if (storageSettings.collapsedFolders)
         state.uiState.collapsedFolders = Array.from(uiState.collapsedFolders)
-      if (storageSettings.selectedTag)
-        state.uiState.selectedTag = uiState.selectedTag
+      if (storageSettings.selectedTags)
+        state.uiState.selectedTags = uiState.selectedTags
 
       chrome.storage.local.set(state, () => {
         if (chrome.runtime.lastError) {
-          console.error(
-            "Detailed error saving state:",
-            chrome.runtime.lastError
-          )
+          console.error("Error saving state:", chrome.runtime.lastError)
         } else {
-          console.log("UI state saved with settings:", state)
+          console.log("UI state saved:", state)
         }
       })
     })
-  }, 500) // Chờ 500ms trước khi lưu
+  }, 500)
 }
 
-// Wrap loadUIState to respect storage settings
-function customLoadUIState(callback) {
+export function customLoadUIState(callback) {
   console.log("customLoadUIState called")
   chrome.storage.local.get(["storageSettings"], (result) => {
     const storageSettings = result.storageSettings || defaultStorageSettings
+    console.log("Using storageSettings for load:", storageSettings)
     chrome.storage.local.get(
       ["uiState", "checkboxesVisible", "bookmarkTags", "tagColors"],
       (loadResult) => {
@@ -209,8 +208,10 @@ function customLoadUIState(callback) {
               loadResult.uiState.collapsedFolders || []
             )
           }
-          if (storageSettings.selectedTag) {
-            uiState.selectedTag = loadResult.uiState.selectedTag || ""
+          if (storageSettings.selectedTags) {
+            uiState.selectedTags = loadResult.uiState.selectedTags || []
+            uiState.selectedTag =
+              uiState.selectedTags.length === 1 ? uiState.selectedTags[0] : ""
           }
         }
         if (storageSettings.checkboxesVisible) {
@@ -233,29 +234,60 @@ function customLoadUIState(callback) {
           const selectAllContainer = document.querySelector(".select-all")
           if (selectAllContainer) {
             selectAllContainer.style.display = "none"
-          } else {
-            console.warn("Select All container (.select-all) not found")
           }
         }
-        // Luôn tải bookmarkTags và tagColors
         uiState.bookmarkTags = loadResult.bookmarkTags || {}
         uiState.tagColors = loadResult.tagColors || {}
+
         const elements = {
-          tagFilter: document.getElementById("tag-filter"),
+          tagFilterContainer: document.getElementById("tag-filter-container"),
           folderListDiv: document.getElementById("folder-list"),
+          folderFilter: document.getElementById("folder-filter"),
+          sortFilter: document.getElementById("sort-filter"),
+          searchInput: document.getElementById("search-input"),
+          createFolderButton: document.getElementById("create-folder"),
+          addToFolderButton: document.getElementById("add-to-folder"),
+          deleteFolderButton: document.getElementById("delete-folder"),
+          renameFolderButton: document.getElementById("rename-folder"),
+          deleteBookmarksButton: document.getElementById(
+            "delete-bookmarks-button"
+          ),
+          exportBookmarksOption: document.getElementById(
+            "export-bookmarks-option"
+          ),
+          importBookmarksOption: document.getElementById(
+            "import-bookmarks-option"
+          ),
+          editInNewTabOption: document.getElementById("edit-in-new-tab-option"),
+          toggleCheckboxesButton: document.getElementById("toggle-checkboxes"),
+          renamePopup: document.getElementById("rename-popup"),
+          renameInput: document.getElementById("rename-input"),
+          addToFolderPopup: document.getElementById("add-to-folder-popup"),
+          addToFolderSelect: document.getElementById("add-to-folder-select"),
+          bookmarkCountDiv: document.getElementById("bookmark-count"),
+          scrollToTopButton: document.getElementById("scroll-to-top"),
+          clearRenameButton: document.getElementById("clear-rename"),
+          clearSearchButton: document.getElementById("clear-search"),
+          settingsButton: document.getElementById("settings-button"),
+          renameFolderPopup: document.getElementById("rename-folder-popup"),
+          renameFolderSelect: document.getElementById("rename-folder-select"),
+          renameFolderInput: document.getElementById("rename-folder-input"),
+          bookmarkDetailPopup: document.getElementById("bookmark-detail-popup"),
+          manageTagsPopup: document.getElementById("manage-tags-popup"),
         }
-        if (elements.tagFilter) {
+
+        if (!elements.tagFilterContainer) {
+          console.error("tagFilterContainer not found in customLoadUIState")
+        } else {
           populateTagFilter(elements)
         }
-        console.log("UI state loaded with settings:", loadResult)
+
+        console.log("UI state loaded:", loadResult)
         if (callback) callback()
       }
     )
   })
 }
-
-// Export wrapped functions
-export { customSaveUIState, customLoadUIState }
 
 // Override original saveUIState to prevent accidental use
 export function saveUIState() {

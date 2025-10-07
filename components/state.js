@@ -15,6 +15,9 @@ export const uiState = {
   checkboxesVisible: false,
   bookmarkTags: {},
   tagColors: {},
+  collapsedFolders: new Set(),
+  selectedTag: "", // Giữ lại để tương thích ngược
+  selectedTags: [], // Thêm để lưu nhiều tag
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -44,7 +47,12 @@ export function setTagColors(tagColors) {
 }
 
 export function setSelectedTag(tag) {
-  uiState.selectedTag = tag
+  uiState.selectedTag = tag // Giữ lại để tương thích ngược
+  uiState.selectedTags = tag ? [tag] : [] // Đồng bộ với selectedTags
+}
+export function setSelectedTags(tags) {
+  uiState.selectedTags = tags
+  uiState.selectedTag = tags.length === 1 ? tags[0] : "" // Cập nhật selectedTag
 }
 
 export function saveUIState() {

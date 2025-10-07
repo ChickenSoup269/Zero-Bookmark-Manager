@@ -272,7 +272,7 @@
 }
 
 .detail-bookmark-item .bookmark-tags {
-  display: flex;
+  display: none;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 8px;
@@ -301,4 +301,37 @@
   position: absolute;
   top: 16px;
   right: 16px;
+}
+/* tree view bookmark popup ẩn mấy cái tag */
+.tree-view .bookmark-tags {
+  transition: display 0.3s ease;
+}
+
+/* Tùy chỉnh giao diện tag trong các chế độ khác */
+.bookmark-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.bookmark-tag {
+  background-color: var(--tag-bg, #ccc);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  margin-left: 4px;
+  transition: background-color 0.3s ease;
+}
+
+/* Đảm bảo tag hiển thị đúng trong detail-view */
+.detail-view .bookmark-tags {
+  margin-top: 8px;
+}
+
+/* Responsive cho popup */
+@media (max-width: 600px) {
+  .tree-view .bookmark-tags {
+    display: none !important; /* Dự phòng nếu inline style không hoạt động */
+  }
 }

@@ -1,4 +1,8 @@
-import { updateTheme, renderFilteredBookmarks } from "./components/ui.js"
+import {
+  updateTheme,
+  renderFilteredBookmarks,
+  updateUILanguage,
+} from "./components/ui.js"
 import { getBookmarkTree } from "./components/bookmarks.js"
 import { translations, debounce } from "./components/utils.js"
 import { setupEventListeners } from "./components/events.js"
@@ -6,7 +10,6 @@ import { uiState } from "./components/state.js"
 import { customLoadUIState } from "./components/option/option.js"
 
 document.addEventListener("DOMContentLoaded", () => {
-  // DOM references
   const elements = {
     searchInput: document.getElementById("search"),
     clearSearchButton: document.getElementById("clear-search"),
@@ -59,14 +62,12 @@ document.addEventListener("DOMContentLoaded", () => {
     createFolderSave: document.getElementById("create-folder-save"),
     createFolderCancel: document.getElementById("create-folder-cancel"),
     clearCreateFolder: document.getElementById("clear-create-folder"),
-    // renameFolderOption: document.getElementById("rename-folder-option"),
     showBookmarkIdsOption: document.getElementById("show-bookmark-ids-option"),
-    tagFilter: document.getElementById("tag-filter"),
+    tagFilterContainer: document.getElementById("tag-filter-container"),
   }
 
-  // Initialize application
   const init = () => {
-    // Add import option to settings menu
+    // Thêm import option vào settings menu
     if (!elements.importBookmarksOption) {
       const importBookmarksOption = document.createElement("button")
       importBookmarksOption.id = "import-bookmarks-option"
@@ -79,16 +80,15 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.importBookmarksOption = importBookmarksOption
     }
 
-    // Initialize theme, font, view, and showBookmarkIds
+    // Khởi tạo ngôn ngữ
+    const savedLanguage = localStorage.getItem("appLanguage") || "en"
+    elements.languageSwitcher.value = savedLanguage
+    updateUILanguage(elements, savedLanguage)
+
+    // Khởi tạo theme, font, view
     const savedTheme = localStorage.getItem("appTheme") || "system"
     elements.themeSwitcher.value = savedTheme
-    if (typeof updateTheme === "function") {
-      updateTheme(elements, savedTheme)
-    } else {
-      console.error(
-        "updateTheme function is not defined. Check imports in main.js."
-      )
-    }
+    updateTheme(elements, savedTheme)
 
     const savedFont = localStorage.getItem("appFont") || "normal"
     document.body.classList.add(`font-${savedFont}`)
@@ -102,14 +102,13 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.storage.local.get(["showBookmarkIds"], (data) => {
       uiState.showBookmarkIds = data.showBookmarkIds || false
       if (elements.showBookmarkIdsOption) {
-        const language = localStorage.getItem("appLanguage") || "en"
         elements.showBookmarkIdsOption.textContent = uiState.showBookmarkIds
-          ? translations[language].hideBookmarkIds
-          : translations[language].showBookmarkIds
+          ? translations[savedLanguage].hideBookmarkIds
+          : translations[savedLanguage].showBookmarkIds
       }
     })
 
-    // Fetch fresh bookmark data first
+    // Lấy dữ liệu bookmark
     getBookmarkTree((bookmarkTreeNodes) => {
       if (bookmarkTreeNodes) {
         customLoadUIState(() => {
@@ -117,23 +116,21 @@ document.addEventListener("DOMContentLoaded", () => {
           setupBookmarkChangeListeners(elements)
         })
       } else {
-        const language = localStorage.getItem("appLanguage") || "en"
-        elements.folderListDiv.innerHTML = `<p>${translations[language].noBookmarks}</p>`
+        elements.folderListDiv.innerHTML = `<p>${translations[savedLanguage].noBookmarks}</p>`
       }
     })
 
-    // Setup event listeners after DOM is ready
+    // Thiết lập event listeners
     setupEventListeners(elements)
 
-    // Thêm sự kiện cho showBookmarkIdsOption
+    // Sự kiện cho showBookmarkIdsOption
     if (elements.showBookmarkIdsOption) {
       elements.showBookmarkIdsOption.addEventListener("click", () => {
         uiState.showBookmarkIds = !uiState.showBookmarkIds
         chrome.storage.local.set({ showBookmarkIds: uiState.showBookmarkIds })
-        const language = localStorage.getItem("appLanguage") || "en"
         elements.showBookmarkIdsOption.textContent = uiState.showBookmarkIds
-          ? translations[language].hideBookmarkIds
-          : translations[language].showBookmarkIds
+          ? translations[savedLanguage].hideBookmarkIds
+          : translations[savedLanguage].showBookmarkIds
         getBookmarkTree((bookmarkTreeNodes) => {
           if (bookmarkTreeNodes) {
             renderFilteredBookmarks(bookmarkTreeNodes, elements)
@@ -141,16 +138,26 @@ document.addEventListener("DOMContentLoaded", () => {
         })
       })
     }
+
+    // Sự kiện cho languageSwitcher
+    elements.languageSwitcher.addEventListener("change", (e) => {
+      const newLanguage = e.target.value
+      localStorage.setItem("appLanguage", newLanguage)
+      updateUILanguage(elements, newLanguage)
+      getBookmarkTree((bookmarkTreeNodes) => {
+        if (bookmarkTreeNodes) {
+          renderFilteredBookmarks(bookmarkTreeNodes, elements)
+        }
+      })
+    })
   }
 
-  // Add real-time bookmark change listeners
   function setupBookmarkChangeListeners(elements) {
     const refreshBookmarks = debounce(() => {
       getBookmarkTree((bookmarkTreeNodes) => {
         if (bookmarkTreeNodes) {
           renderFilteredBookmarks(bookmarkTreeNodes, elements)
         } else {
-          console.error("Failed to refresh bookmark tree on change")
           const language = localStorage.getItem("appLanguage") || "en"
           console.error(translations[language].errorUnexpected)
         }
@@ -162,7 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.bookmarks.onChanged.addListener(refreshBookmarks)
     chrome.bookmarks.onMoved.addListener(refreshBookmarks)
 
-    // Clean up listeners on popup close
     window.addEventListener("unload", () => {
       chrome.bookmarks.onCreated.removeListener(refreshBookmarks)
       chrome.bookmarks.onRemoved.removeListener(refreshBookmarks)
