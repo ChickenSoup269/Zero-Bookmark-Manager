@@ -1005,3 +1005,66 @@ html {
   background-color: var(--focus-outline);
   border: 1px solid var(--folder-bg);
 }
+
+/* tags search  */
+.tag-filter-container {
+  position: relative;
+  width: 100%;
+}
+
+#tag-filter-toggle {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+}
+
+#tag-filter-toggle:hover {
+  background: var(--hover-bg, #f0f0f0);
+}
+
+#tag-filter-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+#tag-filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tag-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+}
+
+.tag-filter-option input[type="checkbox"] {
+  margin: 0;
+}
+
+.tag-filter-option label {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.tag-filter-option:hover {
+  background: var(--hover-bg, #f0f0f0);
+}

@@ -21,9 +21,12 @@
                         <option value="en">English</option>
                         <option value="vi">Tiếng Việt</option>
                     </select>
-                    <!-- <select id="tag-filter" class="select">
-                        <option value="">All Tags</option>
-                    </select> -->
+                    <div id="tag-filter-container" class="tag-filter-container">
+                        <button id="tag-filter-toggle" class="select">Select Tags</button>
+                        <div id="tag-filter-dropdown" class="dropdown-menu hidden">
+                            <div id="tag-filter-options"></div>
+                        </div>
+                    </div>
                     <select id="theme-switcher" class="select">
                         <option value="system">Theme: System</option>
                         <option value="light">Theme: Light</option>

@@ -5,12 +5,14 @@
 ### [1.1.0] - 2025-10-08
 
 - Added web view
-- Added chatbot - geminiQ
+- Added chatbot - gemini
 - Added favourite bookmarks
-- Added tree view
+- Added tree view/detail view
 - Added option local storage settings
+- Added tags into bookmark (limit 10)
+- Added Option Local store
 - Update export option now have CSV (Excell/Sheets)
-- Update small UI
+- Update UI
 
 ### [1.0.3] - 2025-09-02
 
