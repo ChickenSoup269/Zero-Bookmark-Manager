@@ -29,9 +29,9 @@
 
 :root {
   /* Dark theme variables */
-  --bg-primary: #000000;
-  --bg-secondary: #1a1a1a;
-  --bg-tertiary: #333333;
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
   --bg-white-none: white;
   --bg-side: #bebebe;
   --text-primary: #ffffff;
@@ -77,8 +77,8 @@
 /* Light theme */
 [data-theme="light"] body.light-theme {
   --bg-primary: #ffffff;
-  --bg-secondary: #f5f5f5;
-  --bg-tertiary: #cfcece;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #eaeef2;
   --bg-white-none: none;
   --bg-side: #585858;
   --text-primary: #000000;
@@ -101,6 +101,41 @@
   --shadow-sm: 0 1px 2px rgba(255, 255, 255, 0.1);
   --shadow-md: 0 4px 6px rgba(212, 212, 212, 0.188);
   --shadow-lg: 0 10px 15px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="github-light"],
+body.github-light-theme {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #eaeef2;
+  --bg-side: #f0f2f4;
+  --bg-card: #ffffff;
+
+  --text-primary: #1f2328;
+  --text-secondary: #57606a;
+  --text-muted: #6e7781;
+
+  --border-color: #d0d7de;
+  --accent-color: #0969da;
+  --accent-hover: #054da7;
+  --focus-outline: #218bff;
+  --hover-bg: #f3f4f6;
+
+  --success-color: #1a7f37;
+  --warning-color: #9a6700;
+  --error-color: #cf222e;
+
+  --folder-title-color: #1f2328;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(9, 105, 218, 0.08);
+  --bookmark-bg: rgba(0, 0, 0, 0.02);
+  --bookmark-hover-bg: rgba(0, 0, 0, 0.05);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 3px 6px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 6px 12px rgba(0, 0, 0, 0.12);
+
+  --tree-line-color: rgba(0, 0, 0, 0.15);
 }
 
 /* Dracula theme */

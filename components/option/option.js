@@ -11,8 +11,8 @@ import {
   hideLocalStorageSettingsPopup,
 } from "../utils.js"
 import { populateTagFilter, renderFilteredBookmarks } from "../ui.js"
+import { elements } from "../../main.js"
 
-// Default settings for which properties to save (all enabled by default)
 const defaultStorageSettings = {
   searchQuery: false,
   selectedFolderId: true,
@@ -20,11 +20,11 @@ const defaultStorageSettings = {
   viewMode: true,
   collapsedFolders: true,
   checkboxesVisible: false,
-  selectedTags: true, // Thêm để lưu selectedTags
+  selectedTags: true,
   bookmarkTags: true,
   tagColors: true,
 }
-
+chrome.storage.local.set({ storageSettings: defaultStorageSettings })
 // Map checkbox IDs to translation keys
 const checkboxIdToTranslationKey = {
   "save-searchQuery": "saveSearchQuery",
@@ -133,160 +133,156 @@ function saveStorageSettings() {
   })
 }
 
-let saveTimeout
 export function customSaveUIState() {
-  clearTimeout(saveTimeout)
-  saveTimeout = setTimeout(() => {
-    console.log("customSaveUIState called. Current uiState:", uiState)
-    chrome.storage.local.get(["storageSettings"], (result) => {
-      const storageSettings = result.storageSettings || defaultStorageSettings
-      console.log("Using storageSettings for save:", storageSettings)
-      const state = {
-        uiState: {},
-        checkboxesVisible: storageSettings.checkboxesVisible
-          ? uiState.checkboxesVisible
-          : undefined,
-        bookmarkTags: uiState.bookmarkTags,
-        tagColors: uiState.tagColors,
-      }
-      if (storageSettings.searchQuery)
-        state.uiState.searchQuery = uiState.searchQuery
-      if (storageSettings.selectedFolderId)
-        state.uiState.selectedFolderId = uiState.selectedFolderId
-      if (storageSettings.sortType) state.uiState.sortType = uiState.sortType
-      if (storageSettings.viewMode) state.uiState.viewMode = uiState.viewMode
-      if (storageSettings.collapsedFolders)
-        state.uiState.collapsedFolders = Array.from(uiState.collapsedFolders)
-      if (storageSettings.selectedTags)
-        state.uiState.selectedTags = uiState.selectedTags
-
-      chrome.storage.local.set(state, () => {
-        if (chrome.runtime.lastError) {
-          console.error("Error saving state:", chrome.runtime.lastError)
-        } else {
-          console.log("UI state saved:", state)
-        }
-      })
-    })
-  }, 500)
-}
-
-export function customLoadUIState(callback) {
-  console.log("customLoadUIState called")
+  console.log("customSaveUIState called. Current uiState:", uiState)
   chrome.storage.local.get(["storageSettings"], (result) => {
     const storageSettings = result.storageSettings || defaultStorageSettings
-    console.log("Using storageSettings for load:", storageSettings)
-    chrome.storage.local.get(
-      ["uiState", "checkboxesVisible", "bookmarkTags", "tagColors"],
-      (loadResult) => {
-        if (loadResult.uiState) {
-          if (storageSettings.searchQuery) {
-            uiState.searchQuery = loadResult.uiState.searchQuery || ""
-            console.log(`Loaded searchQuery: ${uiState.searchQuery}`)
-          } else {
-            uiState.searchQuery = ""
-            console.log(
-              "Cleared searchQuery due to storageSettings.searchQuery = false"
-            )
-            const searchInput = document.getElementById("search-input")
-            if (searchInput) {
-              searchInput.value = ""
-              console.log("Cleared search input in UI")
-            }
-          }
-          if (storageSettings.selectedFolderId) {
-            uiState.selectedFolderId = loadResult.uiState.selectedFolderId || ""
-          }
-          if (storageSettings.sortType) {
-            uiState.sortType = loadResult.uiState.sortType || "default"
-          }
-          if (storageSettings.viewMode) {
-            uiState.viewMode = loadResult.uiState.viewMode || "flat"
-          }
-          if (storageSettings.collapsedFolders) {
-            uiState.collapsedFolders = new Set(
-              loadResult.uiState.collapsedFolders || []
-            )
-          }
-          if (storageSettings.selectedTags) {
-            uiState.selectedTags = loadResult.uiState.selectedTags || []
-            uiState.selectedTag =
-              uiState.selectedTags.length === 1 ? uiState.selectedTags[0] : ""
-          }
-        }
-        if (storageSettings.checkboxesVisible) {
-          uiState.checkboxesVisible = loadResult.checkboxesVisible || false
-        } else {
-          uiState.checkboxesVisible = false
-          const toggleCheckboxesButton = document.getElementById(
-            "toggle-checkboxes-button"
-          )
-          const savedLanguage = localStorage.getItem("appLanguage") || "en"
-          if (toggleCheckboxesButton) {
-            toggleCheckboxesButton.textContent =
-              translations[savedLanguage].showCheckboxes
-          }
-          document
-            .querySelectorAll(".bookmark-checkbox, #select-all")
-            .forEach((checkbox) => {
-              checkbox.style.display = "none"
-            })
-          const selectAllContainer = document.querySelector(".select-all")
-          if (selectAllContainer) {
-            selectAllContainer.style.display = "none"
-          }
-        }
-        uiState.bookmarkTags = loadResult.bookmarkTags || {}
-        uiState.tagColors = loadResult.tagColors || {}
+    console.log("Using storageSettings for save:", storageSettings)
+    console.log("Saving selectedTags:", uiState.selectedTags)
+    const state = {
+      uiState: {},
+      checkboxesVisible: storageSettings.checkboxesVisible
+        ? uiState.checkboxesVisible
+        : undefined,
+      bookmarkTags: uiState.bookmarkTags,
+      tagColors: uiState.tagColors,
+    }
+    if (storageSettings.searchQuery)
+      state.uiState.searchQuery = uiState.searchQuery
+    if (storageSettings.selectedFolderId)
+      state.uiState.selectedFolderId = uiState.selectedFolderId
+    if (storageSettings.sortType) state.uiState.sortType = uiState.sortType
+    if (storageSettings.viewMode) state.uiState.viewMode = uiState.viewMode
+    if (storageSettings.collapsedFolders)
+      state.uiState.collapsedFolders = Array.from(uiState.collapsedFolders)
+    if (storageSettings.selectedTags)
+      state.uiState.selectedTags = uiState.selectedTags
 
-        const elements = {
-          tagFilterContainer: document.getElementById("tag-filter-container"),
-          folderListDiv: document.getElementById("folder-list"),
-          folderFilter: document.getElementById("folder-filter"),
-          sortFilter: document.getElementById("sort-filter"),
-          searchInput: document.getElementById("search-input"),
-          createFolderButton: document.getElementById("create-folder"),
-          addToFolderButton: document.getElementById("add-to-folder"),
-          deleteFolderButton: document.getElementById("delete-folder"),
-          renameFolderButton: document.getElementById("rename-folder"),
-          deleteBookmarksButton: document.getElementById(
-            "delete-bookmarks-button"
-          ),
-          exportBookmarksOption: document.getElementById(
-            "export-bookmarks-option"
-          ),
-          importBookmarksOption: document.getElementById(
-            "import-bookmarks-option"
-          ),
-          editInNewTabOption: document.getElementById("edit-in-new-tab-option"),
-          toggleCheckboxesButton: document.getElementById("toggle-checkboxes"),
-          renamePopup: document.getElementById("rename-popup"),
-          renameInput: document.getElementById("rename-input"),
-          addToFolderPopup: document.getElementById("add-to-folder-popup"),
-          addToFolderSelect: document.getElementById("add-to-folder-select"),
-          bookmarkCountDiv: document.getElementById("bookmark-count"),
-          scrollToTopButton: document.getElementById("scroll-to-top"),
-          clearRenameButton: document.getElementById("clear-rename"),
-          clearSearchButton: document.getElementById("clear-search"),
-          settingsButton: document.getElementById("settings-button"),
-          renameFolderPopup: document.getElementById("rename-folder-popup"),
-          renameFolderSelect: document.getElementById("rename-folder-select"),
-          renameFolderInput: document.getElementById("rename-folder-input"),
-          bookmarkDetailPopup: document.getElementById("bookmark-detail-popup"),
-          manageTagsPopup: document.getElementById("manage-tags-popup"),
-        }
-
-        if (!elements.tagFilterContainer) {
-          console.error("tagFilterContainer not found in customLoadUIState")
-        } else {
-          populateTagFilter(elements)
-        }
-
-        console.log("UI state loaded:", loadResult)
-        if (callback) callback()
+    chrome.storage.local.set(state, () => {
+      if (chrome.runtime.lastError) {
+        console.error("Error saving state:", chrome.runtime.lastError)
+      } else {
+        console.log("UI state saved:", state)
       }
-    )
+    })
   })
+}
+
+export async function customLoadUIState(callback) {
+  console.log("customLoadUIState called")
+  try {
+    const result = await new Promise((resolve, reject) => {
+      chrome.storage.local.get(
+        [
+          "storageSettings",
+          "uiState",
+          "checkboxesVisible",
+          "bookmarkTags",
+          "tagColors",
+        ],
+        (data) => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError)
+          } else {
+            resolve(data)
+          }
+        }
+      )
+    })
+
+    const storageSettings = result.storageSettings || defaultStorageSettings
+    console.log("Using storageSettings for load:", storageSettings)
+
+    // Khôi phục trạng thái uiState
+    if (result.uiState) {
+      if (storageSettings.searchQuery) {
+        uiState.searchQuery = result.uiState.searchQuery || ""
+        console.log(`Loaded searchQuery: ${uiState.searchQuery}`)
+      } else {
+        uiState.searchQuery = ""
+        console.log(
+          "Cleared searchQuery due to storageSettings.searchQuery = false"
+        )
+      }
+      if (storageSettings.selectedFolderId) {
+        uiState.selectedFolderId = result.uiState.selectedFolderId || ""
+      }
+      if (storageSettings.sortType) {
+        uiState.sortType = result.uiState.sortType || "default"
+      }
+      if (storageSettings.viewMode) {
+        uiState.viewMode = result.uiState.viewMode || "flat"
+      }
+      if (storageSettings.collapsedFolders) {
+        uiState.collapsedFolders = new Set(
+          result.uiState.collapsedFolders || []
+        )
+      }
+      if (storageSettings.selectedTags) {
+        uiState.selectedTags = result.uiState.selectedTags || []
+        uiState.selectedTag =
+          uiState.selectedTags.length === 1 ? uiState.selectedTags[0] : ""
+      }
+    }
+    if (storageSettings.checkboxesVisible) {
+      uiState.checkboxesVisible = result.checkboxesVisible || false
+    } else {
+      uiState.checkboxesVisible = false
+    }
+    uiState.bookmarkTags = result.bookmarkTags || {}
+    uiState.tagColors = result.tagColors || {}
+
+    // Cập nhật giao diện
+    const savedLanguage = localStorage.getItem("appLanguage") || "en"
+    if (elements.languageSwitcher) {
+      elements.languageSwitcher.value = savedLanguage
+    }
+    if (elements.viewSwitcher) {
+      elements.viewSwitcher.value = uiState.viewMode
+    }
+    if (elements.folderFilter) {
+      elements.folderFilter.value = uiState.selectedFolderId
+    }
+    if (elements.sortFilter) {
+      elements.sortFilter.value = uiState.sortType
+    }
+    if (elements.searchInput) {
+      elements.searchInput.value = uiState.searchQuery
+    }
+    if (elements.toggleCheckboxesButton) {
+      elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
+        ? translations[savedLanguage].hideCheckboxes
+        : translations[savedLanguage].showCheckboxes
+    }
+
+    // Cập nhật hiển thị checkbox
+    document
+      .querySelectorAll(".bookmark-checkbox, #select-all")
+      .forEach((checkbox) => {
+        checkbox.style.display = uiState.checkboxesVisible
+          ? "inline-block"
+          : "none"
+      })
+    const selectAllContainer = document.querySelector(".select-all")
+    if (selectAllContainer) {
+      selectAllContainer.style.display = uiState.checkboxesVisible
+        ? "block"
+        : "none"
+    } else {
+      console.warn("Select All container (.select-all) not found")
+    }
+
+    console.log("UI state loaded:", result)
+    if (callback) callback()
+  } catch (error) {
+    console.error("Error loading UI state:", error)
+    showCustomPopup(
+      translations[localStorage.getItem("appLanguage") || "en"].errorUnexpected,
+      "error",
+      true
+    )
+    if (callback) callback()
+  }
 }
 
 // Override original saveUIState to prevent accidental use

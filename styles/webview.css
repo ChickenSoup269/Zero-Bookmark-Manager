@@ -679,3 +679,32 @@ body {
 .existing-tags-select option {
   padding: 8px;
 }
+
+/* styles.css */
+.hidden {
+  display: none;
+}
+
+#tag-filter-container {
+  position: relative;
+}
+
+#tag-filter-dropdown {
+  position: absolute;
+  z-index: 1000;
+  background: var(--bg-secondary, #ffffff);
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 200px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#tag-filter-dropdown label {
+  display: block;
+  margin: 5px 0;
+}
+
+#tag-filter-dropdown input[type="checkbox"] {
+  margin-right: 8px;
+}

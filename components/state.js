@@ -16,8 +16,8 @@ export const uiState = {
   bookmarkTags: {},
   tagColors: {},
   collapsedFolders: new Set(),
-  selectedTag: "", // Giữ lại để tương thích ngược
-  selectedTags: [], // Thêm để lưu nhiều tag
+  selectedTag: "",
+  selectedTags: [],
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -47,12 +47,12 @@ export function setTagColors(tagColors) {
 }
 
 export function setSelectedTag(tag) {
-  uiState.selectedTag = tag // Giữ lại để tương thích ngược
-  uiState.selectedTags = tag ? [tag] : [] // Đồng bộ với selectedTags
+  uiState.selectedTag = tag
+  uiState.selectedTags = tag ? [tag] : []
 }
 export function setSelectedTags(tags) {
   uiState.selectedTags = tags
-  uiState.selectedTag = tags.length === 1 ? tags[0] : "" // Cập nhật selectedTag
+  uiState.selectedTag = tags.length === 1 ? tags[0] : ""
 }
 
 export function saveUIState() {
@@ -64,6 +64,7 @@ export function saveUIState() {
       viewMode: uiState.viewMode,
       collapsedFolders: Array.from(uiState.collapsedFolders),
       selectedTag: uiState.selectedTag,
+      selectedTags: uiState.selectedTags, // Added
     },
     checkboxesVisible: uiState.checkboxesVisible,
     bookmarkTags: uiState.bookmarkTags,
@@ -85,12 +86,14 @@ export function loadUIState(callback) {
       if (result.uiState) {
         uiState.searchQuery = result.uiState.searchQuery || ""
         uiState.selectedFolderId = result.uiState.selectedFolderId || ""
-        uiState.sortType = result.uiState.sortType || "default"
+        uiState.sortType = result.uiState.selectedTag || "default"
         uiState.viewMode = result.uiState.viewMode || "flat"
         uiState.collapsedFolders = new Set(
           result.uiState.collapsedFolders || []
         )
         uiState.selectedTag = result.uiState.selectedTag || ""
+        uiState.selectedTags = result.uiState.selectedTags || [] // Added
+        console.log("Loaded selectedTags:", uiState.selectedTags) // Add debug
       }
       uiState.checkboxesVisible = result.checkboxesVisible || false
       uiState.bookmarkTags = result.bookmarkTags || {}

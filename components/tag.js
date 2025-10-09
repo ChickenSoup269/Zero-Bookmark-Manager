@@ -36,9 +36,9 @@ export function addTagToBookmark(bookmarkId, tag, color) {
     }
     if (bookmarkTags[bookmarkId].length >= 10) {
       const language = localStorage.getItem("appLanguage") || "en"
-      const t = translations[language] || translations.en
       showCustomPopup(
-        t.tagLimitError || "Cannot add more than 10 tags per bookmark",
+        translations[language].tagLimitError ||
+          "Cannot add more than 10 tags per bookmark",
         "error",
         true
       )
@@ -46,19 +46,20 @@ export function addTagToBookmark(bookmarkId, tag, color) {
     }
     if (!bookmarkTags[bookmarkId].includes(tag)) {
       bookmarkTags[bookmarkId].push(tag)
-      saveTags(bookmarkTags, { [tag]: color }) // Lưu cả tag và màu
+      uiState.bookmarkTags = bookmarkTags // Update uiState
+      saveTags(bookmarkTags, { [tag]: color })
     } else {
-      saveTags(bookmarkTags) // Chỉ lưu nếu tag đã tồn tại
+      saveTags(bookmarkTags)
     }
-    // Re-render bookmarks
     chrome.bookmarks.getTree((tree) => {
       renderFilteredBookmarks(tree, {
-        tagFilter: document.getElementById("tag-filter-container"),
+        tagFilterContainer: document.getElementById("tag-filter-container"),
         folderListDiv: document.getElementById("folder-list"),
       })
     })
   })
 }
+
 // Remove tag from bookmark
 export function removeTagFromBookmark(bookmarkId, tag) {
   chrome.storage.local.get("bookmarkTags", (data) => {

@@ -9,8 +9,10 @@ import { setupEventListeners } from "./components/events.js"
 import { uiState } from "./components/state.js"
 import { customLoadUIState } from "./components/option/option.js"
 
+export let elements
+
 document.addEventListener("DOMContentLoaded", () => {
-  const elements = {
+  elements = {
     searchInput: document.getElementById("search"),
     clearSearchButton: document.getElementById("clear-search"),
     folderFilter: document.getElementById("folder-filter"),
@@ -78,6 +80,19 @@ document.addEventListener("DOMContentLoaded", () => {
         ].importBookmarks
       elements.settingsMenu.appendChild(importBookmarksOption)
       elements.importBookmarksOption = importBookmarksOption
+    }
+
+    console.log("Testing tag filter toggle")
+    const toggle = document.getElementById("tag-filter-toggle")
+    const dropdown = document.getElementById("tag-filter-dropdown")
+    if (toggle && dropdown) {
+      toggle.addEventListener("click", (e) => {
+        e.stopPropagation()
+        console.log("Test toggle clicked " + toggle)
+        dropdown.classList.toggle("hidden")
+      })
+    } else {
+      console.error("Test toggle or dropdown not found", { toggle, dropdown })
     }
 
     // Khởi tạo ngôn ngữ

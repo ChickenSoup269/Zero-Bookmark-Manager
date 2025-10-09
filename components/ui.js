@@ -7,7 +7,6 @@ import {
   setBookmarks,
   setFolders,
   setBookmarkTree,
-  setSelectedTag,
 } from "./state.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
 import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
@@ -18,6 +17,7 @@ import {
   changeTagColor,
   getTagsForBookmark,
   getAllTags,
+  tagColors,
 } from "./tag.js"
 
 export function updateUILanguage(elements, language) {
@@ -217,45 +217,56 @@ export function updateUILanguage(elements, language) {
 }
 
 export async function populateTagFilter(elements) {
-  const language = localStorage.getItem("appLanguage") || "en"
-  const t = translations[language] || translations.en
+  console.log("Populating tag filter with elements:", elements)
+  console.log("Current selectedTags:", uiState.selectedTags)
   const tagFilterOptions = elements.tagFilterContainer?.querySelector(
     "#tag-filter-options"
   )
-  if (!tagFilterOptions) {
-    console.error("tagFilterOptions element not found in elements object")
+  const tagFilterToggle =
+    elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
+  if (!tagFilterOptions || !tagFilterToggle) {
+    console.error("Tag filter options or toggle not found", {
+      tagFilterOptions,
+      tagFilterToggle,
+    })
     return
   }
-  tagFilterOptions.innerHTML = ""
 
-  try {
-    const tags = await getAllTags()
-    tags.forEach((tag) => {
-      const div = document.createElement("div")
-      div.className = "tag-filter-option"
-      div.innerHTML = `
-        <input type="checkbox" value="${tag}" ${
-        uiState.selectedTags.includes(tag) ? "checked" : ""
-      }>
-        <label style="background-color: ${
-          uiState.tagColors[tag] || "#ccc"
-        }; color: #fff; padding: 2px 6px; border-radius: 4px;">${tag}</label>
-      `
-      tagFilterOptions.appendChild(div)
-    })
-  } catch (error) {
-    console.error("Error populating tag filter:", error)
-    showCustomPopup(
-      t.errorUnexpected || "An unexpected error occurred",
-      "error",
-      true
-    )
-  }
+  const allTags = await getAllTags()
+  console.log("Tags to populate:", allTags)
+  tagFilterOptions.innerHTML = ""
+  allTags.forEach((tag) => {
+    const label = document.createElement("label")
+    const checkbox = document.createElement("input")
+    checkbox.type = "checkbox"
+    checkbox.value = tag
+    checkbox.checked = uiState.selectedTags.includes(tag)
+    console.log(`Tag ${tag} checked: ${checkbox.checked}`) // Debug checkbox state
+    const tagText = document.createElement("span")
+    tagText.textContent = tag
+    tagText.style.color = uiState.tagColors[tag] || "#000000"
+    label.appendChild(checkbox)
+    label.appendChild(tagText)
+    tagFilterOptions.appendChild(label)
+  })
+  console.log("Tag filter options HTML:", tagFilterOptions.innerHTML)
+
+  tagFilterToggle.textContent =
+    uiState.selectedTags.length > 0
+      ? uiState.selectedTags.join(", ")
+      : translations[localStorage.getItem("appLanguage") || "en"].allTags
+  console.log("Tag filter toggle text set to:", tagFilterToggle.textContent)
 }
 
 // Existing functions (unchanged)
 export function updateTheme(elements, theme) {
-  const availableThemes = ["light", "dark", "dracula", "onedark"]
+  const availableThemes = [
+    "light",
+    "dark",
+    "github-light",
+    "dracula",
+    "onedark",
+  ]
   const isDarkMode =
     theme === "dark" ||
     (theme === "system" &&
@@ -283,6 +294,9 @@ export function updateTheme(elements, theme) {
       break
     case "dark":
       activeTheme = "dark"
+      break
+    case "github-light":
+      activeTheme = "github-light"
       break
     case "system":
       activeTheme = isDarkMode ? "dark" : "light"
@@ -347,70 +361,75 @@ export function updateTheme(elements, theme) {
   )
 }
 
-export function restoreUIState(elements, callback) {
-  detectViewContext()
-  chrome.storage.local.get(["uiState", "checkboxesVisible"], (data) => {
-    if (chrome.runtime.lastError) {
-      console.error("Error restoring state:", chrome.runtime.lastError)
-      callback()
-      return
-    }
-    if (data.uiState) {
-      uiState.searchQuery = data.uiState.searchQuery || ""
-      uiState.selectedFolderId = data.uiState.selectedFolderId || ""
-      uiState.sortType = data.uiState.sortType || "default"
-      uiState.viewMode = data.uiState.viewMode || "flat"
-      uiState.collapsedFolders = new Set(data.uiState.collapsedFolders || [])
-      uiState.selectedTags = data.uiState.selectedTags || []
-      uiState.selectedTag =
-        uiState.selectedTags.length === 1 ? uiState.selectedTags[0] : ""
-      ;["0", "1", "2"].forEach((id) => {
-        if (uiState.collapsedFolders.has(id)) {
-          uiState.collapsedFolders.delete(id)
-        }
-      })
-    }
-    uiState.checkboxesVisible = data.checkboxesVisible || false
-    const savedLanguage = localStorage.getItem("appLanguage") || "en"
-    elements.languageSwitcher.value = savedLanguage
-    elements.viewSwitcher.value = uiState.viewMode
-    elements.folderFilter.value = uiState.selectedFolderId
-    elements.sortFilter.value = uiState.sortType
-    elements.searchInput.value = uiState.searchQuery
-    updateUILanguage(elements, savedLanguage)
-    elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
-      ? translations[savedLanguage].hideCheckboxes
-      : translations[savedLanguage].showCheckboxes
-    document
-      .querySelectorAll(".bookmark-checkbox, #select-all")
-      .forEach((checkbox) => {
-        checkbox.style.display = uiState.checkboxesVisible
-          ? "inline-block"
-          : "none"
-      })
-    const selectAllContainer = document.querySelector(".select-all")
-    if (selectAllContainer) {
-      selectAllContainer.style.display = uiState.checkboxesVisible
-        ? "block"
-        : "none"
-    } else {
-      console.warn("Select All container (.select-all) not found")
-    }
-    if (elements.tagFilterContainer) {
-      loadTags().then(() => {
-        console.log("Tags loaded, setting up tag filter listener")
-        populateTagFilter(elements)
-        setupTagFilterListener(elements)
-        callback()
-      })
-    } else {
-      console.error("tagFilterContainer not found, skipping tag filter setup")
-      callback()
-    }
-  })
-}
+// export function restoreUIState(elements, callback) {
+//   detectViewContext()
+//   chrome.storage.local.get(["uiState", "checkboxesVisible"], (data) => {
+//     if (chrome.runtime.lastError) {
+//       console.error("Error restoring state:", chrome.runtime.lastError)
+//       callback()
+//       return
+//     }
+//     if (data.uiState) {
+//       uiState.searchQuery = data.uiState.searchQuery || ""
+//       uiState.selectedFolderId = data.uiState.selectedFolderId || ""
+//       uiState.sortType = data.uiState.sortType || "default"
+//       uiState.viewMode = data.uiState.viewMode || "flat"
+//       uiState.collapsedFolders = new Set(data.uiState.collapsedFolders || [])
+//       uiState.selectedTags = data.uiState.selectedTags || []
+//       uiState.selectedTag =
+//         uiState.selectedTags.length === 1 ? uiState.selectedTags[0] : ""
+//       ;["0", "1", "2"].forEach((id) => {
+//         if (uiState.collapsedFolders.has(id)) {
+//           uiState.collapsedFolders.delete(id)
+//         }
+//       })
+//     }
+//     uiState.checkboxesVisible = data.checkboxesVisible || false
+//     const savedLanguage = localStorage.getItem("appLanguage") || "en"
+//     elements.languageSwitcher.value = savedLanguage
+//     elements.viewSwitcher.value = uiState.viewMode
+//     elements.folderFilter.value = uiState.selectedFolderId
+//     elements.sortFilter.value = uiState.sortType
+//     elements.searchInput.value = uiState.searchQuery
+//     updateUILanguage(elements, savedLanguage)
+//     elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
+//       ? translations[savedLanguage].hideCheckboxes
+//       : translations[savedLanguage].showCheckboxes
+//     document
+//       .querySelectorAll(".bookmark-checkbox, #select-all")
+//       .forEach((checkbox) => {
+//         checkbox.style.display = uiState.checkboxesVisible
+//           ? "inline-block"
+//           : "none"
+//       })
+//     const selectAllContainer = document.querySelector(".select-all")
+//     if (selectAllContainer) {
+//       selectAllContainer.style.display = uiState.checkboxesVisible
+//         ? "block"
+//         : "none"
+//     } else {
+//       console.warn("Select All container (.select-all) not found")
+//     }
+//     if (elements.tagFilterContainer) {
+//       loadTags().then(() => {
+//         console.log("Tags loaded, setting up tag filter listener")
+//         populateTagFilter(elements)
+//         setupTagFilterListener(elements)
+//         callback()
+//       })
+//     } else {
+//       console.error("tagFilterContainer not found, skipping tag filter setup")
+//       callback()
+//     }
+//   })
+// }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
+  console.log(
+    "renderFilteredBookmarks called with selectedTags:",
+    uiState.selectedTags
+  )
+  console.log("Bookmark tags:", uiState.bookmarkTags)
   chrome.storage.local.get(["favoriteBookmarks"], (data) => {
     const favoriteBookmarks = data.favoriteBookmarks || {}
 
@@ -419,6 +438,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         if (node.url) {
           node.isFavorite = !!favoriteBookmarks[node.id]
           node.tags = uiState.bookmarkTags[node.id] || []
+          console.log(`Bookmark ${node.id}: tags=${node.tags}`)
         }
         if (node.children) {
           addFavoriteAndTagsStatus(node.children)
@@ -443,6 +463,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         uiState.selectedTags.some((tag) => bookmark.tags.includes(tag))
       )
     }
+    console.log("Filtered bookmarks by tags:", filtered)
 
     if (uiState.sortType === "favorites") {
       filtered = filtered.filter((bookmark) => bookmark.isFavorite)
@@ -472,6 +493,8 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       )
     }
 
+    console.log("Final filtered bookmarks:", filtered)
+
     if (uiState.viewMode === "tree") {
       const rootChildren = bookmarkTreeNodes[0]?.children || []
       renderTreeView(rootChildren, elements)
@@ -482,7 +505,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     }
 
     toggleFolderButtons(elements)
-    saveUIState()
+    customSaveUIState()
   })
 }
 
@@ -721,7 +744,10 @@ function renderTreeView(nodes, elements, depth = 0) {
 
   if (depth === 0) {
     elements.folderListDiv.appendChild(fragment)
-    attachTreeListeners(elements)
+    // Ensure listeners are attached after DOM update
+    setTimeout(() => {
+      attachTreeListeners(elements)
+    }, 0)
   }
 
   return fragment
@@ -744,7 +770,7 @@ function createDetailBookmarkElement(bookmark) {
     bookmark.isFavorite ? "favorited" : ""
   }`
   div.dataset.id = bookmark.id
-  div.style.cssText = `
+  div.style.cssText = ` 
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -816,7 +842,7 @@ function createDetailBookmarkElement(bookmark) {
          style="
            color: var(--text-primary);
            text-decoration: none;
-           font-size: 16px;
+           font-size: 8px;
            font-weight: 600;
            overflow: hidden;
            text-overflow: ellipsis;
@@ -1420,39 +1446,58 @@ function showManageTagsPopup(bookmarkId) {
 }
 
 export function setupTagFilterListener(elements) {
+  console.log("Setting up tag filter listener with elements:", elements)
   const tagFilterToggle =
     elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
   const tagFilterDropdown = elements.tagFilterContainer?.querySelector(
     "#tag-filter-dropdown"
   )
   if (!tagFilterToggle || !tagFilterDropdown) {
-    console.error("Tag filter toggle or dropdown not found")
+    console.error("Tag filter toggle or dropdown not found", {
+      tagFilterContainer: elements.tagFilterContainer,
+      tagFilterToggle,
+      tagFilterDropdown,
+    })
     return
   }
 
-  tagFilterToggle.addEventListener("click", () => {
+  console.log("Attaching click event to tagFilterToggle")
+  tagFilterToggle.addEventListener("click", (e) => {
+    e.stopPropagation()
+    console.log(
+      "Toggling dropdown, current hidden:",
+      tagFilterDropdown.classList.contains("hidden")
+    )
     tagFilterDropdown.classList.toggle("hidden")
   })
 
-  // Ẩn dropdown khi click bên ngoài
+  console.log("Attaching document click event")
   document.addEventListener("click", (e) => {
     if (!elements.tagFilterContainer.contains(e.target)) {
+      console.log("Click outside, hiding dropdown")
       tagFilterDropdown.classList.add("hidden")
     }
   })
 
+  console.log("Attaching change event to tagFilterDropdown")
   tagFilterDropdown.addEventListener("change", (e) => {
+    console.log("Change event triggered on:", e.target)
     if (e.target.type === "checkbox") {
       const selectedTags = Array.from(
         tagFilterDropdown.querySelectorAll('input[type="checkbox"]:checked')
       ).map((cb) => cb.value)
+      console.log("Selected tags updated:", selectedTags)
       setSelectedTags(selectedTags)
+      console.log("uiState.selectedTags after set:", uiState.selectedTags)
       tagFilterToggle.textContent =
         selectedTags.length > 0
           ? selectedTags.join(", ")
           : translations[localStorage.getItem("appLanguage") || "en"].allTags
+      console.log("Tag filter toggle text set to:", tagFilterToggle.textContent)
+      console.log("Calling customSaveUIState after tag selection")
       customSaveUIState()
       chrome.bookmarks.getTree((tree) => {
+        console.log("Rendering bookmarks after tag selection")
         renderFilteredBookmarks(tree, elements)
       })
     }
