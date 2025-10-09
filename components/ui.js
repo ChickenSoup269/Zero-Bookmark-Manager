@@ -236,7 +236,7 @@ export async function populateTagFilter(elements) {
   tagFilterOptions.innerHTML = ""
   allTags.forEach((tag) => {
     const label = document.createElement("label")
-    label.style.display = "block" // Ensure each tag is on a new line
+    label.style.display = "block"
     const checkbox = document.createElement("input")
     checkbox.type = "checkbox"
     checkbox.value = tag
@@ -456,7 +456,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     setFolders(folders)
     populateFolderFilter(folders, elements)
     populateTagFilter(elements)
-    setupTagFilterListener(elements) // Thêm dòng này để đảm bảo sự kiện được gắn
+    setupTagFilterListener(elements)
     updateBookmarkCount(bookmarks, elements)
     let filtered = bookmarks
 
@@ -514,7 +514,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 function renderDetailView(bookmarksList, elements) {
   const fragment = document.createDocumentFragment()
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
-  const language = localStorage.getItem("appLanguage") || "en"
+  // const language = localStorage.getItem("appLanguage") || "en"
 
   sortedBookmarks.forEach((bookmark) => {
     if (bookmark.url) {
@@ -773,9 +773,10 @@ function renderTreeView(nodes, elements, depth = 0) {
 
   if (depth === 0) {
     elements.folderListDiv.appendChild(fragment)
-    setTimeout(() => {
-      attachTreeListeners(elements)
-    }, 0)
+    attachSelectAllListener(elements)
+    attachDropdownListeners(elements)
+    setupBookmarkActionListeners(elements)
+    return
   }
 
   return fragment
