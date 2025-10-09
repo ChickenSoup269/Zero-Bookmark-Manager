@@ -25,8 +25,36 @@ const defaultStorageSettings = {
   tagColors: true,
 }
 
-chrome.storage.local.set({ storageSettings: defaultStorageSettings })
-// Map checkbox IDs to translation keys
+function initializeStorageSettings() {
+  chrome.storage.local.get(["storageSettings"], (result) => {
+    if (!result.storageSettings) {
+      chrome.storage.local.set(
+        { storageSettings: defaultStorageSettings },
+        () => {
+          if (chrome.runtime.lastError) {
+            console.error(
+              "Error initializing storageSettings:",
+              chrome.runtime.lastError
+            )
+          } else {
+            console.log(
+              "Initialized storageSettings:",
+              JSON.stringify(defaultStorageSettings, null, 2)
+            )
+          }
+        }
+      )
+    } else {
+      console.log(
+        "storageSettings already exists:",
+        JSON.stringify(result.storageSettings, null, 2)
+      )
+    }
+  })
+}
+
+initializeStorageSettings()
+
 const checkboxIdToTranslationKey = {
   "save-searchQuery": "saveSearchQuery",
   "save-selectedFolderId": "saveSelectedFolderId",
@@ -39,11 +67,14 @@ const checkboxIdToTranslationKey = {
   "save-tagColors": "saveTagColors",
 }
 
-// Load storage settings from chrome.storage.local or use defaults
 function loadStorageSettings(callback) {
   const language = localStorage.getItem("appLanguage") || "en"
   chrome.storage.local.get(["storageSettings"], (result) => {
     const storageSettings = result.storageSettings || defaultStorageSettings
+    console.log(
+      "Loaded storageSettings:",
+      JSON.stringify(storageSettings, null, 2)
+    )
     const checkboxes = [
       "save-searchQuery",
       "save-selectedFolderId",
@@ -64,8 +95,8 @@ function loadStorageSettings(callback) {
         const label = element.parentElement
         if (label) {
           const input = label.querySelector('input[type="checkbox"]')
-          label.textContent = "" // Clear existing text
-          label.appendChild(input) // Re-append checkbox
+          label.textContent = ""
+          label.appendChild(input)
           const translationKey = checkboxIdToTranslationKey[id]
           const labelText = translations[language][translationKey]
           if (labelText) {
@@ -82,12 +113,14 @@ function loadStorageSettings(callback) {
         console.warn(`Checkbox element ${id} not found`)
       }
     })
-    console.log("Storage settings loaded:", storageSettings)
+    console.log(
+      "Storage settings loaded:",
+      JSON.stringify(storageSettings, null, 2)
+    )
     if (callback) callback(storageSettings)
   })
 }
 
-// Save storage settings to chrome.storage.local
 function saveStorageSettings() {
   const language = localStorage.getItem("appLanguage") || "en"
   const checkboxes = [
@@ -107,10 +140,12 @@ function saveStorageSettings() {
     const key = id.replace("save-", "")
     if (element) {
       storageSettings[key] = element.checked
-      console.log(`Saving ${key}: ${element.checked} (from checkbox state)`)
+      console.log(`Saving ${key}: ${element.checked}`)
     } else {
-      console.error(`Checkbox ${id} not found during save`)
-      storageSettings[key] = false
+      console.warn(
+        `Checkbox ${id} not found during save, using default: ${defaultStorageSettings[key]}`
+      )
+      storageSettings[key] = defaultStorageSettings[key]
     }
   })
 
@@ -124,7 +159,10 @@ function saveStorageSettings() {
         showCustomPopup(translations[language].errorUnexpected, "error", true)
         reject(chrome.runtime.lastError)
       } else {
-        console.log("Storage settings saved:", storageSettings)
+        console.log(
+          "Storage settings saved successfully:",
+          JSON.stringify(storageSettings, null, 2)
+        )
         showCustomPopup(translations[language].successTitle, "success", true)
         resolve(storageSettings)
       }
@@ -135,11 +173,16 @@ function saveStorageSettings() {
 }
 
 export function customSaveUIState() {
-  console.log("customSaveUIState called. Current uiState:", uiState)
+  console.log(
+    "customSaveUIState called. Current uiState:",
+    JSON.stringify(uiState, null, 2)
+  )
   chrome.storage.local.get(["storageSettings"], (result) => {
     const storageSettings = result.storageSettings || defaultStorageSettings
-    console.log("Using storageSettings for save:", storageSettings)
-    console.log("Saving selectedTags:", uiState.selectedTags)
+    console.log(
+      "Using storageSettings for save:",
+      JSON.stringify(storageSettings, null, 2)
+    )
     const state = {
       uiState: {},
       checkboxesVisible: storageSettings.checkboxesVisible
@@ -148,22 +191,39 @@ export function customSaveUIState() {
       bookmarkTags: uiState.bookmarkTags,
       tagColors: uiState.tagColors,
     }
-    if (storageSettings.searchQuery)
+    if (storageSettings.searchQuery) {
       state.uiState.searchQuery = uiState.searchQuery
-    if (storageSettings.selectedFolderId)
+      console.log(`Saving searchQuery: ${uiState.searchQuery}`)
+    }
+    if (storageSettings.selectedFolderId) {
       state.uiState.selectedFolderId = uiState.selectedFolderId
-    if (storageSettings.sortType) state.uiState.sortType = uiState.sortType
-    if (storageSettings.viewMode) state.uiState.viewMode = uiState.viewMode
-    if (storageSettings.collapsedFolders)
+      console.log(`Saving selectedFolderId: ${uiState.selectedFolderId}`)
+    }
+    if (storageSettings.sortType) {
+      state.uiState.sortType = uiState.sortType
+      console.log(`Saving sortType: ${uiState.sortType}`)
+    }
+    if (storageSettings.viewMode) {
+      state.uiState.viewMode = uiState.viewMode
+      console.log(`Saving viewMode: ${uiState.viewMode}`)
+    }
+    if (storageSettings.collapsedFolders) {
       state.uiState.collapsedFolders = Array.from(uiState.collapsedFolders)
-    if (storageSettings.selectedTags)
+      console.log(`Saving collapsedFolders:`, uiState.collapsedFolders)
+    }
+    if (storageSettings.selectedTags) {
       state.uiState.selectedTags = uiState.selectedTags
+      console.log(`Saving selectedTags: ${uiState.selectedTags}`)
+    }
 
     chrome.storage.local.set(state, () => {
       if (chrome.runtime.lastError) {
-        console.error("Error saving state:", chrome.runtime.lastError)
+        console.error("Error saving UI state:", chrome.runtime.lastError)
       } else {
-        console.log("UI state saved:", state)
+        console.log(
+          "UI state saved successfully:",
+          JSON.stringify(state, null, 2)
+        )
       }
     })
   })
@@ -183,8 +243,10 @@ export async function customLoadUIState(callback) {
         ],
         (data) => {
           if (chrome.runtime.lastError) {
+            console.error("Error loading storage:", chrome.runtime.lastError)
             reject(chrome.runtime.lastError)
           } else {
+            console.log("Loaded storage data:", JSON.stringify(data, null, 2))
             resolve(data)
           }
         }
@@ -192,9 +254,11 @@ export async function customLoadUIState(callback) {
     })
 
     const storageSettings = result.storageSettings || defaultStorageSettings
-    console.log("Using storageSettings for load:", storageSettings)
+    console.log(
+      "Using storageSettings for load:",
+      JSON.stringify(storageSettings, null, 2)
+    )
 
-    // Khôi phục trạng thái uiState
     if (result.uiState) {
       if (storageSettings.searchQuery) {
         uiState.searchQuery = result.uiState.searchQuery || ""
@@ -202,61 +266,105 @@ export async function customLoadUIState(callback) {
       } else {
         uiState.searchQuery = ""
         console.log(
-          "Cleared searchQuery due to storageSettings.searchQuery = false"
+          "Reset searchQuery to empty due to storageSettings.searchQuery = false"
         )
       }
       if (storageSettings.selectedFolderId) {
         uiState.selectedFolderId = result.uiState.selectedFolderId || ""
+        console.log(`Loaded selectedFolderId: ${uiState.selectedFolderId}`)
+      } else {
+        uiState.selectedFolderId = ""
+        console.log(
+          "Reset selectedFolderId to empty due to storageSettings.selectedFolderId = false"
+        )
       }
       if (storageSettings.sortType) {
         uiState.sortType = result.uiState.sortType || "default"
+        console.log(`Loaded sortType: ${uiState.sortType}`)
+      } else {
+        uiState.sortType = "default"
+        console.log(
+          "Reset sortType to default due to storageSettings.sortType = false"
+        )
       }
       if (storageSettings.viewMode) {
         uiState.viewMode = result.uiState.viewMode || "flat"
+        console.log(`Loaded viewMode: ${uiState.viewMode}`)
+      } else {
+        uiState.viewMode = "flat"
+        console.log(
+          "Reset viewMode to flat due to storageSettings.viewMode = false"
+        )
       }
       if (storageSettings.collapsedFolders) {
         uiState.collapsedFolders = new Set(
           result.uiState.collapsedFolders || []
         )
+        console.log(`Loaded collapsedFolders:`, uiState.collapsedFolders)
+      } else {
+        uiState.collapsedFolders = new Set()
+        console.log(
+          "Reset collapsedFolders to empty due to storageSettings.collapsedFolders = false"
+        )
       }
       if (storageSettings.selectedTags) {
         uiState.selectedTags = result.uiState.selectedTags || []
-        uiState.selectedTag =
-          uiState.selectedTags.length === 1 ? uiState.selectedTags[0] : ""
+        console.log(`Loaded selectedTags: ${uiState.selectedTags}`)
+      } else {
+        uiState.selectedTags = []
+        console.log(
+          "Reset selectedTags to empty due to storageSettings.selectedTags = false"
+        )
       }
     }
     if (storageSettings.checkboxesVisible) {
       uiState.checkboxesVisible = result.checkboxesVisible || false
+      console.log(`Loaded checkboxesVisible: ${uiState.checkboxesVisible}`)
     } else {
       uiState.checkboxesVisible = false
+      console.log(
+        "Reset checkboxesVisible to false due to storageSettings.checkboxesVisible = false"
+      )
     }
     uiState.bookmarkTags = result.bookmarkTags || {}
+    console.log(`Loaded bookmarkTags:`, uiState.bookmarkTags)
     uiState.tagColors = result.tagColors || {}
+    console.log(`Loaded tagColors:`, uiState.tagColors)
 
-    // Cập nhật giao diện
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
     if (elements.languageSwitcher) {
       elements.languageSwitcher.value = savedLanguage
+      console.log(`Set languageSwitcher to: ${savedLanguage}`)
     }
     if (elements.viewSwitcher) {
       elements.viewSwitcher.value = uiState.viewMode
+      console.log(`Set viewSwitcher to: ${uiState.viewMode}`)
     }
     if (elements.folderFilter) {
       elements.folderFilter.value = uiState.selectedFolderId
+      console.log(`Set folderFilter to: ${uiState.selectedFolderId}`)
     }
     if (elements.sortFilter) {
       elements.sortFilter.value = uiState.sortType
+      console.log(`Set sortFilter to: ${uiState.sortType}`)
     }
     if (elements.searchInput) {
       elements.searchInput.value = uiState.searchQuery
+      console.log(`Set searchInput to: ${uiState.searchQuery}`)
     }
     if (elements.toggleCheckboxesButton) {
       elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
         ? translations[savedLanguage].hideCheckboxes
         : translations[savedLanguage].showCheckboxes
+      console.log(
+        `Set toggleCheckboxesButton text to: ${
+          uiState.checkboxesVisible
+            ? translations[savedLanguage].hideCheckboxes
+            : translations[savedLanguage].showCheckboxes
+        }`
+      )
     }
 
-    // Cập nhật hiển thị checkbox
     document
       .querySelectorAll(".bookmark-checkbox, #select-all")
       .forEach((checkbox) => {
@@ -269,11 +377,42 @@ export async function customLoadUIState(callback) {
       selectAllContainer.style.display = uiState.checkboxesVisible
         ? "block"
         : "none"
+      console.log(
+        `Set selectAllContainer display to: ${
+          uiState.checkboxesVisible ? "block" : "none"
+        }`
+      )
     } else {
       console.warn("Select All container (.select-all) not found")
     }
 
-    console.log("UI state loaded:", result)
+    const tagFilterDropdown = document.getElementById("tag-filter-dropdown")
+    if (tagFilterDropdown) {
+      const checkboxes = tagFilterDropdown.querySelectorAll(
+        'input[type="checkbox"]'
+      )
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = uiState.selectedTags.includes(checkbox.value)
+        console.log(`Tag ${checkbox.value} checked: ${checkbox.checked}`)
+      })
+    } else {
+      console.warn("tag-filter-dropdown not found")
+    }
+
+    // Làm mới giao diện sau khi tải trạng thái
+    chrome.bookmarks.getTree((bookmarkTreeNodes) => {
+      const elements = {
+        tagFilter: document.getElementById("tag-filter"),
+        folderListDiv: document.getElementById("folder-list"),
+      }
+      populateTagFilter(elements)
+      renderFilteredBookmarks(bookmarkTreeNodes, elements)
+    })
+
+    console.log(
+      "UI state loaded successfully:",
+      JSON.stringify(uiState, null, 2)
+    )
     if (callback) callback()
   } catch (error) {
     console.error("Error loading UI state:", error)
@@ -286,19 +425,16 @@ export async function customLoadUIState(callback) {
   }
 }
 
-// Override original saveUIState to prevent accidental use
 export function saveUIState() {
   console.warn("Original saveUIState called from:", new Error().stack)
   customSaveUIState()
 }
 
-// Override original loadUIState to prevent accidental use
 export function loadUIState(callback) {
   console.warn("Original loadUIState called! Use customLoadUIState instead.")
   customLoadUIState(callback)
 }
 
-// Initialize event listeners
 function initializeEventListeners() {
   const settingsButton = document.getElementById("localstorage-settings-option")
   const saveButton = document.getElementById("localstorage-settings-save")
@@ -331,11 +467,12 @@ function initializeEventListeners() {
       .then((storageSettings) => {
         console.log(
           "Calling customSaveUIState after saving settings:",
-          storageSettings
+          JSON.stringify(storageSettings, null, 2)
         )
         customSaveUIState()
         const searchInput = document.getElementById("search-input")
         if (searchInput && !storageSettings.searchQuery) {
+          uiState.searchQuery = ""
           searchInput.value = ""
           console.log("Cleared search input after saving settings")
         }
@@ -343,7 +480,31 @@ function initializeEventListeners() {
           tagFilter: document.getElementById("tag-filter"),
           folderListDiv: document.getElementById("folder-list"),
         }
-        if (!storageSettings.bookmarkTags || !storageSettings.tagColors) {
+        if (!storageSettings.selectedTags) {
+          uiState.selectedTags = []
+          console.log(
+            "Cleared selectedTags due to storageSettings.selectedTags = false"
+          )
+          const tagFilterDropdown = document.getElementById(
+            "tag-filter-dropdown"
+          )
+          if (tagFilterDropdown) {
+            const checkboxes = tagFilterDropdown.querySelectorAll(
+              'input[type="checkbox"]'
+            )
+            checkboxes.forEach((checkbox) => {
+              checkbox.checked = false
+              console.log(
+                `Reset tag ${checkbox.value} checked: ${checkbox.checked}`
+              )
+            })
+          }
+        }
+        if (
+          !storageSettings.bookmarkTags ||
+          !storageSettings.tagColors ||
+          !storageSettings.selectedTags
+        ) {
           chrome.bookmarks.getTree((bookmarkTreeNodes) => {
             populateTagFilter(elements)
             renderFilteredBookmarks(bookmarkTreeNodes, elements)
@@ -373,11 +534,12 @@ function initializeEventListeners() {
         .then((storageSettings) => {
           console.log(
             "Calling customSaveUIState after Enter key save:",
-            storageSettings
+            JSON.stringify(storageSettings, null, 2)
           )
           customSaveUIState()
           const searchInput = document.getElementById("search-input")
           if (searchInput && !storageSettings.searchQuery) {
+            uiState.searchQuery = ""
             searchInput.value = ""
             console.log("Cleared search input after Enter key save")
           }
@@ -385,7 +547,31 @@ function initializeEventListeners() {
             tagFilter: document.getElementById("tag-filter"),
             folderListDiv: document.getElementById("folder-list"),
           }
-          if (!storageSettings.bookmarkTags || !storageSettings.tagColors) {
+          if (!storageSettings.selectedTags) {
+            uiState.selectedTags = []
+            console.log(
+              "Cleared selectedTags due to storageSettings.selectedTags = false"
+            )
+            const tagFilterDropdown = document.getElementById(
+              "tag-filter-dropdown"
+            )
+            if (tagFilterDropdown) {
+              const checkboxes = tagFilterDropdown.querySelectorAll(
+                'input[type="checkbox"]'
+              )
+              checkboxes.forEach((checkbox) => {
+                checkbox.checked = false
+                console.log(
+                  `Reset tag ${checkbox.value} checked: ${checkbox.checked}`
+                )
+              })
+            }
+          }
+          if (
+            !storageSettings.bookmarkTags ||
+            !storageSettings.tagColors ||
+            !storageSettings.selectedTags
+          ) {
             chrome.bookmarks.getTree((bookmarkTreeNodes) => {
               populateTagFilter(elements)
               renderFilteredBookmarks(bookmarkTreeNodes, elements)
@@ -402,7 +588,6 @@ function initializeEventListeners() {
   document.addEventListener("keydown", handleKeydown)
 }
 
-// Ensure DOM is loaded before setting up event listeners
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM loaded, initializing local storage settings")

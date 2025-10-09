@@ -4,7 +4,6 @@ export const uiState = {
   bookmarks: [],
   folders: [],
   selectedFolderId: "",
-  selectedTag: "",
   searchQuery: "",
   sortType: "default",
   viewMode: "flat",
@@ -15,7 +14,6 @@ export const uiState = {
   bookmarkTags: {},
   tagColors: {},
   collapsedFolders: new Set(),
-  selectedTag: "",
   selectedTags: [],
 }
 
@@ -45,11 +43,6 @@ export function setTagColors(tagColors) {
   uiState.tagColors = { ...uiState.tagColors, ...tagColors }
 }
 
-export function setSelectedTag(tag) {
-  uiState.selectedTag = tag
-  uiState.selectedTags = tag ? [tag] : []
-}
-
 export function setSelectedTags(tags) {
   console.log("setSelectedTags called with:", tags)
   uiState.selectedTags = [...tags]
@@ -64,8 +57,7 @@ export function saveUIState() {
       sortType: uiState.sortType,
       viewMode: uiState.viewMode,
       collapsedFolders: Array.from(uiState.collapsedFolders),
-      selectedTag: uiState.selectedTag,
-      selectedTags: uiState.selectedTags, // Added
+      selectedTags: uiState.selectedTags,
     },
     checkboxesVisible: uiState.checkboxesVisible,
     bookmarkTags: uiState.bookmarkTags,
@@ -73,9 +65,12 @@ export function saveUIState() {
   }
   chrome.storage.local.set(state, () => {
     if (chrome.runtime.lastError) {
-      console.error("Error saving state:", chrome.runtime.lastError)
+      console.error("Error saving UI state:", chrome.runtime.lastError)
     } else {
-      console.log("UI state saved:", state)
+      console.log(
+        "UI state saved successfully:",
+        JSON.stringify(state, null, 2)
+      )
     }
   })
 }
@@ -84,22 +79,29 @@ export function loadUIState(callback) {
   chrome.storage.local.get(
     ["uiState", "checkboxesVisible", "bookmarkTags", "tagColors"],
     (result) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error loading UI state:", chrome.runtime.lastError)
+      } else {
+        console.log("Loaded UI state:", JSON.stringify(result, null, 2))
+      }
       if (result.uiState) {
         uiState.searchQuery = result.uiState.searchQuery || ""
         uiState.selectedFolderId = result.uiState.selectedFolderId || ""
-        uiState.sortType = result.uiState.selectedTag || "default"
+        uiState.sortType = result.uiState.sortType || "default"
         uiState.viewMode = result.uiState.viewMode || "flat"
         uiState.collapsedFolders = new Set(
           result.uiState.collapsedFolders || []
         )
-        uiState.selectedTag = result.uiState.selectedTag || ""
-        uiState.selectedTags = result.uiState.selectedTags || [] // Added
-        console.log("Loaded selectedTags:", uiState.selectedTags) // Add debug
+        uiState.selectedTags = result.uiState.selectedTags || []
+        console.log("Loaded selectedTags:", uiState.selectedTags)
       }
       uiState.checkboxesVisible = result.checkboxesVisible || false
       uiState.bookmarkTags = result.bookmarkTags || {}
       uiState.tagColors = result.tagColors || {}
-      console.log("UI state loaded:", result)
+      console.log(
+        "UI state loaded successfully:",
+        JSON.stringify(uiState, null, 2)
+      )
       if (callback) callback()
     }
   )

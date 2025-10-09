@@ -236,11 +236,13 @@ export async function populateTagFilter(elements) {
   tagFilterOptions.innerHTML = ""
   allTags.forEach((tag) => {
     const label = document.createElement("label")
+    label.style.display = "block" // Ensure each tag is on a new line
     const checkbox = document.createElement("input")
     checkbox.type = "checkbox"
     checkbox.value = tag
     checkbox.checked = uiState.selectedTags.includes(tag)
     console.log(`Tag ${tag} checked: ${checkbox.checked}`)
+    checkbox.dataset.tag = tag // Add data-tag for debugging
     const tagText = document.createElement("span")
     tagText.textContent = tag
     tagText.style.color = uiState.tagColors[tag] || "#000000"
@@ -454,6 +456,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     setFolders(folders)
     populateFolderFilter(folders, elements)
     populateTagFilter(elements)
+    setupTagFilterListener(elements) // Thêm dòng này để đảm bảo sự kiện được gắn
     updateBookmarkCount(bookmarks, elements)
     let filtered = bookmarks
 
@@ -504,7 +507,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     }
 
     toggleFolderButtons(elements)
-    customSaveUIState() // Line 508
+    customSaveUIState()
   })
 }
 
@@ -612,6 +615,13 @@ function renderTreeView(nodes, elements, depth = 0) {
   const fragment = document.createDocumentFragment()
   const language = localStorage.getItem("appLanguage") || "en"
 
+  // Log trạng thái ban đầu
+  console.log("renderTreeView called:", {
+    depth,
+    nodeCount: nodes?.length || 0,
+    selectedTags: uiState.selectedTags,
+  })
+
   if (!nodes || !Array.isArray(nodes) || nodes.length === 0) {
     console.warn("No nodes to render in renderTreeView", { nodes, depth })
     const emptyMessage = document.createElement("div")
@@ -672,9 +682,22 @@ function renderTreeView(nodes, elements, depth = 0) {
     const matchesFavorite =
       uiState.sortType === "favorites" ? node.isFavorite : true
 
-    const matchesTag = uiState.selectedTag
-      ? node.tags?.includes(uiState.selectedTag)
-      : true
+    // Lọc dựa trên selectedTags
+    const matchesTag =
+      uiState.selectedTags.length > 0
+        ? node.tags?.some((tag) => uiState.selectedTags.includes(tag))
+        : true
+
+    // Log để kiểm tra việc lọc tag
+    if (node.url) {
+      console.log("Checking bookmark:", {
+        id: node.id,
+        title: node.title,
+        tags: node.tags || [],
+        matchesTag,
+        selectedTags: uiState.selectedTags,
+      })
+    }
 
     if (node.children && Array.isArray(node.children)) {
       const isCollapsed = uiState.collapsedFolders.has(node.id)
@@ -738,12 +761,18 @@ function renderTreeView(nodes, elements, depth = 0) {
     if (node.url && matchesSearch && matchesFavorite && matchesTag) {
       const bookmarkElement = createEnhancedBookmarkElement(node, depth)
       fragment.appendChild(bookmarkElement)
+    } else if (node.url && !matchesTag) {
+      console.log("Bookmark filtered out due to tag mismatch:", {
+        id: node.id,
+        title: node.title,
+        tags: node.tags || [],
+        selectedTags: uiState.selectedTags,
+      })
     }
   })
 
   if (depth === 0) {
     elements.folderListDiv.appendChild(fragment)
-    // Ensure listeners are attached after DOM update
     setTimeout(() => {
       attachTreeListeners(elements)
     }, 0)
@@ -1478,49 +1507,26 @@ export function setupTagFilterListener(elements) {
     }
   })
 
-  // Use event delegation on tagFilterDropdown for checkbox changes
-  console.log("Attaching change event to tagFilterDropdown")
-  tagFilterDropdown.addEventListener("change", (e) => {
-    if (e.target.type === "checkbox") {
-      console.log(
-        "Change event triggered on checkbox:",
-        e.target,
-        "value:",
-        e.target.value
-      )
-      const selectedTags = Array.from(
-        tagFilterDropdown.querySelectorAll('input[type="checkbox"]:checked')
-      ).map((cb) => cb.value)
-      console.log("Selected tags updated:", selectedTags)
-      setSelectedTags(selectedTags)
-      console.log("uiState.selectedTags after set:", uiState.selectedTags)
-      tagFilterToggle.textContent =
-        selectedTags.length > 0
-          ? selectedTags.join(", ")
-          : translations[localStorage.getItem("appLanguage") || "en"].allTags
-      console.log("Tag filter toggle text set to:", tagFilterToggle.textContent)
-      console.log("Calling customSaveUIState after tag selection")
-      customSaveUIState()
-      chrome.bookmarks.getTree((tree) => {
-        console.log("Rendering bookmarks after tag selection")
-        renderFilteredBookmarks(tree, elements)
-      })
-    }
-  })
-
-  // Remove any existing listeners to prevent duplicates
+  // Clear existing listeners to prevent duplicates
   tagFilterDropdown.removeEventListener("change", handleTagChange)
   console.log("Attaching change event to tagFilterDropdown")
   tagFilterDropdown.addEventListener("change", handleTagChange)
 
   function handleTagChange(e) {
-    console.log("Change event triggered on:", e.target)
     if (e.target.type === "checkbox") {
+      console.log(
+        "Change event triggered on checkbox:",
+        e.target,
+        "value:",
+        e.target.value,
+        "checked:",
+        e.target.checked
+      )
       const selectedTags = Array.from(
         tagFilterDropdown.querySelectorAll('input[type="checkbox"]:checked')
       ).map((cb) => cb.value)
       console.log("Selected tags updated:", selectedTags)
-      setSelectedTags(selectedTags)
+      uiState.selectedTags = selectedTags // Trực tiếp cập nhật uiState
       console.log("uiState.selectedTags after set:", uiState.selectedTags)
       tagFilterToggle.textContent =
         selectedTags.length > 0
@@ -1535,6 +1541,12 @@ export function setupTagFilterListener(elements) {
       })
     }
   }
+
+  // Debug: Log all checkboxes
+  console.log(
+    "Tag filter checkboxes:",
+    tagFilterDropdown.querySelectorAll('input[type="checkbox"]')
+  )
 }
 
 function attachTreeListeners(elements) {

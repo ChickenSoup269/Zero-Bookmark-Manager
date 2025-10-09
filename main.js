@@ -82,19 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.importBookmarksOption = importBookmarksOption
     }
 
-    console.log("Testing tag filter toggle")
-    const toggle = document.getElementById("tag-filter-toggle")
-    const dropdown = document.getElementById("tag-filter-dropdown")
-    if (toggle && dropdown) {
-      toggle.addEventListener("click", (e) => {
-        e.stopPropagation()
-        console.log("Test toggle clicked " + toggle)
-        dropdown.classList.toggle("hidden")
-      })
-    } else {
-      console.error("Test toggle or dropdown not found", { toggle, dropdown })
-    }
-
     // Khởi tạo ngôn ngữ
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
     elements.languageSwitcher.value = savedLanguage

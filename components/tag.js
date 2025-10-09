@@ -1,6 +1,6 @@
-import { renderFilteredBookmarks } from "./ui.js" // To re-render after changes
+// components/tag.js
+import { renderFilteredBookmarks } from "./ui.js"
 
-// Default tag colors - can be customized
 export let tagColors = {}
 
 // Load saved tags and colors from storage
@@ -46,7 +46,7 @@ export function addTagToBookmark(bookmarkId, tag, color) {
     }
     if (!bookmarkTags[bookmarkId].includes(tag)) {
       bookmarkTags[bookmarkId].push(tag)
-      uiState.bookmarkTags = bookmarkTags // Update uiState
+      uiState.bookmarkTags = bookmarkTags
       saveTags(bookmarkTags, { [tag]: color })
     } else {
       saveTags(bookmarkTags)
@@ -100,7 +100,6 @@ export function getTagsForBookmark(bookmarkId) {
   })
 }
 
-// Get all unique tags
 export async function getAllTags() {
   return new Promise((resolve) => {
     chrome.storage.local.get("bookmarkTags", (data) => {
@@ -109,7 +108,7 @@ export async function getAllTags() {
       Object.values(bookmarkTags).forEach((tags) =>
         tags.forEach((t) => allTags.add(t))
       )
-      console.log("All tags:", Array.from(allTags)) // Thêm log để kiểm tra
+      console.log("All tags:", Array.from(allTags))
       resolve(Array.from(allTags))
     })
   })
