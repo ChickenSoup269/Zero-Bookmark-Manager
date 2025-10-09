@@ -11,14 +11,13 @@ import {
 import { attachDropdownListeners } from "./controller/dropdown.js"
 import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
 import {
-  loadTags,
   addTagToBookmark,
   removeTagFromBookmark,
   changeTagColor,
   getTagsForBookmark,
   getAllTags,
-  tagColors,
 } from "./tag.js"
+import { customSaveUIState } from "./option/option.js"
 
 export function updateUILanguage(elements, language) {
   const t = translations[language] || translations.en
@@ -241,7 +240,7 @@ export async function populateTagFilter(elements) {
     checkbox.type = "checkbox"
     checkbox.value = tag
     checkbox.checked = uiState.selectedTags.includes(tag)
-    console.log(`Tag ${tag} checked: ${checkbox.checked}`) // Debug checkbox state
+    console.log(`Tag ${tag} checked: ${checkbox.checked}`)
     const tagText = document.createElement("span")
     tagText.textContent = tag
     tagText.style.color = uiState.tagColors[tag] || "#000000"
@@ -505,7 +504,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
     }
 
     toggleFolderButtons(elements)
-    customSaveUIState()
+    customSaveUIState() // Line 508
   })
 }
 
@@ -1479,8 +1478,42 @@ export function setupTagFilterListener(elements) {
     }
   })
 
+  // Use event delegation on tagFilterDropdown for checkbox changes
   console.log("Attaching change event to tagFilterDropdown")
   tagFilterDropdown.addEventListener("change", (e) => {
+    if (e.target.type === "checkbox") {
+      console.log(
+        "Change event triggered on checkbox:",
+        e.target,
+        "value:",
+        e.target.value
+      )
+      const selectedTags = Array.from(
+        tagFilterDropdown.querySelectorAll('input[type="checkbox"]:checked')
+      ).map((cb) => cb.value)
+      console.log("Selected tags updated:", selectedTags)
+      setSelectedTags(selectedTags)
+      console.log("uiState.selectedTags after set:", uiState.selectedTags)
+      tagFilterToggle.textContent =
+        selectedTags.length > 0
+          ? selectedTags.join(", ")
+          : translations[localStorage.getItem("appLanguage") || "en"].allTags
+      console.log("Tag filter toggle text set to:", tagFilterToggle.textContent)
+      console.log("Calling customSaveUIState after tag selection")
+      customSaveUIState()
+      chrome.bookmarks.getTree((tree) => {
+        console.log("Rendering bookmarks after tag selection")
+        renderFilteredBookmarks(tree, elements)
+      })
+    }
+  })
+
+  // Remove any existing listeners to prevent duplicates
+  tagFilterDropdown.removeEventListener("change", handleTagChange)
+  console.log("Attaching change event to tagFilterDropdown")
+  tagFilterDropdown.addEventListener("change", handleTagChange)
+
+  function handleTagChange(e) {
     console.log("Change event triggered on:", e.target)
     if (e.target.type === "checkbox") {
       const selectedTags = Array.from(
@@ -1501,10 +1534,11 @@ export function setupTagFilterListener(elements) {
         renderFilteredBookmarks(tree, elements)
       })
     }
-  })
+  }
 }
 
 function attachTreeListeners(elements) {
+  // Folder toggle listeners (giữ nguyên)
   document.querySelectorAll(".folder-toggle").forEach((toggle) => {
     toggle.onclick = (e) => {
       e.stopPropagation()
@@ -1563,8 +1597,39 @@ function attachTreeListeners(elements) {
     })
   })
 
+  // EVENT DELEGATION CHO DROPDOWN - thống nhất cho cả app
+  document.addEventListener("click", (e) => {
+    const dropdownBtn = e.target.closest(".dropdown-btn")
+    if (dropdownBtn) {
+      e.stopPropagation()
+      const dropdownMenu = dropdownBtn.nextElementSibling
+
+      if (dropdownMenu && dropdownMenu.classList.contains("dropdown-menu")) {
+        // Đóng tất cả dropdown khác
+        document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+          if (menu !== dropdownMenu) {
+            menu.classList.add("hidden")
+          }
+        })
+        // Toggle dropdown hiện tại
+        dropdownMenu.classList.toggle("hidden")
+      }
+    }
+  })
+
+  // Close all dropdowns when clicking outside
+  document.addEventListener("click", (e) => {
+    if (
+      !e.target.closest(".dropdown-btn") &&
+      !e.target.closest(".dropdown-menu")
+    ) {
+      document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+        menu.classList.add("hidden")
+      })
+    }
+  })
+
   attachSelectAllListener(elements)
-  attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
 }
 

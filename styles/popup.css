@@ -302,6 +302,7 @@
   top: 16px;
   right: 16px;
 }
+
 /* tree view bookmark popup ẩn mấy cái tag */
 .tree-view .bookmark-tags {
   transition: display 0.3s ease;

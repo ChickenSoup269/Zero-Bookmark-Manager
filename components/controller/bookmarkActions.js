@@ -617,7 +617,26 @@ function handleDeleteBookmark(e, elements) {
     showCustomPopup(translations[language].errorUnexpected, "error", false)
     return
   }
+
   showCustomConfirm(translations[language].deleteConfirm, () => {
+    // Remove tags for the bookmark
+    if (uiState.bookmarkTags[bookmarkId]) {
+      console.log(
+        `Removing tags for bookmark ${bookmarkId}:`,
+        uiState.bookmarkTags[bookmarkId]
+      )
+      delete uiState.bookmarkTags[bookmarkId]
+      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
+        console.log(
+          "Updated bookmarkTags after deletion:",
+          uiState.bookmarkTags
+        )
+        customSaveUIState()
+        // Re-populate tag filter to reflect tag changes
+        populateTagFilter(elements)
+      })
+    }
+
     safeChromeBookmarksCall("remove", [bookmarkId], () => {
       getBookmarkTree((bookmarkTreeNodes) => {
         if (bookmarkTreeNodes) {
@@ -787,6 +806,22 @@ export function handleDeleteSelectedBookmarks(elements) {
     translations[language].deleteBookmarksConfirm ||
       "Are you sure you want to delete the selected bookmarks?",
     () => {
+      // Remove tags for all selected bookmarks
+      Array.from(uiState.selectedBookmarks).forEach((bookmarkId) => {
+        if (uiState.bookmarkTags[bookmarkId]) {
+          console.log(
+            `Removing tags for bookmark ${bookmarkId}:`,
+            uiState.bookmarkTags[bookmarkId]
+          )
+          delete uiState.bookmarkTags[bookmarkId]
+        }
+      })
+      console.log("Updated bookmarkTags after deletion:", uiState.bookmarkTags)
+      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
+        customSaveUIState()
+        populateTagFilter(elements)
+      })
+
       const deletePromises = Array.from(uiState.selectedBookmarks).map(
         (bookmarkId) => {
           return new Promise((resolve) => {

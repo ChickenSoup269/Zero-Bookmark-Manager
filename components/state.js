@@ -1,5 +1,4 @@
 // components/state.js
-
 export const uiState = {
   bookmarkTree: [],
   bookmarks: [],
@@ -50,9 +49,11 @@ export function setSelectedTag(tag) {
   uiState.selectedTag = tag
   uiState.selectedTags = tag ? [tag] : []
 }
+
 export function setSelectedTags(tags) {
-  uiState.selectedTags = tags
-  uiState.selectedTag = tags.length === 1 ? tags[0] : ""
+  console.log("setSelectedTags called with:", tags)
+  uiState.selectedTags = [...tags]
+  console.log("uiState.selectedTags updated:", uiState.selectedTags)
 }
 
 export function saveUIState() {

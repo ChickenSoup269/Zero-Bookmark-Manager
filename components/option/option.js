@@ -24,6 +24,7 @@ const defaultStorageSettings = {
   bookmarkTags: true,
   tagColors: true,
 }
+
 chrome.storage.local.set({ storageSettings: defaultStorageSettings })
 // Map checkbox IDs to translation keys
 const checkboxIdToTranslationKey = {

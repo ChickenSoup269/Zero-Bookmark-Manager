@@ -588,84 +588,126 @@ body {
   cursor: pointer;
 }
 
-/* detail view */
+/* ===== DETAIL VIEW GRID ===== */
 .detail-view {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
-  padding: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  padding: 24px;
+  background: var(--bg-primary);
+  transition: var(--transition);
 }
+
+/* ===== BOOKMARK CARD ===== */
 .detail-bookmark-item {
+  position: relative;
   background: var(--bg-card, #fff);
   border: 1px solid var(--border-color, #e0e0e0);
-  border-radius: 12px;
-  padding: 12px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: var(--border-radius-lg, 12px);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  cursor: pointer;
 }
 
 .detail-bookmark-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-color, #000);
 }
+
+/* ===== TITLE ===== */
 .detail-bookmark-item .bookmark-title {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--text-primary);
   text-decoration: none;
+  display: block;
+  margin-bottom: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.detail-bookmark-item .bookmark-title:hover {
+  color: var(--accent-color);
+}
+
+/* ===== URL ===== */
 .detail-bookmark-item .bookmark-url {
-  font-size: 12px;
-  color: var(--text-secondary);
-  opacity: 0.8;
+  font-size: 13px;
+  color: var(--text-muted);
+  opacity: 0.85;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 20%; /* Giới hạn chiều rộng để tránh tràn */
+  max-width: 100%;
+  margin-bottom: 8px;
 }
 
+/* ===== TAGS ===== */
 .detail-bookmark-item .bookmark-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .detail-bookmark-item .bookmark-tag {
-  background-color: #ccc;
-  color: white;
+  background-color: var(--accent-color, #000);
+  color: #fff;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
-  display: inline-block;
+  letter-spacing: 0.3px;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
+.detail-bookmark-item .bookmark-tag:hover {
+  background-color: var(--accent-hover, #333);
+  transform: scale(1.05);
+}
+
+/* ===== DETAILS ===== */
 .detail-bookmark-item .bookmark-details {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-secondary);
-  margin-top: 8px;
-  line-height: 1.4;
-  background: var(--bg-secondary, #f8f8f8);
-  padding: 8px;
+  margin-top: 10px;
+  line-height: 1.5;
+  background: var(--bg-tertiary, #f8f8f8);
+  padding: 10px 12px;
   border-radius: 8px;
   word-break: break-word;
   overflow: hidden;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
 }
 
 .detail-bookmark-item .bookmark-details p {
   margin: 4px 0;
 }
 
+/* ===== DROPDOWN MENU ===== */
 .detail-bookmark-item .dropdown-btn-group {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 10px;
+  right: 10px;
 }
 
+/* ===== SMALL SCREEN ===== */
+@media (max-width: 600px) {
+  .detail-view {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .detail-bookmark-item {
+    padding: 14px;
+  }
+}
+
+/* tags select */
 .existing-tags-select {
   width: 100%;
   padding: 8px;
@@ -680,7 +722,7 @@ body {
   padding: 8px;
 }
 
-/* styles.css */
+/* tag ở selcet sidevar*/
 .hidden {
   display: none;
 }
