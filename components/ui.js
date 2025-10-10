@@ -1573,7 +1573,6 @@ function attachTreeListeners(elements) {
     })
   })
 
-  // Event delegation for dropdowns - single listener with cleanup
   const oldHandler = window._dropdownClickHandler
   if (oldHandler) {
     document.removeEventListener("click", oldHandler)
