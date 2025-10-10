@@ -401,10 +401,7 @@ export async function customLoadUIState(callback) {
 
     // Làm mới giao diện sau khi tải trạng thái
     chrome.bookmarks.getTree((bookmarkTreeNodes) => {
-      const elements = {
-        tagFilter: document.getElementById("tag-filter"),
-        folderListDiv: document.getElementById("folder-list"),
-      }
+      const elements = getAllUIElements()
       populateTagFilter(elements)
       renderFilteredBookmarks(bookmarkTreeNodes, elements)
     })
@@ -476,10 +473,7 @@ function initializeEventListeners() {
           searchInput.value = ""
           console.log("Cleared search input after saving settings")
         }
-        const elements = {
-          tagFilter: document.getElementById("tag-filter"),
-          folderListDiv: document.getElementById("folder-list"),
-        }
+        const elements = getAllUIElements()
         if (!storageSettings.selectedTags) {
           uiState.selectedTags = []
           console.log(
@@ -543,10 +537,7 @@ function initializeEventListeners() {
             searchInput.value = ""
             console.log("Cleared search input after Enter key save")
           }
-          const elements = {
-            tagFilter: document.getElementById("tag-filter"),
-            folderListDiv: document.getElementById("folder-list"),
-          }
+          const elements = getAllUIElements()
           if (!storageSettings.selectedTags) {
             uiState.selectedTags = []
             console.log(

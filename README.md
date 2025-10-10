@@ -62,15 +62,17 @@ Install Bookmark-Manager
 
 ## Usage/Examples
 
-| Parameter          | Description                                                         |
-| :----------------- | :------------------------------------------------------------------ |
-| `Search`           | Type keywords in the search box.                                    |
-| `Filter folders`   | Select a folder from the dropdown.                                  |
-| `Sort`             | Choose a sorting option.                                            |
-| `Manage folders`   | Create, rename, or delete fodlers                                   |
-| `Manage bookmarks` | Click "⋮" to add to folder, rename, or delete.                      |
-| `Export/Import`    | Use Settings to export as JSON/HTML or import with duplicate check. |
-| `Customize`        | Adjust theme, font, or language in Settings.                        |
+| Parameter                | Description                                                                                 |
+| :----------------------- | :------------------------------------------------------------------------------------------ |
+| `Search`                 | Type keywords in the search box.                                                            |
+| `Filter folders`         | Select a folder from the dropdown.                                                          |
+| `Sort`                   | Choose a sorting option.                                                                    |
+| `Manage folders`         | Create, rename, or delete fodlers                                                           |
+| `Manage bookmarks`       | Click "⋮" to add to folder, rename, or delete.                                              |
+| `Export/Import`          | Use Settings to export as JSON/HTML or import with duplicate check.                         |
+| `Customize`              | Adjust theme, font, or language in Settings.                                                |
+| `Edit in new tabs`       | Use extension with web page                                                                 |
+| `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs |
 
 ## Video & screenshots
 

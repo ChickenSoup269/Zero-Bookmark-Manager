@@ -1,6 +1,5 @@
 // ./components/controller/dropdown.js
 export function attachDropdownListeners() {
-  // Remove existing listeners to prevent duplicates
   const dropdownButtons = document.querySelectorAll(".dropdown-btn")
   dropdownButtons.forEach((button) => {
     const newButton = button.cloneNode(true)
