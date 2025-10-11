@@ -210,9 +210,8 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     console.log("Bookmark data:", bookmark)
 
     // Set thumbnail
-    let thumbnailUrl = chrome.runtime.getURL("images/default-favicon.png") // Use chrome.runtime.getURL for extension resources
+    let thumbnailUrl = chrome.runtime.getURL("images/default-favicon.png")
     if (bookmark.url && bookmark.url.startsWith("http")) {
-      // Use mshots as an alternative thumbnail service
       thumbnailUrl = `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(
         bookmark.url
       )}?w=1000`
@@ -221,7 +220,6 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
       console.warn("Invalid URL for thumbnail:", bookmark.url)
     }
 
-    // Prevent error loop by checking if src is already set
     if (thumbnailEl.src !== thumbnailUrl) {
       thumbnailEl.src = thumbnailUrl
       thumbnailEl.alt = bookmark.title || "Website thumbnail"
@@ -244,6 +242,48 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
       console.log("Thumbnail loaded successfully for URL:", bookmark.url)
     }
 
+    // Add hover icon and enlarge functionality
+    const thumbnailContainer = thumbnailEl.parentElement
+    thumbnailContainer.classList.add("thumbnail-container")
+    const magnifyIcon = document.createElement("span")
+    magnifyIcon.className = "magnify-icon"
+    magnifyIcon.innerHTML = "<i class='fas fa-search-plus'></i>"
+    thumbnailContainer.appendChild(magnifyIcon)
+
+    // Enlarge image on click
+    let enlargeOverlay = null
+    thumbnailEl.onclick = () => {
+      if (!enlargeOverlay) {
+        enlargeOverlay = document.createElement("div")
+        enlargeOverlay.className = "enlarge-overlay"
+        const enlargedImg = document.createElement("img")
+        enlargedImg.src = thumbnailEl.src
+        enlargedImg.alt = thumbnailEl.alt
+        enlargedImg.className = "enlarged-image"
+        enlargeOverlay.appendChild(enlargedImg)
+        document.body.appendChild(enlargeOverlay)
+
+        // Close overlay on click
+        enlargeOverlay.onclick = (e) => {
+          if (e.target === enlargeOverlay) {
+            enlargeOverlay.remove()
+            enlargeOverlay = null
+            document.removeEventListener("keydown", handleOverlayKeydown)
+          }
+        }
+
+        // Close overlay on Escape
+        const handleOverlayKeydown = (e) => {
+          if (e.key === "Escape") {
+            enlargeOverlay.remove()
+            enlargeOverlay = null
+            document.removeEventListener("keydown", handleOverlayKeydown)
+          }
+        }
+        document.addEventListener("keydown", handleOverlayKeydown)
+      }
+    }
+
     // Populate other fields
     title.textContent =
       bookmark.title || bookmark.url || translations[language].notAvailable
@@ -257,11 +297,12 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
           (tag) => `
             <span class="bookmark-tag" style="
               background-color: ${uiState.tagColors[tag] || "#ccc"};
-              color: white;
+              color: ${uiState.tagTextColors?.[tag] || "#ffffff"};
               padding: 4px 10px;
               border-radius: 6px;
               font-size: 12px;
-              margin-right: 8px;
+              margin: 0 8px 8px 0;
+              display: inline-block;
             ">
               ${tag}
             </span>
@@ -275,6 +316,11 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     const closePopup = () => {
       console.log("Closing popup")
       popup.classList.add("hidden")
+      if (enlargeOverlay) {
+        enlargeOverlay.remove()
+        enlargeOverlay = null
+      }
+      magnifyIcon.remove()
       document.removeEventListener("keydown", handleKeydown)
     }
 
