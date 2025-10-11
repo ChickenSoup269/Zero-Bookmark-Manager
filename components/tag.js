@@ -108,7 +108,7 @@ export async function getAllTags() {
       Object.values(bookmarkTags).forEach((tags) =>
         tags.forEach((t) => allTags.add(t))
       )
-      console.log("All tags:", Array.from(allTags))
+
       resolve(Array.from(allTags))
     })
   })

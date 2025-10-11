@@ -216,8 +216,6 @@ export function updateUILanguage(elements, language) {
 }
 
 export async function populateTagFilter(elements) {
-  console.log("Populating tag filter with elements:", elements)
-  console.log("Current selectedTags:", uiState.selectedTags)
   const tagFilterOptions = elements.tagFilterContainer?.querySelector(
     "#tag-filter-options"
   )
@@ -232,7 +230,7 @@ export async function populateTagFilter(elements) {
   }
 
   const allTags = await getAllTags()
-  console.log("Tags to populate:", allTags)
+
   tagFilterOptions.innerHTML = ""
   allTags.forEach((tag) => {
     const label = document.createElement("label")
@@ -241,7 +239,7 @@ export async function populateTagFilter(elements) {
     checkbox.type = "checkbox"
     checkbox.value = tag
     checkbox.checked = uiState.selectedTags.includes(tag)
-    console.log(`Tag ${tag} checked: ${checkbox.checked}`)
+
     checkbox.dataset.tag = tag // Add data-tag for debugging
     const tagText = document.createElement("span")
     tagText.textContent = tag
@@ -250,13 +248,11 @@ export async function populateTagFilter(elements) {
     label.appendChild(tagText)
     tagFilterOptions.appendChild(label)
   })
-  console.log("Tag filter options HTML:", tagFilterOptions.innerHTML)
 
   tagFilterToggle.textContent =
     uiState.selectedTags.length > 0
       ? uiState.selectedTags.join(", ")
       : translations[localStorage.getItem("appLanguage") || "en"].allTags
-  console.log("Tag filter toggle text set to:", tagFilterToggle.textContent)
 }
 
 // Existing functions (unchanged)
@@ -363,11 +359,6 @@ export function updateTheme(elements, theme) {
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
-  console.log(
-    "renderFilteredBookmarks called with selectedTags:",
-    uiState.selectedTags
-  )
-  console.log("Bookmark tags:", uiState.bookmarkTags)
   chrome.storage.local.get(["favoriteBookmarks"], (data) => {
     const favoriteBookmarks = data.favoriteBookmarks || {}
 
@@ -376,7 +367,6 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         if (node.url) {
           node.isFavorite = !!favoriteBookmarks[node.id]
           node.tags = uiState.bookmarkTags[node.id] || []
-          console.log(`Bookmark ${node.id}: tags=${node.tags}`)
         }
         if (node.children) {
           addFavoriteAndTagsStatus(node.children)
@@ -402,7 +392,6 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         uiState.selectedTags.some((tag) => bookmark.tags.includes(tag))
       )
     }
-    console.log("Filtered bookmarks by tags:", filtered)
 
     if (uiState.sortType === "favorites") {
       filtered = filtered.filter((bookmark) => bookmark.isFavorite)
@@ -431,8 +420,6 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
             .includes(uiState.searchQuery.toLowerCase())
       )
     }
-
-    console.log("Final filtered bookmarks:", filtered)
 
     if (uiState.viewMode === "tree") {
       const rootChildren = bookmarkTreeNodes[0]?.children || []
@@ -480,26 +467,7 @@ function renderDetailView(bookmarksList, elements) {
 
 function populateFolderFilter(folders, elements) {
   const language = localStorage.getItem("appLanguage") || "en"
-
-  // ✅ KIỂM TRA elements.folderFilter TỒN TẠI
-  if (!elements || !elements.folderFilter) {
-    console.error(
-      "folderFilter element not found in elements object:",
-      elements
-    )
-    // Thử tìm trong DOM
-    const folderFilter = document.querySelector("#folder-filter")
-    if (folderFilter) {
-      elements = elements || {}
-      elements.folderFilter = folderFilter
-    } else {
-      console.error("Cannot find #folder-filter in DOM")
-      return // Thoát sớm nếu không tìm thấy
-    }
-  }
-
   elements.folderFilter.innerHTML = `<option value="">${translations[language].allBookmarks}</option>`
-
   folders.forEach((folder) => {
     if (folder.id !== "0") {
       const option = document.createElement("option")
@@ -508,7 +476,6 @@ function populateFolderFilter(folders, elements) {
       elements.folderFilter.appendChild(option)
     }
   })
-
   if (folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId
   } else {
@@ -572,14 +539,6 @@ function renderTreeView(nodes, elements, depth = 0) {
   const fragment = document.createDocumentFragment()
   const language = localStorage.getItem("appLanguage") || "en"
 
-  // Log initial state (optional, consider disabling in production)
-  console.log("renderTreeView called:", {
-    depth,
-    nodeCount: nodes?.length || 0,
-    selectedTags: uiState.selectedTags,
-  })
-
-  // Handle empty or invalid nodes
   if (!nodes || !Array.isArray(nodes) || nodes.length === 0) {
     console.warn("No nodes to render in renderTreeView", { nodes, depth })
     const emptyMessage = document.createElement("div")
@@ -588,10 +547,10 @@ function renderTreeView(nodes, elements, depth = 0) {
     emptyMessage.style.padding = "20px"
     emptyMessage.style.textAlign = "center"
     fragment.appendChild(emptyMessage)
+    elements.folderListDiv.appendChild(fragment)
     return fragment
   }
 
-  // Initialize root level
   if (depth === 0) {
     elements.folderListDiv.innerHTML = ""
     elements.folderListDiv.classList.add("tree-view")
@@ -602,7 +561,6 @@ function renderTreeView(nodes, elements, depth = 0) {
     fragment.appendChild(selectAllDiv)
   }
 
-  // Filter nodes based on selected folder
   let nodesToRender = nodes
   if (
     depth === 0 &&
@@ -621,16 +579,15 @@ function renderTreeView(nodes, elements, depth = 0) {
     }
   }
 
-  // Sort folders and bookmarks
   const folders = nodesToRender.filter((node) => node.children)
   const bookmarks = nodesToRender.filter((node) => node.url)
+
   const sortedBookmarks = sortBookmarks(bookmarks, uiState.sortType)
   const sortedFolders = folders.sort((a, b) =>
     (a.title || "").localeCompare(b.title || "")
   )
   const sortedNodes = [...sortedFolders, ...sortedBookmarks]
 
-  // Render nodes
   sortedNodes.forEach((node) => {
     const folderTitle =
       node.title && node.title.trim() !== "" ? node.title : `Folder ${node.id}`
@@ -648,18 +605,6 @@ function renderTreeView(nodes, elements, depth = 0) {
         ? node.tags?.some((tag) => uiState.selectedTags.includes(tag))
         : true
 
-    // Log bookmark filtering (optional, consider disabling in production)
-    if (node.url) {
-      console.log("Checking bookmark:", {
-        id: node.id,
-        title: node.title,
-        tags: node.tags || [],
-        matchesTag,
-        selectedTags: uiState.selectedTags,
-      })
-    }
-
-    // Render folder
     if (node.children && Array.isArray(node.children)) {
       const isCollapsed = uiState.collapsedFolders.has(node.id)
       const itemCount = countFolderItems(node)
@@ -719,25 +664,15 @@ function renderTreeView(nodes, elements, depth = 0) {
       fragment.appendChild(childrenContainer)
     }
 
-    // Render bookmark
     if (node.url && matchesSearch && matchesFavorite && matchesTag) {
       const bookmarkElement = createEnhancedBookmarkElement(node, depth)
       fragment.appendChild(bookmarkElement)
-    } else if (node.url && !matchesTag) {
-      console.log("Bookmark filtered out due to tag mismatch:", {
-        id: node.id,
-        title: node.title,
-        tags: node.tags || [],
-        selectedTags: uiState.selectedTags,
-      })
     }
   })
 
-  // Attach listeners only at root level
   if (depth === 0) {
     elements.folderListDiv.appendChild(fragment)
-    attachSelectAllListener(elements)
-    attachTreeListeners(elements) // Handles dropdowns and bookmark actions
+    attachTreeListeners(elements) // Gắn lại sự kiện sau khi render
     return
   }
 
@@ -1437,7 +1372,6 @@ function showManageTagsPopup(bookmarkId) {
 }
 
 export function setupTagFilterListener(elements) {
-  console.log("Setting up tag filter listener with elements:", elements)
   const tagFilterToggle =
     elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
   const tagFilterDropdown = elements.tagFilterContainer?.querySelector(
@@ -1452,79 +1386,66 @@ export function setupTagFilterListener(elements) {
     return
   }
 
-  console.log("Attaching click event to tagFilterToggle")
   tagFilterToggle.addEventListener("click", (e) => {
     e.stopPropagation()
-    console.log(
-      "Toggling dropdown, current hidden:",
-      tagFilterDropdown.classList.contains("hidden")
-    )
+
     tagFilterDropdown.classList.toggle("hidden")
   })
 
-  console.log("Attaching document click event")
   document.addEventListener("click", (e) => {
     if (!elements.tagFilterContainer.contains(e.target)) {
-      console.log("Click outside, hiding dropdown")
       tagFilterDropdown.classList.add("hidden")
     }
   })
 
   // Clear existing listeners to prevent duplicates
   tagFilterDropdown.removeEventListener("change", handleTagChange)
-  console.log("Attaching change event to tagFilterDropdown")
+
   tagFilterDropdown.addEventListener("change", handleTagChange)
 
   function handleTagChange(e) {
     if (e.target.type === "checkbox") {
-      console.log(
-        "Change event triggered on checkbox:",
-        e.target,
-        "value:",
-        e.target.value,
-        "checked:",
-        e.target.checked
-      )
       const selectedTags = Array.from(
         tagFilterDropdown.querySelectorAll('input[type="checkbox"]:checked')
       ).map((cb) => cb.value)
-      console.log("Selected tags updated:", selectedTags)
+
       uiState.selectedTags = selectedTags // Trực tiếp cập nhật uiState
-      console.log("uiState.selectedTags after set:", uiState.selectedTags)
+
       tagFilterToggle.textContent =
         selectedTags.length > 0
           ? selectedTags.join(", ")
           : translations[localStorage.getItem("appLanguage") || "en"].allTags
-      console.log("Tag filter toggle text set to:", tagFilterToggle.textContent)
-      console.log("Calling customSaveUIState after tag selection")
+
       customSaveUIState()
       chrome.bookmarks.getTree((tree) => {
-        console.log("Rendering bookmarks after tag selection")
         renderFilteredBookmarks(tree, elements)
       })
     }
   }
 
   // Debug: Log all checkboxes
-  console.log(
-    "Tag filter checkboxes:",
-    tagFilterDropdown.querySelectorAll('input[type="checkbox"]')
-  )
 }
 
 function attachTreeListeners(elements) {
-  // Folder toggle listeners
-  document.querySelectorAll(".folder-toggle").forEach((toggle) => {
-    toggle.onclick = (e) => {
+  const folderListDiv = elements.folderListDiv
+  // Xóa các sự kiện cũ để tránh trùng lặp
+  folderListDiv.removeEventListener("click", handleFolderToggle)
+  folderListDiv.removeEventListener("click", handleDropdownClick)
+  folderListDiv.removeEventListener("click", handlePopupActions)
+
+  // Gắn sự kiện toggle thư mục
+  function handleFolderToggle(e) {
+    const toggle = e.target.closest(".folder-toggle")
+    if (toggle) {
       e.stopPropagation()
-      const folderDiv = e.target.closest(".folder-item")
+      const folderDiv = toggle.closest(".folder-item")
       const folderId = folderDiv.dataset.id
       const childrenContainer = folderDiv.nextElementSibling
       const folderIcon = folderDiv.querySelector(".folder-icon")
 
       if (uiState.collapsedFolders.has(folderId)) {
         uiState.collapsedFolders.delete(folderId)
-        e.target.textContent = "−"
+        toggle.textContent = "−"
         folderIcon.textContent = "📂"
         if (childrenContainer) {
           childrenContainer.style.display = "block"
@@ -1539,76 +1460,138 @@ function attachTreeListeners(elements) {
                 depth
               )
               childrenContainer.appendChild(childrenFragment)
+              // Gắn lại sự kiện cho dropdown và popup trong thư mục con
+              attachDropdownListeners(elements)
+              setupBookmarkActionListeners(elements)
+              initializePopups() // Khởi tạo lại popup
             }
           }
         }
       } else {
         uiState.collapsedFolders.add(folderId)
-        e.target.textContent = "+"
+        toggle.textContent = "+"
         folderIcon.textContent = "📁"
         if (childrenContainer) {
           childrenContainer.style.display = "none"
         }
       }
 
-      e.target.style.transform = "scale(1.1)"
+      toggle.style.transform = "scale(1.1)"
       setTimeout(() => {
-        e.target.style.transform = ""
+        toggle.style.transform = ""
       }, 150)
 
-      saveUIState()
+      customSaveUIState()
     }
-
-    // Hover effects
-    toggle.addEventListener("mouseenter", () => {
-      toggle.style.background = "var(--text-primary)"
-      toggle.style.color = "var(--bg-primary)"
-      toggle.style.transform = "scale(1.05)"
-    })
-
-    toggle.addEventListener("mouseleave", () => {
-      toggle.style.background = "var(--bg-primary)"
-      toggle.style.color = "var(--text-primary)"
-      toggle.style.transform = ""
-    })
-  })
-
-  const oldHandler = window._dropdownClickHandler
-  if (oldHandler) {
-    document.removeEventListener("click", oldHandler)
   }
 
-  const dropdownClickHandler = (e) => {
+  // Gắn sự kiện dropdown
+  function handleDropdownClick(e) {
     const dropdownBtn = e.target.closest(".dropdown-btn")
     if (dropdownBtn) {
       e.stopPropagation()
       const dropdownMenu = dropdownBtn.nextElementSibling
 
       if (dropdownMenu && dropdownMenu.classList.contains("dropdown-menu")) {
-        // Close all other dropdowns
         document.querySelectorAll(".dropdown-menu").forEach((menu) => {
           if (menu !== dropdownMenu) {
             menu.classList.add("hidden")
           }
         })
-        // Toggle current dropdown
         dropdownMenu.classList.toggle("hidden")
       }
-      return
     }
+  }
 
-    // Close all dropdowns when clicking outside
-    if (!e.target.closest(".dropdown-menu")) {
+  // Gắn sự kiện cho các hành động popup
+  function handlePopupActions(e) {
+    const target = e.target.closest(".menu-item")
+    if (!target) return
+
+    e.stopPropagation()
+    const bookmarkId = target.dataset.id
+    const language = localStorage.getItem("appLanguage") || "en"
+
+    if (target.classList.contains("rename-btn")) {
+      const renamePopup = document.getElementById("rename-popup")
+      if (renamePopup) {
+        renamePopup.classList.remove("hidden")
+        const renameInput = renamePopup.querySelector("#rename-input")
+        const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
+        if (bookmark && renameInput) {
+          renameInput.value = bookmark.title || bookmark.url
+        } else {
+          console.error("Bookmark or rename input not found", {
+            bookmarkId,
+            bookmark,
+            renameInput,
+          })
+          showCustomPopup(translations[language].errorUnexpected, "error", true)
+        }
+      } else {
+        console.error("Rename popup not found")
+        showCustomPopup(translations[language].errorUnexpected, "error", true)
+      }
+    } else if (target.classList.contains("view-detail-btn")) {
+      showBookmarkDetail(bookmarkId)
+    } else if (target.classList.contains("manage-tags-btn")) {
+      showManageTagsPopup(bookmarkId)
+    } else if (target.classList.contains("add-to-folder")) {
+      const addToFolderPopup = document.getElementById("add-to-folder-popup")
+      if (addToFolderPopup) {
+        addToFolderPopup.classList.remove("hidden")
+      } else {
+        console.error("Add to folder popup not found")
+        showCustomPopup(translations[language].errorUnexpected, "error", true)
+      }
+    } else if (target.classList.contains("delete-btn")) {
+      showCustomPopup(
+        translations[language].confirmDeleteBookmark,
+        "confirm",
+        true,
+        () => {
+          chrome.bookmarks.remove(bookmarkId, () => {
+            if (chrome.runtime.lastError) {
+              console.error(
+                "Error deleting bookmark:",
+                chrome.runtime.lastError
+              )
+              showCustomPopup(
+                translations[language].errorUnexpected,
+                "error",
+                true
+              )
+            } else {
+              chrome.bookmarks.getTree((tree) => {
+                renderFilteredBookmarks(tree, elements)
+              })
+            }
+          })
+        }
+      )
+    } else if (target.classList.contains("favorite-btn")) {
+      toggleFavorite(bookmarkId, target)
+    }
+  }
+
+  // Gắn các sự kiện
+  folderListDiv.addEventListener("click", handleFolderToggle)
+  folderListDiv.addEventListener("click", handleDropdownClick)
+  folderListDiv.addEventListener("click", handlePopupActions)
+
+  // Đóng dropdown khi click bên ngoài
+  document.addEventListener("click", (e) => {
+    if (
+      !e.target.closest(".dropdown-btn") &&
+      !e.target.closest(".dropdown-menu")
+    ) {
       document.querySelectorAll(".dropdown-menu").forEach((menu) => {
         menu.classList.add("hidden")
       })
     }
-  }
+  })
 
-  // Store handler for future cleanup
-  window._dropdownClickHandler = dropdownClickHandler
-  document.addEventListener("click", dropdownClickHandler)
-
+  attachSelectAllListener(elements)
   attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
 }
