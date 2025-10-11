@@ -1484,7 +1484,7 @@ html {
 }
 
 .hidden {
-  display: none !important;
+  display: none;
 }
 
 /* Responsive Design for 480px and below */
@@ -1493,10 +1493,6 @@ html {
     padding: 16px;
     max-width: 90%;
     margin: 0 16px;
-  }
-
-  .rename-popup-content h3 {
-    font-size: 1.25rem;
   }
 
   #existing-tags {
