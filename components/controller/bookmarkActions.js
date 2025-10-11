@@ -337,7 +337,7 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
 }
 
 // Function to open manage tags popup with dropdown for existing tags
-async function openManageTagsPopup(bookmarkId, elements) {
+async function openManageTagsPopup(bookmarkId) {
   const language = localStorage.getItem("appLanguage") || "en"
   const popup = document.getElementById("manage-tags-popup")
   const existingTags = document.getElementById("existing-tags")
@@ -345,7 +345,7 @@ async function openManageTagsPopup(bookmarkId, elements) {
   const newTagColor = document.getElementById("new-tag-color")
   const newTagTextColor = document.createElement("input")
   const addTagBtn = document.getElementById("add-tag-btn")
-  const closeButton = popup.querySelector(".close-modal")
+  const closeButton = popup?.querySelector(".close-modal")
   const MAX_TAGS = 10
 
   // Initialize text color input
@@ -430,6 +430,11 @@ async function openManageTagsPopup(bookmarkId, elements) {
 
   // Insert dropdown and text color input
   const addTagContainer = popup.querySelector(".add-tag-container")
+  if (!addTagContainer) {
+    console.error("add-tag-container not found")
+    showCustomPopup(translations[language].errorUnexpected, "error", true)
+    return
+  }
   addTagContainer.before(tagSelect)
   addTagContainer.before(newTagTextColor)
 
@@ -537,9 +542,11 @@ async function openManageTagsPopup(bookmarkId, elements) {
         uiState.bookmarkTags[bookmarkId] = []
       }
       uiState.bookmarkTags[bookmarkId].push(selectedTag)
-      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
-      renderTags()
-      tagSelect.value = ""
+      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
+        console.log("Tag added to storage:", selectedTag)
+        renderTags()
+        tagSelect.value = ""
+      })
     }
   })
 
@@ -567,21 +574,26 @@ async function openManageTagsPopup(bookmarkId, elements) {
         uiState.tagColors[tag] = bgColor
         if (!uiState.tagTextColors) uiState.tagTextColors = {}
         uiState.tagTextColors[tag] = textColor
-        chrome.storage.local.set({
-          bookmarkTags: uiState.bookmarkTags,
-          tagColors: uiState.tagColors,
-          tagTextColors: uiState.tagTextColors,
-        })
-        renderTags()
-        newTagInput.value = ""
-        newTagColor.value = "#cccccc"
-        newTagTextColor.value = "#ffffff"
-        const option = document.createElement("option")
-        option.value = tag
-        option.textContent = tag
-        option.style.backgroundColor = bgColor
-        option.style.color = textColor
-        tagSelect.appendChild(option)
+        chrome.storage.local.set(
+          {
+            bookmarkTags: uiState.bookmarkTags,
+            tagColors: uiState.tagColors,
+            tagTextColors: uiState.tagTextColors,
+          },
+          () => {
+            console.log("New tag saved:", { tag, bgColor, textColor })
+            renderTags()
+            newTagInput.value = ""
+            newTagColor.value = "#cccccc"
+            newTagTextColor.value = "#ffffff"
+            const option = document.createElement("option")
+            option.value = tag
+            option.textContent = tag
+            option.style.backgroundColor = bgColor
+            option.style.color = textColor
+            tagSelect.appendChild(option)
+          }
+        )
       } else {
         showCustomPopup(
           translations[language].tagExists || "Tag already exists",
@@ -596,16 +608,22 @@ async function openManageTagsPopup(bookmarkId, elements) {
   existingTags.addEventListener("click", (e) => {
     if (e.target.classList.contains("remove-tag-btn")) {
       const tag = e.target.dataset.tag
+      console.log("Removing tag:", tag)
       uiState.bookmarkTags[bookmarkId] = uiState.bookmarkTags[
         bookmarkId
       ].filter((t) => t !== tag)
-      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
-      renderTags()
+      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
+        console.log("Tag removed from storage:", tag)
+        renderTags()
+      })
     } else if (e.target.classList.contains("edit-tag-btn")) {
       const tag = e.target.dataset.tag
       const tagItem = e.target.closest(".tag-item")
       const tagSpan = tagItem.querySelector(".bookmark-tag")
       const currentTagName = tagSpan.textContent
+      const removeButton = tagItem.querySelector(".remove-tag-btn")
+
+      console.log("Editing tag:", { currentTagName, tag })
 
       // Replace tag with input and save button
       const editInput = document.createElement("input")
@@ -635,11 +653,13 @@ async function openManageTagsPopup(bookmarkId, elements) {
       tagItem.innerHTML = ""
       tagItem.appendChild(editInput)
       tagItem.appendChild(saveButton)
-      tagItem.appendChild(e.target)
-      tagItem.appendChild(tagItem.querySelector(".remove-tag-btn"))
+      tagItem.appendChild(e.target) // Edit button
+      if (removeButton) tagItem.appendChild(removeButton) // Remove button
 
       saveButton.onclick = () => {
         const newTagName = editInput.value.trim()
+        console.log("Saving edited tag:", { oldTag: tag, newTagName })
+
         if (!newTagName) {
           showCustomPopup(
             translations[language].tagEmpty || "Tag name cannot be empty",
@@ -649,10 +669,11 @@ async function openManageTagsPopup(bookmarkId, elements) {
           return
         }
         if (newTagName === currentTagName) {
+          console.log("No change in tag name, reverting")
           renderTags()
           return
         }
-        if (tags.includes(newTagName)) {
+        if (uiState.bookmarkTags[bookmarkId].includes(newTagName)) {
           showCustomPopup(
             translations[language].tagExists || "Tag already exists",
             "error",
@@ -681,29 +702,33 @@ async function openManageTagsPopup(bookmarkId, elements) {
 
         // Save to storage
         uiState.bookmarkTags = updatedBookmarkTags
-        chrome.storage.local.set({
-          bookmarkTags: uiState.bookmarkTags,
-          tagColors: uiState.tagColors,
-          tagTextColors: uiState.tagTextColors,
-        })
-
-        // Update dropdown
-        const option = tagSelect.querySelector(`option[value="${tag}"]`)
-        if (option) {
-          option.value = newTagName
-          option.textContent = newTagName
-          option.style.backgroundColor = uiState.tagColors[newTagName]
-          option.style.color =
-            uiState.tagTextColors?.[newTagName] ||
-            getContrastColor(uiState.tagColors[newTagName])
-        }
-
-        renderTags()
+        chrome.storage.local.set(
+          {
+            bookmarkTags: uiState.bookmarkTags,
+            tagColors: uiState.tagColors,
+            tagTextColors: uiState.tagTextColors,
+          },
+          () => {
+            console.log("Tag updated in storage:", { oldTag: tag, newTagName })
+            // Update dropdown
+            const option = tagSelect.querySelector(`option[value="${tag}"]`)
+            if (option) {
+              option.value = newTagName
+              option.textContent = newTagName
+              option.style.backgroundColor = uiState.tagColors[newTagName]
+              option.style.color =
+                uiState.tagTextColors?.[newTagName] ||
+                getContrastColor(uiState.tagColors[newTagName])
+            }
+            renderTags()
+          }
+        )
       }
     }
   })
 
   const closePopup = () => {
+    console.log("Closing manage tags popup")
     popup.classList.add("hidden")
     tagSelect.remove()
     colorButtonsContainer.remove()
