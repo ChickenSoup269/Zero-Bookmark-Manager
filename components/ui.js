@@ -659,6 +659,10 @@ function renderTreeView(nodes, elements, depth = 0) {
           depth + 1
         )
         childrenContainer.appendChild(childrenFragment)
+        // Gắn lại sự kiện và khởi tạo popup
+
+        attachDropdownListeners(elements)
+        setupBookmarkActionListeners(elements)
       }
 
       fragment.appendChild(childrenContainer)
@@ -672,7 +676,8 @@ function renderTreeView(nodes, elements, depth = 0) {
 
   if (depth === 0) {
     elements.folderListDiv.appendChild(fragment)
-    attachTreeListeners(elements) // Gắn lại sự kiện sau khi render
+    // Khởi tạo popup tại root
+    attachTreeListeners(elements)
     return
   }
 
@@ -1252,125 +1257,6 @@ function attachSelectAllListener(elements) {
   }
 }
 
-function showBookmarkDetail(bookmarkId) {
-  const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
-  if (!bookmark) return
-
-  const modal = document.getElementById("bookmark-detail-popup")
-  if (!modal) return
-
-  modal.querySelector("#detail-title").textContent =
-    bookmark.title || bookmark.url
-  modal.querySelector("#detail-url").textContent = bookmark.url
-  modal.querySelector("#detail-date-added").textContent = new Date(
-    bookmark.dateAdded
-  ).toLocaleString()
-  const tagsContainer = modal.querySelector("#detail-tags")
-  tagsContainer.innerHTML = (bookmark.tags || [])
-    .map(
-      (tag) => `
-    <span style="background-color: ${
-      uiState.tagColors[tag] || "#ccc"
-    }; color: white; padding: 4px 8px; border-radius: 6px; margin-right: 4px;">
-      ${tag}
-    </span>
-  `
-    )
-    .join("")
-
-  modal.classList.remove("hidden")
-}
-
-function showManageTagsPopup(bookmarkId) {
-  const modal = document.getElementById("manage-tags-popup")
-  if (!modal) return
-
-  getTagsForBookmark(bookmarkId).then((tags) => {
-    const existingTags = modal.querySelector("#existing-tags")
-    existingTags.innerHTML = tags
-      .map(
-        (tag) => `
-      <div class="tag-item">
-        <span style="background-color: ${
-          uiState.tagColors[tag] || "#ccc"
-        }; color: white; padding: 4px 8px; border-radius: 6px;">${tag}</span>
-        <input type="color" value="${
-          uiState.tagColors[tag] || "#cccccc"
-        }" data-tag="${tag}" class="tag-color-picker">
-        <button class="remove-tag" data-tag="${tag}" data-id="${bookmarkId}">Remove</button>
-      </div>
-    `
-      )
-      .join("")
-
-    modal.querySelectorAll(".tag-color-picker").forEach((picker) => {
-      picker.onchange = (e) => {
-        const tag = e.target.dataset.tag
-        changeTagColor(tag, e.target.value)
-        customSaveUIState()
-        chrome.bookmarks.getTree((tree) => {
-          renderFilteredBookmarks(tree, {
-            tagFilter: document.getElementById("tag-filter-container"),
-            folderListDiv: document.getElementById("folder-list"),
-          })
-        })
-      }
-    })
-
-    modal.querySelectorAll(".remove-tag").forEach((btn) => {
-      btn.onclick = (e) => {
-        const tag = e.target.dataset.tag
-        const id = e.target.dataset.id
-        removeTagFromBookmark(id, tag)
-        showManageTagsPopup(id)
-        customSaveUIState()
-        chrome.bookmarks.getTree((tree) => {
-          renderFilteredBookmarks(tree, {
-            tagFilter: document.getElementById("tag-filter-container"),
-            folderListDiv: document.getElementById("folder-list"),
-          })
-        })
-      }
-    })
-
-    const addBtn = modal.querySelector("#add-tag-btn")
-    const input = modal.querySelector("#new-tag-input")
-    const colorPicker = modal.querySelector("#new-tag-color")
-    addBtn.onclick = () => {
-      const tag = input.value.trim()
-      const color = colorPicker.value
-      if (tag) {
-        // Kiểm tra số lượng tag
-        getTagsForBookmark(bookmarkId).then((currentTags) => {
-          if (currentTags.length >= 10) {
-            const language = localStorage.getItem("appLanguage") || "en"
-            const t = translations[language] || translations.en
-            showCustomPopup(
-              t.tagLimitError || "Cannot add more than 10 tags per bookmark",
-              "error",
-              true
-            )
-            return
-          }
-          addTagToBookmark(bookmarkId, tag, color)
-          input.value = ""
-          colorPicker.value = "#cccccc"
-          showManageTagsPopup(bookmarkId)
-          customSaveUIState()
-          chrome.bookmarks.getTree((tree) => {
-            renderFilteredBookmarks(tree, {
-              tagFilter: document.getElementById("tag-filter-container"),
-              folderListDiv: document.getElementById("folder-list"),
-            })
-          })
-        })
-      }
-    }
-
-    modal.classList.remove("hidden")
-  })
-}
-
 export function setupTagFilterListener(elements) {
   const tagFilterToggle =
     elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
@@ -1463,7 +1349,7 @@ function attachTreeListeners(elements) {
               // Gắn lại sự kiện cho dropdown và popup trong thư mục con
               attachDropdownListeners(elements)
               setupBookmarkActionListeners(elements)
-              initializePopups() // Khởi tạo lại popup
+              // Khởi tạo lại popup
             }
           }
         }
@@ -1532,10 +1418,6 @@ function attachTreeListeners(elements) {
         console.error("Rename popup not found")
         showCustomPopup(translations[language].errorUnexpected, "error", true)
       }
-    } else if (target.classList.contains("view-detail-btn")) {
-      showBookmarkDetail(bookmarkId)
-    } else if (target.classList.contains("manage-tags-btn")) {
-      showManageTagsPopup(bookmarkId)
     } else if (target.classList.contains("add-to-folder")) {
       const addToFolderPopup = document.getElementById("add-to-folder-popup")
       if (addToFolderPopup) {

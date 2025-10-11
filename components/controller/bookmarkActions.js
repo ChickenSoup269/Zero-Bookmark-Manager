@@ -146,16 +146,42 @@ function handleMenuItemClick(e, elements) {
 }
 
 // Function to open bookmark detail popup
-function openBookmarkDetailPopup(bookmarkId, elements) {
+export function openBookmarkDetailPopup(bookmarkId, elements) {
+  console.log(
+    "openBookmarkDetailPopup called with ID:",
+    bookmarkId,
+    "Elements:",
+    elements
+  )
+
   const language = localStorage.getItem("appLanguage") || "en"
   const popup = document.getElementById("bookmark-detail-popup")
   const title = document.getElementById("detail-title")
   const url = document.getElementById("detail-url")
   const dateAdded = document.getElementById("detail-date-added")
   const tags = document.getElementById("detail-tags")
-  const closeButton = popup.querySelector(".close-modal")
+  const closeButton = popup?.querySelector(".close-modal")
+  const thumbnailEl = popup?.querySelector("#detail-thumbnail")
 
-  if (!popup || !title || !url || !dateAdded || !tags || !closeButton) {
+  console.log("DOM elements check:", {
+    popup: !!popup,
+    title: !!title,
+    url: !!url,
+    dateAdded: !!dateAdded,
+    tags: !!tags,
+    closeButton: !!closeButton,
+    thumbnail: !!thumbnailEl,
+  })
+
+  if (
+    !popup ||
+    !title ||
+    !url ||
+    !dateAdded ||
+    !tags ||
+    !closeButton ||
+    !thumbnailEl
+  ) {
     console.error("Bookmark detail popup elements missing", {
       popup: !!popup,
       title: !!title,
@@ -163,18 +189,62 @@ function openBookmarkDetailPopup(bookmarkId, elements) {
       dateAdded: !!dateAdded,
       tags: !!tags,
       closeButton: !!closeButton,
+      thumbnail: !!thumbnailEl,
     })
     showCustomPopup(translations[language].errorUnexpected, "error", true)
     return
   }
 
   safeChromeBookmarksCall("get", [bookmarkId], (results) => {
+    console.log("safeChromeBookmarksCall result:", results)
     if (chrome.runtime.lastError || !results || results.length === 0) {
+      console.error(
+        "Chrome bookmarks API error:",
+        chrome.runtime.lastError?.message
+      )
       showCustomPopup(translations[language].errorUnexpected, "error", true)
       return
     }
 
     const bookmark = results[0]
+    console.log("Bookmark data:", bookmark)
+
+    // Set thumbnail
+    let thumbnailUrl = chrome.runtime.getURL("images/default-favicon.png") // Use chrome.runtime.getURL for extension resources
+    if (bookmark.url && bookmark.url.startsWith("http")) {
+      // Use mshots as an alternative thumbnail service
+      thumbnailUrl = `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(
+        bookmark.url
+      )}?w=1000`
+      console.log("Generated thumbnail URL:", thumbnailUrl)
+    } else {
+      console.warn("Invalid URL for thumbnail:", bookmark.url)
+    }
+
+    // Prevent error loop by checking if src is already set
+    if (thumbnailEl.src !== thumbnailUrl) {
+      thumbnailEl.src = thumbnailUrl
+      thumbnailEl.alt = bookmark.title || "Website thumbnail"
+      thumbnailEl.style.display = "block"
+    }
+
+    // Handle thumbnail errors
+    thumbnailEl.onerror = () => {
+      console.error("Failed to load thumbnail for URL:", bookmark.url)
+      if (
+        thumbnailEl.src !== chrome.runtime.getURL("images/default-favicon.png")
+      ) {
+        thumbnailEl.src = chrome.runtime.getURL("images/default-favicon.png")
+        thumbnailEl.alt = "Default thumbnail"
+      } else {
+        thumbnailEl.style.display = "none"
+      }
+    }
+    thumbnailEl.onload = () => {
+      console.log("Thumbnail loaded successfully for URL:", bookmark.url)
+    }
+
+    // Populate other fields
     title.textContent =
       bookmark.title || bookmark.url || translations[language].notAvailable
     url.textContent = bookmark.url || translations[language].notAvailable
@@ -185,23 +255,25 @@ function openBookmarkDetailPopup(bookmarkId, elements) {
       (uiState.bookmarkTags[bookmarkId] || [])
         .map(
           (tag) => `
-        <span class="bookmark-tag" style="
-          background-color: ${uiState.tagColors[tag] || "#ccc"};
-          color: white;
-          padding: 4px 10px;
-          border-radius: 6px;
-          font-size: 12px;
-          margin-right: 8px;
-        ">
-          ${tag}
-        </span>
-      `
+            <span class="bookmark-tag" style="
+              background-color: ${uiState.tagColors[tag] || "#ccc"};
+              color: white;
+              padding: 4px 10px;
+              border-radius: 6px;
+              font-size: 12px;
+              margin-right: 8px;
+            ">
+              ${tag}
+            </span>
+          `
         )
         .join("") || translations[language].notAvailable
 
+    console.log("Showing popup")
     popup.classList.remove("hidden")
 
     const closePopup = () => {
+      console.log("Closing popup")
       popup.classList.add("hidden")
       document.removeEventListener("keydown", handleKeydown)
     }
@@ -225,8 +297,42 @@ async function openManageTagsPopup(bookmarkId, elements) {
   const existingTags = document.getElementById("existing-tags")
   const newTagInput = document.getElementById("new-tag-input")
   const newTagColor = document.getElementById("new-tag-color")
+  const newTagTextColor = document.createElement("input")
   const addTagBtn = document.getElementById("add-tag-btn")
   const closeButton = popup.querySelector(".close-modal")
+  const MAX_TAGS = 10
+
+  // Initialize text color input
+  newTagTextColor.type = "color"
+  newTagTextColor.id = "new-tag-text-color"
+  newTagTextColor.value = "#ffffff"
+  newTagTextColor.style.cssText = `
+    padding: 8px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    width: 100%;
+  `
+
+  // Predefined background colors
+  const predefinedColors = [
+    "#ecf2f8",
+    "#fa7970",
+    "#faa356",
+    "#7ce378",
+    "#a2b2fb",
+    "#77bdfb",
+    "#cea5fb",
+  ]
+
+  // Function to calculate contrasting text color
+  function getContrastColor(bgColor) {
+    const hex = bgColor.replace("#", "")
+    const r = parseInt(hex.substr(0, 2), 16) / 255
+    const g = parseInt(hex.substr(2, 2), 16) / 255
+    const b = parseInt(hex.substr(4, 2), 16) / 255
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b
+    return luminance > 0.5 ? "#000000" : "#ffffff"
+  }
 
   if (
     !popup ||
@@ -270,29 +376,83 @@ async function openManageTagsPopup(bookmarkId, elements) {
     option.value = tag
     option.textContent = tag
     option.style.backgroundColor = uiState.tagColors[tag] || "#ccc"
-    option.style.color = "#fff"
+    option.style.color =
+      uiState.tagTextColors?.[tag] ||
+      getContrastColor(uiState.tagColors[tag] || "#ccc")
     tagSelect.appendChild(option)
   })
 
-  // Insert dropdown above the add-tag-container
+  // Insert dropdown and text color input
   const addTagContainer = popup.querySelector(".add-tag-container")
   addTagContainer.before(tagSelect)
+  addTagContainer.before(newTagTextColor)
+
+  // Create predefined color buttons
+  const colorButtonsContainer = document.createElement("div")
+  colorButtonsContainer.className = "color-buttons-container"
+  colorButtonsContainer.style.cssText = `
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  `
+  predefinedColors.forEach((color) => {
+    const button = document.createElement("button")
+    button.type = "button"
+    button.style.cssText = `
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background-color: ${color};
+      border: 1px solid #ccc;
+      cursor: pointer;
+    `
+    button.addEventListener("click", () => {
+      newTagColor.value = color
+      newTagTextColor.value = getContrastColor(color)
+    })
+    colorButtonsContainer.appendChild(button)
+  })
+  addTagContainer.before(colorButtonsContainer)
+
+  // Add tag count display
+  const tagCountDisplay = document.createElement("div")
+  tagCountDisplay.className = "tag-count"
+  tagCountDisplay.style.cssText = `
+    font-size: 0.9rem;
+    color: var(--text-secondary, #666);
+    margin-bottom: 12px;
+  `
+  addTagContainer.before(tagCountDisplay)
 
   const renderTags = () => {
     const tags = uiState.bookmarkTags[bookmarkId] || []
+    tagCountDisplay.textContent = `${tags.length}/${MAX_TAGS} tags`
     existingTags.innerHTML = tags
       .map(
         (tag) => `
-        <div class="tag-item" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <div class="tag-item" style="display: inline-flex; align-items: center; gap: 6px; margin: 0 8px 8px 0;">
           <span class="bookmark-tag" style="
             background-color: ${uiState.tagColors[tag] || "#ccc"};
-            color: white;
+            color: ${
+              uiState.tagTextColors?.[tag] ||
+              getContrastColor(uiState.tagColors[tag] || "#ccc")
+            };
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 12px;
           ">
             ${tag}
           </span>
+          <button class="edit-tag-btn" data-tag="${tag}" style="
+            background: none;
+            border: none;
+            color: var(--primary-color, #007bff);
+            cursor: pointer;
+            font-size: 12px;
+          ">
+            ✎
+          </button>
           <button class="remove-tag-btn" data-tag="${tag}" style="
             background: none;
             border: none;
@@ -315,44 +475,66 @@ async function openManageTagsPopup(bookmarkId, elements) {
   // Handle tag selection from dropdown
   tagSelect.addEventListener("change", () => {
     const selectedTag = tagSelect.value
-    if (
-      selectedTag &&
-      !uiState.bookmarkTags[bookmarkId]?.includes(selectedTag)
-    ) {
+    const currentTags = uiState.bookmarkTags[bookmarkId] || []
+    if (currentTags.length >= MAX_TAGS) {
+      showCustomPopup(
+        translations[language].tagLimitReached ||
+          `Cannot add more than ${MAX_TAGS} tags`,
+        "error",
+        true
+      )
+      tagSelect.value = ""
+      return
+    }
+    if (selectedTag && !currentTags.includes(selectedTag)) {
       if (!uiState.bookmarkTags[bookmarkId]) {
         uiState.bookmarkTags[bookmarkId] = []
       }
       uiState.bookmarkTags[bookmarkId].push(selectedTag)
       chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
       renderTags()
-      tagSelect.value = "" // Reset dropdown
+      tagSelect.value = ""
     }
   })
 
   // Handle adding new tag
   addTagBtn.onclick = () => {
     const tag = newTagInput.value.trim()
-    const color = newTagColor.value
+    const bgColor = newTagColor.value
+    const textColor = newTagTextColor.value
+    const currentTags = uiState.bookmarkTags[bookmarkId] || []
+    if (currentTags.length >= MAX_TAGS) {
+      showCustomPopup(
+        translations[language].tagLimitReached ||
+          `Cannot add more than ${MAX_TAGS} tags`,
+        "error",
+        true
+      )
+      return
+    }
     if (tag) {
       if (!uiState.bookmarkTags[bookmarkId]) {
         uiState.bookmarkTags[bookmarkId] = []
       }
       if (!uiState.bookmarkTags[bookmarkId].includes(tag)) {
         uiState.bookmarkTags[bookmarkId].push(tag)
-        uiState.tagColors[tag] = color
+        uiState.tagColors[tag] = bgColor
+        if (!uiState.tagTextColors) uiState.tagTextColors = {}
+        uiState.tagTextColors[tag] = textColor
         chrome.storage.local.set({
           bookmarkTags: uiState.bookmarkTags,
           tagColors: uiState.tagColors,
+          tagTextColors: uiState.tagTextColors,
         })
         renderTags()
         newTagInput.value = ""
         newTagColor.value = "#cccccc"
-        // Update dropdown with new tag
+        newTagTextColor.value = "#ffffff"
         const option = document.createElement("option")
         option.value = tag
         option.textContent = tag
-        option.style.backgroundColor = color
-        option.style.color = "#fff"
+        option.style.backgroundColor = bgColor
+        option.style.color = textColor
         tagSelect.appendChild(option)
       } else {
         showCustomPopup(
@@ -364,6 +546,7 @@ async function openManageTagsPopup(bookmarkId, elements) {
     }
   }
 
+  // Handle tag editing and removal
   existingTags.addEventListener("click", (e) => {
     if (e.target.classList.contains("remove-tag-btn")) {
       const tag = e.target.dataset.tag
@@ -372,12 +555,114 @@ async function openManageTagsPopup(bookmarkId, elements) {
       ].filter((t) => t !== tag)
       chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
       renderTags()
+    } else if (e.target.classList.contains("edit-tag-btn")) {
+      const tag = e.target.dataset.tag
+      const tagItem = e.target.closest(".tag-item")
+      const tagSpan = tagItem.querySelector(".bookmark-tag")
+      const currentTagName = tagSpan.textContent
+
+      // Replace tag with input and save button
+      const editInput = document.createElement("input")
+      editInput.type = "text"
+      editInput.value = currentTagName
+      editInput.className = "edit-tag-input"
+      editInput.style.cssText = `
+        padding: 4px 8px;
+        border: 1px solid var(--border-color, #d1d1d1);
+        border-radius: 6px;
+        font-size: 12px;
+        width: 100px;
+      `
+
+      const saveButton = document.createElement("button")
+      saveButton.textContent = translations[language].save || "Save"
+      saveButton.style.cssText = `
+        background: var(--primary-color, #007bff);
+        color: #ffffff;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+      `
+
+      tagItem.innerHTML = ""
+      tagItem.appendChild(editInput)
+      tagItem.appendChild(saveButton)
+      tagItem.appendChild(e.target)
+      tagItem.appendChild(tagItem.querySelector(".remove-tag-btn"))
+
+      saveButton.onclick = () => {
+        const newTagName = editInput.value.trim()
+        if (!newTagName) {
+          showCustomPopup(
+            translations[language].tagEmpty || "Tag name cannot be empty",
+            "error",
+            true
+          )
+          return
+        }
+        if (newTagName === currentTagName) {
+          renderTags()
+          return
+        }
+        if (tags.includes(newTagName)) {
+          showCustomPopup(
+            translations[language].tagExists || "Tag already exists",
+            "error",
+            true
+          )
+          return
+        }
+
+        // Update all bookmarks with the old tag
+        const updatedBookmarkTags = { ...uiState.bookmarkTags }
+        for (const id in updatedBookmarkTags) {
+          if (updatedBookmarkTags[id].includes(tag)) {
+            updatedBookmarkTags[id] = updatedBookmarkTags[id].map((t) =>
+              t === tag ? newTagName : t
+            )
+          }
+        }
+
+        // Update colors
+        uiState.tagColors[newTagName] = uiState.tagColors[tag]
+        uiState.tagTextColors[newTagName] =
+          uiState.tagTextColors?.[tag] ||
+          getContrastColor(uiState.tagColors[tag])
+        delete uiState.tagColors[tag]
+        if (uiState.tagTextColors) delete uiState.tagTextColors[tag]
+
+        // Save to storage
+        uiState.bookmarkTags = updatedBookmarkTags
+        chrome.storage.local.set({
+          bookmarkTags: uiState.bookmarkTags,
+          tagColors: uiState.tagColors,
+          tagTextColors: uiState.tagTextColors,
+        })
+
+        // Update dropdown
+        const option = tagSelect.querySelector(`option[value="${tag}"]`)
+        if (option) {
+          option.value = newTagName
+          option.textContent = newTagName
+          option.style.backgroundColor = uiState.tagColors[newTagName]
+          option.style.color =
+            uiState.tagTextColors?.[newTagName] ||
+            getContrastColor(uiState.tagColors[newTagName])
+        }
+
+        renderTags()
+      }
     }
   })
 
   const closePopup = () => {
     popup.classList.add("hidden")
-    tagSelect.remove() // Clean up dropdown
+    tagSelect.remove()
+    colorButtonsContainer.remove()
+    newTagTextColor.remove()
+    tagCountDisplay.remove()
     document.removeEventListener("keydown", handleKeydown)
   }
 

@@ -59,7 +59,7 @@ export function isInFolder(
   bookmarkTree = uiState.bookmarkTree
 ) {
   if (!bookmark || !bookmark.parentId || !folderId) {
-    return true // Allow all nodes when no folder is selected
+    return true
   }
   if (bookmark.parentId === folderId) {
     return true

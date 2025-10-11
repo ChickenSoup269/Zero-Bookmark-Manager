@@ -1104,3 +1104,401 @@ html {
 .tag-filter-option:hover {
   background: var(--hover-bg, #f0f0f0);
 }
+
+/* ===== Bookmark Detail Popup (Dark Theme, Responsive) ===== */
+#bookmark-detail-popup {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+
+#bookmark-detail-popup.hidden {
+  display: none;
+}
+
+/* ===== Popup Box ===== */
+#bookmark-detail-popup .rename-popup-content {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  width: 600px;
+  max-width: 90%;
+  animation: popupFadeIn 0.25s ease-out;
+}
+
+/* ===== Thumbnail ===== */
+.bookmark-thumbnail {
+  flex: 0 0 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bookmark-thumbnail img {
+  width: 250px;
+  height: auto;
+  border-radius: var(--border-radius-md);
+  object-fit: cover;
+  box-shadow: var(--box-shadow);
+  background: var(--bg-tertiary);
+}
+
+/* ===== Info ===== */
+.bookmark-info {
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.bookmark-info h3 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: var(--spacing-sm);
+  color: var(--accent-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-xs);
+}
+
+.bookmark-info p {
+  margin: var(--spacing-xs) 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.bookmark-info strong {
+  color: var(--accent-color);
+}
+
+/* ===== Tags ===== */
+#detail-tags span {
+  display: inline-block;
+  margin-right: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.85rem;
+  border-radius: var(--border-radius-md);
+  padding: 4px 8px;
+  color: #fff;
+}
+
+/* ===== Animation ===== */
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========  Responsive: màn hình nhỏ (≤480px) ======== */
+@media (max-width: 480px) {
+  #bookmark-detail-popup .rename-popup-content {
+    flex-direction: column;
+    align-items: center;
+    width: 95%;
+    max-width: 360px;
+    padding: var(--spacing-md);
+  }
+
+  .bookmark-thumbnail {
+    flex: 0 0 auto;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .bookmark-thumbnail img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: var(--border-radius-md);
+  }
+
+  .bookmark-info {
+    width: 100%;
+  }
+
+  .bookmark-info h3 {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .bookmark-info p {
+    font-size: 0.9rem;
+  }
+
+  .rename-popup-buttons {
+    display: flex;
+    justify-content: center;
+  }
+
+  .rename-popup-buttons .button {
+    width: 100%;
+    padding: 10px 0;
+  }
+}
+
+/*  */
+
+#existing-tags {
+  margin-bottom: 16px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--bg-secondary, #f7f7f7);
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.bookmark-tag {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.remove-tag-btn {
+  background: none;
+  border: none;
+  color: var(--text-danger, #ff5555);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.remove-tag-btn:hover {
+  color: var(--text-danger-hover, #cc4444);
+}
+
+.edit-tag-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color, #007bff);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.edit-tag-btn:hover {
+  color: var(--primary-hover, #0056b3);
+}
+
+.edit-tag-input {
+  padding: 6px 10px;
+  border: 1px solid var(--border-color, #d1d1d1);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--text-primary, #333333);
+  width: 100px;
+}
+
+.edit-tag-input:focus {
+  outline: none;
+  border-color: var(--primary-color, #007bff);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.tag-count {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  margin-bottom: 12px;
+}
+
+.add-tag-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+#new-tag-input {
+  padding: 10px;
+  border: 1px solid var(--border-color, #d1d1d1);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--text-primary, #333333);
+  background: var(--bg-secondary, #ffffff);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#new-tag-input:focus {
+  outline: none;
+  border-color: var(--primary-color, #007bff);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+#new-tag-color,
+#new-tag-text-color {
+  padding: 6px;
+  border: 1px solid var(--border-color, #d1d1d1);
+  border-radius: 8px;
+  width: 100%;
+  height: 40px;
+  cursor: pointer;
+}
+
+.existing-tags-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color, #d1d1d1);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: var(--bg-secondary, #ffffff);
+  color: var(--text-primary, #333333);
+  margin-bottom: 12px;
+}
+
+.existing-tags-select:focus {
+  outline: none;
+  border-color: var(--primary-color, #007bff);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.existing-tags-select option {
+  padding: 8px;
+}
+
+.color-buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.color-buttons-container button {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #d1d1d1);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.color-buttons-container button:hover {
+  transform: scale(1.1);
+  border-color: var(--primary-color, #007bff);
+}
+
+#add-tag-btn,
+.close-modal {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#add-tag-btn {
+  background: var(--primary-color, #007bff);
+  color: #ffffff;
+}
+
+#add-tag-btn:hover {
+  background: var(--primary-hover, #0056b3);
+}
+
+.close-modal {
+  background: var(--secondary-color, #6c757d);
+  color: #ffffff;
+}
+
+.close-modal:hover {
+  background: var(--secondary-hover, #5a6268);
+}
+
+.rename-popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Responsive Design for 480px and below */
+@media screen and (max-width: 480px) {
+  .rename-popup-content {
+    padding: 16px;
+    max-width: 90%;
+    margin: 0 16px;
+  }
+
+  .rename-popup-content h3 {
+    font-size: 1.25rem;
+  }
+
+  #existing-tags {
+    max-height: 120px;
+    padding: 6px;
+  }
+
+  .bookmark-tag {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+  }
+
+  .remove-tag-btn,
+  .edit-tag-btn {
+    font-size: 0.8rem;
+    padding: 3px;
+  }
+
+  .edit-tag-input {
+    padding: 5px 8px;
+    font-size: 0.85rem;
+    width: 80px;
+  }
+
+  .tag-count {
+    font-size: 0.85rem;
+  }
+
+  #new-tag-input,
+  #new-tag-color,
+  #new-tag-text-color,
+  .existing-tags-select {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .color-buttons-container button {
+    width: 28px;
+    height: 28px;
+  }
+
+  #add-tag-btn,
+  .close-modal {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .rename-popup-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

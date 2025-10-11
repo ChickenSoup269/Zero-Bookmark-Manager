@@ -150,15 +150,25 @@
             </div>
         </div>
         <div id="bookmark-detail-popup" class="rename-popup hidden" role="dialog" aria-labelledby="detail-title">
-            <div class="rename-popup-content">
-                <h3 id="detail-title-label">Bookmark Detail</h3>
-                <p><strong id="detail-title-label">Title:</strong> <span id="detail-title"></span></p>
-                <p><strong id="detail-url-label">URL:</strong> <span id="detail-url"></span></p>
-                <p><strong id="detail-date-added-label">Date Added:</strong> <span id="detail-date-added"></span></p>
-                <p><strong id="detail-tags-label">Tags:</strong> <span id="detail-tags"></span></p>
-                <div class="rename-popup-buttons">
-                    <button class="close-modal button cancel">Close</button>
+            <div class="rename-popup-content" style="display: flex; gap: 16px; align-items: flex-start;">
+
+                <!-- Cột trái: ảnh thumbnail -->
+                <div class="bookmark-thumbnail" style="flex: 0 0 150px;">
+                    <img id="detail-thumbnail" src="" alt="Website thumbnail" />
                 </div>
+
+                <!-- Cột phải: thông tin -->
+                <div class="bookmark-info" style="flex: 1;">
+                    <h3 id="detail-title-label">Bookmark Detail</h3>
+                    <p><strong>Title:</strong> <span id="detail-title"></span></p>
+                    <p><strong>URL:</strong> <span id="detail-url"></span></p>
+                    <p><strong>Date Added:</strong> <span id="detail-date-added"></span></p>
+                    <p><strong>Tags:</strong> <span id="detail-tags"></span></p>
+                    <div class="rename-popup-buttons" style="margin-top: 16px;">
+                        <button class="close-modal button cancel">Close</button>
+                    </div>
+                </div>
+
             </div>
         </div>
         <div id="manage-tags-popup" class="rename-popup hidden" role="dialog" aria-labelledby="manage-tags-title">

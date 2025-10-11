@@ -205,6 +205,8 @@ export const translations = {
     tagExists: "Tag already exists",
     tagLimitError: "Cannot add more than 10 tags per bookmark",
     saveSelectedTag: "Save Selected Tags",
+    addTag: "Add Tag",
+    tagLimitReached: "Tag limit reached",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -410,6 +412,8 @@ export const translations = {
     tagExists: "Thẻ đã tồn tại",
     tagLimitError: "Không thể thêm quá 10 thẻ cho mỗi bookmark",
     saveSelectedTag: "Lưu Thẻ Đã chọn",
+    addTag: "Thêm Thẻ",
+    tagLimitReached: "Đã đạt giới hạn thẻ",
   },
 }
 
