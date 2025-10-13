@@ -2,17 +2,32 @@
 
 ## Changelog:
 
-### [1.1.0] - 2025-10-08
+### [1.1.0] - 2025-14-08
 
-- Added web view
-- Added chatbot - gemini
+- Added webView (edit in new tab)
+- Added Chatbot - Gemini (Beta)
+- Added soft most visted
 - Added favourite bookmarks
-- Added tree view/detail view
-- Added option local storage settings
-- Added tags into bookmark (limit 10)
-- Added Option Local store
-- Update export option now have CSV (Excell/Sheets)
-- Update UI
+  - fav bookmark & added soft type favourite
+- Added Tree view (option work with flat list)
+  - Option View details | add tags
+  - View details: Title, date add, tags
+  - Mange tags: add tags in bookmark with color
+- Added Details view
+  - View bookmark details: Title, Date Added, Folder, and Mini Web Preview (can be extended for use)
+- Added Local Storage Settings (choose to persist data between sessions)
+  - Save Search Query
+  - Save Selected Folder
+  - Save Sort Type
+  - Save View Mode
+  - Save Collapsed Folders
+  - Save Checkboxes Visibility
+  - Save Selected Tags
+- Added tags into bookmark (limit: 10 per bookmark)
+- Updated UI refinements and small visual improvements
+- Updated Themes (added One Dark & Dracula)
+- Updated Export options — now supports CSV (Excel/Sheets)
+- Updated Fonts (added AnonymicePro, ProFont, JetBrains )
 
 ### [1.0.3] - 2025-09-02
 

@@ -1,3 +1,4 @@
+// components/export/export.js
 import {
   translations,
   safeChromeBookmarksCall,
@@ -150,6 +151,25 @@ export function setupExportImportListeners(elements) {
               }</p>
             </div>
           </div>
+          
+          <div class="setting-card">
+            <div class="setting-toggle">
+              <input type="checkbox" id="includeFolderPath" class="toggle-input">
+              <label for="includeFolderPath" class="toggle-label">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-info">
+              <h4>${
+                translations[language].includeFolderPath ||
+                "Include folder path"
+              }</h4>
+              <p>${
+                translations[language].includeFolderPathDescription ||
+                "Add folder path to bookmarks"
+              }</p>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -198,6 +218,8 @@ export function setupExportImportListeners(elements) {
         const includeFolderModDates = document.getElementById(
           "includeFolderModDates"
         ).checked
+        const includeFolderPath =
+          document.getElementById("includeFolderPath").checked
 
         // Add loading state
         const confirmBtn = document.getElementById("confirmExport")
@@ -241,7 +263,9 @@ export function setupExportImportListeners(elements) {
               await exportToCSV(
                 bookmarkTreeNodes,
                 includeCreationDates,
-                includeFolderModDates
+                includeFolderModDates,
+                includeIconData,
+                includeFolderPath
               )
             }
           } catch (error) {
@@ -273,7 +297,7 @@ export function setupExportImportListeners(elements) {
       document.body.removeChild(popup)
     })
 
-    // Enhanced popup styles
+    // Enhanced popup styles (unchanged)
     const style = document.createElement("style")
     style.textContent = `
     .popup {
@@ -604,17 +628,24 @@ export function setupExportImportListeners(elements) {
     input.accept = "application/json"
     input.addEventListener("change", (e) => {
       const file = e.target.files[0]
-      if (!file) return
+      if (!file) {
+        console.log("No file selected for import")
+        return
+      }
       const reader = new FileReader()
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result)
+          console.log("Parsed JSON data:", data)
           if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
             const language = localStorage.getItem("appLanguage") || "en"
             showCustomPopup(
               translations[language].importInvalidFile || "Invalid file format",
               "error",
               false
+            )
+            console.error(
+              "Invalid JSON: bookmarks property missing or not an array"
             )
             return
           }
@@ -628,25 +659,61 @@ export function setupExportImportListeners(elements) {
                 "error",
                 false
               )
+              console.error("Failed to fetch bookmark tree")
               return
             }
 
             const existingBookmarks = flattenBookmarks(bookmarkTreeNodes)
             const existingUrls = new Set(existingBookmarks.map((b) => b.url))
+            console.log("Existing URLs:", Array.from(existingUrls))
 
             const bookmarksToImport = []
             const duplicateBookmarks = []
+            const importedTags = {} // Map old ID to tags
+            const importedAccessCounts = {} // Map old ID to access count
             const flattenImportedBookmarks = flattenBookmarks(data.bookmarks)
 
-            flattenImportedBookmarks.forEach((bookmark) => {
+            // Collect bookmarks, tags, and access counts
+            flattenImportedBookmarks.forEach((bookmark, index) => {
+              console.log(`Processing bookmark ${index}:`, bookmark)
               if (bookmark.url) {
                 if (existingUrls.has(bookmark.url)) {
+                  console.log(`Duplicate found: ${bookmark.url}`)
                   duplicateBookmarks.push(bookmark)
                 } else {
                   bookmarksToImport.push(bookmark)
+                  if (bookmark.id) {
+                    if (Array.isArray(bookmark.tags)) {
+                      importedTags[bookmark.id] = bookmark.tags
+                      console.log(
+                        `Collected tags for ID ${bookmark.id}:`,
+                        bookmark.tags
+                      )
+                    } else {
+                      console.warn(`No valid tags for ID ${bookmark.id}`)
+                    }
+                    if (typeof bookmark.accessCount === "number") {
+                      importedAccessCounts[bookmark.id] = bookmark.accessCount
+                      console.log(
+                        `Collected accessCount for ID ${bookmark.id}:`,
+                        bookmark.accessCount
+                      )
+                    } else {
+                      console.warn(`No valid accessCount for ID ${bookmark.id}`)
+                    }
+                  } else {
+                    console.warn("Bookmark missing ID:", bookmark)
+                  }
                 }
+              } else {
+                console.log("Skipping bookmark without URL:", bookmark)
               }
             })
+
+            console.log("Bookmarks to import:", bookmarksToImport.length)
+            console.log("Duplicates found:", duplicateBookmarks.length)
+            console.log("Imported tags:", importedTags)
+            console.log("Imported access counts:", importedAccessCounts)
 
             const language = localStorage.getItem("appLanguage") || "en"
             if (duplicateBookmarks.length > 0) {
@@ -657,10 +724,21 @@ export function setupExportImportListeners(elements) {
                 }: ${duplicateBookmarks.length}`,
                 "warning",
                 true,
-                () => importNonDuplicateBookmarks(bookmarksToImport, elements)
+                () =>
+                  importNonDuplicateBookmarks(
+                    bookmarksToImport,
+                    elements,
+                    importedTags,
+                    importedAccessCounts
+                  )
               )
             } else {
-              importNonDuplicateBookmarks(bookmarksToImport, elements)
+              importNonDuplicateBookmarks(
+                bookmarksToImport,
+                elements,
+                importedTags,
+                importedAccessCounts
+              )
             }
           })
         } catch (error) {
@@ -680,9 +758,19 @@ export function setupExportImportListeners(elements) {
   })
 }
 
-function importNonDuplicateBookmarks(bookmarksToImport, elements) {
+async function importNonDuplicateBookmarks(
+  bookmarksToImport,
+  elements,
+  importedTags,
+  importedAccessCounts
+) {
   const language = localStorage.getItem("appLanguage") || "en"
-  const importPromises = bookmarksToImport.map((bookmark) => {
+  const idMapping = {} // Map old ID to new ID
+
+  console.log("Starting import of", bookmarksToImport.length, "bookmarks")
+
+  // Create bookmarks and track new IDs
+  const importPromises = bookmarksToImport.map((bookmark, index) => {
     return new Promise((resolve) => {
       safeChromeBookmarksCall(
         "create",
@@ -693,12 +781,62 @@ function importNonDuplicateBookmarks(bookmarksToImport, elements) {
             url: bookmark.url,
           },
         ],
-        resolve
+        (result) => {
+          if (result && result.id && bookmark.id) {
+            idMapping[bookmark.id] = result.id
+            console.log(`Mapped old ID ${bookmark.id} to new ID ${result.id}`)
+          } else {
+            console.warn(`Failed to map ID for bookmark ${index}:`, {
+              bookmark,
+              result,
+            })
+          }
+          resolve(result)
+        }
       )
     })
   })
 
-  Promise.all(importPromises).then(() => {
+  try {
+    await Promise.all(importPromises)
+    console.log("Bookmark creation completed. ID mapping:", idMapping)
+
+    // Fetch existing storage data
+    const { bookmarkTags = {}, bookmarkAccessCounts = {} } =
+      await chrome.storage.local.get(["bookmarkTags", "bookmarkAccessCounts"])
+    console.log("Existing bookmarkTags:", bookmarkTags)
+    console.log("Existing bookmarkAccessCounts:", bookmarkAccessCounts)
+
+    // Update tags and access counts with new IDs
+    let tagsUpdated = 0
+    let countsUpdated = 0
+    for (const [oldId, tags] of Object.entries(importedTags)) {
+      if (idMapping[oldId] && Array.isArray(tags)) {
+        bookmarkTags[idMapping[oldId]] = tags
+        tagsUpdated++
+      }
+    }
+    for (const [oldId, count] of Object.entries(importedAccessCounts)) {
+      if (idMapping[oldId] && typeof count === "number") {
+        bookmarkAccessCounts[idMapping[oldId]] = count
+        countsUpdated++
+      }
+    }
+    console.log(
+      `Updated ${tagsUpdated} tags and ${countsUpdated} access counts`
+    )
+
+    // Save updated data to chrome.storage.local
+    await chrome.storage.local.set({
+      bookmarkTags,
+      bookmarkAccessCounts,
+    })
+    console.log("Saved to chrome.storage.local:", {
+      bookmarkTags,
+      bookmarkAccessCounts,
+    })
+
+    // Refresh UI
     safeChromeBookmarksCall("getTree", [], (bookmarkTreeNodes) => {
       if (bookmarkTreeNodes) {
         uiState.bookmarkTree = bookmarkTreeNodes
@@ -711,13 +849,22 @@ function importNonDuplicateBookmarks(bookmarksToImport, elements) {
             "Bookmarks imported successfully!",
           "success"
         )
+        console.log("UI refreshed successfully")
       } else {
         showCustomPopup(
           translations[language].importError || "Failed to update bookmarks",
           "error",
           false
         )
+        console.error("Failed to fetch bookmark tree after import")
       }
     })
-  })
+  } catch (error) {
+    console.error("Import failed:", error)
+    showCustomPopup(
+      translations[language].importError || "Failed to update bookmarks",
+      "error",
+      false
+    )
+  }
 }

@@ -10,13 +10,7 @@ import {
 } from "./state.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
 import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
-import {
-  addTagToBookmark,
-  removeTagFromBookmark,
-  changeTagColor,
-  getTagsForBookmark,
-  getAllTags,
-} from "./tag.js"
+import { getAllTags } from "./tag.js"
 import { customSaveUIState } from "./option/option.js"
 
 export function updateUILanguage(elements, language) {
@@ -124,7 +118,7 @@ export function updateUILanguage(elements, language) {
         : t.allTags
   }
 
-  // Update other UI elements
+  // Update sort filter with new most-visited option
   elements.sortFilter.innerHTML = `
     <option value="default">${t.sortDefault}</option>
     <option value="favorites">${t.sortFavorites}</option>
@@ -132,6 +126,7 @@ export function updateUILanguage(elements, language) {
     <option value="last-opened">${t.sortLastOpened}</option>
     <option value="a-z">${t.sortAZ}</option>
     <option value="z-a">${t.sortZA}</option>
+    <option value="most-visited">${t.sortMostVisited || "Most Visited"}</option>
   `
   elements.createFolderButton.textContent = t.createFolder
   elements.addToFolderButton.textContent = t.addToFolder
@@ -350,80 +345,85 @@ export function updateTheme(elements, theme) {
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
-  chrome.storage.local.get(["favoriteBookmarks"], (data) => {
-    const favoriteBookmarks = data.favoriteBookmarks || {}
+  chrome.storage.local.get(
+    ["favoriteBookmarks", "bookmarkAccessCounts"],
+    (data) => {
+      const favoriteBookmarks = data.favoriteBookmarks || {}
+      const bookmarkAccessCounts = data.bookmarkAccessCounts || {}
 
-    const addFavoriteAndTagsStatus = (nodes) => {
-      for (const node of nodes) {
-        if (node.url) {
-          node.isFavorite = !!favoriteBookmarks[node.id]
-          node.tags = uiState.bookmarkTags[node.id] || []
-        }
-        if (node.children) {
-          addFavoriteAndTagsStatus(node.children)
+      const addFavoriteAndTagsStatus = (nodes) => {
+        for (const node of nodes) {
+          if (node.url) {
+            node.isFavorite = !!favoriteBookmarks[node.id]
+            node.tags = uiState.bookmarkTags[node.id] || []
+            node.accessCount = bookmarkAccessCounts[node.id] || 0
+          }
+          if (node.children) {
+            addFavoriteAndTagsStatus(node.children)
+          }
         }
       }
+
+      addFavoriteAndTagsStatus(bookmarkTreeNodes)
+
+      const bookmarks = flattenBookmarks(bookmarkTreeNodes)
+      const folders = getFolders(bookmarkTreeNodes)
+      setBookmarkTree(bookmarkTreeNodes)
+      setBookmarks(bookmarks)
+      setFolders(folders)
+      populateFolderFilter(folders, elements)
+      populateTagFilter(elements)
+      setupTagFilterListener(elements)
+      updateBookmarkCount(bookmarks, elements)
+      let filtered = bookmarks
+
+      if (uiState.selectedTags.length > 0) {
+        filtered = filtered.filter((bookmark) =>
+          uiState.selectedTags.some((tag) => bookmark.tags.includes(tag))
+        )
+      }
+
+      if (uiState.sortType === "favorites") {
+        filtered = filtered.filter((bookmark) => bookmark.isFavorite)
+      }
+
+      if (
+        uiState.selectedFolderId &&
+        uiState.selectedFolderId !== "0" &&
+        folders.some((f) => f.id === uiState.selectedFolderId)
+      ) {
+        filtered = filtered.filter((bookmark) =>
+          isInFolder(bookmark, uiState.selectedFolderId)
+        )
+      } else {
+        uiState.selectedFolderId = ""
+      }
+
+      if (uiState.searchQuery) {
+        filtered = filtered.filter(
+          (bookmark) =>
+            bookmark.title
+              ?.toLowerCase()
+              .includes(uiState.searchQuery.toLowerCase()) ||
+            bookmark.url
+              ?.toLowerCase()
+              .includes(uiState.searchQuery.toLowerCase())
+        )
+      }
+
+      if (uiState.viewMode === "tree") {
+        const rootChildren = bookmarkTreeNodes[0]?.children || []
+        renderTreeView(rootChildren, elements)
+      } else if (uiState.viewMode === "detail") {
+        renderDetailView(filtered, elements)
+      } else {
+        renderBookmarks(filtered, elements)
+      }
+
+      toggleFolderButtons(elements)
+      customSaveUIState()
     }
-
-    addFavoriteAndTagsStatus(bookmarkTreeNodes)
-
-    const bookmarks = flattenBookmarks(bookmarkTreeNodes)
-    const folders = getFolders(bookmarkTreeNodes)
-    setBookmarkTree(bookmarkTreeNodes)
-    setBookmarks(bookmarks)
-    setFolders(folders)
-    populateFolderFilter(folders, elements)
-    populateTagFilter(elements)
-    setupTagFilterListener(elements)
-    updateBookmarkCount(bookmarks, elements)
-    let filtered = bookmarks
-
-    if (uiState.selectedTags.length > 0) {
-      filtered = filtered.filter((bookmark) =>
-        uiState.selectedTags.some((tag) => bookmark.tags.includes(tag))
-      )
-    }
-
-    if (uiState.sortType === "favorites") {
-      filtered = filtered.filter((bookmark) => bookmark.isFavorite)
-    }
-
-    if (
-      uiState.selectedFolderId &&
-      uiState.selectedFolderId !== "0" &&
-      folders.some((f) => f.id === uiState.selectedFolderId)
-    ) {
-      filtered = filtered.filter((bookmark) =>
-        isInFolder(bookmark, uiState.selectedFolderId)
-      )
-    } else {
-      uiState.selectedFolderId = ""
-    }
-
-    if (uiState.searchQuery) {
-      filtered = filtered.filter(
-        (bookmark) =>
-          bookmark.title
-            ?.toLowerCase()
-            .includes(uiState.searchQuery.toLowerCase()) ||
-          bookmark.url
-            ?.toLowerCase()
-            .includes(uiState.searchQuery.toLowerCase())
-      )
-    }
-
-    if (uiState.viewMode === "tree") {
-      const rootChildren = bookmarkTreeNodes[0]?.children || []
-      renderTreeView(rootChildren, elements)
-    } else if (uiState.viewMode === "detail") {
-      renderDetailView(filtered, elements)
-    } else {
-      renderBookmarks(filtered, elements)
-    }
-
-    toggleFolderButtons(elements)
-    customSaveUIState()
-  })
+  )
 }
 
 function renderDetailView(bookmarksList, elements) {
@@ -563,17 +563,17 @@ function renderTreeView(nodes, elements, depth = 0) {
   const fragment = document.createDocumentFragment()
   const language = localStorage.getItem("appLanguage") || "en"
 
-  if (!nodes || !Array.isArray(nodes) || nodes.length === 0) {
-    console.warn("No nodes to render in renderTreeView", { nodes, depth })
-    const emptyMessage = document.createElement("div")
-    emptyMessage.textContent =
-      translations[language].noBookmarks || "No bookmarks found"
-    emptyMessage.style.padding = "20px"
-    emptyMessage.style.textAlign = "center"
-    fragment.appendChild(emptyMessage)
-    elements.folderListDiv.appendChild(fragment)
-    return fragment
-  }
+  // if (!nodes || !Array.isArray(nodes) || nodes.length === 0) {
+  //   console.warn("No nodes to render in renderTreeView", { nodes, depth })
+  //   const emptyMessage = document.createElement("div")
+  //   emptyMessage.textContent =
+  //     translations[language].noBookmarks || "No bookmarks found"
+  //   emptyMessage.style.padding = "20px"
+  //   emptyMessage.style.textAlign = "center"
+  //   fragment.appendChild(emptyMessage)
+  //   elements.folderListDiv.appendChild(fragment)
+  //   return fragment
+  // }
 
   if (depth === 0) {
     elements.folderListDiv.innerHTML = ""
@@ -684,7 +684,6 @@ function renderTreeView(nodes, elements, depth = 0) {
         )
         childrenContainer.appendChild(childrenFragment)
         // Gắn lại sự kiện và khởi tạo popup
-
         attachDropdownListeners(elements)
         setupBookmarkActionListeners(elements)
       }
@@ -877,7 +876,7 @@ function createDetailBookmarkElement(bookmark, language) {
   return div
 }
 
-function createEnhancedBookmarkElement(bookmark) {
+function createEnhancedBookmarkElement(bookmark, depth = 0) {
   const language = localStorage.getItem("appLanguage") || "en"
   let favicon
   try {
@@ -900,6 +899,7 @@ function createEnhancedBookmarkElement(bookmark) {
     padding: 12px 16px;
     border: 1px solid transparent;
     box-shadow: var( --shadow-sm);
+    margin-left: ${depth * 20}px;
   `
 
   div.addEventListener("mouseenter", () => {
@@ -1039,6 +1039,23 @@ function createEnhancedBookmarkElement(bookmark) {
     if (dropdownBtn) dropdownBtn.style.opacity = "0"
   })
 
+  // Track bookmark access
+  const link = div.querySelector(".bookmark-title")
+  link.addEventListener("click", () => {
+    chrome.storage.local.get(["bookmarkAccessCounts"], (data) => {
+      const bookmarkAccessCounts = data.bookmarkAccessCounts || {}
+      bookmarkAccessCounts[bookmark.id] =
+        (bookmarkAccessCounts[bookmark.id] || 0) + 1
+      chrome.storage.local.set({ bookmarkAccessCounts }, () => {
+        if (uiState.sortType === "most-visited") {
+          chrome.bookmarks.getTree((tree) => {
+            renderFilteredBookmarks(tree, elements)
+          })
+        }
+      })
+    })
+  })
+
   return div
 }
 
@@ -1168,6 +1185,24 @@ function createBookmarkElement(bookmark, depth = 0) {
       </div>
     </div>
   `
+
+  // Track bookmark access
+  const link = div.querySelector(".link")
+  link.addEventListener("click", () => {
+    chrome.storage.local.get(["bookmarkAccessCounts"], (data) => {
+      const bookmarkAccessCounts = data.bookmarkAccessCounts || {}
+      bookmarkAccessCounts[bookmark.id] =
+        (bookmarkAccessCounts[bookmark.id] || 0) + 1
+      chrome.storage.local.set({ bookmarkAccessCounts }, () => {
+        if (uiState.sortType === "most-visited") {
+          chrome.bookmarks.getTree((tree) => {
+            renderFilteredBookmarks(tree, elements)
+          })
+        }
+      })
+    })
+  })
+
   return div
 }
 
@@ -1198,6 +1233,9 @@ function sortBookmarks(bookmarksList, sortType) {
       break
     case "z-a":
       sorted.sort((a, b) => (b.title || b.url).localeCompare(a.title || b.url))
+      break
+    case "most-visited":
+      sorted.sort((a, b) => (b.accessCount || 0) - (a.accessCount || 0))
       break
     default:
       sorted.sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0))

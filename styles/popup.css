@@ -224,6 +224,10 @@
   }
 }
 
+.bookmark-url {
+  display: none;
+}
+
 /* Folder children styling */
 .folder-children {
   margin-left: 4px;

@@ -13,6 +13,10 @@ import {
 import { populateTagFilter, renderFilteredBookmarks } from "../ui.js"
 import { elements } from "../../main.js"
 
+function getAllUIElements() {
+  elements
+}
+
 const defaultStorageSettings = {
   searchQuery: false,
   selectedFolderId: true,
