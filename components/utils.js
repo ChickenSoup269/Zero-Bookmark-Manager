@@ -689,15 +689,27 @@ export function showCustomGuide() {
     const closePopup = () => {
       popup.classList.add("hidden")
       document.removeEventListener("keydown", handleKeydown)
+      document.removeEventListener("click", handleOutsideClick) // Thêm dòng này
     }
 
     okButton.onclick = () => closePopup()
 
-    popup.onclick = (e) => {
-      if (e.target === popup) {
+    // Trong hàm showCustomGuide, thay thế phần event listener:
+    const handleOutsideClick = (e) => {
+      if (!popup.contains(e.target)) {
         closePopup()
       }
     }
+
+    // Sử dụng click thay vì mousedown
+    setTimeout(() => {
+      document.addEventListener("click", handleOutsideClick)
+    }, 0)
+
+    // Ngăn sự kiện click từ nội dung popup lan ra ngoài
+    popup.addEventListener("click", (e) => {
+      e.stopPropagation()
+    })
 
     const handleKeydown = (e) => {
       if (e.key === "Enter" || e.key === "Escape") {

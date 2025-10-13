@@ -435,8 +435,10 @@
   max-height: 80vh;
   padding: var(--spacing-md, 1.5rem);
 
+  border: 2px solid var(--border-color);
+
   /* Styling */
-  background-color: var(--bg-secondary, #ffffff);
+  background-color: var(--bg-tertiary);
   border-radius: var(--border-radius-lg, 12px);
   box-shadow: var(--shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.15));
 

@@ -74,6 +74,18 @@ document.addEventListener("DOMContentLoaded", () => {
         - { "action": "general", "response": "Tui tìm thấy nhiều bookmark tên 'ChickenSoup'. Bạn muốn chỉnh sửa cái nào? Hãy cung cấp URL, ID, hoặc thư mục." }
     `
 
+  // General System Prompt for off-topic questions
+  const generalSystemPrompt = `
+    You are Gemini, a helpful and truthful AI assistant created by Google. Your role is to provide accurate, concise, and conversational answers to a wide range of questions. Respond in the user's language (e.g., Vietnamese if the query is in Vietnamese) in a natural, friendly tone. If the question is vague or unclear, politely ask for clarification while offering a helpful response based on your best interpretation. Provide factual information based on your knowledge and avoid speculative or unverified content.
+    Examples:
+    - Query: "What day is it today?"
+      Response: "Today is Monday, October 13, 2025. Anything specific you want to plan for today?"
+    - Query: "Hello"
+      Response: "Hi there! How can I assist you today? Want to manage your bookmarks or ask something else?"
+    - Query: "Tell me about Python programming"
+      Response: "Python is a versatile, high-level programming language known for its readability and wide range of applications, from web development to data science. Would you like tips on learning Python or specific details about its features?"
+  `
+
   // Language support
   const getLanguage = () => localStorage.getItem("appLanguage") || "en"
   const t = (key) => translations[getLanguage()][key] || key
@@ -169,11 +181,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Build API request for Gemini
-  const buildApiRequest = (url, apiKey, model, message) => {
+  const buildApiRequest = (url, apiKey, model, message, isGeneral = false) => {
     try {
       let apiUrl = url
       const headers = { "Content-Type": "application/json" }
       let body
+
+      const prompt = isGeneral ? generalSystemPrompt : systemPrompt
 
       if (model === "gemini") {
         if (!apiUrl.includes("generateContent")) {
@@ -190,13 +204,13 @@ document.addEventListener("DOMContentLoaded", () => {
             },
           ],
           systemInstruction: {
-            parts: [{ text: systemPrompt }],
+            parts: [{ text: prompt }],
           },
           generationConfig: {
             maxOutputTokens: 1024,
             temperature: 0.7,
             topP: 0.8,
-            responseMimeType: "application/json",
+            responseMimeType: isGeneral ? "text/plain" : "application/json",
           },
           safetySettings: [
             {
@@ -222,15 +236,15 @@ document.addEventListener("DOMContentLoaded", () => {
         body = {
           model: "gpt-3.5-turbo",
           messages: [
-            { role: "system", content: systemPrompt },
+            { role: "system", content: prompt },
             { role: "user", content: message },
           ],
-          response_format: { type: "json_object" },
+          response_format: isGeneral ? undefined : { type: "json_object" },
         }
       } else {
         headers["x-api-key"] = apiKey
         body = {
-          prompt: `${systemPrompt}\n${message}`,
+          prompt: `${prompt}\n${message}`,
         }
       }
 
@@ -456,12 +470,60 @@ document.addEventListener("DOMContentLoaded", () => {
   async function handleBookmarkCommand(action, params, originalMessage) {
     const loadingMessage = document.createElement("div")
     loadingMessage.className = "chatbox-message bot loading"
-    loadingMessage.textContent = t("loadingBookmarks") || "Loading bookmarks..."
+    loadingMessage.textContent = t("loadingBookmarks") || "Loading..."
     chatMessages.appendChild(loadingMessage)
     chatMessages.scrollTop = chatMessages.scrollHeight
 
     try {
-      if (action === "count") {
+      if (action === "general") {
+        const config = getAiConfig()
+        const apiRequest = buildApiRequest(
+          config.curl,
+          config.apiKey,
+          config.model,
+          originalMessage,
+          true // Use generalSystemPrompt
+        )
+        if (!apiRequest) {
+          throw new Error(t("errorUnexpected") || "Invalid API URL")
+        }
+
+        const response = await fetch(apiRequest.url, {
+          method: apiRequest.method,
+          headers: apiRequest.headers,
+          body: JSON.stringify(apiRequest.body),
+        })
+        if (!response.ok) {
+          throw new Error(
+            `${t("errorUnexpected") || "Unexpected error"}: ${
+              response.statusText
+            }`
+          )
+        }
+
+        const data = await response.json()
+        let answer
+        if (config.model === "gemini") {
+          answer =
+            data.candidates?.[0]?.content?.parts?.[0]?.text || "No response"
+        } else if (config.model === "gpt") {
+          answer = data.choices?.[0]?.message?.content || "No response"
+        } else {
+          answer = data.text || "No response"
+        }
+
+        loadingMessage.remove()
+        const botMessage = document.createElement("div")
+        botMessage.className = "chatbox-message bot"
+        const timestamp = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+        botMessage.innerHTML = `${answer}<span class="timestamp">${timestamp}</span>`
+        chatMessages.appendChild(botMessage)
+        addToChatHistory("bot", answer, timestamp)
+        chatMessages.scrollTop = chatMessages.scrollHeight
+      } else if (action === "count") {
         chrome.bookmarks.getTree((bookmarkTree) => {
           let count = 0
           function countBookmarks(nodes) {
@@ -1265,28 +1327,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           })
         })
-      } else if (action === "general") {
-        loadingMessage.remove()
-        const botMessage = document.createElement("div")
-        botMessage.className = "chatbox-message bot"
-        const timestamp = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-        botMessage.innerHTML = `${
-          params.response ||
-          t("naturalLanguagePrompt") ||
-          "I'm trying to understand what you want! Could you clarify, like 'change bookmark ChickenSoup to ChickenSoup2698' or 'suggest a website for learning Python'?"
-        }<span class="timestamp">${timestamp}</span>`
-        chatMessages.appendChild(botMessage)
-        addToChatHistory(
-          "bot",
-          params.response ||
-            t("naturalLanguagePrompt") ||
-            "I'm trying to understand what you want! Could you clarify, like 'change bookmark ChickenSoup to ChickenSoup2698' or 'suggest a website for learning Python'?",
-          timestamp
-        )
-        chatMessages.scrollTop = chatMessages.scrollHeight
       } else {
         throw new Error(
           t("notSupported") ||
@@ -1399,22 +1439,69 @@ document.addEventListener("DOMContentLoaded", () => {
 
       await handleBookmarkCommand(result.action, result.params || {}, message)
     } catch (error) {
-      const errorMessage = document.createElement("div")
-      errorMessage.className = "chatbox-message bot error"
-      const timestamp = new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-      errorMessage.innerHTML = `${t("errorTitle") || "Oops"}: ${
-        error.message
-      }<span class="timestamp">${timestamp}</span>`
-      chatMessages.appendChild(errorMessage)
-      addToChatHistory(
-        "bot",
-        `${t("errorTitle") || "Oops"}: ${error.message}`,
-        timestamp
+      // If API fails, try handling as off-topic question
+      const apiRequestGeneral = buildApiRequest(
+        config.curl,
+        config.apiKey,
+        config.model,
+        message,
+        true
       )
-      chatMessages.scrollTop = chatMessages.scrollHeight
+      if (apiRequestGeneral) {
+        try {
+          const responseGeneral = await fetch(apiRequestGeneral.url, {
+            method: apiRequestGeneral.method,
+            headers: apiRequestGeneral.headers,
+            body: JSON.stringify(apiRequestGeneral.body),
+          })
+          if (!responseGeneral.ok) {
+            throw new Error(
+              `${t("errorUnexpected") || "Unexpected error"}: ${
+                responseGeneral.statusText
+              }`
+            )
+          }
+          const dataGeneral = await responseGeneral.json()
+          let answer
+          if (config.model === "gemini") {
+            answer =
+              dataGeneral.candidates?.[0]?.content?.parts?.[0]?.text ||
+              "No response"
+          } else if (config.model === "gpt") {
+            answer = dataGeneral.choices?.[0]?.message?.content || "No response"
+          } else {
+            answer = dataGeneral.text || "No response"
+          }
+
+          const botMessage = document.createElement("div")
+          botMessage.className = "chatbox-message bot"
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+          botMessage.innerHTML = `${answer}<span class="timestamp">${timestamp}</span>`
+          chatMessages.appendChild(botMessage)
+          addToChatHistory("bot", answer, timestamp)
+          chatMessages.scrollTop = chatMessages.scrollHeight
+        } catch (generalError) {
+          const errorMessage = document.createElement("div")
+          errorMessage.className = "chatbox-message bot error"
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+          errorMessage.innerHTML = `${t("errorTitle") || "Oops"}: ${
+            generalError.message
+          }<span class="timestamp">${timestamp}</span>`
+          chatMessages.appendChild(errorMessage)
+          addToChatHistory(
+            "bot",
+            `${t("errorTitle") || "Oops"}: ${generalError.message}`,
+            timestamp
+          )
+          chatMessages.scrollTop = chatMessages.scrollHeight
+        }
+      }
     }
   }
 

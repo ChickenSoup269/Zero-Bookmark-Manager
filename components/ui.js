@@ -257,13 +257,7 @@ export async function populateTagFilter(elements) {
 
 // Existing functions (unchanged)
 export function updateTheme(elements, theme) {
-  const availableThemes = [
-    "light",
-    "dark",
-    "github-light",
-    "dracula",
-    "onedark",
-  ]
+  const availableThemes = ["light", "dark", "dracula", "onedark"]
   const isDarkMode =
     theme === "dark" ||
     (theme === "system" &&
@@ -291,9 +285,6 @@ export function updateTheme(elements, theme) {
       break
     case "dark":
       activeTheme = "dark"
-      break
-    case "github-light":
-      activeTheme = "github-light"
       break
     case "system":
       activeTheme = isDarkMode ? "dark" : "light"
@@ -440,6 +431,7 @@ function renderDetailView(bookmarksList, elements) {
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
   const language = localStorage.getItem("appLanguage") || "en"
 
+  // Tạo bookmark elements
   sortedBookmarks.forEach((bookmark) => {
     if (bookmark.url) {
       const bookmarkElement = createDetailBookmarkElement(bookmark, language)
@@ -447,11 +439,11 @@ function renderDetailView(bookmarksList, elements) {
     }
   })
 
-  // Clear existing content and apply detail view styling
+  // Làm trống danh sách cũ & thêm class layout
   elements.folderListDiv.innerHTML = ""
   elements.folderListDiv.classList.add("detail-view")
 
-  // Create header for select all if checkboxes are visible
+  // Header chọn tất cả (nếu đang bật checkbox)
   if (uiState.checkboxesVisible) {
     const selectAllDiv = document.createElement("div")
     selectAllDiv.className = "select-all-container"
@@ -459,12 +451,12 @@ function renderDetailView(bookmarksList, elements) {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 24px;
-      background: var(--bg-primary);
-      border-bottom: 1px solid var(--border-color, #e0e0e0);
+      padding: 10px 20px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 100;
     `
     selectAllDiv.innerHTML = `
       <input type="checkbox" id="select-all" style="transform: scale(1.2);">
@@ -472,24 +464,26 @@ function renderDetailView(bookmarksList, elements) {
         font-size: 14px;
         color: var(--text-primary);
         font-weight: 500;
+        cursor: pointer;
       ">${translations[language].selectAll}</label>
     `
     fragment.prepend(selectAllDiv)
   }
 
+  // Render vào DOM
   elements.folderListDiv.appendChild(fragment)
 
-  // Update UI state
-  elements.searchInput.value = uiState.searchQuery
+  // --- Cập nhật state filters ---
+  elements.searchInput.value = uiState.searchQuery || ""
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId
   } else {
     uiState.selectedFolderId = ""
     elements.folderFilter.value = ""
   }
-  elements.sortFilter.value = uiState.sortType
+  elements.sortFilter.value = uiState.sortType || "name"
 
-  // Attach event listeners
+  // --- Attach event listeners ---
   attachSelectAllListener(elements)
   attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
@@ -837,7 +831,22 @@ function createDetailBookmarkElement(bookmark, language) {
                   <strong>${translations[language].manageTags}:</strong> ${tagsHtml}
                 </div>`
               : ""
-          }
+          } ${
+      uiState.showBookmarkIds
+        ? `<div class="modal-bookmark-id" style="
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            padding: 6px 10px;
+            text-align: right;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-radius: 0 0 8px 8px;
+          ">
+            ID: ${bookmark.id}
+          </div>`
+        : ""
+    }
       </div>
         <iframe src="${
           bookmark.url
