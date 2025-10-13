@@ -438,19 +438,48 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 function renderDetailView(bookmarksList, elements) {
   const fragment = document.createDocumentFragment()
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
-  // const language = localStorage.getItem("appLanguage") || "en"
+  const language = localStorage.getItem("appLanguage") || "en"
 
   sortedBookmarks.forEach((bookmark) => {
     if (bookmark.url) {
-      const bookmarkElement = createDetailBookmarkElement(bookmark)
+      const bookmarkElement = createDetailBookmarkElement(bookmark, language)
       fragment.appendChild(bookmarkElement)
     }
   })
 
+  // Clear existing content and apply detail view styling
   elements.folderListDiv.innerHTML = ""
   elements.folderListDiv.classList.add("detail-view")
+
+  // Create header for select all if checkboxes are visible
+  if (uiState.checkboxesVisible) {
+    const selectAllDiv = document.createElement("div")
+    selectAllDiv.className = "select-all-container"
+    selectAllDiv.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border-color, #e0e0e0);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    `
+    selectAllDiv.innerHTML = `
+      <input type="checkbox" id="select-all" style="transform: scale(1.2);">
+      <label for="select-all" style="
+        font-size: 14px;
+        color: var(--text-primary);
+        font-weight: 500;
+      ">${translations[language].selectAll}</label>
+    `
+    fragment.prepend(selectAllDiv)
+  }
+
   elements.folderListDiv.appendChild(fragment)
 
+  // Update UI state
   elements.searchInput.value = uiState.searchQuery
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId
@@ -460,6 +489,7 @@ function renderDetailView(bookmarksList, elements) {
   }
   elements.sortFilter.value = uiState.sortType
 
+  // Attach event listeners
   attachSelectAllListener(elements)
   attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
@@ -684,192 +714,161 @@ function renderTreeView(nodes, elements, depth = 0) {
   return fragment
 }
 
-function createDetailBookmarkElement(bookmark) {
-  const language = localStorage.getItem("appLanguage") || "en"
+function createDetailBookmarkElement(bookmark, language) {
   let favicon
   try {
     favicon = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(
       bookmark.url
     )}`
-  } catch (error) {
-    console.error("Error generating favicon URL for", bookmark.url, error)
+  } catch {
     favicon = "./images/default-favicon.png"
   }
 
   const div = document.createElement("div")
-  div.className = `bookmark-item detail-bookmark-item ${
-    bookmark.isFavorite ? "favorited" : ""
-  }`
-  div.dataset.id = bookmark.id
-  div.style.cssText = ` 
+  div.className = "bookmark-item detail-bookmark-item"
+  div.style.cssText = `
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin: 12px 0;
     padding: 16px;
-    border: 1px solid var(--border-color, #e0e0e0);
-    border-radius: 12px;
-    background: var(--bg-primary);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg, 12px);
+    background: var(--bg-tertiary);
+    box-shadow: var(--shadow-sm);
   `
-
-  div.addEventListener("mouseenter", () => {
-    div.style.transform = "translateY(-2px)"
-    div.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.15)"
-  })
-  div.addEventListener("mouseleave", () => {
-    div.style.transform = ""
-    div.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.1)"
-  })
 
   const tagsHtml = (bookmark.tags || [])
     .map(
       (tag) => `
-    <span class="bookmark-tag" style="
-      background-color: ${uiState.tagColors[tag] || "#ccc"};
-      color: white;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      margin-right: 8px;
-      margin-bottom: 8px;
-      display: inline-block;
-    ">
-      ${tag}
-    </span>
-  `
+        <span class="bookmark-tag" style="
+          background-color: ${uiState.tagColors[tag] || "var(--accent-color)"};
+          color: #fff;
+          padding: 4px 10px;
+          border-radius: 6px;
+          font-size: 12px;
+          letter-spacing: 0.3px;
+          display:inline-block;
+          margin-right:6px;
+          margin-bottom:4px;
+        ">
+          ${tag}
+        </span>
+      `
     )
     .join("")
 
   div.innerHTML = `
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <input type="checkbox" 
-             class="bookmark-checkbox" 
-             data-id="${bookmark.id}" 
-             ${uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""}
-             style="display: ${
-               uiState.checkboxesVisible ? "inline-block" : "none"
-             }; transform: scale(1.2);">
+    <div style="display:flex;align-items:center;gap:12px;">
       <div class="bookmark-favicon" style="
-        width: 32px; 
-        height: 32px; 
-        border-radius: 6px; 
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: white;
+        width:32px;height:32px;border-radius:6px;overflow:hidden;
+        display:flex;align-items:center;justify-content:center;
+        background:var(--bg-secondary);
+        border:1px solid var(--border-color);
       ">
-        <img src="${favicon}" 
-             alt="favicon" 
-             style="width: 90%; height: 90%; object-fit: cover;"
-             onerror="this.style.display='none'; this.parentElement.innerHTML='';">
+        <img src="${favicon}" alt="favicon" 
+             style="width:100%;height:100%;object-fit:contain;">
       </div>
-      <a href="${bookmark.url}" 
-         target="_blank" 
-         class="bookmark-title"
-         style="
-           color: var(--text-primary);
-           text-decoration: none;
-           font-size: 8px;
-           font-weight: 600;
-           overflow: hidden;
-           text-overflow: ellipsis;
-           white-space: nowrap;
-         "
-         title="${bookmark.title || bookmark.url}">
-        ${bookmark.title || bookmark.url}
-      </a>
+          <a href="${bookmark.url}" target="_blank" style="
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 8px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: wrap;
+            display: block;
+            min-width: 0;
+            max-width: 100%;
+            flex: 1;
+          ">
+            ${bookmark.title || bookmark.url}
+          </a>
     </div>
-    <div class="bookmark-url" style="
-      font-size: 12px;
-      color: var(--text-secondary);
-      opacity: 0.8;
-      margin-top: 4px;
-      word-break: break-all;
-    ">
+
+    <div style="font-size:13px;color:var(--text-muted);opacity:0.85;">
       ${extractDomain(bookmark.url)}
     </div>
-    <div class="bookmark-tags" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
-      ${tagsHtml}
-    </div>
-    <div class="bookmark-details" style="
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 8px;
-    ">
-      <p><strong>${translations[language].detailDateAdded}:</strong> ${
-    bookmark.dateAdded
-      ? new Date(bookmark.dateAdded).toLocaleString()
-      : translations[language].notAvailable
-  }</p>
-    </div>
-    ${
-      uiState.showBookmarkIds
-        ? `<span class="bookmark-id" style="font-size: 12px; color: var(--text-secondary); opacity: 0.8;">ID: ${bookmark.id}</span>`
-        : ""
-    }
-    <div class="dropdown-btn-group" style="position: absolute; top: 16px; right: 16px;">
-      <button class="dropdown-btn ${bookmark.isFavorite ? "favorited" : ""}" 
-              data-id="${bookmark.id}" 
-              aria-label="Bookmark options"
-              style="
-                width: 32px; height: 32px; border: none; border-radius: 6px;
-                background: transparent; cursor: pointer;
-                transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
-                opacity: 0;
-              ">
-        ${
-          bookmark.isFavorite
-            ? '<i class="fas fa-star"></i>'
-            : '<i class="fas fa-ellipsis-v"></i>'
-        }
-      </button>
-      <div class="dropdown-menu hidden" style="
-        position: absolute; right: 0; top: 100%; margin-top: 4px;
-        background: var(--bg-secondary, #2d2d2d); border: 1px solid var(--border-color, #404040);
-        border-radius: 8px; min-width: 160px; padding: 4px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
-      ">
-        <button class="menu-item add-to-folder" data-id="${bookmark.id}">${
-    translations[language].addToFolderOption
-  }</button>
-        <button class="menu-item delete-btn" data-id="${bookmark.id}">${
-    translations[language].deleteBookmarkOption
-  }</button>
-        <button class="menu-item rename-btn" data-id="${bookmark.id}">${
-    translations[language].renameBookmarkOption
-  }</button>
-        <button class="menu-item view-detail-btn" data-id="${bookmark.id}">${
-    translations[language].viewDetail
-  }</button>
-        <button class="menu-item manage-tags-btn" data-id="${bookmark.id}">${
-    translations[language].manageTags
-  }</button>
-        <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;">
-        <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
-    translations[language].favourite
-  }</button>
-      </div>
-    </div>
+
+    <button class="view-detail-btn" style="
+      background:var(--accent-color);
+      color: var(--bg-primary);
+      border:none;
+      border-radius:6px;
+      padding:8px 12px;
+      cursor:pointer;
+      font-weight:600;
+      margin-top:8px;
+    ">${translations[language].viewDetail}</button>
   `
 
-  div.addEventListener("mouseenter", () => {
-    const dropdownBtn = div.querySelector(".dropdown-btn")
-    if (dropdownBtn) dropdownBtn.style.opacity = "1"
-  })
+  // ===== Modal Logic =====
+  const viewBtn = div.querySelector(".view-detail-btn")
+  viewBtn.addEventListener("click", () => {
+    const overlay = document.createElement("div")
+    overlay.className = "bookmark-modal-overlay"
+    overlay.innerHTML = `
+      <div class="bookmark-modal">
+        <div class="modal-header">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <img src="${favicon}" class="modal-favicon" alt="icon">
+            <h3 class="modal-title">${bookmark.title || bookmark.url}</h3>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-fullscreen" title="Phóng to / Thu nhỏ">⤢</button>
+            <button class="modal-close">&times;</button>
+          </div>
+        </div>
+       <div class="modal-info">
+          <div class="modal-meta">
+            <span><strong>${translations[language].detailDateAdded}:</strong> ${
+      bookmark.dateAdded
+        ? new Date(bookmark.dateAdded).toLocaleString()
+        : translations[language].notAvailable
+    }</span>
+            <span class="separator">|</span>
+            <span><strong>${translations[language].detailFolder}:</strong> ${
+      findParentFolder(bookmark.id, uiState.bookmarkTree)?.title ||
+      translations[language].noFolder
+    }</span>
+          </div>
+          ${
+            tagsHtml
+              ? `<div class="modal-tags">
+                  <strong>${translations[language].manageTags}:</strong> ${tagsHtml}
+                </div>`
+              : ""
+          }
+      </div>
+        <iframe src="${
+          bookmark.url
+        }" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+      </div>
+    `
 
-  div.addEventListener("mouseleave", () => {
-    const dropdownBtn = div.querySelector(".dropdown-btn")
-    if (dropdownBtn) dropdownBtn.style.opacity = "0"
+    document.body.appendChild(overlay)
+
+    // Nút đóng
+    overlay.querySelector(".modal-close").addEventListener("click", () => {
+      overlay.remove()
+    })
+
+    // Nút phóng to / thu nhỏ
+    const modal = overlay.querySelector(".bookmark-modal")
+    const fullscreenBtn = overlay.querySelector(".modal-fullscreen")
+    fullscreenBtn.addEventListener("click", () => {
+      modal.classList.toggle("fullscreen")
+    })
+
+    // Click ngoài overlay -> đóng
+    overlay.addEventListener("click", (evt) => {
+      if (evt.target === overlay) overlay.remove()
+    })
   })
 
   return div
 }
 
-function createEnhancedBookmarkElement(bookmark, depth = 0) {
+function createEnhancedBookmarkElement(bookmark) {
   const language = localStorage.getItem("appLanguage") || "en"
   let favicon
   try {
@@ -888,15 +887,10 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin: 3px 0;
-    padding: 10px 14px;
+    margin: 7px 0;
+    padding: 12px 16px;
     border: 1px solid transparent;
-    border-radius: 10px;
-    margin-left: ${depth * 12}px;
-    background: var(--bg-primary);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    cursor: pointer;
+    box-shadow: var( --shadow-sm);
   `
 
   div.addEventListener("mouseenter", () => {

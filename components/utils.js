@@ -207,6 +207,8 @@ export const translations = {
     saveSelectedTag: "Save Selected Tags",
     addTag: "Add Tag",
     tagLimitReached: "Tag limit reached",
+    detailDateAdded: "Date Added",
+    detailFolder: "Folder",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -414,6 +416,8 @@ export const translations = {
     saveSelectedTag: "Lưu Thẻ Đã chọn",
     addTag: "Thêm Thẻ",
     tagLimitReached: "Đã đạt giới hạn thẻ",
+    detailDateAdded: "Ngày Thêm",
+    detailFolder: "Thư mục",
   },
 }
 
