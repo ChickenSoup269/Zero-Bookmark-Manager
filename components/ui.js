@@ -903,7 +903,6 @@ function createEnhancedBookmarkElement(bookmark) {
   `
 
   div.addEventListener("mouseenter", () => {
-    div.style.transform = "translateX(6px) translateY(-1px)"
     div.style.borderColor = "var(--hover-bg)"
     div.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.12)"
   })

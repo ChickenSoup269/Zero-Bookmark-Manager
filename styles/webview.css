@@ -254,9 +254,9 @@ body {
 
 .bookmark-item:hover,
 .folder-item:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  background-color: var(--bookmark-hover-bg);
+  background-color: var(--bg-secondary);
   z-index: 100;
 }
 

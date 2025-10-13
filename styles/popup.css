@@ -82,7 +82,7 @@
 .folder-item {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* tách icon/title và các action */
+  justify-content: space-between;
   padding: 10px 14px;
   margin: 10px 0;
   border: 1px solid var(--border-color);
@@ -93,12 +93,11 @@
   cursor: pointer;
 }
 
-/* Hover effect: nổi nhẹ + đổi màu nền */
 .bookmark-item:hover,
 .folder-item:hover {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   box-shadow: var(--shadow-md);
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--bg-secondary);
   z-index: 1;
 }
 
