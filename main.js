@@ -9,7 +9,11 @@ import { setupEventListeners } from "./components/events.js"
 import { uiState } from "./components/state.js"
 import { customLoadUIState } from "./components/option/option.js"
 
-export let elements
+let elements = {}
+
+export function getElements() {
+  return elements
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   elements = {
@@ -66,6 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
     clearCreateFolder: document.getElementById("clear-create-folder"),
     showBookmarkIdsOption: document.getElementById("show-bookmark-ids-option"),
     tagFilterContainer: document.getElementById("tag-filter-container"),
+    tagFilterToggle: document.getElementById("tag-filter-toggle"),
+    tagFilterDropdown: document.getElementById("tag-filter-dropdown"),
+    tagFilterOptions: document.getElementById("tag-filter-options"),
   }
 
   const init = () => {

@@ -10,6 +10,19 @@ export async function exportToHTML(
   currentTheme
 ) {
   let faviconMap = {}
+  let bookmarkTags = {}
+
+  // Fetch tags from chrome.storage.local
+  try {
+    const storageData = await new Promise((resolve) =>
+      chrome.storage.local.get(["bookmarkTags"], resolve)
+    )
+    bookmarkTags = storageData.bookmarkTags || {}
+    console.log("Fetched bookmarkTags:", bookmarkTags)
+  } catch (error) {
+    console.error("Failed to fetch bookmarkTags:", error)
+  }
+
   if (includeIconData) {
     const bookmarksWithUrls = flattenBookmarks(bookmarkTreeNodes).filter(
       (b) => b.url
@@ -46,6 +59,7 @@ export async function exportToHTML(
     unnamedFolder: translations[language].unnamedFolder || "Unnamed Folder",
     bookmarks: translations[language].bookmarks || "bookmarks",
     folders: translations[language].folders || "folders",
+    tags: translations[language].tags || "Tags", // Added for tag labels
   }
 
   const cssTheme = `
@@ -69,6 +83,8 @@ export async function exportToHTML(
         --folder-hover-bg: rgba(255, 255, 255, 0.05);
         --bookmark-bg: rgba(255, 255, 255, 0.02);
         --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
+        --tag-bg: #4a5568;
+        --tag-text: #e2e8f0;
         `
             : currentTheme === "dracula"
             ? `
@@ -88,6 +104,8 @@ export async function exportToHTML(
         --folder-hover-bg: rgba(80, 250, 123, 0.1);
         --bookmark-bg: rgba(255, 255, 255, 0.02);
         --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
+        --tag-bg: #44475a;
+        --tag-text: #f8f8f2;
         `
             : currentTheme === "onedark"
             ? `
@@ -107,6 +125,8 @@ export async function exportToHTML(
         --folder-hover-bg: rgba(152, 195, 121, 0.1);
         --bookmark-bg: rgba(255, 255, 255, 0.02);
         --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
+        --tag-bg: #3e4451;
+        --tag-text: #abb2bf;
         `
             : `
         /* Default: light theme */
@@ -126,6 +146,8 @@ export async function exportToHTML(
         --folder-hover-bg: rgba(112, 161, 70, 0.15);
         --bookmark-bg: rgba(0, 0, 0, 0.02);
         --bookmark-hover-bg: rgba(0, 0, 0, 0.05);
+        --tag-bg: #edf2f7;
+        --tag-text: #2d3748;
         `
         }
         
@@ -143,8 +165,6 @@ export async function exportToHTML(
         --border-radius-lg: 0.75rem;
         --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-
 
     * {
       box-sizing: border-box;
@@ -386,6 +406,29 @@ export async function exportToHTML(
       border-radius: 0.25rem;
     }
     
+    .tag {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      margin: 0.2rem;
+      transition: var(--transition);
+    }
+    
+    .tag:hover {
+      background: var(--accent-hover);
+      color: white;
+    }
+    
+    .tags-container {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+    
     .stats-bar {
       background: var(--bg-secondary);
       padding: 1rem 2rem;
@@ -543,6 +586,7 @@ export async function exportToHTML(
             includeFolderModDates
           )};
           const faviconMap = ${JSON.stringify(faviconMap)};
+          const bookmarkTags = ${JSON.stringify(bookmarkTags)};
           
           const listContainer = document.getElementById("bookmarkList");
           const gridContainer = document.getElementById("bookmarkGrid");
@@ -572,6 +616,12 @@ export async function exportToHTML(
             });
           }
 
+          function renderTags(bookmarkId) {
+            const tags = bookmarkTags[bookmarkId] || [];
+            if (!tags.length) return '';
+            return \`<div class="tags-container"><span class="meta-info"><i class="fas fa-tags"></i> \${translations.tags}: \${tags.map(tag => \`<span class="tag">\${tag}</span>\`).join('')}</span></div>\`;
+          }
+
           function renderBookmarks(nodes, parent = listContainer, gridParent = gridContainer, treeParent = treeContainer, depth = 0) {
             const folders = nodes.filter(node => node.children);
             const bookmarksOnly = nodes.filter(node => node.url);
@@ -588,6 +638,7 @@ export async function exportToHTML(
                 if (includeCreationDates) {
                   li.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> \${translations.created}: \${formatDate(node.dateAdded)}</div>\`;
                 }
+                li.innerHTML += renderTags(node.id);
                 parent.appendChild(li);
 
                 const gridItem = document.createElement("div");
@@ -600,6 +651,7 @@ export async function exportToHTML(
                 if (includeCreationDates) {
                   gridItem.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> \${translations.created}: \${formatDate(node.dateAdded)}</div>\`;
                 }
+                gridItem.innerHTML += renderTags(node.id);
                 gridParent.appendChild(gridItem);
               }
             });
@@ -616,6 +668,7 @@ export async function exportToHTML(
                 if (includeCreationDates) {
                   treeItem.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> \${translations.created}: \${formatDate(node.dateAdded)}</div>\`;
                 }
+                treeItem.innerHTML += renderTags(node.id);
               } else if (node.children) {
                 treeItem.className = "folder";
                 treeItem.textContent = node.title || translations.unnamedFolder;

@@ -122,11 +122,11 @@ export function updateUILanguage(elements, language) {
   elements.sortFilter.innerHTML = `
     <option value="default">${t.sortDefault}</option>
     <option value="favorites">${t.sortFavorites}</option>
+    <option value="most-visited">${t.sortMostVisited || "Most Visited"}</option>
     <option value="old">${t.sortOld}</option>
     <option value="last-opened">${t.sortLastOpened}</option>
     <option value="a-z">${t.sortAZ}</option>
     <option value="z-a">${t.sortZA}</option>
-    <option value="most-visited">${t.sortMostVisited || "Most Visited"}</option>
   `
   elements.createFolderButton.textContent = t.createFolder
   elements.addToFolderButton.textContent = t.addToFolder
@@ -699,7 +699,6 @@ function renderTreeView(nodes, elements, depth = 0) {
 
   if (depth === 0) {
     elements.folderListDiv.appendChild(fragment)
-    // Khởi tạo popup tại root
     attachTreeListeners(elements)
     return
   }
@@ -1352,7 +1351,7 @@ export function setupTagFilterListener(elements) {
   // Debug: Log all checkboxes
 }
 
-function attachTreeListeners(elements) {
+export function attachTreeListeners(elements) {
   const folderListDiv = elements.folderListDiv
   // Xóa các sự kiện cũ để tránh trùng lặp
   folderListDiv.removeEventListener("click", handleFolderToggle)

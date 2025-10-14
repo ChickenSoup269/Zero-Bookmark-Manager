@@ -10,12 +10,12 @@ import {
   showLocalStorageSettingsPopup,
   hideLocalStorageSettingsPopup,
 } from "../utils.js"
-import { populateTagFilter, renderFilteredBookmarks } from "../ui.js"
-import { elements } from "../../main.js"
-
-function getAllUIElements() {
-  elements
-}
+import {
+  populateTagFilter,
+  renderFilteredBookmarks,
+  attachTreeListeners,
+} from "../ui.js"
+import { getElements } from "../../main.js"
 
 const defaultStorageSettings = {
   searchQuery: false,
@@ -28,6 +28,8 @@ const defaultStorageSettings = {
   bookmarkTags: true,
   tagColors: true,
 }
+
+const elements = getElements()
 
 function initializeStorageSettings() {
   chrome.storage.local.get(["storageSettings"], (result) => {
@@ -314,7 +316,6 @@ export async function customLoadUIState(callback) {
 
     // Làm mới giao diện sau khi tải trạng thái
     chrome.bookmarks.getTree((bookmarkTreeNodes) => {
-      const elements = getAllUIElements()
       populateTagFilter(elements)
       renderFilteredBookmarks(bookmarkTreeNodes, elements)
       // Gắn lại sự kiện để đảm bảo dropdown hoạt động
@@ -402,6 +403,7 @@ function initializeEventListeners() {
           chrome.bookmarks.getTree((bookmarkTreeNodes) => {
             populateTagFilter(elements)
             renderFilteredBookmarks(bookmarkTreeNodes, elements)
+            attachTreeListeners(elements)
           })
         }
       })
@@ -432,7 +434,7 @@ function initializeEventListeners() {
             uiState.searchQuery = ""
             searchInput.value = ""
           }
-          const elements = getAllUIElements()
+
           if (!storageSettings.selectedTags) {
             uiState.selectedTags = []
 
@@ -470,8 +472,10 @@ function initializeEventListeners() {
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    initializeEventListeners()
+  chrome.bookmarks.getTree((bookmarkTreeNodes) => {
+    populateTagFilter(elements)
+    renderFilteredBookmarks(bookmarkTreeNodes, elements)
+    attachTreeListeners(elements)
   })
 } else {
   initializeEventListeners()
