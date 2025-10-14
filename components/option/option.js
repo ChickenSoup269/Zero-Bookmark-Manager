@@ -318,8 +318,6 @@ export async function customLoadUIState(callback) {
     chrome.bookmarks.getTree((bookmarkTreeNodes) => {
       populateTagFilter(elements)
       renderFilteredBookmarks(bookmarkTreeNodes, elements)
-      // Gắn lại sự kiện để đảm bảo dropdown hoạt động
-      attachTreeListeners(elements)
     })
 
     if (callback) callback()

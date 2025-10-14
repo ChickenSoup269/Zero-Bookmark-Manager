@@ -22,17 +22,17 @@
 
 ## Introduction
 
-Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bookmark organization. Easily view, search, sort, and manage your bookmarks with a sleek interface. It supports light/dark themes, multilingual display (English/Vietnamese), and export/import functionality for seamless backup and restore.
+Bookmark Manager is a and intuitive Chrome extension that simplifies bookmark organization. Easily view, search, sort, and manage your bookmarks with a sleek interface. It supports light/dark themes, multilingual display (English/Vietnamese), and export/import functionality for seamless backup and restore.
 
 ## Features
 
-- **View Bookmarks:** Browse bookmarks by folder or as a flat list.
+- **View Bookmarks:** Browse bookmarks by flat list, tree view, or details view.
 - **Search:** Instantly find bookmarks by keyword (title or URL).
-- **Sort:** Organize bookmarks by date added, last opened, or alphabetically (A-Z, Z-A).
+- **Sort:** Organize bookmarks by date added, last opened, or alphabetically (A-Z, Z-A), favourite, most visted.
 - **Folder Management:** Create, delete, or move bookmarks between folders.
-- **Edit Bookmarks:** Rename or delete bookmarks with ease.
-- **Export/Import:** Save bookmarks to JSON or import with duplicate detection (based on URL).
-- **Themes:** Switch between light, dark, or system-based themes.
+- **Edit Bookmarks:** add to folder, rename or delete bookmarks. View details, favourite, add tags.
+- **Export/Import:** Save bookmarks to JSON/HTML/CSV or import with JSON duplicate detection (based on URL).
+- **Themes:** Switch between light, dark, dracula, one dark, or system-based themes.
 - **Fonts:** Customize interface with different font styles.
 - **Multilingual:** Supports English and Vietnamese for a localized experience.
 
@@ -54,11 +54,27 @@ Install Bookmark-Manager
 
 ### Step by step to use offline:
 
-1. Clone the repository or download the source code from GitHub.
-2. Open Chrome and navigate to chrome://extensions/.
+1. Clone the repository or download/Releases you can chosse version you like here <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
+2. Open Chrome and navigate to <a href="chrome://extensions/"> chrome://extensions </a>
 3. Enable Developer Mode.
+
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_1.webp?raw=true" width="400"/>
+
 4. Click Load unpacked and select the extension folder.
-5. Click the extension icon in the toolbar to start using it.
+
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_2.webp?raw=true"  width="400"/>
+
+5. Select the newly downloaded folder
+
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_3.png?raw=true"  width="400"/>
+
+- Make sure you go in and see files like this
+
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_4.png?raw=true"  width="400"/>
+
+6. Click the extension icon in the toolbar to start using it.
+
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_5.png?raw=true"  width="400"/>
 
 ## Usage/Examples
 
@@ -68,11 +84,13 @@ Install Bookmark-Manager
 | `Filter folders`         | Select a folder from the dropdown.                                                          |
 | `Sort`                   | Choose a sorting option.                                                                    |
 | `Manage folders`         | Create, rename, or delete fodlers                                                           |
-| `Manage bookmarks`       | Click "⋮" to add to folder, rename, or delete.                                              |
-| `Export/Import`          | Use Settings to export as JSON/HTML or import with duplicate check.                         |
-| `Customize`              | Adjust theme, font, or language in Settings.                                                |
-| `Edit in new tabs`       | Use extension with web page                                                                 |
+| `Manage bookmarks`       | Click "⋮" to add to folder, rename, or delete, Viewdetail, Manage tags, Favourite           |
+| `Export/Import`          | Use Settings to export as JSON/HTML/CSV or import with Json duplicate check.                |
+| `Customize`              | Adjust theme, font, or language in Settings, Render view                                    |
+| `Edit in new tabs`       | Use extension with web view                                                                 |
 | `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs |
+| `Tags`                   | Choose a sorting tags option                                                                |
+| `Chatbot`                | You can check Help Guide in chatbot with icon [?] (beta version)                            |
 
 ## Video & screenshots
 
@@ -86,11 +104,11 @@ video
 
 <!-- image -->
 <p align="center">
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/Group%2023.png?raw=true" alt="Screenshot" width="520"/>
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/Group%2024.png?raw=true" alt="Screenshot" width="520"/>
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/Group%2025.png?raw=true" alt="Screenshot" width="520"/>
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/Group%2026.png?raw=true" alt="Screenshot" width="520"/>
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/Group%2027.png?raw=true" alt="Screenshot" width="520"/>
+  <img src="" alt="Screenshot" width="520"/>
+  <img src="" alt="Screenshot" width="520"/>
+  <img src="" alt="Screenshot" width="520"/>
+  <img src="" alt="Screenshot" width="520"/>
+  <img src="" alt="Screenshot" width="520"/>
  </p>
 
 ## Feedback

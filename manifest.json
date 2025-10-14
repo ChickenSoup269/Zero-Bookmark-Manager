@@ -3,13 +3,7 @@
   "name": "Zero Bookmark Manager",
   "version": "1.1.0",
   "description": "A sleek and intuitive Chrome extension to manage bookmarks with search, sort, folder management, and export/import features.",
-  "permissions": [
-    "bookmarks",
-    "storage",
-    "tabs",
-    "https://generativelanguage.googleapis.com/*",
-    "https://image.thum.io/*"
-  ],
+  "permissions": ["bookmarks", "storage", "tabs", "https://image.thum.io/*"],
   "action": {
     "default_popup": "index.html"
   },

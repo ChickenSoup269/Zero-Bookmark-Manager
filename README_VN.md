@@ -22,19 +22,19 @@
 
 ## Introduction
 
-Quản lý Dấu trang là một tiện ích mở rộng Chrome mạnh mẽ và trực quan, giúp đơn giản hóa việc tổ chức dấu trang. Dễ dàng xem, tìm kiếm, sắp xếp và quản lý dấu trang của bạn với giao diện mượt mà. Nó hỗ trợ chủ đề sáng/tối, hiển thị đa ngôn ngữ (Tiếng Anh/Tiếng Việt), và chức năng xuất/nhập để sao lưu và khôi phục liền mạch.
+Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản hóa việc tổ chức bookmark. Dễ dàng xem, tìm kiếm, sắp xếp và quản lý bookmark của bạn với giao diện dễ nhìn? Hỗ trợ chủ đề sáng/tối, hiển thị ngôn ngữ (Tiếng Anh/Tiếng Việt), và chức năng xuất/nhập để sao lưu và khôi phục liền mạch.
 
 ## Features
 
-- **Xem Bookmark:** Duyệt dấu trang theo thư mục hoặc dạng danh sách phẳng.
-- **Tìm kiếm:** Tìm dấu trang ngay lập tức bằng từ khóa (tiêu đề hoặc URL).
-- **Sắp xếp:** Tổ chức dấu trang theo ngày thêm, lần mở cuối, hoặc thứ tự bảng chữ cái (A-Z, Z-A).
-- **Quản lý Thư mục:** Tạo, xóa, hoặc di chuyển dấu trang giữa các thư mục.
-- **Chỉnh sửa Bookmark:** Đổi tên hoặc xóa dấu trang một cách dễ dàng.
-- **Xuất/Nhập:** Lưu dấu trang vào JSON hoặc nhập với phát hiện trùng lặp (dựa trên URL).
-- **Chủ đề:** Chuyển đổi giữa sáng, tối, hoặc dựa trên hệ thống.
+- **Xem Bookmark:** Duyệt qua bookmark theo dạng danh sách phẳng, cây thư mục hoặc chế độ chi tiết.
+- **Tìm kiếm:** Tìm bookmark ngay lập tức bằng từ khóa (tiêu đề hoặc URL)..
+- **Sắp xếp:** Sắp xếp bookmark theo ngày thêm, lần mở gần nhất, bảng chữ cái (A–Z, Z–A), yêu thích hoặc lượt truy cập nhiều nhất.
+- **Quản lý Thư mục:** Tạo, xóa, hoặc di chuyển bookmark giữa các thư mục.
+- **Chỉnh sửa Bookmark:** Thêm vào thư mục, đổi tên hoặc xóa dấu trang. Xem chi tiết, đánh dấu yêu thích, thêm thẻ (tags).
+- **Xuất/Nhập:** Lưu bookmark dưới dạng JSON/HTML/CSV hoặc nhập vào bằng tệp JSON (tự động phát hiện trùng lặp dựa trên URL).
+- **Giao diện (Themes):** Chuyển đổi giữa các chủ đề sáng, tối, dracula, one dark hoặc theo hệ thống.
 - **Phông chữ:** Tùy chỉnh giao diện với các kiểu phông chữ khác nhau.
-- **Đa ngôn ngữ:** Hỗ trợ Tiếng Anh và Tiếng Việt cho trải nghiệm được địa phương hóa.
+- **Đa ngôn ngữ:** Hỗ trợ tiếng Anh và tiếng Việt để mang lại trải nghiệm thân thiện hơn.
 
 ## Running Tests
 
@@ -54,34 +54,49 @@ Cài đặt Bookmark-Manager
 
 ### Step by step to use offline:
 
-1. Các bước sử dụng ngoại tuyến:
-2. Sao chép kho lưu trữ hoặc tải mã nguồn từ GitHub.
-3. Mở Chrome và điều hướng đến chrome://extensions/.
-4. Bật Chế độ Nhà phát triển.
-5. Nhấp vào Tải gói đã giải nén và chọn thư mục tiện ích.
-6. Nhấp vào biểu tượng tiện ích trên thanh công cụ để bắt đầu sử dụng.
+1. Clone repository hoặc tải bản phát hành (Releases) mà bạn muốn tại đây<a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
+2. Mở Chrome và truy cập vào đường dẫn: <a href="chrome://extensions/"> chrome://extensions </a>
+3. Bật chế độ Nhà phát triển (Developer Mode).
+
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_1.webp?raw=true" width="400"/>
+
+4. Nhấn “Load unpacked” (Tải tiện ích chưa đóng gói) và chọn thư mục chứa tiện ích mở rộng.
+
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_2.webp?raw=true"  width="400"/>
+
+5. Chọn thư mục bạn vừa tải về.
+
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_3.png?raw=true"  width="400"/>
+
+- Hãy đảm bảo rằng bên trong thư mục có các tệp như hình dưới đây:
+
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_4.png?raw=true"  width="400"/>
+
+6. Nhấn vào biểu tượng tiện ích trên thanh công cụ để bắt đầu sử dụng.
+
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_5.png?raw=true"  width="400"/>
 
 ảnh gif
 
 ## Usage/Examples
 
-| Parameter          | Description                                                                   |
-| :----------------- | :---------------------------------------------------------------------------- |
-| `Tìm kiếm`         | Nhập từ khóa vào ô tìm kiếm.                                                  |
-| `Lọc thư mục`      | Chọn thư mục từ dropdown.                                                     |
-| `Sắp xếp`          | Chọn tùy chọn sắp xếp.                                                        |
-| `Quản lý thư mục`  | Hiển thị tạo, sửa, xóa thư mục.                                               |
-| `Quản lý bookmark` | Nhấn "⋮" để thêm vào thư mục, đổi tên hoặc xóa.                               |
-| `Xuất/Nhập`        | Sử dụng Cài đặt để xuất dưới dạng JSON/HTML hoặc nhập với kiểm tra trùng lặp. |
-| `Tùy chỉnh`        | Điều chỉnh chủ đề, phông chữ, hoặc ngôn ngữ trong Cài đặt.                    |
+| Parameter                        | Description                                                                                                           |
+| :------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `Tìm kiếm`                       | Nhập từ khóa vào ô tìm kiếm.                                                                                          |
+| `Lọc thư mục`                    | Chọn thư mục từ dropdown.                                                                                             |
+| `Sắp xếp`                        | Chọn tùy chọn sắp xếp.                                                                                                |
+| `Quản lý thư mục`                | Hiển thị tạo, sửa, xóa thư mục.                                                                                       |
+| `Quản lý bookmark`               | Nhấn vào biểu tượng “⋮” để thêm vào thư mục, đổi tên hoặc xóa. Xem chi tiết, quản lý thẻ (tags), đánh dấu yêu thích.  |
+| `Xuất/Nhập`                      | Dùng phần Cài đặt (Settings) để xuất bookmarks ra JSON/HTML/CSV hoặc nhập vào với kiểm tra trùng lặp (dựa trên JSON). |
+| `Tùy chỉnh`                      | Điều chỉnh giao diện, phông chữ hoặc ngôn ngữ trong phần Cài đặt, chế độ hiển thị (Render view).                      |
+| `Chỉnh sửa trong tab mới`        | Sử dụng tiện ích trong chế độ xem web.                                                                                |
+| `Cài đặt lưu trữ ở local chrome` | Lưu dữ liệu tùy chỉnh cho tìm kiếm, chọn, sắp xếp, chế độ xem, trạng thái thư mục thu gọn, thẻ, và checkbox.          |
+| `Tags`                           | Chọn tùy chọn sắp xếp theo thẻ.                                                                                       |
+| `Chatbot`                        | Xem hướng dẫn trợ giúp trong chatbot (biểu tượng [?]). (beta version)                                                 |
 
 ## Video & screenshots
 
-<p align="center"> <img src="./images/Screenshot.png" alt="Screenshot" width="220"/> </p>
-
-<div style="text-align: center;">
-
-</div>
+- (để tiết kiệm bạn hãy qua readme chính để xem, xin cảm ơn)
 
 ## Feedback
 

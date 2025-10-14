@@ -13,6 +13,8 @@ const language = localStorage.getItem("appLanguage") || "en"
 const aiConfigTitle = document.getElementById("ai-config-title")
 if (aiConfigTitle) {
   aiConfigTitle.textContent = translations[language].aiTitle || "AI Assistant"
-} else {
-  console.warn("Element with id 'ai-config-title' not found in DOM")
 }
+
+// else {
+//   console.warn("Element with id 'ai-config-title' not found in DOM")
+// }

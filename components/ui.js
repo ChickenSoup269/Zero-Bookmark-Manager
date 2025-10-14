@@ -74,9 +74,9 @@ export function updateUILanguage(elements, language) {
   let hasError = false
   requiredElements.forEach(({ key, selector, optionText, placeholder }) => {
     if (!elements[key]) {
-      console.warn(
-        `${key} element not found in elements object. Attempting to fetch from DOM with selector: ${selector}`
-      )
+      // console.warn(
+      //   `${key} element not found in elements object. Attempting to fetch from DOM with selector: ${selector}`
+      // )
       elements[key] = document.querySelector(selector)
       if (!elements[key]) {
         console.error(`Failed to find ${key} in DOM with selector: ${selector}`)
@@ -151,53 +151,6 @@ export function updateUILanguage(elements, language) {
   elements.renameFolderInput.dataset.errorPlaceholder = t.emptyFolderError
   elements.renameFolderInput.dataset.selectFolderError = t.selectFolderError
 
-  // Update popup-specific elements with checks
-  const updatePopupElement = (popup, selector, text) => {
-    const element = popup.querySelector(selector)
-    if (element) {
-      element.textContent = text
-    } else {
-      console.warn(`Element ${selector} not found in popup`)
-    }
-  }
-
-  updatePopupElement(elements.renamePopup, "#rename-title", t.renameTitle)
-  updatePopupElement(
-    elements.addToFolderPopup,
-    "#add-to-folder-title",
-    t.addToFolderTitle
-  )
-  updatePopupElement(
-    elements.renameFolderPopup,
-    "#rename-folder-title",
-    t.renameTitle
-  )
-  updatePopupElement(
-    elements.bookmarkDetailPopup,
-    "#detail-title-label",
-    t.detailTitle
-  )
-  updatePopupElement(
-    elements.bookmarkDetailPopup,
-    "#detail-url-label",
-    t.detailUrl
-  )
-  updatePopupElement(
-    elements.bookmarkDetailPopup,
-    "#detail-date-added-label",
-    t.detailDateAdded
-  )
-  updatePopupElement(
-    elements.bookmarkDetailPopup,
-    "#detail-tags-label",
-    t.detailTags
-  )
-  updatePopupElement(
-    elements.manageTagsPopup,
-    "#manage-tags-title",
-    t.manageTags
-  )
-
   if (elements.manageTagsPopup.querySelector("#new-tag-input")) {
     elements.manageTagsPopup.querySelector("#new-tag-input").placeholder =
       t.newTagPlaceholder
@@ -216,17 +169,17 @@ export async function populateTagFilter(elements) {
   )
   const tagFilterToggle =
     elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
+
   if (!tagFilterOptions || !tagFilterToggle) {
-    console.error("Tag filter options or toggle not found", {
-      tagFilterOptions,
-      tagFilterToggle,
-    })
+    // console.error("Tag filter options or toggle not found", {
+    //   tagFilterOptions,
+    //   tagFilterToggle,
+    // })
     return
   }
 
   const allTags = await getAllTags()
-
-  tagFilterOptions.innerHTML = ""
+  elements.tagFilterOptions.innerHTML = ""
   allTags.forEach((tag) => {
     const label = document.createElement("label")
     label.style.display = "block"
@@ -371,8 +324,8 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       setBookmarkTree(bookmarkTreeNodes)
       setBookmarks(bookmarks)
       setFolders(folders)
-      populateFolderFilter(folders, elements)
       populateTagFilter(elements)
+      populateFolderFilter(folders, elements)
       setupTagFilterListener(elements)
       updateBookmarkCount(bookmarks, elements)
       let filtered = bookmarks
@@ -1356,8 +1309,8 @@ export function setupTagFilterListener(elements) {
 export function attachTreeListeners(elements) {
   const folderListDiv = elements.folderListDiv
   // Xóa các sự kiện cũ để tránh trùng lặp
-  folderListDiv.removeEventListener("click", handleFolderToggle)
   folderListDiv.removeEventListener("click", handleDropdownClick)
+  folderListDiv.removeEventListener("click", handleFolderToggle)
   folderListDiv.removeEventListener("click", handlePopupActions)
 
   // Gắn sự kiện toggle thư mục

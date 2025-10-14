@@ -176,10 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const config = localStorage.getItem("aiConfig")
     return config
       ? JSON.parse(config)
-      : { model: "", apiKey: "", curl: "", apiVisible: false }
+      : { model: "", apiKey: "", curl: "", apiVisible: true }
   }
 
-  const saveAiConfig = (model, apiKey, curl, apiVisible = false) => {
+  const saveAiConfig = (model, apiKey, curl, apiVisible = true) => {
     localStorage.setItem(
       "aiConfig",
       JSON.stringify({ model, apiKey, curl, apiVisible })
@@ -1598,7 +1598,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const model = aiModelSelect ? aiModelSelect.value : ""
       const apiKey = apiKeyInput ? apiKeyInput.value : ""
       const curl = curlInput ? curlInput.value : ""
-      const apiVisible = apiKeyInput ? apiKeyInput.type === "text" : false
+      const apiVisible = apiKeyInput ? apiKeyInput.type === "text" : true
       saveAiConfig(model, apiKey, curl, apiVisible)
       if (aiConfigPopup) aiConfigPopup.classList.add("hidden")
       showCustomPopup(t("successTitle") || "Success", "success", true)
