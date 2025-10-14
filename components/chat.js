@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const aiConfigPopup = document.getElementById("ai-config-popup")
   const aiModelSelect = document.getElementById("ai-model-select")
   const apiKeyInput = document.getElementById("api-key-input")
+  const toggleApiVisibility = document.getElementById("toggle-api-visibility")
   const curlInput = document.getElementById("curl-input")
   const clearApiKey = document.getElementById("clear-api-key")
   const clearCurl = document.getElementById("clear-curl")
@@ -97,7 +98,18 @@ document.addEventListener("DOMContentLoaded", () => {
   if (chatMaximize) chatMaximize.title = t("maximizeMinimize")
   if (chatEditConfig) chatEditConfig.title = t("editAIConfig")
   if (chatClose) chatClose.title = t("closeChat")
-
+  if (toggleApiVisibility && apiKeyInput) {
+    toggleApiVisibility.addEventListener("click", () => {
+      const isHidden = apiKeyInput.type === "password"
+      apiKeyInput.type = isHidden ? "text" : "password"
+      toggleApiVisibility.innerHTML = isHidden
+        ? '<i class="fas fa-eye"></i>'
+        : '<i class="fas fa-eye-slash"></i>'
+      const config = getAiConfig()
+      config.apiVisible = !isHidden
+      localStorage.setItem("aiConfig", JSON.stringify(config))
+    })
+  }
   // Chat history management
   let chatHistory = []
 
@@ -162,12 +174,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Load saved AI config
   const getAiConfig = () => {
     const config = localStorage.getItem("aiConfig")
-    return config ? JSON.parse(config) : { model: "", apiKey: "", curl: "" }
+    return config
+      ? JSON.parse(config)
+      : { model: "", apiKey: "", curl: "", apiVisible: false }
   }
 
-  // Save AI config
-  const saveAiConfig = (model, apiKey, curl) => {
-    localStorage.setItem("aiConfig", JSON.stringify({ model, apiKey, curl }))
+  const saveAiConfig = (model, apiKey, curl, apiVisible = false) => {
+    localStorage.setItem(
+      "aiConfig",
+      JSON.stringify({ model, apiKey, curl, apiVisible })
+    )
   }
 
   // Validate URL
@@ -1582,7 +1598,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const model = aiModelSelect ? aiModelSelect.value : ""
       const apiKey = apiKeyInput ? apiKeyInput.value : ""
       const curl = curlInput ? curlInput.value : ""
-      saveAiConfig(model, apiKey, curl)
+      const apiVisible = apiKeyInput ? apiKeyInput.type === "text" : false
+      saveAiConfig(model, apiKey, curl, apiVisible)
       if (aiConfigPopup) aiConfigPopup.classList.add("hidden")
       showCustomPopup(t("successTitle") || "Success", "success", true)
     })

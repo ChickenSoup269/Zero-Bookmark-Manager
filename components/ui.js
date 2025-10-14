@@ -902,11 +902,13 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
   `
 
   div.addEventListener("mouseenter", () => {
+    div.style.background = "var(--hover-bg)"
     div.style.borderColor = "var(--hover-bg)"
     div.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.12)"
   })
 
   div.addEventListener("mouseleave", () => {
+    div.style.background = "var(--bg-primary)"
     div.style.transform = ""
     div.style.borderColor = "transparent"
     div.style.boxShadow = ""

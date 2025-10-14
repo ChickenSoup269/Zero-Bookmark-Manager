@@ -388,6 +388,36 @@ html {
   transition: all var(--transition-fast);
 }
 
+/* .button.clear.api {
+  position: absolute;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius);
+  transition: all var(--transition-fast);
+} */
+
+.rename-input-container .button.eye {
+  position: absolute;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius);
+  transition: all var(--transition-fast);
+}
+
 .button.clear:hover {
   color: var(--focus-outline);
   background-color: rgba(255, 255, 255, 0.1);

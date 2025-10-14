@@ -183,6 +183,11 @@
   text-align: right;
 }
 
+.chatbox-messages a {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
 .chatbox-message.bot .timestamp,
 .chatbox-message.loading .timestamp,
 .chatbox-message.error .timestamp {
@@ -662,12 +667,7 @@
   cursor: pointer;
 }
 
-.light-theme #custom-guide-ok {
-  background-color: var(--focus-outline);
-  color: #fff;
-}
-
-.dark-theme #custom-guide-ok {
+#custom-guide-ok {
   background-color: var(--focus-outline);
   color: #fff;
 }
@@ -675,7 +675,7 @@
 /* High contrast */
 @media (prefers-contrast: high) {
   .chatbox-message.user {
-    background-color: #0055cc;
+    background-color: var(--accent-color);
     color: #ffffff;
   }
 
@@ -695,7 +695,7 @@
   }
 
   .chatbox-content h3 {
-    background-color: #0055cc;
+    background-color: var(--accent-color);
     color: #ffffff;
   }
 
@@ -703,7 +703,7 @@
   .scroll-to-top,
   .chat-scroll-bottom,
   .button.send {
-    background-color: #0055cc;
+    background-color: var(--accent-color);
     color: #ffffff;
   }
 }
@@ -723,21 +723,9 @@
   text-decoration: underline;
 }
 
-/* .suggested-website {
-  background-color: var(--bg-tertiary);
-  padding: 8px;
-  border-radius: 8px;
-  margin-bottom: 8px;
+.chatbox.maximized {
+  width: 80vw; /* Fullscreen width */
+  height: 80vh; /* Fullscreen height */
+  max-width: 800px; /* Optional max width */
+  max-height: 600px; /* Optional max height */
 }
-
-.bookmark-suggestion-button {
-  background-color: var(--accent-color);
-  color: var(--bg-primary);
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-left: 8px;
-}
-.bookmark-suggestion-button:hover {
-  background-color: var(--hover-bg);
-} */
