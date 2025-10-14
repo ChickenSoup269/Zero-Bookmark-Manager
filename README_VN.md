@@ -54,29 +54,34 @@ Cài đặt Bookmark-Manager
 
 ### Step by step to use offline:
 
-1. Clone repository hoặc tải bản phát hành (Releases) mà bạn muốn tại đây<a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
-2. Mở Chrome và truy cập vào đường dẫn: <a href="chrome://extensions/"> chrome://extensions </a>
-3. Bật chế độ Nhà phát triển (Developer Mode).
+1. Clone repository hoặc tải bản phát hành (Releases) mà bạn muốn tại đây <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
+2. Mở Chrome và truy cập vào đường dẫn: <p     style="color:#b4592e">chrome://extensions </p>
 
-   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_1.webp?raw=true" width="400"/>
+<p align="center"> 3. Bật chế độ Nhà phát triển (Developer Mode).</p>
 
-4. Nhấn “Load unpacked” (Tải tiện ích chưa đóng gói) và chọn thư mục chứa tiện ích mở rộng.
+<p align="center">
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_1.webp?raw=true" width="450" />
+</p>
 
-   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_2.webp?raw=true"  width="400"/>
+<p align="center">4. Nhấn “Load unpacked” (Tải tiện ích chưa đóng gói) và chọn thư mục chứa tiện ích mở rộng.</p>
+<p align="center">
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_2.webp?raw=true"  width="450" />
+</p>
 
-5. Chọn thư mục bạn vừa tải về.
+<p align="center">5. Chọn thư mục bạn vừa tải về.</p>
+<p align="center">
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_3.png?raw=true" width="450"  />
+</p>
 
-   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_3.png?raw=true"  width="400"/>
+<p align="center">- Hãy đảm bảo rằng bên trong thư mục có các tệp như hình dưới đây:</p>
+<p align="center">
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_4.png?raw=true"  width="450" />
+</p>
 
-- Hãy đảm bảo rằng bên trong thư mục có các tệp như hình dưới đây:
-
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_4.png?raw=true"  width="400"/>
-
-6. Nhấn vào biểu tượng tiện ích trên thanh công cụ để bắt đầu sử dụng.
-
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_5.png?raw=true"  width="400"/>
-
-ảnh gif
+<p align="center">6. Nhấn vào biểu tượng tiện ích trên thanh công cụ để bắt đầu sử dụng.</p>
+<p align="center">
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_5.png?raw=true"  width="380"  />
+</p>
 
 ## Usage/Examples
 

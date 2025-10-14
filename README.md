@@ -1,7 +1,7 @@
 # Bookmark Manager Extension <img src="./icons/icon.png" alt="logoEX" width="30">
 
 <div align="center">
-<img src="./images/logo.png" alt="logo" width="full">
+<img src="./images/logo.png" alt="logo" width="520">
 </div>
 
  <table width="100%">
@@ -55,26 +55,36 @@ Install Bookmark-Manager
 ### Step by step to use offline:
 
 1. Clone the repository or download/Releases you can chosse version you like here <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
-2. Open Chrome and navigate to <a href="chrome://extensions/"> chrome://extensions </a>
-3. Enable Developer Mode.
+2. Open Chrome and navigate to <p     style="color:#b4592e">chrome://extensions </p>
 
-   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_1.webp?raw=true" width="400"/>
+<p align=center>3.  Enable Developer Mode.</p>
 
-4. Click Load unpacked and select the extension folder.
+<p align="center">
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_1.webp?raw=true" width="400"/>
+</p>
 
+<p align=center>4. Click Load unpacked and select the extension folder.</p>
+
+<p align="center">
    <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_2.webp?raw=true"  width="400"/>
+</p>
 
-5. Select the newly downloaded folder
+<p align=center>5. Select the newly downloaded folder</p>
 
+<p align="center">
    <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_3.png?raw=true"  width="400"/>
+</p>
 
-- Make sure you go in and see files like this
+<p align=center>- Make sure you go in and see files like this</p>
 
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_4.png?raw=true"  width="400"/>
+<p align="center">
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_4.png?raw=true"  width="400"/>
+</p>
 
-6. Click the extension icon in the toolbar to start using it.
-
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_5.png?raw=true"  width="400"/>
+<p align=center>6. Click the extension icon in the toolbar to start using it.</p>
+<p align="center">
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_5.png?raw=true"  width="400" height="480"/>
+</p>
 
 ## Usage/Examples
 
