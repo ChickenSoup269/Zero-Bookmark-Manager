@@ -55,7 +55,7 @@ Cài đặt Bookmark-Manager
 ### Step by step to use offline:
 
 1. Clone repository hoặc tải bản phát hành (Releases) mà bạn muốn tại đây <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
-2. Mở Chrome và truy cập vào đường dẫn: <p style="color:#b4592e">chrome://extensions </p>
+2. Mở Chrome và truy cập vào đường dẫn **chrome://extensions**
 
 <p align="center"> 3. Bật chế độ Nhà phát triển (Developer Mode).</p>
 

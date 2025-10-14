@@ -55,7 +55,7 @@ Install Bookmark-Manager
 ### Step by step to use offline:
 
 1. Clone the repository or download/Releases you can chosse version you like here <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
-2. Open Chrome and navigate to <p     style="color:#b4592e">chrome://extensions </p>
+2. Open Chrome and navigate to **chrome://extensions**
 
 <p align=center>3.  Enable Developer Mode.</p>
 
