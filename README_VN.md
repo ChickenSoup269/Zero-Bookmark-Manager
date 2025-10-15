@@ -60,27 +60,27 @@ Cài đặt Bookmark-Manager
 <p align="center"> 3. Bật chế độ Nhà phát triển (Developer Mode).</p>
 
 <p align="center">
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_1.webp?raw=true" width="550" />
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_1.webp?raw=true" width="full" />
 </p>
 
 <p align="center">4. Nhấn “Load unpacked” (Tải tiện ích chưa đóng gói) và chọn thư mục chứa tiện ích mở rộng.</p>
 <p align="center">
-   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_2.webp?raw=true"  width="550" />
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_2.webp?raw=true"  width="full" />
 </p>
 
 <p align="center">5. Chọn thư mục bạn vừa tải về.</p>
 <p align="center">
-   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_3.png?raw=true" width="550"  />
+   <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_3.png?raw=true" width="full"  />
 </p>
 
 <p align="center">- Hãy đảm bảo rằng bên trong thư mục có các tệp như hình dưới đây:</p>
 <p align="center">
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_4.png?raw=true"  width="550" />
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_4.png?raw=true"  width="full" />
 </p>
 
 <p align="center">6. Nhấn vào biểu tượng tiện ích trên thanh công cụ để bắt đầu sử dụng.</p>
 <p align="center">
-  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_5.png?raw=true" width="550" height="480"  />
+  <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/extension_download_5.png?raw=true" width="full"  />
 </p>
 
 ## Usage/Examples
