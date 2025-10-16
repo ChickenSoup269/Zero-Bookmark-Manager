@@ -147,13 +147,6 @@ function handleMenuItemClick(e, elements) {
 
 // Function to open bookmark detail popup
 export function openBookmarkDetailPopup(bookmarkId, elements) {
-  console.log(
-    "openBookmarkDetailPopup called with ID:",
-    bookmarkId,
-    "Elements:",
-    elements
-  )
-
   const language = localStorage.getItem("appLanguage") || "en"
   const popup = document.getElementById("bookmark-detail-popup")
   const title = document.getElementById("detail-title")
@@ -162,16 +155,6 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
   const tags = document.getElementById("detail-tags")
   const closeButton = popup?.querySelector(".close-modal")
   const thumbnailEl = popup?.querySelector("#detail-thumbnail")
-
-  console.log("DOM elements check:", {
-    popup: !!popup,
-    title: !!title,
-    url: !!url,
-    dateAdded: !!dateAdded,
-    tags: !!tags,
-    closeButton: !!closeButton,
-    thumbnail: !!thumbnailEl,
-  })
 
   if (
     !popup ||
@@ -196,7 +179,6 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
   }
 
   safeChromeBookmarksCall("get", [bookmarkId], (results) => {
-    console.log("safeChromeBookmarksCall result:", results)
     if (chrome.runtime.lastError || !results || results.length === 0) {
       console.error(
         "Chrome bookmarks API error:",
@@ -207,7 +189,6 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     }
 
     const bookmark = results[0]
-    console.log("Bookmark data:", bookmark)
 
     // Set thumbnail
     let thumbnailUrl = chrome.runtime.getURL("images/default-favicon.png")
@@ -215,7 +196,6 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
       thumbnailUrl = `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(
         bookmark.url
       )}?w=1000`
-      console.log("Generated thumbnail URL:", thumbnailUrl)
     } else {
       console.warn("Invalid URL for thumbnail:", bookmark.url)
     }
@@ -238,9 +218,7 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
         thumbnailEl.style.display = "none"
       }
     }
-    thumbnailEl.onload = () => {
-      console.log("Thumbnail loaded successfully for URL:", bookmark.url)
-    }
+    thumbnailEl.onload = () => {}
 
     // Add hover icon and enlarge functionality
     const thumbnailContainer = thumbnailEl.parentElement
@@ -310,11 +288,9 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
         )
         .join("") || translations[language].notAvailable
 
-    console.log("Showing popup")
     popup.classList.remove("hidden")
 
     const closePopup = () => {
-      console.log("Closing popup")
       popup.classList.add("hidden")
       if (enlargeOverlay) {
         enlargeOverlay.remove()
@@ -543,7 +519,6 @@ async function openManageTagsPopup(bookmarkId) {
       }
       uiState.bookmarkTags[bookmarkId].push(selectedTag)
       chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
-        console.log("Tag added to storage:", selectedTag)
         renderTags()
         tagSelect.value = ""
       })
@@ -581,7 +556,6 @@ async function openManageTagsPopup(bookmarkId) {
             tagTextColors: uiState.tagTextColors,
           },
           () => {
-            console.log("New tag saved:", { tag, bgColor, textColor })
             renderTags()
             newTagInput.value = ""
             newTagColor.value = "#cccccc"
@@ -608,12 +582,11 @@ async function openManageTagsPopup(bookmarkId) {
   existingTags.addEventListener("click", (e) => {
     if (e.target.classList.contains("remove-tag-btn")) {
       const tag = e.target.dataset.tag
-      console.log("Removing tag:", tag)
+
       uiState.bookmarkTags[bookmarkId] = uiState.bookmarkTags[
         bookmarkId
       ].filter((t) => t !== tag)
       chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
-        console.log("Tag removed from storage:", tag)
         renderTags()
       })
     } else if (e.target.classList.contains("edit-tag-btn")) {
@@ -622,8 +595,6 @@ async function openManageTagsPopup(bookmarkId) {
       const tagSpan = tagItem.querySelector(".bookmark-tag")
       const currentTagName = tagSpan.textContent
       const removeButton = tagItem.querySelector(".remove-tag-btn")
-
-      console.log("Editing tag:", { currentTagName, tag })
 
       // Replace tag with input and save button
       const editInput = document.createElement("input")
@@ -658,7 +629,6 @@ async function openManageTagsPopup(bookmarkId) {
 
       saveButton.onclick = () => {
         const newTagName = editInput.value.trim()
-        console.log("Saving edited tag:", { oldTag: tag, newTagName })
 
         if (!newTagName) {
           showCustomPopup(
@@ -669,7 +639,6 @@ async function openManageTagsPopup(bookmarkId) {
           return
         }
         if (newTagName === currentTagName) {
-          console.log("No change in tag name, reverting")
           renderTags()
           return
         }
@@ -709,7 +678,6 @@ async function openManageTagsPopup(bookmarkId) {
             tagTextColors: uiState.tagTextColors,
           },
           () => {
-            console.log("Tag updated in storage:", { oldTag: tag, newTagName })
             // Update dropdown
             const option = tagSelect.querySelector(`option[value="${tag}"]`)
             if (option) {
@@ -728,7 +696,6 @@ async function openManageTagsPopup(bookmarkId) {
   })
 
   const closePopup = () => {
-    console.log("Closing manage tags popup")
     popup.classList.add("hidden")
     tagSelect.remove()
     colorButtonsContainer.remove()
@@ -977,16 +944,8 @@ function handleDeleteBookmark(e, elements) {
   showCustomConfirm(translations[language].deleteConfirm, () => {
     // Remove tags for the bookmark
     if (uiState.bookmarkTags[bookmarkId]) {
-      console.log(
-        `Removing tags for bookmark ${bookmarkId}:`,
-        uiState.bookmarkTags[bookmarkId]
-      )
       delete uiState.bookmarkTags[bookmarkId]
       chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
-        console.log(
-          "Updated bookmarkTags after deletion:",
-          uiState.bookmarkTags
-        )
         customSaveUIState()
         // Re-populate tag filter to reflect tag changes
         populateTagFilter(elements)
@@ -1165,14 +1124,10 @@ export function handleDeleteSelectedBookmarks(elements) {
       // Remove tags for all selected bookmarks
       Array.from(uiState.selectedBookmarks).forEach((bookmarkId) => {
         if (uiState.bookmarkTags[bookmarkId]) {
-          console.log(
-            `Removing tags for bookmark ${bookmarkId}:`,
-            uiState.bookmarkTags[bookmarkId]
-          )
           delete uiState.bookmarkTags[bookmarkId]
         }
       })
-      console.log("Updated bookmarkTags after deletion:", uiState.bookmarkTags)
+
       chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
         customSaveUIState()
         populateTagFilter(elements)

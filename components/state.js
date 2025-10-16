@@ -44,9 +44,7 @@ export function setTagColors(tagColors) {
 }
 
 export function setSelectedTags(tags) {
-  console.log("setSelectedTags called with:", tags)
   uiState.selectedTags = [...tags]
-  console.log("uiState.selectedTags updated:", uiState.selectedTags)
 }
 
 export function saveUIState() {
@@ -67,10 +65,6 @@ export function saveUIState() {
     if (chrome.runtime.lastError) {
       console.error("Error saving UI state:", chrome.runtime.lastError)
     } else {
-      console.log(
-        "UI state saved successfully:",
-        JSON.stringify(state, null, 2)
-      )
     }
   })
 }
@@ -82,7 +76,6 @@ export function loadUIState(callback) {
       if (chrome.runtime.lastError) {
         console.error("Error loading UI state:", chrome.runtime.lastError)
       } else {
-        console.log("Loaded UI state:", JSON.stringify(result, null, 2))
       }
       if (result.uiState) {
         uiState.searchQuery = result.uiState.searchQuery || ""
@@ -93,15 +86,11 @@ export function loadUIState(callback) {
           result.uiState.collapsedFolders || []
         )
         uiState.selectedTags = result.uiState.selectedTags || []
-        console.log("Loaded selectedTags:", uiState.selectedTags)
       }
       uiState.checkboxesVisible = result.checkboxesVisible || false
       uiState.bookmarkTags = result.bookmarkTags || {}
       uiState.tagColors = result.tagColors || {}
-      console.log(
-        "UI state loaded successfully:",
-        JSON.stringify(uiState, null, 2)
-      )
+
       if (callback) callback()
     }
   )

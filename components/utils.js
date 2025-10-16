@@ -780,17 +780,8 @@ export function showLocalStorageSettingsPopup() {
   const checkboxes = document.querySelectorAll(
     '.localstorage-settings-container input[type="checkbox"]'
   )
-  console.log(`Found ${checkboxes.length} checkboxes in popup`)
-  checkboxes.forEach((checkbox) => {
-    console.log(
-      `Checkbox ${checkbox.id}: checked=${checkbox.checked}, display=${
-        getComputedStyle(checkbox).display
-      }, visibility=${getComputedStyle(checkbox).visibility}`
-    )
-  })
 
   popup.classList.remove("hidden")
-  console.log("Local storage settings popup shown")
 
   // Apply current theme
   const currentTheme =
@@ -804,6 +795,5 @@ export function hideLocalStorageSettingsPopup() {
   const popup = document.getElementById("localstorage-settings-popup")
   if (popup) {
     popup.classList.add("hidden")
-    console.log("Local storage settings popup hidden")
   }
 }

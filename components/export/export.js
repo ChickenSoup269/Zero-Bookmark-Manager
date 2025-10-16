@@ -629,14 +629,13 @@ export function setupExportImportListeners(elements) {
     input.addEventListener("change", (e) => {
       const file = e.target.files[0]
       if (!file) {
-        console.log("No file selected for import")
         return
       }
       const reader = new FileReader()
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result)
-          console.log("Parsed JSON data:", data)
+
           if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
             const language = localStorage.getItem("appLanguage") || "en"
             showCustomPopup(
@@ -665,7 +664,6 @@ export function setupExportImportListeners(elements) {
 
             const existingBookmarks = flattenBookmarks(bookmarkTreeNodes)
             const existingUrls = new Set(existingBookmarks.map((b) => b.url))
-            console.log("Existing URLs:", Array.from(existingUrls))
 
             const bookmarksToImport = []
             const duplicateBookmarks = []
@@ -675,29 +673,19 @@ export function setupExportImportListeners(elements) {
 
             // Collect bookmarks, tags, and access counts
             flattenImportedBookmarks.forEach((bookmark, index) => {
-              console.log(`Processing bookmark ${index}:`, bookmark)
               if (bookmark.url) {
                 if (existingUrls.has(bookmark.url)) {
-                  console.log(`Duplicate found: ${bookmark.url}`)
                   duplicateBookmarks.push(bookmark)
                 } else {
                   bookmarksToImport.push(bookmark)
                   if (bookmark.id) {
                     if (Array.isArray(bookmark.tags)) {
                       importedTags[bookmark.id] = bookmark.tags
-                      console.log(
-                        `Collected tags for ID ${bookmark.id}:`,
-                        bookmark.tags
-                      )
                     } else {
                       console.warn(`No valid tags for ID ${bookmark.id}`)
                     }
                     if (typeof bookmark.accessCount === "number") {
                       importedAccessCounts[bookmark.id] = bookmark.accessCount
-                      console.log(
-                        `Collected accessCount for ID ${bookmark.id}:`,
-                        bookmark.accessCount
-                      )
                     } else {
                       console.warn(`No valid accessCount for ID ${bookmark.id}`)
                     }
@@ -706,14 +694,8 @@ export function setupExportImportListeners(elements) {
                   }
                 }
               } else {
-                console.log("Skipping bookmark without URL:", bookmark)
               }
             })
-
-            console.log("Bookmarks to import:", bookmarksToImport.length)
-            console.log("Duplicates found:", duplicateBookmarks.length)
-            console.log("Imported tags:", importedTags)
-            console.log("Imported access counts:", importedAccessCounts)
 
             const language = localStorage.getItem("appLanguage") || "en"
             if (duplicateBookmarks.length > 0) {
@@ -767,8 +749,6 @@ async function importNonDuplicateBookmarks(
   const language = localStorage.getItem("appLanguage") || "en"
   const idMapping = {} // Map old ID to new ID
 
-  console.log("Starting import of", bookmarksToImport.length, "bookmarks")
-
   // Create bookmarks and track new IDs
   const importPromises = bookmarksToImport.map((bookmark, index) => {
     return new Promise((resolve) => {
@@ -784,7 +764,6 @@ async function importNonDuplicateBookmarks(
         (result) => {
           if (result && result.id && bookmark.id) {
             idMapping[bookmark.id] = result.id
-            console.log(`Mapped old ID ${bookmark.id} to new ID ${result.id}`)
           } else {
             console.warn(`Failed to map ID for bookmark ${index}:`, {
               bookmark,
@@ -799,13 +778,10 @@ async function importNonDuplicateBookmarks(
 
   try {
     await Promise.all(importPromises)
-    console.log("Bookmark creation completed. ID mapping:", idMapping)
 
     // Fetch existing storage data
     const { bookmarkTags = {}, bookmarkAccessCounts = {} } =
       await chrome.storage.local.get(["bookmarkTags", "bookmarkAccessCounts"])
-    console.log("Existing bookmarkTags:", bookmarkTags)
-    console.log("Existing bookmarkAccessCounts:", bookmarkAccessCounts)
 
     // Update tags and access counts with new IDs
     let tagsUpdated = 0
@@ -822,16 +798,9 @@ async function importNonDuplicateBookmarks(
         countsUpdated++
       }
     }
-    console.log(
-      `Updated ${tagsUpdated} tags and ${countsUpdated} access counts`
-    )
 
     // Save updated data to chrome.storage.local
     await chrome.storage.local.set({
-      bookmarkTags,
-      bookmarkAccessCounts,
-    })
-    console.log("Saved to chrome.storage.local:", {
       bookmarkTags,
       bookmarkAccessCounts,
     })
@@ -849,7 +818,6 @@ async function importNonDuplicateBookmarks(
             "Bookmarks imported successfully!",
           "success"
         )
-        console.log("UI refreshed successfully")
       } else {
         showCustomPopup(
           translations[language].importError || "Failed to update bookmarks",

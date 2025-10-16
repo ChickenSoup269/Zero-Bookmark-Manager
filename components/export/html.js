@@ -18,7 +18,6 @@ export async function exportToHTML(
       chrome.storage.local.get(["bookmarkTags"], resolve)
     )
     bookmarkTags = storageData.bookmarkTags || {}
-    console.log("Fetched bookmarkTags:", bookmarkTags)
   } catch (error) {
     console.error("Failed to fetch bookmarkTags:", error)
   }
