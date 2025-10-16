@@ -977,8 +977,11 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
   }</button>
         <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;">
         <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
-    translations[language].favourite
-  }</button>
+    bookmark.isFavorite
+      ? translations[language].removeFavourite || "Remove from Favorites"
+      : translations[language].favourite || "Add to Favorites"
+  }
+      </button>
       </div>
     </div>
   `
@@ -1133,9 +1136,12 @@ function createBookmarkElement(bookmark, depth = 0) {
     translations[language].manageTags
   }</button>
         <hr/>
-        <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
-    translations[language].favourite
+    <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
+    bookmark.isFavorite
+      ? translations[language].removeFavourite || "Remove from Favorites"
+      : translations[language].favourite || "Add to Favorites"
   }</button>
+  </button>
       </div>
     </div>
   `
