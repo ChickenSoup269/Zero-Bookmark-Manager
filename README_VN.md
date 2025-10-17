@@ -99,6 +99,16 @@ Cài đặt Bookmark-Manager
 | `Tags`                           | Chọn tùy chọn sắp xếp theo thẻ.                                                                                       |
 | `Chatbot`                        | Xem hướng dẫn trợ giúp trong chatbot (biểu tượng [?]). (beta version)                                                 |
 
+## How to get Gemini APi ?
+
+1. Đầu tiên các bạn cần có API key của Gemini (bắt buộc) và tên model của nó
+2. Lấy API key ở tại trang web này
+   https://aistudio.google.com/prompts/new_chat
+
+3. Chọn model của bạn ở đây và get API key là xong
+
+Video hướng dẫn
+
 ## Video & screenshots
 
 - (để tiết kiệm bạn hãy qua readme chính để xem, xin cảm ơn)
