@@ -289,7 +289,7 @@ body {
 
 .bookmark-title {
   flex-grow: 1;
-  font-size: 1rem;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-primary);
   text-decoration: none;

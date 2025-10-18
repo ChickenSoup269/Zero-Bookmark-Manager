@@ -320,7 +320,21 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       )
       console.log(
         "Folders:",
-        folders.map((f) => ({ id: f.id, title: f.title }))
+        folders.map((f) => ({
+          id: f.id,
+          title: f.title,
+          childrenLength: f.children?.length || 0,
+        }))
+      )
+      console.log(
+        "Sample bookmark:",
+        bookmarks[0]
+          ? {
+              id: bookmarks[0].id,
+              parentId: bookmarks[0].parentId,
+              title: bookmarks[0].title,
+            }
+          : "No bookmarks"
       )
 
       setBookmarkTree(bookmarkTreeNodes)
@@ -459,6 +473,34 @@ function renderDetailView(bookmarksList, elements) {
   setupBookmarkActionListeners(elements)
 }
 
+function isDescendant(nodeId, targetId, bookmarkTreeNodes) {
+  function findNode(id, nodes) {
+    for (const node of nodes) {
+      if (node.id === id) return node
+      if (node.children) {
+        const found = findNode(id, node.children)
+        if (found) return found
+      }
+    }
+    return null
+  }
+
+  const node = findNode(nodeId, bookmarkTreeNodes)
+  if (!node || !node.children) return false
+
+  function checkDescendant(currentNode, targetId) {
+    if (currentNode.id === targetId) return true
+    if (currentNode.children) {
+      return currentNode.children.some((child) =>
+        checkDescendant(child, targetId)
+      )
+    }
+    return false
+  }
+
+  return checkDescendant(node, targetId)
+}
+
 function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
   console.log("Starting renderCardView", {
     bookmarkTreeNodesLength: bookmarkTreeNodes.length,
@@ -498,45 +540,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
   elements.folderListDiv.classList.add("card-view")
   console.log("Cleared folderListDiv and added card-view class")
 
-  // Create root drop zone
-  const rootDropZone = document.createElement("div")
-  rootDropZone.className = "root-drop-zone"
-  rootDropZone.innerHTML = `
-    <div class="root-drop-content">
-      <span class="folder-icon">📁</span>
-      <span class="folder-title">${
-        translations[language].rootFolder || "Root Folder"
-      }</span>
-    </div>
-  `
-  rootDropZone.addEventListener("dragover", (e) => {
-    e.preventDefault()
-    rootDropZone.classList.add("drag-over")
-  })
-  rootDropZone.addEventListener("dragleave", () => {
-    rootDropZone.classList.remove("drag-over")
-  })
-  rootDropZone.addEventListener("drop", (e) => {
-    e.preventDefault()
-    const bookmarkId = e.dataTransfer.getData("text/plain")
-    if (bookmarkId) {
-      console.log(`Dropping bookmark ${bookmarkId} to root`)
-      chrome.bookmarks.move(bookmarkId, { parentId: "0" }, () => {
-        if (chrome.runtime.lastError) {
-          console.error("Error moving bookmark:", chrome.runtime.lastError)
-          showCustomPopup(translations[language].errorUnexpected, "error", true)
-        } else {
-          chrome.bookmarks.getTree((tree) => {
-            renderFilteredBookmarks(tree, elements)
-          })
-        }
-      })
-    }
-    rootDropZone.classList.remove("drag-over")
-  })
-  fragment.appendChild(rootDropZone)
-  console.log("Added root drop zone")
-
   // Filter folders based on selected folder ID
   let foldersToRender = folders
   if (
@@ -560,7 +563,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       console.warn(
         `Selected folder ${uiState.selectedFolderId} not found or has no children, resetting`
       )
-      foldersToRender = folders // Fallback to all folders
+      foldersToRender = folders
       uiState.selectedFolderId = ""
       elements.folderFilter.value = ""
     }
@@ -577,7 +580,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
   )
 
   // Render folder cards
-  foldersToRender.forEach((folder) => {
+  foldersToRender.forEach((folder, index) => {
     if (folder.id === "0") {
       console.log("Skipping root folder")
       return
@@ -586,6 +589,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     const folderCard = document.createElement("div")
     folderCard.className = "folder-card"
     folderCard.dataset.folderId = folder.id
+    folderCard.draggable = true
 
     // Calculate bookmarks for this folder
     const folderBookmarks = filteredBookmarks.filter((bookmark) => {
@@ -621,7 +625,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       folder.title && folder.title.trim() !== ""
         ? folder.title
         : `Folder ${folder.id}`
-    const itemCount = folderBookmarks.length // Use filtered bookmarks count
+    const itemCount = folderBookmarks.length
     folderCard.innerHTML = `
       <div class="folder-content">
         <span class="folder-icon">📂</span>
@@ -642,6 +646,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         bookmarkElement.draggable = true
         bookmarkElement.addEventListener("dragstart", (e) => {
           e.dataTransfer.setData("text/plain", bookmark.id)
+          e.dataTransfer.setData("type", "bookmark")
           bookmarkElement.classList.add("dragging")
         })
         bookmarkElement.addEventListener("dragend", () => {
@@ -651,24 +656,49 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       }
     })
 
-    // Handle drag-and-drop for the folder
+    // Handle folder drag-and-drop
+    folderCard.addEventListener("dragstart", (e) => {
+      e.dataTransfer.setData("text/plain", folder.id)
+      e.dataTransfer.setData("type", "folder")
+      folderCard.classList.add("folder-dragging")
+      console.log(`Dragging folder ${folder.id}`)
+    })
+
+    folderCard.addEventListener("dragend", () => {
+      folderCard.classList.remove("folder-dragging")
+      console.log(`Drag ended for folder ${folder.id}`)
+    })
+
     folderCard.addEventListener("dragover", (e) => {
       e.preventDefault()
-      folderCard.classList.add("drag-over")
+      const draggedType = e.dataTransfer.getData("type")
+      const draggedId = e.dataTransfer.getData("text/plain")
+      if (
+        draggedType === "folder" &&
+        draggedId !== folder.id &&
+        !isDescendant(draggedId, folder.id, bookmarkTreeNodes)
+      ) {
+        folderCard.classList.add("folder-drag-over")
+      } else if (draggedType === "bookmark") {
+        folderCard.classList.add("folder-drag-over")
+      }
     })
+
     folderCard.addEventListener("dragleave", () => {
-      folderCard.classList.remove("drag-over")
+      folderCard.classList.remove("folder-drag-over")
     })
+
     folderCard.addEventListener("drop", (e) => {
       e.preventDefault()
-      const bookmarkId = e.dataTransfer.getData("text/plain")
+      const draggedType = e.dataTransfer.getData("type")
+      const draggedId = e.dataTransfer.getData("text/plain")
       const targetFolderId = folderCard.dataset.folderId
 
-      if (bookmarkId && targetFolderId) {
+      if (draggedType === "bookmark" && draggedId && targetFolderId) {
         console.log(
-          `Dropping bookmark ${bookmarkId} to folder ${targetFolderId}`
+          `Dropping bookmark ${draggedId} to folder ${targetFolderId}`
         )
-        chrome.bookmarks.move(bookmarkId, { parentId: targetFolderId }, () => {
+        chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
           if (chrome.runtime.lastError) {
             console.error("Error moving bookmark:", chrome.runtime.lastError)
             showCustomPopup(
@@ -682,8 +712,56 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
             })
           }
         })
+      } else if (
+        draggedType === "folder" &&
+        draggedId !== targetFolderId &&
+        !isDescendant(draggedId, targetFolderId, bookmarkTreeNodes)
+      ) {
+        console.log(
+          `Dropping folder ${draggedId} near folder ${targetFolderId}`
+        )
+        chrome.bookmarks.get(draggedId, (nodes) => {
+          const draggedFolder = nodes[0]
+          const targetIndex = foldersToRender.findIndex(
+            (f) => f.id === targetFolderId
+          )
+          const draggedIndex = foldersToRender.findIndex(
+            (f) => f.id === draggedId
+          )
+          // Determine drop position: before or after target folder
+          const rect = folderCard.getBoundingClientRect()
+          const mouseX = e.clientX
+          const isDropBefore = mouseX < rect.left + rect.width / 2
+          const newIndex = isDropBefore ? targetIndex : targetIndex + 1
+          console.log(
+            `Dropping folder ${draggedId} ${
+              isDropBefore ? "before" : "after"
+            } folder ${targetFolderId} at index ${newIndex}`
+          )
+          chrome.bookmarks.move(
+            draggedId,
+            {
+              parentId: draggedFolder.parentId,
+              index: newIndex,
+            },
+            () => {
+              if (chrome.runtime.lastError) {
+                console.error("Error moving folder:", chrome.runtime.lastError)
+                showCustomPopup(
+                  translations[language].errorUnexpected,
+                  "error",
+                  true
+                )
+              } else {
+                chrome.bookmarks.getTree((tree) => {
+                  renderFilteredBookmarks(tree, elements)
+                })
+              }
+            }
+          )
+        })
       }
-      folderCard.classList.remove("drag-over")
+      folderCard.classList.remove("folder-drag-over")
     })
 
     fragment.appendChild(folderCard)
@@ -715,6 +793,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
   setupBookmarkActionListeners(elements)
   console.log("Finished renderCardView, UI elements updated")
 }
+
 function createSimpleBookmarkElement(bookmark, language) {
   let favicon
   try {
@@ -733,13 +812,47 @@ function createSimpleBookmarkElement(bookmark, language) {
       <div class="bookmark-favicon">
         <img src="${favicon}" alt="favicon" onerror="this.style.display='none';">
       </div>
-      <a href="${bookmark.url}" target="_blank" class="bookmark-title">
+      <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">
         ${bookmark.title || bookmark.url}
       </a>
+      <div class="dropdown-btn-group">
+        <button class="dropdown-btn ${
+          bookmark.isFavorite ? "favorited" : ""
+        }" data-id="${bookmark.id}" aria-label="Bookmark options">
+          ${
+            bookmark.isFavorite
+              ? '<i class="fas fa-star"></i>'
+              : '<i class="fas fa-ellipsis-v"></i>'
+          }
+        </button>
+        <div class="dropdown-menu hidden">
+          <button class="menu-item add-to-folder" data-id="${bookmark.id}">${
+    translations[language].addToFolderOption || "Add to Folder"
+  }</button>
+          <button class="menu-item delete-btn" data-id="${bookmark.id}">${
+    translations[language].deleteBookmarkOption || "Delete Bookmark"
+  }</button>
+          <button class="menu-item rename-btn" data-id="${bookmark.id}">${
+    translations[language].renameBookmarkOption || "Rename Bookmark"
+  }</button>
+          <button class="menu-item view-detail-btn" data-id="${bookmark.id}">${
+    translations[language].viewDetail || "View Details"
+  }</button>
+          <button class="menu-item manage-tags-btn" data-id="${bookmark.id}">${
+    translations[language].manageTags || "Manage Tags"
+  }</button>
+          <hr/>
+          <button class="menu-item favorite-btn" data-id="${bookmark.id}">${
+    bookmark.isFavorite
+      ? translations[language].removeFavourite || "Remove from Favorites"
+      : translations[language].favourite || "Add to Favorites"
+  }</button>
+        </div>
+      </div>
     </div>
   `
 
-  const link = div.querySelector(".bookmark-title")
+  const link = div.querySelector(".card-bookmark-title")
   link.addEventListener("click", () => {
     chrome.storage.local.get(["bookmarkAccessCounts"], (data) => {
       const bookmarkAccessCounts = data.bookmarkAccessCounts || {}
@@ -755,9 +868,29 @@ function createSimpleBookmarkElement(bookmark, language) {
     })
   })
 
+  // Handle dropdown toggle
+  const dropdownBtn = div.querySelector(".dropdown-btn")
+  const dropdownMenu = div.querySelector(".dropdown-menu")
+  dropdownBtn.addEventListener("click", (e) => {
+    e.stopPropagation()
+    const isHidden = dropdownMenu.classList.contains("hidden")
+    document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+      menu.classList.add("hidden")
+    })
+    if (isHidden) {
+      dropdownMenu.classList.remove("hidden")
+    }
+  })
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!div.contains(e.target)) {
+      dropdownMenu.classList.add("hidden")
+    }
+  })
+
   return div
 }
-
 function createDetailBookmarkElement(bookmark, language) {
   let favicon
   try {
@@ -1283,7 +1416,6 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
       font-size: 11px;
       color: var(--text-secondary);
       opacity: 0.7;
-      max-width: 120px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
