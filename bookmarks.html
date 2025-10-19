@@ -208,22 +208,25 @@
             <div class="rename-popup-content">
                 <h3 id="ai-config-title" class="ai-title">Configure AI Chatbot</h3>
                 <div class="ai-config-container">
-                    <select id="ai-model-select" class="select" aria-label="Select AI model">
-                        <option value="">Select AI Model</option>
-                        <option value="gemini">Gemini</option>
-                    </select>
+                    <div class="input-container">
+                        <select id="ai-model-select" class="select" aria-label="Select AI model">
+                            <option value="">Select AI Model</option>
+                            <option value="gemini">Gemini</option>
+                            <option value="gpt">GPT</option>
+                        </select>
+                        <div id="ai-model-error" class="error-message hidden">Please select an AI model.</div>
+                    </div>
                     <div class="rename-input-container">
                         <input type="password" id="api-key-input" class="input" placeholder="Enter API key..."
                             aria-label="API key" maxlength="255">
                         <button type="button" id="toggle-api-visibility" class="button eye"
                             aria-label="Toggle visibility"><i class="fas fa-eye-slash"></i></button>
-                        <!-- <button id="clear-api-key" class="button clear api" aria-label="Clear API key input">✖</button> -->
                     </div>
                     <div class="rename-input-container">
                         <textarea id="curl-input" class="input"
-                            placeholder="Enter API URL (e.g., https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent)"
-                            rows="4" aria-label="API URL"></textarea>
-                        <button id="clear-curl" class="button clear" aria-label="Clear API URL input">✖</button>
+                            placeholder="Enter model name (e.g., gemini-2.0-flash or gpt-3.5-turbo)" rows="4"
+                            aria-label="Model name"></textarea>
+                        <button id="clear-curl" class="button clear" aria-label="Clear model name input">✖</button>
                     </div>
                 </div>
                 <div class="rename-popup-buttons">

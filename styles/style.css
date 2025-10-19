@@ -1805,13 +1805,9 @@ html {
   transition: all 0.3s ease;
 }
 
-.bookmark-item:hover {
-  background: var(--hover-bg, #f5f5f5);
-}
-
 .bookmark-item.dragging {
   opacity: 0.5;
-  background: var(--accent-color, #007bff);
+  background: var(--accent-color);
 }
 
 .bookmark-content {
@@ -1830,7 +1826,6 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-secondary, #e9ecef);
 }
 
 .bookmark-favicon img {
@@ -1869,11 +1864,11 @@ html {
 }
 
 .dropdown-btn.favorited {
-  color: var(--accent-color, #007bff);
+  color: var(--accent-color);
 }
 
 .dropdown-btn:hover {
-  color: var(--accent-dark, #0056b3);
+  color: var(--focus-outline);
 }
 
 .dropdown-menu {
@@ -2016,7 +2011,7 @@ html {
   }
 
   .folder-title {
-    font-size: 14px;
+    font-size: 12px;
     max-width: 120px;
   }
 
@@ -2055,11 +2050,6 @@ html {
 
   .dropdown-menu {
     min-width: 120px;
-  }
-
-  .menu-item {
-    font-size: 12px;
-    padding: 6px 10px;
   }
 
   .custom-popup {

@@ -1285,6 +1285,60 @@ function renderTreeView(nodes, elements, depth = 0) {
         ">${itemCount}</span>
       `
 
+      // Add drag-and-drop support for folders
+      folderDiv.addEventListener("dragover", (e) => {
+        e.preventDefault()
+        folderDiv.style.background = "var(--hover-bg)"
+        folderDiv.style.border = "2px dashed var(--accent-color)"
+      })
+
+      folderDiv.addEventListener("dragleave", () => {
+        folderDiv.style.background = "transparent"
+        folderDiv.style.border = "none"
+      })
+
+      folderDiv.addEventListener("drop", (e) => {
+        e.preventDefault()
+        const bookmarkId = e.dataTransfer.getData("text/plain")
+        const targetFolderId = folderDiv.dataset.id
+
+        if (bookmarkId && targetFolderId) {
+          const currentFolder = findParentFolder(
+            bookmarkId,
+            uiState.bookmarkTree
+          )
+          if (currentFolder?.id === targetFolderId) {
+            folderDiv.style.background = "transparent"
+            folderDiv.style.border = "none"
+            return
+          }
+
+          chrome.bookmarks.move(
+            bookmarkId,
+            { parentId: targetFolderId },
+            () => {
+              if (chrome.runtime.lastError) {
+                console.error(
+                  "Error moving bookmark:",
+                  chrome.runtime.lastError
+                )
+                showCustomPopup(
+                  translations[language].errorUnexpected,
+                  "error",
+                  true
+                )
+              } else {
+                chrome.bookmarks.getTree((tree) => {
+                  renderFilteredBookmarks(tree, elements)
+                })
+              }
+            }
+          )
+        }
+        folderDiv.style.background = "transparent"
+        folderDiv.style.border = "none"
+      })
+
       fragment.appendChild(folderDiv)
 
       const childrenContainer = document.createElement("div")
@@ -1336,6 +1390,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
   const div = document.createElement("div")
   div.className = `bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`
   div.dataset.id = bookmark.id
+  div.draggable = true
   div.style.cssText = `
     display: flex;
     align-items: center;
@@ -1343,14 +1398,25 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
     margin: 7px 0;
     padding: 12px 16px;
     border: 1px solid transparent;
-    box-shadow: var( --shadow-sm);
+    box-shadow: var(--shadow-sm);
     margin-left: ${depth * 20}px;
   `
 
+  div.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", bookmark.id)
+    div.style.opacity = "0.5"
+  })
+
+  div.addEventListener("dragend", () => {
+    div.style.opacity = "1"
+  })
+
   div.addEventListener("mouseenter", () => {
-    div.style.background = "var(--hover-bg)"
+    div.style.background = "var(--bg-tertiary)"
     div.style.borderColor = "var(--hover-bg)"
     div.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.12)"
+    const dropdownBtn = div.querySelector(".dropdown-btn")
+    if (dropdownBtn) dropdownBtn.style.opacity = "1"
   })
 
   div.addEventListener("mouseleave", () => {
@@ -1358,6 +1424,8 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
     div.style.transform = ""
     div.style.borderColor = "transparent"
     div.style.boxShadow = ""
+    const dropdownBtn = div.querySelector(".dropdown-btn")
+    if (dropdownBtn) dropdownBtn.style.opacity = "0"
   })
 
   const tagsHtml = (bookmark.tags || [])
@@ -1416,6 +1484,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
       font-size: 11px;
       color: var(--text-secondary);
       opacity: 0.7;
+      max-width: 120px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -1477,16 +1546,6 @@ function createEnhancedBookmarkElement(bookmark, depth = 0) {
       </div>
     </div>
   `
-
-  div.addEventListener("mouseenter", () => {
-    const dropdownBtn = div.querySelector(".dropdown-btn")
-    if (dropdownBtn) dropdownBtn.style.opacity = "1"
-  })
-
-  div.addEventListener("mouseleave", () => {
-    const dropdownBtn = div.querySelector(".dropdown-btn")
-    if (dropdownBtn) dropdownBtn.style.opacity = "0"
-  })
 
   const link = div.querySelector(".bookmark-title")
   link.addEventListener("click", () => {

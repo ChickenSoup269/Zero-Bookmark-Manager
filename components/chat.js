@@ -110,6 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("aiConfig", JSON.stringify(config))
     })
   }
+
   // Chat history management
   let chatHistory = []
 
@@ -176,13 +177,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const config = localStorage.getItem("aiConfig")
     return config
       ? JSON.parse(config)
-      : { model: "", apiKey: "", curl: "", apiVisible: true }
+      : { model: "", apiKey: "", modelName: "", apiVisible: true }
   }
 
-  const saveAiConfig = (model, apiKey, curl, apiVisible = true) => {
+  const saveAiConfig = (model, apiKey, modelName, apiVisible = true) => {
     localStorage.setItem(
       "aiConfig",
-      JSON.stringify({ model, apiKey, curl, apiVisible })
+      JSON.stringify({ model, apiKey, modelName, apiVisible })
     )
   }
 
@@ -197,19 +198,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Build API request for Gemini
-  const buildApiRequest = (url, apiKey, model, message, isGeneral = false) => {
+  const buildApiRequest = (
+    modelName,
+    apiKey,
+    model,
+    message,
+    isGeneral = false
+  ) => {
     try {
-      let apiUrl = url
+      let apiUrl
       const headers = { "Content-Type": "application/json" }
       let body
 
       const prompt = isGeneral ? generalSystemPrompt : systemPrompt
 
       if (model === "gemini") {
-        if (!apiUrl.includes("generateContent")) {
-          apiUrl =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent"
-        }
+        apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`
         apiUrl = apiUrl.includes("?key=")
           ? apiUrl.replace(/(\?key=)[^&]+/, `$1${apiKey}`)
           : apiUrl + (apiUrl.includes("?") ? "&" : "?") + `key=${apiKey}`
@@ -248,9 +252,10 @@ document.addEventListener("DOMContentLoaded", () => {
           ],
         }
       } else if (model === "gpt") {
+        apiUrl = "https://api.openai.com/v1/chat/completions"
         headers["Authorization"] = `Bearer ${apiKey}`
         body = {
-          model: "gpt-3.5-turbo",
+          model: modelName || "gpt-3.5-turbo",
           messages: [
             { role: "system", content: prompt },
             { role: "user", content: message },
@@ -258,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
           response_format: isGeneral ? undefined : { type: "json_object" },
         }
       } else {
+        apiUrl = modelName
         headers["x-api-key"] = apiKey
         body = {
           prompt: `${prompt}\n${message}`,
@@ -268,7 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Failed to build API request:", error)
       showCustomPopup(
-        `${t("errorTitle") || "Error"}: Invalid API URL - ${error.message}`,
+        `${t("errorTitle") || "Error"}: Invalid model name or configuration - ${
+          error.message
+        }`,
         "error",
         true
       )
@@ -280,13 +288,13 @@ document.addEventListener("DOMContentLoaded", () => {
   async function suggestBookmarkDetails(url) {
     const config = getAiConfig()
     const apiRequest = buildApiRequest(
-      config.curl,
+      config.modelName,
       config.apiKey,
       config.model,
       `Analyze the website at ${url} and suggest a title and folder for the bookmark. Return JSON: { "title": string, "folder": string }`
     )
     if (!apiRequest) {
-      throw new Error(t("errorUnexpected") || "Invalid API URL")
+      throw new Error(t("errorUnexpected") || "Invalid model name")
     }
     try {
       const response = await fetch(apiRequest.url, {
@@ -331,13 +339,13 @@ document.addEventListener("DOMContentLoaded", () => {
   async function suggestWebsites(topic) {
     const config = getAiConfig()
     const apiRequest = buildApiRequest(
-      config.curl,
+      config.modelName,
       config.apiKey,
       config.model,
       `Suggest websites for ${topic}. Return JSON: { "websites": [{ "url": string, "title": string, "description": string }, ...] }`
     )
     if (!apiRequest) {
-      throw new Error(t("errorUnexpected") || "Invalid API URL")
+      throw new Error(t("errorUnexpected") || "Invalid model name")
     }
     try {
       const response = await fetch(apiRequest.url, {
@@ -494,14 +502,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (action === "general") {
         const config = getAiConfig()
         const apiRequest = buildApiRequest(
-          config.curl,
+          config.modelName,
           config.apiKey,
           config.model,
           originalMessage,
           true // Use generalSystemPrompt
         )
         if (!apiRequest) {
-          throw new Error(t("errorUnexpected") || "Invalid API URL")
+          throw new Error(t("errorUnexpected") || "Invalid model name")
         }
 
         const response = await fetch(apiRequest.url, {
@@ -1388,7 +1396,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chatInput.value = ""
 
     const config = getAiConfig()
-    if (!config.model || !config.apiKey || !config.curl) {
+    if (!config.model || !config.apiKey || !config.modelName) {
       const botMessage = document.createElement("div")
       botMessage.className = "chatbox-message bot error"
       const timestamp = new Date().toLocaleTimeString([], {
@@ -1411,7 +1419,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const apiRequest = buildApiRequest(
-      config.curl,
+      config.modelName,
       config.apiKey,
       config.model,
       message
@@ -1457,7 +1465,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       // If API fails, try handling as off-topic question
       const apiRequestGeneral = buildApiRequest(
-        config.curl,
+        config.modelName,
         config.apiKey,
         config.model,
         message,
@@ -1576,8 +1584,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const config = getAiConfig()
       if (aiModelSelect) aiModelSelect.value = config.model || ""
       if (apiKeyInput) apiKeyInput.value = config.apiKey || ""
-      if (curlInput) curlInput.value = config.curl || ""
+      if (curlInput) curlInput.value = config.modelName || ""
       if (aiConfigPopup) aiConfigPopup.classList.remove("hidden")
+      // Reset validation styles
+      if (aiModelSelect) {
+        aiModelSelect.classList.remove("error")
+        const errorMessage = document.getElementById("ai-model-error")
+        if (errorMessage) errorMessage.classList.add("hidden")
+      }
     })
   }
 
@@ -1597,9 +1611,24 @@ document.addEventListener("DOMContentLoaded", () => {
     aiConfigSave.addEventListener("click", () => {
       const model = aiModelSelect ? aiModelSelect.value : ""
       const apiKey = apiKeyInput ? apiKeyInput.value : ""
-      const curl = curlInput ? curlInput.value : ""
+      const modelName = curlInput ? curlInput.value : ""
       const apiVisible = apiKeyInput ? apiKeyInput.type === "text" : true
-      saveAiConfig(model, apiKey, curl, apiVisible)
+
+      // Validate AI model selection
+      if (!model) {
+        if (aiModelSelect) aiModelSelect.classList.add("error")
+        const errorMessage = document.getElementById("ai-model-error")
+        if (errorMessage) errorMessage.classList.remove("hidden")
+        showCustomPopup(
+          t("errorTitle") || "Error",
+          "Please select an AI model.",
+          "error",
+          true
+        )
+        return
+      }
+
+      saveAiConfig(model, apiKey, modelName, apiVisible)
       if (aiConfigPopup) aiConfigPopup.classList.add("hidden")
       showCustomPopup(t("successTitle") || "Success", "success", true)
     })

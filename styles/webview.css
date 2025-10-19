@@ -256,8 +256,14 @@ body {
 .folder-item:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  background-color: var(--bg-secondary);
   z-index: 100;
+}
+
+.bookmark-item:hover {
+  background-color: var(--bg-secondary);
+}
+.folder-item:hover {
+  background-color: var(--bg-tertiary);
 }
 
 .bookmark-checkbox {
@@ -625,4 +631,25 @@ body {
 
 #tag-filter-dropdown input[type="checkbox"] {
   margin-right: 8px;
+}
+
+/* css ai config */
+
+.select.error {
+  border: 2px solid red;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.error-message.hidden {
+  display: none;
+}
+
+.input-container {
+  position: relative;
+  margin-bottom: 15px;
 }
