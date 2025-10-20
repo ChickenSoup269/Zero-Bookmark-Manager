@@ -1,4 +1,3 @@
-// components/ui.js
 import { translations, showCustomPopup } from "./utils/utils.js"
 import { flattenBookmarks, getFolders, isInFolder } from "./bookmarks.js"
 import { uiState, setBookmarks, setFolders, setBookmarkTree } from "./state.js"
@@ -535,46 +534,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
   elements.folderListDiv.classList.add("card-view")
   console.log("Cleared folderListDiv and added card-view class")
 
-  // Track navigation history in uiState
-  if (!uiState.navigationStack) {
-    uiState.navigationStack = []
-  }
-
-  // Add back button if inside a folder
-  if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
-    const backButton = document.createElement("button")
-    backButton.className = "back-button"
-    backButton.style.cssText = `
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      margin: 10px;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 14px;
-    `
-    backButton.innerHTML = `
-      <span style="font-size: 18px;">←</span>
-      <span>${translations[language].back || "Back"}</span>
-    `
-    backButton.addEventListener("click", () => {
-      uiState.selectedFolderId = "0" // Reset to show all bookmarks
-      uiState.navigationStack = [] // Clear navigation stack
-      uiState.viewMode = "card" // Restore card view
-      elements.folderFilter.value = ""
-      customSaveUIState()
-      chrome.bookmarks.getTree((tree) => {
-        renderFilteredBookmarks(tree, elements)
-      })
-    })
-    fragment.appendChild(backButton)
-  }
-
   // Filter folders based on selected folder ID
   let foldersToRender = folders
   if (
@@ -593,7 +552,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       title: selectedFolder?.title,
     })
     if (selectedFolder && selectedFolder.children) {
-      foldersToRender = selectedFolder.children.filter((node) => node.children)
+      foldersToRender = [selectedFolder]
     } else {
       console.warn(
         `Selected folder ${uiState.selectedFolderId} not found or has no children, resetting`
@@ -672,22 +631,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     console.log(
       `Created folder card for ${folderTitle} with ${itemCount} bookmarks`
     )
-
-    // Add click event to show bookmarks in list view
-    folderCard.addEventListener("click", (e) => {
-      if (
-        e.target.closest(".dropdown-btn") ||
-        e.target.closest(".dropdown-menu")
-      ) {
-        return // Prevent navigation if clicking dropdown
-      }
-      uiState.navigationStack.push(uiState.selectedFolderId || "0")
-      uiState.selectedFolderId = folder.id
-      uiState.viewMode = "list" // Switch to list view
-      elements.folderFilter.value = folder.id
-      customSaveUIState()
-      renderBookmarks(sortedBookmarks, elements)
-    })
 
     // Add bookmarks to the folder card
     const bookmarksContainer = folderCard.querySelector(".bookmarks-container")
@@ -942,7 +885,6 @@ function createSimpleBookmarkElement(bookmark, language) {
 
   return div
 }
-
 function createDetailBookmarkElement(bookmark, language) {
   let favicon
   try {
@@ -1215,99 +1157,24 @@ function toggleFolderButtons(elements) {
 
 function renderBookmarks(bookmarksList, elements) {
   const fragment = document.createDocumentFragment()
-  const language = localStorage.getItem("appLanguage") || "en"
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
-
-  // Clear existing content and apply list view styling
-  elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.classList.remove(
-    "detail-view",
-    "card-view",
-    "tree-view"
-  )
-  elements.folderListDiv.classList.add("list-view")
-
-  // Add back button if inside a folder
-  if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
-    const backButton = document.createElement("button")
-    backButton.className = "back-button"
-    backButton.style.cssText = `
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      margin: 10px;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 14px;
-    `
-    backButton.innerHTML = `
-      <span style="font-size: 18px;">←</span>
-      <span>${translations[language].back || "Back"}</span>
-    `
-    backButton.addEventListener("click", () => {
-      uiState.selectedFolderId = "0" // Reset to show all bookmarks
-      uiState.navigationStack = [] // Clear navigation stack
-      uiState.viewMode = "card" // Restore card view
-      elements.folderFilter.value = ""
-      customSaveUIState()
-      chrome.bookmarks.getTree((tree) => {
-        renderFilteredBookmarks(tree, elements)
-      })
-    })
-    fragment.appendChild(backButton)
-  }
-
-  // Add select all checkbox if checkboxes are visible
-  if (uiState.checkboxesVisible) {
-    const selectAllDiv = document.createElement("div")
-    selectAllDiv.className = "select-all-container"
-    selectAllDiv.style.cssText = `
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    `
-    selectAllDiv.innerHTML = `
-      <input type="checkbox" id="select-all" style="transform: scale(1.2);">
-      <label for="select-all" style="
-        font-size: 14px;
-        color: var(--text-primary);
-        font-weight: 500;
-        cursor: pointer;
-      ">${translations[language].selectAll}</label>
-    `
-    fragment.appendChild(selectAllDiv)
-  }
-
-  // Render bookmarks
   sortedBookmarks.forEach((bookmark) => {
     if (bookmark.url) {
-      const bookmarkElement = createBookmarkElement(bookmark)
-      fragment.appendChild(bookmarkElement)
+      fragment.appendChild(createBookmarkElement(bookmark))
     }
   })
 
+  elements.folderListDiv.innerHTML = ""
   elements.folderListDiv.appendChild(fragment)
 
-  // Update UI elements
-  elements.searchInput.value = uiState.searchQuery || ""
+  elements.searchInput.value = uiState.searchQuery
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId
   } else {
     uiState.selectedFolderId = ""
     elements.folderFilter.value = ""
   }
-  elements.sortFilter.value = uiState.sortType || "name"
+  elements.sortFilter.value = uiState.sortType
 
   attachSelectAllListener(elements)
   attachDropdownListeners(elements)
@@ -2050,7 +1917,9 @@ export function attachTreeListeners(elements) {
 
       if (dropdownMenu && dropdownMenu.classList.contains("dropdown-menu")) {
         document.querySelectorAll(".dropdown-menu").forEach((menu) => {
-          menu.classList.add("hidden")
+          if (menu !== dropdownMenu) {
+            menu.classList.add("hidden")
+          }
         })
         dropdownMenu.classList.toggle("hidden")
       }
