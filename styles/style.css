@@ -1731,7 +1731,7 @@ html {
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
-  z-index: 1;
+  z-index: 0;
 }
 
 .folder-card {
@@ -1741,7 +1741,7 @@ html {
   padding: 16px;
   box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.1));
   transition: all 0.3s ease;
-  z-index: 1;
+  z-index: 0;
 }
 
 .folder-card:hover {
