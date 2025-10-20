@@ -3,7 +3,7 @@ import {
   translations,
   safeChromeBookmarksCall,
   showCustomConfirm,
-} from "../utils.js"
+} from "../utils/utils.js"
 import { getBookmarkTree, flattenBookmarks } from "../bookmarks.js"
 import { renderFilteredBookmarks } from "../ui.js"
 import { uiState } from "../state.js"

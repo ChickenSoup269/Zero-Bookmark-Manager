@@ -5,7 +5,7 @@ import {
   safeChromeBookmarksCall,
   showCustomPopup,
   showCustomConfirm,
-} from "../utils.js"
+} from "../utils/utils.js"
 import { getBookmarkTree } from "../bookmarks.js"
 import { renderFilteredBookmarks } from "../ui.js"
 import { uiState, setCurrentBookmarkId } from "../state.js"

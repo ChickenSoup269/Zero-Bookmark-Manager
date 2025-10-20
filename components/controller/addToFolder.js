@@ -1,5 +1,5 @@
 // ./components/controller/addToFolder.js
-import { translations, showCustomPopup } from "../utils.js"
+import { translations, showCustomPopup } from "../utils/utils.js"
 import { moveBookmarksToFolder } from "../bookmarks.js"
 import { uiState, saveUIState, selectedBookmarks } from "../state.js"
 

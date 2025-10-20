@@ -1,5 +1,5 @@
 // components/controller/uiControls.js
-import { translations, debounce } from "../utils.js"
+import { translations, debounce } from "../utils/utils.js"
 import { isInFolder } from "../bookmarks.js"
 import {
   updateUILanguage,

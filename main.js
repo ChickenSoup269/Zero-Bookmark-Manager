@@ -4,7 +4,7 @@ import {
   updateUILanguage,
 } from "./components/ui.js"
 import { getBookmarkTree } from "./components/bookmarks.js"
-import { translations, debounce } from "./components/utils.js"
+import { translations, debounce } from "./components/utils/utils.js"
 import { setupEventListeners } from "./components/events.js"
 import { uiState } from "./components/state.js"
 import { customLoadUIState } from "./components/option/option.js"

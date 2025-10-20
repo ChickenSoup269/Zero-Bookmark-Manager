@@ -216,17 +216,23 @@
                         </select>
                         <div id="ai-model-error" class="error-message hidden">Please select an AI model.</div>
                     </div>
-                    <div class="rename-input-container">
-                        <input type="password" id="api-key-input" class="input" placeholder="Enter API key..."
-                            aria-label="API key" maxlength="255">
-                        <button type="button" id="toggle-api-visibility" class="button eye"
-                            aria-label="Toggle visibility"><i class="fas fa-eye-slash"></i></button>
+                    <div class="input-container">
+                        <div class="rename-input-container">
+                            <input type="password" id="api-key-input" class="input" placeholder="Enter API key..."
+                                aria-label="API key" maxlength="255">
+                            <button type="button" id="toggle-api-visibility" class="button eye"
+                                aria-label="Toggle visibility"><i class="fas fa-eye-slash"></i></button>
+                        </div>
+                        <div id="api-key-error" class="error-message hidden">Please enter an API key.</div>
                     </div>
-                    <div class="rename-input-container">
-                        <textarea id="curl-input" class="input"
-                            placeholder="Enter model name (e.g., gemini-2.0-flash or gpt-3.5-turbo)" rows="4"
-                            aria-label="Model name"></textarea>
-                        <button id="clear-curl" class="button clear" aria-label="Clear model name input">✖</button>
+                    <div class="input-container">
+                        <div class="rename-input-container">
+                            <textarea id="curl-input" class="input"
+                                placeholder="Enter model name (e.g., gemini-2.0-flash or gpt-3.5-turbo)" rows="4"
+                                aria-label="Model name"></textarea>
+                            <button id="clear-curl" class="button clear" aria-label="Clear model name input">✖</button>
+                        </div>
+                        <div id="curl-error" class="error-message hidden">Please enter a model name.</div>
                     </div>
                 </div>
                 <div class="rename-popup-buttons">

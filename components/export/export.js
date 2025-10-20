@@ -3,7 +3,7 @@ import {
   translations,
   safeChromeBookmarksCall,
   showCustomPopup,
-} from "../utils.js"
+} from "../utils/utils.js"
 import { flattenBookmarks, getFolders } from "../bookmarks.js"
 import { renderFilteredBookmarks } from "../ui.js"
 import { uiState, saveUIState } from "../state.js"

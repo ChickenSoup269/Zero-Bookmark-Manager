@@ -1863,10 +1863,6 @@ html {
   color: var(--text-primary);
 }
 
-.dropdown-btn.favorited {
-  color: var(--accent-color);
-}
-
 .dropdown-btn:hover {
   color: var(--focus-outline);
 }
@@ -1949,7 +1945,7 @@ html {
 }
 
 .custom-popup-close:hover {
-  color: var(--accent-dark, #0056b3);
+  color: var(--accent-dark);
 }
 
 .custom-popup-content {
@@ -1963,12 +1959,12 @@ html {
   justify-content: flex-end;
   gap: 8px;
   padding-top: 8px;
-  border-top: 1px solid var(--border-color, #e0e0e0);
+  border-top: 1px solid var(--border-color);
 }
 
 .custom-popup-button {
   padding: 8px 16px;
-  background: var(--accent-color, #007bff);
+  background: var(--accent-color);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -1977,16 +1973,16 @@ html {
 }
 
 .custom-popup-button:hover {
-  background: var(--accent-dark, #0056b3);
+  background: var(--accent-dark);
 }
 
 .custom-popup-button.cancel {
-  background: var(--bg-secondary, #e9ecef);
+  background: var(--bg-secondary);
   color: var(--text-primary);
 }
 
 .custom-popup-button.cancel:hover {
-  background: var(--hover-bg, #f5f5f5);
+  background: var(--hover-bg);
 }
 
 /* Responsive adjustments for 480px screens */

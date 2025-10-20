@@ -635,7 +635,9 @@ body {
 
 /* css ai config */
 
-.select.error {
+.select.error,
+.input.error,
+textarea.error {
   border: 2px solid red;
 }
 
@@ -652,4 +654,10 @@ body {
 .input-container {
   position: relative;
   margin-bottom: 15px;
+}
+
+.rename-input-container {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
 }

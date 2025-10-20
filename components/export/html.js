@@ -1,5 +1,5 @@
 import { flattenBookmarks } from "../bookmarks.js"
-import { translations } from "../utils.js"
+import { translations } from "../utils/utils.js"
 
 export async function exportToHTML(
   bookmarkTreeNodes,

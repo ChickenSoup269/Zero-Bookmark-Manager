@@ -9,7 +9,7 @@ import {
   translations,
   showLocalStorageSettingsPopup,
   hideLocalStorageSettingsPopup,
-} from "../utils.js"
+} from "../utils/utils.js"
 import {
   populateTagFilter,
   renderFilteredBookmarks,

@@ -4,7 +4,7 @@ import {
   showCustomPopup,
   showCustomConfirm,
   showCustomGuide,
-} from "./utils.js"
+} from "./utils/utils.js"
 
 document.addEventListener("DOMContentLoaded", () => {
   const chatToggle = document.getElementById("chat-toggle")
@@ -1585,16 +1585,19 @@ document.addEventListener("DOMContentLoaded", () => {
       if (aiModelSelect) aiModelSelect.value = config.model || ""
       if (apiKeyInput) apiKeyInput.value = config.apiKey || ""
       if (curlInput) curlInput.value = config.modelName || ""
-      if (aiConfigPopup) aiConfigPopup.classList.remove("hidden")
-      // Reset validation styles
-      if (aiModelSelect) {
-        aiModelSelect.classList.remove("error")
-        const errorMessage = document.getElementById("ai-model-error")
-        if (errorMessage) errorMessage.classList.add("hidden")
-      }
+      if (aiConfigPopup)
+        aiConfigPopup.classList.remove("hidden")[
+          // Reset validation styles
+          (aiModelSelect, apiKeyInput, curlInput)
+        ].forEach((input) => {
+          if (input) input.classList.remove("error")
+        })
+      ;["ai-model-error", "api-key-error", "curl-error"].forEach((errorId) => {
+        const errorElement = document.getElementById(errorId)
+        if (errorElement) errorElement.classList.add("hidden")
+      })
     })
   }
-
   if (clearApiKey) {
     clearApiKey.addEventListener("click", () => {
       if (apiKeyInput) apiKeyInput.value = ""
@@ -1610,30 +1613,66 @@ document.addEventListener("DOMContentLoaded", () => {
   if (aiConfigSave) {
     aiConfigSave.addEventListener("click", () => {
       const model = aiModelSelect ? aiModelSelect.value : ""
-      const apiKey = apiKeyInput ? apiKeyInput.value : ""
-      const modelName = curlInput ? curlInput.value : ""
-      const apiVisible = apiKeyInput ? apiKeyInput.type === "text" : true
+      const apiKey = apiKeyInput ? apiKeyInput.value.trim() : ""
+      const modelName = curlInput ? curlInput.value.trim() : ""
+      const apiVisible = apiKeyInput
+        ? apiKeyInput.type === "text"
+        : true[
+            // Reset previous error states
+            (aiModelSelect, apiKeyInput, curlInput)
+          ].forEach((input) => {
+            if (input) input.classList.remove("error")
+          })
+      ;["ai-model-error", "api-key-error", "curl-error"].forEach((errorId) => {
+        const errorElement = document.getElementById(errorId)
+        if (errorElement) errorElement.classList.add("hidden")
+      })
 
-      // Validate AI model selection
+      // Validate inputs
+      let hasError = false
+      const errors = []
+
       if (!model) {
         if (aiModelSelect) aiModelSelect.classList.add("error")
-        const errorMessage = document.getElementById("ai-model-error")
-        if (errorMessage) errorMessage.classList.remove("hidden")
+        const errorElement = document.getElementById("ai-model-error")
+        if (errorElement) errorElement.classList.remove("hidden")
+        errors.push("Please select an AI model.")
+        hasError = true
+      }
+
+      if (!apiKey) {
+        if (apiKeyInput) apiKeyInput.classList.add("error")
+        const errorElement = document.getElementById("api-key-error")
+        if (errorElement) errorElement.classList.remove("hidden")
+        errors.push("Please enter an API key.")
+        hasError = true
+      }
+
+      if (!modelName) {
+        if (curlInput) curlInput.classList.add("error")
+        const errorElement = document.getElementById("curl-error")
+        if (errorElement) errorElement.classList.remove("hidden")
+        errors.push("Please enter a model name.")
+        hasError = true
+      }
+
+      // Show combined error popup if any validation fails
+      if (hasError) {
         showCustomPopup(
           t("errorTitle") || "Error",
-          "Please select an AI model.",
+          errors.join(" "),
           "error",
           true
         )
         return
       }
 
+      // Save configuration if all validations pass
       saveAiConfig(model, apiKey, modelName, apiVisible)
       if (aiConfigPopup) aiConfigPopup.classList.add("hidden")
       showCustomPopup(t("successTitle") || "Success", "success", true)
     })
   }
-
   if (aiConfigCancel) {
     aiConfigCancel.addEventListener("click", () => {
       if (aiConfigPopup) aiConfigPopup.classList.add("hidden")

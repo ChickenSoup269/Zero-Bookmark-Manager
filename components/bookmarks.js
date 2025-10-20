@@ -3,7 +3,7 @@ import {
   translations,
   safeChromeBookmarksCall,
   showCustomPopup,
-} from "./utils.js"
+} from "./utils/utils.js"
 import {
   setBookmarks,
   setFolders,
