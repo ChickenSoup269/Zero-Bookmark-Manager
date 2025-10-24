@@ -519,7 +519,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     }))
   )
 
-  // Clear existing content and apply card view styling
   if (!elements.folderListDiv) {
     console.error("folderListDiv not found in elements", elements)
     showCustomPopup(
@@ -534,8 +533,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
   elements.folderListDiv.classList.add("card-view")
   console.log("Cleared folderListDiv and added card-view class")
 
-  // Filter folders based on selected folder ID
-  let foldersToRender = folders
+  let showBackButton = false
   if (
     uiState.selectedFolderId &&
     uiState.selectedFolderId !== "0" &&
@@ -552,214 +550,265 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       title: selectedFolder?.title,
     })
     if (selectedFolder && selectedFolder.children) {
-      foldersToRender = [selectedFolder]
+      // Filter only direct bookmarks in the selected folder
+      const folderBookmarks = filteredBookmarks.filter((bookmark) => {
+        const isInFolderResult = isInFolder(bookmark, selectedFolder.id)
+        return (
+          isInFolderResult &&
+          bookmark.parentId === selectedFolder.id && // Only direct bookmarks
+          (!uiState.searchQuery ||
+            bookmark.title
+              ?.toLowerCase()
+              .includes(uiState.searchQuery.toLowerCase()) ||
+            bookmark.url
+              ?.toLowerCase()
+              .includes(uiState.searchQuery.toLowerCase())) &&
+          (uiState.sortType !== "favorites" || bookmark.isFavorite) &&
+          (uiState.selectedTags.length === 0 ||
+            bookmark.tags?.some((tag) => uiState.selectedTags.includes(tag)))
+        )
+      })
+      const sortedBookmarks = sortBookmarks(folderBookmarks, uiState.sortType)
+      console.log(
+        `Folder ${selectedFolder.id} has ${folderBookmarks.length} filtered bookmarks`
+      )
+
+      // Add Back button
+      showBackButton = true
+      const backButton = document.createElement("button")
+      backButton.className = "back-button"
+      backButton.textContent = translations[language].back || "Back"
+      backButton.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        margin: 10px;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+      `
+      backButton.innerHTML = `
+        <span style="font-size: 16px;">←</span>
+        ${backButton.textContent}
+      `
+      backButton.addEventListener("click", () => {
+        uiState.selectedFolderId = ""
+        elements.folderFilter.value = ""
+        chrome.bookmarks.getTree((tree) => {
+          renderFilteredBookmarks(tree, elements)
+        })
+      })
+      fragment.appendChild(backButton)
+
+      // Render bookmarks in a flat list
+      elements.folderListDiv.classList.remove("card-view")
+      sortedBookmarks.forEach((bookmark) => {
+        if (bookmark.url) {
+          const bookmarkElement = createSimpleBookmarkElement(bookmark, language)
+          bookmarkElement.draggable = true
+          bookmarkElement.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", bookmark.id)
+            e.dataTransfer.setData("type", "bookmark")
+            bookmarkElement.classList.add("dragging")
+          })
+          bookmarkElement.addEventListener("dragend", () => {
+            bookmarkElement.classList.remove("dragging")
+          })
+          fragment.appendChild(bookmarkElement)
+        }
+      })
     } else {
       console.warn(
         `Selected folder ${uiState.selectedFolderId} not found or has no children, resetting`
       )
-      foldersToRender = folders
       uiState.selectedFolderId = ""
       elements.folderFilter.value = ""
     }
   } else {
-    console.log("No selected folder or showing all folders")
-  }
-  console.log(
-    "Folders to render:",
-    foldersToRender.map((f) => ({
-      id: f.id,
-      title: f.title,
-      childrenLength: f.children?.length || 0,
-    }))
-  )
+    // Render folder cards
+    folders.forEach((folder, index) => {
+      if (folder.id === "0") {
+        console.log("Skipping root folder")
+        return
+      }
 
-  // Render folder cards
-  foldersToRender.forEach((folder, index) => {
-    if (folder.id === "0") {
-      console.log("Skipping root folder")
-      return
-    }
+      const folderCard = document.createElement("div")
+      folderCard.className = "folder-card"
+      folderCard.dataset.folderId = folder.id
+      folderCard.draggable = true
 
-    const folderCard = document.createElement("div")
-    folderCard.className = "folder-card"
-    folderCard.dataset.folderId = folder.id
-    folderCard.draggable = true
-
-    // Calculate bookmarks for this folder
-    const folderBookmarks = filteredBookmarks.filter((bookmark) => {
-      const isInFolderResult = isInFolder(bookmark, folder.id)
+      const folderBookmarks = filteredBookmarks.filter((bookmark) => {
+        const isInFolderResult = isInFolder(bookmark, folder.id)
+        return (
+          isInFolderResult &&
+          (!uiState.searchQuery ||
+            bookmark.title
+              ?.toLowerCase()
+              .includes(uiState.searchQuery.toLowerCase()) ||
+            bookmark.url
+              ?.toLowerCase()
+              .includes(uiState.searchQuery.toLowerCase())) &&
+          (uiState.sortType !== "favorites" || bookmark.isFavorite) &&
+          (uiState.selectedTags.length === 0 ||
+            bookmark.tags?.some((tag) => uiState.selectedTags.includes(tag)))
+        )
+      })
+      const sortedBookmarks = sortBookmarks(folderBookmarks, uiState.sortType)
       console.log(
-        `Bookmark ${bookmark.id} in folder ${folder.id}: ${isInFolderResult}`,
-        {
-          bookmarkParentId: bookmark.parentId,
-          folderId: folder.id,
+        `Folder ${folder.id} has ${folderBookmarks.length} filtered bookmarks`
+      )
+
+      const folderTitle =
+        folder.title && folder.title.trim() !== ""
+          ? folder.title
+          : `Folder ${folder.id}`
+      const itemCount = folderBookmarks.length
+      folderCard.innerHTML = `
+        <div class="folder-content">
+          <span class="folder-icon">📂</span>
+          <span class="folder-title">${folderTitle}</span>
+          <span class="folder-count">${itemCount}</span>
+        </div>
+        <div class="bookmarks-container"></div>
+      `
+
+      folderCard.addEventListener("click", (e) => {
+        if (e.target.closest(".bookmarks-container, .dropdown-btn, .bookmark-item")) {
+          return
         }
-      )
-      return (
-        isInFolderResult &&
-        (!uiState.searchQuery ||
-          bookmark.title
-            ?.toLowerCase()
-            .includes(uiState.searchQuery.toLowerCase()) ||
-          bookmark.url
-            ?.toLowerCase()
-            .includes(uiState.searchQuery.toLowerCase())) &&
-        (uiState.sortType !== "favorites" || bookmark.isFavorite) &&
-        (uiState.selectedTags.length === 0 ||
-          bookmark.tags?.some((tag) => uiState.selectedTags.includes(tag)))
-      )
-    })
-    const sortedBookmarks = sortBookmarks(folderBookmarks, uiState.sortType)
-    console.log(
-      `Folder ${folder.id} has ${folderBookmarks.length} filtered bookmarks`
-    )
-
-    // Folder title and icon
-    const folderTitle =
-      folder.title && folder.title.trim() !== ""
-        ? folder.title
-        : `Folder ${folder.id}`
-    const itemCount = folderBookmarks.length
-    folderCard.innerHTML = `
-      <div class="folder-content">
-        <span class="folder-icon">📂</span>
-        <span class="folder-title">${folderTitle}</span>
-        <span class="folder-count">${itemCount}</span>
-      </div>
-      <div class="bookmarks-container"></div>
-    `
-    console.log(
-      `Created folder card for ${folderTitle} with ${itemCount} bookmarks`
-    )
-
-    // Add bookmarks to the folder card
-    const bookmarksContainer = folderCard.querySelector(".bookmarks-container")
-    sortedBookmarks.forEach((bookmark) => {
-      if (bookmark.url) {
-        const bookmarkElement = createSimpleBookmarkElement(bookmark, language)
-        bookmarkElement.draggable = true
-        bookmarkElement.addEventListener("dragstart", (e) => {
-          e.dataTransfer.setData("text/plain", bookmark.id)
-          e.dataTransfer.setData("type", "bookmark")
-          bookmarkElement.classList.add("dragging")
+        uiState.selectedFolderId = folder.id
+        elements.folderFilter.value = folder.id
+        chrome.bookmarks.getTree((tree) => {
+          renderFilteredBookmarks(tree, elements)
         })
-        bookmarkElement.addEventListener("dragend", () => {
-          bookmarkElement.classList.remove("dragging")
-        })
-        bookmarksContainer.appendChild(bookmarkElement)
-      }
-    })
+      })
 
-    // Handle folder drag-and-drop
-    folderCard.addEventListener("dragstart", (e) => {
-      e.dataTransfer.setData("text/plain", folder.id)
-      e.dataTransfer.setData("type", "folder")
-      folderCard.classList.add("folder-dragging")
-      console.log(`Dragging folder ${folder.id}`)
-    })
+      const bookmarksContainer = folderCard.querySelector(".bookmarks-container")
+      sortedBookmarks.forEach((bookmark) => {
+        if (bookmark.url) {
+          const bookmarkElement = createSimpleBookmarkElement(bookmark, language)
+          bookmarkElement.draggable = true
+          bookmarkElement.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", bookmark.id)
+            e.dataTransfer.setData("type", "bookmark")
+            bookmarkElement.classList.add("dragging")
+          })
+          bookmarkElement.addEventListener("dragend", () => {
+            bookmarkElement.classList.remove("dragging")
+          })
+          bookmarksContainer.appendChild(bookmarkElement)
+        }
+      })
 
-    folderCard.addEventListener("dragend", () => {
-      folderCard.classList.remove("folder-dragging")
-      console.log(`Drag ended for folder ${folder.id}`)
-    })
+      folderCard.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", folder.id)
+        e.dataTransfer.setData("type", "folder")
+        folderCard.classList.add("folder-dragging")
+        console.log(`Dragging folder ${folder.id}`)
+      })
 
-    folderCard.addEventListener("dragover", (e) => {
-      e.preventDefault()
-      const draggedType = e.dataTransfer.getData("type")
-      const draggedId = e.dataTransfer.getData("text/plain")
-      if (
-        draggedType === "folder" &&
-        draggedId !== folder.id &&
-        !isDescendant(draggedId, folder.id, bookmarkTreeNodes)
-      ) {
-        folderCard.classList.add("folder-drag-over")
-      } else if (draggedType === "bookmark") {
-        folderCard.classList.add("folder-drag-over")
-      }
-    })
+      folderCard.addEventListener("dragend", () => {
+        folderCard.classList.remove("folder-dragging")
+        console.log(`Drag ended for folder ${folder.id}`)
+      })
 
-    folderCard.addEventListener("dragleave", () => {
-      folderCard.classList.remove("folder-drag-over")
-    })
+      folderCard.addEventListener("dragover", (e) => {
+        e.preventDefault()
+        const draggedType = e.dataTransfer.getData("type")
+        const draggedId = e.dataTransfer.getData("text/plain")
+        if (
+          draggedType === "folder" &&
+          draggedId !== folder.id &&
+          !isDescendant(draggedId, folder.id, bookmarkTreeNodes)
+        ) {
+          folderCard.classList.add("folder-drag-over")
+        } else if (draggedType === "bookmark") {
+          folderCard.classList.add("folder-drag-over")
+        }
+      })
 
-    folderCard.addEventListener("drop", (e) => {
-      e.preventDefault()
-      const draggedType = e.dataTransfer.getData("type")
-      const draggedId = e.dataTransfer.getData("text/plain")
-      const targetFolderId = folderCard.dataset.folderId
+      folderCard.addEventListener("dragleave", () => {
+        folderCard.classList.remove("folder-drag-over")
+      })
 
-      if (draggedType === "bookmark" && draggedId && targetFolderId) {
-        console.log(
-          `Dropping bookmark ${draggedId} to folder ${targetFolderId}`
-        )
-        chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
-          if (chrome.runtime.lastError) {
-            console.error("Error moving bookmark:", chrome.runtime.lastError)
-            showCustomPopup(
-              translations[language].errorUnexpected,
-              "error",
-              true
-            )
-          } else {
-            chrome.bookmarks.getTree((tree) => {
-              renderFilteredBookmarks(tree, elements)
-            })
-          }
-        })
-      } else if (
-        draggedType === "folder" &&
-        draggedId !== targetFolderId &&
-        !isDescendant(draggedId, targetFolderId, bookmarkTreeNodes)
-      ) {
-        console.log(
-          `Dropping folder ${draggedId} near folder ${targetFolderId}`
-        )
-        chrome.bookmarks.get(draggedId, (nodes) => {
-          const draggedFolder = nodes[0]
-          const targetIndex = foldersToRender.findIndex(
-            (f) => f.id === targetFolderId
-          )
-          const draggedIndex = foldersToRender.findIndex(
-            (f) => f.id === draggedId
-          )
-          // Determine drop position: before or after target folder
-          const rect = folderCard.getBoundingClientRect()
-          const mouseX = e.clientX
-          const isDropBefore = mouseX < rect.left + rect.width / 2
-          const newIndex = isDropBefore ? targetIndex : targetIndex + 1
+      folderCard.addEventListener("drop", (e) => {
+        e.preventDefault()
+        const draggedType = e.dataTransfer.getData("type")
+        const draggedId = e.dataTransfer.getData("text/plain")
+        const targetFolderId = folderCard.dataset.folderId
+
+        if (draggedType === "bookmark" && draggedId && targetFolderId) {
           console.log(
-            `Dropping folder ${draggedId} ${
-              isDropBefore ? "before" : "after"
-            } folder ${targetFolderId} at index ${newIndex}`
+            `Dropping bookmark ${draggedId} to folder ${targetFolderId}`
           )
-          chrome.bookmarks.move(
-            draggedId,
-            {
-              parentId: draggedFolder.parentId,
-              index: newIndex,
-            },
-            () => {
-              if (chrome.runtime.lastError) {
-                console.error("Error moving folder:", chrome.runtime.lastError)
-                showCustomPopup(
-                  translations[language].errorUnexpected,
-                  "error",
-                  true
-                )
-              } else {
-                chrome.bookmarks.getTree((tree) => {
-                  renderFilteredBookmarks(tree, elements)
-                })
-              }
+          chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
+            if (chrome.runtime.lastError) {
+              console.error("Error moving bookmark:", chrome.runtime.lastError)
+              showCustomPopup(
+                translations[language].errorUnexpected,
+                "error",
+                true
+              )
+            } else {
+              chrome.bookmarks.getTree((tree) => {
+                renderFilteredBookmarks(tree, elements)
+              })
             }
+          })
+        } else if (
+          draggedType === "folder" &&
+          draggedId !== targetFolderId &&
+          !isDescendant(draggedId, targetFolderId, bookmarkTreeNodes)
+        ) {
+          console.log(
+            `Dropping folder ${draggedId} near folder ${targetFolderId}`
           )
-        })
-      }
-      folderCard.classList.remove("folder-drag-over")
-    })
+          chrome.bookmarks.get(draggedId, (nodes) => {
+            const draggedFolder = nodes[0]
+            const targetIndex = folders.findIndex((f) => f.id === targetFolderId)
+            const draggedIndex = folders.findIndex((f) => f.id === draggedId)
+            const rect = folderCard.getBoundingClientRect()
+            const mouseX = e.clientX
+            const isDropBefore = mouseX < rect.left + rect.width / 2
+            const newIndex = isDropBefore ? targetIndex : targetIndex + 1
+            console.log(
+              `Dropping folder ${draggedId} ${
+                isDropBefore ? "before" : "after"
+              } folder ${targetFolderId} at index ${newIndex}`
+            )
+            chrome.bookmarks.move(
+              draggedId,
+              {
+                parentId: draggedFolder.parentId,
+                index: newIndex,
+              },
+              () => {
+                if (chrome.runtime.lastError) {
+                  console.error("Error moving folder:", chrome.runtime.lastError)
+                  showCustomPopup(
+                    translations[language].errorUnexpected,
+                    "error",
+                    true
+                  )
+                } else {
+                  chrome.bookmarks.getTree((tree) => {
+                    renderFilteredBookmarks(tree, elements)
+                  })
+                }
+              }
+            )
+          })
+        }
+        folderCard.classList.remove("folder-drag-over")
+      })
 
-    fragment.appendChild(folderCard)
-  })
+      fragment.appendChild(folderCard)
+    })
+  }
 
   elements.folderListDiv.appendChild(fragment)
   console.log(
@@ -767,12 +816,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     fragment.childElementCount,
     "children"
   )
-  console.log(
-    "folderListDiv HTML after render:",
-    elements.folderListDiv.innerHTML
-  )
 
-  // Update UI elements
   elements.searchInput.value = uiState.searchQuery || ""
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId

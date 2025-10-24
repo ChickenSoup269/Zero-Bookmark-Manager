@@ -661,3 +661,23 @@ textarea.error {
   display: flex;
   align-items: flex-start;
 }
+
+/* back button */
+.back-button-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+}
