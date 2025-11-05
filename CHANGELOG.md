@@ -2,6 +2,10 @@
 
 ## Changelog:
 
+### [1.1.1] - 2025-14-08
+
+- Added Card View
+
 ### [1.1.0] - 2025-14-08
 
 - Added webView (edit in new tab)
