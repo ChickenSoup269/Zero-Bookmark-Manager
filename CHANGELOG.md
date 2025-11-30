@@ -2,11 +2,11 @@
 
 ## Changelog:
 
-### [1.1.1] - 2025-14-08
+### [1.1.1] - [???]
 
 - Added Card View
 
-### [1.1.0] - 2025-14-08
+### [1.1.0] - 2025-08-14
 
 - Added webView (edit in new tab)
 - Added Chatbot - Gemini (Beta)
