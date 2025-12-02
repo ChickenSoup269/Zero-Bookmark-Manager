@@ -13,12 +13,19 @@
       <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/CHANGELOG.md">CHANGELOG.md</a>
     </td>
     <td align="right">
-      <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">Link Extension</a>
+      <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">Link Extension </a>
     </td>
   </tr>
+  
 </table>
 
+<div align="center">
+
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Generic badge](https://img.shields.io/badge/Version-1.1.2-white.svg)](https://shields.io/)
+![My Skills](https://go-skill-icons.vercel.app/api/icons?i=js,html,css)
+
+</div>
 
 ## Introduction
 
