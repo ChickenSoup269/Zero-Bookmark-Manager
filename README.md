@@ -4,6 +4,7 @@
 <img src="./images/logo.png" alt="logo" width="520">
 </div>
 
+<div align="center">
  <table width="100%" >
   <tr>
     <td align="left">
@@ -18,12 +19,21 @@
   </tr>
   
 </table>
+</div>
 
 <div align="center">
 
+<p>
+
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![Generic badge](https://img.shields.io/badge/Version-1.1.2-white.svg)](https://shields.io/)
+
+</p>
+<p>
+
 ![My Skills](https://go-skill-icons.vercel.app/api/icons?i=js,html,css)
+
+</p>
 
 </div>
 
