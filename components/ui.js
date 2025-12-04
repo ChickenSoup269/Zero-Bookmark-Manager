@@ -668,6 +668,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
   )
 }
 
+let currentDragType = null
 function renderDetailView(bookmarksList, elements) {
   const fragment = document.createDocumentFragment()
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
@@ -716,11 +717,13 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     folders.some((f) => f.id === uiState.selectedFolderId)
 
   if (isViewingSpecificFolder) {
+    // ... (Giữ nguyên logic phần xem folder cụ thể - nút Back) ...
     const selectedFolder = findNodeById(
       uiState.selectedFolderId,
       bookmarkTreeNodes
     )
     if (selectedFolder && selectedFolder.children) {
+      // ... (Giữ nguyên logic lọc và nút Back) ...
       const folderBookmarks = filteredBookmarks.filter((bookmark) => {
         return (
           bookmark.parentId === selectedFolder.id &&
@@ -738,6 +741,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       })
       const sortedBookmarks = sortBookmarks(folderBookmarks, uiState.sortType)
 
+      // Tạo nút Back (Giữ nguyên code của bạn)
       const backButton = document.createElement("button")
       backButton.className = "back-button"
       backButton.style.cssText = `display: flex; align-items: center; gap: 8px; padding: 8px 16px; margin: 10px; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 500;`
@@ -754,16 +758,22 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       fragment.appendChild(backButton)
 
       elements.folderListDiv.classList.remove("card-view")
+
       sortedBookmarks.forEach((bookmark) => {
         if (bookmark.url) {
           const el = createSimpleBookmarkElement(bookmark, language, elements)
           el.draggable = true
           el.addEventListener("dragstart", (e) => {
             e.dataTransfer.setData("text/plain", bookmark.id)
-            e.dataTransfer.setData("type", "bookmark")
+            // e.dataTransfer.setData("type", "bookmark") // Bỏ dòng này, dùng biến global
+            currentDragType = "bookmark" // <--- CẬP NHẬT: Dùng biến global
+            e.dataTransfer.effectAllowed = "move" // <--- CẬP NHẬT: Cho phép move
             el.classList.add("dragging")
           })
-          el.addEventListener("dragend", () => el.classList.remove("dragging"))
+          el.addEventListener("dragend", () => {
+            el.classList.remove("dragging")
+            currentDragType = null // Reset
+          })
           fragment.appendChild(el)
         }
       })
@@ -772,6 +782,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       elements.folderFilter.value = ""
     }
   } else {
+    // --- PHẦN HIỂN THỊ DANH SÁCH FOLDER (ROOT) ---
     folders.forEach((folder) => {
       if (folder.id === "0") return
 
@@ -794,7 +805,8 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       const folderCard = document.createElement("div")
       folderCard.className = "folder-card"
       folderCard.dataset.folderId = folder.id
-      folderCard.draggable = true
+      folderCard.draggable = true // Folder cũng có thể kéo được
+
       folderCard.innerHTML = `
             <div class="folder-content">
                 <span class="folder-icon">📂</span>
@@ -806,6 +818,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
             <div class="bookmarks-container"></div>
         `
 
+      // Click vào folder
       folderCard.addEventListener("click", (e) => {
         if (
           e.target.closest(
@@ -820,21 +833,33 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         )
       })
 
+      // Drag Folder
       folderCard.addEventListener("dragstart", (e) => {
         e.dataTransfer.setData("text/plain", folder.id)
-        e.dataTransfer.setData("type", "folder")
+        currentDragType = "folder" // <--- CẬP NHẬT
+        e.dataTransfer.effectAllowed = "move"
         folderCard.classList.add("folder-dragging")
       })
-      folderCard.addEventListener("dragend", () =>
+
+      folderCard.addEventListener("dragend", () => {
         folderCard.classList.remove("folder-dragging")
-      )
+        currentDragType = null
+      })
+
+      // --- DRAG OVER & DROP (QUAN TRỌNG) ---
       folderCard.addEventListener("dragover", (e) => {
-        e.preventDefault()
+        e.preventDefault() // Bắt buộc để cho phép Drop
+        e.dataTransfer.dropEffect = "move" // Hiển thị icon move
         folderCard.classList.add("folder-drag-over")
       })
-      folderCard.addEventListener("dragleave", () =>
-        folderCard.classList.remove("folder-drag-over")
-      )
+
+      folderCard.addEventListener("dragleave", (e) => {
+        // Chỉ remove class nếu thực sự rời khỏi folderCard (tránh flicker khi rê qua con)
+        if (!folderCard.contains(e.relatedTarget)) {
+          folderCard.classList.remove("folder-drag-over")
+        }
+      })
+
       folderCard.addEventListener("drop", (e) =>
         handleFolderDrop(
           e,
@@ -846,6 +871,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         )
       )
 
+      // Render bookmarks con bên trong card
       const bookmarksContainer = folderCard.querySelector(
         ".bookmarks-container"
       )
@@ -854,11 +880,17 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
           const el = createSimpleBookmarkElement(bookmark, language, elements)
           el.draggable = true
           el.addEventListener("dragstart", (e) => {
+            e.stopPropagation() // Ngăn event bubbing lên folder cha
             e.dataTransfer.setData("text/plain", bookmark.id)
-            e.dataTransfer.setData("type", "bookmark")
+            currentDragType = "bookmark" // <--- CẬP NHẬT
+            e.dataTransfer.effectAllowed = "move"
             el.classList.add("dragging")
           })
-          el.addEventListener("dragend", () => el.classList.remove("dragging"))
+          el.addEventListener("dragend", (e) => {
+            e.stopPropagation()
+            el.classList.remove("dragging")
+            currentDragType = null
+          })
           bookmarksContainer.appendChild(el)
         }
       })
@@ -879,36 +911,54 @@ function handleFolderDrop(
   elements
 ) {
   e.preventDefault()
-  const draggedType = e.dataTransfer.getData("type")
+  e.stopPropagation() // Ngừng nổi bọt để tránh drop nhầm chỗ khác
+
+  // Lấy ID từ dataTransfer (text/plain thường hoạt động ổn định nhất)
   const draggedId = e.dataTransfer.getData("text/plain")
+
+  // Lấy type từ biến toàn cục
+  const draggedType = currentDragType
+
   const targetFolderId = folderCard.dataset.folderId
   folderCard.classList.remove("folder-drag-over")
 
-  if (draggedType === "bookmark" && draggedId && targetFolderId) {
-    chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
-      if (chrome.runtime.lastError)
-        showCustomPopup(translations[language].errorUnexpected, "error", true)
-      else
-        chrome.bookmarks.getTree((tree) =>
-          renderFilteredBookmarks(tree, elements)
-        )
+  if (!draggedId || !targetFolderId) return
+
+  // Xử lý kéo BOOKMARK vào FOLDER
+  if (draggedType === "bookmark") {
+    // Kiểm tra xem bookmark có đang nằm trong folder này rồi không (optional)
+    chrome.bookmarks.get(draggedId, (results) => {
+      if (results && results[0] && results[0].parentId === targetFolderId) {
+        // Đã ở trong folder này rồi thì thôi
+        return
+      }
+
+      chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
+        if (chrome.runtime.lastError)
+          showCustomPopup(translations[language].errorUnexpected, "error", true)
+        else
+          chrome.bookmarks.getTree((tree) =>
+            renderFilteredBookmarks(tree, elements)
+          )
+      })
     })
-  } else if (
+  }
+  // Xử lý kéo FOLDER vào FOLDER
+  else if (
     draggedType === "folder" &&
     draggedId !== targetFolderId &&
     !isDescendant(draggedId, targetFolderId, bookmarkTreeNodes)
   ) {
     chrome.bookmarks.get(draggedId, (nodes) => {
       const draggedFolder = nodes[0]
-      chrome.bookmarks.move(
-        draggedId,
-        { parentId: draggedFolder.parentId },
-        () => {
+      // Chỉ di chuyển nếu cha mới khác cha cũ
+      if (draggedFolder.parentId !== targetFolderId) {
+        chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
           chrome.bookmarks.getTree((tree) =>
             renderFilteredBookmarks(tree, elements)
           )
-        }
-      )
+        })
+      }
     })
   }
 }

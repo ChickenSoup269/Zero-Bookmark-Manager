@@ -2,6 +2,23 @@
 
 ## Changelog:
 
+### [1.1.2] - [2025-12-04]
+
+## Added
+
+- Web Preview Modal for viewing websites inside Bookmark Detail.
+- Properties Modal for displaying detailed bookmark information.
+
+## Improved
+
+- Refactored overall code structure for better readability and maintainability.
+- Enhanced Bookmark Detail View for a more intuitive and polished user experience.
+
+## Updated
+
+- README formatting improved and version badge added.
+- Updated README images for better visibility and consistency.
+
 ### [1.1.1] - [???]
 
 - Added Card View
