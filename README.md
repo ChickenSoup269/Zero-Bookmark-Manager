@@ -140,10 +140,10 @@ Video Updating
 <!-- image -->
 <p align="center">
 
-<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/1.png?raw=true" alt="Screenshot" width="450"/><img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/2.png?raw=true" alt="Screenshot" width="450"/>
-<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/3.png?raw=true" alt="Screenshot" width="450"/>
-<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/4.png?raw=true" alt="Screenshot" width="450"/>
-<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/5.png?raw=true" alt="Screenshot" width="450"/>
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/1.png?raw=true" alt="Screenshot" width="580"/><img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/2.png?raw=true" alt="Screenshot" width="580"/>
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/3.png?raw=true" alt="Screenshot" width="580"/>
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/4.png?raw=true" alt="Screenshot" width="580"/>
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/5.png?raw=true" alt="Screenshot" width="580"/>
 
  </p>
 

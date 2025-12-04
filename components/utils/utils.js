@@ -219,6 +219,10 @@ export const translations = {
     detailFolder: "Folder",
     includeFolderPath: "Include Folder Path (for CSV)",
     includeFolderPathDescription: "Add full folder path (for CSV)",
+    pinSuccess: "Bookmark pinned!",
+    unpinSuccess: "Bookmark unpinned!",
+    pinToTop: "Pin to Top",
+    unpin: "Unpin from Top",
   },
   vi: {
     allBookmarks: "Tất cả Bookmarks",
@@ -437,6 +441,10 @@ export const translations = {
     detailFolder: "Thư mục",
     includeFolderPath: "Bao gồm Đường dẫn Thư mục (cho CSV)",
     includeFolderPathDescription: "Thêm đường dẫn đầy đủ của thư mục (cho CSV)",
+    pinSuccess: "Đã ghim bookmark!",
+    unpinSuccess: "Đã bỏ ghim bookmark!",
+    pinToTop: "Ghim lên Đầu",
+    unpin: "Bỏ ghim khỏi Đầu",
   },
 }
 
