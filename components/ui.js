@@ -7,7 +7,7 @@ import { getAllTags } from "./tag.js"
 import { customSaveUIState } from "./option/option.js"
 
 // ==========================================
-// HELPER FUNCTIONS (DÙNG CHUNG ĐỂ TRÁNH LẶP CODE)
+// HELPER FUNCTIONS
 // ==========================================
 
 function getFaviconUrl(url) {
@@ -45,7 +45,7 @@ function createTagsHTML(tags, styleOverride = "") {
 function createDropdownHTML(bookmark, language) {
   const t = translations[language] || translations.en
   const isFav = bookmark.isFavorite
-  const isPinned = bookmark.isPinned // Biến này sẽ được lấy từ storage
+  const isPinned = bookmark.isPinned
 
   return `
     <div class="dropdown-btn-group" style="position: relative;">
@@ -127,7 +127,6 @@ function attachDropdownToggle(element) {
   const menu = element.querySelector(".dropdown-menu")
 
   if (btn && menu) {
-    // Toggle menu
     btn.addEventListener("click", (e) => {
       e.stopPropagation()
       const isHidden = menu.classList.contains("hidden")
@@ -137,9 +136,6 @@ function attachDropdownToggle(element) {
       if (isHidden) menu.classList.remove("hidden")
     })
 
-    // Close when clicking outside is handled globally in attachTreeListeners
-
-    // Hover effects for visibility
     element.addEventListener("mouseenter", () => {
       if (
         element.classList.contains("detail-bookmark-item") ||
@@ -157,6 +153,177 @@ function attachDropdownToggle(element) {
         btn.style.opacity = "0"
       }
     })
+  }
+}
+
+// --- HELPER: Open Web Preview (Iframe) ---
+// Dùng cho nút to ở Detail View
+function openWebPreviewModal(bookmark) {
+  const favicon = getFaviconUrl(bookmark.url)
+
+  // Remove existing overlay
+  const existingOverlay = document.querySelector(".bookmark-modal-overlay")
+  if (existingOverlay) existingOverlay.remove()
+
+  const overlay = document.createElement("div")
+  overlay.className = "bookmark-modal-overlay"
+
+  overlay.innerHTML = `
+    <div class="bookmark-modal" style="width: 90%; height: 90%; max-width: 1200px;">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="${favicon}" class="modal-favicon" alt="icon" onerror="this.src='./images/default-favicon.png'">
+          <h3 class="modal-title" title="${bookmark.title}">${
+    bookmark.title || bookmark.url
+  }</h3>
+        </div>
+        <div class="modal-actions">
+           <a href="${
+             bookmark.url
+           }" target="_blank" class="modal-external-link" title="Open in New Tab" style="text-decoration:none; color:var(--text-secondary); margin-right:10px;">
+             <i class="fas fa-external-link-alt"></i> ↗
+           </a>
+           <button class="modal-fullscreen" title="Fullscreen">⤢</button>
+           <button class="modal-close" title="Close">✕</button>
+        </div>
+      </div>
+      
+      <!-- Iframe Wrapper with Fallback -->
+      <div class="iframe-wrapper" style="position:relative; flex:1; background:#f0f0f0; overflow:hidden;">
+        
+        <!-- Fallback Message (Behind Iframe) -->
+        <div class="iframe-fallback" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; width: 80%; color: #555;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
+            <p><strong>Preview unavailable?</strong></p>
+            <p style="font-size:12px;">Many websites block being displayed inside extensions.</p>
+            <a href="${
+              bookmark.url
+            }" target="_blank" class="button" style="display:inline-block; margin-top:10px; padding: 8px 16px; background:var(--accent-color); color:white; border-radius:4px; text-decoration:none;">
+                Open Website Directly
+            </a>
+        </div>
+
+        <!-- Main Iframe -->
+        <iframe src="${bookmark.url}" 
+                style="width:100%; height:100%; border:none; position:relative; z-index:2; background:transparent;" 
+                sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                onload="this.style.background='white'">
+        </iframe>
+      </div>
+    </div>`
+
+  document.body.appendChild(overlay)
+
+  const modal = overlay.querySelector(".bookmark-modal")
+  overlay.querySelector(".modal-close").onclick = () => overlay.remove()
+  overlay.querySelector(".modal-fullscreen").onclick = () =>
+    modal.classList.toggle("fullscreen")
+  overlay.onclick = (evt) => {
+    if (evt.target === overlay) overlay.remove()
+  }
+}
+
+// --- HELPER: Open Properties (Metadata) ---
+// Dùng cho nút Detail trong Dropdown menu
+function openBookmarkPropertiesModal(bookmark) {
+  const language = localStorage.getItem("appLanguage") || "en"
+  const t = translations[language] || translations.en
+  const favicon = getFaviconUrl(bookmark.url)
+  const tagsHtml = createTagsHTML(bookmark.tags)
+  const parentFolder = findParentFolder(bookmark.id, uiState.bookmarkTree)
+
+  const existingOverlay = document.querySelector(".bookmark-modal-overlay")
+  if (existingOverlay) existingOverlay.remove()
+
+  const overlay = document.createElement("div")
+  overlay.className = "bookmark-modal-overlay"
+
+  // Giao diện nhỏ gọn, chỉ hiển thị thông tin text
+  overlay.innerHTML = `
+    <div class="bookmark-modal" style="width: 400px; height: auto; max-height: 80vh;">
+      <div class="modal-header">
+        <h3>${t.viewDetail || "Bookmark Details"}</h3>
+        <button class="modal-close" title="Close">✕</button>
+      </div>
+      
+      <div class="modal-info" style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+         
+         <div style="display:flex; justify-content:center; margin-bottom:10px;">
+            <img src="${favicon}" style="width:48px; height:48px;" onerror="this.src='./images/default-favicon.png'">
+         </div>
+
+         <div class="detail-row">
+            <strong style="display:block; color:var(--text-secondary); font-size:12px;">Title</strong>
+            <span style="display:block; font-size:14px; color:var(--text-primary);">${
+              bookmark.title
+            }</span>
+         </div>
+
+         <div class="detail-row">
+            <strong style="display:block; color:var(--text-secondary); font-size:12px;">URL</strong>
+            <a href="${
+              bookmark.url
+            }" target="_blank" style="font-size:13px; color:var(--accent-color); word-break:break-all;">${
+    bookmark.url
+  }</a>
+         </div>
+
+         <div style="display:flex; gap: 20px;">
+             <div class="detail-row">
+                <strong style="display:block; color:var(--text-secondary); font-size:12px;">${
+                  t.detailDateAdded || "Date Added"
+                }</strong>
+                <span style="font-size:13px; color:var(--text-primary);">
+                    ${
+                      bookmark.dateAdded
+                        ? new Date(bookmark.dateAdded).toLocaleDateString()
+                        : "-"
+                    }
+                </span>
+             </div>
+             <div class="detail-row">
+                <strong style="display:block; color:var(--text-secondary); font-size:12px;">${
+                  t.detailFolder || "Folder"
+                }</strong>
+                <span style="font-size:13px; color:var(--text-primary);">
+                    ${parentFolder ? parentFolder.title : t.noFolder || "None"}
+                </span>
+             </div>
+         </div>
+
+         <div class="detail-row">
+            <strong style="display:block; color:var(--text-secondary); font-size:12px;">${
+              t.manageTags || "Tags"
+            }</strong>
+            <div style="margin-top:4px;">${
+              tagsHtml ||
+              '<span style="color:#888; font-style:italic;">No tags</span>'
+            }</div>
+         </div>
+         
+         <div class="detail-row">
+            <strong style="display:block; color:var(--text-secondary); font-size:12px;">ID</strong>
+            <span style="font-size:12px; color:#888;">${bookmark.id}</span>
+         </div>
+
+      </div>
+      
+      <div class="modal-footer" style="padding: 15px; border-top: 1px solid var(--border-color); text-align: right;">
+        <button class="button modal-close-btn" style="background: var(--bg-secondary);">Close</button>
+      </div>
+    </div>`
+
+  document.body.appendChild(overlay)
+
+  const closeBtn = overlay.querySelector(".modal-close")
+  const footerCloseBtn = overlay.querySelector(".modal-close-btn")
+
+  const closeAction = () => overlay.remove()
+
+  closeBtn.onclick = closeAction
+  footerCloseBtn.onclick = closeAction
+  overlay.onclick = (evt) => {
+    if (evt.target === overlay) closeAction()
   }
 }
 
@@ -420,19 +587,18 @@ export function updateTheme(elements, theme) {
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
-  // Thêm 'pinnedBookmarks' vào danh sách cần lấy
   chrome.storage.local.get(
     ["favoriteBookmarks", "bookmarkAccessCounts", "pinnedBookmarks"],
     (data) => {
       const favoriteBookmarks = data.favoriteBookmarks || {}
       const bookmarkAccessCounts = data.bookmarkAccessCounts || {}
-      const pinnedBookmarks = data.pinnedBookmarks || {} // Lấy danh sách đã ghim
+      const pinnedBookmarks = data.pinnedBookmarks || {}
 
       const addStatus = (nodes) => {
         for (const node of nodes) {
           if (node.url) {
             node.isFavorite = !!favoriteBookmarks[node.id]
-            node.isPinned = !!pinnedBookmarks[node.id] // Gán trạng thái Pin
+            node.isPinned = !!pinnedBookmarks[node.id]
             node.tags = uiState.bookmarkTags[node.id] || []
             node.accessCount = bookmarkAccessCounts[node.id] || 0
           }
@@ -453,7 +619,6 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       setupTagFilterListener(elements)
       updateBookmarkCount(bookmarks, elements)
 
-      // ... (Phần filter giữ nguyên như cũ) ...
       let filtered = bookmarks.filter((bookmark) => bookmark.url)
 
       if (uiState.selectedTags.length > 0) {
@@ -545,7 +710,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
   elements.folderListDiv.classList.remove("detail-view", "tree-view")
   elements.folderListDiv.classList.add("card-view")
 
-  // Check if inside a folder
   const isViewingSpecificFolder =
     uiState.selectedFolderId &&
     uiState.selectedFolderId !== "0" &&
@@ -557,7 +721,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       bookmarkTreeNodes
     )
     if (selectedFolder && selectedFolder.children) {
-      // Filter direct children
       const folderBookmarks = filteredBookmarks.filter((bookmark) => {
         return (
           bookmark.parentId === selectedFolder.id &&
@@ -575,7 +738,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       })
       const sortedBookmarks = sortBookmarks(folderBookmarks, uiState.sortType)
 
-      // Back Button
       const backButton = document.createElement("button")
       backButton.className = "back-button"
       backButton.style.cssText = `display: flex; align-items: center; gap: 8px; padding: 8px 16px; margin: 10px; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 500;`
@@ -591,8 +753,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       })
       fragment.appendChild(backButton)
 
-      // Render Bookmarks
-      elements.folderListDiv.classList.remove("card-view") // Use list layout for items inside
+      elements.folderListDiv.classList.remove("card-view")
       sortedBookmarks.forEach((bookmark) => {
         if (bookmark.url) {
           const el = createSimpleBookmarkElement(bookmark, language, elements)
@@ -611,7 +772,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       elements.folderFilter.value = ""
     }
   } else {
-    // Render Folder Cards
     folders.forEach((folder) => {
       if (folder.id === "0") return
 
@@ -646,7 +806,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
             <div class="bookmarks-container"></div>
         `
 
-      // Folder Click
       folderCard.addEventListener("click", (e) => {
         if (
           e.target.closest(
@@ -661,7 +820,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         )
       })
 
-      // Folder Drag Events
       folderCard.addEventListener("dragstart", (e) => {
         e.dataTransfer.setData("text/plain", folder.id)
         e.dataTransfer.setData("type", "folder")
@@ -742,15 +900,10 @@ function handleFolderDrop(
   ) {
     chrome.bookmarks.get(draggedId, (nodes) => {
       const draggedFolder = nodes[0]
-      const targetIndex = uiState.folders.findIndex(
-        (f) => f.id === targetFolderId
-      ) // simplified logic for index
-      // Complex sorting logic for drop position omitted for brevity, defaulting to append or move
       chrome.bookmarks.move(
         draggedId,
         { parentId: draggedFolder.parentId },
         () => {
-          // Simplified move
           chrome.bookmarks.getTree((tree) =>
             renderFilteredBookmarks(tree, elements)
           )
@@ -793,82 +946,33 @@ function createDetailBookmarkElement(bookmark, language, elements) {
   div.dataset.id = bookmark.id
   div.style.cssText = `display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-tertiary); box-shadow: var(--shadow-sm);`
 
-  const tagsHtml = createTagsHTML(bookmark.tags)
-
   div.innerHTML = `
     <div style="display:flex;align-items:center;gap:12px;">
-      <div class="bookmark-favicon" style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:var(--bg-secondary);border:1px solid var(--border-color);display:flex;justify-content:center;align-items:center;">
-        <img src="${favicon}" style="width:100%;height:100%;object-fit:contain;">
+      <div class="bookmark-favicon" style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:white;border:1px solid var(--border-color);display:flex;justify-content:center;align-items:center;">
+        <img src="${favicon}" style="width:20px;height:20px;object-fit:contain;" onerror="this.src='./images/default-favicon.png'">
       </div>
       <a href="${
         bookmark.url
-      }" target="_blank" style="flex:1;color:var(--text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+      }" target="_blank" style="flex:1;color:var(--text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none; max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
         ${bookmark.title || bookmark.url}
       </a>
       ${createDropdownHTML(bookmark, language)}
     </div>
-    <div style="font-size:13px;color:var(--text-muted);opacity:0.85;">${extractDomain(
-      bookmark.url
-    )}</div>
-    <button class="view-detail-btn" style="background:var(--accent-color);color:var(--bg-primary);border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:600;margin-top:8px;">
-      ${translations[language].viewDetail}
+    <div style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px;">
+        <span>${extractDomain(bookmark.url)}</span>
+    </div>
+    <button class="view-detail-btn-action" style="background:var(--bg-primary);color:var(--text-primary);border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:600;margin-top:8px; width:100%;">
+      ${translations[language].viewDetail || "View Details"}
     </button>
   `
 
-  // Inline modal logic (Keep existing logic)
-  div.querySelector(".view-detail-btn").addEventListener("click", () => {
-    const overlay = document.createElement("div")
-    overlay.className = "bookmark-modal-overlay"
-    overlay.innerHTML = `
-      <div class="bookmark-modal">
-        <div class="modal-header">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <img src="${favicon}" class="modal-favicon" alt="icon">
-            <h3 class="modal-title">${bookmark.title || bookmark.url}</h3>
-          </div>
-          <div class="modal-actions"><button class="modal-fullscreen">⤢</button><button class="modal-close">&times;</button></div>
-        </div>
-       <div class="modal-info">
-          <div class="modal-meta">
-            <span><strong>${translations[language].detailDateAdded}:</strong> ${
-      bookmark.dateAdded
-        ? new Date(bookmark.dateAdded).toLocaleString()
-        : translations[language].notAvailable
-    }</span>
-            <span class="separator">|</span>
-            <span><strong>${translations[language].detailFolder}:</strong> ${
-      findParentFolder(bookmark.id, uiState.bookmarkTree)?.title ||
-      translations[language].noFolder
-    }</span>
-          </div>
-          ${
-            tagsHtml
-              ? `<div class="modal-tags"><strong>${translations[language].manageTags}:</strong> ${tagsHtml}</div>`
-              : ""
-          } 
-          ${
-            uiState.showBookmarkIds
-              ? `<div class="modal-bookmark-id" style="font-size:12px;color:var(--text-muted);margin-top:8px;text-align:right;">ID: ${bookmark.id}</div>`
-              : ""
-          }
-      </div>
-        <iframe src="${
-          bookmark.url
-        }" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
-      </div>`
-    document.body.appendChild(overlay)
-    overlay
-      .querySelector(".modal-close")
-      .addEventListener("click", () => overlay.remove())
-    overlay
-      .querySelector(".modal-fullscreen")
-      .addEventListener("click", () =>
-        overlay.querySelector(".bookmark-modal").classList.toggle("fullscreen")
-      )
-    overlay.addEventListener("click", (evt) => {
-      if (evt.target === overlay) overlay.remove()
+  // Use the new helper function for the main button
+  div
+    .querySelector(".view-detail-btn-action")
+    .addEventListener("click", (e) => {
+      e.stopPropagation()
+      openWebPreviewModal(bookmark) // GỌI HÀM XEM WEB (IFRAME)
     })
-  })
 
   attachDropdownToggle(div)
   return div
@@ -941,7 +1045,6 @@ function renderTreeView(nodes, elements, depth = 0) {
         : true
 
     if (node.children) {
-      // Folder Item
       const isCollapsed = uiState.collapsedFolders.has(node.id)
       const folderDiv = document.createElement("div")
       folderDiv.className = "folder-item"
@@ -962,7 +1065,6 @@ function renderTreeView(nodes, elements, depth = 0) {
         )}</span>
       `
 
-      // Folder Drag Events (Simplified)
       folderDiv.addEventListener("dragover", (e) => {
         e.preventDefault()
         folderDiv.style.background = "var(--hover-bg)"
@@ -1104,7 +1206,6 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
 // ==========================================
 
 function commonPostRenderOps(elements) {
-  // Reset search inputs and filters state
   elements.searchInput.value = uiState.searchQuery || ""
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
     elements.folderFilter.value = uiState.selectedFolderId
@@ -1118,21 +1219,38 @@ function commonPostRenderOps(elements) {
   attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
 
-  // --- THÊM ĐOẠN NÀY ĐỂ KÍCH HOẠT NÚT PIN ---
-  // Gắn thủ công sự kiện cho nút Pin vì nó chưa được xử lý trong controller
+  // --- MANUAL EVENT HANDLERS (Since some are dynamic) ---
+
+  // 1. PIN Buttons
   const pinButtons = elements.folderListDiv.querySelectorAll(".pin-btn")
   pinButtons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      e.stopPropagation() // Ngăn sự kiện nổi bọt
+      e.stopPropagation()
       const bookmarkId = btn.getAttribute("data-id")
       togglePin(bookmarkId, elements)
-
-      // Đóng dropdown menu sau khi click
       const dropdownMenu = btn.closest(".dropdown-menu")
       if (dropdownMenu) dropdownMenu.classList.add("hidden")
     })
   })
-  // ------------------------------------------
+
+  // 2. DETAIL Buttons (In Dropdown Menu)
+  const detailButtons = elements.folderListDiv.querySelectorAll(
+    ".menu-item.view-detail-btn"
+  )
+  detailButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation()
+      const id = btn.dataset.id
+      const bookmark = uiState.bookmarks.find((b) => b.id === id)
+
+      // GỌI HÀM XEM THUỘC TÍNH (METADATA)
+      if (bookmark) openBookmarkPropertiesModal(bookmark)
+
+      document
+        .querySelectorAll(".dropdown-menu")
+        .forEach((m) => m.classList.add("hidden"))
+    })
+  })
 }
 
 function attachSelectAllListener(elements) {
@@ -1200,27 +1318,40 @@ export function setupTagFilterListener(elements) {
 
 export function attachTreeListeners(elements) {
   const folderListDiv = elements.folderListDiv
-  // Remove old listeners to prevent duplicates if any
   const clone = folderListDiv.cloneNode(true)
   folderListDiv.replaceWith(clone)
-  elements.folderListDiv = clone // Cập nhật lại tham chiếu mới
+  elements.folderListDiv = clone
 
-  // Re-attach specific handlers
   clone.onclick = (e) => {
-    // 1. Xử lý nút Pin (THÊM ĐOẠN NÀY)
+    // 1. PIN Button in Tree View
     const pinBtn = e.target.closest(".pin-btn")
     if (pinBtn) {
       e.stopPropagation()
       const bookmarkId = pinBtn.dataset.id
       togglePin(bookmarkId, elements)
-      // Đóng menu sau khi pin
       document
         .querySelectorAll(".dropdown-menu")
         .forEach((m) => m.classList.add("hidden"))
       return
     }
 
-    // 2. Folder Toggle
+    // 2. DETAIL Button in Tree View (Dropdown)
+    const detailBtn = e.target.closest(".menu-item.view-detail-btn")
+    if (detailBtn) {
+      e.stopPropagation()
+      const id = detailBtn.dataset.id
+      const bookmark = uiState.bookmarks.find((b) => b.id === id)
+
+      // GỌI HÀM XEM THUỘC TÍNH (METADATA)
+      if (bookmark) openBookmarkPropertiesModal(bookmark)
+
+      document
+        .querySelectorAll(".dropdown-menu")
+        .forEach((m) => m.classList.add("hidden"))
+      return
+    }
+
+    // 3. Folder Toggle
     const toggle = e.target.closest(".folder-toggle")
     if (toggle) {
       e.stopPropagation()
@@ -1235,7 +1366,6 @@ export function attachTreeListeners(elements) {
         if (childrenContainer) {
           childrenContainer.style.display = "block"
           if (childrenContainer.innerHTML === "") {
-            // Lazy load
             const node = findNodeById(folderId, uiState.bookmarkTree)
             if (node && node.children)
               childrenContainer.appendChild(
@@ -1257,9 +1387,7 @@ export function attachTreeListeners(elements) {
       return
     }
 
-    // 3. Dropdown handling
-    // Dropdown toggle is handled by attachDropdownToggle attached to individual items.
-    // Here we just handle clicking outside to close.
+    // 4. Dropdown closing logic
     if (
       !e.target.closest(".dropdown-btn") &&
       !e.target.closest(".dropdown-menu")
@@ -1270,7 +1398,6 @@ export function attachTreeListeners(elements) {
     }
   }
 
-  // Re-attach other listeners for the cloned element
   attachSelectAllListener(elements)
   attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
@@ -1318,15 +1445,13 @@ function toggleFolderButtons(elements) {
 }
 
 function sortBookmarks(list, type) {
-  // Tách riêng danh sách đã Pin và chưa Pin
   const pinned = list.filter((b) => b.isPinned)
   const unpinned = list.filter((b) => !b.isPinned)
 
-  // Hàm sort nội bộ cho các item chưa pin
   const sortFn = (a, b) => {
     switch (type) {
       case "favorites":
-        return (b.dateAdded || 0) - (a.dateAdded || 0) // Logic cũ: favorites chỉ là bộ lọc, ở đây sort theo ngày
+        return (b.dateAdded || 0) - (a.dateAdded || 0)
       case "default":
       case "new":
         return (b.dateAdded || 0) - (a.dateAdded || 0)
@@ -1343,11 +1468,9 @@ function sortBookmarks(list, type) {
     }
   }
 
-  // Sort riêng 2 nhóm
   pinned.sort(sortFn)
   unpinned.sort(sortFn)
 
-  // Gộp lại: Pinned luôn ở trên cùng
   return [...pinned, ...unpinned]
 }
 
@@ -1406,7 +1529,6 @@ function isAncestorOf(node, targetFolderId) {
   return false
 }
 
-// Global listener for closing modals
 document.querySelectorAll(".close-modal").forEach((btn) => {
   btn.onclick = () => btn.closest(".rename-popup")?.classList.add("hidden")
 })
@@ -1422,12 +1544,9 @@ export function togglePin(bookmarkId, elements) {
     }
 
     chrome.storage.local.set({ pinnedBookmarks }, () => {
-      // Re-render để cập nhật vị trí
       chrome.bookmarks.getTree((tree) =>
         renderFilteredBookmarks(tree, elements)
       )
-
-      // Hiển thị thông báo nhỏ (Optional)
       const language = localStorage.getItem("appLanguage") || "en"
       const msg = pinnedBookmarks[bookmarkId]
         ? translations[language].pinSuccess || "Pinned to top"
@@ -1437,7 +1556,6 @@ export function togglePin(bookmarkId, elements) {
   })
 }
 
-// Function to handle toggling favorite (used by action listeners)
 export function toggleFavorite(bookmarkId, buttonElement) {
   chrome.storage.local.get("favoriteBookmarks", (data) => {
     const favoriteBookmarks = data.favoriteBookmarks || {}
@@ -1450,7 +1568,6 @@ export function toggleFavorite(bookmarkId, buttonElement) {
     }
     chrome.storage.local.set({ favoriteBookmarks }, () => {
       if (uiState.sortType === "favorites") {
-        // Logic to refresh UI if needed
         buttonElement.closest(".bookmark-item")?.remove()
       } else {
         const icon = buttonElement.querySelector("i")

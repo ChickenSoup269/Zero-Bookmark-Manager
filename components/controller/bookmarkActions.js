@@ -1,5 +1,4 @@
 // components/controller/bookmarkAction.js
-
 import {
   translations,
   safeChromeBookmarksCall,
@@ -11,78 +10,80 @@ import { renderFilteredBookmarks } from "../ui.js"
 import { uiState, setCurrentBookmarkId } from "../state.js"
 import { openAddToFolderPopup } from "./addToFolder.js"
 
+// --- HELPER FUNCTIONS ---
+
+const getLang = () => localStorage.getItem("appLanguage") || "en"
+
+const getTranslation = (key, fallback) => {
+  const t = translations[getLang()] || translations.en
+  return t[key] || fallback || key
+}
+
+const handleError = (logMsg, uiMsgKey, isError = true) => {
+  console.error(logMsg)
+  showCustomPopup(
+    getTranslation(uiMsgKey, "An unexpected error occurred"),
+    isError ? "error" : "success",
+    isError
+  )
+}
+
+const attachListener = (element, event, handler) => {
+  if (element) {
+    element.removeEventListener(event, handler)
+    element.addEventListener(event, handler)
+  }
+}
+
+// --- MAIN SETUP ---
+
 export function setupBookmarkActionListeners(elements) {
-  // Handle rename save
-  if (elements.renameSave) {
-    elements.renameSave.removeEventListener("click", handleRenameSave)
-    elements.renameSave.addEventListener("click", (e) =>
-      handleRenameSave(e, elements)
-    )
-  } else {
-    console.error("renameSave element not found")
-  }
+  const listeners = [
+    {
+      el: elements.renameSave,
+      evt: "click",
+      handler: (e) => handleRenameSave(e, elements),
+    },
+    {
+      el: elements.renameCancel,
+      evt: "click",
+      handler: (e) => handleRenameCancel(e, elements),
+    },
+    {
+      el: elements.renameInput,
+      evt: "keypress",
+      handler: (e) => handleRenameInputKeypress(e, elements),
+    },
+    {
+      el: elements.renameInput,
+      evt: "keydown",
+      handler: (e) => handleRenameInputKeydown(e, elements),
+    },
+    {
+      el: elements.renamePopup,
+      evt: "click",
+      handler: (e) => handleRenamePopupClick(e, elements),
+    },
+    {
+      el: elements.clearRenameButton,
+      evt: "click",
+      handler: (e) => handleClearRename(e, elements),
+    },
+  ]
 
-  // Handle rename cancel
-  if (elements.renameCancel) {
-    elements.renameCancel.removeEventListener("click", handleRenameCancel)
-    elements.renameCancel.addEventListener("click", (e) =>
-      handleRenameCancel(e, elements)
-    )
-  } else {
-    console.error("renameCancel element not found")
-  }
-
-  // Handle rename input keypress
-  if (elements.renameInput) {
-    elements.renameInput.removeEventListener(
-      "keypress",
-      handleRenameInputKeypress
-    )
-    elements.renameInput.addEventListener("keypress", (e) =>
-      handleRenameInputKeypress(e, elements)
-    )
-    elements.renameInput.removeEventListener(
-      "keydown",
-      handleRenameInputKeydown
-    )
-    elements.renameInput.addEventListener("keydown", (e) =>
-      handleRenameInputKeydown(e, elements)
-    )
-  } else {
-    console.error("renameInput element not found")
-  }
-
-  // Handle rename popup click
-  if (elements.renamePopup) {
-    elements.renamePopup.removeEventListener("click", handleRenamePopupClick)
-    elements.renamePopup.addEventListener("click", (e) =>
-      handleRenamePopupClick(e, elements)
-    )
-  } else {
-    console.error("renamePopup element not found")
-  }
-
-  // Handle clear rename
-  if (elements.clearRenameButton) {
-    elements.clearRenameButton.removeEventListener("click", handleClearRename)
-    elements.clearRenameButton.addEventListener("click", (e) =>
-      handleClearRename(e, elements)
-    )
-  } else {
-    console.error("clearRenameButton element not found")
-  }
-
-  // Handle all menu-item buttons
-  document.querySelectorAll(".menu-item").forEach((button) => {
-    button.removeEventListener("click", handleMenuItemClick)
-    button.addEventListener("click", (e) => handleMenuItemClick(e, elements))
+  listeners.forEach(({ el, evt, handler }) => {
+    if (el) attachListener(el, evt, handler)
+    else console.warn(`Element for event '${evt}' not found`)
   })
 
-  // Handle bookmark checkboxes
-  const checkboxes = document.querySelectorAll(".bookmark-checkbox")
-  checkboxes.forEach((checkbox) => {
-    checkbox.removeEventListener("change", handleBookmarkCheckbox)
-    checkbox.addEventListener("change", (e) =>
+  // Menu items
+  document.querySelectorAll(".menu-item").forEach((button) => {
+    attachListener(button, "click", (e) => handleMenuItemClick(e, elements))
+  })
+
+  // Checkboxes
+  document.querySelectorAll(".bookmark-checkbox").forEach((checkbox) => {
+    attachListener(checkbox, "change", (e) =>
       handleBookmarkCheckbox(e, elements)
     )
   })
@@ -90,791 +91,470 @@ export function setupBookmarkActionListeners(elements) {
 
 function handleMenuItemClick(e, elements) {
   e.stopPropagation()
-  const bookmarkId = e.target.dataset.id
-  const action = e.target.classList.contains("add-to-folder")
-    ? "add-to-folder"
-    : e.target.classList.contains("delete-btn")
-    ? "delete"
-    : e.target.classList.contains("rename-btn")
-    ? "rename"
-    : e.target.classList.contains("favorite-btn")
-    ? "favorite"
-    : e.target.classList.contains("view-detail-btn")
-    ? "view-detail"
-    : e.target.classList.contains("manage-tags-btn")
-    ? "manage-tags"
-    : e.target.id === "localstorage-settings-option" ||
-      e.target.id === "export-bookmarks-option" ||
-      e.target.id === "import-bookmarks-option" ||
-      e.target.id === "rename-folder-option" ||
-      e.target.id === "show-bookmark-ids-option" ||
-      e.target.id === "edit-in-new-tab-option"
-    ? null
-    : null
+  const target = e.target
+  const bookmarkId = target.dataset.id
 
-  if (!bookmarkId && action) {
-    console.error("Invalid bookmark ID for action", { bookmarkId, action })
-    return
+  // Ignored options
+  const ignoredIds = [
+    "localstorage-settings-option",
+    "export-bookmarks-option",
+    "import-bookmarks-option",
+    "rename-folder-option",
+    "show-bookmark-ids-option",
+    "edit-in-new-tab-option",
+  ]
+  if (ignoredIds.includes(target.id)) return
+
+  // Determine action
+  const actions = {
+    "add-to-folder": () => handleAddToFolder(e, elements),
+    "delete-btn": () => handleDeleteBookmark(e, elements),
+    "rename-btn": () => handleRenameBookmark(e, elements),
+    "favorite-btn": () => handleFavoriteBookmark(e, elements),
+    "view-detail-btn": () => openBookmarkDetailPopup(bookmarkId, elements),
+    "manage-tags-btn": () => openManageTagsPopup(bookmarkId, elements),
   }
 
-  if (!action) {
-    return
-  }
+  const actionKey = Object.keys(actions).find((key) =>
+    target.classList.contains(key)
+  )
 
-  switch (action) {
-    case "add-to-folder":
-      handleAddToFolder(e, elements)
-      break
-    case "delete":
-      handleDeleteBookmark(e, elements)
-      break
-    case "rename":
-      handleRenameBookmark(e, elements)
-      break
-    case "favorite":
-      handleFavoriteBookmark(e, elements)
-      break
-    case "view-detail":
-      openBookmarkDetailPopup(bookmarkId, elements)
-      break
-    case "manage-tags":
-      openManageTagsPopup(bookmarkId, elements)
-      break
-  }
-
-  e.target.closest(".dropdown-menu").classList.add("hidden")
-}
-
-// Function to open bookmark detail popup
-export function openBookmarkDetailPopup(bookmarkId, elements) {
-  const language = localStorage.getItem("appLanguage") || "en"
-  const popup = document.getElementById("bookmark-detail-popup")
-  const title = document.getElementById("detail-title")
-  const url = document.getElementById("detail-url")
-  const dateAdded = document.getElementById("detail-date-added")
-  const tags = document.getElementById("detail-tags")
-  const closeButton = popup?.querySelector(".close-modal")
-  const thumbnailEl = popup?.querySelector("#detail-thumbnail")
-
-  if (
-    !popup ||
-    !title ||
-    !url ||
-    !dateAdded ||
-    !tags ||
-    !closeButton ||
-    !thumbnailEl
-  ) {
-    console.error("Bookmark detail popup elements missing", {
-      popup: !!popup,
-      title: !!title,
-      url: !!url,
-      dateAdded: !!dateAdded,
-      tags: !!tags,
-      closeButton: !!closeButton,
-      thumbnail: !!thumbnailEl,
-    })
-    showCustomPopup(translations[language].errorUnexpected, "error", true)
-    return
-  }
-
-  safeChromeBookmarksCall("get", [bookmarkId], (results) => {
-    if (chrome.runtime.lastError || !results || results.length === 0) {
-      console.error(
-        "Chrome bookmarks API error:",
-        chrome.runtime.lastError?.message
-      )
-      showCustomPopup(translations[language].errorUnexpected, "error", true)
+  if (actionKey) {
+    if (!bookmarkId) {
+      console.error("Invalid bookmark ID for action", actionKey)
       return
     }
+    actions[actionKey]()
+    target.closest(".dropdown-menu")?.classList.add("hidden")
+  }
+}
 
-    const bookmark = results[0]
+// --- POPUP HANDLERS ---
 
-    // Set thumbnail
-    let thumbnailUrl = chrome.runtime.getURL("images/default-favicon.png")
-    if (bookmark.url && bookmark.url.startsWith("http")) {
-      thumbnailUrl = `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(
-        bookmark.url
+export function openBookmarkDetailPopup(bookmarkId, elements) {
+  const popup = document.getElementById("bookmark-detail-popup")
+  if (!popup) return handleError("Detail popup missing", "errorUnexpected")
+
+  const els = {
+    title: document.getElementById("detail-title"),
+    url: document.getElementById("detail-url"),
+    date: document.getElementById("detail-date-added"),
+    tags: document.getElementById("detail-tags"),
+    close: popup.querySelector(".close-modal"),
+    thumb: popup.querySelector("#detail-thumbnail"),
+  }
+
+  if (Object.values(els).some((el) => !el))
+    return handleError("Detail elements missing", "errorUnexpected")
+
+  safeChromeBookmarksCall("get", [bookmarkId], (results) => {
+    if (chrome.runtime.lastError || !results?.[0]) {
+      return handleError(
+        chrome.runtime.lastError?.message || "Bookmark not found",
+        "errorUnexpected"
+      )
+    }
+
+    const b = results[0]
+    const defaultThumb = chrome.runtime.getURL("images/default-favicon.png")
+
+    // Setup Thumbnail
+    const setThumb = (src) => {
+      els.thumb.src = src
+      els.thumb.style.display = src === defaultThumb ? "none" : "block"
+    }
+
+    let thumbUrl = defaultThumb
+    if (b.url?.startsWith("http")) {
+      thumbUrl = `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(
+        b.url
       )}?w=1000`
-    } else {
-      console.warn("Invalid URL for thumbnail:", bookmark.url)
     }
 
-    if (thumbnailEl.src !== thumbnailUrl) {
-      thumbnailEl.src = thumbnailUrl
-      thumbnailEl.alt = bookmark.title || "Website thumbnail"
-      thumbnailEl.style.display = "block"
-    }
+    setThumb(thumbUrl)
+    els.thumb.onerror = () => setThumb(defaultThumb)
+    els.thumb.alt = b.title || "Thumbnail"
 
-    // Handle thumbnail errors
-    thumbnailEl.onerror = () => {
-      console.error("Failed to load thumbnail for URL:", bookmark.url)
-      if (
-        thumbnailEl.src !== chrome.runtime.getURL("images/default-favicon.png")
-      ) {
-        thumbnailEl.src = chrome.runtime.getURL("images/default-favicon.png")
-        thumbnailEl.alt = "Default thumbnail"
-      } else {
-        thumbnailEl.style.display = "none"
-      }
-    }
-    thumbnailEl.onload = () => {}
+    // Setup UI Data
+    els.title.textContent = b.title || b.url || getTranslation("notAvailable")
+    els.url.textContent = b.url || getTranslation("notAvailable")
+    els.date.textContent = b.dateAdded
+      ? new Date(b.dateAdded).toLocaleString()
+      : getTranslation("notAvailable")
 
-    // Add hover icon and enlarge functionality
-    const thumbnailContainer = thumbnailEl.parentElement
-    thumbnailContainer.classList.add("thumbnail-container")
-    const magnifyIcon = document.createElement("span")
-    magnifyIcon.className = "magnify-icon"
-    magnifyIcon.innerHTML = "<i class='fas fa-search-plus'></i>"
-    thumbnailContainer.appendChild(magnifyIcon)
+    const tagList = uiState.bookmarkTags[bookmarkId] || []
+    els.tags.innerHTML = tagList.length
+      ? tagList
+          .map(
+            (tag) => `
+          <span class="bookmark-tag" style="background-color: ${
+            uiState.tagColors[tag] || "#ccc"
+          }; color: ${
+              uiState.tagTextColors?.[tag] || "#fff"
+            }; padding: 4px 10px; border-radius: 6px; font-size: 12px; margin: 0 8px 8px 0; display: inline-block;">
+            ${tag}
+          </span>`
+          )
+          .join("")
+      : getTranslation("notAvailable")
 
-    // Enlarge image on click
-    let enlargeOverlay = null
-    thumbnailEl.onclick = () => {
-      if (!enlargeOverlay) {
-        enlargeOverlay = document.createElement("div")
-        enlargeOverlay.className = "enlarge-overlay"
-        const enlargedImg = document.createElement("img")
-        enlargedImg.src = thumbnailEl.src
-        enlargedImg.alt = thumbnailEl.alt
-        enlargedImg.className = "enlarged-image"
-        enlargeOverlay.appendChild(enlargedImg)
-        document.body.appendChild(enlargeOverlay)
+    // Setup Magnify & Overlay
+    setupThumbnailInteraction(els.thumb)
 
-        // Close overlay on click
-        enlargeOverlay.onclick = (e) => {
-          if (e.target === enlargeOverlay) {
-            enlargeOverlay.remove()
-            enlargeOverlay = null
-            document.removeEventListener("keydown", handleOverlayKeydown)
-          }
-        }
-
-        // Close overlay on Escape
-        const handleOverlayKeydown = (e) => {
-          if (e.key === "Escape") {
-            enlargeOverlay.remove()
-            enlargeOverlay = null
-            document.removeEventListener("keydown", handleOverlayKeydown)
-          }
-        }
-        document.addEventListener("keydown", handleOverlayKeydown)
-      }
-    }
-
-    // Populate other fields
-    title.textContent =
-      bookmark.title || bookmark.url || translations[language].notAvailable
-    url.textContent = bookmark.url || translations[language].notAvailable
-    dateAdded.textContent = bookmark.dateAdded
-      ? new Date(bookmark.dateAdded).toLocaleString()
-      : translations[language].notAvailable
-    tags.innerHTML =
-      (uiState.bookmarkTags[bookmarkId] || [])
-        .map(
-          (tag) => `
-            <span class="bookmark-tag" style="
-              background-color: ${uiState.tagColors[tag] || "#ccc"};
-              color: ${uiState.tagTextColors?.[tag] || "#ffffff"};
-              padding: 4px 10px;
-              border-radius: 6px;
-              font-size: 12px;
-              margin: 0 8px 8px 0;
-              display: inline-block;
-            ">
-              ${tag}
-            </span>
-          `
-        )
-        .join("") || translations[language].notAvailable
-
+    // Show & Close Logic
     popup.classList.remove("hidden")
+    const close = () => popup.classList.add("hidden")
+    els.close.onclick = close
+    popup.onclick = (e) => e.target === popup && close()
 
-    const closePopup = () => {
-      popup.classList.add("hidden")
-      if (enlargeOverlay) {
-        enlargeOverlay.remove()
-        enlargeOverlay = null
+    const escHandler = (e) => {
+      if (e.key === "Escape") {
+        close()
+        document.removeEventListener("keydown", escHandler)
       }
-      magnifyIcon.remove()
-      document.removeEventListener("keydown", handleKeydown)
     }
-
-    closeButton.onclick = closePopup
-    popup.onclick = (e) => {
-      if (e.target === popup) closePopup()
-    }
-
-    const handleKeydown = (e) => {
-      if (e.key === "Escape") closePopup()
-    }
-    document.addEventListener("keydown", handleKeydown)
+    document.addEventListener("keydown", escHandler)
   })
 }
 
-// Function to open manage tags popup with dropdown for existing tags
+function setupThumbnailInteraction(thumbEl) {
+  const container = thumbEl.parentElement
+  if (!container.querySelector(".magnify-icon")) {
+    container.classList.add("thumbnail-container")
+    const icon = document.createElement("span")
+    icon.className = "magnify-icon"
+    icon.innerHTML = "<i class='fas fa-search-plus'></i>"
+    container.appendChild(icon)
+  }
+
+  thumbEl.onclick = () => {
+    const overlay = document.createElement("div")
+    overlay.className = "enlarge-overlay"
+    overlay.innerHTML = `<img src="${thumbEl.src}" class="enlarged-image" alt="Enlarged">`
+    document.body.appendChild(overlay)
+
+    const remove = () => overlay.remove()
+    overlay.onclick = (e) => e.target === overlay && remove()
+    const esc = (e) => {
+      if (e.key === "Escape") {
+        remove()
+        document.removeEventListener("keydown", esc)
+      }
+    }
+    document.addEventListener("keydown", esc)
+  }
+}
+
+// --- MANAGE TAGS ---
+
 async function openManageTagsPopup(bookmarkId) {
-  const language = localStorage.getItem("appLanguage") || "en"
   const popup = document.getElementById("manage-tags-popup")
-  const existingTags = document.getElementById("existing-tags")
-  const newTagInput = document.getElementById("new-tag-input")
-  const newTagColor = document.getElementById("new-tag-color")
-  const newTagTextColor = document.createElement("input")
-  const addTagBtn = document.getElementById("add-tag-btn")
-  const closeButton = popup?.querySelector(".close-modal")
+  const addTagContainer = popup?.querySelector(".add-tag-container")
+  if (!popup || !addTagContainer)
+    return handleError("Tags popup missing", "errorUnexpected")
+
+  const els = {
+    existingTags: document.getElementById("existing-tags"),
+    input: document.getElementById("new-tag-input"),
+    color: document.getElementById("new-tag-color"),
+    addBtn: document.getElementById("add-tag-btn"),
+    close: popup.querySelector(".close-modal"),
+  }
+
+  // --- Utility inside Manage Tags ---
   const MAX_TAGS = 10
-
-  // Initialize text color input
-  newTagTextColor.type = "color"
-  newTagTextColor.id = "new-tag-text-color"
-  newTagTextColor.value = "#ffffff"
-  newTagTextColor.style.cssText = `
-    padding: 8px;
-    margin-bottom: 12px;
-    border-radius: 6px;
-    width: 100%;
-  `
-
-  // Predefined background colors
-  const predefinedColors = [
-    "#ecf2f8",
-    "#fa7970",
-    "#faa356",
-    "#7ce378",
-    "#a2b2fb",
-    "#77bdfb",
-    "#cea5fb",
-  ]
-
-  // Function to calculate contrasting text color
-  function getContrastColor(bgColor) {
-    const hex = bgColor.replace("#", "")
-    const r = parseInt(hex.substr(0, 2), 16) / 255
-    const g = parseInt(hex.substr(2, 2), 16) / 255
-    const b = parseInt(hex.substr(4, 2), 16) / 255
-    const luminance = 0.299 * r + 0.587 * g + 0.114 * b
-    return luminance > 0.5 ? "#000000" : "#ffffff"
+  const getContrastColor = (hex) => {
+    const r = parseInt(hex.substr(1, 2), 16),
+      g = parseInt(hex.substr(3, 2), 16),
+      b = parseInt(hex.substr(5, 2), 16)
+    return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? "#000000" : "#ffffff"
   }
 
-  if (
-    !popup ||
-    !existingTags ||
-    !newTagInput ||
-    !newTagColor ||
-    !addTagBtn ||
-    !closeButton
-  ) {
-    console.error("Manage tags popup elements missing", {
-      popup: !!popup,
-      existingTags: !!existingTags,
-      newTagInput: !!newTagInput,
-      newTagColor: !!newTagColor,
-      addTagBtn: !!addTagBtn,
-      closeButton: !!closeButton,
+  // --- Initialization (Prevent Duplicates) ---
+  let textColorInput = document.getElementById("new-tag-text-color")
+  let tagSelect = document.querySelector(".existing-tags-select")
+
+  if (!textColorInput) {
+    textColorInput = document.createElement("input")
+    textColorInput.type = "color"
+    textColorInput.id = "new-tag-text-color"
+    textColorInput.value = "#ffffff"
+    textColorInput.style.cssText =
+      "padding: 8px; margin-bottom: 12px; border-radius: 6px; width: 100%;"
+    addTagContainer.before(textColorInput)
+  }
+
+  if (!tagSelect) {
+    tagSelect = document.createElement("select")
+    tagSelect.className = "select existing-tags-select"
+    tagSelect.style.cssText =
+      "width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);"
+    addTagContainer.before(tagSelect)
+  }
+
+  // Predefined Colors
+  if (!popup.querySelector(".color-buttons-container")) {
+    const colors = [
+      "#ecf2f8",
+      "#fa7970",
+      "#faa356",
+      "#7ce378",
+      "#a2b2fb",
+      "#77bdfb",
+      "#cea5fb",
+    ]
+    const colorContainer = document.createElement("div")
+    colorContainer.className = "color-buttons-container"
+    colorContainer.style.cssText =
+      "display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;"
+
+    colors.forEach((c) => {
+      const btn = document.createElement("button")
+      btn.type = "button"
+      btn.style.cssText = `width: 30px; height: 30px; border-radius: 6px; background-color: ${c}; border: 1px solid #ccc; cursor: pointer;`
+      btn.onclick = () => {
+        els.color.value = c
+        textColorInput.value = getContrastColor(c)
+      }
+      colorContainer.appendChild(btn)
     })
-    showCustomPopup(translations[language].errorUnexpected, "error", true)
-    return
+    addTagContainer.before(colorContainer)
   }
 
-  // Create dropdown for existing tags
-  const tagSelect = document.createElement("select")
-  tagSelect.className = "select existing-tags-select"
-  tagSelect.style.cssText = `
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 12px;
-    border-radius: 6px;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-  `
-  tagSelect.innerHTML = `<option value="">${
-    translations[language].selectTag || "Select Tag"
-  }</option>`
-
-  // Populate dropdown with existing tags
-  const tags = await getAllTags()
-  tags.forEach((tag) => {
-    const option = document.createElement("option")
-    option.value = tag
-    option.textContent = tag
-    option.style.backgroundColor = uiState.tagColors[tag] || "#ccc"
-    option.style.color =
-      uiState.tagTextColors?.[tag] ||
-      getContrastColor(uiState.tagColors[tag] || "#ccc")
-    tagSelect.appendChild(option)
-  })
-
-  // Insert dropdown and text color input
-  const addTagContainer = popup.querySelector(".add-tag-container")
-  if (!addTagContainer) {
-    console.error("add-tag-container not found")
-    showCustomPopup(translations[language].errorUnexpected, "error", true)
-    return
+  let countDisplay = popup.querySelector(".tag-count")
+  if (!countDisplay) {
+    countDisplay = document.createElement("div")
+    countDisplay.className = "tag-count"
+    countDisplay.style.cssText =
+      "font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px;"
+    addTagContainer.before(countDisplay)
   }
-  addTagContainer.before(tagSelect)
-  addTagContainer.before(newTagTextColor)
 
-  // Create predefined color buttons
-  const colorButtonsContainer = document.createElement("div")
-  colorButtonsContainer.className = "color-buttons-container"
-  colorButtonsContainer.style.cssText = `
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 12px;
-  `
-  predefinedColors.forEach((color) => {
-    const button = document.createElement("button")
-    button.type = "button"
-    button.style.cssText = `
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
-      background-color: ${color};
-      border: 1px solid #ccc;
-      cursor: pointer;
-    `
-    button.addEventListener("click", () => {
-      newTagColor.value = color
-      newTagTextColor.value = getContrastColor(color)
+  // --- Logic ---
+  const updateDropdown = async () => {
+    const tags = await getAllTags()
+    tagSelect.innerHTML = `<option value="">${getTranslation(
+      "selectTag",
+      "Select Tag"
+    )}</option>`
+    tags.forEach((t) => {
+      const opt = document.createElement("option")
+      opt.value = t
+      opt.textContent = t
+      opt.style.backgroundColor = uiState.tagColors[t] || "#ccc"
+      opt.style.color =
+        uiState.tagTextColors?.[t] ||
+        getContrastColor(uiState.tagColors[t] || "#ccc")
+      tagSelect.appendChild(opt)
     })
-    colorButtonsContainer.appendChild(button)
-  })
-  addTagContainer.before(colorButtonsContainer)
-
-  // Add tag count display
-  const tagCountDisplay = document.createElement("div")
-  tagCountDisplay.className = "tag-count"
-  tagCountDisplay.style.cssText = `
-    font-size: 0.9rem;
-    color: var(--text-secondary, #666);
-    margin-bottom: 12px;
-  `
-  addTagContainer.before(tagCountDisplay)
+  }
 
   const renderTags = () => {
-    const tags = uiState.bookmarkTags[bookmarkId] || []
-    tagCountDisplay.textContent = `${tags.length}/${MAX_TAGS} tags`
-    existingTags.innerHTML = tags
+    const currentTags = uiState.bookmarkTags[bookmarkId] || []
+    countDisplay.textContent = `${currentTags.length}/${MAX_TAGS} tags`
+    els.existingTags.innerHTML = currentTags
       .map(
         (tag) => `
         <div class="tag-item" style="display: inline-flex; align-items: center; gap: 6px; margin: 0 8px 8px 0;">
-          <span class="bookmark-tag" style="
-            background-color: ${uiState.tagColors[tag] || "#ccc"};
-            color: ${
-              uiState.tagTextColors?.[tag] ||
-              getContrastColor(uiState.tagColors[tag] || "#ccc")
-            };
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-          ">
-            ${tag}
-          </span>
-          <button class="edit-tag-btn" data-tag="${tag}" style="
-            background: none;
-            border: none;
-            color: var(--primary-color, #007bff);
-            cursor: pointer;
-            font-size: 12px;
-          ">
-            ✎
-          </button>
-          <button class="remove-tag-btn" data-tag="${tag}" style="
-            background: none;
-            border: none;
-            color: var(--text-danger, #ff5555);
-            cursor: pointer;
-            font-size: 12px;
-          ">
-            ✕
-          </button>
-        </div>
-      `
+          <span class="bookmark-tag" style="background-color: ${
+            uiState.tagColors[tag] || "#ccc"
+          }; color: ${
+          uiState.tagTextColors?.[tag] || "#fff"
+        }; padding: 4px 10px; border-radius: 6px; font-size: 12px;">${tag}</span>
+          <button class="edit-tag-btn" data-tag="${tag}" style="background: none; border: none; color: var(--primary-color); cursor: pointer;">✎</button>
+          <button class="remove-tag-btn" data-tag="${tag}" style="background: none; border: none; color: var(--text-danger); cursor: pointer;">✕</button>
+        </div>`
       )
       .join("")
   }
 
-  renderTags()
+  const saveTagData = (cb) => {
+    chrome.storage.local.set(
+      {
+        bookmarkTags: uiState.bookmarkTags,
+        tagColors: uiState.tagColors,
+        tagTextColors: uiState.tagTextColors,
+      },
+      cb
+    )
+  }
 
-  popup.classList.remove("hidden")
-
-  // Handle tag selection from dropdown
-  tagSelect.addEventListener("change", () => {
-    const selectedTag = tagSelect.value
+  const handleAddTag = (tagName, bgColor, txtColor) => {
     const currentTags = uiState.bookmarkTags[bookmarkId] || []
-    if (currentTags.length >= MAX_TAGS) {
-      showCustomPopup(
-        translations[language].tagLimitReached ||
-          `Cannot add more than ${MAX_TAGS} tags`,
-        "error",
-        true
-      )
-      tagSelect.value = ""
-      return
-    }
-    if (selectedTag && !currentTags.includes(selectedTag)) {
-      if (!uiState.bookmarkTags[bookmarkId]) {
-        uiState.bookmarkTags[bookmarkId] = []
-      }
-      uiState.bookmarkTags[bookmarkId].push(selectedTag)
-      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
-        renderTags()
-        tagSelect.value = ""
-      })
-    }
-  })
+    if (currentTags.length >= MAX_TAGS)
+      return handleError("Limit reached", "tagLimitReached")
+    if (!tagName) return
 
-  // Handle adding new tag
-  addTagBtn.onclick = () => {
-    const tag = newTagInput.value.trim()
-    const bgColor = newTagColor.value
-    const textColor = newTagTextColor.value
-    const currentTags = uiState.bookmarkTags[bookmarkId] || []
-    if (currentTags.length >= MAX_TAGS) {
-      showCustomPopup(
-        translations[language].tagLimitReached ||
-          `Cannot add more than ${MAX_TAGS} tags`,
-        "error",
-        true
-      )
-      return
-    }
-    if (tag) {
-      if (!uiState.bookmarkTags[bookmarkId]) {
-        uiState.bookmarkTags[bookmarkId] = []
-      }
-      if (!uiState.bookmarkTags[bookmarkId].includes(tag)) {
-        uiState.bookmarkTags[bookmarkId].push(tag)
-        uiState.tagColors[tag] = bgColor
+    if (!uiState.bookmarkTags[bookmarkId]) uiState.bookmarkTags[bookmarkId] = []
+
+    if (!uiState.bookmarkTags[bookmarkId].includes(tagName)) {
+      uiState.bookmarkTags[bookmarkId].push(tagName)
+      if (bgColor) uiState.tagColors[tagName] = bgColor
+      if (txtColor) {
         if (!uiState.tagTextColors) uiState.tagTextColors = {}
-        uiState.tagTextColors[tag] = textColor
-        chrome.storage.local.set(
-          {
-            bookmarkTags: uiState.bookmarkTags,
-            tagColors: uiState.tagColors,
-            tagTextColors: uiState.tagTextColors,
-          },
-          () => {
-            renderTags()
-            newTagInput.value = ""
-            newTagColor.value = "#cccccc"
-            newTagTextColor.value = "#ffffff"
-            const option = document.createElement("option")
-            option.value = tag
-            option.textContent = tag
-            option.style.backgroundColor = bgColor
-            option.style.color = textColor
-            tagSelect.appendChild(option)
-          }
-        )
-      } else {
-        showCustomPopup(
-          translations[language].tagExists || "Tag already exists",
-          "error",
-          true
-        )
+        uiState.tagTextColors[tagName] = txtColor
       }
+      saveTagData(() => {
+        renderTags()
+        updateDropdown()
+      })
+    } else {
+      handleError("Tag exists", "tagExists")
     }
   }
 
-  // Handle tag editing and removal
-  existingTags.addEventListener("click", (e) => {
-    if (e.target.classList.contains("remove-tag-btn")) {
-      const tag = e.target.dataset.tag
+  // Events
+  attachListener(tagSelect, "change", () => {
+    handleAddTag(tagSelect.value)
+    tagSelect.value = ""
+  })
 
+  els.addBtn.onclick = () => {
+    handleAddTag(els.input.value.trim(), els.color.value, textColorInput.value)
+    els.input.value = ""
+    els.color.value = "#cccccc"
+    textColorInput.value = "#ffffff"
+  }
+
+  // Edit/Remove Delegation
+  els.existingTags.onclick = (e) => {
+    const tag = e.target.dataset.tag
+    if (e.target.classList.contains("remove-tag-btn")) {
       uiState.bookmarkTags[bookmarkId] = uiState.bookmarkTags[
         bookmarkId
       ].filter((t) => t !== tag)
-      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
-        renderTags()
-      })
+      saveTagData(renderTags)
     } else if (e.target.classList.contains("edit-tag-btn")) {
-      const tag = e.target.dataset.tag
-      const tagItem = e.target.closest(".tag-item")
-      const tagSpan = tagItem.querySelector(".bookmark-tag")
-      const currentTagName = tagSpan.textContent
-      const removeButton = tagItem.querySelector(".remove-tag-btn")
-
-      // Replace tag with input and save button
-      const editInput = document.createElement("input")
-      editInput.type = "text"
-      editInput.value = currentTagName
-      editInput.className = "edit-tag-input"
-      editInput.style.cssText = `
-        padding: 4px 8px;
-        border: 1px solid var(--border-color, #d1d1d1);
-        border-radius: 6px;
-        font-size: 12px;
-        width: 100px;
-      `
-
-      const saveButton = document.createElement("button")
-      saveButton.textContent = translations[language].save || "Save"
-      saveButton.style.cssText = `
-        background: var(--primary-color, #007bff);
-        color: #ffffff;
-        border: none;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 12px;
-        cursor: pointer;
-      `
-
-      tagItem.innerHTML = ""
-      tagItem.appendChild(editInput)
-      tagItem.appendChild(saveButton)
-      tagItem.appendChild(e.target) // Edit button
-      if (removeButton) tagItem.appendChild(removeButton) // Remove button
-
-      saveButton.onclick = () => {
-        const newTagName = editInput.value.trim()
-
-        if (!newTagName) {
-          showCustomPopup(
-            translations[language].tagEmpty || "Tag name cannot be empty",
-            "error",
-            true
-          )
-          return
-        }
-        if (newTagName === currentTagName) {
-          renderTags()
-          return
-        }
-        if (uiState.bookmarkTags[bookmarkId].includes(newTagName)) {
-          showCustomPopup(
-            translations[language].tagExists || "Tag already exists",
-            "error",
-            true
-          )
-          return
-        }
-
-        // Update all bookmarks with the old tag
-        const updatedBookmarkTags = { ...uiState.bookmarkTags }
-        for (const id in updatedBookmarkTags) {
-          if (updatedBookmarkTags[id].includes(tag)) {
-            updatedBookmarkTags[id] = updatedBookmarkTags[id].map((t) =>
-              t === tag ? newTagName : t
-            )
-          }
-        }
-
-        // Update colors
-        uiState.tagColors[newTagName] = uiState.tagColors[tag]
-        uiState.tagTextColors[newTagName] =
-          uiState.tagTextColors?.[tag] ||
-          getContrastColor(uiState.tagColors[tag])
-        delete uiState.tagColors[tag]
-        if (uiState.tagTextColors) delete uiState.tagTextColors[tag]
-
-        // Save to storage
-        uiState.bookmarkTags = updatedBookmarkTags
-        chrome.storage.local.set(
-          {
-            bookmarkTags: uiState.bookmarkTags,
-            tagColors: uiState.tagColors,
-            tagTextColors: uiState.tagTextColors,
-          },
-          () => {
-            // Update dropdown
-            const option = tagSelect.querySelector(`option[value="${tag}"]`)
-            if (option) {
-              option.value = newTagName
-              option.textContent = newTagName
-              option.style.backgroundColor = uiState.tagColors[newTagName]
-              option.style.color =
-                uiState.tagTextColors?.[newTagName] ||
-                getContrastColor(uiState.tagColors[newTagName])
-            }
-            renderTags()
-          }
-        )
-      }
+      // Edit logic (simplified for brevity, similar structure to original but cleaner DOM calls)
+      handleEditTagUI(
+        e.target.closest(".tag-item"),
+        tag,
+        bookmarkId,
+        saveTagData,
+        renderTags,
+        updateDropdown
+      )
     }
-  })
-
-  const closePopup = () => {
-    popup.classList.add("hidden")
-    tagSelect.remove()
-    colorButtonsContainer.remove()
-    newTagTextColor.remove()
-    tagCountDisplay.remove()
-    document.removeEventListener("keydown", handleKeydown)
   }
 
-  closeButton.onclick = closePopup
-  popup.onclick = (e) => {
-    if (e.target === popup) closePopup()
-  }
+  await updateDropdown()
+  renderTags()
+  popup.classList.remove("hidden")
 
-  const handleKeydown = (e) => {
-    if (e.key === "Escape") closePopup()
+  const close = () => popup.classList.add("hidden")
+  els.close.onclick = close
+  popup.onclick = (e) => e.target === popup && close()
+  const esc = (e) => {
+    if (e.key === "Escape") {
+      close()
+      document.removeEventListener("keydown", esc)
+    }
   }
-  document.addEventListener("keydown", handleKeydown)
+  document.addEventListener("keydown", esc)
 }
 
-// Function to get all user-created tags
+function handleEditTagUI(
+  container,
+  oldTag,
+  bookmarkId,
+  saveFn,
+  renderFn,
+  updateDropdownFn
+) {
+  const input = document.createElement("input")
+  input.value = oldTag
+  input.style.cssText =
+    "padding: 4px 8px; border-radius: 6px; width: 100px; font-size: 12px;"
+
+  const saveBtn = document.createElement("button")
+  saveBtn.textContent = "Save"
+  saveBtn.style.cssText =
+    "background: var(--primary-color); color: #fff; border: none; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; margin-left: 4px;"
+
+  container.innerHTML = ""
+  container.append(input, saveBtn)
+
+  saveBtn.onclick = () => {
+    const newTag = input.value.trim()
+    if (!newTag) return handleError("Empty tag", "tagEmpty")
+    if (newTag === oldTag) return renderFn()
+
+    // Update all usage
+    Object.keys(uiState.bookmarkTags).forEach((id) => {
+      if (uiState.bookmarkTags[id].includes(oldTag)) {
+        uiState.bookmarkTags[id] = uiState.bookmarkTags[id].map((t) =>
+          t === oldTag ? newTag : t
+        )
+      }
+    })
+
+    uiState.tagColors[newTag] = uiState.tagColors[oldTag]
+    uiState.tagTextColors[newTag] = uiState.tagTextColors?.[oldTag]
+    delete uiState.tagColors[oldTag]
+    if (uiState.tagTextColors) delete uiState.tagTextColors[oldTag]
+
+    saveFn(() => {
+      updateDropdownFn()
+      renderFn()
+    })
+  }
+}
+
 async function getAllTags() {
   return new Promise((resolve) => {
     chrome.storage.local.get(["bookmarkTags"], (data) => {
-      const bookmarkTags = data.bookmarkTags || {}
       const allTags = new Set()
-      Object.values(bookmarkTags).forEach((tags) => {
+      Object.values(data.bookmarkTags || {}).forEach((tags) =>
         tags.forEach((tag) => allTags.add(tag))
-      })
+      )
       resolve([...allTags].sort())
     })
   })
 }
 
-// Existing functions (unchanged)
+// --- ACTION HANDLERS ---
+
 function handleRenameSave(e, elements) {
   e.stopPropagation()
   const newTitle = elements.renameInput.value.trim()
-  const language = localStorage.getItem("appLanguage") || "en"
 
   if (!newTitle) {
     elements.renameInput.classList.add("error")
-    elements.renameInput.placeholder = translations[language].emptyTitleError
-    elements.renameInput.focus()
-    return
+    elements.renameInput.placeholder = getTranslation("emptyTitleError")
+    return elements.renameInput.focus()
   }
 
-  if (!uiState.currentBookmarkId) {
-    console.error("No currentBookmarkId set")
-    showCustomPopup(
-      translations[language].errorNoBookmarkSelected || "No bookmark selected",
-      "error",
-      false
-    )
-    elements.renamePopup.classList.add("hidden")
-    return
-  }
+  if (!uiState.currentBookmarkId)
+    return handleError("No ID", "errorNoBookmarkSelected", false)
 
-  safeChromeBookmarksCall("get", [uiState.currentBookmarkId], (bookmark) => {
-    if (chrome.runtime.lastError) {
-      console.error(
-        "Error retrieving bookmark:",
-        chrome.runtime.lastError.message
-      )
-      showCustomPopup(
-        translations[language].errorUnexpected ||
-          "An unexpected error occurred",
-        "error",
-        false
-      )
-      elements.renamePopup.classList.add("hidden")
-      return
-    }
+  safeChromeBookmarksCall("get", [uiState.currentBookmarkId], (res) => {
+    if (!res?.[0]?.url)
+      return handleError("Not a bookmark", "errorNotABookmark", false)
 
-    if (!bookmark || !bookmark[0]) {
-      console.error("Bookmark not found for ID:", uiState.currentBookmarkId)
-      showCustomPopup(
-        translations[language].bookmarkNotFound || "Bookmark not found",
-        "error",
-        false
-      )
-      elements.renamePopup.classList.add("hidden")
-      return
-    }
-
-    if (!bookmark[0].url) {
-      console.error(
-        "Selected item is not a bookmark, ID:",
-        uiState.currentBookmarkId
-      )
-      showCustomPopup(
-        translations[language].errorNotABookmark ||
-          "Selected item is not a bookmark",
-        "error",
-        false
-      )
-      elements.renamePopup.classList.add("hidden")
-      return
-    }
-
-    const parentId = bookmark[0].parentId
-    safeChromeBookmarksCall("getChildren", [parentId], (siblings) => {
-      if (chrome.runtime.lastError) {
-        console.error(
-          "Error retrieving siblings:",
-          chrome.runtime.lastError.message
+    safeChromeBookmarksCall("getChildren", [res[0].parentId], (siblings) => {
+      if (
+        siblings?.some(
+          (s) =>
+            s.id !== uiState.currentBookmarkId &&
+            s.title.toLowerCase() === newTitle.toLowerCase()
         )
-        showCustomPopup(
-          translations[language].errorUnexpected ||
-            "An unexpected error occurred",
-          "error",
-          false
-        )
-        elements.renamePopup.classList.add("hidden")
-        return
-      }
-
-      const isDuplicate = siblings.some(
-        (sibling) =>
-          sibling.id !== uiState.currentBookmarkId &&
-          sibling.title.toLowerCase() === newTitle.toLowerCase()
-      )
-      if (isDuplicate) {
+      ) {
         elements.renameInput.classList.add("error")
-        elements.renameInput.placeholder =
-          translations[language].duplicateTitleError
-        elements.renameInput.focus()
-        return
+        elements.renameInput.placeholder = getTranslation("duplicateTitleError")
+        return elements.renameInput.focus()
       }
 
       safeChromeBookmarksCall(
         "update",
         [uiState.currentBookmarkId, { title: newTitle }],
-        (result) => {
-          if (chrome.runtime.lastError) {
-            console.error(
-              "Error updating bookmark:",
-              chrome.runtime.lastError.message
-            )
-            showCustomPopup(
-              translations[language].errorUnexpected ||
-                "An unexpected error occurred",
-              "error",
-              false
-            )
-            elements.renamePopup.classList.add("hidden")
-            return
-          }
+        (updated) => {
+          if (!updated) return handleError("Update failed", "errorUnexpected")
 
-          if (result) {
-            getBookmarkTree((bookmarkTreeNodes) => {
-              if (bookmarkTreeNodes) {
-                renderFilteredBookmarks(bookmarkTreeNodes, elements)
-                showCustomPopup(
-                  translations[language].renameSuccess ||
-                    "Bookmark renamed successfully!",
-                  "success"
-                )
-                setCurrentBookmarkId(null)
-                elements.renamePopup.classList.add("hidden")
-              } else {
-                console.error("Failed to retrieve bookmark tree")
-                showCustomPopup(
-                  translations[language].errorUnexpected ||
-                    "An unexpected error occurred",
-                  "error",
-                  false
-                )
-              }
-            })
-          } else {
-            console.error("Bookmark update returned null")
-            showCustomPopup(
-              translations[language].errorUnexpected ||
-                "An unexpected error occurred",
-              "error",
-              false
-            )
-            elements.renamePopup.classList.add("hidden")
-          }
+          getBookmarkTree((nodes) => {
+            renderFilteredBookmarks(nodes, elements)
+            showCustomPopup(getTranslation("renameSuccess"), "success")
+            handleRenameCancel(e, elements)
+          })
         }
       )
     })
@@ -882,94 +562,50 @@ function handleRenameSave(e, elements) {
 }
 
 function handleRenameCancel(e, elements) {
-  e.stopPropagation()
+  e?.stopPropagation()
   elements.renamePopup.classList.add("hidden")
   elements.renameInput.classList.remove("error")
   elements.renameInput.value = ""
-  const language = localStorage.getItem("appLanguage") || "en"
-  elements.renameInput.placeholder = translations[language].renamePlaceholder
+  elements.renameInput.placeholder = getTranslation("renamePlaceholder")
   setCurrentBookmarkId(null)
 }
 
 function handleRenameInputKeypress(e, elements) {
-  if (e.key === "Enter") {
-    elements.renameSave.click()
-  }
+  if (e.key === "Enter") elements.renameSave.click()
 }
-
 function handleRenameInputKeydown(e, elements) {
-  if (e.key === "Escape") {
-    elements.renameCancel.click()
-  }
+  if (e.key === "Escape") elements.renameCancel.click()
 }
-
 function handleRenamePopupClick(e, elements) {
-  if (e.target === elements.renamePopup) {
-    elements.renameCancel.click()
-  }
+  if (e.target === elements.renamePopup) elements.renameCancel.click()
 }
 
 function handleClearRename(e, elements) {
   e.stopPropagation()
   elements.renameInput.value = ""
-  elements.renameInput.classList.remove("error")
-  const language = localStorage.getItem("appLanguage") || "en"
-  elements.renameInput.placeholder = translations[language].renamePlaceholder
   elements.renameInput.focus()
 }
 
 function handleAddToFolder(e, elements) {
   e.stopPropagation()
-  const bookmarkId = e.target.dataset.id
-  if (!bookmarkId) {
-    console.error("Bookmark ID is undefined in handleAddToFolder")
-    const language = localStorage.getItem("appLanguage") || "en"
-    showCustomPopup(translations[language].errorUnexpected, "error", false)
-    return
-  }
-
-  openAddToFolderPopup(elements, [bookmarkId])
+  if (e.target.dataset.id) openAddToFolderPopup(elements, [e.target.dataset.id])
 }
 
 function handleDeleteBookmark(e, elements) {
   e.stopPropagation()
-  const bookmarkId = e.target.dataset.id
-  const language = localStorage.getItem("appLanguage") || "en"
-  if (!bookmarkId) {
-    console.error("Bookmark ID is undefined in handleDeleteBookmark")
-    showCustomPopup(translations[language].errorUnexpected, "error", false)
-    return
-  }
+  const id = e.target.dataset.id
+  if (!id) return handleError("No ID", "errorUnexpected")
 
-  showCustomConfirm(translations[language].deleteConfirm, () => {
-    // Remove tags for the bookmark
-    if (uiState.bookmarkTags[bookmarkId]) {
-      delete uiState.bookmarkTags[bookmarkId]
-      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
-        customSaveUIState()
-        // Re-populate tag filter to reflect tag changes
-        populateTagFilter(elements)
-      })
+  showCustomConfirm(getTranslation("deleteConfirm"), () => {
+    if (uiState.bookmarkTags[id]) {
+      delete uiState.bookmarkTags[id]
+      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
     }
 
-    safeChromeBookmarksCall("remove", [bookmarkId], () => {
-      getBookmarkTree((bookmarkTreeNodes) => {
-        if (bookmarkTreeNodes) {
-          renderFilteredBookmarks(bookmarkTreeNodes, elements)
-          showCustomPopup(
-            translations[language].deleteBookmarkSuccess ||
-              "Bookmark deleted successfully!",
-            "success"
-          )
-        } else {
-          console.error("Failed to retrieve bookmark tree")
-          showCustomPopup(
-            translations[language].errorUnexpected ||
-              "An unexpected error occurred",
-            "error",
-            false
-          )
-        }
+    safeChromeBookmarksCall("remove", [id], () => {
+      getBookmarkTree((nodes) => {
+        renderFilteredBookmarks(nodes, elements)
+        showCustomPopup(getTranslation("deleteBookmarkSuccess"), "success")
       })
     })
   })
@@ -977,100 +613,41 @@ function handleDeleteBookmark(e, elements) {
 
 function handleFavoriteBookmark(e, elements) {
   e.stopPropagation()
-  const bookmarkId = e.target.dataset.id
-  const language = localStorage.getItem("appLanguage") || "en"
-  if (!bookmarkId) {
-    console.error("Bookmark ID is undefined in handleFavoriteBookmark")
-    showCustomPopup(translations[language].errorUnexpected, "error", false)
-    return
-  }
+  const id = e.target.dataset.id
+  if (!id) return handleError("No ID", "errorUnexpected")
 
-  safeChromeBookmarksCall("get", [bookmarkId], (bookmarks) => {
-    if (chrome.runtime.lastError) {
-      console.error("Error retrieving bookmark:", chrome.runtime.lastError)
-      showCustomPopup(
-        translations[language].errorUnexpected ||
-          "An unexpected error occurred",
-        "error",
-        false
-      )
-      return
-    }
-
-    const bookmark = bookmarks[0]
-    if (!bookmark) {
-      console.error("Bookmark not found for ID:", bookmarkId)
-      showCustomPopup(
-        translations[language].bookmarkNotFound || "Bookmark not found",
-        "error",
-        false
-      )
-      return
-    }
-
-    if (!bookmark.url) {
-      console.error("Selected item is not a bookmark, ID:", bookmarkId)
-      showCustomPopup(
-        translations[language].errorNotABookmark ||
-          "Selected item is not a bookmark",
-        "error",
-        false
-      )
-      return
-    }
+  safeChromeBookmarksCall("get", [id], (res) => {
+    if (!res?.[0]?.url)
+      return handleError("Invalid bookmark", "errorNotABookmark", false)
 
     chrome.storage.local.get("favoriteBookmarks", (data) => {
-      const favoriteBookmarks = data.favoriteBookmarks || {}
-      const isFavorite = !favoriteBookmarks[bookmarkId]
-      favoriteBookmarks[bookmarkId] = isFavorite
-      chrome.storage.local.set({ favoriteBookmarks }, () => {
-        if (chrome.runtime.lastError) {
-          console.error(
-            "Error saving favorite state:",
-            chrome.runtime.lastError
-          )
-          showCustomPopup(
-            translations[language].errorUnexpected ||
-              "An unexpected error occurred",
-            "error",
-            false
-          )
-          return
-        }
+      const favs = data.favoriteBookmarks || {}
+      const isFav = !favs[id]
+      favs[id] = isFav
 
-        const updateBookmarkInTree = (nodes) => {
-          for (const node of nodes) {
-            if (node.id === bookmarkId) {
-              node.isFavorite = isFavorite
+      chrome.storage.local.set({ favoriteBookmarks: favs }, () => {
+        // Update local state tree recursively
+        const updateTree = (nodes) =>
+          nodes.some((n) => {
+            if (n.id === id) {
+              n.isFavorite = isFav
               return true
             }
-            if (node.children) {
-              if (updateBookmarkInTree(node.children)) return true
-            }
-          }
-          return false
-        }
+            return n.children && updateTree(n.children)
+          })
+        updateTree(uiState.bookmarkTree)
 
-        updateBookmarkInTree(uiState.bookmarkTree)
-
-        const button = document.querySelector(
-          `.dropdown-btn[data-id="${bookmarkId}"]`
-        )
-        if (button) {
-          button.classList.toggle("favorited", isFavorite)
-          button.innerHTML = isFavorite
+        // UI Update
+        const btn = document.querySelector(`.dropdown-btn[data-id="${id}"]`)
+        if (btn) {
+          btn.classList.toggle("favorited", isFav)
+          btn.innerHTML = isFav
             ? '<i class="fas fa-star"></i>'
             : '<i class="fas fa-ellipsis-v"></i>'
         }
-
         renderFilteredBookmarks(uiState.bookmarkTree, elements)
-
         showCustomPopup(
-          isFavorite
-            ? translations[language].favoriteSuccess ||
-                "Bookmark added to favorites!"
-            : translations[language].unfavoriteSuccess ||
-                "Bookmark removed from favorites!",
+          getTranslation(isFav ? "favoriteSuccess" : "unfavoriteSuccess"),
           "success"
         )
       })
@@ -1080,172 +657,71 @@ function handleFavoriteBookmark(e, elements) {
 
 function handleBookmarkCheckbox(e, elements) {
   e.stopPropagation()
-  const bookmarkId = e.target.dataset.id
-  if (!bookmarkId) {
-    console.error("Bookmark ID is undefined in handleBookmarkCheckbox", {
-      checkbox: e.target,
-      dataset: e.target.dataset,
-    })
-    return
-  }
+  const id = e.target.dataset.id
+  if (!id) return
 
-  if (e.target.checked) {
-    uiState.selectedBookmarks.add(bookmarkId)
-  } else {
-    uiState.selectedBookmarks.delete(bookmarkId)
-  }
+  e.target.checked
+    ? uiState.selectedBookmarks.add(id)
+    : uiState.selectedBookmarks.delete(id)
 
-  elements.addToFolderButton.classList.toggle(
-    "hidden",
-    uiState.selectedBookmarks.size === 0
-  )
-  elements.deleteBookmarksButton.classList.toggle(
-    "hidden",
-    uiState.selectedBookmarks.size === 0
-  )
+  const hasSelected = uiState.selectedBookmarks.size > 0
+  elements.addToFolderButton.classList.toggle("hidden", !hasSelected)
+  elements.deleteBookmarksButton.classList.toggle("hidden", !hasSelected)
 }
 
 export function handleDeleteSelectedBookmarks(elements) {
-  const language = localStorage.getItem("appLanguage") || "en"
-  if (uiState.selectedBookmarks.size === 0) {
-    console.error("No bookmarks selected for deletion")
-    showCustomPopup(
-      translations[language].errorNoBookmarkSelected || "No bookmarks selected",
-      "error",
-      false
-    )
-    return
-  }
+  if (uiState.selectedBookmarks.size === 0)
+    return handleError("No selection", "errorNoBookmarkSelected", false)
 
-  showCustomConfirm(
-    translations[language].deleteBookmarksConfirm ||
-      "Are you sure you want to delete the selected bookmarks?",
-    () => {
-      // Remove tags for all selected bookmarks
-      Array.from(uiState.selectedBookmarks).forEach((bookmarkId) => {
-        if (uiState.bookmarkTags[bookmarkId]) {
-          delete uiState.bookmarkTags[bookmarkId]
-        }
-      })
+  showCustomConfirm(getTranslation("deleteBookmarksConfirm"), () => {
+    // Cleanup tags
+    uiState.selectedBookmarks.forEach((id) => delete uiState.bookmarkTags[id])
+    chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
 
-      chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags }, () => {
-        customSaveUIState()
-        populateTagFilter(elements)
-      })
-
-      const deletePromises = Array.from(uiState.selectedBookmarks).map(
-        (bookmarkId) => {
-          return new Promise((resolve) => {
-            safeChromeBookmarksCall("remove", [bookmarkId], () => {
-              resolve()
-            })
-          })
-        }
+    // Bulk delete
+    Promise.all(
+      Array.from(uiState.selectedBookmarks).map(
+        (id) =>
+          new Promise((resolve) =>
+            safeChromeBookmarksCall("remove", [id], resolve)
+          )
       )
+    ).then(() => {
+      uiState.selectedBookmarks.clear()
+      elements.addToFolderButton.classList.add("hidden")
+      elements.deleteBookmarksButton.classList.add("hidden")
+      document
+        .querySelectorAll(".bookmark-checkbox")
+        .forEach((cb) => (cb.checked = false))
 
-      Promise.all(deletePromises).then(() => {
-        uiState.selectedBookmarks.clear()
-        elements.addToFolderButton.classList.add("hidden")
-        elements.deleteBookmarksButton.classList.add("hidden")
-        document.querySelectorAll(".bookmark-checkbox").forEach((cb) => {
-          cb.checked = false
-        })
-        getBookmarkTree((bookmarkTreeNodes) => {
-          if (bookmarkTreeNodes) {
-            renderFilteredBookmarks(bookmarkTreeNodes, elements)
-            showCustomPopup(
-              translations[language].deleteBookmarksSuccess ||
-                "Bookmarks deleted successfully!",
-              "success"
-            )
-          } else {
-            console.error("Failed to retrieve bookmark tree")
-            showCustomPopup(
-              translations[language].errorUnexpected ||
-                "An unexpected error occurred",
-              "error",
-              false
-            )
-          }
-        })
+      getBookmarkTree((nodes) => {
+        renderFilteredBookmarks(nodes, elements)
+        showCustomPopup(getTranslation("deleteBookmarksSuccess"), "success")
       })
-    }
-  )
+    })
+  })
 }
 
 function handleRenameBookmark(e, elements) {
   e.stopPropagation()
-  const bookmarkId = e.target.dataset.id
-  const language = localStorage.getItem("appLanguage") || "en"
+  const id = e.target.dataset.id
+  if (!id) return handleError("No ID", "errorUnexpected")
 
-  if (!bookmarkId) {
-    console.error("Bookmark ID is undefined in handleRenameBookmark")
-    showCustomPopup(translations[language].errorUnexpected, "error", false)
-    return
-  }
+  if (!elements.renamePopup || !elements.renameInput)
+    return handleError("Popup missing", "popupNotFound")
 
-  const renamePopup = document.getElementById("rename-popup")
-  const renameInput = document.getElementById("rename-input")
-  if (!renamePopup || !renameInput) {
-    console.error("Rename popup or input element is missing", {
-      renamePopup: !!renamePopup,
-      renameInput: !!renameInput,
-    })
-    showCustomPopup(
-      translations[language].popupNotFound || "Rename popup not found",
-      "error",
-      false
-    )
-    return
-  }
+  setCurrentBookmarkId(id)
+  elements.renameInput.value = ""
+  elements.renameInput.classList.remove("error")
+  elements.renameInput.placeholder = getTranslation("renamePlaceholder")
+  elements.renamePopup.classList.remove("hidden")
+  elements.renameInput.focus()
 
-  setCurrentBookmarkId(bookmarkId)
-  renameInput.value = ""
-  renameInput.classList.remove("error")
-  renameInput.placeholder = translations[language].renamePlaceholder
-  renamePopup.classList.remove("hidden")
-  renameInput.focus()
-
-  safeChromeBookmarksCall("get", [bookmarkId], (bookmark) => {
-    if (chrome.runtime.lastError) {
-      console.error(
-        "Error retrieving bookmark:",
-        chrome.runtime.lastError.message
-      )
-      showCustomPopup(
-        translations[language].errorUnexpected ||
-          "An unexpected error occurred",
-        "error",
-        false
-      )
-      renamePopup.classList.add("hidden")
-      setCurrentBookmarkId(null)
-      return
-    }
-
-    if (bookmark && bookmark[0]) {
-      if (!bookmark[0].url) {
-        console.error("Selected item is not a bookmark, ID:", bookmarkId)
-        showCustomPopup(
-          translations[language].errorNotABookmark ||
-            "Selected item is not a bookmark",
-          "error",
-          false
-        )
-        renamePopup.classList.add("hidden")
-        setCurrentBookmarkId(null)
-        return
-      }
-      renameInput.value = bookmark[0].title || ""
-    } else {
-      console.error("Bookmark not found for ID:", bookmarkId)
-      showCustomPopup(
-        translations[language].bookmarkNotFound || "Bookmark not found",
-        "error",
-        false
-      )
-      renamePopup.classList.add("hidden")
-      setCurrentBookmarkId(null)
+  safeChromeBookmarksCall("get", [id], (res) => {
+    if (res?.[0]?.url) elements.renameInput.value = res[0].title || ""
+    else {
+      handleError("Not found", "bookmarkNotFound", false)
+      handleRenameCancel(null, elements)
     }
   })
 }
