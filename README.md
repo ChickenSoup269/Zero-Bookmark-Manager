@@ -1,4 +1,8 @@
+<div align="center">
+
 # Bookmark Manager Extension <img src="./icons/icon.png" alt="logoEX" width="30">
+
+</div>
 
 <div align="center">
 <img src="./images/logo.png" alt="logo" width="520">
