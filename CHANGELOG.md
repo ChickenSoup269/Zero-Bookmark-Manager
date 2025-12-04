@@ -19,11 +19,11 @@
 - README formatting improved and version badge added.
 - Updated README images for better visibility and consistency.
 
-### [1.1.1] - [???]
+### [1.1.1] - [2025-11-07]
 
 - Added Card View
 
-### [1.1.0] - 2025-08-14
+### [1.1.0] - [2025-08-14]
 
 - Added webView (edit in new tab)
 - Added Chatbot - Gemini (Beta)
@@ -50,7 +50,7 @@
 - Updated Export options — now supports CSV (Excel/Sheets)
 - Updated Fonts (added AnonymicePro, ProFont, JetBrains )
 
-### [1.0.3] - 2025-09-02
+### [1.0.3] - [2025-09-02]
 
 - Added light/dark theme switching (auto-detected)
 - Added English/Vietnamese language support with dynamic UI updates
@@ -68,10 +68,10 @@
 - Fixed missing text for Delete Bookmarks button with proper translation support
 - Improved checkbox selection handling for individual and Select All interactions
 
-### [1.0.2] - 2025-08-15
+### [1.0.2] - [2025-08-15]
 
 - Removed unused "identity" permission from manifest.json.
 
-### [1.0.1] - 2025-08-12
+### [1.0.1] - [2025-08-12]
 
 - Base bookmarks
