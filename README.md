@@ -117,6 +117,7 @@ Install Bookmark-Manager
 | `Edit in new tabs`       | Use extension with web view                                                                 |
 | `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs |
 | `Tags`                   | Choose a sorting tags option                                                                |
+| `Pin to top`             | Choose a bookmark to pin on top                                                             |
 | `Chatbot`                | You can check Help Guide in chatbot with icon [?] (beta version)                            |
 
 ## How to get Gemini APi ?
@@ -124,7 +125,6 @@ Install Bookmark-Manager
 1. First you need to have Gemini API key (required) and its model name
 2. Get API key at this website
    https://aistudio.google.com/api-keys
-
 3. Select your model here and get API key and curl http you're done
 
 Video tutorial

@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       // Chỉ chạy trong extension context
       const manifest = chrome.runtime.getManifest()
-      versionElement.textContent = manifest.version || "1.0.0"
+      versionElement.textContent = manifest.version || "1.1.2"
     } catch (err) {
       console.warn("Unable to load version from manifest:", err)
       versionElement.textContent = "1.0.0"

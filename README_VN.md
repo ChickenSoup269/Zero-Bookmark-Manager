@@ -97,6 +97,7 @@ Cài đặt Bookmark-Manager
 | `Chỉnh sửa trong tab mới`        | Sử dụng tiện ích trong chế độ xem web.                                                                                |
 | `Cài đặt lưu trữ ở local chrome` | Lưu dữ liệu tùy chỉnh cho tìm kiếm, chọn, sắp xếp, chế độ xem, trạng thái thư mục thu gọn, thẻ, và checkbox.          |
 | `Tags`                           | Chọn tùy chọn sắp xếp theo thẻ.                                                                                       |
+| `Ghim lên đầu`                   | Chọn bookmark ghim lên đầu trang                                                                                      |
 | `Chatbot`                        | Xem hướng dẫn trợ giúp trong chatbot (biểu tượng [?]). (beta version)                                                 |
 
 ## How to get Gemini APi ?
