@@ -6,18 +6,26 @@
 
 ## Added
 
-- Web Preview Modal for viewing websites inside Bookmark Detail.
-- Properties Modal for displaying detailed bookmark information.
+- Added bookmark component and utility functions.
+- Added version 1.1.2 to the CHANGELOG and introduced web preview & properties modals.
+- Added version badge to the README.
+- Added modals for web preview and properties in the bookmark detail view.
 
 ## Improved
 
-- Refactored overall code structure for better readability and maintainability.
-- Enhanced Bookmark Detail View for a more intuitive and polished user experience.
+- Improved README layout for better visual alignment.
+- Refactored code structure for better readability and maintainability (multiple iterations).
+- Enhanced bookmark detail popup (openBookmarkDetailPopup) with better error handling.
+- Improved renderCardView with better bookmark handling and smoother drag-and-drop interactions.
+- Enhanced README images for improved clarity and consistency.
+- Updated footer to display a dynamic version number.
 
 ## Updated
 
-- README formatting improved and version badge added.
-- Updated README images for better visibility and consistency.
+- Updated changelog dates for consistency.
+- Updated README and manifest.json (version bumped to 1.1.2).
+- Updated CHANGELOG and related UI components.
+- Removed "tabs" permission from manifest.json.
 
 ### [1.1.1] - [2025-11-07]
 
