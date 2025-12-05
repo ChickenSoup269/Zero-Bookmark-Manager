@@ -131,6 +131,8 @@ function handleMenuItemClick(e, elements) {
 
 // --- POPUP HANDLERS ---
 
+// Thay thế hàm này trong components/controller/bookmarkAction.js
+
 export function openBookmarkDetailPopup(bookmarkId, elements) {
   const popup = document.getElementById("bookmark-detail-popup")
   if (!popup) return handleError("Detail popup missing", "errorUnexpected")
@@ -142,10 +144,13 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     tags: document.getElementById("detail-tags"),
     close: popup.querySelector(".close-modal"),
     thumb: popup.querySelector("#detail-thumbnail"),
+    modalFooter: popup.querySelector(".modal-footer .button"), // Nút đóng ở dưới
   }
 
-  if (Object.values(els).some((el) => !el))
-    return handleError("Detail elements missing", "errorUnexpected")
+  // Clear dữ liệu cũ trước khi load mới (tránh hiện lại ảnh của bookmark trước)
+  els.title.textContent = "Loading..."
+  els.thumb.src = "./images/loading-spinner.gif" // Hoặc ảnh placeholder
+  els.thumb.style.display = "none"
 
   safeChromeBookmarksCall("get", [bookmarkId], (results) => {
     if (chrome.runtime.lastError || !results?.[0]) {
@@ -156,55 +161,82 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     }
 
     const b = results[0]
-    const defaultThumb = chrome.runtime.getURL("images/default-favicon.png")
+    const defaultThumb = "./images/default-favicon.png" // Đảm bảo đường dẫn này đúng trong project của bạn
 
-    // Setup Thumbnail
-    const setThumb = (src) => {
-      els.thumb.src = src
-      els.thumb.style.display = src === defaultThumb ? "none" : "block"
-    }
-
+    // --- XỬ LÝ THUMBNAIL ---
+    // Dùng service của WordPress để lấy ảnh chụp màn hình web
     let thumbUrl = defaultThumb
-    if (b.url?.startsWith("http")) {
+    if (b.url && b.url.startsWith("http")) {
       thumbUrl = `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(
         b.url
-      )}?w=1000`
+      )}?w=800`
     }
 
-    setThumb(thumbUrl)
-    els.thumb.onerror = () => setThumb(defaultThumb)
+    // Hiển thị ảnh
+    els.thumb.style.display = "block"
+    els.thumb.src = thumbUrl
+
+    // Nếu tải ảnh lỗi (web chặn hoặc không tồn tại), fallback về icon mặc định
+    els.thumb.onerror = () => {
+      // Nếu load mshots lỗi, thử dùng Google Favicon chất lượng cao
+      els.thumb.src = `https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(
+        b.url
+      )}`
+      // Nếu vẫn lỗi nữa thì về default
+      els.thumb.onerror = () => {
+        els.thumb.src = defaultThumb
+      }
+    }
     els.thumb.alt = b.title || "Thumbnail"
 
-    // Setup UI Data
+    // --- SETUP TEXT DATA ---
     els.title.textContent = b.title || b.url || getTranslation("notAvailable")
     els.url.textContent = b.url || getTranslation("notAvailable")
+    els.url.href = b.url // Biến URL thành link click được
+    els.url.target = "_blank"
+
     els.date.textContent = b.dateAdded
       ? new Date(b.dateAdded).toLocaleString()
       : getTranslation("notAvailable")
 
+    // --- SETUP TAGS ---
     const tagList = uiState.bookmarkTags[bookmarkId] || []
-    els.tags.innerHTML = tagList.length
-      ? tagList
-          .map(
-            (tag) => `
-          <span class="bookmark-tag" style="background-color: ${
-            uiState.tagColors[tag] || "#ccc"
-          }; color: ${
-              uiState.tagTextColors?.[tag] || "#fff"
-            }; padding: 4px 10px; border-radius: 6px; font-size: 12px; margin: 0 8px 8px 0; display: inline-block;">
+    if (tagList.length > 0) {
+      els.tags.innerHTML = tagList
+        .map(
+          (tag) => `
+          <span class="bookmark-tag" style="
+            background-color: ${uiState.tagColors[tag] || "#ccc"}; 
+            color: ${uiState.tagTextColors?.[tag] || "#fff"}; 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            margin: 0 4px 4px 0; 
+            display: inline-block;">
             ${tag}
-          </span>`
-          )
-          .join("")
-      : getTranslation("notAvailable")
+          </span>
+        `
+        )
+        .join("")
+    } else {
+      els.tags.innerHTML = `<span style="color: var(--text-secondary); font-style: italic;">${getTranslation(
+        "noTags",
+        "No tags"
+      )}</span>`
+    }
 
-    // Setup Magnify & Overlay
+    // Setup Magnify (Phóng to ảnh)
     setupThumbnailInteraction(els.thumb)
 
-    // Show & Close Logic
+    // --- SHOW POPUP ---
     popup.classList.remove("hidden")
+
     const close = () => popup.classList.add("hidden")
-    els.close.onclick = close
+
+    // Gắn sự kiện đóng (đảm bảo xóa listener cũ để không bị double click)
+    attachListener(els.close, "click", close)
+    if (els.modalFooter) attachListener(els.modalFooter, "click", close)
+
     popup.onclick = (e) => e.target === popup && close()
 
     const escHandler = (e) => {
@@ -216,7 +248,6 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     document.addEventListener("keydown", escHandler)
   })
 }
-
 function setupThumbnailInteraction(thumbEl) {
   const container = thumbEl.parentElement
   if (!container.querySelector(".magnify-icon")) {
@@ -461,42 +492,109 @@ function handleEditTagUI(
   renderFn,
   updateDropdownFn
 ) {
+  // 1. Lưu lại HTML cũ để phục hồi nếu bấm Cancel
+  const originalHTML = container.innerHTML
+
+  // 2. Tạo giao diện Edit
+  container.classList.add("editing-container") // Đánh dấu đang edit
+  container.style.display = "flex"
+  container.style.alignItems = "center"
+  container.style.gap = "4px"
+  container.innerHTML = "" // Xóa nội dung cũ
+
   const input = document.createElement("input")
   input.value = oldTag
   input.style.cssText =
-    "padding: 4px 8px; border-radius: 6px; width: 100px; font-size: 12px;"
+    "padding: 4px 6px; border-radius: 4px; border: 1px solid var(--accent-color); width: 80px; font-size: 12px;"
+
+  // Tự động focus và bôi đen text
+  setTimeout(() => input.select(), 0)
 
   const saveBtn = document.createElement("button")
-  saveBtn.textContent = "Save"
+  saveBtn.innerHTML = "✓" // Icon tick
+  saveBtn.title = "Save"
   saveBtn.style.cssText =
-    "background: var(--primary-color); color: #fff; border: none; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; margin-left: 4px;"
+    "background: var(--success-color, #28a745); color: #fff; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;"
 
-  container.innerHTML = ""
-  container.append(input, saveBtn)
+  const cancelBtn = document.createElement("button")
+  cancelBtn.innerHTML = "✕" // Icon x
+  cancelBtn.title = "Cancel"
+  cancelBtn.style.cssText =
+    "background: var(--text-danger, #dc3545); color: #fff; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;"
 
-  saveBtn.onclick = () => {
+  container.append(input, saveBtn, cancelBtn)
+
+  // 3. Xử lý nút Cancel
+  cancelBtn.onclick = (e) => {
+    e.stopPropagation()
+    container.classList.remove("editing-container")
+    container.innerHTML = originalHTML // Khôi phục giao diện cũ
+  }
+
+  // 4. Xử lý nút Save
+  saveBtn.onclick = (e) => {
+    e.stopPropagation()
     const newTag = input.value.trim()
-    if (!newTag) return handleError("Empty tag", "tagEmpty")
-    if (newTag === oldTag) return renderFn()
 
-    // Update all usage
-    Object.keys(uiState.bookmarkTags).forEach((id) => {
-      if (uiState.bookmarkTags[id].includes(oldTag)) {
-        uiState.bookmarkTags[id] = uiState.bookmarkTags[id].map((t) =>
-          t === oldTag ? newTag : t
-        )
+    // Validate
+    if (!newTag)
+      return showCustomPopup(
+        getTranslation("tagEmpty", "Tag cannot be empty"),
+        "error",
+        true
+      )
+    if (newTag === oldTag) {
+      // Không thay đổi gì thì quay lại
+      cancelBtn.click()
+      return
+    }
+
+    // --- LOGIC ĐỔI TÊN TOÀN CỤC (GLOBAL RENAME) ---
+
+    // Bước A: Cập nhật danh sách bookmark
+    // Duyệt qua tất cả bookmark đang lưu trong state
+    Object.keys(uiState.bookmarkTags).forEach((bId) => {
+      const tags = uiState.bookmarkTags[bId]
+      if (tags.includes(oldTag)) {
+        // 1. Xóa tag cũ
+        const newTags = tags.filter((t) => t !== oldTag)
+
+        // 2. Thêm tag mới (nếu chưa có) -> Tránh trùng lặp ['TagA', 'TagA']
+        if (!newTags.includes(newTag)) {
+          newTags.push(newTag)
+        }
+
+        uiState.bookmarkTags[bId] = newTags
       }
     })
 
-    uiState.tagColors[newTag] = uiState.tagColors[oldTag]
-    uiState.tagTextColors[newTag] = uiState.tagTextColors?.[oldTag]
+    // Bước B: Cập nhật màu sắc (Ưu tiên màu của Tag Mới nếu nó đã tồn tại)
+    if (!uiState.tagColors[newTag]) {
+      // Nếu tag mới chưa có màu -> Thừa kế màu tag cũ
+      uiState.tagColors[newTag] = uiState.tagColors[oldTag]
+    }
+    // Xóa màu tag cũ
     delete uiState.tagColors[oldTag]
-    if (uiState.tagTextColors) delete uiState.tagTextColors[oldTag]
 
+    // Tương tự với Text Color
+    if (uiState.tagTextColors) {
+      if (!uiState.tagTextColors[newTag]) {
+        uiState.tagTextColors[newTag] = uiState.tagTextColors[oldTag]
+      }
+      delete uiState.tagTextColors[oldTag]
+    }
+
+    // Bước C: Lưu và Render lại
     saveFn(() => {
-      updateDropdownFn()
-      renderFn()
+      updateDropdownFn() // Cập nhật dropdown chọn tag
+      renderFn() // Render lại danh sách tag trong popup
     })
+  }
+
+  // Hỗ trợ bấm Enter để save
+  input.onkeydown = (e) => {
+    if (e.key === "Enter") saveBtn.click()
+    if (e.key === "Escape") cancelBtn.click()
   }
 }
 
