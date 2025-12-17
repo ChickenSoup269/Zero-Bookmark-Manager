@@ -5,6 +5,7 @@ import {
   updateUILanguage,
   updateTheme,
   renderFilteredBookmarks,
+  handleCheckHealth,
 } from "../ui.js"
 import { uiState, saveUIState } from "../state.js"
 import { openRenameFolderPopup } from "./renameFolder.js"
@@ -222,6 +223,16 @@ export function setupUIControlListeners(elements) {
     e.stopPropagation()
     elements.settingsMenu.classList.toggle("hidden")
   })
+
+  // Nút kiểm tra tình trạng link (Check Links)
+  if (elements.checkHealthButton) {
+    elements.checkHealthButton.addEventListener("click", (e) => {
+      e.stopPropagation()
+      handleCheckHealth(elements)
+    })
+  } else {
+    console.warn("check-health-btn element not found")
+  }
 
   // elements.renameFolderOption.addEventListener("click", () => {
   //   openRenameFolderPopup(elements, "")

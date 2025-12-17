@@ -443,6 +443,49 @@ html {
   box-shadow: var(--shadow-sm);
 }
 
+/* Warning / utility buttons */
+.button-warning {
+  background: linear-gradient(135deg, #ffb347, #ff7b47);
+  color: #1f1305;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.button-warning i {
+  font-size: 0.85rem;
+}
+
+.button-warning:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+}
+
+.button-warning.is-loading {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+.button-warning.is-loading i {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 #create-folder-title,
 #add-to-folder-title,
 #rename-folder-title,

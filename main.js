@@ -73,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tagFilterToggle: document.getElementById("tag-filter-toggle"),
     tagFilterDropdown: document.getElementById("tag-filter-dropdown"),
     tagFilterOptions: document.getElementById("tag-filter-options"),
+    checkHealthButton: document.getElementById("check-health-btn"),
   }
 
   const init = () => {

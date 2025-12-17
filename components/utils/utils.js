@@ -509,13 +509,28 @@ export function showCustomPopup(
   }
 
   try {
-    title.textContent =
-      type === "success"
-        ? translations[language].successTitle
-        : translations[language].errorTitle
+    // Thiết lập tiêu đề theo loại popup
+    if (type === "loading") {
+      title.textContent =
+        language === "vi" ? "Đang xử lý..." : "Loading..."
+    } else if (type === "success") {
+      title.textContent = translations[language].successTitle
+    } else if (type === "error") {
+      title.textContent = translations[language].errorTitle
+    } else {
+      // info, warning, ...
+      title.textContent =
+        language === "vi" ? "Thông báo" : "Notification"
+    }
 
     messageEl.textContent = message
     popup.classList.remove("hidden")
+
+    // Áp dụng class theo type để có thể style khác nhau (success, error, loading, warning,...)
+    popup.classList.remove("success", "error", "loading", "warning", "info")
+    if (type) {
+      popup.classList.add(type)
+    }
 
     const currentTheme =
       document.documentElement.getAttribute("data-theme") || "light"
@@ -564,7 +579,7 @@ export function showCustomPopup(
 
     document.addEventListener("keydown", handleKeydown)
 
-    if (type === "success" && autoClose && !onConfirm) {
+    if ((type === "success" || type === "info") && autoClose && !onConfirm) {
       setTimeout(closePopup, 5000)
     }
   } catch (error) {
