@@ -40,13 +40,16 @@ function getStorage(keys) {
 
 // Load saved tags and colors from storage
 export async function loadTags() {
-  const data = await getStorage(["bookmarkTags", "tagColors"])
+  const data = await getStorage(["bookmarkTags", "tagColors", "tagTextColors"])
   if (data.tagColors) {
     tagColors = { ...tagColors, ...data.tagColors }
   }
   // Cập nhật uiState nếu cần thiết để đồng bộ
   if (data.bookmarkTags) {
     uiState.bookmarkTags = data.bookmarkTags
+  }
+  if (data.tagTextColors) {
+    uiState.tagTextColors = data.tagTextColors
   }
 }
 

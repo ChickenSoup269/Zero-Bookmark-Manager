@@ -470,7 +470,6 @@ html {
 
 .button-warning.is-loading {
   cursor: wait;
-  opacity: 0.8;
 }
 
 .button-warning.is-loading i {
@@ -1425,8 +1424,8 @@ html {
 .add-tag-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin: 16px 0;
 }
 
 #new-tag-input {

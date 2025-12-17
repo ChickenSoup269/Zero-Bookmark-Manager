@@ -1,4 +1,4 @@
-// health/health.js
+ 
 import { uiState } from "../state.js" // Import state để cập nhật trạng thái
 import { showCustomPopup } from "../utils/utils.js"
 
@@ -34,6 +34,51 @@ async function checkUrlStatus(url) {
   }
 }
 
+// Phân tích mức độ "legit" của URL (chỉ heuristic, không tuyệt đối)
+function analyzeUrlRisk(url) {
+  try {
+    const u = new URL(url)
+    const host = u.hostname.toLowerCase()
+    const full = url.toLowerCase()
+
+    let score = 0
+
+    // HTTP không có HTTPS -> trừ điểm
+    if (u.protocol === "http:") score += 2
+
+    // Domain quá dài hoặc nhiều dấu gạch ngang
+    if (host.length > 30) score += 1
+    if (host.split("-").length > 3) score += 1
+
+    // Punycode (thường dùng fake domain)
+    if (host.includes("xn--")) score += 2
+
+    // Một số TLD thường bị lạm dụng (chỉ heuristic)
+    const suspiciousTlds = [".ru", ".cn", ".tk", ".top", ".xyz", ".click", ".link"]
+    if (suspiciousTlds.some((tld) => host.endsWith(tld))) score += 2
+
+    // Ký tự @ trong URL (thường dùng cho phishing)
+    if (full.includes("@")) score += 2
+
+    // Query chứa từ khóa login / verify / secure + nhiều tham số
+    const q = u.search.toLowerCase()
+    const riskyKeywords = ["login", "verify", "update", "secure", "account"]
+    if (
+      q &&
+      riskyKeywords.some((k) => q.includes(k)) &&
+      q.split("&").length > 3
+    ) {
+      score += 2
+    }
+
+    // Ngưỡng: score >= 4 coi là "mờ ám"
+    return score >= 4 ? "alive_suspicious" : "alive_safe"
+  } catch {
+    // Nếu parse URL lỗi, coi như an toàn vừa phải
+    return "alive_safe"
+  }
+}
+
 /**
  * Hàm chính để kiểm tra danh sách bookmarks
  * @param {Array} bookmarks - Danh sách các bookmark object
@@ -64,7 +109,8 @@ export async function checkBrokenLinks(bookmarks, onProgress, onComplete) {
     const isAlive = await checkUrlStatus(bookmark.url)
 
     if (isAlive) {
-      uiState.healthStatus[bookmark.id] = "alive"
+      // Lưu trạng thái chi tiết: safe / suspicious
+      uiState.healthStatus[bookmark.id] = analyzeUrlRisk(bookmark.url)
     } else {
       uiState.healthStatus[bookmark.id] = "dead"
       brokenCount++

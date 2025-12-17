@@ -21,17 +21,35 @@ function getFaviconUrl(url) {
   }
 }
 
+function getContrastColor(hex) {
+  if (!hex || typeof hex !== "string" || !hex.startsWith("#")) return "#ffffff"
+  const safe = hex.replace("#", "")
+  if (safe.length !== 6) return "#ffffff"
+
+  const r = parseInt(safe.substr(0, 2), 16)
+  const g = parseInt(safe.substr(2, 2), 16)
+  const b = parseInt(safe.substr(4, 2), 16)
+
+  // Công thức contrast phổ biến (YIQ)
+  return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? "#000000" : "#ffffff"
+}
+
 function createTagsHTML(tags, styleOverride = "") {
   if (!tags || tags.length === 0) return ""
   return tags
-    .map(
-      (tag) => `
+    .map((tag) => {
+      const bg = uiState.tagColors[tag] || "#ccc"
+      const textColor =
+        (uiState.tagTextColors && uiState.tagTextColors[tag]) ||
+        getContrastColor(bg)
+
+      return `
     <span class="bookmark-tag" style="
-      background-color: ${uiState.tagColors[tag] || "#ccc"};
-      color: white; 
-      padding: 2px 6px; 
-      border-radius: 4px; 
-      font-size: 10px; 
+      background-color: ${bg};
+      color: ${textColor};
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
       margin-right: 4px;
       display: inline-block;
       ${styleOverride}
@@ -39,7 +57,7 @@ function createTagsHTML(tags, styleOverride = "") {
       ${tag}
     </span>
   `
-    )
+    })
     .join("")
 }
 
@@ -58,14 +76,27 @@ function renderHealthIcon(bookmarkId) {
     language === "vi"
       ? "Liên kết có thể đã chết hoặc website không phản hồi."
       : "Link might be dead or the website is not responding."
+  const safeTitle =
+    language === "vi"
+      ? "Trang web có vẻ hợp lệ."
+      : "Site looks likely safe."
+  const suspiciousTitle =
+    language === "vi"
+      ? "Trang web trông có vẻ mờ ám (dựa trên một số dấu hiệu phổ biến). Hãy cẩn thận!"
+      : "Site looks suspicious based on common patterns. Proceed with caution!"
 
   if (status === "checking") {
-    return `<span class="health-icon checking" title="${checkingTitle}" style="margin-left:5px; font-size:12px; cursor:progress;">⏳</span>`
+    return `<span class="health-icon checking" title="${checkingTitle}"><i class="fas fa-spinner fa-spin"></i></span>`
   }
   if (status === "dead") {
-    return `<span class="health-icon dead" title="${deadTitle}" style="margin-left:5px; color:#ff4d4f; font-size:12px; cursor:help;">⚠️</span>`
+    return `<span class="health-icon dead" title="${deadTitle}"><i class="fas fa-exclamation-triangle"></i></span>`
   }
-  // Nếu 'alive' thì không hiện gì cho đỡ rối mắt, hoặc bạn có thể thêm check xanh tại đây
+  if (status === "alive_suspicious") {
+    return `<span class="health-icon suspicious" title="${suspiciousTitle}"><i class="fas fa-radiation-alt"></i></span>`
+  }
+  if (status === "alive_safe") {
+    return `<span class="health-icon safe" title="${safeTitle}"><i class="fas fa-shield-alt"></i></span>`
+  }
   return ""
 }
 

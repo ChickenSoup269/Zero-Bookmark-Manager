@@ -1,12 +1,14 @@
 // components/export/csv.js
 import { flattenBookmarks } from "../bookmarks.js"
+import { uiState } from "../state.js"
 
 export async function exportToCSV(
   bookmarkTreeNodes,
   includeCreationDates,
   includeFolderModDates,
   includeIconData,
-  includeFolderPath
+  includeFolderPath,
+  exportOnlySelected
 ) {
   try {
     const { bookmarkAccessCounts, bookmarkTags } =
@@ -18,9 +20,18 @@ export async function exportToCSV(
       throw new Error("Invalid bookmarkTreeNodes: must be an array")
     }
 
-    const allBookmarks = flattenBookmarks(bookmarkTreeNodes).filter(
+    const flatBookmarks = flattenBookmarks(bookmarkTreeNodes).filter(
       (b) => b.url
     )
+
+    let allBookmarks = flatBookmarks
+
+    // Nếu bật exportOnlySelected và có bookmark đang được check trong UI,
+    // chỉ export những bookmark đó.
+    if (exportOnlySelected && uiState.selectedBookmarks?.size > 0) {
+      const selectedIds = new Set(uiState.selectedBookmarks)
+      allBookmarks = flatBookmarks.filter((b) => selectedIds.has(b.id))
+    }
 
     // Function to fetch Base64 favicon
     async function getFaviconBase64(url) {

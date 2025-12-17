@@ -13,6 +13,7 @@ export const uiState = {
   checkboxesVisible: false,
   bookmarkTags: {},
   tagColors: {},
+  tagTextColors: {},
   collapsedFolders: new Set(),
   selectedTags: [],
 }
@@ -60,6 +61,7 @@ export function saveUIState() {
     checkboxesVisible: uiState.checkboxesVisible,
     bookmarkTags: uiState.bookmarkTags,
     tagColors: uiState.tagColors,
+    tagTextColors: uiState.tagTextColors,
   }
   chrome.storage.local.set(state, () => {
     if (chrome.runtime.lastError) {
@@ -71,7 +73,7 @@ export function saveUIState() {
 
 export function loadUIState(callback) {
   chrome.storage.local.get(
-    ["uiState", "checkboxesVisible", "bookmarkTags", "tagColors"],
+    ["uiState", "checkboxesVisible", "bookmarkTags", "tagColors", "tagTextColors"],
     (result) => {
       if (chrome.runtime.lastError) {
         console.error("Error loading UI state:", chrome.runtime.lastError)
@@ -90,6 +92,7 @@ export function loadUIState(callback) {
       uiState.checkboxesVisible = result.checkboxesVisible || false
       uiState.bookmarkTags = result.bookmarkTags || {}
       uiState.tagColors = result.tagColors || {}
+      uiState.tagTextColors = result.tagTextColors || {}
 
       if (callback) callback()
     }

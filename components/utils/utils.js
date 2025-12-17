@@ -219,6 +219,11 @@ export const translations = {
     detailFolder: "Folder",
     includeFolderPath: "Include Folder Path (for CSV)",
     includeFolderPathDescription: "Add full folder path (for CSV)",
+    includeIconData: "Include icon data (Base64)",
+    includeIconDataDescription: "Add favicon data to bookmarks",
+    exportOnlySelected: "Only export selected bookmarks",
+    exportOnlySelectedDescription:
+      "If any bookmarks are checked in the main list, export only those",
     pinSuccess: "Bookmark pinned!",
     unpinSuccess: "Bookmark unpinned!",
     pinToTop: "Pin to Top",
@@ -441,6 +446,11 @@ export const translations = {
     detailFolder: "Thư mục",
     includeFolderPath: "Bao gồm Đường dẫn Thư mục (cho CSV)",
     includeFolderPathDescription: "Thêm đường dẫn đầy đủ của thư mục (cho CSV)",
+    includeIconData: "Bao gồm dữ liệu icon (Base64)",
+    includeIconDataDescription: "Thêm favicon cho từng bookmark",
+    exportOnlySelected: "Chỉ xuất các bookmark đã chọn",
+    exportOnlySelectedDescription:
+      "Nếu có bookmark được tick trong danh sách chính, chỉ xuất những bookmark đó",
     pinSuccess: "Đã ghim bookmark!",
     unpinSuccess: "Đã bỏ ghim bookmark!",
     pinToTop: "Ghim lên Đầu",

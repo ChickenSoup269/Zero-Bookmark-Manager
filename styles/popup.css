@@ -257,6 +257,10 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+.bookmark-title {
+  text-decoration: none;
+}
+
 .detail-bookmark-item .bookmark-title {
   font-size: 16px;
   font-weight: 600;

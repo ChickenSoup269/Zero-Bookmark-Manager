@@ -305,25 +305,27 @@ async function openManageTagsPopup(bookmarkId) {
   let textColorInput = document.getElementById("new-tag-text-color")
   let tagSelect = document.querySelector(".existing-tags-select")
 
+  // Input chọn màu chữ (text color) đơn giản, không quá màu mè
   if (!textColorInput) {
     textColorInput = document.createElement("input")
     textColorInput.type = "color"
     textColorInput.id = "new-tag-text-color"
     textColorInput.value = "#ffffff"
     textColorInput.style.cssText =
-      "padding: 8px; margin-bottom: 12px; border-radius: 6px; width: 100%;"
-    addTagContainer.before(textColorInput)
+      "padding: 4px; border-radius: 6px; width: 100%; margin-top: 4px;"
+    addTagContainer.appendChild(textColorInput)
   }
 
+  // Dropdown chọn nhanh tag đã tồn tại (màu đại diện là màu chữ thôi)
   if (!tagSelect) {
     tagSelect = document.createElement("select")
     tagSelect.className = "select existing-tags-select"
     tagSelect.style.cssText =
-      "width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);"
-    addTagContainer.before(tagSelect)
+      "width: 100%; padding: 8px; border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary); margin-top: 8px;"
+    addTagContainer.appendChild(tagSelect)
   }
 
-  // Predefined Colors
+  // Predefined Colors (màu nền tag, hiển thị gọn)
   if (!popup.querySelector(".color-buttons-container")) {
     const colors = [
       "#ecf2f8",

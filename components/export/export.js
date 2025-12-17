@@ -21,6 +21,24 @@ export function setupExportImportListeners(elements) {
           ? "dark"
           : "light"
         : appTheme
+
+    // Đọc cấu hình export lần trước (nếu có)
+    const {
+      exportFormat: storedExportFormat,
+      exportIncludeIconData = false,
+      exportIncludeCreationDates = false,
+      exportIncludeFolderModDates = false,
+      exportIncludeFolderPath = false,
+      exportOnlySelected = false,
+    } = await chrome.storage.local.get([
+      "exportFormat",
+      "exportIncludeIconData",
+      "exportIncludeCreationDates",
+      "exportIncludeFolderModDates",
+      "exportIncludeFolderPath",
+      "exportOnlySelected",
+    ])
+
     const popup = document.createElement("div")
     popup.className = "popup"
     popup.setAttribute("data-theme", currentTheme)
@@ -90,11 +108,14 @@ export function setupExportImportListeners(elements) {
         </div>
       </div>
       
-      <div class="form-section">
-        <label class="form-label">${
-          translations[language].advancedSettings || "Advanced Settings"
-        }</label>
-        <div class="settings-grid">
+      <div class="form-section advanced-section">
+        <button type="button" class="advanced-toggle" id="advancedToggle">
+          <span class="advanced-title">${
+            translations[language].advancedSettings || "Advanced Settings"
+          }</span>
+          <span class="advanced-arrow" id="advancedArrow">▼</span>
+        </button>
+        <div class="settings-grid" id="advancedSettings">
           <div class="setting-card">
             <div class="setting-toggle">
               <input type="checkbox" id="includeIconData" class="toggle-input">
@@ -170,7 +191,26 @@ export function setupExportImportListeners(elements) {
               }</p>
             </div>
           </div>
+          <div class="setting-card">
+            <div class="setting-toggle">
+              <input type="checkbox" id="exportOnlySelected" class="toggle-input">
+              <label for="exportOnlySelected" class="toggle-label">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-info">
+              <h4>${
+                translations[language].exportOnlySelected ||
+                "Only export selected bookmarks"
+              }</h4>
+              <p>${
+                translations[language].exportOnlySelectedDescription ||
+                "If any bookmarks are checked in the main list, export only those"
+              }</p>
+            </div>
         </div>
+        </div>
+      
       </div>
       
       <div class="popup-footer">
@@ -196,15 +236,55 @@ export function setupExportImportListeners(elements) {
 
     // Format selection handling
     const formatCards = popup.querySelectorAll(".format-card")
-    let selectedFormat = "json"
+    let selectedFormat = storedExportFormat || "json"
 
+    // Apply saved format card state
     formatCards.forEach((card) => {
+      const isActive = card.dataset.format === selectedFormat
+      card.classList.toggle("active", isActive)
       card.addEventListener("click", () => {
         formatCards.forEach((c) => c.classList.remove("active"))
         card.classList.add("active")
         selectedFormat = card.dataset.format
       })
     })
+
+    // Apply saved checkbox states
+    const includeIconInput = document.getElementById("includeIconData")
+    const includeCreationInput = document.getElementById("includeCreationDates")
+    const includeFolderModInput = document.getElementById(
+      "includeFolderModDates"
+    )
+    const includeFolderPathInput = document.getElementById("includeFolderPath")
+    const exportOnlySelectedInput =
+      document.getElementById("exportOnlySelected")
+
+    if (includeIconInput) includeIconInput.checked = exportIncludeIconData
+    if (includeCreationInput)
+      includeCreationInput.checked = exportIncludeCreationDates
+    if (includeFolderModInput)
+      includeFolderModInput.checked = exportIncludeFolderModDates
+    if (includeFolderPathInput)
+      includeFolderPathInput.checked = exportIncludeFolderPath
+    if (exportOnlySelectedInput)
+      exportOnlySelectedInput.checked = exportOnlySelected
+
+    // Advanced settings collapse/expand
+    const advancedToggle = document.getElementById("advancedToggle")
+    const advancedSettings = document.getElementById("advancedSettings")
+    const advancedArrow = document.getElementById("advancedArrow")
+
+    if (advancedToggle && advancedSettings && advancedArrow) {
+      let advancedOpen = true
+      const toggleAdvanced = () => {
+        advancedOpen = !advancedOpen
+        advancedSettings.style.display = advancedOpen ? "grid" : "none"
+        advancedArrow.textContent = advancedOpen ? "▼" : "►"
+      }
+      // Khởi tạo trạng thái: mặc định mở
+      advancedSettings.style.display = "grid"
+      advancedToggle.addEventListener("click", toggleAdvanced)
+    }
 
     document
       .getElementById("confirmExport")
@@ -220,6 +300,18 @@ export function setupExportImportListeners(elements) {
         ).checked
         const includeFolderPath =
           document.getElementById("includeFolderPath").checked
+        const exportOnlySelected =
+          document.getElementById("exportOnlySelected").checked
+
+        // Lưu cấu hình lần export này
+        chrome.storage.local.set({
+          exportFormat: selectedFormat,
+          exportIncludeIconData: includeIconData,
+          exportIncludeCreationDates: includeCreationDates,
+          exportIncludeFolderModDates: includeFolderModDates,
+          exportIncludeFolderPath: includeFolderPath,
+          exportOnlySelected,
+        })
 
         // Add loading state
         const confirmBtn = document.getElementById("confirmExport")
@@ -265,7 +357,8 @@ export function setupExportImportListeners(elements) {
                 includeCreationDates,
                 includeFolderModDates,
                 includeIconData,
-                includeFolderPath
+                includeFolderPath,
+                exportOnlySelected
               )
             }
           } catch (error) {
@@ -372,12 +465,34 @@ export function setupExportImportListeners(elements) {
       padding: 0.75rem;
     }
     
-    .form-label {
-      display: block;
-      font-weight: 600;
+    .advanced-section {
+      padding: 0.75rem;
+    }
+
+    .advanced-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: transparent;
+      border: none;
       color: var(--text-primary);
-      margin-bottom: 0.5rem;
+      font-weight: 600;
       font-size: 0.9rem;
+      padding: 0.25rem 0;
+      cursor: pointer;
+    }
+
+    .advanced-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .advanced-arrow {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      transition: transform 0.2s ease;
     }
     
     .format-options {

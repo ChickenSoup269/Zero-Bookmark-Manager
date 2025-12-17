@@ -169,6 +169,7 @@ export function customSaveUIState() {
         : undefined,
       bookmarkTags: uiState.bookmarkTags,
       tagColors: uiState.tagColors,
+      tagTextColors: uiState.tagTextColors,
     }
     if (storageSettings.searchQuery) {
       state.uiState.searchQuery = uiState.searchQuery
@@ -208,6 +209,7 @@ export async function customLoadUIState(callback) {
           "checkboxesVisible",
           "bookmarkTags",
           "tagColors",
+          "tagTextColors",
         ],
         (data) => {
           if (chrome.runtime.lastError) {
@@ -263,6 +265,7 @@ export async function customLoadUIState(callback) {
     }
     uiState.bookmarkTags = result.bookmarkTags || {}
     uiState.tagColors = result.tagColors || {}
+    uiState.tagTextColors = result.tagTextColors || {}
 
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
     if (elements.languageSwitcher) {
