@@ -750,102 +750,30 @@ export function setupExportImportListeners(elements) {
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result)
+          // ... kiểm tra tính hợp lệ của data ...
 
-          if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
-            const language = localStorage.getItem("appLanguage") || "en"
-            showCustomPopup(
-              translations[language].importInvalidFile || "Invalid file format",
-              "error",
-              false
-            )
-            console.error(
-              "Invalid JSON: bookmarks property missing or not an array"
-            )
-            return
-          }
+          // THAY VÌ: flattenBookmarks(data.bookmarks)
+          // HÃY LẤY: dữ liệu gốc để giữ cấu trúc folder
+          const rawImportData = data.bookmarks
 
-          safeChromeBookmarksCall("getTree", [], (bookmarkTreeNodes) => {
-            if (!bookmarkTreeNodes) {
-              const language = localStorage.getItem("appLanguage") || "en"
-              showCustomPopup(
-                translations[language].importError ||
-                  "Failed to fetch bookmark tree",
-                "error",
-                false
-              )
-              console.error("Failed to fetch bookmark tree")
-              return
-            }
-
-            const existingBookmarks = flattenBookmarks(bookmarkTreeNodes)
-            const existingUrls = new Set(existingBookmarks.map((b) => b.url))
-
-            const bookmarksToImport = []
-            const duplicateBookmarks = []
-            const importedTags = {} // Map old ID to tags
-            const importedAccessCounts = {} // Map old ID to access count
-            const flattenImportedBookmarks = flattenBookmarks(data.bookmarks)
-
-            // Collect bookmarks, tags, and access counts
-            flattenImportedBookmarks.forEach((bookmark, index) => {
-              if (bookmark.url) {
-                if (existingUrls.has(bookmark.url)) {
-                  duplicateBookmarks.push(bookmark)
-                } else {
-                  bookmarksToImport.push(bookmark)
-                  if (bookmark.id) {
-                    if (Array.isArray(bookmark.tags)) {
-                      importedTags[bookmark.id] = bookmark.tags
-                    } else {
-                      console.warn(`No valid tags for ID ${bookmark.id}`)
-                    }
-                    if (typeof bookmark.accessCount === "number") {
-                      importedAccessCounts[bookmark.id] = bookmark.accessCount
-                    } else {
-                      console.warn(`No valid accessCount for ID ${bookmark.id}`)
-                    }
-                  } else {
-                    console.warn("Bookmark missing ID:", bookmark)
-                  }
-                }
-              } else {
-              }
-            })
-
-            const language = localStorage.getItem("appLanguage") || "en"
-            if (duplicateBookmarks.length > 0) {
-              showCustomPopup(
-                `${
-                  translations[language].importDuplicatePrompt ||
-                  "Duplicate bookmarks found"
-                }: ${duplicateBookmarks.length}`,
-                "warning",
-                true,
-                () =>
-                  importNonDuplicateBookmarks(
-                    bookmarksToImport,
-                    elements,
-                    importedTags,
-                    importedAccessCounts
-                  )
-              )
-            } else {
-              importNonDuplicateBookmarks(
-                bookmarksToImport,
-                elements,
-                importedTags,
-                importedAccessCounts
-              )
-            }
+          // Thu thập Tags và AccessCount từ file JSON (vẫn dùng bản flatten để lấy map id)
+          const flatData = flattenBookmarks(rawImportData)
+          const importedTags = {}
+          const importedAccessCounts = {}
+          flatData.forEach((b) => {
+            if (b.tags) importedTags[b.id] = b.tags
+            if (b.accessCount) importedAccessCounts[b.id] = b.accessCount
           })
-        } catch (error) {
-          console.error("Error parsing import file:", error)
-          const language = localStorage.getItem("appLanguage") || "en"
-          showCustomPopup(
-            translations[language].importInvalidFile || "Invalid file format",
-            "error",
-            false
+
+          // Gọi hàm import với dữ liệu CÂY (rawImportData)
+          importNonDuplicateBookmarks(
+            rawImportData,
+            elements,
+            importedTags,
+            importedAccessCounts
           )
+        } catch (e) {
+          console.error(e)
         }
       }
       reader.readAsText(file)
@@ -856,7 +784,7 @@ export function setupExportImportListeners(elements) {
 }
 
 async function importNonDuplicateBookmarks(
-  bookmarksToImport,
+  nodesToImport, // Mảng nodes gốc từ JSON (data.bookmarks)
   elements,
   importedTags,
   importedAccessCounts
@@ -864,101 +792,96 @@ async function importNonDuplicateBookmarks(
   const language = localStorage.getItem("appLanguage") || "en"
   const idMapping = {}
 
-  // --- BƯỚC MỚI: TÌM ID GỐC CỦA TRÌNH DUYỆT HIỆN TẠI ---
-  const getSafeParentId = () => {
+  // Hàm Helper: Tạo bookmark/folder và đợi nó xong hẳn
+  const createBookmark = (data) => {
     return new Promise((resolve) => {
-      chrome.bookmarks.getTree((nodes) => {
-        // Thông thường: nodes[0] là root, nodes[0].children[1] là "Other Bookmarks"
-        // Chúng ta lấy ID của "Other Bookmarks" để đảm bảo an toàn
-        const otherBookmarks =
-          nodes[0]?.children?.[1] || nodes[0]?.children?.[0]
-        resolve(otherBookmarks.id || "2")
+      chrome.bookmarks.create(data, (result) => {
+        if (chrome.runtime.lastError) {
+          console.warn("Lỗi Edge/Chrome:", chrome.runtime.lastError.message)
+          resolve(null)
+        } else {
+          resolve(result)
+        }
       })
     })
   }
 
-  const targetParentId = await getSafeParentId()
-  // ---------------------------------------------------
-
-  const importPromises = bookmarksToImport.map((bookmark) => {
-    return new Promise((resolve) => {
-      safeChromeBookmarksCall(
-        "create",
-        [
-          {
-            // KHÔNG dùng bookmark.parentId từ file JSON vì ID đó là của trình duyệt cũ
-            parentId: targetParentId,
-            title: bookmark.title || "",
-            url: bookmark.url,
-          },
-        ],
-        (result) => {
-          if (result && result.id && bookmark.id) {
-            idMapping[bookmark.id] = result.id
-          }
-          resolve(result)
-        }
-      )
-    })
-  })
-
   try {
-    await Promise.all(importPromises)
+    // 1. Tìm ID của "Other Bookmarks" (hoặc thư mục gốc bất kỳ)
+    const tree = await new Promise((r) => chrome.bookmarks.getTree(r))
+    const targetRoot = tree[0]?.children?.[1] || tree[0]?.children?.[0]
 
-    // Fetch existing storage data
+    // 2. Tạo một folder cha để chứa đồ import (Cách này an toàn nhất cho Edge)
+    const importContainer = await createBookmark({
+      parentId: targetRoot.id,
+      title: `Imported ${new Date().toLocaleDateString()}`,
+    })
+
+    const rootParentId = importContainer ? importContainer.id : targetRoot.id
+
+    // 3. Hàm đệ quy "Xịn"
+    async function processNodes(nodes, parentId) {
+      for (const node of nodes) {
+        // Bỏ qua các node hệ thống (Root, Bar, Other) nhưng vẫn xử lý con của chúng
+        if (node.id === "0" || node.id === "1" || node.id === "2") {
+          if (node.children) await processNodes(node.children, parentId)
+          continue
+        }
+
+        if (node.children) {
+          // Là THƯ MỤC
+          const newFolder = await createBookmark({
+            parentId: parentId,
+            title: node.title || "New Folder",
+          })
+          if (newFolder) {
+            idMapping[node.id] = newFolder.id
+            await processNodes(node.children, newFolder.id)
+          }
+        } else if (node.url) {
+          // Là BOOKMARK
+          const newBookmark = await createBookmark({
+            parentId: parentId,
+            title: node.title || "",
+            url: node.url,
+          })
+          if (newBookmark) {
+            idMapping[node.id] = newBookmark.id
+          }
+        }
+      }
+    }
+
+    // 4. Bắt đầu chạy
+    await processNodes(nodesToImport, rootParentId)
+
+    // 5. Cập nhật Tags và AccessCount vào Storage
     const { bookmarkTags = {}, bookmarkAccessCounts = {} } =
       await chrome.storage.local.get(["bookmarkTags", "bookmarkAccessCounts"])
 
-    // Update tags and access counts with new IDs
-    let tagsUpdated = 0
-    let countsUpdated = 0
     for (const [oldId, tags] of Object.entries(importedTags)) {
-      if (idMapping[oldId] && Array.isArray(tags)) {
-        bookmarkTags[idMapping[oldId]] = tags
-        tagsUpdated++
-      }
+      if (idMapping[oldId]) bookmarkTags[idMapping[oldId]] = tags
     }
     for (const [oldId, count] of Object.entries(importedAccessCounts)) {
-      if (idMapping[oldId] && typeof count === "number") {
-        bookmarkAccessCounts[idMapping[oldId]] = count
-        countsUpdated++
-      }
+      if (idMapping[oldId]) bookmarkAccessCounts[idMapping[oldId]] = count
     }
 
-    // Save updated data to chrome.storage.local
-    await chrome.storage.local.set({
-      bookmarkTags,
-      bookmarkAccessCounts,
-    })
+    await chrome.storage.local.set({ bookmarkTags, bookmarkAccessCounts })
 
-    // Refresh UI
-    safeChromeBookmarksCall("getTree", [], (bookmarkTreeNodes) => {
-      if (bookmarkTreeNodes) {
-        uiState.bookmarkTree = bookmarkTreeNodes
-        uiState.bookmarks = flattenBookmarks(bookmarkTreeNodes)
-        uiState.folders = getFolders(bookmarkTreeNodes)
-        renderFilteredBookmarks(bookmarkTreeNodes, elements)
-        saveUIState()
-        showCustomPopup(
-          translations[language].importSuccess ||
-            "Bookmarks imported successfully!",
-          "success"
-        )
-      } else {
-        showCustomPopup(
-          translations[language].importError || "Failed to update bookmarks",
-          "error",
-          false
-        )
-        console.error("Failed to fetch bookmark tree after import")
-      }
+    // 6. Cập nhật UI
+    chrome.bookmarks.getTree((newTree) => {
+      uiState.bookmarkTree = newTree
+      uiState.bookmarks = flattenBookmarks(newTree)
+      uiState.folders = getFolders(newTree)
+      renderFilteredBookmarks(newTree, elements)
+      saveUIState()
+      showCustomPopup(
+        translations[language].importSuccess || "Success",
+        "success"
+      )
     })
   } catch (error) {
-    console.error("Import failed:", error)
-    showCustomPopup(
-      translations[language].importError || "Failed to update bookmarks",
-      "error",
-      false
-    )
+    console.error("Critical Import Error:", error)
+    showCustomPopup("Import Failed", "error")
   }
 }
