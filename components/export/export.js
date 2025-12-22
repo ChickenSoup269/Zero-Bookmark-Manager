@@ -862,16 +862,32 @@ async function importNonDuplicateBookmarks(
   importedAccessCounts
 ) {
   const language = localStorage.getItem("appLanguage") || "en"
-  const idMapping = {} // Map old ID to new ID
+  const idMapping = {}
 
-  // Create bookmarks and track new IDs
-  const importPromises = bookmarksToImport.map((bookmark, index) => {
+  // --- BƯỚC MỚI: TÌM ID GỐC CỦA TRÌNH DUYỆT HIỆN TẠI ---
+  const getSafeParentId = () => {
+    return new Promise((resolve) => {
+      chrome.bookmarks.getTree((nodes) => {
+        // Thông thường: nodes[0] là root, nodes[0].children[1] là "Other Bookmarks"
+        // Chúng ta lấy ID của "Other Bookmarks" để đảm bảo an toàn
+        const otherBookmarks =
+          nodes[0]?.children?.[1] || nodes[0]?.children?.[0]
+        resolve(otherBookmarks.id || "2")
+      })
+    })
+  }
+
+  const targetParentId = await getSafeParentId()
+  // ---------------------------------------------------
+
+  const importPromises = bookmarksToImport.map((bookmark) => {
     return new Promise((resolve) => {
       safeChromeBookmarksCall(
         "create",
         [
           {
-            parentId: bookmark.parentId || "2",
+            // KHÔNG dùng bookmark.parentId từ file JSON vì ID đó là của trình duyệt cũ
+            parentId: targetParentId,
             title: bookmark.title || "",
             url: bookmark.url,
           },
@@ -879,11 +895,6 @@ async function importNonDuplicateBookmarks(
         (result) => {
           if (result && result.id && bookmark.id) {
             idMapping[bookmark.id] = result.id
-          } else {
-            console.warn(`Failed to map ID for bookmark ${index}:`, {
-              bookmark,
-              result,
-            })
           }
           resolve(result)
         }
