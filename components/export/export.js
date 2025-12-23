@@ -873,30 +873,76 @@ async function importNonDuplicateBookmarks(nodesToImport, elements) {
   }
 
   try {
-    // Bắt đầu chạy từ gốc (parentId ban đầu có thể để mặc định là localOtherId)
+    // 1. Đợi quá trình tạo bookmark trên Edge/Chrome hoàn tất
     await processNodes(nodesToImport, localOtherId)
 
-    // 4. Lưu Tag vào Storage (Đảm bảo dùng ID mới)
-    const storageData = await chrome.storage.local.get(["bookmarkTags"])
-    const bookmarkTags = storageData.bookmarkTags || {}
+    // 2. Lấy dữ liệu hiện có từ Storage máy mới
+    const storageData = await chrome.storage.local.get([
+      "bookmarkTags",
+      "bookmarkAccessCounts",
+      "favoriteBookmarks",
+      "pinnedBookmarks",
+    ])
 
-    Object.keys(tagsFromJSON).forEach((oldId) => {
-      const newId = idMapping[oldId]
-      if (newId) bookmarkTags[newId] = tagsFromJSON[oldId]
+    const bookmarkTags = storageData.bookmarkTags || {}
+    const bookmarkAccessCounts = storageData.bookmarkAccessCounts || {}
+    const favoriteBookmarks = storageData.favoriteBookmarks || {}
+    const pinnedBookmarks = storageData.pinnedBookmarks || {}
+
+    // 3. Hàm đệ quy duy nhất để khôi phục toàn bộ Metadata
+    function restoreMetadata(nodes) {
+      nodes.forEach((node) => {
+        const newId = idMapping[node.id] // Tìm ID mới tương ứng trên máy này
+
+        if (newId) {
+          // Khôi phục Yêu thích & Ghim
+          if (node.isFavorite) favoriteBookmarks[newId] = true
+          if (node.isPinned) pinnedBookmarks[newId] = true
+
+          // Khôi phục Tags (Hợp nhất với tag cũ nếu đã có)
+          if (node.tags && node.tags.length > 0) {
+            const existingTags = bookmarkTags[newId] || []
+            // Dùng Set để tránh bị trùng tag
+            bookmarkTags[newId] = [...new Set([...existingTags, ...node.tags])]
+          }
+
+          // Khôi phục số lần truy cập (Cộng dồn)
+          if (node.accessCount) {
+            bookmarkAccessCounts[newId] =
+              (bookmarkAccessCounts[newId] || 0) + node.accessCount
+          }
+        }
+
+        // Đi sâu vào các thư mục con
+        if (node.children) restoreMetadata(node.children)
+      })
+    }
+
+    // Chạy khôi phục
+    restoreMetadata(nodesToImport)
+
+    // 4. Lưu tất cả vào Storage
+    await chrome.storage.local.set({
+      bookmarkTags,
+      bookmarkAccessCounts,
+      favoriteBookmarks,
+      pinnedBookmarks,
     })
 
-    await chrome.storage.local.set({ bookmarkTags })
-
-    // 5. Render lại UI (Sử dụng hàm ui.js đã được bạn sửa để đọc tag trực tiếp)
+    // 5. Cập nhật giao diện
     setTimeout(() => {
       chrome.bookmarks.getTree((newTree) => {
         uiState.bookmarkTree = newTree
         uiState.bookmarks = flattenBookmarks(newTree)
         uiState.folders = getFolders(newTree)
+
+        // Đảm bảo uiState cũng được cập nhật dữ liệu mới nhất
+        uiState.bookmarkTags = bookmarkTags
+
         renderFilteredBookmarks(newTree, elements)
         saveUIState()
         showCustomPopup(
-          translations[language].importSuccess || "Success",
+          translations[language].importSuccess || "Import thành công!",
           "success"
         )
       })

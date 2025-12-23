@@ -14,45 +14,99 @@
 <body>
     <div class="container">
         <div class="sidebar">
-            <img src="" alt="logo" class="logo">
-            <div id="bookmark-count" class="count">Total Bookmarks: 0</div>
-            <div class="controls">
-                <select id="folder-filter" class="select">
-                    <option value="">All Bookmarks</option>
-                </select>
-                <div id="tag-filter-container" class="tag-filter-container">
-                    <button id="tag-filter-toggle" class="select">Select Tags</button>
-                    <div id="tag-filter-dropdown" class="dropdown-menu hidden">
-                        <div id="tag-filter-options"></div>
-                    </div>
-                </div>
-                <select id="sort-filter" class="select">
-                    <option value="default">Sort: Default</option>
-                    <option value="new">New to Old</option>
-                    <option value="old">Old to New</option>
-                    <option value="last-opened">By Last Opened</option>
-                    <option value="a-z">A to Z</option>
-                    <option value="z-a">Z to A</option>
-                </select>
-                <div class="search-container">
-                    <input type="text" id="search" placeholder="Search bookmarks..." class="input">
-                    <button id="clear-search" class="button clear">✖</button>
-                </div>
-                <div class="control-buttons">
-                    <button id="create-folder" class="button create">Create Folder</button>
-                    <button id="rename-folder" class="button rename-folder hidden">Rename Folder</button>
-                    <button id="add-to-folder" class="button add hidden">Add to Folder</button>
-                    <button id="delete-folder" class="button delete-folder hidden">Delete Folder</button>
-                    <button id="delete-bookmarks-button" class="button delete-bookmarks hidden">Delete
-                        Bookmarks</button>
+            <div class="sidebar-header">
+                <img src="" alt="logo" class="logo">
+                <div class="sidebar-count">
+                    <i class="fas fa-bookmark sidebar-count-icon" aria-hidden="true"></i>
+                    <div id="bookmark-count" class="count">Total Bookmarks: 0</div>
                 </div>
             </div>
-            <div class="bottom-controls">
-                <div class="select-all">
-                    <input type="checkbox" id="select-all">
-                    <label for="select-all">Select All</label>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-filter" aria-hidden="true"></i>
+                    <span>Filters</span>
                 </div>
-                <button id="toggle-checkboxes" class="button toggle small">Show Checkboxes</button>
+                <div class="controls">
+                    <select id="folder-filter" class="select" aria-label="Folder filter">
+                        <option value="">All Bookmarks</option>
+                    </select>
+                    <div id="tag-filter-container" class="tag-filter-container">
+                        <button id="tag-filter-toggle" class="select" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-tags" aria-hidden="true"></i>
+                            <span>Select Tags</span>
+                        </button>
+                        <div id="tag-filter-dropdown" class="dropdown-menu hidden">
+                            <div id="tag-filter-options"></div>
+                        </div>
+                    </div>
+                    <select id="sort-filter" class="select" aria-label="Sort bookmarks">
+                        <option value="default">Sort: Default</option>
+                        <option value="new">New to Old</option>
+                        <option value="old">Old to New</option>
+                        <option value="last-opened">By Last Opened</option>
+                        <option value="a-z">A to Z</option>
+                        <option value="z-a">Z to A</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <span>Search</span>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="search" placeholder="Search bookmarks..." class="input"
+                        aria-label="Search bookmarks">
+                    <button id="clear-search" class="button clear" aria-label="Clear search">✖</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-folder" aria-hidden="true"></i>
+                    <span>Folder actions</span>
+                </div>
+                <div class="control-buttons">
+                    <button id="create-folder" class="button create">
+                        <i class="fas fa-folder-plus" aria-hidden="true"></i>
+                        <span>Create Folder</span>
+                    </button>
+                    <button id="rename-folder" class="button rename-folder hidden">
+                        <i class="fas fa-edit" aria-hidden="true"></i>
+                        <span>Rename Folder</span>
+                    </button>
+                    <button id="add-to-folder" class="button add hidden">
+                        <i class="fas fa-folder-open" aria-hidden="true"></i>
+                        <span>Add to Folder</span>
+                    </button>
+                    <button id="delete-folder" class="button delete-folder hidden">
+                        <i class="fas fa-folder-minus" aria-hidden="true"></i>
+                        <span>Delete Folder</span>
+                    </button>
+                    <button id="delete-bookmarks-button" class="button delete-bookmarks hidden">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                        <span>Delete Bookmarks</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section sidebar-section-bottom">
+                <div class="sidebar-section-title sidebar-section-title-small">
+                    <i class="far fa-check-square" aria-hidden="true"></i>
+                    <span>Selection</span>
+                </div>
+                <div class="bottom-controls">
+                    <div class="select-all">
+                        <input type="checkbox" id="select-all">
+                        <label for="select-all">Select All</label>
+                    </div>
+                    <button id="toggle-checkboxes" class="button toggle small">
+                        <i class="fas fa-list-ul" aria-hidden="true"></i>
+                        <span>Show Checkboxes</span>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="header">

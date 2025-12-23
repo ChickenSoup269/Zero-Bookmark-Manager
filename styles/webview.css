@@ -22,6 +22,7 @@ body {
   flex-direction: column;
   gap: var(--spacing-md);
   transition: transform var(--transition-fast);
+  border-right: 1px solid var(--border-color);
 }
 
 .sidebar.collapsed {
@@ -37,6 +38,66 @@ body {
   padding: var(--spacing-md);
   max-width: calc(1380px - var(--sidebar-width));
   transition: margin-left var(--transition-fast);
+}
+
+/* Sidebar layout enhancements */
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
+}
+
+.sidebar-count {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.sidebar-count-icon {
+  font-size: 0.9rem;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.sidebar-section:first-of-type {
+  border-top: none;
+  margin-top: var(--spacing-xs);
+}
+
+.sidebar-section-bottom {
+  margin-top: auto;
+  padding-top: var(--spacing-md);
+}
+
+.sidebar-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  opacity: 0.9;
+}
+
+.sidebar-section-title i {
+  font-size: 0.8rem;
+}
+
+.sidebar-section-title-small {
+  font-size: 0.75rem;
 }
 
 .container.collapsed {
@@ -109,6 +170,7 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-sm);
+  gap: 6px;
 }
 
 .control-buttons .button:hover {
@@ -423,6 +485,12 @@ body {
   color: var(--text-secondary);
 }
 
+.bottom-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
 #toggle-checkboxes {
   width: 100%;
   font-size: 0.8rem;
@@ -431,6 +499,10 @@ body {
   cursor: pointer;
   font-weight: 500;
   transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .dropdown-btn {
@@ -681,3 +753,4 @@ textarea.error {
   font-weight: 500;
   font-size: 14px;
 }
+
