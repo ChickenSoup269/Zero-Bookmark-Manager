@@ -2111,3 +2111,29 @@ html {
     padding: 6px 12px;
   }
 }
+
+/* Health Icon Styles */
+.health-icon {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+/* Đang kiểm tra */
+.health-icon.checking {
+  color: #6c757d; /* xám */
+}
+
+/* Dead / lỗi */
+.health-icon.dead {
+  color: #dc3545; /* đỏ */
+}
+
+/* Nghi ngờ / nguy hiểm */
+.health-icon.suspicious {
+  color: #fd7e14; /* cam */
+}
+
+/* An toàn */
+.health-icon.safe {
+  color: #28a745; /* xanh lá */
+}

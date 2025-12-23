@@ -77,26 +77,36 @@ function renderHealthIcon(bookmarkId) {
       ? "Liên kết có thể đã chết hoặc website không phản hồi."
       : "Link might be dead or the website is not responding."
   const safeTitle =
-    language === "vi"
-      ? "Trang web có vẻ hợp lệ."
-      : "Site looks likely safe."
+    language === "vi" ? "Trang web có vẻ hợp lệ." : "Site looks likely safe."
   const suspiciousTitle =
     language === "vi"
       ? "Trang web trông có vẻ mờ ám (dựa trên một số dấu hiệu phổ biến). Hãy cẩn thận!"
       : "Site looks suspicious based on common patterns. Proceed with caution!"
 
   if (status === "checking") {
-    return `<span class="health-icon checking" title="${checkingTitle}"><i class="fas fa-spinner fa-spin"></i></span>`
+    return `<span class="health-icon checking" title="${checkingTitle}">
+    <i class="fas fa-spinner fa-spin"></i>
+  </span>`
   }
+
   if (status === "dead") {
-    return `<span class="health-icon dead" title="${deadTitle}"><i class="fas fa-exclamation-triangle"></i></span>`
+    return `<span class="health-icon dead" title="${deadTitle}">
+    <i class="fas fa-exclamation-triangle"></i>
+  </span>`
   }
+
   if (status === "alive_suspicious") {
-    return `<span class="health-icon suspicious" title="${suspiciousTitle}"><i class="fas fa-radiation-alt"></i></span>`
+    return `<span class="health-icon suspicious" title="${suspiciousTitle}">
+    <i class="fas fa-radiation-alt"></i>
+  </span>`
   }
+
   if (status === "alive_safe") {
-    return `<span class="health-icon safe" title="${safeTitle}"><i class="fas fa-shield-alt"></i></span>`
+    return `<span class="health-icon safe" title="${safeTitle}">
+    <i class="fas fa-check"></i>
+  </span>`
   }
+
   return ""
 }
 
@@ -738,18 +748,27 @@ export function updateTheme(elements, theme) {
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
   chrome.storage.local.get(
-    ["favoriteBookmarks", "bookmarkAccessCounts", "pinnedBookmarks"],
+    [
+      "favoriteBookmarks",
+      "bookmarkAccessCounts",
+      "pinnedBookmarks",
+      "bookmarkTags",
+    ], // THÊM "bookmarkTags" VÀO ĐÂY
     (data) => {
       const favoriteBookmarks = data.favoriteBookmarks || {}
       const bookmarkAccessCounts = data.bookmarkAccessCounts || {}
       const pinnedBookmarks = data.pinnedBookmarks || {}
+      const bookmarkTagsFromStorage = data.bookmarkTags || {} // Lấy tag trực tiếp từ storage
 
       const addStatus = (nodes) => {
         for (const node of nodes) {
           if (node.url) {
             node.isFavorite = !!favoriteBookmarks[node.id]
             node.isPinned = !!pinnedBookmarks[node.id]
-            node.tags = uiState.bookmarkTags[node.id] || []
+
+            // SỬA TẠI ĐÂY: Ưu tiên lấy từ storage vừa lấy được
+            node.tags = bookmarkTagsFromStorage[node.id] || []
+
             node.accessCount = bookmarkAccessCounts[node.id] || 0
           }
           if (node.children) addStatus(node.children)
@@ -757,6 +776,9 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       }
 
       addStatus(bookmarkTreeNodes)
+
+      // Cập nhật lại uiState để đồng bộ với RAM
+      uiState.bookmarkTags = bookmarkTagsFromStorage
 
       const bookmarks = flattenBookmarks(bookmarkTreeNodes)
       const folders = getFolders(bookmarkTreeNodes)

@@ -750,6 +750,7 @@ export function setupExportImportListeners(elements) {
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result)
+          importNonDuplicateBookmarks(data.bookmarks, elements)
           // ... kiểm tra tính hợp lệ của data ...
 
           // THAY VÌ: flattenBookmarks(data.bookmarks)
@@ -764,14 +765,6 @@ export function setupExportImportListeners(elements) {
             if (b.tags) importedTags[b.id] = b.tags
             if (b.accessCount) importedAccessCounts[b.id] = b.accessCount
           })
-
-          // Gọi hàm import với dữ liệu CÂY (rawImportData)
-          importNonDuplicateBookmarks(
-            rawImportData,
-            elements,
-            importedTags,
-            importedAccessCounts
-          )
         } catch (e) {
           console.error(e)
         }
@@ -783,105 +776,132 @@ export function setupExportImportListeners(elements) {
   })
 }
 
-async function importNonDuplicateBookmarks(
-  nodesToImport, // Mảng nodes gốc từ JSON (data.bookmarks)
-  elements,
-  importedTags,
-  importedAccessCounts
-) {
+async function importNonDuplicateBookmarks(nodesToImport, elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   const idMapping = {}
+  const tagsFromJSON = {}
 
-  // Hàm Helper: Tạo bookmark/folder và đợi nó xong hẳn
+  // 1. Quét Tag từ JSON
+  function extractTags(nodes) {
+    nodes.forEach((node) => {
+      if (node.tags && node.tags.length > 0) tagsFromJSON[node.id] = node.tags
+      if (node.children) extractTags(node.children)
+    })
+  }
+  extractTags(nodesToImport)
+
+  // 2. Lấy cây hiện tại để tìm ID hệ thống của Edge/Chrome mới
+  const existingTree = await new Promise((r) => chrome.bookmarks.getTree(r))
+  const flatExisting = flattenBookmarks(existingTree)
+  const existingUrls = new Set(flatExisting.map((b) => b.url).filter((u) => u))
+
+  // Ánh xạ ID hệ thống: [0] thường là root, con của nó là Bar(1) và Other(2)
+  const localBarId = existingTree[0]?.children?.[0]?.id || "1"
+  const localOtherId = existingTree[0]?.children?.[1]?.id || "2"
+
   const createBookmark = (data) => {
     return new Promise((resolve) => {
-      chrome.bookmarks.create(data, (result) => {
-        if (chrome.runtime.lastError) {
-          console.warn("Lỗi Edge/Chrome:", chrome.runtime.lastError.message)
-          resolve(null)
-        } else {
-          resolve(result)
-        }
+      chrome.bookmarks.create(data, (res) => {
+        if (chrome.runtime.lastError) resolve(null)
+        else resolve(res)
       })
     })
   }
 
-  try {
-    // 1. Tìm ID của "Other Bookmarks" (hoặc thư mục gốc bất kỳ)
-    const tree = await new Promise((r) => chrome.bookmarks.getTree(r))
-    const targetRoot = tree[0]?.children?.[1] || tree[0]?.children?.[0]
+  // 3. Hàm đệ quy xử lý logic ánh xạ thư mục gốc
+  async function processNodes(nodes, currentParentId) {
+    for (const node of nodes) {
+      let targetParentIdForChildren = currentParentId
 
-    // 2. Tạo một folder cha để chứa đồ import (Cách này an toàn nhất cho Edge)
-    const importContainer = await createBookmark({
-      parentId: targetRoot.id,
-      title: `Imported ${new Date().toLocaleDateString()}`,
-    })
+      // KIỂM TRA NẾU LÀ THƯ MỤC HỆ THỐNG TRONG FILE JSON
+      if (node.id === "1") {
+        // Nếu là Bookmark Bar từ máy cũ -> Ánh xạ vào Bookmark Bar máy mới
+        await processNodes(node.children, localBarId)
+        continue
+      }
+      if (node.id === "2") {
+        // Nếu là Other Bookmarks từ máy cũ -> Ánh xạ vào Other Bookmarks máy mới
+        await processNodes(node.children, localOtherId)
+        continue
+      }
+      if (node.id === "0") {
+        // Gốc của cây -> Đi tiếp vào con
+        await processNodes(node.children, currentParentId)
+        continue
+      }
 
-    const rootParentId = importContainer ? importContainer.id : targetRoot.id
+      // XỬ LÝ THƯ MỤC NGƯỜI DÙNG TẠO (FE, BE, v.v.)
+      if (node.children) {
+        const currentChildren = await new Promise((r) =>
+          chrome.bookmarks.getChildren(currentParentId, r)
+        )
+        let targetFolder = currentChildren.find(
+          (c) => !c.url && c.title === node.title
+        )
 
-    // 3. Hàm đệ quy "Xịn"
-    async function processNodes(nodes, parentId) {
-      for (const node of nodes) {
-        // Bỏ qua các node hệ thống (Root, Bar, Other) nhưng vẫn xử lý con của chúng
-        if (node.id === "0" || node.id === "1" || node.id === "2") {
-          if (node.children) await processNodes(node.children, parentId)
+        if (!targetFolder) {
+          targetFolder = await createBookmark({
+            parentId: currentParentId,
+            title: node.title,
+          })
+        }
+
+        if (targetFolder) {
+          idMapping[node.id] = targetFolder.id
+          await processNodes(node.children, targetFolder.id)
+        }
+      }
+      // XỬ LÝ BOOKMARK
+      else if (node.url) {
+        if (existingUrls.has(node.url)) {
+          const eb = flatExisting.find((b) => b.url === node.url)
+          if (eb) idMapping[node.id] = eb.id
           continue
         }
 
-        if (node.children) {
-          // Là THƯ MỤC
-          const newFolder = await createBookmark({
-            parentId: parentId,
-            title: node.title || "New Folder",
-          })
-          if (newFolder) {
-            idMapping[node.id] = newFolder.id
-            await processNodes(node.children, newFolder.id)
-          }
-        } else if (node.url) {
-          // Là BOOKMARK
-          const newBookmark = await createBookmark({
-            parentId: parentId,
-            title: node.title || "",
-            url: node.url,
-          })
-          if (newBookmark) {
-            idMapping[node.id] = newBookmark.id
-          }
+        const newB = await createBookmark({
+          parentId: currentParentId,
+          title: node.title,
+          url: node.url,
+        })
+        if (newB) {
+          idMapping[node.id] = newB.id
+          existingUrls.add(node.url)
         }
       }
     }
+  }
 
-    // 4. Bắt đầu chạy
-    await processNodes(nodesToImport, rootParentId)
+  try {
+    // Bắt đầu chạy từ gốc (parentId ban đầu có thể để mặc định là localOtherId)
+    await processNodes(nodesToImport, localOtherId)
 
-    // 5. Cập nhật Tags và AccessCount vào Storage
-    const { bookmarkTags = {}, bookmarkAccessCounts = {} } =
-      await chrome.storage.local.get(["bookmarkTags", "bookmarkAccessCounts"])
+    // 4. Lưu Tag vào Storage (Đảm bảo dùng ID mới)
+    const storageData = await chrome.storage.local.get(["bookmarkTags"])
+    const bookmarkTags = storageData.bookmarkTags || {}
 
-    for (const [oldId, tags] of Object.entries(importedTags)) {
-      if (idMapping[oldId]) bookmarkTags[idMapping[oldId]] = tags
-    }
-    for (const [oldId, count] of Object.entries(importedAccessCounts)) {
-      if (idMapping[oldId]) bookmarkAccessCounts[idMapping[oldId]] = count
-    }
-
-    await chrome.storage.local.set({ bookmarkTags, bookmarkAccessCounts })
-
-    // 6. Cập nhật UI
-    chrome.bookmarks.getTree((newTree) => {
-      uiState.bookmarkTree = newTree
-      uiState.bookmarks = flattenBookmarks(newTree)
-      uiState.folders = getFolders(newTree)
-      renderFilteredBookmarks(newTree, elements)
-      saveUIState()
-      showCustomPopup(
-        translations[language].importSuccess || "Success",
-        "success"
-      )
+    Object.keys(tagsFromJSON).forEach((oldId) => {
+      const newId = idMapping[oldId]
+      if (newId) bookmarkTags[newId] = tagsFromJSON[oldId]
     })
+
+    await chrome.storage.local.set({ bookmarkTags })
+
+    // 5. Render lại UI (Sử dụng hàm ui.js đã được bạn sửa để đọc tag trực tiếp)
+    setTimeout(() => {
+      chrome.bookmarks.getTree((newTree) => {
+        uiState.bookmarkTree = newTree
+        uiState.bookmarks = flattenBookmarks(newTree)
+        uiState.folders = getFolders(newTree)
+        renderFilteredBookmarks(newTree, elements)
+        saveUIState()
+        showCustomPopup(
+          translations[language].importSuccess || "Success",
+          "success"
+        )
+      })
+    }, 200)
   } catch (error) {
-    console.error("Critical Import Error:", error)
-    showCustomPopup("Import Failed", "error")
+    console.error("Import Error:", error)
   }
 }
