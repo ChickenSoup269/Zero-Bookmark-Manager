@@ -279,6 +279,8 @@ body {
 
 /* Bookmark item styling (horizontal/row layout within folders) */
 .folder-list.tree-view .bookmark-item {
+  position: relative; /* Add for z-index context */
+  z-index: 1; /* Default z-index */
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -291,6 +293,7 @@ body {
 }
 
 .folder-list.tree-view .bookmark-item:hover {
+  z-index: 100; /* Bring to front on hover */
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -752,5 +755,127 @@ textarea.error {
   cursor: pointer;
   font-weight: 500;
   font-size: 14px;
+}
+
+/* Styles for Thumbnail Magnification */
+.thumbnail-container {
+  position: relative;
+  cursor: zoom-in;
+}
+
+.magnify-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none; /* Let the click pass through to the image */
+}
+
+.thumbnail-container:hover .magnify-icon {
+  opacity: 1;
+}
+
+/* Styles for enlarged image overlay */
+.enlarge-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  cursor: zoom-out;
+}
+
+.enlarged-image {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border-radius: 8px;
+}
+
+/* Styles for Iframe Web Preview Modal */
+.bookmark-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+}
+
+.bookmark-modal {
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.3s ease, height 0.3s ease, max-width 0.3s ease;
+  /* Default size is set via inline styles in JS */
+}
+
+.bookmark-modal.fullscreen {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  border-radius: 0;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-favicon {
+  width: 20px;
+  height: 20px;
+}
+
+.modal-actions button,
+.modal-actions a {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 5px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.modal-actions button:hover,
+.modal-actions a:hover {
+  color: var(--text-primary);
+}
+
+.iframe-wrapper {
+  flex-grow: 1;
 }
 
