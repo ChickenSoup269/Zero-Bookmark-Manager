@@ -552,10 +552,18 @@ export function handleCheckHealth(elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   const t = translations[language] || translations.en
 
+  const checkHealthButton = elements.checkHealthButton;
+  const checkHealthIcon = checkHealthButton?.querySelector('i');
+  let originalIconClass = '';
+
   // Trạng thái loading cho nút Check Links (nếu có)
-  if (elements.checkHealthButton) {
-    elements.checkHealthButton.classList.add("is-loading")
-    elements.checkHealthButton.disabled = true
+  if (checkHealthButton) {
+    if (checkHealthIcon) {
+      originalIconClass = checkHealthIcon.className; // Store original
+      checkHealthIcon.className = 'fas fa-spinner fa-spin'; // Set spinner
+    }
+    checkHealthButton.classList.add("is-loading")
+    checkHealthButton.disabled = true
   }
 
   // Popup kiểu loading (không auto close)
@@ -575,15 +583,8 @@ export function handleCheckHealth(elements) {
       // Tốt nhất là chỉ update DOM, nhưng để đơn giản ta gọi render lại view hiện tại.
 
       // Cách tối ưu: Chỉ tìm DOM element và update
-      // Tuy nhiên, để đảm bảo code ngắn gọn với cấu trúc hiện tại, ta gọi renderFiltered
-      chrome.bookmarks.getTree((tree) => {
-        // Chúng ta không muốn fetch lại tree từ chrome làm mất state 'checking'
-        // Nhưng renderFilteredBookmarks đang gọi setBookmarks lại.
-        // Vì healthStatus nằm trong uiState (đối tượng) nên nó vẫn được giữ nguyên nếu không bị reset.
-
-        // CHỈ GỌI LẠI FUNCTION RENDER VIEW HIỆN TẠI (Không fetch lại data)
-        reRenderCurrentView(elements)
-      })
+      // Tuy nhiên, để đảm bảo code ngắn gọn với cấu trúc hiện tại, ta gọi render lại view hiện tại
+      reRenderCurrentView(elements)
     },
     (brokenCount) => {
       // Callback Complete
@@ -599,9 +600,12 @@ export function handleCheckHealth(elements) {
       showCustomPopup(msg, type, true)
 
       // Reset trạng thái nút
-      if (elements.checkHealthButton) {
-        elements.checkHealthButton.classList.remove("is-loading")
-        elements.checkHealthButton.disabled = false
+      if (checkHealthButton) {
+        checkHealthButton.classList.remove("is-loading")
+        checkHealthButton.disabled = false
+        if (checkHealthIcon) {
+            checkHealthIcon.className = originalIconClass; // Restore original
+        }
       }
       reRenderCurrentView(elements)
     }
