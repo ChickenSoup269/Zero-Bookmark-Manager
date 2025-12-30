@@ -506,6 +506,7 @@ export function updateUILanguage(elements, language) {
     <option value="last-opened">${t.sortLastOpened}</option>
     <option value="a-z">${t.sortAZ}</option>
     <option value="z-a">${t.sortZA}</option>
+    <option value="domain">${t.sortDomain || "By Domain"}</option>
   `
   // Update texts
   elements.createFolderButton.textContent = t.createFolder
@@ -791,7 +792,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       setBookmarks(bookmarks)
       setFolders(folders)
       populateTagFilter(elements)
-      populateFolderFilter(folders, elements)
+      populateFolderFilter(bookmarkTreeNodes, elements)
       setupTagFilterListener(elements)
       updateBookmarkCount(bookmarks, elements)
 
@@ -1695,22 +1696,44 @@ export function attachTreeListeners(elements) {
   setupBookmarkActionListeners(elements)
 }
 
-function populateFolderFilter(folders, elements) {
-  const language = localStorage.getItem("appLanguage") || "en"
-  elements.folderFilter.innerHTML = `<option value="">${translations[language].allBookmarks}</option>`
-  folders.forEach((folder) => {
-    if (folder.id !== "0") {
-      const option = document.createElement("option")
-      option.value = folder.id
-      option.textContent = folder.title
-      elements.folderFilter.appendChild(option)
-    }
-  })
-  if (folders.some((f) => f.id === uiState.selectedFolderId))
-    elements.folderFilter.value = uiState.selectedFolderId
-  else {
-    uiState.selectedFolderId = ""
-    elements.folderFilter.value = ""
+function populateFolderFilter(bookmarkTreeNodes, elements) {
+  const language = localStorage.getItem("appLanguage") || "en";
+  const folderFilter = elements.folderFilter;
+  folderFilter.innerHTML = `<option value="">${translations[language].allBookmarks}</option>`;
+
+  function buildFolderOptions(nodes, depth = 0) {
+    nodes.forEach((node) => {
+      if (node.children) {
+        // Only process folders
+        const option = document.createElement("option");
+        option.value = node.id;
+        
+        // Add indentation for tree structure
+        const prefix = "\u00A0\u00A0".repeat(depth); // using non-breaking spaces
+        const folderName = node.title || `Folder ${node.id}`;
+        option.textContent = `${prefix}${folderName}`;
+        
+        folderFilter.appendChild(option);
+        
+        // Recursively process children
+        if (node.children.length > 0) {
+          buildFolderOptions(node.children, depth + 1);
+        }
+      }
+    });
+  }
+
+  // Start building from the root's children, as the root itself isn't a displayable folder
+  if (bookmarkTreeNodes && bookmarkTreeNodes.length > 0) {
+    buildFolderOptions(bookmarkTreeNodes[0].children);
+  }
+
+  // Set the selected value
+  if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
+    folderFilter.value = uiState.selectedFolderId;
+  } else {
+    uiState.selectedFolderId = "";
+    folderFilter.value = "";
   }
 }
 
@@ -1780,6 +1803,8 @@ function sortBookmarks(list, type) {
         return (b.title || b.url).localeCompare(a.title || b.url)
       case "most-visited":
         return (b.accessCount || 0) - (a.accessCount || 0)
+      case "domain":
+        return extractDomain(a.url).localeCompare(extractDomain(b.url))
       default:
         return (b.dateAdded || 0) - (a.dateAdded || 0)
     }
