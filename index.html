@@ -7,7 +7,7 @@
     <title>Zero Bookmark Manager</title>
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="./styles/popup.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body>
@@ -27,31 +27,31 @@
                             <div id="tag-filter-options"></div>
                         </div>
                     </div>
-                    <select id="theme-switcher" class="select">
-                        <option value="system">Theme: System</option>
-                        <option value="light">Theme: Light</option>
-                        <option value="dark">Theme: Dark</option>
-                        <option value="dracula">Theme: dracula</option>
-                        <option value="onedark">Theme: onedark</option>
+                    <select id="theme-switcher" class="select select-with-icons">
+                        <option value="system">System</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="dracula">Dracula</option>
+                        <option value="onedark">Onedark</option>
                     </select>
-                    <select id="font-switcher" class="select">
-                        <option value="normal">Font: Normal</option>
-                        <option value="gohu">Font: GohuFont</option>
-                        <option value="anonymiceProNerd">Font: AnonymiceProNerd</option>
-                        <option value="proFontWindowsNerdFontPropo">Font: ProFont</option>
-                        <option value="jetBrainsMonoNerdFont">Font: jetBrains</option>
+                    <select id="font-switcher" class="select select-with-icons">
+                        <option value="normal">&#xf031; Normal</option>
+                        <option value="gohu">&#xf031; GohuFont</option>
+                        <option value="anonymiceProNerd">&#xf031; AnonymiceProNerd</option>
+                        <option value="proFontWindowsNerdFontPropo">&#xf031; ProFont</option>
+                        <option value="jetBrainsMonoNerdFont">&#xf031; jetBrains</option>
                     </select>
-                    <select id="view-switcher" class="select">
-                        <option value="flat">View: Flat List</option>
-                        <option value="tree">View: Tree View</option>
-                        <option value="detail">View: Detail View</option>
-                        <option value="card">View: Card View</option>
+                    <select id="view-switcher" class="select select-with-icons">
+                        <option value="flat">&#xf03a; Flat List</option>
+                        <option value="tree">&#xf0e8; Tree View</option>
+                        <option value="detail">&#xf05a; Detail View</option>
+                        <option value="card">&#xf009; Card View</option>
                     </select>
                     <hr>
+                    <button id="edit-in-new-tab-option" class="menu-item">Edit in New Tab</button>
                     <button id="export-bookmarks-option" class="menu-item">Export Bookmarks</button>
                     <button id="import-bookmarks-option" class="menu-item">Import Bookmarks</button>
                     <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
-                    <button id="edit-in-new-tab-option" class="menu-item">Edit in New Tab</button>
                     <button id="check-health-btn" class="button button-warning">
                         <i class="fas fa-stethoscope"></i> Check Links
                     </button>

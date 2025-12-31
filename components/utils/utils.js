@@ -10,6 +10,7 @@ export const translations = {
     sortZA: "Z to A",
     sortFavorites: "Favorites",
     sortMostVisited: "Most Visited",
+    sortDomain: "By Domain",
     createFolder: "Create Folder",
     addToFolder: "Add to Folder",
     deleteFolder: "Delete Folder",
@@ -239,6 +240,7 @@ export const translations = {
     sortZA: "Z đến A",
     sortFavorites: "Yêu thích",
     sortMostVisited: "Truy cập Nhiều nhất",
+    sortDomain: "Theo tên miền",
     createFolder: "Tạo Thư mục",
     addToFolder: "Thêm vào Thư mục",
     deleteFolder: "Xóa Thư mục",
@@ -276,7 +278,7 @@ export const translations = {
     addToFolderOption: "Thêm vào Thư mục",
     deleteBookmarkOption: "Xóa",
     renameBookmarkOption: "Đổi tên",
-    editInNewTabOption: "Chỉnh sửa trong Tab Mới",
+    editInNewTabOption: "Mở Tab Web",
     deleteBookmarks: "Xóa bookmark",
     importSuccess: "Bookmark đã được nhập thành công!",
     importDuplicatePrompt:
@@ -521,16 +523,14 @@ export function showCustomPopup(
   try {
     // Thiết lập tiêu đề theo loại popup
     if (type === "loading") {
-      title.textContent =
-        language === "vi" ? "Đang xử lý..." : "Loading..."
+      title.textContent = language === "vi" ? "Đang xử lý..." : "Loading..."
     } else if (type === "success") {
       title.textContent = translations[language].successTitle
     } else if (type === "error") {
       title.textContent = translations[language].errorTitle
     } else {
       // info, warning, ...
-      title.textContent =
-        language === "vi" ? "Thông báo" : "Notification"
+      title.textContent = language === "vi" ? "Thông báo" : "Notification"
     }
 
     messageEl.textContent = message

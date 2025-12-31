@@ -115,6 +115,8 @@ function createDropdownHTML(bookmark, language) {
   const isFav = bookmark.isFavorite
   const isPinned = bookmark.isPinned
 
+  const iconStyle = "width: 14px; text-align: center; margin-right: 8px;"
+
   return `
     <div class="dropdown-btn-group" style="position: relative;">
       <button class="dropdown-btn ${isFav ? "favorited" : ""} ${
@@ -137,10 +139,11 @@ function createDropdownHTML(bookmark, language) {
       <div class="dropdown-menu hidden" style="
         position: absolute; right: 0; top: 100%; margin-top: 4px;
         background: var(--bg-secondary, #2d2d2d); border: 1px solid var(--border-color, #404040);
-        border-radius: 8px; min-width: 160px; padding: 4px;
+        border-radius: 8px; min-width: 180px; padding: 4px;
         box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
       ">
         <button class="menu-item pin-btn" data-id="${bookmark.id}">
+            <i class="fas fa-thumbtack" style="${iconStyle}"></i>
             ${
               isPinned
                 ? t.unpin || "Unpin from Top"
@@ -148,23 +151,34 @@ function createDropdownHTML(bookmark, language) {
             }
         </button>
         <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;"/>
-        <button class="menu-item add-to-folder" data-id="${bookmark.id}">${
+        <button class="menu-item add-to-folder" data-id="${
+          bookmark.id
+        }"><i class="fas fa-folder-plus" style="${iconStyle}"></i>${
     t.addToFolderOption || "Add to Folder"
   }</button>
-        <button class="menu-item delete-btn" data-id="${bookmark.id}">${
+        <button class="menu-item delete-btn" data-id="${
+          bookmark.id
+        }"><i class="fas fa-trash-alt" style="${iconStyle}"></i>${
     t.deleteBookmarkOption || "Delete"
   }</button>
-        <button class="menu-item rename-btn" data-id="${bookmark.id}">${
+        <button class="menu-item rename-btn" data-id="${
+          bookmark.id
+        }"><i class="fas fa-edit" style="${iconStyle}"></i>${
     t.renameBookmarkOption || "Rename"
   }</button>
-        <button class="menu-item view-detail-btn" data-id="${bookmark.id}">${
+        <button class="menu-item view-detail-btn" data-id="${
+          bookmark.id
+        }"><i class="fas fa-info-circle" style="${iconStyle}"></i>${
     t.viewDetail || "Details"
   }</button>
-        <button class="menu-item manage-tags-btn" data-id="${bookmark.id}">${
+        <button class="menu-item manage-tags-btn" data-id="${
+          bookmark.id
+        }"><i class="fas fa-tags" style="${iconStyle}"></i>${
     t.manageTags || "Tags"
   }</button>
         <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;"/>
         <button class="menu-item favorite-btn" data-id="${bookmark.id}">
+            <i class="fas fa-star" style="${iconStyle}"></i>
           ${
             isFav
               ? t.removeFavourite || "Unfavorite"
@@ -508,15 +522,25 @@ export function updateUILanguage(elements, language) {
     <option value="z-a">${t.sortZA}</option>
     <option value="domain">${t.sortDomain || "By Domain"}</option>
   `
-  // Update texts
-  elements.createFolderButton.textContent = t.createFolder
-  elements.addToFolderButton.textContent = t.addToFolder
-  elements.deleteFolderButton.textContent = t.deleteFolder
-  elements.renameFolderButton.textContent = t.renameFolder
-  elements.deleteBookmarksButton.textContent = t.deleteBookmarks
-  elements.exportBookmarksOption.textContent = t.exportBookmarks
-  elements.importBookmarksOption.textContent = t.importBookmarks
-  elements.editInNewTabOption.textContent = t.editInNewTabOption
+  const updateButtonText = (btnElem, text) => {
+    if (!btnElem) return
+    const span = btnElem.querySelector("span")
+    if (span) {
+      span.textContent = text
+    } else {
+      // Fallback for buttons without a span, though the structure should be consistent
+      btnElem.textContent = text
+    }
+  }
+
+  updateButtonText(elements.createFolderButton, t.createFolder)
+  updateButtonText(elements.addToFolderButton, t.addToFolder)
+  updateButtonText(elements.deleteFolderButton, t.deleteFolder)
+  updateButtonText(elements.renameFolderButton, t.renameFolder)
+  updateButtonText(elements.deleteBookmarksButton, t.deleteBookmarks)
+  elements.exportBookmarksOption.innerHTML = `<i class="fas fa-file-export"></i> ${t.exportBookmarks}`
+  elements.importBookmarksOption.innerHTML = `<i class="fas fa-file-import"></i> ${t.importBookmarks}`
+  elements.editInNewTabOption.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t.editInNewTabOption}`
   elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
     ? t.hideCheckboxes
     : t.showCheckboxes
@@ -553,15 +577,15 @@ export function handleCheckHealth(elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   const t = translations[language] || translations.en
 
-  const checkHealthButton = elements.checkHealthButton;
-  const checkHealthIcon = checkHealthButton?.querySelector('i');
-  let originalIconClass = '';
+  const checkHealthButton = elements.checkHealthButton
+  const checkHealthIcon = checkHealthButton?.querySelector("i")
+  let originalIconClass = ""
 
   // Trạng thái loading cho nút Check Links (nếu có)
   if (checkHealthButton) {
     if (checkHealthIcon) {
-      originalIconClass = checkHealthIcon.className; // Store original
-      checkHealthIcon.className = 'fas fa-spinner fa-spin'; // Set spinner
+      originalIconClass = checkHealthIcon.className // Store original
+      checkHealthIcon.className = "fas fa-spinner fa-spin" // Set spinner
     }
     checkHealthButton.classList.add("is-loading")
     checkHealthButton.disabled = true
@@ -605,7 +629,7 @@ export function handleCheckHealth(elements) {
         checkHealthButton.classList.remove("is-loading")
         checkHealthButton.disabled = false
         if (checkHealthIcon) {
-            checkHealthIcon.className = originalIconClass; // Restore original
+          checkHealthIcon.className = originalIconClass // Restore original
         }
       }
       reRenderCurrentView(elements)
@@ -1697,43 +1721,43 @@ export function attachTreeListeners(elements) {
 }
 
 function populateFolderFilter(bookmarkTreeNodes, elements) {
-  const language = localStorage.getItem("appLanguage") || "en";
-  const folderFilter = elements.folderFilter;
-  folderFilter.innerHTML = `<option value="">${translations[language].allBookmarks}</option>`;
+  const language = localStorage.getItem("appLanguage") || "en"
+  const folderFilter = elements.folderFilter
+  folderFilter.innerHTML = `<option value="">${translations[language].allBookmarks}</option>`
 
   function buildFolderOptions(nodes, depth = 0) {
     nodes.forEach((node) => {
       if (node.children) {
         // Only process folders
-        const option = document.createElement("option");
-        option.value = node.id;
-        
+        const option = document.createElement("option")
+        option.value = node.id
+
         // Add indentation for tree structure
-        const prefix = "\u00A0\u00A0".repeat(depth); // using non-breaking spaces
-        const folderName = node.title || `Folder ${node.id}`;
-        option.textContent = `${prefix}${folderName}`;
-        
-        folderFilter.appendChild(option);
-        
+        const prefix = "\u00A0\u00A0".repeat(depth) // using non-breaking spaces
+        const folderName = node.title || `Folder ${node.id}`
+        option.textContent = `${prefix}${folderName}`
+
+        folderFilter.appendChild(option)
+
         // Recursively process children
         if (node.children.length > 0) {
-          buildFolderOptions(node.children, depth + 1);
+          buildFolderOptions(node.children, depth + 1)
         }
       }
-    });
+    })
   }
 
   // Start building from the root's children, as the root itself isn't a displayable folder
   if (bookmarkTreeNodes && bookmarkTreeNodes.length > 0) {
-    buildFolderOptions(bookmarkTreeNodes[0].children);
+    buildFolderOptions(bookmarkTreeNodes[0].children)
   }
 
   // Set the selected value
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
-    folderFilter.value = uiState.selectedFolderId;
+    folderFilter.value = uiState.selectedFolderId
   } else {
-    uiState.selectedFolderId = "";
-    folderFilter.value = "";
+    uiState.selectedFolderId = ""
+    folderFilter.value = ""
   }
 }
 
