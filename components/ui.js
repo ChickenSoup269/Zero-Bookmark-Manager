@@ -702,7 +702,7 @@ export async function populateTagFilter(elements) {
 }
 
 export function updateTheme(elements, theme) {
-  const availableThemes = ["light", "dark", "dracula", "onedark"]
+  const availableThemes = ["light", "dark", "dracula", "onedark", "tet"]
   const isDarkMode =
     theme === "dark" ||
     (theme === "system" &&
@@ -736,6 +736,7 @@ export function updateTheme(elements, theme) {
     dark: "images/logo.png",
     dracula: "images/logo_dracula.png",
     onedark: "images/logo_onedark.png",
+    tet: "images/logo_tet.png",
   }
 
   const getAsset = (path) =>

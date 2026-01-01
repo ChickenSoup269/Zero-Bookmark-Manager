@@ -154,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const newLanguage = e.target.value
       localStorage.setItem("appLanguage", newLanguage)
       updateUILanguage(elements, newLanguage)
+      window.dispatchEvent(new CustomEvent('languageChanged')); // Dispatch custom event
       getBookmarkTree((bookmarkTreeNodes) => {
         if (bookmarkTreeNodes) {
           renderFilteredBookmarks(bookmarkTreeNodes, elements)

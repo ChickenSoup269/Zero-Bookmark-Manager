@@ -25,7 +25,7 @@
             <div class="sidebar-section">
                 <div class="sidebar-section-title">
                     <i class="fas fa-filter" aria-hidden="true"></i>
-                    <span>Filters</span>
+                    <span id="filters-title">Filters</span>
                 </div>
                 <div class="controls">
                     <select id="folder-filter" class="select" aria-label="Folder filter">
@@ -54,7 +54,7 @@
             <div class="sidebar-section">
                 <div class="sidebar-section-title">
                     <i class="fas fa-search" aria-hidden="true"></i>
-                    <span>Search</span>
+                    <span id="search-title">Search</span>
                 </div>
                 <div class="search-container">
                     <input type="text" id="search" placeholder="Search bookmarks..." class="input"
@@ -66,7 +66,7 @@
             <div class="sidebar-section">
                 <div class="sidebar-section-title">
                     <i class="fas fa-folder" aria-hidden="true"></i>
-                    <span>Folder actions</span>
+                    <span id="folder-actions-title">Folder actions</span>
                 </div>
                 <div class="control-buttons">
                     <button id="create-folder" class="button create">
@@ -95,7 +95,7 @@
             <div class="sidebar-section sidebar-section-bottom">
                 <div class="sidebar-section-title sidebar-section-title-small">
                     <i class="far fa-check-square" aria-hidden="true"></i>
-                    <span>Selection</span>
+                    <span id="selection-title">Selection</span>
                 </div>
                 <div class="bottom-controls">
                     <div class="select-all">
@@ -122,11 +122,12 @@
                         <option value="vi">Tiếng Việt</option>
                     </select>
                     <select id="theme-switcher" class="select select-with-icons">
-                        <option value="system">System</option>
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                        <option value="dracula">Dracula</option>
-                        <option value="onedark">Onedark</option>
+                        <option value="system">&#9889; System</option>
+                        <option value="light">&#9889; Light</option>
+                        <option value="dark">&#9889; Dark</option>
+                        <option value="dracula">&#9889; Dracula</option>
+                        <option value="onedark">&#9889; OneDark</option>
+                        <option value="tet">&#9889; Tet</option>
                     </select>
                     <select id="font-switcher" class="select select-with-icons">
                         <option value="hackNerd">Aa: HackNerd</option>
@@ -391,6 +392,7 @@
     <script src="./components/year.js" type="module"></script>
     <script src="main.js" type="module"></script>
     <script src="./components/sidebar.js" type="module"></script>
+    <script src="./components/localization.js" type="module"></script>
 </body>
 
 </html>

@@ -166,6 +166,41 @@ body.onedark-theme {
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
+/* Tet theme */
+
+[data-theme="tet"],
+body.tet-theme {
+  --bg-primary: #a72220; /* Softer, richer red */
+  --bg-secondary: #cc3f2c; /* Warmer, less intense red/orange */
+  --bg-tertiary: #4d1c1c; /* More brownish-red for tertiary */
+  --text-primary: #f0e68c; /* Slightly softer bright gold (khaki) */
+  --text-secondary: #e6b800; /* Creamy, readable gold */
+  --text-muted: #c49a00; /* Desaturated, subtle gold */
+  --accent-color: #f0e68c; /* Bright Gold (khaki) */
+  --border-color: #7a1f1e; /* Refined blend of red and gold */
+  --danger-color: #ff5555; /* Keep consistent red for danger */
+  --danger-hover: #ff4444; /* Keep consistent red for danger hover */
+  --hover-bg: rgba(240, 230, 140, 0.15); /* Subtle khaki gold hover */
+  --focus-outline: #f0e68c; /* Vibrant khaki gold for focus */
+  --box-shadow: 0 6px 15px rgba(240, 230, 140, 0.25); /* Softer golden glow */
+  --tree-line-color: rgba(240, 230, 140, 0.4); /* Softer gold tree lines */
+  --folder-title-color: #f0e68c; /* Bright gold for folder titles */
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(
+    240,
+    230,
+    140,
+    0.2
+  ); /* Subtle gold hover for folders */
+  --bookmark-bg: rgba(240, 230, 140, 0.05); /* Very subtle golden bookmark bg */
+  --bookmark-hover-bg: rgba(
+    240,
+    230,
+    140,
+    0.12
+  ); /* Slightly more pronounced golden bookmark bg */
+}
+
 /* Reset and base styles */
 * {
   box-sizing: border-box;

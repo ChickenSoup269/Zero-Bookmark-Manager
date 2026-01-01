@@ -232,6 +232,10 @@ export const translations = {
     unpinSuccess: "Bookmark unpinned!",
     pinToTop: "Pin to Top",
     unpin: "Unpin from Top",
+    filtersTitle: "Filters",
+    searchTitle: "Search",
+    folderActionsTitle: "Folder actions",
+    selectionTitle: "Selection",
   },
   vi: {
     welcomeMessage: "Chào mừng đến với Zero Bookmark Manager Chat!",
@@ -463,6 +467,10 @@ export const translations = {
     unpinSuccess: "Đã bỏ ghim bookmark!",
     pinToTop: "Ghim lên Đầu",
     unpin: "Bỏ ghim khỏi Đầu",
+    filtersTitle: "Bộ lọc",
+    searchTitle: "Tìm kiếm",
+    folderActionsTitle: "Thao tác thư mục",
+    selectionTitle: "Lựa chọn",
   },
 }
 
