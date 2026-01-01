@@ -1,6 +1,9 @@
 // components/utils.js
 export const translations = {
   en: {
+    welcomeMessage: "Welcome to Zero Bookmark Manager Chat!",
+    welcomeSubMessage: "How can I assist you today?",
+    startButton: "Start Chat",
     allBookmarks: "All Bookmarks",
     sortDefault: "Sort: Default",
     sortNew: "New to Old",
@@ -231,6 +234,9 @@ export const translations = {
     unpin: "Unpin from Top",
   },
   vi: {
+    welcomeMessage: "Chào mừng đến với Zero Bookmark Manager Chat!",
+    welcomeSubMessage: "Tôi có thể giúp gì cho bạn hôm nay?",
+    startButton: "Bắt đầu Chat",
     allBookmarks: "Tất cả Bookmarks",
     sortDefault: "Sắp xếp: Mặc định",
     sortNew: "Mới đến Cũ",

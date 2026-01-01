@@ -1529,14 +1529,63 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Function to display the welcome message and start button
+  const displayWelcomeMessage = () => {
+    if (chatMessages.querySelector(".chatbox-welcome-container")) {
+      return // Don't add if already present
+    }
+
+    const welcomeContainer = document.createElement("div")
+    welcomeContainer.className = "chatbox-welcome-container"
+
+    const welcomeMessage = document.createElement("div")
+    welcomeMessage.className = "chatbox-welcome-message"
+    welcomeMessage.innerHTML = `${
+      t("welcomeMessage") || "Welcome to Zero Bookmark Manager Chat!"
+    }<br><br>${
+      t("welcomeSubMessage") || "How can I assist you today?"
+    }`
+
+    const startButton = document.createElement("button")
+    startButton.className = "button chatbox-start-button"
+    startButton.textContent = t("startButton") || "Start Chat"
+    startButton.addEventListener("click", () => {
+      const initialMessage =
+        getLanguage() === "vi" ? "Xin chào Zero" : "Hello Zero"
+      chatInput.value = initialMessage // Set the input value
+      handleUserInput() // Trigger sending the message
+      // After sending, the welcome message should be removed by handleUserInput if it detects messages
+      removeWelcomeMessage()
+    })
+
+    welcomeContainer.appendChild(welcomeMessage)
+    welcomeContainer.appendChild(startButton)
+    chatMessages.appendChild(welcomeContainer)
+  }
+
+  // Function to remove the welcome message
+  const removeWelcomeMessage = () => {
+    const welcomeContainer = chatMessages.querySelector(
+      ".chatbox-welcome-container"
+    )
+    if (welcomeContainer) {
+      welcomeContainer.remove()
+    }
+  }
+
   // Event listeners
+
   if (chatSend) {
-    chatSend.addEventListener("click", handleUserInput)
+    chatSend.addEventListener("click", () => {
+      removeWelcomeMessage() // Remove welcome message when user sends a message
+      handleUserInput()
+    })
   }
 
   if (chatInput) {
     chatInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
+        removeWelcomeMessage() // Remove welcome message when user types and presses enter
         handleUserInput()
       }
     })
@@ -1547,6 +1596,7 @@ document.addEventListener("DOMContentLoaded", () => {
       chatMessages.innerHTML = ""
       chatHistory = []
       chatMessages.scrollTop = chatMessages.scrollHeight
+      displayWelcomeMessage() // Display welcome message if chat is cleared
     })
   }
 
@@ -1556,8 +1606,19 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!chatbox.classList.contains("hidden")) {
         chatInput.focus()
         chatMessages.scrollTop = chatMessages.scrollHeight
+        // Display welcome message if chat history is empty
+        if (getChatHistory().length === 0) {
+          displayWelcomeMessage()
+        } else {
+          removeWelcomeMessage() // Ensure it's removed if there's history
+        }
       }
     })
+  }
+
+  // Initial check when chatbox might be opened initially (e.g., on page load if not hidden)
+  if (!chatbox.classList.contains("hidden") && getChatHistory().length === 0) {
+    displayWelcomeMessage()
   }
 
   if (chatClose) {
