@@ -30,7 +30,7 @@
 <p>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Generic badge](https://img.shields.io/badge/Version-1.1.2-white.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Version-1.1.3-white.svg)](https://shields.io/)
 
 </p>
 <p>
@@ -53,8 +53,8 @@ Bookmark Manager is a and intuitive Chrome extension that simplifies bookmark or
 - **Folder Management:** Create, delete, or move bookmarks between folders.
 - **Edit Bookmarks:** add to folder, rename or delete bookmarks. View details, favourite, add tags.
 - **Export/Import:** Save bookmarks to JSON/HTML/CSV or import with JSON duplicate detection (based on URL).
-- **Themes:** Switch between light, dark, dracula, one dark, or system-based themes.
-- **Fonts:** Customize interface with different font styles.
+- **Themes:** Switch between light, dark, dracula, one dark, Tet, or system-based themes.
+- **Fonts:** Customize interface with various font styles, including improved Nerd Fonts support.
 - **Multilingual:** Supports English and Vietnamese for a localized experience.
 
 ## Running Tests
@@ -109,20 +109,21 @@ Install Bookmark-Manager
 
 ## Usage/Examples
 
-| Parameter                | Description                                                                                 |
-| :----------------------- | :------------------------------------------------------------------------------------------ |
-| `Search`                 | Type keywords in the search box.                                                            |
-| `Filter folders`         | Select a folder from the dropdown.                                                          |
-| `Sort`                   | Choose a sorting option.                                                                    |
-| `Manage folders`         | Create, rename, or delete fodlers                                                           |
-| `Manage bookmarks`       | Click "⋮" to add to folder, rename, or delete, Viewdetail, Manage tags, Favourite           |
-| `Export/Import`          | Use Settings to export as JSON/HTML/CSV or import with Json duplicate check.                |
-| `Customize`              | Adjust theme, font, or language in Settings, Render view                                    |
-| `Edit in new tabs`       | Use extension with web view                                                                 |
-| `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs |
-| `Tags`                   | Choose a sorting tags option                                                                |
-| `Pin to top`             | Choose a bookmark to pin on top                                                             |
-| `Chatbot`                | You can check Help Guide in chatbot with icon [?] (beta version)                            |
+| Parameter                | Description                                                                                                            |
+| :----------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| `Search`                 | Type keywords in the search box.                                                                                       |
+| `Filter folders`         | Select a folder from the dropdown.                                                                                     |
+| `Sort`                   | Choose a sorting option.                                                                                               |
+| `Manage folders`         | Create, rename, or delete fodlers                                                                                      |
+| `Manage bookmarks`       | Click "⋮" to add to folder, rename, or delete, Viewdetail, Manage tags (now with a color palette), Favourite           |
+| `Export/Import`          | Use Settings to export as JSON/HTML/CSV or import with Json duplicate check.                                           |
+| `Customize`              | Adjust theme (including the new Tet theme), font, or language in Settings, Render view                                 |
+| `Edit in new tabs`       | Use extension with web view                                                                                            |
+| `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs                            |
+| `Tags`                   | Choose a sorting tags option                                                                                           |
+| `Pin to top`             | Choose a bookmark to pin on top                                                                                        |
+| `Chatbot`                | Now features an interactive welcome message and start button. Check Help Guide in chatbot with icon [?] (beta version) |
+| `Localization`           | Sidebar section titles (Filters, Search, Folder actions, Selection) are now dynamically translated.                    |
 
 ## How to get Gemini APi ?
 

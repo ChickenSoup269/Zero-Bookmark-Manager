@@ -2044,20 +2044,6 @@ html {
   border: 2px solid var(--focus-outline);
   box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
 }
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 480px;
-  max-height: 80vh;
-  background: var(--bg-tertiary, #ffffff);
-  border: 1px solid var(--border-color, #e0e0e0);
-  border-radius: 12px;
-  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
-  z-index: 100;
-  overflow-y: auto;
-  padding: 16px;
-}
 
 .custom-popup-header {
   display: flex;

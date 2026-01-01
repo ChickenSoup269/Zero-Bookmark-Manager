@@ -2,6 +2,26 @@
 
 ## Changelog:
 
+### [1.1.3] - [2026-01-01]
+
+## Added
+
+- New "Tet" theme with red and gold color palette.
+- Dynamic localization for sidebar section titles (Filters, Search, Folder actions, Selection).
+- Chatbox welcome message with localized text and a "Start Chat" button.
+- Color palette for tag management in the "Manage Tags" popup.
+
+## Improved
+
+- "Tet" theme color palette adjusted for better contrast and readability.
+- Font switching mechanism enhanced with more choices and robust handling.
+- Overall localization experience improved with dedicated script and event handling.
+
+## Updated
+
+- `README.md` to reflect new features, version, and usage examples.
+- Corrected Roboto font file path in styles.
+
 ### [1.1.2] - [2025-12-04]
 
 ## Added
