@@ -170,33 +170,28 @@ body.onedark-theme {
 
 [data-theme="tet"],
 body.tet-theme {
-  --bg-primary: #a72220; /* Softer, richer red */
-  --bg-secondary: #cc3f2c; /* Warmer, less intense red/orange */
-  --bg-tertiary: #4d1c1c; /* More brownish-red for tertiary */
-  --text-primary: #f0e68c; /* Slightly softer bright gold (khaki) */
-  --text-secondary: #e6b800; /* Creamy, readable gold */
-  --text-muted: #c49a00; /* Desaturated, subtle gold */
-  --accent-color: #f0e68c; /* Bright Gold (khaki) */
-  --border-color: #7a1f1e; /* Refined blend of red and gold */
-  --danger-color: #ff5555; /* Keep consistent red for danger */
-  --danger-hover: #ff4444; /* Keep consistent red for danger hover */
-  --hover-bg: rgba(240, 230, 140, 0.15); /* Subtle khaki gold hover */
-  --focus-outline: #f0e68c; /* Vibrant khaki gold for focus */
-  --box-shadow: 0 6px 15px rgba(240, 230, 140, 0.25); /* Softer golden glow */
-  --tree-line-color: rgba(240, 230, 140, 0.4); /* Softer gold tree lines */
-  --folder-title-color: #f0e68c; /* Bright gold for folder titles */
+  --bg-primary: #8c001a; /* Deeper, richer red */
+  --bg-secondary: #bc1823; /* Slightly lighter, still deep red */
+  --bg-tertiary: #5c000d; /* Very dark, almost brownish-red */
+  --text-primary: #d4c154; /* Vibrant gold for primary text */
+  --text-secondary: #fffacd; /* Creamy white for secondary text */
+  --text-muted: #fffacd; /* Muted gold */
+  --accent-color: #fffacd; /* Vibrant gold for accents */
+  --border-color: #700014; /* Darker red for borders */
+  --danger-color: #ff5555; /* Unchanged */
+  --danger-hover: #ff4444; /* Unchanged */
+  --hover-bg: rgba(255, 215, 0, 0.15); /* Subtle gold hover */
+  --focus-outline: #fffacd; /* Vibrant gold for focus */
+  --box-shadow: 0 6px 15px rgba(255, 215, 0, 0.25); /* Softer golden glow */
+  --tree-line-color: rgba(255, 215, 0, 0.4); /* Soft gold tree lines */
+  --folder-title-color: #fffacd; /* Vibrant gold for folder titles */
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(
-    240,
-    230,
-    140,
-    0.2
-  ); /* Subtle gold hover for folders */
-  --bookmark-bg: rgba(240, 230, 140, 0.05); /* Very subtle golden bookmark bg */
+  --folder-hover-bg: rgba(255, 215, 0, 0.2); /* Subtle gold hover for folders */
+  --bookmark-bg: rgba(255, 215, 0, 0.05); /* Very subtle golden bookmark bg */
   --bookmark-hover-bg: rgba(
-    240,
-    230,
-    140,
+    255,
+    215,
+    0,
     0.12
   ); /* Slightly more pronounced golden bookmark bg */
 }
@@ -262,7 +257,7 @@ html {
   margin-top: 10px;
   margin-bottom: var(--spacing-sm);
   color: var(--text-secondary);
-  width: 180px;
+  width: 184px;
 }
 
 .search-container {
@@ -2003,6 +1998,52 @@ html {
 
 /* Popup Styles */
 .custom-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  max-height: 80vh;
+  background: var(--bg-tertiary, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
+  z-index: 100;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* Color Palette for Tags */
+.color-palette-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  justify-content: center;
+}
+
+.color-swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%; /* Make them round */
+  border: 2px solid var(--border-color);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 0; /* Remove default padding */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent-color); /* Highlight on hover */
+}
+
+.color-swatch.selected {
+  border: 2px solid var(--focus-outline);
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
   position: fixed;
   top: 50%;
   left: 50%;

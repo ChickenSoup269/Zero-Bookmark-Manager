@@ -158,7 +158,7 @@ function createDropdownHTML(bookmark, language) {
   }</button>
         <button class="menu-item delete-btn" data-id="${
           bookmark.id
-        }"><i class="fas fa-trash-alt" style="${iconStyle}"></i>${
+        }"><i class="fas fa-trash" style="${iconStyle}"></i>${
     t.deleteBookmarkOption || "Delete"
   }</button>
         <button class="menu-item rename-btn" data-id="${

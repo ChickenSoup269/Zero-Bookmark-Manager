@@ -326,32 +326,28 @@ async function openManageTagsPopup(bookmarkId) {
   }
 
   // Predefined Colors (màu nền tag, hiển thị gọn)
-  if (!popup.querySelector(".color-buttons-container")) {
-    const colors = [
-      "#ecf2f8",
-      "#fa7970",
-      "#faa356",
-      "#7ce378",
-      "#a2b2fb",
-      "#77bdfb",
-      "#cea5fb",
-    ]
-    const colorContainer = document.createElement("div")
-    colorContainer.className = "color-buttons-container"
-    colorContainer.style.cssText =
-      "display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;"
+  // Ensure this block runs only once when the popup is first initialized or when a bookmark is selected that triggers it.
+  // The HTML structure should already contain the .color-palette-container from bookmarks.html
+  // So we only need to attach event listeners here.
+  const colorPaletteContainer = popup.querySelector(".color-palette-container");
+  if (colorPaletteContainer) {
+    // Clear existing listeners to prevent duplicates
+    Array.from(colorPaletteContainer.children).forEach(btn => {
+      btn.removeEventListener('click', handleSwatchClick);
+    });
 
-    colors.forEach((c) => {
-      const btn = document.createElement("button")
-      btn.type = "button"
-      btn.style.cssText = `width: 30px; height: 30px; border-radius: 6px; background-color: ${c}; border: 1px solid #ccc; cursor: pointer;`
-      btn.onclick = () => {
-        els.color.value = c
-        textColorInput.value = getContrastColor(c)
-      }
-      colorContainer.appendChild(btn)
-    })
-    addTagContainer.before(colorContainer)
+    // Attach new listeners
+    Array.from(colorPaletteContainer.children).forEach(btn => {
+      btn.addEventListener('click', handleSwatchClick);
+    });
+  }
+
+  function handleSwatchClick(e) {
+    const selectedColor = e.target.dataset.color;
+    if (selectedColor) {
+      els.color.value = selectedColor;
+      textColorInput.value = getContrastColor(selectedColor);
+    }
   }
 
   let countDisplay = popup.querySelector(".tag-count")
