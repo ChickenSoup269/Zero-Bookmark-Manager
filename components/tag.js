@@ -54,7 +54,11 @@ export async function loadTags() {
 }
 
 // Save tags and colors to storage
-export function saveTags(bookmarkTags, updatedTagColors = null) {
+export function saveTags(
+  bookmarkTags,
+  updatedTagColors = null,
+  updatedTagTextColors = null
+) {
   const dataToSave = {}
 
   if (bookmarkTags) {
@@ -70,11 +74,16 @@ export function saveTags(bookmarkTags, updatedTagColors = null) {
     uiState.tagColors = tagColors
   }
 
+  if (updatedTagTextColors) {
+    uiState.tagTextColors = { ...uiState.tagTextColors, ...updatedTagTextColors }
+    dataToSave.tagTextColors = uiState.tagTextColors
+  }
+
   chrome.storage.local.set(dataToSave)
 }
 
 // Add tag to bookmark
-export async function addTagToBookmark(bookmarkId, tag, color) {
+export async function addTagToBookmark(bookmarkId, tag, color, textColor) {
   const data = await getStorage("bookmarkTags")
   const bookmarkTags = data.bookmarkTags || {}
 
@@ -96,7 +105,7 @@ export async function addTagToBookmark(bookmarkId, tag, color) {
 
   if (!bookmarkTags[bookmarkId].includes(tag)) {
     bookmarkTags[bookmarkId].push(tag)
-    saveTags(bookmarkTags, { [tag]: color })
+    saveTags(bookmarkTags, { [tag]: color }, { [tag]: textColor })
     refreshUI()
   }
 }
@@ -126,14 +135,60 @@ export function changeTagColor(tag, color) {
   refreshUI()
 }
 
+export async function updateTag(oldTag, newTag, newBgColor, newTextColor) {
+  const data = await getStorage(["bookmarkTags", "tagColors", "tagTextColors"])
+  let bookmarkTags = data.bookmarkTags || {}
+  let storedColors = data.tagColors || {}
+  let storedTextColors = data.tagTextColors || {}
+
+  // --- LOGIC ĐỔI TÊN TOÀN CỤC (GLOBAL RENAME) ---
+
+  // Bước A: Cập nhật danh sách bookmark
+  // Duyệt qua tất cả bookmark đang lưu trong state
+  Object.keys(bookmarkTags).forEach((bId) => {
+    const tags = bookmarkTags[bId]
+    if (tags.includes(oldTag)) {
+      // 1. Xóa tag cũ
+      const newTags = tags.filter((t) => t !== oldTag)
+
+      // 2. Thêm tag mới (nếu chưa có) -> Tránh trùng lặp ['TagA', 'TagA']
+      if (!newTags.includes(newTag)) {
+        newTags.push(newTag)
+      }
+
+      bookmarkTags[bId] = newTags
+    }
+  })
+
+  // Bước B: Cập nhật màu sắc
+  // Xóa màu của tag cũ nếu tên tag thay đổi
+  if (newTag !== oldTag) {
+    delete storedColors[oldTag]
+    if (storedTextColors) {
+      delete storedTextColors[oldTag]
+    }
+  }
+
+  // Luôn cập nhật màu cho tag mới
+  storedColors[newTag] = newBgColor
+  if (!storedTextColors) {
+    storedTextColors = {}
+  }
+  storedTextColors[newTag] = newTextColor
+
+  saveTags(bookmarkTags, storedColors, storedTextColors)
+  refreshUI()
+}
+
 // === TÍNH NĂNG MỚI: ĐỔI TÊN TAG (EDIT TAG) ===
 export async function renameTagGlobal(oldTag, newTag) {
   if (!oldTag || !newTag || oldTag === newTag) return
 
   // 1. Lấy dữ liệu hiện tại
-  const data = await getStorage(["bookmarkTags", "tagColors"])
+  const data = await getStorage(["bookmarkTags", "tagColors", "tagTextColors"])
   let bookmarkTags = data.bookmarkTags || {}
   let storedColors = data.tagColors || {}
+  let storedTextColors = data.tagTextColors || {}
 
   // 2. Duyệt qua tất cả bookmark để đổi tên tag
   let hasChanges = false
@@ -159,10 +214,15 @@ export async function renameTagGlobal(oldTag, newTag) {
     // Cập nhật biến local export
     tagColors = storedColors
   }
+  if (storedTextColors[oldTag]) {
+    storedTextColors[newTag] = storedTextColors[oldTag]
+    delete storedTextColors[oldTag]
+    uiState.tagTextColors = storedTextColors
+  }
 
   // 4. Lưu và Render lại nếu có thay đổi
   if (hasChanges || storedColors[newTag]) {
-    saveTags(bookmarkTags, storedColors)
+    saveTags(bookmarkTags, storedColors, storedTextColors)
 
     // Cập nhật selectedTags trong uiState nếu người dùng đang lọc theo tag cũ
     if (uiState.selectedTags && uiState.selectedTags.includes(oldTag)) {
@@ -181,9 +241,10 @@ export async function renameTagGlobal(oldTag, newTag) {
 
 // === TÍNH NĂNG BỔ SUNG: XÓA TAG TOÀN CỤC ===
 export async function deleteTagGlobal(tagToDelete) {
-  const data = await getStorage(["bookmarkTags", "tagColors"])
+  const data = await getStorage(["bookmarkTags", "tagColors", "tagTextColors"])
   let bookmarkTags = data.bookmarkTags || {}
   let storedColors = data.tagColors || {}
+  let storedTextColors = data.tagTextColors || {}
 
   // Xóa tag khỏi tất cả bookmark
   for (const bookmarkId in bookmarkTags) {
@@ -202,15 +263,22 @@ export async function deleteTagGlobal(tagToDelete) {
     delete storedColors[tagToDelete]
     tagColors = storedColors
   }
+  if (storedTextColors[tagToDelete]) {
+    delete storedTextColors[tagToDelete]
+    uiState.tagTextColors = storedTextColors
+  }
 
   // Xóa khỏi bộ lọc đang chọn
   if (uiState.selectedTags) {
     uiState.selectedTags = uiState.selectedTags.filter((t) => t !== tagToDelete)
   }
 
-  saveTags(bookmarkTags, storedColors) // Save colors object directly, pass null handled inside logic if needed, but here we pass full object logic
+  saveTags(bookmarkTags, storedColors, storedTextColors) // Save colors object directly, pass null handled inside logic if needed, but here we pass full object logic
   // Fix logic saveTags for direct object pass:
-  chrome.storage.local.set({ tagColors: storedColors })
+  chrome.storage.local.set({
+    tagColors: storedColors,
+    tagTextColors: storedTextColors,
+  })
 
   refreshUI()
 }

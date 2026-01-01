@@ -243,6 +243,15 @@
   margin-right: var(--spacing-sm);
   cursor: pointer;
   transform: scale(1.1);
+  position: relative;
+  z-index: 2;
+}
+
+.card-view .bookmark-item .bookmark-checkbox {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3; /* Ensure it's above other elements in the card */
 }
 
 .favicon {

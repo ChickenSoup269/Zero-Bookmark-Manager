@@ -20,7 +20,7 @@
 ## Updated
 
 - `README.md` to reflect new features, version, and usage examples.
-- Corrected Roboto font file path in styles.
+- Corrected HackNerd font file path in styles.
 
 ### [1.1.2] - [2025-12-04]
 

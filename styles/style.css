@@ -176,7 +176,7 @@ body.tet-theme {
   --text-primary: #d4c154; /* Vibrant gold for primary text */
   --text-secondary: #fffacd; /* Creamy white for secondary text */
   --text-muted: #fffacd; /* Muted gold */
-  --accent-color: #fffacd; /* Vibrant gold for accents */
+  --accent-color: rgb(240, 230, 137); /* Vibrant gold for accents */
   --border-color: #700014; /* Darker red for borders */
   --danger-color: #ff5555; /* Unchanged */
   --danger-hover: #ff4444; /* Unchanged */
@@ -2220,4 +2220,49 @@ html {
 /* An toàn */
 .health-icon.safe {
   color: #28a745; /* xanh lá */
+}
+
+.add-tag-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid var(--border-color);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.color-picker-label {
+    cursor: pointer;
+}
+
+.tag-color-picker {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.tag-color-picker::-webkit-color-swatch {
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+}
+
+.tag-color-picker::-moz-color-swatch {
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+}
+
+.color-swatch.selected {
+  border: 2px solid var(--focus-outline);
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
 }

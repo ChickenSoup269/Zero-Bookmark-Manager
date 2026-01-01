@@ -9,6 +9,7 @@ import { getBookmarkTree } from "../bookmarks.js"
 import { renderFilteredBookmarks } from "../ui.js"
 import { uiState, setCurrentBookmarkId } from "../state.js"
 import { openAddToFolderPopup } from "./addToFolder.js"
+import { updateTag } from "../tag.js"
 
 // --- HELPER FUNCTIONS ---
 
@@ -293,7 +294,7 @@ async function openManageTagsPopup(bookmarkId) {
   }
 
   // --- Utility inside Manage Tags ---
-  const MAX_TAGS = 10
+  const MAX_TAGS = 8
   const getContrastColor = (hex) => {
     const r = parseInt(hex.substr(1, 2), 16),
       g = parseInt(hex.substr(3, 2), 16),
@@ -301,52 +302,53 @@ async function openManageTagsPopup(bookmarkId) {
     return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? "#000000" : "#ffffff"
   }
 
-  // --- Initialization (Prevent Duplicates) ---
-  let textColorInput = document.getElementById("new-tag-text-color")
-  let tagSelect = document.querySelector(".existing-tags-select")
+  // --- Get Elements (They should already exist from bookmarks.html) ---
+  const textColorInput = document.getElementById("new-tag-text-color")
+  const tagSelect = document.querySelector(".existing-tags-select")
 
-  // Input chọn màu chữ (text color) đơn giản, không quá màu mè
-  if (!textColorInput) {
-    textColorInput = document.createElement("input")
-    textColorInput.type = "color"
-    textColorInput.id = "new-tag-text-color"
-    textColorInput.value = "#ffffff"
-    textColorInput.style.cssText =
-      "padding: 4px; border-radius: 6px; width: 100%; margin-top: 4px;"
-    addTagContainer.appendChild(textColorInput)
-  }
-
-  // Dropdown chọn nhanh tag đã tồn tại (màu đại diện là màu chữ thôi)
-  if (!tagSelect) {
-    tagSelect = document.createElement("select")
-    tagSelect.className = "select existing-tags-select"
-    tagSelect.style.cssText =
-      "width: 100%; padding: 8px; border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary); margin-top: 8px;"
-    addTagContainer.appendChild(tagSelect)
-  }
+  if (!textColorInput) console.error("new-tag-text-color input not found!")
+  if (!tagSelect) console.error("existing-tags-select dropdown not found!")
 
   // Predefined Colors (màu nền tag, hiển thị gọn)
   // Ensure this block runs only once when the popup is first initialized or when a bookmark is selected that triggers it.
   // The HTML structure should already contain the .color-palette-container from bookmarks.html
   // So we only need to attach event listeners here.
-  const colorPaletteContainer = popup.querySelector(".color-palette-container");
+  const colorPaletteContainer = popup.querySelector(".color-palette-container")
   if (colorPaletteContainer) {
     // Clear existing listeners to prevent duplicates
-    Array.from(colorPaletteContainer.children).forEach(btn => {
-      btn.removeEventListener('click', handleSwatchClick);
-    });
+    Array.from(colorPaletteContainer.children).forEach((btn) => {
+      btn.removeEventListener("click", handleSwatchClick)
+    })
 
     // Attach new listeners
-    Array.from(colorPaletteContainer.children).forEach(btn => {
-      btn.addEventListener('click', handleSwatchClick);
-    });
+    Array.from(colorPaletteContainer.children).forEach((btn) => {
+      btn.addEventListener("click", handleSwatchClick)
+    })
+
+    // Set initial selected color
+    const initialColor = els.color.value
+    const swatches = colorPaletteContainer.querySelectorAll(".color-swatch")
+    swatches.forEach((swatch) => {
+      if (swatch.dataset.color === initialColor) {
+        swatch.classList.add("selected")
+      } else {
+        swatch.classList.remove("selected")
+      }
+    })
   }
 
   function handleSwatchClick(e) {
-    const selectedColor = e.target.dataset.color;
+    const selectedColor = e.target.dataset.color
     if (selectedColor) {
-      els.color.value = selectedColor;
-      textColorInput.value = getContrastColor(selectedColor);
+      els.color.value = selectedColor
+      textColorInput.value = getContrastColor(selectedColor)
+
+      // Remove .selected from all swatches
+      const swatches = colorPaletteContainer.querySelectorAll(".color-swatch")
+      swatches.forEach((swatch) => swatch.classList.remove("selected"))
+
+      // Add .selected to the clicked swatch
+      e.target.classList.add("selected")
     }
   }
 
@@ -505,6 +507,18 @@ function handleEditTagUI(
   input.style.cssText =
     "padding: 4px 6px; border-radius: 4px; border: 1px solid var(--accent-color); width: 80px; font-size: 12px;"
 
+  const bgColorPicker = document.createElement("input")
+  bgColorPicker.type = "color"
+  bgColorPicker.value = uiState.tagColors[oldTag] || "#cccccc"
+  bgColorPicker.style.cssText =
+    "width: 24px; height: 24px; border: none; padding: 0; border-radius: 50%;"
+
+  const textColorPicker = document.createElement("input")
+  textColorPicker.type = "color"
+  textColorPicker.value = uiState.tagTextColors[oldTag] || "#ffffff"
+  textColorPicker.style.cssText =
+    "width: 24px; height: 24px; border: none; padding: 0; border-radius: 50%;"
+
   // Tự động focus và bôi đen text
   setTimeout(() => input.select(), 0)
 
@@ -520,7 +534,7 @@ function handleEditTagUI(
   cancelBtn.style.cssText =
     "background: var(--text-danger, #dc3545); color: #fff; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;"
 
-  container.append(input, saveBtn, cancelBtn)
+  container.append(input, bgColorPicker, textColorPicker, saveBtn, cancelBtn)
 
   // 3. Xử lý nút Cancel
   cancelBtn.onclick = (e) => {
@@ -530,9 +544,11 @@ function handleEditTagUI(
   }
 
   // 4. Xử lý nút Save
-  saveBtn.onclick = (e) => {
+  saveBtn.onclick = async (e) => {
     e.stopPropagation()
     const newTag = input.value.trim()
+    const newBgColor = bgColorPicker.value
+    const newTextColor = textColorPicker.value
 
     // Validate
     if (!newTag)
@@ -541,52 +557,14 @@ function handleEditTagUI(
         "error",
         true
       )
-    if (newTag === oldTag) {
-      // Không thay đổi gì thì quay lại
-      cancelBtn.click()
-      return
-    }
 
-    // --- LOGIC ĐỔI TÊN TOÀN CỤC (GLOBAL RENAME) ---
+    await updateTag(oldTag, newTag, newBgColor, newTextColor)
 
-    // Bước A: Cập nhật danh sách bookmark
-    // Duyệt qua tất cả bookmark đang lưu trong state
-    Object.keys(uiState.bookmarkTags).forEach((bId) => {
-      const tags = uiState.bookmarkTags[bId]
-      if (tags.includes(oldTag)) {
-        // 1. Xóa tag cũ
-        const newTags = tags.filter((t) => t !== oldTag)
-
-        // 2. Thêm tag mới (nếu chưa có) -> Tránh trùng lặp ['TagA', 'TagA']
-        if (!newTags.includes(newTag)) {
-          newTags.push(newTag)
-        }
-
-        uiState.bookmarkTags[bId] = newTags
-      }
-    })
-
-    // Bước B: Cập nhật màu sắc (Ưu tiên màu của Tag Mới nếu nó đã tồn tại)
-    if (!uiState.tagColors[newTag]) {
-      // Nếu tag mới chưa có màu -> Thừa kế màu tag cũ
-      uiState.tagColors[newTag] = uiState.tagColors[oldTag]
-    }
-    // Xóa màu tag cũ
-    delete uiState.tagColors[oldTag]
-
-    // Tương tự với Text Color
-    if (uiState.tagTextColors) {
-      if (!uiState.tagTextColors[newTag]) {
-        uiState.tagTextColors[newTag] = uiState.tagTextColors[oldTag]
-      }
-      delete uiState.tagTextColors[oldTag]
-    }
-
-    // Bước C: Lưu và Render lại
-    saveFn(() => {
-      updateDropdownFn() // Cập nhật dropdown chọn tag
-      renderFn() // Render lại danh sách tag trong popup
-    })
+    // The refreshUI in updateTag will trigger a full re-render,
+    // which should include the tags in the popup.
+    // However, to be safe, let's call renderFn()
+    renderFn()
+    updateDropdownFn()
   }
 
   // Hỗ trợ bấm Enter để save

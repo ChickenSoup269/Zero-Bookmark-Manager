@@ -538,8 +538,8 @@ export function updateUILanguage(elements, language) {
   updateButtonText(elements.deleteFolderButton, t.deleteFolder)
   updateButtonText(elements.renameFolderButton, t.renameFolder)
   updateButtonText(elements.deleteBookmarksButton, t.deleteBookmarks)
-  elements.exportBookmarksOption.innerHTML = `${t.exportBookmarks}  <i class="fas fa-upload"></i> `
-  elements.importBookmarksOption.innerHTML = `${t.importBookmarks}  <i class="fas fa-download"></i>`
+  elements.exportBookmarksOption.innerHTML = `${t.exportBookmarks}  <i class="fas fa-download"></i>`
+  elements.importBookmarksOption.innerHTML = `${t.importBookmarks}  <i class="fas fa-upload"></i>`
   elements.editInNewTabOption.innerHTML = `${t.editInNewTabOption}  <i class="fas fa-external-link-alt"></i>`
   elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
     ? t.hideCheckboxes
@@ -1144,7 +1144,13 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
   div.className = `bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`
   div.dataset.id = bookmark.id
   const healthIcon = renderHealthIcon(bookmark.id)
+  const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
+  const isChecked = uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
+
   div.innerHTML = `
+    <input type="checkbox" class="bookmark-checkbox" data-id="${
+      bookmark.id
+    }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
     <div class="bookmark-content">
       <div class="bookmark-favicon"><img src="${favicon}" alt="icon" onerror="this.style.display='none';"></div>
       <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">${
