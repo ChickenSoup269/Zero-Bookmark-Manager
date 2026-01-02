@@ -65,6 +65,7 @@
   --folder-hover-bg: rgba(112, 161, 70, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
+  --check-link-color: linear-gradient(135deg, #4781ff, #47e6ff);
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -174,14 +175,14 @@ body.tet-theme {
   --bg-secondary: #bc1823; /* Slightly lighter, still deep red */
   --bg-tertiary: #5c000d; /* Very dark, almost brownish-red */
   --text-primary: #d4c154; /* Vibrant gold for primary text */
-  --text-secondary: #fffacd; /* Creamy white for secondary text */
+  --text-secondary: #ebdd57; /* Creamy white for secondary text */
   --text-muted: #fffacd; /* Muted gold */
   --accent-color: rgb(240, 230, 137); /* Vibrant gold for accents */
   --border-color: #700014; /* Darker red for borders */
   --danger-color: #ff5555; /* Unchanged */
   --danger-hover: #ff4444; /* Unchanged */
   --hover-bg: rgba(255, 215, 0, 0.15); /* Subtle gold hover */
-  --focus-outline: #fffacd; /* Vibrant gold for focus */
+  --focus-outline: #e8d739; /* Vibrant gold for focus */
   --box-shadow: 0 6px 15px rgba(255, 215, 0, 0.25); /* Softer golden glow */
   --tree-line-color: rgba(255, 215, 0, 0.4); /* Soft gold tree lines */
   --folder-title-color: #fffacd; /* Vibrant gold for folder titles */
@@ -194,6 +195,11 @@ body.tet-theme {
     0,
     0.12
   ); /* Slightly more pronounced golden bookmark bg */
+  --check-link-color: linear-gradient(
+    135deg,
+    #bc1823,
+    #ebdd57
+  ); /* Gold color for checked links */
 }
 
 /* Reset and base styles */
@@ -491,9 +497,9 @@ html {
   box-shadow: var(--shadow-sm);
 }
 
-/* Warning / utility buttons */
+/* Warning / utility buttons / cho check link button */
 .button-warning {
-  background: linear-gradient(135deg, #4781ff, #47e6ff);
+  background: var(--check-link-color);
   color: white;
   font-weight: 600;
   border-radius: 5px;
@@ -2223,43 +2229,43 @@ html {
 }
 
 .add-tag-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .color-picker-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    border: 1px solid var(--border-color);
-    padding: 5px;
-    border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--border-color);
+  padding: 5px;
+  border-radius: 5px;
 }
 
 .color-picker-label {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .tag-color-picker {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 24px;
-    height: 24px;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .tag-color-picker::-webkit-color-swatch {
-    border-radius: 50%;
-    border: 1px solid var(--border-color);
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
 }
 
 .tag-color-picker::-moz-color-swatch {
-    border-radius: 50%;
-    border: 1px solid var(--border-color);
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
 }
 
 .color-swatch.selected {
