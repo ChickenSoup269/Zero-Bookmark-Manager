@@ -98,13 +98,13 @@
   --bg-secondary-rgb: 246, 248, 250;
   --bg-tertiary: #eaeef2;
   --bg-white-none: none;
-  --bg-side: #585858;
+  --bg-side: #272727;
   --text-primary: #000000;
-  --text-secondary: #333333;
+  --text-secondary: #000000;
   --text-muted: #666666;
   --border-color: #cccccc;
   --accent-color: #000000;
-  --hover-bg: #999999;
+  --hover-bg: #ffffffcd;
   --focus-outline: #4a90e2;
   --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.753);
   --tree-line-color: rgba(0, 0, 0, 0.5);
@@ -232,7 +232,11 @@ body.font-jetBrainsMonoNerdFont * {
 }
 
 body {
-  background: var(--bg-primary);
+  background: linear-gradient(
+    to bottom,
+    var(--bg-tertiary),
+    var(--bg-secondary)
+  );
   color: var(--text-primary);
   margin: 0;
   padding: 0;
@@ -334,6 +338,10 @@ html {
   transform: scale(1);
   height: auto;
   display: flex;
+}
+
+.button.delete-bookmarks {
+  color: white !important;
 }
 
 .button.add.hidden,
@@ -615,7 +623,8 @@ html {
   top: 100%;
   right: 0;
   margin-top: 8px;
-  background-color: var(--bg-secondary);
+  background-color: rgba(var(--bg-secondary), 0.2); /* Semi-transparent */
+  backdrop-filter: blur(20px) !important; /* Glass effect */
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   min-width: 240px;
@@ -631,16 +640,54 @@ html {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.dropdown-menu:not(.hidden) {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
 .dropdown-menu.hidden {
-  display: none;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
 }
 
+/* Select in dropdown - Hover effect */
+.dropdown-menu.select {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+    transform 0.15s ease;
+}
+
+.dropdown-menu .select:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+/* Menu item - Button style */
+.dropdown-menu .menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease,
+    transform 0.15s ease;
+}
+
+.dropdown-menu .menu-item:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+/* HR in dropdown */
 .dropdown-menu hr {
   border: none;
   border-top: 1px solid var(--border-color);

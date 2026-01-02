@@ -12,10 +12,10 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container grid-layout">
         <div class="sidebar">
             <div class="sidebar-header">
-                <img src="" alt="logo" class="logo">
+                <img src="path/to/logo.png" alt="Zero Bookmark Manager Logo" class="logo">
                 <div class="sidebar-count">
                     <i class="fas fa-bookmark sidebar-count-icon" aria-hidden="true"></i>
                     <div id="bookmark-count" class="count"></div>
@@ -27,7 +27,7 @@
                     <i class="fas fa-filter" aria-hidden="true"></i>
                     <span id="filters-title">Filters</span>
                 </div>
-                <div class="controls">
+                <div class="controls flex-column">
                     <select id="folder-filter" class="select" aria-label="Folder filter">
                         <option value="">All Bookmarks</option>
                     </select>
@@ -69,7 +69,7 @@
                     <i class="fas fa-folder" aria-hidden="true"></i>
                     <span id="folder-actions-title">Folder actions</span>
                 </div>
-                <div class="control-buttons">
+                <div class="control-buttons grid-buttons">
                     <button id="create-folder" class="button create">
                         <i class="fas fa-folder" aria-hidden="true"></i>
                         <span>Create Folder</span>
@@ -98,9 +98,9 @@
                     <i class="far fa-check-square" aria-hidden="true"></i>
                     <span id="selection-title">Selection</span>
                 </div>
-                <div class="bottom-controls">
+                <div class="bottom-controls flex-row">
                     <div class="select-all">
-                        <input type="checkbox" id="select-all">
+                        <input type="checkbox" id="select-all" aria-label="Select all bookmarks">
                         <label for="select-all">Select All</label>
                     </div>
                     <button id="toggle-checkboxes" class="button toggle small">
@@ -110,40 +110,43 @@
                 </div>
             </div>
         </div>
-        <div class="header">
-            <button id="toggle-sidebar" class="button toggle-sidebar" title="Toggle Sidebar">
+
+        <div class="header flex-header">
+            <button id="toggle-sidebar" class="button toggle-sidebar" title="Toggle Sidebar"
+                aria-label="Toggle Sidebar">
                 <i class="fas fa-bars"></i>
             </button>
-            <img src="" alt="logo" class="logo">
+            <img src="path/to/logo.png" alt="Zero Bookmark Manager Logo" class="logo">
             <div class="settings-container">
-                <select id="health-sort-filter" class="select" style="display: none;">
+                <select id="health-sort-filter" class="select" style="display: none;" aria-label="Sort by health">
                     <option value="all">Sort by Health: All</option>
                     <option value="dead">Dead Links</option>
                     <option value="suspicious">Suspicious Links</option>
                     <option value="safe">Safe Links</option>
                 </select>
-                <button id="settings-button" class="button settings" title="Settings">⋮</button>
+                <button id="settings-button" class="button settings" title="Settings"
+                    aria-label="Open settings">⋮</button>
                 <div id="settings-menu" class="dropdown-menu-2 hidden">
-                    <select id="language-switcher" class="select">
+                    <select id="language-switcher" class="select" aria-label="Select language">
                         <option value="en">English</option>
                         <option value="vi">Tiếng Việt</option>
                     </select>
-                    <select id="theme-switcher" class="select select-with-icons">
+                    <select id="theme-switcher" class="select select-with-icons" aria-label="Select theme">
                         <option value="system">&#xf108; System</option>
                         <option value="light">&#9889; Light</option>
                         <option value="dark">&#9889; Dark</option>
                         <option value="dracula">&#9889; Dracula</option>
-                        <option value="onedark">&#9889; OneDark</option> >
+                        <option value="onedark">&#9889; OneDark</option>
                         <option value="tet">&#9889; Tet</option>
                     </select>
-                    <select id="font-switcher" class="select select-with-icons">
+                    <select id="font-switcher" class="select select-with-icons" aria-label="Select font">
                         <option value="hackNerd">Aa: HackNerd</option>
                         <option value="gohu">Aa: GohuFont</option>
                         <option value="anonymiceProNerd">Aa: AnonymicePro</option>
                         <option value="proFontWindowsNerdFontPropo">Aa: ProFont</option>
                         <option value="jetBrainsMonoNerdFont">Aa: JetBrains</option>
                     </select>
-                    <select id="view-switcher" class="select select-with-icons">
+                    <select id="view-switcher" class="select select-with-icons" aria-label="Select view mode">
                         <option value="flat">&#xf03a; Flat List</option>
                         <option value="tree">&#xf0e8; Tree View</option>
                         <option value="detail">&#xf05a; Detail View</option>
@@ -157,21 +160,24 @@
                     <button id="check-health-btn" class="button button-warning">
                         <i class="fas fa-stethoscope"></i> Check Links
                     </button>
-
                     <hr>
-                    <button id="localstorage-settings-option" class="menu-item"><i class="fas fa-cog"></i> Local Storage
-                        Settings</button>
+                    <button id="localstorage-settings-option" class="menu-item">
+                        <i class="fas fa-cog"></i> Local Storage Settings
+                    </button>
                 </div>
             </div>
         </div>
+
         <div class="back-button-container" id="back-button-container" style="display: none;">
-            <button id="back-button" class="button back-button">
+            <button id="back-button" class="button back-button" aria-label="Go back">
                 <span style="font-size: 18px;">←</span>
                 <span>Back</span>
             </button>
         </div>
-        <div id="folder-list" class="folder-list"></div>
-        <div id="rename-popup" class="rename-popup hidden" role="dialog" aria-labelledby="rename-title">
+
+        <div id="folder-list" class="folder-list card-grid"></div>
+
+        <div id="rename-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="rename-title">
             <div class="rename-popup-content">
                 <h3 id="rename-title">Rename</h3>
                 <div class="rename-input-container">
@@ -185,7 +191,9 @@
                 </div>
             </div>
         </div>
-        <div id="rename-folder-popup" class="rename-popup hidden" role="dialog" aria-labelledby="rename-folder-title">
+
+        <div id="rename-folder-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="rename-folder-title">
             <div class="rename-popup-content">
                 <h3 id="rename-folder-title">Rename Folder</h3>
                 <div class="rename-input-container">
@@ -203,7 +211,9 @@
                 </div>
             </div>
         </div>
-        <div id="add-to-folder-popup" class="rename-popup hidden" role="dialog" aria-labelledby="add-to-folder-title">
+
+        <div id="add-to-folder-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="add-to-folder-title">
             <div class="rename-popup-content">
                 <h3 id="add-to-folder-title">Add to Folder</h3>
                 <div class="add-to-folder-container">
@@ -217,13 +227,15 @@
                 </div>
             </div>
         </div>
-        <div id="create-folder-popup" class="rename-popup hidden" role="dialog" aria-labelledby="create-folder-title">
+
+        <div id="create-folder-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="create-folder-title">
             <div class="rename-popup-content">
                 <h3 id="create-folder-title">Create Folder</h3>
                 <div class="rename-input-container">
                     <input type="text" id="create-folder-input" class="input" placeholder="Enter folder name..."
-                        maxlength="255">
-                    <button id="clear-create-folder" class="button clear">✖</button>
+                        aria-label="Folder name" maxlength="255">
+                    <button id="clear-create-folder" class="button clear" aria-label="Clear folder name">✖</button>
                 </div>
                 <div class="rename-popup-buttons">
                     <button id="create-folder-save" class="button save">Save</button>
@@ -231,15 +243,13 @@
                 </div>
             </div>
         </div>
-        <!-- Bookmark Detail Popup -->
-        <div id="bookmark-detail-popup" class="rename-popup hidden" role="dialog" aria-labelledby="detail-title">
+
+        <div id="bookmark-detail-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="detail-title">
             <div class="rename-popup-content" style="display: flex; gap: 16px; align-items: flex-start;">
-                <!-- Cột trái: ảnh thumbnail -->
                 <div class="bookmark-thumbnail" style="flex: 0 0 150px;">
                     <img id="detail-thumbnail" src="" alt="Website thumbnail" />
                 </div>
-
-                <!-- Cột phải: thông tin -->
                 <div class="bookmark-info" style="flex: 1;">
                     <h3 id="detail-title-label">Bookmark Detail</h3>
                     <p><strong>Title:</strong> <span id="detail-title"></span></p>
@@ -253,25 +263,37 @@
             </div>
         </div>
 
-        <div id="manage-tags-popup" class="rename-popup hidden" role="dialog" aria-labelledby="manage-tags-title">
+        <div id="manage-tags-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="manage-tags-title">
             <div class="rename-popup-content">
                 <h3 id="manage-tags-title">Manage Tags</h3>
                 <div id="existing-tags"></div>
-                <select class="existing-tags-select select" style="margin-bottom: 12px;"></select>
+                <select class="existing-tags-select select" style="margin-bottom: 12px;"
+                    aria-label="Select existing tag"></select>
                 <input type="hidden" id="new-tag-text-color">
                 <div class="color-palette-container">
-                    <button class="color-swatch" style="background-color: #FF69B4;" data-color="#FF69B4"></button>
-                    <button class="color-swatch" style="background-color: #BA55D3;" data-color="#BA55D3"></button>
-                    <button class="color-swatch" style="background-color: #4169E1;" data-color="#4169E1"></button>
-                    <button class="color-swatch" style="background-color: #20B2AA;" data-color="#20B2AA"></button>
-                    <button class="color-swatch" style="background-color: #32CD32;" data-color="#32CD32"></button>
-                    <button class="color-swatch" style="background-color: #FFD700;" data-color="#FFD700"></button>
-                    <button class="color-swatch" style="background-color: #FF8C00;" data-color="#FF8C00"></button>
-                    <button class="color-swatch" style="background-color: #FF4500;" data-color="#FF4500"></button>
+                    <button class="color-swatch" style="background-color: #FF69B4;" data-color="#FF69B4"
+                        aria-label="Hot pink"></button>
+                    <button class="color-swatch" style="background-color: #BA55D3;" data-color="#BA55D3"
+                        aria-label="Medium orchid"></button>
+                    <button class="color-swatch" style="background-color: #4169E1;" data-color="#4169E1"
+                        aria-label="Royal blue"></button>
+                    <button class="color-swatch" style="background-color: #20B2AA;" data-color="#20B2AA"
+                        aria-label="Light sea green"></button>
+                    <button class="color-swatch" style="background-color: #32CD32;" data-color="#32CD32"
+                        aria-label="Lime green"></button>
+                    <button class="color-swatch" style="background-color: #FFD700;" data-color="#FFD700"
+                        aria-label="Gold"></button>
+                    <button class="color-swatch" style="background-color: #FF8C00;" data-color="#FF8C00"
+                        aria-label="Dark orange"></button>
+                    <button class="color-swatch" style="background-color: #FF4500;" data-color="#FF4500"
+                        aria-label="Orange red"></button>
                 </div>
                 <div class="add-tag-container">
-                    <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name...">
-                    <input type="color" id="new-tag-color" value="#cccccc" class="tag-color-picker">
+                    <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name..."
+                        aria-label="New tag name">
+                    <input type="color" id="new-tag-color" value="#cccccc" class="tag-color-picker"
+                        aria-label="Tag color">
                 </div>
                 <div class="rename-popup-buttons">
                     <button id="add-tag-btn" class="button save">Add Tag</button>
@@ -280,7 +302,8 @@
             </div>
         </div>
 
-        <div id="custom-popup" class="rename-popup hidden" role="dialog" aria-labelledby="custom-popup-title">
+        <div id="custom-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="custom-popup-title">
             <div class="rename-popup-content">
                 <h3 id="custom-popup-title">Notification</h3>
                 <p id="custom-popup-message"></p>
@@ -289,7 +312,9 @@
                 </div>
             </div>
         </div>
-        <div id="ai-config-popup" class="rename-popup hidden" role="dialog" aria-labelledby="ai-config-title">
+
+        <div id="ai-config-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="ai-config-title">
             <div class="rename-popup-content">
                 <h3 id="ai-config-title" class="ai-title">Configure AI Chatbot</h3>
                 <div class="ai-config-container">
@@ -306,7 +331,7 @@
                             <input type="password" id="api-key-input" class="input" placeholder="Enter API key..."
                                 aria-label="API key" maxlength="255">
                             <button type="button" id="toggle-api-visibility" class="button eye"
-                                aria-label="Toggle visibility"><i class="fas fa-eye-slash"></i></button>
+                                aria-label="Toggle API key visibility"><i class="fas fa-eye-slash"></i></button>
                         </div>
                         <div id="api-key-error" class="error-message hidden">Please enter an API key.</div>
                     </div>
@@ -326,6 +351,7 @@
                 </div>
             </div>
         </div>
+
         <div class="floating-buttons">
             <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
                 <i class="fas fa-caret-up"></i>
@@ -334,24 +360,30 @@
                 <i class="far fa-comment-alt"></i>
             </button>
         </div>
+
         <div id="chatbox" class="chatbox hidden">
             <div class="chatbox-content">
                 <h3>
                     ChatBot
                     <div class="chatbox-header-controlers">
-                        <button id="chat-help" class="chatbox-header-button" title="Help Guide">
+                        <button id="chat-help" class="chatbox-header-button" title="Help Guide"
+                            aria-label="Open help guide">
                             <i class="fas fa-question-circle"></i>
                         </button>
-                        <button id="chat-history" class="chatbox-header-button" title="Export Chat History">
+                        <button id="chat-history" class="chatbox-header-button" title="Export Chat History"
+                            aria-label="Export chat history">
                             <i class="fas fa-history"></i>
                         </button>
-                        <button id="chat-maximize" class="chatbox-header-button" title="Maximize/Minimize">
+                        <button id="chat-maximize" class="chatbox-header-button" title="Maximize/Minimize"
+                            aria-label="Toggle maximize">
                             <i class="fas fa-expand"></i>
                         </button>
-                        <button id="chat-edit-config" class="chatbox-header-button" title="Edit AI Config">
+                        <button id="chat-edit-config" class="chatbox-header-button" title="Edit AI Config"
+                            aria-label="Edit AI configuration">
                             <i class="fas fa-cog"></i>
                         </button>
-                        <button id="chat-close" class="chatbox-header-button" title="Close Chat">
+                        <button id="chat-close" class="chatbox-header-button" title="Close Chat"
+                            aria-label="Close chat">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -367,11 +399,13 @@
                             aria-label="Chat input">
                         <button id="chat-clear" class="clear" aria-label="Clear input">✖</button>
                     </div>
-                    <button id="chat-send" class="button send"><i class="fas fa-paper-plane"></i></button>
+                    <button id="chat-send" class="button send" aria-label="Send message"><i
+                            class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
-        <div id="custom-guide" class="rename-popup custom-guide hidden" role="dialog"
+
+        <div id="custom-guide" class="rename-popup custom-guide hidden popup-animate" role="dialog"
             aria-labelledby="custom-guide-title">
             <h3 id="custom-guide-title">Help Guide</h3>
             <div id="custom-guide-message"></div>
@@ -379,7 +413,8 @@
                 <button id="custom-guide-ok" class="button save">OK</button>
             </div>
         </div>
-        <div id="localstorage-settings-popup" class="rename-popup hidden" role="dialog"
+
+        <div id="localstorage-settings-popup" class="rename-popup hidden popup-animate" role="dialog"
             aria-labelledby="localstorage-settings-title">
             <div class="rename-popup-content">
                 <h3 id="localstorage-settings-title">Local Storage Settings</h3>
@@ -399,6 +434,7 @@
                 </div>
             </div>
         </div>
+
         <div class="footer">
             <p class="footer-text">
                 <span id="year"></span>
@@ -407,6 +443,7 @@
             </p>
         </div>
     </div>
+
     <script src="./components/option/option.js" type="module"></script>
     <script src="./components/tag.js" type="module"></script>
     <script src="./components/chat.js" type="module"></script>
