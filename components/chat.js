@@ -114,6 +114,54 @@ document.addEventListener("DOMContentLoaded", () => {
   // Chat history management
   let chatHistory = []
 
+  // ===== NEW HELPER FUNCTIONS =====
+  function appendBotMessage(htmlContent, textContent) {
+    const botMessageContainer = document.createElement("div")
+    botMessageContainer.className = "chatbox-message-container bot"
+    const timestamp = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    botMessageContainer.innerHTML = `
+      <div class="chat-avatar">
+       <i class="fas fa-power-off"></i>
+      </div>
+      <div class="chatbox-message">
+        ${htmlContent}
+        <span class="timestamp">${timestamp}</span>
+      </div>
+    `
+    chatMessages.appendChild(botMessageContainer)
+    const cleanText = textContent || htmlContent.replace(/<[^>]*>/g, "")
+    addToChatHistory("bot", cleanText, timestamp)
+    chatMessages.scrollTop = chatMessages.scrollHeight
+  }
+
+  function showTypingIndicator() {
+    if (document.getElementById("typing-indicator")) return
+    const typingIndicator = document.createElement("div")
+    typingIndicator.id = "typing-indicator"
+    typingIndicator.className = "chatbox-message-container bot"
+    typingIndicator.innerHTML = `
+      <div class="chat-avatar">
+       <i class="fas fa-power-off"></i>
+      </div>
+      <div class="chatbox-message">
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    `
+    chatMessages.appendChild(typingIndicator)
+    chatMessages.scrollTop = chatMessages.scrollHeight
+  }
+
+  function hideTypingIndicator() {
+    const indicator = document.getElementById("typing-indicator")
+    if (indicator) indicator.remove()
+  }
+  // ===== END OF NEW HELPERS =====
+
   const getChatHistory = () => {
     return chatHistory
   }
@@ -492,11 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle bookmark commands
   async function handleBookmarkCommand(action, params, originalMessage) {
-    const loadingMessage = document.createElement("div")
-    loadingMessage.className = "chatbox-message bot loading"
-    loadingMessage.textContent = t("loadingBookmarks") || "Loading..."
-    chatMessages.appendChild(loadingMessage)
-    chatMessages.scrollTop = chatMessages.scrollHeight
+    showTypingIndicator()
 
     try {
       if (action === "general") {
@@ -536,17 +580,8 @@ document.addEventListener("DOMContentLoaded", () => {
           answer = data.text || "No response"
         }
 
-        loadingMessage.remove()
-        const botMessage = document.createElement("div")
-        botMessage.className = "chatbox-message bot"
-        const timestamp = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-        botMessage.innerHTML = `${answer}<span class="timestamp">${timestamp}</span>`
-        chatMessages.appendChild(botMessage)
-        addToChatHistory("bot", answer, timestamp)
-        chatMessages.scrollTop = chatMessages.scrollHeight
+        hideTypingIndicator()
+        appendBotMessage(answer, answer)
       } else if (action === "count") {
         chrome.bookmarks.getTree((bookmarkTree) => {
           let count = 0
@@ -557,24 +592,26 @@ document.addEventListener("DOMContentLoaded", () => {
             })
           }
           countBookmarks(bookmarkTree[0].children)
-          loadingMessage.remove()
-          const botMessage = document.createElement("div")
-          botMessage.className = "chatbox-message bot"
+          hideTypingIndicator()
+          const botMessageContainer = document.createElement("div")
+          botMessageContainer.className = "chatbox-message-container bot"
           const timestamp = new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           })
-          botMessage.innerHTML = `${t("youHave") || "You have"} ${count} ${
+          const content = `${t("youHave") || "You have"} ${count} ${
             t("bookmarks") || "bookmarks"
-          }.<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(botMessage)
-          addToChatHistory(
-            "bot",
-            `${t("youHave") || "You have"} ${count} ${
-              t("bookmarks") || "bookmarks"
-            }.`,
-            timestamp
-          )
+          }.`
+          botMessageContainer.innerHTML = `
+            <div class="chat-avatar">
+             <i class="fas fa-power-off"></i>
+            </div>
+            <div class="chatbox-message">
+              ${content}<span class="timestamp">${timestamp}</span>
+            </div>
+          `
+          chatMessages.appendChild(botMessageContainer)
+          addToChatHistory("bot", content, timestamp)
           chatMessages.scrollTop = chatMessages.scrollHeight
         })
       } else if (action === "count_folders") {
@@ -587,25 +624,14 @@ document.addEventListener("DOMContentLoaded", () => {
             })
           }
           countFolders(bookmarkTree[0].children)
-          loadingMessage.remove()
-          const botMessage = document.createElement("div")
-          botMessage.className = "chatbox-message bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          botMessage.innerHTML = `${t("youHave") || "You have"} ${count} ${
+          hideTypingIndicator()
+          const htmlContent = `${t("youHave") || "You have"} ${count} ${
             t("folders") || "folders"
-          }.<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(botMessage)
-          addToChatHistory(
-            "bot",
-            `${t("youHave") || "You have"} ${count} ${
-              t("folders") || "folders"
-            }.`,
-            timestamp
-          )
-          chatMessages.scrollTop = chatMessages.scrollHeight
+          }.`
+          const textContent = `${t("youHave") || "You have"} ${count} ${
+            t("folders") || "folders"
+          }.`
+          appendBotMessage(htmlContent, textContent)
         })
       } else if (action === "list") {
         chrome.bookmarks.getTree((bookmarkTree) => {
@@ -623,14 +649,8 @@ document.addEventListener("DOMContentLoaded", () => {
             })
           }
           collectBookmarks(bookmarkTree[0].children)
-          loadingMessage.remove()
-          const botMessage = document.createElement("div")
-          botMessage.className = "chatbox-message bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          botMessage.innerHTML = bookmarks.length
+          hideTypingIndicator()
+          const htmlContent = bookmarks.length
             ? `${
                 t("hereAreYourBookmarks") || "Here are your bookmarks"
               }:<br>${bookmarks
@@ -644,20 +664,9 @@ document.addEventListener("DOMContentLoaded", () => {
                       b.url
                     }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
                 )
-                .join("<br>")}<span class="timestamp">${timestamp}</span>`
-            : `${
-                t("noBookmarks") || "You don't have any bookmarks yet."
-              }<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(botMessage)
-          addToChatHistory(
-            "bot",
-            botMessage.textContent
-              .replace(/<[^>]*>/g, "")
-              .replace(timestamp, "")
-              .trim(),
-            timestamp
-          )
-          chatMessages.scrollTop = chatMessages.scrollHeight
+                .join("<br>")}`
+            : `${t("noBookmarks") || "You don't have any bookmarks yet."}`
+          appendBotMessage(htmlContent)
         })
       } else if (action === "list_folders") {
         chrome.bookmarks.getTree((bookmarkTree) => {
@@ -674,14 +683,8 @@ document.addEventListener("DOMContentLoaded", () => {
             })
           }
           collectFolders(bookmarkTree[0].children)
-          loadingMessage.remove()
-          const botMessage = document.createElement("div")
-          botMessage.className = "chatbox-message bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          botMessage.innerHTML = folders.length
+          hideTypingIndicator()
+          const htmlContent = folders.length
             ? `${
                 t("hereAreYourFolders") || "Here are your folders"
               }:<br>${folders
@@ -691,20 +694,9 @@ document.addEventListener("DOMContentLoaded", () => {
                       f.title
                     } (ID: ${f.id})</span>`
                 )
-                .join("<br>")}<span class="timestamp">${timestamp}</span>`
-            : `${
-                t("noFolders") || "You don't have any folders yet."
-              }<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(botMessage)
-          addToChatHistory(
-            "bot",
-            botMessage.textContent
-              .replace(/<[^>]*>/g, "")
-              .replace(timestamp, "")
-              .trim(),
-            timestamp
-          )
-          chatMessages.scrollTop = chatMessages.scrollHeight
+                .join("<br>")}`
+            : `${t("noFolders") || "You don't have any folders yet."}`
+          appendBotMessage(htmlContent)
         })
       } else if (action === "list_bookmarks_in_folder" && params.folder) {
         searchFoldersByName(params.folder).then((folders) => {
@@ -725,14 +717,8 @@ document.addEventListener("DOMContentLoaded", () => {
           const folderId = folders[0].id
           chrome.bookmarks.getChildren(folderId, (children) => {
             const bookmarks = children.filter((node) => node.url)
-            loadingMessage.remove()
-            const botMessage = document.createElement("div")
-            botMessage.className = "chatbox-message bot"
-            const timestamp = new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-            botMessage.innerHTML = bookmarks.length
+            hideTypingIndicator()
+            const htmlContent = bookmarks.length
               ? `${
                   t("hereAreBookmarksInFolder") ||
                   "Here are the bookmarks in folder"
@@ -749,22 +735,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         b.id
                       })</span>`
                   )
-                  .join("<br>")}<span class="timestamp">${timestamp}</span>`
+                  .join("<br>")}`
               : `${
                   t("noBookmarksInFolder") || "No bookmarks in this folder"
-                } '${
-                  params.folder
-                }'.<span class="timestamp">${timestamp}</span>`
-            chatMessages.appendChild(botMessage)
-            addToChatHistory(
-              "bot",
-              botMessage.textContent
-                .replace(/<[^>]*>/g, "")
-                .replace(timestamp, "")
-                .trim(),
-              timestamp
-            )
-            chatMessages.scrollTop = chatMessages.scrollHeight
+                } '${params.folder}'.`
+            appendBotMessage(htmlContent)
           })
         })
       } else if (action === "add" && params.url) {
@@ -787,31 +762,18 @@ document.addEventListener("DOMContentLoaded", () => {
         chrome.bookmarks.create(
           { parentId: await findFolderId(folder), title, url },
           (bookmark) => {
-            loadingMessage.remove()
-            const botMessage = document.createElement("div")
-            botMessage.className = "chatbox-message bot"
-            const timestamp = new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-            botMessage.innerHTML = `${
+            hideTypingIndicator()
+            const htmlContent = `${
               t("addedBookmarkToFolder") || "I've added the bookmark"
             } <a href="${url}" target="_blank">${title}</a> ${
               t("toFolder") || "to the folder"
-            } '${folder}' (ID: ${
+            } '${folder}' (ID: ${bookmark.id}).`
+            const textContent = `${
+              t("addedBookmarkToFolder") || "I've added the bookmark"
+            } ${title} ${t("toFolder") || "to the folder"} '${folder}' (ID: ${
               bookmark.id
-            }).<span class="timestamp">${timestamp}</span>`
-            chatMessages.appendChild(botMessage)
-            addToChatHistory(
-              "bot",
-              `${
-                t("addedBookmarkToFolder") || "I've added the bookmark"
-              } ${title} ${t("toFolder") || "to the folder"} '${folder}' (ID: ${
-                bookmark.id
-              }).`,
-              timestamp
-            )
-            chatMessages.scrollTop = chatMessages.scrollHeight
+            }).`
+            appendBotMessage(htmlContent, textContent)
           }
         )
       } else if (
@@ -900,48 +862,27 @@ document.addEventListener("DOMContentLoaded", () => {
               chrome.bookmarks.get(bookmarkId, (results) => resolve(results[0]))
             })
             const folderName = await getFolderName(updatedBookmark.parentId)
-            loadingMessage.remove()
-            const botMessage = document.createElement("div")
-            botMessage.className = "chatbox-message bot"
-            const timestamp = new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-            botMessage.innerHTML = `${
+            hideTypingIndicator()
+            const htmlContent = `${
               t("updatedBookmark") || "I've updated the bookmark"
             } <a href="${updatedBookmark.url}" target="_blank">${
               updatedBookmark.title
-            }</a> ${
+            }</a> ${t("inFolder") || "in"} '${folderName}' (ID: ${bookmarkId}).`
+            const textContent = `${
+              t("updatedBookmark") || "I've updated the bookmark"
+            } ${updatedBookmark.title} ${
               t("inFolder") || "in"
-            } '${folderName}' (ID: ${bookmarkId}).<span class="timestamp">${timestamp}</span>`
-            chatMessages.appendChild(botMessage)
-            addToChatHistory(
-              "bot",
-              `${t("updatedBookmark") || "I've updated the bookmark"} ${
-                updatedBookmark.title
-              } ${t("inFolder") || "in"} '${folderName}' (ID: ${bookmarkId}).`,
-              timestamp
-            )
-            chatMessages.scrollTop = chatMessages.scrollHeight
+            } '${folderName}' (ID: ${bookmarkId}).`
+            appendBotMessage(htmlContent, textContent)
           }
           performUpdates().catch((error) => {
-            loadingMessage.remove()
-            const errorMessage = document.createElement("div")
-            errorMessage.className = "chatbox-message bot error"
-            const timestamp = new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-            errorMessage.innerHTML = `${t("errorTitle") || "Oops"}: ${
-              error.message
-            }<span class="timestamp">${timestamp}</span>`
-            chatMessages.appendChild(errorMessage)
-            addToChatHistory(
-              "bot",
-              `${t("errorTitle") || "Oops"}: ${error.message}`,
-              timestamp
+            hideTypingIndicator()
+            appendBotMessage(
+              `<span class="error-text">${t("errorTitle") || "Oops"}: ${
+                error.message
+              }</span>`,
+              `${t("errorTitle") || "Oops"}: ${error.message}`
             )
-            chatMessages.scrollTop = chatMessages.scrollHeight
           })
         }
       } else if (
@@ -986,26 +927,12 @@ document.addEventListener("DOMContentLoaded", () => {
           bookmarkTitle = bookmarks[0].title || bookmarks[0].url
         }
         if (params.confirm) {
-          loadingMessage.remove()
-          const confirmMessage = document.createElement("div")
-          confirmMessage.className = "chatbox-message bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          confirmMessage.innerHTML = `${
+          hideTypingIndicator()
+          const htmlContent = `${
             t("deleteConfirm") || "Are you sure you want to delete the bookmark"
-          } '${bookmarkTitle}' (ID: ${bookmarkId})?<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(confirmMessage)
-          addToChatHistory(
-            "bot",
-            `${
-              t("deleteConfirm") ||
-              "Are you sure you want to delete the bookmark"
-            } '${bookmarkTitle}' (ID: ${bookmarkId})?`,
-            timestamp
-          )
-          chatMessages.scrollTop = chatMessages.scrollHeight
+          } '${bookmarkTitle}' (ID: ${bookmarkId})?`
+          const textContent = htmlContent
+          appendBotMessage(htmlContent, textContent)
           showCustomConfirm(
             `${
               t("deleteConfirm") ||
@@ -1016,46 +943,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (chrome.runtime.lastError) {
                   throw new Error(chrome.runtime.lastError.message)
                 }
-                const botMessage = document.createElement("div")
-                botMessage.className = "chatbox-message bot"
-                const timestamp = new Date().toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-                botMessage.innerHTML = `${
+                const htmlContent = `${
                   t("deletedBookmark") || "I've deleted the bookmark"
-                }: ${bookmarkTitle} (ID: ${bookmarkId}).<span class="timestamp">${timestamp}</span>`
-                chatMessages.appendChild(botMessage)
-                addToChatHistory(
-                  "bot",
-                  `${
-                    t("deletedBookmark") || "I've deleted the bookmark"
-                  }: ${bookmarkTitle} (ID: ${bookmarkId}).`,
-                  timestamp
-                )
-                chatMessages.scrollTop = chatMessages.scrollHeight
+                }: ${bookmarkTitle} (ID: ${bookmarkId}).`
+                const textContent = htmlContent
+                appendBotMessage(htmlContent, textContent)
                 showCustomPopup(t("successTitle") || "Success", "success", true)
               })
             },
             () => {
-              const cancelMessage = document.createElement("div")
-              cancelMessage.className = "chatbox-message bot"
-              const timestamp = new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-              cancelMessage.innerHTML = `${t("cancel") || "Cancelled"}: ${
+              const htmlContent = `${t("cancel") || "Cancelled"}: ${
                 t("deleteBookmarkSuccess") || "Bookmark deletion cancelled"
-              }.<span class="timestamp">${timestamp}</span>`
-              chatMessages.appendChild(cancelMessage)
-              addToChatHistory(
-                "bot",
-                `${t("cancel") || "Cancelled"}: ${
-                  t("deleteBookmarkSuccess") || "Bookmark deletion cancelled"
-                }.`,
-                timestamp
-              )
-              chatMessages.scrollTop = chatMessages.scrollHeight
+              }.`
+              const textContent = htmlContent
+              appendBotMessage(htmlContent, textContent)
             }
           )
         }
@@ -1107,41 +1008,20 @@ document.addEventListener("DOMContentLoaded", () => {
             )
           })
           const folderName = await getFolderName(folderId)
-          loadingMessage.remove()
-          const botMessage = document.createElement("div")
-          botMessage.className = "chatbox-message bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          botMessage.innerHTML = `${
+          hideTypingIndicator()
+          const htmlContent = `${
             t("movedBookmark") || "I've moved the bookmark"
           } '${bookmarks[0].title || bookmarks[0].url}' (ID: ${bookmarkId}) ${
             t("toFolder") || "to the folder"
-          } '${folderName}'.<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(botMessage)
-          addToChatHistory(
-            "bot",
-            `${t("movedBookmark") || "I've moved the bookmark"} '${
-              bookmarks[0].title || bookmarks[0].url
-            }' (ID: ${bookmarkId}) ${
-              t("toFolder") || "to the folder"
-            } '${folderName}'.`,
-            timestamp
-          )
-          chatMessages.scrollTop = chatMessages.scrollHeight
+          } '${folderName}'.`
+          const textContent = htmlContent
+          appendBotMessage(htmlContent, textContent)
         }
       } else if (action === "search_bookmark" && params.keyword) {
         chrome.bookmarks.search({ query: params.keyword }, (results) => {
           const bookmarks = results.filter((node) => node.url)
-          loadingMessage.remove()
-          const botMessage = document.createElement("div")
-          botMessage.className = "chatbox-message bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          botMessage.innerHTML = bookmarks.length
+          hideTypingIndicator()
+          const htmlContent = bookmarks.length
             ? `${t("foundBookmarks") || "I found"} ${bookmarks.length} ${
                 t("bookmarksMatching") || "bookmarks matching"
               } '${params.keyword}':<br>${bookmarks
@@ -1157,32 +1037,17 @@ document.addEventListener("DOMContentLoaded", () => {
                       b.id
                     })</span>`
                 )
-                .join("<br>")}<span class="timestamp">${timestamp}</span>`
+                .join("<br>")}`
             : `${
                 t("noBookmarksFoundFor") ||
                 "I couldn't find any bookmarks matching"
-              } '${params.keyword}'.<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(botMessage)
-          addToChatHistory(
-            "bot",
-            botMessage.textContent
-              .replace(/<[^>]*>/g, "")
-              .replace(timestamp, "")
-              .trim(),
-            timestamp
-          )
-          chatMessages.scrollTop = chatMessages.scrollHeight
+              } '${params.keyword}'.`
+          appendBotMessage(htmlContent)
         })
       } else if (action === "search_folder" && params.keyword) {
         searchFoldersByName(params.keyword).then((folders) => {
-          loadingMessage.remove()
-          const botMessage = document.createElement("div")
-          botMessage.className = "chatbox-message bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          botMessage.innerHTML = folders.length
+          hideTypingIndicator()
+          const htmlContent = folders.length
             ? `${t("foundFolders") || "I found these folders"}:<br>${folders
                 .map(
                   (f, index) =>
@@ -1190,20 +1055,11 @@ document.addEventListener("DOMContentLoaded", () => {
                       f.title || t("unnamedFolder") || "Unnamed"
                     } (ID: ${f.id})</span>`
                 )
-                .join("<br>")}<span class="timestamp">${timestamp}</span>`
+                .join("<br>")}`
             : `${
                 t("noFoldersFoundFor") || "I couldn't find any folders matching"
-              } '${params.keyword}'.<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(botMessage)
-          addToChatHistory(
-            "bot",
-            botMessage.textContent
-              .replace(/<[^>]*>/g, "")
-              .replace(timestamp, "")
-              .trim(),
-            timestamp
-          )
-          chatMessages.scrollTop = chatMessages.scrollHeight
+              } '${params.keyword}'.`
+          appendBotMessage(htmlContent)
         })
       } else if (action === "favorite" && (params.title || params.id)) {
         let bookmarks = []
@@ -1235,44 +1091,20 @@ document.addEventListener("DOMContentLoaded", () => {
         if (bookmarks.length === 1) {
           bookmarkId = bookmarks[0].id
           await toggleFavorite(bookmarkId, params.favorite)
-          loadingMessage.remove()
-          const botMessage = document.createElement("div")
-          botMessage.className = "chatbox-message bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          botMessage.innerHTML = `${
+          hideTypingIndicator()
+          const htmlContent = `${
             params.favorite
               ? t("markedFavorite") || "I've marked the bookmark"
               : t("unmarkedFavorite") ||
                 "I've removed the bookmark from favorites"
-          } '${
-            bookmarks[0].title || bookmarks[0].url
-          }' (ID: ${bookmarkId}).<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(botMessage)
-          addToChatHistory(
-            "bot",
-            `${
-              params.favorite
-                ? t("markedFavorite") || "I've marked the bookmark"
-                : t("unmarkedFavorite") ||
-                  "I've removed the bookmark from favorites"
-            } '${bookmarks[0].title || bookmarks[0].url}' (ID: ${bookmarkId}).`,
-            timestamp
-          )
-          chatMessages.scrollTop = chatMessages.scrollHeight
+          } '${bookmarks[0].title || bookmarks[0].url}' (ID: ${bookmarkId}).`
+          const textContent = htmlContent
+          appendBotMessage(htmlContent, textContent)
         }
       } else if (action === "suggest_website" && params.websites) {
-        loadingMessage.remove()
-        const botMessage = document.createElement("div")
-        botMessage.className = "chatbox-message bot"
-        const timestamp = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
+        hideTypingIndicator()
         const websites = params.websites || []
-        botMessage.innerHTML = websites.length
+        const htmlContent = websites.length
           ? `${
               t("suggestWebsite") || "I've suggested the following websites"
             }:<br>${websites
@@ -1292,65 +1124,62 @@ document.addEventListener("DOMContentLoaded", () => {
                     t("addToFolder") || "Bookmark"
                   }</button></span>`
               )
-              .join("<br>")}<span class="timestamp">${timestamp}</span>`
+              .join("<br>")}`
           : `${
               t("noBookmarksFoundFor") ||
               "I couldn't find any websites for this topic"
-            }.<span class="timestamp">${timestamp}</span>`
-        chatMessages.appendChild(botMessage)
-        addToChatHistory(
-          "bot",
-          botMessage.textContent
-            .replace(/<[^>]*>/g, "")
-            .replace(timestamp, "")
-            .trim(),
-          timestamp
-        )
-        chatMessages.scrollTop = chatMessages.scrollHeight
+            }.`
+
+        appendBotMessage(htmlContent)
 
         // Add event listeners for bookmark buttons
-        const bookmarkButtons = botMessage.querySelectorAll(".bookmark-btn")
-        bookmarkButtons.forEach((button) => {
-          button.addEventListener("click", async () => {
-            const url = button.getAttribute("data-url")
-            const title = button.getAttribute("data-title")
-            const folder = button.getAttribute("data-folder")
-            try {
-              const existingBookmarks = await checkUrlExists(url)
-              if (existingBookmarks.length > 0) {
+        // This part needs to query the last message, which now will be in a container
+        const lastBotMessageContainer = chatMessages.lastElementChild
+        if (lastBotMessageContainer) {
+          const bookmarkButtons =
+            lastBotMessageContainer.querySelectorAll(".bookmark-btn")
+          bookmarkButtons.forEach((button) => {
+            button.addEventListener("click", async () => {
+              const url = button.getAttribute("data-url")
+              const title = button.getAttribute("data-title")
+              const folder = button.getAttribute("data-folder")
+              try {
+                const existingBookmarks = await checkUrlExists(url)
+                if (existingBookmarks.length > 0) {
+                  showCustomPopup(
+                    `${
+                      t("duplicateUrlError") ||
+                      "A bookmark with this URL already exists"
+                    }: ${url}.`,
+                    "error",
+                    true
+                  )
+                  return
+                }
+                chrome.bookmarks.create(
+                  { parentId: await findFolderId(folder), title, url },
+                  (bookmark) => {
+                    showCustomPopup(
+                      `${
+                        t("addedBookmarkToFolder") || "I've added the bookmark"
+                      } ${title} ${
+                        t("toFolder") || "to the folder"
+                      } '${folder}' (ID: ${bookmark.id}).`,
+                      "success",
+                      true
+                    )
+                  }
+                )
+              } catch (error) {
                 showCustomPopup(
-                  `${
-                    t("duplicateUrlError") ||
-                    "A bookmark with this URL already exists"
-                  }: ${url}.`,
+                  `${t("errorTitle") || "Error"}: ${error.message}`,
                   "error",
                   true
                 )
-                return
               }
-              chrome.bookmarks.create(
-                { parentId: await findFolderId(folder), title, url },
-                (bookmark) => {
-                  showCustomPopup(
-                    `${
-                      t("addedBookmarkToFolder") || "I've added the bookmark"
-                    } ${title} ${
-                      t("toFolder") || "to the folder"
-                    } '${folder}' (ID: ${bookmark.id}).`,
-                    "success",
-                    true
-                  )
-                }
-              )
-            } catch (error) {
-              showCustomPopup(
-                `${t("errorTitle") || "Error"}: ${error.message}`,
-                "error",
-                true
-              )
-            }
+            })
           })
-        })
+        }
       } else {
         throw new Error(
           t("notSupported") ||
@@ -1358,23 +1187,13 @@ document.addEventListener("DOMContentLoaded", () => {
         )
       }
     } catch (error) {
-      loadingMessage.remove()
-      const errorMessage = document.createElement("div")
-      errorMessage.className = "chatbox-message bot error"
-      const timestamp = new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-      errorMessage.innerHTML = `${t("errorTitle") || "Oops"}: ${
-        error.message
-      }<span class="timestamp">${timestamp}</span>`
-      chatMessages.appendChild(errorMessage)
-      addToChatHistory(
-        "bot",
-        `${t("errorTitle") || "Oops"}: ${error.message}`,
-        timestamp
+      hideTypingIndicator()
+      appendBotMessage(
+        `<span class="error-text">${t("errorTitle") || "Oops"}: ${
+          error.message
+        }</span>`,
+        `${t("errorTitle") || "Oops"}: ${error.message}`
       )
-      chatMessages.scrollTop = chatMessages.scrollHeight
     }
   }
 
@@ -1383,38 +1202,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const message = chatInput.value.trim()
     if (!message) return
 
-    const userMessage = document.createElement("div")
-    userMessage.className = "chatbox-message user"
+    const userMessageContainer = document.createElement("div")
+    userMessageContainer.className = "chatbox-message-container user"
     const timestamp = new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     })
-    userMessage.innerHTML = `${message}<span class="timestamp">${timestamp}</span>`
-    chatMessages.appendChild(userMessage)
+    userMessageContainer.innerHTML = `
+      <div class="chatbox-message">
+        ${message}<span class="timestamp">${timestamp}</span>
+      </div>
+      <div class="chat-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+    `
+    chatMessages.appendChild(userMessageContainer)
     addToChatHistory("user", message, timestamp)
     chatMessages.scrollTop = chatMessages.scrollHeight
     chatInput.value = ""
 
     const config = getAiConfig()
     if (!config.model || !config.apiKey || !config.modelName) {
-      const botMessage = document.createElement("div")
-      botMessage.className = "chatbox-message bot error"
-      const timestamp = new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-      botMessage.innerHTML = `${
-        t("errorTitle") || "Error"
-      }: Please configure AI settings in 'Configure AI Chatbot'.<span class="timestamp">${timestamp}</span>`
-      chatMessages.appendChild(botMessage)
-      addToChatHistory(
-        "bot",
+      appendBotMessage(
+        `<span class="error-text">${
+          t("errorTitle") || "Error"
+        }: Please configure AI settings in 'Configure AI Chatbot'.</span>`,
         `${
           t("errorTitle") || "Error"
-        }: Please configure AI settings in 'Configure AI Chatbot'.`,
-        timestamp
+        }: Please configure AI settings in 'Configure AI Chatbot'.`
       )
-      chatMessages.scrollTop = chatMessages.scrollHeight
       return
     }
 
@@ -1542,9 +1358,7 @@ document.addEventListener("DOMContentLoaded", () => {
     welcomeMessage.className = "chatbox-welcome-message"
     welcomeMessage.innerHTML = `${
       t("welcomeMessage") || "Welcome to Zero Bookmark Manager Chat!"
-    }<br><br>${
-      t("welcomeSubMessage") || "How can I assist you today?"
-    }`
+    }<br><br>${t("welcomeSubMessage") || "How can I assist you today?"}`
 
     const startButton = document.createElement("button")
     startButton.className = "button chatbox-start-button"

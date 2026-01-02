@@ -45,6 +45,7 @@
   /* Dark theme variables */
   --bg-primary: #0d1117;
   --bg-secondary: #161b22;
+  --bg-secondary-rgb: 22, 27, 34;
   --bg-tertiary: #21262d;
   --bg-white-none: white;
   --bg-side: #bebebe;
@@ -66,6 +67,7 @@
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --check-link-color: linear-gradient(135deg, #4781ff, #47e6ff);
+  --health-icon-dead-color: #dc3545;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -93,6 +95,7 @@
 [data-theme="light"] body.light-theme {
   --bg-primary: #ffffff;
   --bg-secondary: #f6f8fa;
+  --bg-secondary-rgb: 246, 248, 250;
   --bg-tertiary: #eaeef2;
   --bg-white-none: none;
   --bg-side: #585858;
@@ -123,6 +126,7 @@
 body.dracula-theme {
   --bg-primary: #282a36;
   --bg-secondary: #242424;
+  --bg-secondary-rgb: 36, 36, 36;
   --bg-tertiary: #373844;
   --text-primary: #ffffff;
   --text-secondary: #50fa7b;
@@ -147,6 +151,7 @@ body.dracula-theme {
 body.onedark-theme {
   --bg-primary: #282c34;
   --bg-secondary: #21252b;
+  --bg-secondary-rgb: 33, 37, 43;
   --bg-tertiary: #2c313c;
   --text-primary: #ffffff;
   --text-secondary: #c678dd;
@@ -173,6 +178,7 @@ body.onedark-theme {
 body.tet-theme {
   --bg-primary: #8c001a; /* Deeper, richer red */
   --bg-secondary: #bc1823; /* Slightly lighter, still deep red */
+  --bg-secondary-rgb: 188, 24, 35;
   --bg-tertiary: #5c000d; /* Very dark, almost brownish-red */
   --text-primary: #d4c154; /* Vibrant gold for primary text */
   --text-secondary: #ebdd57; /* Creamy white for secondary text */
@@ -195,11 +201,8 @@ body.tet-theme {
     0,
     0.12
   ); /* Slightly more pronounced golden bookmark bg */
-  --check-link-color: linear-gradient(
-    135deg,
-    #bc1823,
-    #ebdd57
-  ); /* Gold color for checked links */
+  --check-link-color: linear-gradient(90deg, #8c001a, #ebdd57);
+  --health-icon-dead-color: #fee209;
 }
 
 /* Reset and base styles */
@@ -508,7 +511,7 @@ html {
   align-items: center;
   gap: 6px;
   font-size: 0.8rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   border: none;
   transition: all var(--transition-fast);
 }
@@ -609,22 +612,22 @@ html {
 
 .dropdown-menu {
   position: absolute;
-  top: 1%;
-  right: 10%;
+  top: 100%;
+  right: 0;
   margin-top: 8px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  min-width: 220px;
+  min-width: 240px;
   padding: var(--spacing-sm);
   box-shadow: var(--shadow-lg);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 100;
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1001;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
-  transform: translateY(-8px);
+  transform: translateY(0);
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -748,7 +751,7 @@ html {
 }
 
 .loading {
-  opacity: 0.6;
+  opacity: 1;
   pointer-events: none;
   position: relative;
 }
@@ -994,7 +997,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  z-index: 1000; /* Keep the higher z-index */
   transition: opacity 0.3s ease;
 }
 
@@ -2215,7 +2218,7 @@ html {
 
 /* Dead / lỗi */
 .health-icon.dead {
-  color: #dc3545; /* đỏ */
+  color: var(--health-icon-dead-color); /* đỏ */
 }
 
 /* Nghi ngờ / nguy hiểm */

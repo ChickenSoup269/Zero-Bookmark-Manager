@@ -75,6 +75,12 @@
                 <option value="z-a">Z to A</option>
                 <option value="domain">By Domain</option>
             </select>
+            <select id="health-sort-filter" class="select" style="display: none;">
+                <option value="all">Sort by Health: All</option>
+                <option value="dead">Dead Links</option>
+                <option value="suspicious">Suspicious Links</option>
+                <option value="safe">Safe Links</option>
+            </select>
             <div class="control-buttons">
                 <button id="create-folder" class="button create">Create Folder</button>
                 <button id="rename-folder" class="button rename-folder hidden">Rename Folder</button>
@@ -182,6 +188,8 @@
             <div class="rename-popup-content">
                 <h3 id="manage-tags-title">Manage Tags</h3>
                 <div id="existing-tags"></div>
+                <select class="existing-tags-select select" style="margin-bottom: 12px;"></select>
+                <input type="hidden" id="new-tag-text-color">
                 <div class="add-tag-container">
                     <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name...">
                     <input type="color" id="new-tag-color" value="#cccccc" class="tag-color-picker">

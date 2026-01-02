@@ -730,21 +730,7 @@ export function showCustomGuide() {
   try {
     title.textContent = translations[language].helpGuideTitle
 
-    // Parse helpGuide into a list
-    const guideContent = translations[language].helpGuide.trim()
-    const guideItems = guideContent.split("\n\n").map((item) => {
-      const lines = item.trim().split("\n")
-      const title = lines[0].replace(/^\d+\.\s*/, "")
-      const content = lines
-        .slice(1)
-        .map((line) => {
-          const trimmedLine = line.replace(/^\s*-\s*/, "")
-          return `<p>${trimmedLine}</p>`
-        })
-        .join("")
-      return `<li><strong>${title}</strong>${content}</li>`
-    })
-    messageEl.innerHTML = `<ul>${guideItems.join("")}</ul>`
+    messageEl.innerHTML = translations[language].helpGuide;
 
     popup.classList.remove("hidden")
 
@@ -767,10 +753,10 @@ export function showCustomGuide() {
       }
     }
 
-    // Sử dụng click thay vì mousedown
+    // Sử dụng click thay vì mousedown, và thêm một độ trễ nhỏ
     setTimeout(() => {
       document.addEventListener("click", handleOutsideClick)
-    }, 0)
+    }, 100) // 100ms delay
 
     // Ngăn sự kiện click từ nội dung popup lan ra ngoài
     popup.addEventListener("click", (e) => {

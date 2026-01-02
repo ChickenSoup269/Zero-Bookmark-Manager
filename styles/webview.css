@@ -179,6 +179,7 @@ body {
 }
 
 .settings-container {
+  position: relative;
   display: flex;
   align-items: center;
   z-index: 100;
@@ -400,29 +401,29 @@ body {
 
 .dropdown-menu-2 {
   position: absolute;
-  top: 1%;
-  right: 10%;
+  top: 100%;
+  right: 0;
   margin-top: 8px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  min-width: 220px;
+  min-width: 240px;
   padding: var(--spacing-sm);
   box-shadow: var(--shadow-lg);
-  opacity: 0;
-  pointer-events: none;
+  opacity: 1;
+  pointer-events: auto;
   z-index: 1001;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
-  transform: translateY(-8px);
+  transform: translateY(0);
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.dropdown-menu-2:not(.hidden) {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+.dropdown-menu-2.hidden {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
 }
 
 .dropdown-menu-2 .select {
@@ -877,4 +878,22 @@ textarea.error {
 
 .iframe-wrapper {
   flex-grow: 1;
+}
+
+.custom-guide {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-secondary); /* Or your theme's background */
+  padding: 20px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 1001; /* Higher than chatbox (1000) */
+  width: 400px; /* Adjust as needed */
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.custom-guide:not(.hidden) {
+  display: block;
 }

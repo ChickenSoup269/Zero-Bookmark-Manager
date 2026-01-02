@@ -47,6 +47,7 @@
                         <option value="last-opened">By Last Opened</option>
                         <option value="a-z">A to Z</option>
                         <option value="z-a">Z to A</option>
+                        <option value="domain">By Domain</option>
                     </select>
                 </div>
             </div>
@@ -115,6 +116,12 @@
             </button>
             <img src="" alt="logo" class="logo">
             <div class="settings-container">
+                <select id="health-sort-filter" class="select" style="display: none;">
+                    <option value="all">Sort by Health: All</option>
+                    <option value="dead">Dead Links</option>
+                    <option value="suspicious">Suspicious Links</option>
+                    <option value="safe">Safe Links</option>
+                </select>
                 <button id="settings-button" class="button settings" title="Settings">⋮</button>
                 <div id="settings-menu" class="dropdown-menu-2 hidden">
                     <select id="language-switcher" class="select">
@@ -250,6 +257,8 @@
             <div class="rename-popup-content">
                 <h3 id="manage-tags-title">Manage Tags</h3>
                 <div id="existing-tags"></div>
+                <select class="existing-tags-select select" style="margin-bottom: 12px;"></select>
+                <input type="hidden" id="new-tag-text-color">
                 <div class="color-palette-container">
                     <button class="color-swatch" style="background-color: #FF69B4;" data-color="#FF69B4"></button>
                     <button class="color-swatch" style="background-color: #BA55D3;" data-color="#BA55D3"></button>
@@ -358,11 +367,12 @@
                             aria-label="Chat input">
                         <button id="chat-clear" class="clear" aria-label="Clear input">✖</button>
                     </div>
-                    <button id="chat-send" class="button send">Send</button>
+                    <button id="chat-send" class="button send"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
-        <div id="custom-guide" class="custom-guide hidden" role="dialog" aria-labelledby="custom-guide-title">
+        <div id="custom-guide" class="rename-popup custom-guide hidden" role="dialog"
+            aria-labelledby="custom-guide-title">
             <h3 id="custom-guide-title">Help Guide</h3>
             <div id="custom-guide-message"></div>
             <div class="rename-popup-buttons">

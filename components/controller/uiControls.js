@@ -219,6 +219,12 @@ export function setupUIControlListeners(elements) {
     saveUIState()
   })
 
+  elements.healthSortFilter.addEventListener("change", () => {
+    uiState.healthFilter = elements.healthSortFilter.value
+    renderFilteredBookmarks(uiState.bookmarkTree, elements)
+    saveUIState()
+  })
+
   elements.settingsButton.addEventListener("click", (e) => {
     e.stopPropagation()
     elements.settingsMenu.classList.toggle("hidden")

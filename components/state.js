@@ -16,6 +16,9 @@ export const uiState = {
   tagTextColors: {},
   collapsedFolders: new Set(),
   selectedTags: [],
+  healthFilter: "all", // "all", "dead", "suspicious", "safe"
+  healthStatus: {},
+
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
