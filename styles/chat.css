@@ -8,20 +8,24 @@
 
 /* === Chat Toggle Button === */
 .chat-toggle {
-  position: static;
-  width: var(--w);
-  height: var(--h);
+  position: fixed;
+  bottom: 50px;
+  right: 0px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background-color: var(--accent-color);
   color: var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   box-shadow: var(--shadow-md);
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-fast),
+    background-color var(--transition-fast), opacity var(--transition-fast);
+  opacity: 1;
+  pointer-events: auto;
   border: none;
-  cursor: pointer;
 }
 
 .chat-toggle:hover {
@@ -156,6 +160,21 @@
   gap: 10px;
   max-width: 90%;
   animation: message-fade-in 0.4s ease-out;
+  align-items: flex-end;
+}
+
+/* Wrapper mới để chứa bong bóng chat + thời gian theo chiều dọc */
+.message-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+}
+
+/* === TIMESTAMP STYLING === */
+.timestamp {
+  font-size: 0.7rem;
+  color: var(--bg-tertiary);
+  margin-top: 4px;
 }
 
 @keyframes message-fade-in {
@@ -195,13 +214,13 @@
 }
 
 .user .chat-avatar {
-  background: linear-gradient(145deg, #4781ff, #2a6ae0);
-  color: white;
+  background: linear-gradient(145deg, var(--accent-color), var(--text-primary));
+  color: var(--bg-primary);
 }
 
 .user .chatbox-message {
-  background: #4781ff;
-  color: white;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   border-bottom-right-radius: 4px;
 }
 

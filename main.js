@@ -8,6 +8,7 @@ import { translations, debounce } from "./components/utils/utils.js"
 import { setupEventListeners } from "./components/events.js"
 import { uiState } from "./components/state.js"
 import { customLoadUIState } from "./components/option/option.js"
+import { initCopyButtons } from "./components/copy-code.js"
 
 let elements = {}
 
@@ -90,6 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.settingsMenu.appendChild(importBookmarksOption)
       elements.importBookmarksOption = importBookmarksOption
     }
+
+    initCopyButtons()
 
     // Khởi tạo ngôn ngữ
     const savedLanguage = localStorage.getItem("appLanguage") || "en"

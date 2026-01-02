@@ -607,7 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
              <i class="fas fa-power-off"></i>
             </div>
             <div class="chatbox-message">
-              ${content}<span class="timestamp">${timestamp}</span>
+              ${content}<span class="timestamp"> ${timestamp}</span>
             </div>
           `
           chatMessages.appendChild(botMessageContainer)
@@ -1210,7 +1210,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     userMessageContainer.innerHTML = `
       <div class="chatbox-message">
-        ${message}<span class="timestamp">${timestamp}</span>
+        ${message} <span class="timestamp">${timestamp}</span>
       </div>
       <div class="chat-avatar">
         <i class="fas fa-user"></i>
@@ -1330,9 +1330,15 @@ document.addEventListener("DOMContentLoaded", () => {
             hour: "2-digit",
             minute: "2-digit",
           })
-          errorMessage.innerHTML = `${t("errorTitle") || "Oops"}: ${
-            generalError.message
-          }<span class="timestamp">${timestamp}</span>`
+          errorMessage.innerHTML = `
+            <div class="chat-avatar"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="message-content">
+              <div class="chatbox-message error">
+                  ${t("errorTitle") || "Oops"}: ${generalError.message}
+              </div>
+              <span class="timestamp">${timestamp}</span>
+            </div>
+          `
           chatMessages.appendChild(errorMessage)
           addToChatHistory(
             "bot",
