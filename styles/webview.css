@@ -1113,7 +1113,7 @@ textarea.error {
   top: 50%;
   transform: translateY(-50%);
   background: var(--bg-primary);
-  color: white;
+  color: var(--text-primary);
   border: none;
   border-radius: 8px;
   padding: 6px 10px;
@@ -1212,4 +1212,8 @@ textarea.error {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
+}
+
+.scroll-to-top {
+  bottom: 50px;
 }

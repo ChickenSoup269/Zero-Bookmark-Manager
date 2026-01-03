@@ -9,8 +9,8 @@
 /* === Chat Toggle Button === */
 .chat-toggle {
   position: fixed;
-  bottom: 50px;
-  right: 0px;
+  bottom: 10px; /* Đã ở vị trí cao hơn đáy */
+  right: 16px; /* Thay 0px thành 16px để không bị dính sát mép màn hình */
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -21,11 +21,13 @@
   justify-content: center;
   font-size: 1rem;
   box-shadow: var(--shadow-md);
+
+  z-index: 1000; /* Nút chat ở tầng 1000 */
+
   transition: transform var(--transition-fast),
     background-color var(--transition-fast), opacity var(--transition-fast);
-  opacity: 1;
-  pointer-events: auto;
   border: none;
+  cursor: pointer;
 }
 
 .chat-toggle:hover {
@@ -108,7 +110,7 @@
 .chatbox-header-button {
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-size: 0.9rem;
   cursor: pointer;
   padding: var(--spacing-xs);
@@ -377,7 +379,7 @@
 
 .chatbox-welcome-message {
   font-size: 1rem;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   line-height: 1.6;
 }
 

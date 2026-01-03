@@ -89,6 +89,8 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  --text-option: #4a90e2;
 }
 
 /* Light theme */
@@ -119,6 +121,8 @@
   --shadow-sm: 0 1px 2px rgba(70, 70, 70, 0.1);
   --shadow-md: 0 2px 4px rgba(51, 51, 51, 0.188);
   --shadow-lg: 0 10px 15px rgba(255, 255, 255, 0.1);
+
+  --text-option: #4a90e2;
 }
 
 /* Dracula theme */
@@ -144,6 +148,7 @@ body.dracula-theme {
   --folder-hover-bg: rgba(80, 250, 123, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
+  --text-option: #ff79c6;
 }
 
 /* OneDark theme */
@@ -170,6 +175,7 @@ body.onedark-theme {
   --folder-hover-bg: rgba(152, 195, 121, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
+  --text-option: #98c379;
 }
 
 /* Tet theme */
@@ -203,6 +209,32 @@ body.tet-theme {
   ); /* Slightly more pronounced golden bookmark bg */
   --check-link-color: linear-gradient(90deg, #8c001a, #ebdd57);
   --health-icon-dead-color: #fee209;
+  --text-option: #fee209;
+}
+
+/* Opt-in to customizable select */
+/* Opt-in to customizable select */
+select,
+select::picker(select) {
+  appearance: base-select;
+}
+
+/* Change the background of the dropdown and options */
+select::picker(select) {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid #333;
+}
+
+/* Change the color of the selected/hovered option */
+option:checked,
+option:hover {
+  color: var(--text-option);
+}
+
+input[type="checkbox"] {
+  accent-color: var(--text-option);
+  cursor: pointer;
 }
 
 /* Reset and base styles */
@@ -907,10 +939,23 @@ html {
   margin-top: var(--spacing-md);
 }
 
+@keyframes fadeScroll {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.7);
+    pointer-events: none;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+}
+
 .scroll-to-top {
   position: fixed;
-  bottom: 8px;
-  right: 0px;
+  bottom: 16px;
+  right: 16px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -921,20 +966,18 @@ html {
   justify-content: center;
   font-size: 1rem;
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition-fast),
-    background-color var(--transition-fast), opacity var(--transition-fast);
-  opacity: 1;
-  pointer-events: auto;
   border: none;
-}
+  z-index: 1000;
 
-.scroll-to-top.hidden {
-  opacity: 0;
-  pointer-events: none;
+  animation: fadeScroll linear both;
+  animation-timeline: scroll();
+  animation-range: 0px 400px;
+
+  transition: background-color var(--transition-fast), transform 0.2s ease;
 }
 
 .scroll-to-top:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.1);
   background-color: var(--text-secondary);
   box-shadow: var(--shadow-lg);
   cursor: pointer;

@@ -623,7 +623,7 @@ export function handleCheckHealth(elements) {
           : "Finished! All links appear healthy."
       const type = brokenCount > 0 ? "warning" : "success"
       showCustomPopup(msg, type, true)
-      elements.healthSortFilter.style.display = "block"; // Show the filter
+      elements.healthSortFilter.style.display = "block" // Show the filter
 
       // Reset trạng thái nút
       if (checkHealthButton) {
@@ -733,8 +733,8 @@ export function updateTheme(elements, theme) {
       : "light"
 
   const logoSrcMap = {
-    light: "images/logo.png",
-    dark: "images/logo.png",
+    light: "images/logo_tet.png", // qua tết đổi lại ố kề
+    dark: "images/logo_tet.png",
     dracula: "images/logo_dracula.png",
     onedark: "images/logo_onedark.png",
     tet: "images/logo_tet.png",
@@ -825,13 +825,14 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       let filtered = bookmarks.filter((bookmark) => bookmark.url)
 
       if (uiState.healthFilter && uiState.healthFilter !== "all") {
-        filtered = filtered.filter(bookmark => {
-          const status = uiState.healthStatus[bookmark.id];
-          if (uiState.healthFilter === 'dead') return status === 'dead';
-          if (uiState.healthFilter === 'suspicious') return status === 'alive_suspicious';
-          if (uiState.healthFilter === 'safe') return status === 'alive_safe';
-          return false;
-        });
+        filtered = filtered.filter((bookmark) => {
+          const status = uiState.healthStatus[bookmark.id]
+          if (uiState.healthFilter === "dead") return status === "dead"
+          if (uiState.healthFilter === "suspicious")
+            return status === "alive_suspicious"
+          if (uiState.healthFilter === "safe") return status === "alive_safe"
+          return false
+        })
       }
 
       if (uiState.selectedTags.length > 0) {
