@@ -512,14 +512,14 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color 0.25s ease, color 0.25s ease,
-    transform 0.15s ease;
+  transition: all 0.4s ease;
 }
 
 .dropdown-menu-2 .menu-item:hover {
-  background-color: var(--bg-tertiary);
-  color: var(--accent-color);
-  transform: translateY(-1px);
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
 }
 
 /* HR in dropdown */
