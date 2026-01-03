@@ -997,16 +997,12 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       elements.folderFilter.value = ""
     }
   } else {
-    // --- VIEW 2: Root View (Danh sách Folder) ---
     folders.forEach((folder) => {
       if (folder.id === "0") return
 
-      // >>> SỬA LỖI TẠI ĐÂY:
-      // Thay vì dùng isInFolder(bookmark, folder.id), ta so sánh trực tiếp parentId.
-      // Điều này bắt buộc bookmark phải có parentId trùng khớp tuyệt đối với folder hiện tại.
       const folderBookmarks = filteredBookmarks.filter(
         (bookmark) =>
-          bookmark.parentId === folder.id && // <--- SỬA LỖI QUAN TRỌNG
+          bookmark.parentId === folder.id &&
           (!uiState.searchQuery ||
             bookmark.title
               ?.toLowerCase()
@@ -1189,7 +1185,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
     bookmark.isFavorite ? "favorited" : ""
   }`
   div.dataset.id = bookmark.id
-  div.style.cssText = `display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-tertiary); box-shadow: var(--shadow-sm);`
+  div.style.cssText = `display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--hover-bg); box-shadow: var(--shadow-sm);`
   const healthIcon = renderHealthIcon(bookmark.id) // Lấy icon
   div.innerHTML = `
     <div style="display:flex;align-items:center;gap:12px;">
@@ -1207,12 +1203,11 @@ function createDetailBookmarkElement(bookmark, language, elements) {
     <div style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px;">
         <span>${extractDomain(bookmark.url)}</span>
     </div>
-    <button class="view-detail-btn-action" style="background:var(--bg-primary);color:var(--text-primary);border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:600;margin-top:8px; width:100%;">
+    <button class="view-detail-btn-action" style="background:var(--text-primary);color:var(--bg-primary);border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:600;margin-top:8px; width:100%;">
       ${translations[language].viewDetail || "View Details"}
     </button>
   `
 
-  // Use the new helper function for the main button
   div
     .querySelector(".view-detail-btn-action")
     .addEventListener("click", (e) => {
@@ -1647,14 +1642,8 @@ export function setupTagFilterListener(elements) {
 }
 
 export function attachTreeListeners(elements) {
-  // >>> SỬA LỖI: Bỏ đoạn cloneNode(true) đi.
-  // cloneNode làm mất hết các sự kiện drag/drop đã gắn vào các phần tử con.
-
   const folderListDiv = elements.folderListDiv
 
-  // Gán trực tiếp onclick vào div gốc.
-  // Vì mỗi lần renderFilteredBookmarks chạy, innerHTML đã được clear,
-  // nên ta chỉ cần đảm bảo handler click tổng (delegation) được cập nhật.
   folderListDiv.onclick = (e) => {
     // 1. PIN Button in Tree View
     const pinBtn = e.target.closest(".pin-btn")

@@ -56,7 +56,7 @@
   --accent-color: #ffffff;
   --danger-color: #e13939;
   --danger-hover: #e13939;
-  --hover-bg: #555555;
+  --hover-bg: #151a25b2;
   --focus-outline: #4a90e2;
   --box-shadow: 0 6px 15px rgb(255, 255, 255, 0.753);
   --tree-line-color: rgba(255, 255, 255, 0.5);
@@ -91,6 +91,7 @@
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 
   --text-option: white;
+  --shadow-hover-tree: rgba(255, 255, 255, 0.35) 0px 5px 15px;
 }
 
 /* Light theme */
@@ -123,6 +124,7 @@
   --shadow-lg: 0 10px 15px rgba(255, 255, 255, 0.1);
 
   --text-option: #308ef9;
+  --shadow-hover-tree: rgba(0, 0, 0, 0.35) px 5px 15px;
 }
 
 /* Dracula theme */
@@ -372,8 +374,10 @@ html {
   display: flex;
 }
 
-.button.delete-bookmarks {
+.button.delete-bookmarks,
+.button.delete-folder {
   color: white !important;
+  background-color: #ff5555 !important;
 }
 
 .button.add.hidden,
@@ -617,6 +621,7 @@ html {
 }
 
 .dropdown-btn-group {
+  margin-left: auto;
   position: relative;
 }
 
@@ -683,7 +688,7 @@ html {
 }
 
 /* Select in dropdown - Hover effect */
-.dropdown-menu.select {
+.dropdown-menu .select {
   width: 100%;
   padding: 0.6rem 0.8rem;
   font-size: 0.9rem;
@@ -719,7 +724,7 @@ html {
 
 .dropdown-menu .menu-item:hover {
   background-color: var(--text-option);
-  color: var(--accent-color);
+  color: var(--bg-primary);
   transform: translateY(-1px);
 }
 
@@ -2043,11 +2048,6 @@ html {
   color: var(--text-secondary);
 }
 
-.dropdown-btn-group {
-  margin-left: auto;
-  position: relative;
-}
-
 .dropdown-btn {
   background: none;
   border: none;
@@ -2065,11 +2065,10 @@ html {
   position: absolute;
   top: 100%;
   right: 0;
-  background: var(--bg-tertiary);
+  background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.1));
-  z-index: 10;
   min-width: 150px;
 }
 
@@ -2368,4 +2367,17 @@ html {
 .color-swatch.selected {
   border: 2px solid var(--focus-outline);
   box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+/* css button thả xuống trong tree view */
+.folder-toggle {
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  transition: all 0.2s ease;
+}
+
+.folder-toggle:hover {
+  color: var(--bg-primary);
+  background-color: var(--text-primary);
+  transition: all 0.2s ease;
 }

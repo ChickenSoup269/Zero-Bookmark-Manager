@@ -90,8 +90,8 @@
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
   border-radius: var(--border-radius-md);
-  transition: transform var(--transition-fast),
-    box-shadow var(--transition-fast), background-color var(--transition-fast),
+  transition: all 0.2s ease !important;
+  box-shadow: var(--transition-fast), background-color var(--transition-fast),
     z-index var(--transition-fast);
   cursor: pointer;
 }
@@ -100,8 +100,10 @@
 .folder-item:hover {
   z-index: 100; /* Bring hovered item to the front */
   transform: translateY(-2px);
+  transition: all 0.2s ease !important;
   box-shadow: var(--shadow-md);
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
+  backdrop-filter: blur(10px) !important;
 }
 
 /* Card View & Detail View Improvements */
@@ -571,4 +573,28 @@
 
 .iframe-wrapper {
   flex-grow: 1;
+}
+/* css cho button ở top đầu quản lý bookmark */
+.control-buttons .button {
+  width: 100%;
+  padding: 0.6rem;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  font-size: 0.85rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  gap: 8px;
+  transition: all 0.25s ease !important;
+}
+
+.control-buttons .button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-md) !important;
+  transition: all 0.2s ease !important;
 }
