@@ -1,11 +1,11 @@
 <div align="center">
 
-# Bookmark Manager Extension <img src="./icons/icon.png" alt="logoEX" width="30">
+# Bookmark Manager Extension <img src="./icons/icon_vn_tet.png" alt="logoEX" width="30">
 
 </div>
 
 <div align="center">
-<img src="./images/logo.png" alt="logo" width="520">
+<img src="./images/logo_tet.png" alt="logo" width="520">
 </div>
 
 <div align="center">
