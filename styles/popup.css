@@ -598,3 +598,79 @@
   box-shadow: var(--shadow-md) !important;
   transition: all 0.2s ease !important;
 }
+/* Dropdown menu - Glassmorphism với blur */
+#settings-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: -2px;
+  background-color: rgba(var(--bg-primary), 1);
+  backdrop-filter: blur(40px); /* Glass effect */
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  width: 240px;
+  padding: var(--spacing-sm);
+  box-shadow: var(--shadow-lg);
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#settings-menu.hidden {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+
+/* Select in dropdown - Hover effect */
+.dropdown-menu .select {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+    transform 0.15s ease;
+}
+
+.dropdown-menu .select:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+/* Menu item - Button style */
+.dropdown-menu .menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease,
+    transform 0.15s ease;
+}
+
+.dropdown-menu .menu-item:hover {
+  background-color: var(--text-option);
+  color: var(--bg-primary);
+  transform: translateY(-1px);
+}
+
+/* HR in dropdown */
+.dropdown-menu hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: var(--spacing-sm) 0;
+}

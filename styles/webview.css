@@ -442,14 +442,43 @@ body {
   transform: translateY(-1px);
 }
 
+/* này cho dropdown menu cài đặt cho từng bookmark đại diện */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: -2px;
+  background-color: rgba(var(--bg-primary), 1);
+  backdrop-filter: blur(40px); /* Glass effect */
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  width: 240px;
+  padding: var(--spacing-sm);
+  box-shadow: var(--shadow-lg);
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dropdown-menu .menu-item:hover {
+  background-color: var(--text-option);
+  color: var(--bg-primary);
+  transform: translateY(-1px);
+}
+
 /* Dropdown menu - Glassmorphism với blur */
 .dropdown-menu-2 {
   position: fixed;
   top: 60px; /* Thay đổi thành giá trị cụ thể - điều chỉnh theo vị trí bạn muốn */
   right: 20px; /* Cách mép phải một chút */
   margin-top: 8px;
-  background-color: rgba(var(--bg-secondary), 0.9);
-  backdrop-filter: blur(10px);
+  background-color: rgba(var(--bg-primary), 0.9);
+  backdrop-filter: blur(40px); /* Glass effect */
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   min-width: 240px;
