@@ -1289,12 +1289,22 @@ function renderTreeView(nodes, elements, depth = 0) {
         ? node.tags?.some((tag) => uiState.selectedTags.includes(tag))
         : true
 
+    const status = uiState.healthStatus ? uiState.healthStatus[node.id] : null;
+    const matchesHealth =
+      !uiState.healthFilter || uiState.healthFilter === "all"
+        ? true
+        : status &&
+          ((uiState.healthFilter === "dead" && status === "dead") ||
+          (uiState.healthFilter === "suspicious" && status === "alive_suspicious") ||
+          (uiState.healthFilter === "safe" && status === "alive_safe"));
+
     // >>> TRƯỜNG HỢP LÀ FOLDER <<<
     if (node.children) {
       const isCollapsed = uiState.collapsedFolders.has(node.id)
       const folderDiv = document.createElement("div")
       folderDiv.className = "folder-item"
       folderDiv.dataset.id = node.id
+      folderDiv.draggable = true // Enable dragging for folders
       folderDiv.style.marginLeft = `${depth * 20}px`
 
       // HTML hiển thị Folder
@@ -1313,18 +1323,47 @@ function renderTreeView(nodes, elements, depth = 0) {
         )}</span>
       `
 
-      // >>> SỰ KIỆN 1: DRAG OVER (Khi rê bookmark lên trên Folder này)
-      folderDiv.addEventListener("dragover", (e) => {
-        e.preventDefault() // Bắt buộc để cho phép drop
-        e.stopPropagation() // QUAN TRỌNG: Ngăn không cho folder cha nhận sự kiện này
+      // Add dragstart event listener for folders
+      folderDiv.addEventListener("dragstart", (e) => {
+        e.stopPropagation()
+        e.dataTransfer.setData("text/plain", node.id)
+        currentDragType = "folder"
+        e.dataTransfer.effectAllowed = "move"
+        folderDiv.classList.add("dragging")
+      })
 
-        // Chỉ nhận Bookmark
-        if (currentDragType !== "bookmark") return
+      // Add dragend event listener for folders
+      folderDiv.addEventListener("dragend", () => {
+        folderDiv.classList.remove("dragging")
+        currentDragType = null
+      })
+
+      // >>> SỰ KIỆN 1: DRAG OVER (Khi rê bookmark hoặc folder lên trên Folder này)
+      folderDiv.addEventListener("dragover", (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        // Chỉ nhận Bookmark hoặc Folder
+        if (currentDragType !== "bookmark" && currentDragType !== "folder") return
+
+        const draggedId = e.dataTransfer.getData("text/plain")
+        // Prevent dropping a folder onto itself or into its own subfolder
+        if (currentDragType === "folder") {
+            // Cannot drop a folder onto itself
+            if (draggedId === node.id) {
+                e.dataTransfer.dropEffect = "none"
+                return
+            }
+            // Cannot drop a folder into one of its own descendants
+            const draggedNode = findNodeById(draggedId, uiState.bookmarkTree);
+            if (draggedNode && isAncestorOf(draggedNode, node.id)) {
+                e.dataTransfer.dropEffect = "none"
+                return
+            }
+        }
 
         e.dataTransfer.dropEffect = "move"
-
-        // Hiệu ứng visual: đổi màu nền và viền để người dùng biết đang chọn folder nào
-        folderDiv.style.background = "var(--bg-tertiary, #e0e0e0)"
+        folderDiv.style.background = "var(--bg-tertiary, #e0e0f0)"
         folderDiv.style.border = "1px dashed var(--accent-color)"
       })
 
@@ -1336,45 +1375,71 @@ function renderTreeView(nodes, elements, depth = 0) {
         folderDiv.style.border = "none"
       })
 
-      // >>> SỰ KIỆN 3: DROP (Khi thả bookmark vào Folder này)
+      // >>> SỰ KIỆN 3: DROP (Khi thả bookmark hoặc folder vào Folder này)
       folderDiv.addEventListener("drop", (e) => {
         e.preventDefault()
-        e.stopPropagation() // QUAN TRỌNG: Chỉ xử lý tại folder này, không nổi bọt lên cha
+        e.stopPropagation()
 
         // Reset style
         folderDiv.style.background = "transparent"
         folderDiv.style.border = "none"
 
-        // Lấy ID bookmark vừa thả
-        const bookmarkId = e.dataTransfer.getData("text/plain")
+        const draggedId = e.dataTransfer.getData("text/plain")
+        const targetFolderId = node.id
 
-        if (currentDragType === "bookmark" && bookmarkId) {
-          // Kiểm tra xem bookmark có đang ở đây không
-          chrome.bookmarks.get(bookmarkId, (results) => {
-            if (results && results[0]) {
-              if (results[0].parentId === node.id) {
-                // Nếu đã ở trong folder này rồi thì thôi, không reload
-                return
+        if (!draggedId || !targetFolderId) return
+
+        if (currentDragType === "bookmark") {
+          // Existing bookmark drop logic
+          chrome.bookmarks.get(draggedId, (results) => {
+            if (!results || !results.length) return
+            const bookmark = results[0]
+
+            if (bookmark.parentId === targetFolderId) return
+
+            chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
+              if (chrome.runtime.lastError) {
+                showCustomPopup(
+                  translations[language].errorUnexpected,
+                  "error",
+                  true
+                )
               }
-
-              // Di chuyển bookmark vào folder này
-              chrome.bookmarks.move(bookmarkId, { parentId: node.id }, () => {
-                if (chrome.runtime.lastError) {
-                  showCustomPopup(
-                    translations[language].errorUnexpected,
-                    "error",
-                    true
-                  )
-                } else {
-                  // Thành công -> Reload lại cây để cập nhật vị trí mới
-                  chrome.bookmarks.getTree((tree) =>
-                    renderFilteredBookmarks(tree, elements)
-                  )
-                }
-              })
-            }
+            }) // Removed else block to avoid double reload
           })
+        } else if (currentDragType === "folder") {
+            // New folder drop logic
+            // Prevent dropping a folder onto itself
+            if (draggedId === targetFolderId) {
+                showCustomPopup(translations[language].errorCannotMoveFolderToSelf || "Cannot move folder to itself.", "error", true);
+                return;
+            }
+
+            // Prevent dropping a folder into one of its own descendants
+            const draggedNode = findNodeById(draggedId, uiState.bookmarkTree);
+            if (draggedNode && isAncestorOf(draggedNode, targetFolderId)) {
+                showCustomPopup(translations[language].errorCannotMoveFolderToDescendant || "Cannot move folder to its descendant.", "error", true);
+                return;
+            }
+            
+            chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
+                if (chrome.runtime.lastError) {
+                    showCustomPopup(
+                        translations[language].errorUnexpected || "An unexpected error occurred while moving folder.",
+                        "error",
+                        true
+                    );
+                } else {
+                    chrome.bookmarks.getTree((tree) =>
+                        renderFilteredBookmarks(tree, elements)
+                    );
+                }
+            });
         }
+        // Reload tree after any successful move operation (bookmark or folder)
+        chrome.bookmarks.getTree((tree) =>
+            renderFilteredBookmarks(tree, elements)
+        );
       })
 
       fragment.appendChild(folderDiv)
@@ -1393,7 +1458,7 @@ function renderTreeView(nodes, elements, depth = 0) {
       fragment.appendChild(childrenContainer)
     }
     // >>> TRƯỜNG HỢP LÀ BOOKMARK <<<
-    else if (node.url && matchesSearch && matchesFavorite && matchesTag) {
+    else if (node.url && matchesSearch && matchesFavorite && matchesTag && matchesHealth) {
       // Gọi hàm tạo bookmark (đã update ở trên để có thể drag)
       fragment.appendChild(createEnhancedBookmarkElement(node, depth, elements))
     }

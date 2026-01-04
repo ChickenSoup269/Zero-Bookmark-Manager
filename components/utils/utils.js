@@ -236,6 +236,10 @@ export const translations = {
     searchTitle: "Search",
     folderActionsTitle: "Folder actions",
     selectionTitle: "Selection",
+    healthSortAll: "Sort by Health: All",
+    healthSortDead: "Dead Links",
+    healthSortSuspicious: "Suspicious Links",
+    healthSortSafe: "Safe Links",
   },
   vi: {
     welcomeMessage: "Chào mừng đến với Zero Bookmark Manager Chat!",
@@ -734,7 +738,7 @@ export function showCustomGuide() {
   try {
     title.textContent = translations[language].helpGuideTitle
 
-    messageEl.innerHTML = translations[language].helpGuide;
+    messageEl.innerHTML = translations[language].helpGuide
 
     popup.classList.remove("hidden")
 
