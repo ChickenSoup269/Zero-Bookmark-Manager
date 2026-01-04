@@ -92,6 +92,7 @@
 
   --text-option: white;
   --shadow-hover-tree: rgba(255, 255, 255, 0.35) 0px 5px 15px;
+  --hover-bg-option: #2b2b2b;
 }
 
 /* Light theme */
@@ -125,6 +126,7 @@
 
   --text-option: #308ef9;
   --shadow-hover-tree: rgba(0, 0, 0, 0.35) px 5px 15px;
+  --hover-bg-option: #d7d7d7;
 }
 
 /* Dracula theme */
@@ -151,6 +153,7 @@ body.dracula-theme {
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --text-option: #ff79c6;
+  --hover-bg-option: #3a3c4e;
 }
 
 /* OneDark theme */
@@ -178,6 +181,7 @@ body.onedark-theme {
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --text-option: #98c379;
+  --hover-bg-option: #323842;
 }
 
 /* Tet theme */
@@ -212,26 +216,33 @@ body.tet-theme {
   --check-link-color: linear-gradient(90deg, #8c001a, #ebdd57);
   --health-icon-dead-color: #fee209;
   --text-option: white;
+  --hover-bg-option: rgba(255, 215, 0, 0.15);
 }
 
-/* Opt-in to customizable select */
-/* Opt-in to customizable select */
+/* Kích hoạt khả năng tùy chỉnh cho select */
 select,
 select::picker(select) {
   appearance: base-select;
 }
 
-/* Change the background of the dropdown and options */
+/* Tùy chỉnh giao diện danh sách đổ xuống (dropdown) */
 select::picker(select) {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   border: 1px solid #333;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Change the color of the selected/hovered option */
+option {
+  padding: 4px;
+}
+
+/* Màu sắc khi hover hoặc được chọn */
 option:checked,
 option:hover {
   color: var(--text-option);
+  background-color: var(--hover-bg-option);
 }
 
 input[type="checkbox"] {
@@ -378,6 +389,7 @@ html {
 .button.delete-folder {
   color: white !important;
   background-color: #ff5555 !important;
+  transition: all 0.25s ease !important;
 }
 
 .button.add.hidden,

@@ -452,7 +452,7 @@ body {
   backdrop-filter: blur(40px); /* Glass effect */
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  width: 240px;
+  min-width: 240px;
   padding: var(--spacing-sm);
   box-shadow: var(--shadow-lg);
   opacity: 1;
@@ -466,7 +466,7 @@ body {
 }
 
 .dropdown-menu .menu-item:hover {
-  background-color: var(--text-option);
+  background-color: var(--text-primary);
   color: var(--bg-primary);
   transform: translateY(-1px);
 }

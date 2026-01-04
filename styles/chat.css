@@ -303,20 +303,20 @@
 /* === Input Area === */
 .chatbox-input-container .input {
   width: 100%;
-  min-height: 44px; /* Starting height, matches your send button */
-  max-height: 150px; /* Max height before scrolling (adjust as needed) */
+  min-height: 44px;
+  max-height: 150px;
   padding: 12px 40px 12px 18px;
   border: 1px solid transparent;
-  border-radius: 22px;
+  border-radius: 15px;
   font-size: 0.9rem;
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
   transition: all var(--transition-fast);
-  resize: none; /* Disable manual resizing */
-  overflow-y: auto; /* Scroll if it exceeds max-height */
-  line-height: 1.4; /* Better line spacing for wrapping */
-  white-space: pre-wrap; /* Allow wrapping like messages */
-  word-wrap: break-word; /* Wrap long words */
+  resize: none;
+  overflow: hidden;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .chatbox-input-container .input:focus {
@@ -327,11 +327,11 @@
 }
 
 /* Clear Button (adjust position for textarea) */
-.chatbox-input-container .clear {
+/* .chatbox-input-container .clear {
   position: absolute;
   right: 12px;
-  bottom: 12px; /* Align to bottom for multi-line */
-  transform: none; /* Remove vertical centering */
+  bottom: 12px; 
+  transform: none; 
   background: none;
   border: none;
   color: var(--text-muted);
@@ -340,12 +340,12 @@
   padding: 4px;
   border-radius: 50%;
   transition: all var(--transition-fast);
-}
+} */
 
-.chatbox-input-container .clear:hover {
+/* .chatbox-input-container .clear:hover {
   color: var(--text-primary);
   background-color: rgba(255, 255, 255, 0.1);
-}
+} */
 
 /* Send Button */
 .button.send {

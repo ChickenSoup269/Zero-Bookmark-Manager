@@ -115,13 +115,16 @@ document.addEventListener("DOMContentLoaded", () => {
   let chatHistory = []
 
   // ===== NEW HELPER FUNCTIONS =====
-  function appendBotMessage(htmlContent, textContent) {
+  function appendBotMessage(content, textContent, isMarkdown = false) {
     const botMessageContainer = document.createElement("div")
     botMessageContainer.className = "chatbox-message-container bot"
     const timestamp = new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     })
+
+    const htmlContent = isMarkdown ? marked.parse(content) : content
+
     botMessageContainer.innerHTML = `
       <div class="chat-avatar">
        <i class="fas fa-power-off"></i>
@@ -132,7 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `
     chatMessages.appendChild(botMessageContainer)
-    const cleanText = textContent || htmlContent.replace(/<[^>]*>/g, "")
+    const cleanText =
+      textContent || (isMarkdown ? content : content.replace(/<[^>]*>/g, ""))
     addToChatHistory("bot", cleanText, timestamp)
     chatMessages.scrollTop = chatMessages.scrollHeight
   }
@@ -581,7 +585,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         hideTypingIndicator()
-        appendBotMessage(answer, answer)
+        appendBotMessage(answer, null, true)
       } else if (action === "count") {
         chrome.bookmarks.getTree((bookmarkTree) => {
           let count = 0
@@ -593,26 +597,10 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           countBookmarks(bookmarkTree[0].children)
           hideTypingIndicator()
-          const botMessageContainer = document.createElement("div")
-          botMessageContainer.className = "chatbox-message-container bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
           const content = `${t("youHave") || "You have"} ${count} ${
             t("bookmarks") || "bookmarks"
           }.`
-          botMessageContainer.innerHTML = `
-            <div class="chat-avatar">
-             <i class="fas fa-power-off"></i>
-            </div>
-            <div class="chatbox-message">
-              ${content}<span class="timestamp"> ${timestamp}</span>
-            </div>
-          `
-          chatMessages.appendChild(botMessageContainer)
-          addToChatHistory("bot", content, timestamp)
-          chatMessages.scrollTop = chatMessages.scrollHeight
+          appendBotMessage(content, content)
         })
       } else if (action === "count_folders") {
         chrome.bookmarks.getTree((bookmarkTree) => {
@@ -1220,6 +1208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addToChatHistory("user", message, timestamp)
     chatMessages.scrollTop = chatMessages.scrollHeight
     chatInput.value = ""
+    chatInput.style.height = "auto"
 
     const config = getAiConfig()
     if (!config.model || !config.apiKey || !config.modelName) {
@@ -1234,6 +1223,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return
     }
 
+    showTypingIndicator()
     const apiRequest = buildApiRequest(
       config.modelName,
       config.apiKey,
@@ -1241,6 +1231,7 @@ document.addEventListener("DOMContentLoaded", () => {
       message
     )
     if (!apiRequest) {
+      hideTypingIndicator()
       return
     }
 
@@ -1313,39 +1304,16 @@ document.addEventListener("DOMContentLoaded", () => {
             answer = dataGeneral.text || "No response"
           }
 
-          const botMessage = document.createElement("div")
-          botMessage.className = "chatbox-message bot"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          botMessage.innerHTML = `${answer}<span class="timestamp">${timestamp}</span>`
-          chatMessages.appendChild(botMessage)
-          addToChatHistory("bot", answer, timestamp)
-          chatMessages.scrollTop = chatMessages.scrollHeight
+          hideTypingIndicator()
+          appendBotMessage(answer, null, true)
         } catch (generalError) {
-          const errorMessage = document.createElement("div")
-          errorMessage.className = "chatbox-message bot error"
-          const timestamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          errorMessage.innerHTML = `
-            <div class="chat-avatar"><i class="fas fa-exclamation-triangle"></i></div>
-            <div class="message-content">
-              <div class="chatbox-message error">
-                  ${t("errorTitle") || "Oops"}: ${generalError.message}
-              </div>
-              <span class="timestamp">${timestamp}</span>
-            </div>
-          `
-          chatMessages.appendChild(errorMessage)
-          addToChatHistory(
-            "bot",
-            `${t("errorTitle") || "Oops"}: ${generalError.message}`,
-            timestamp
+          hideTypingIndicator()
+          appendBotMessage(
+            `<span class="error-text">${t("errorTitle") || "Oops"}: ${
+              generalError.message
+            }</span>`,
+            `${t("errorTitle") || "Oops"}: ${generalError.message}`
           )
-          chatMessages.scrollTop = chatMessages.scrollHeight
         }
       }
     }
@@ -1403,8 +1371,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (chatInput) {
+    chatInput.addEventListener("input", () => {
+      chatInput.style.height = "auto"
+      chatInput.style.height = `${chatInput.scrollHeight}px`
+    })
+
     chatInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault() // Prevent newline
         removeWelcomeMessage() // Remove welcome message when user types and presses enter
         handleUserInput()
       }
