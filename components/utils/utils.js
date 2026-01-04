@@ -471,6 +471,10 @@ export const translations = {
     searchTitle: "Tìm kiếm",
     folderActionsTitle: "Thao tác thư mục",
     selectionTitle: "Lựa chọn",
+    healthSortAll: "Tất cả",
+    healthSortDead: "Liên kết hỏng",
+    healthSortSuspicious: "Liên kết đáng ngờ",
+    healthSortSafe: "Liên kết an toàn",
   },
 }
 

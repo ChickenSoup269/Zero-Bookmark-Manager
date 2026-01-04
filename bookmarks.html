@@ -119,10 +119,10 @@
             <img src="path/to/logo.png" alt="Zero Bookmark Manager Logo" class="logo">
             <div class="settings-container">
                 <select id="health-sort-filter" class="select" style="display: none;" aria-label="Sort by health">
-                    <option value="all">Sort by Health: All</option>
-                    <option value="dead">Dead Links</option>
-                    <option value="suspicious">Suspicious Links</option>
-                    <option value="safe">Safe Links</option>
+                    <option value="all" data-i18n="healthSortAll">Sort by Health: All</option>
+                    <option value="dead" data-i18n="healthSortDead">Dead Links</option>
+                    <option value="suspicious" data-i18n="healthSortSuspicious">Suspicious Links</option>
+                    <option value="safe" data-i18n="healthSortSafe">Safe Links</option>
                 </select>
                 <button id="settings-button" class="button settings" title="Settings"
                     aria-label="Open settings">⋮</button>
@@ -444,7 +444,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="./components/lib/marked.min.js"></script>
     <script src="./components/option/option.js" type="module"></script>
     <script src="./components/tag.js" type="module"></script>
     <script src="./components/chat.js" type="module"></script>

@@ -31,60 +31,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // System Prompt: Includes suggest_website action
   const systemPrompt = `
-        You are a bookmark management assistant integrated into a browser extension. Your role is to help users manage their bookmarks and suggest relevant websites using natural language or specific commands, interpreting their intent as flexibly as possible. Respond in a conversational, natural way in the user's language (e.g., Vietnamese if the query is in Vietnamese). You have access to Chrome Bookmarks API to perform actions like:
-        - Counting bookmarks ("how many bookmarks do I have?").
-        - Counting folders ("how many folders do I have?").
-        - Listing bookmarks ("list my bookmarks").
-        - Listing folders ("list my folders").
-        - Listing bookmarks in a folder ("list bookmarks in folder <folder>").
-        - Adding bookmarks ("bookmark add <URL> [title <title>] [to folder <folder>]"). Check if the URL already exists; if it does, suggest not adding or ask for confirmation.
-        - Moving bookmarks ("move bookmark 'title' to folder 'folder'" or "move bookmark id <id> to folder 'folder'"). If multiple bookmarks with the same title, specify or ask for clarification.
-        - Editing bookmarks ("edit bookmark <URL> [title <new_title>] [to folder <new_folder>]", "change bookmark title <old_title> to <new_title> [in folder <folder>]", or "edit bookmark id <id> [title <new_title>] [to folder <new_folder>]"). If only a title is provided, search for bookmarks by title; if multiple matches, ask for clarification or use folder context. For ID-based edits, use the bookmark ID directly.
-        - Deleting bookmarks ("delete bookmark <URL>", "delete bookmark titled <title>", or "delete bookmark id <id>"). If duplicate URLs or titles, delete all or specify. For deletion, always require confirmation from the user before proceeding.
-        - Searching bookmarks ("search bookmark <keyword>").
-        - Searching folders ("search folder <keyword>"). If multiple folders with the same name, report an error.
-        - Marking/unmarking bookmarks as favorite ("make bookmark <title> a favorite" or "remove bookmark <title> from favorites"). If multiple bookmarks with the same title, ask for clarification or use folder context.
-        - Suggesting websites ("suggest website for <topic>"). Return a list of relevant website suggestions with URLs, titles, and brief descriptions in JSON format: { "websites": [{ "url": string, "title": string, "description": string }, ...] }. Do not use search or external APIs; rely on your knowledge to suggest reputable websites.
-        For natural language queries, interpret the user's intent and provide a JSON response with:
-        - "action": the action (count, count_folders, list, list_folders, list_bookmarks_in_folder, add, move, edit, delete, search_bookmark, search_folder, favorite, suggest_website, general).
-        - "params": parameters needed for the action (e.g., { url, title, folder, keyword, favorite, id, websites }).
-        - "response": a conversational response in the user's language, summarizing the action or explaining issues (e.g., "I found two bookmarks named 'ChickenSoup'. Which one do you want to make a favorite?").
-        For deletion actions, include a "confirm" field in the params set to true to indicate that user confirmation is required before proceeding.
-        If the query is unclear or not bookmark-related (e.g., "hello", "what time is it?", vague terms like "hmm"), return a conversational fallback response encouraging clarification, like:
-        - Vietnamese: "Tui đang cố hiểu bạn muốn gì! Bạn có thể nói rõ hơn không, như 'đổi tên bookmark ChickenSoup thành ChickenSoup2698' hoặc 'gợi ý trang web để học Python'?"
-        - English: "I'm trying to understand what you want! Could you clarify, like 'change bookmark ChickenSoup to ChickenSoup2698' or 'suggest a website for learning Python'?"
-        Always return JSON format: { "action": string, "params": object, "response": string (optional) }.
-        Example for non-bookmark or unmatched queries:
-        - Query: "What day is it today?" or "hello"
-          Response: { "action": "general", "response": "Tui đang cố hiểu bạn muốn gì! Bạn có thể nói rõ hơn không, như 'đổi tên bookmark ChickenSoup thành ChickenSoup2698' hoặc 'gợi ý trang web để học Python'?" }
-        Example for favorite bookmark query:
-        - Query: "Làm bookmark ChickenSoup thành yêu thích"
-          Response: { "action": "favorite", "params": { "title": "ChickenSoup", "favorite": true }, "response": "Đang tìm bookmark 'ChickenSoup' để đánh dấu là yêu thích..." }
-        - Query: "Bỏ yêu thích bookmark ChickenSoup"
-          Response: { "action": "favorite", "params": { "title": "ChickenSoup", "favorite": false }, "response": "Đang tìm bookmark 'ChickenSoup' để bỏ đánh dấu yêu thích..." }
-        Example for edit by ID:
-        - Query: "Sửa bookmark ID 123 thành tiêu đề 'NewTitle' trong thư mục 'Favorites'"
-          Response: { "action": "edit", "params": { "id": "123", "new_title": "NewTitle", "folder": "Favorites" }, "response": "Đang sửa bookmark với ID 123..." }
-        Example for delete by ID with confirmation:
-        - Query: "Xóa bookmark ID 123"
-          Response: { "action": "delete", "params": { "id": "123", "confirm": true }, "response": "Bạn có chắc muốn xóa bookmark với ID 123 không?" }
-        Example for website suggestion:
-        - Query: "Suggest a website for learning Python"
-          Response: { "action": "suggest_website", "params": { "websites": [{ "url": "https://www.python.org", "title": "Official Python Website", "description": "The official Python website offers tutorials and documentation for learning Python." }, { "url": "https://www.codecademy.com/learn/learn-python-3", "title": "Codecademy Python Course", "description": "An interactive course for learning Python programming." }] }, "response": "I've suggested the following websites for learning Python..." }
-        If multiple bookmarks match the title, return:
-        - { "action": "general", "response": "Tui tìm thấy nhiều bookmark tên 'ChickenSoup'. Bạn muốn chỉnh sửa cái nào? Hãy cung cấp URL, ID, hoặc thư mục." }
+        You are a bookmark management assistant integrated into a browser extension. Your role is to classify user intent for managing bookmarks. Based on the user's query, you must return a JSON object with an "action" and optional "params".
+
+        Available actions:
+        - count: Count all bookmarks.
+        - count_folders: Count all folders.
+        - list: List all bookmarks.
+        - list_folders: List all folders.
+        - list_bookmarks_in_folder: List bookmarks within a specific folder.
+        - add: Add a new bookmark.
+        - move: Move a bookmark to a different folder.
+        - edit: Edit a bookmark's title or folder.
+        - delete: Delete a bookmark.
+        - search_bookmark: Search for bookmarks.
+        - search_folder: Search for folders.
+        - favorite: Mark or unmark a bookmark as a favorite.
+        - suggest_website: Suggest websites on a given topic.
+        - general: For any query that is not related to bookmark management, is a greeting, or is too vague.
+
+        Guidelines:
+        - For natural language queries, interpret the user's intent and provide the corresponding action and parameters.
+        - For deletion actions, include a "confirm" field in the params set to true.
+        - If a query is not about managing bookmarks (e.g., "hello", "what is the capital of France?"), or is vague ("hmm"), you MUST return: { "action": "general" }. Do not attempt to answer the question yourself.
+
+        Example Flows:
+        - User: "how many bookmarks do I have?" -> Response: { "action": "count" }
+        - User: "add https://google.com to my work folder" -> Response: { "action": "add", "params": { "url": "https://google.com", "folder": "work" } }
+        - User: "delete bookmark with id 123" -> Response: { "action": "delete", "params": { "id": "123", "confirm": true } }
+        - User: "what is python?" -> Response: { "action": "general" }
+        - User: "hi there" -> Response: { "action": "general" }
     `
 
   // General System Prompt for off-topic questions
   const generalSystemPrompt = `
-    You are Gemini, a helpful and truthful AI assistant created by Google. Your role is to provide accurate, concise, and conversational answers to a wide range of questions. Respond in the user's language (e.g., Vietnamese if the query is in Vietnamese) in a natural, friendly tone. If the question is vague or unclear, politely ask for clarification while offering a helpful response based on your best interpretation. Provide factual information based on your knowledge and avoid speculative or unverified content.
-    Examples:
+    You are Gemini, a helpful and truthful AI assistant created by Google. Your role is to provide accurate, concise, and conversational answers to a wide range of questions. Respond in the user's language (e.g., Vietnamese if the query is in Vietnamese) in a natural, friendly tone. You must format your responses using Markdown. This includes using bolding, lists, and tables where appropriate.
+
+    When creating a table, use standard GitHub-flavored Markdown syntax. For example:
+    | Header 1 | Header 2 |
+    |----------|----------|
+    | Cell 1   | Cell 2   |
+    | Cell 3   | Cell 4   |
+
+    Examples of full responses:
     - Query: "What day is it today?"
-      Response: "Today is Monday, October 13, 2025. Anything specific you want to plan for today?"
+      Response: "Today is Monday, October 13, 2025. Is there anything specific you'd like to plan?"
     - Query: "Hello"
-      Response: "Hi there! How can I assist you today? Want to manage your bookmarks or ask something else?"
+      Response: "Hi there! How can I assist you today? You can ask me to manage your bookmarks or ask any general question."
     - Query: "Tell me about Python programming"
-      Response: "Python is a versatile, high-level programming language known for its readability and wide range of applications, from web development to data science. Would you like tips on learning Python or specific details about its features?"
+      Response: "Python is a versatile, high-level programming language known for its readability and wide range of applications, from web development to data science. \n\n**Key Features:**\n* Easy to learn\n* Large standard library\n* Used in web development, AI, data science, and more.\n\nWould you like tips on learning Python or specific details about its features?"
   `
 
   // Language support
@@ -543,105 +537,88 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Handle bookmark commands
-  async function handleBookmarkCommand(action, params, originalMessage) {
+
+  async function handleBookmarkCommand(action, params) {
     showTypingIndicator()
 
     try {
-      if (action === "general") {
-        const config = getAiConfig()
-        const apiRequest = buildApiRequest(
-          config.modelName,
-          config.apiKey,
-          config.model,
-          originalMessage,
-          true // Use generalSystemPrompt
-        )
-        if (!apiRequest) {
-          throw new Error(t("errorUnexpected") || "Invalid model name")
-        }
-
-        const response = await fetch(apiRequest.url, {
-          method: apiRequest.method,
-          headers: apiRequest.headers,
-          body: JSON.stringify(apiRequest.body),
-        })
-        if (!response.ok) {
-          throw new Error(
-            `${t("errorUnexpected") || "Unexpected error"}: ${
-              response.statusText
-            }`
-          )
-        }
-
-        const data = await response.json()
-        let answer
-        if (config.model === "gemini") {
-          answer =
-            data.candidates?.[0]?.content?.parts?.[0]?.text || "No response"
-        } else if (config.model === "gpt") {
-          answer = data.choices?.[0]?.message?.content || "No response"
-        } else {
-          answer = data.text || "No response"
-        }
-
-        hideTypingIndicator()
-        appendBotMessage(answer, null, true)
-      } else if (action === "count") {
+      if (action === "count") {
         chrome.bookmarks.getTree((bookmarkTree) => {
           let count = 0
+
           function countBookmarks(nodes) {
             nodes.forEach((node) => {
               if (node.url) count++
+
               if (node.children) countBookmarks(node.children)
             })
           }
+
           countBookmarks(bookmarkTree[0].children)
+
           hideTypingIndicator()
+
           const content = `${t("youHave") || "You have"} ${count} ${
             t("bookmarks") || "bookmarks"
           }.`
+
           appendBotMessage(content, content)
         })
       } else if (action === "count_folders") {
         chrome.bookmarks.getTree((bookmarkTree) => {
           let count = 0
+
           function countFolders(nodes) {
             nodes.forEach((node) => {
               if (!node.url) count++
+
               if (node.children) countFolders(node.children)
             })
           }
+
           countFolders(bookmarkTree[0].children)
+
           hideTypingIndicator()
+
           const htmlContent = `${t("youHave") || "You have"} ${count} ${
             t("folders") || "folders"
           }.`
+
           const textContent = `${t("youHave") || "You have"} ${count} ${
             t("folders") || "folders"
           }.`
+
           appendBotMessage(htmlContent, textContent)
         })
       } else if (action === "list") {
         chrome.bookmarks.getTree((bookmarkTree) => {
           const bookmarks = []
+
           function collectBookmarks(nodes) {
             nodes.forEach((node) => {
               if (node.url) {
                 bookmarks.push({
                   title: node.title || node.url,
+
                   url: node.url,
+
                   id: node.id,
                 })
               }
+
               if (node.children) collectBookmarks(node.children)
             })
           }
+
           collectBookmarks(bookmarkTree[0].children)
+
           hideTypingIndicator()
+
           const htmlContent = bookmarks.length
             ? `${
                 t("hereAreYourBookmarks") || "Here are your bookmarks"
               }:<br>${bookmarks
+
                 .map(
                   (b, index) =>
                     `<span class="bookmark-item">${
@@ -652,38 +629,49 @@ document.addEventListener("DOMContentLoaded", () => {
                       b.url
                     }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
                 )
+
                 .join("<br>")}`
             : `${t("noBookmarks") || "You don't have any bookmarks yet."}`
+
           appendBotMessage(htmlContent)
         })
       } else if (action === "list_folders") {
         chrome.bookmarks.getTree((bookmarkTree) => {
           const folders = []
+
           function collectFolders(nodes) {
             nodes.forEach((node) => {
               if (!node.url && node.id !== "0") {
                 folders.push({
                   title: node.title || t("unnamedFolder") || "Unnamed",
+
                   id: node.id,
                 })
               }
+
               if (node.children) collectFolders(node.children)
             })
           }
+
           collectFolders(bookmarkTree[0].children)
+
           hideTypingIndicator()
+
           const htmlContent = folders.length
             ? `${
                 t("hereAreYourFolders") || "Here are your folders"
               }:<br>${folders
+
                 .map(
                   (f, index) =>
                     `<span class="bookmark-item">${index + 1}. ${
                       f.title
                     } (ID: ${f.id})</span>`
                 )
+
                 .join("<br>")}`
             : `${t("noFolders") || "You don't have any folders yet."}`
+
           appendBotMessage(htmlContent)
         })
       } else if (action === "list_bookmarks_in_folder" && params.folder) {
@@ -695,6 +683,7 @@ document.addEventListener("DOMContentLoaded", () => {
               }`
             )
           }
+
           if (folders.length > 1) {
             throw new Error(
               `${
@@ -702,15 +691,20 @@ document.addEventListener("DOMContentLoaded", () => {
               }: ${params.folder}. Please specify a unique name.`
             )
           }
+
           const folderId = folders[0].id
+
           chrome.bookmarks.getChildren(folderId, (children) => {
             const bookmarks = children.filter((node) => node.url)
+
             hideTypingIndicator()
+
             const htmlContent = bookmarks.length
               ? `${
                   t("hereAreBookmarksInFolder") ||
                   "Here are the bookmarks in folder"
                 } '${params.folder}':<br>${bookmarks
+
                   .map(
                     (b, index) =>
                       `<span class="bookmark-item">${
@@ -723,16 +717,20 @@ document.addEventListener("DOMContentLoaded", () => {
                         b.id
                       })</span>`
                   )
+
                   .join("<br>")}`
               : `${
                   t("noBookmarksInFolder") || "No bookmarks in this folder"
                 } '${params.folder}'.`
+
             appendBotMessage(htmlContent)
           })
         })
       } else if (action === "add" && params.url) {
         let { url, title, folder } = params
+
         const existingBookmarks = await checkUrlExists(url)
+
         if (existingBookmarks.length > 0) {
           throw new Error(
             `${
@@ -741,26 +739,34 @@ document.addEventListener("DOMContentLoaded", () => {
             }: ${url}. Found ${existingBookmarks.length} bookmark(s).`
           )
         }
+
         if (!folder || !title) {
           const suggestions = await suggestBookmarkDetails(url)
+
           folder =
             folder || suggestions.folder || t("unnamedFolder") || "Unnamed"
+
           title = title || suggestions.title || url
         }
+
         chrome.bookmarks.create(
           { parentId: await findFolderId(folder), title, url },
+
           (bookmark) => {
             hideTypingIndicator()
+
             const htmlContent = `${
               t("addedBookmarkToFolder") || "I've added the bookmark"
             } <a href="${url}" target="_blank">${title}</a> ${
               t("toFolder") || "to the folder"
             } '${folder}' (ID: ${bookmark.id}).`
+
             const textContent = `${
               t("addedBookmarkToFolder") || "I've added the bookmark"
             } ${title} ${t("toFolder") || "to the folder"} '${folder}' (ID: ${
               bookmark.id
             }).`
+
             appendBotMessage(htmlContent, textContent)
           }
         )
@@ -770,25 +776,34 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         const {
           url,
+
           title: oldTitle,
+
           new_title: newTitle,
+
           folder: newFolder,
+
           id,
         } = params
+
         if (!newTitle && !newFolder) {
           throw new Error(
             t("emptyTitleError") || "Please provide a new title or folder."
           )
         }
+
         let bookmarks = []
+
         if (id) {
           const bookmark = await getBookmarkById(id)
+
           bookmarks = [bookmark]
         } else if (url) {
           bookmarks = await checkUrlExists(url)
         } else if (oldTitle) {
           bookmarks = await searchBookmarksByTitle(oldTitle)
         }
+
         if (bookmarks.length === 0) {
           throw new Error(
             `${t("noBookmarks") || "I couldn't find a bookmark with"} ${
@@ -796,11 +811,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }.`
           )
         }
+
         if (bookmarks.length > 1 && !id) {
           if (newFolder) {
             const folderId = await findFolderId(newFolder)
+
             bookmarks = bookmarks.filter((b) => b.parentId === folderId)
           }
+
           if (bookmarks.length > 1) {
             throw new Error(
               `${t("clarifyBookmark") || "I found multiple bookmarks named"} '${
@@ -812,14 +830,18 @@ document.addEventListener("DOMContentLoaded", () => {
             )
           }
         }
+
         if (bookmarks.length === 1) {
           const bookmarkId = bookmarks[0].id
+
           const performUpdates = async () => {
             if (newTitle) {
               await new Promise((resolve, reject) => {
                 chrome.bookmarks.update(
                   bookmarkId,
+
                   { title: newTitle },
+
                   (updatedBookmark) => {
                     if (chrome.runtime.lastError) {
                       reject(new Error(chrome.runtime.lastError.message))
@@ -830,12 +852,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 )
               })
             }
+
             if (newFolder) {
               const folderId = await findFolderId(newFolder)
+
               await new Promise((resolve, reject) => {
                 chrome.bookmarks.move(
                   bookmarkId,
+
                   { parentId: folderId },
+
                   (movedBookmark) => {
                     if (chrome.runtime.lastError) {
                       reject(new Error(chrome.runtime.lastError.message))
@@ -846,29 +872,38 @@ document.addEventListener("DOMContentLoaded", () => {
                 )
               })
             }
+
             const updatedBookmark = await new Promise((resolve) => {
               chrome.bookmarks.get(bookmarkId, (results) => resolve(results[0]))
             })
+
             const folderName = await getFolderName(updatedBookmark.parentId)
+
             hideTypingIndicator()
+
             const htmlContent = `${
               t("updatedBookmark") || "I've updated the bookmark"
             } <a href="${updatedBookmark.url}" target="_blank">${
               updatedBookmark.title
             }</a> ${t("inFolder") || "in"} '${folderName}' (ID: ${bookmarkId}).`
+
             const textContent = `${
               t("updatedBookmark") || "I've updated the bookmark"
             } ${updatedBookmark.title} ${
               t("inFolder") || "in"
             } '${folderName}' (ID: ${bookmarkId}).`
+
             appendBotMessage(htmlContent, textContent)
           }
+
           performUpdates().catch((error) => {
             hideTypingIndicator()
+
             appendBotMessage(
               `<span class="error-text">${t("errorTitle") || "Oops"}: ${
                 error.message
               }</span>`,
+
               `${t("errorTitle") || "Oops"}: ${error.message}`
             )
           })
@@ -878,17 +913,23 @@ document.addEventListener("DOMContentLoaded", () => {
         (params.url || params.title || params.id)
       ) {
         let bookmarks = []
+
         let bookmarkId, bookmarkTitle
+
         if (params.id) {
           const bookmark = await getBookmarkById(params.id)
+
           bookmarks = [bookmark]
+
           bookmarkId = params.id
+
           bookmarkTitle = bookmark.title || bookmark.url
         } else if (params.url) {
           bookmarks = await checkUrlExists(params.url)
         } else if (params.title) {
           bookmarks = await searchBookmarksByTitle(params.title)
         }
+
         if (bookmarks.length === 0) {
           throw new Error(
             `${t("noBookmarks") || "I couldn't find a bookmark with"} ${
@@ -900,6 +941,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }.`
           )
         }
+
         if (bookmarks.length > 1 && !params.id) {
           throw new Error(
             `${t("clarifyBookmark") || "I found multiple bookmarks named"} '${
@@ -910,40 +952,55 @@ document.addEventListener("DOMContentLoaded", () => {
             }`
           )
         }
+
         if (bookmarks.length === 1) {
           bookmarkId = bookmarks[0].id
+
           bookmarkTitle = bookmarks[0].title || bookmarks[0].url
         }
+
         if (params.confirm) {
           hideTypingIndicator()
+
           const htmlContent = `${
             t("deleteConfirm") || "Are you sure you want to delete the bookmark"
           } '${bookmarkTitle}' (ID: ${bookmarkId})?`
+
           const textContent = htmlContent
+
           appendBotMessage(htmlContent, textContent)
+
           showCustomConfirm(
             `${
               t("deleteConfirm") ||
               "Are you sure you want to delete the bookmark"
             } '${bookmarkTitle}' (ID: ${bookmarkId})?`,
+
             () => {
               chrome.bookmarks.remove(bookmarkId, () => {
                 if (chrome.runtime.lastError) {
                   throw new Error(chrome.runtime.lastError.message)
                 }
+
                 const htmlContent = `${
                   t("deletedBookmark") || "I've deleted the bookmark"
                 }: ${bookmarkTitle} (ID: ${bookmarkId}).`
+
                 const textContent = htmlContent
+
                 appendBotMessage(htmlContent, textContent)
+
                 showCustomPopup(t("successTitle") || "Success", "success", true)
               })
             },
+
             () => {
               const htmlContent = `${t("cancel") || "Cancelled"}: ${
                 t("deleteBookmarkSuccess") || "Bookmark deletion cancelled"
               }.`
+
               const textContent = htmlContent
+
               appendBotMessage(htmlContent, textContent)
             }
           )
@@ -954,14 +1011,19 @@ document.addEventListener("DOMContentLoaded", () => {
         params.folder
       ) {
         let bookmarks = []
+
         let bookmarkId
+
         if (params.id) {
           const bookmark = await getBookmarkById(params.id)
+
           bookmarks = [bookmark]
+
           bookmarkId = params.id
         } else if (params.title) {
           bookmarks = await searchBookmarksByTitle(params.title)
         }
+
         if (bookmarks.length === 0) {
           throw new Error(
             `${t("noBookmarks") || "I couldn't find a bookmark with"} ${
@@ -969,6 +1031,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }.`
           )
         }
+
         if (bookmarks.length > 1 && !params.id) {
           throw new Error(
             `${t("clarifyBookmark") || "I found multiple bookmarks named"} '${
@@ -979,13 +1042,18 @@ document.addEventListener("DOMContentLoaded", () => {
             }`
           )
         }
+
         if (bookmarks.length === 1) {
           bookmarkId = bookmarks[0].id
+
           const folderId = await findFolderId(params.folder)
+
           await new Promise((resolve, reject) => {
             chrome.bookmarks.move(
               bookmarkId,
+
               { parentId: folderId },
+
               (movedBookmark) => {
                 if (chrome.runtime.lastError) {
                   reject(new Error(chrome.runtime.lastError.message))
@@ -995,24 +1063,32 @@ document.addEventListener("DOMContentLoaded", () => {
               }
             )
           })
+
           const folderName = await getFolderName(folderId)
+
           hideTypingIndicator()
+
           const htmlContent = `${
             t("movedBookmark") || "I've moved the bookmark"
           } '${bookmarks[0].title || bookmarks[0].url}' (ID: ${bookmarkId}) ${
             t("toFolder") || "to the folder"
           } '${folderName}'.`
+
           const textContent = htmlContent
+
           appendBotMessage(htmlContent, textContent)
         }
       } else if (action === "search_bookmark" && params.keyword) {
         chrome.bookmarks.search({ query: params.keyword }, (results) => {
           const bookmarks = results.filter((node) => node.url)
+
           hideTypingIndicator()
+
           const htmlContent = bookmarks.length
             ? `${t("foundBookmarks") || "I found"} ${bookmarks.length} ${
                 t("bookmarksMatching") || "bookmarks matching"
               } '${params.keyword}':<br>${bookmarks
+
                 .map(
                   (b, index) =>
                     `<span class="bookmark-item">${
@@ -1025,40 +1101,51 @@ document.addEventListener("DOMContentLoaded", () => {
                       b.id
                     })</span>`
                 )
+
                 .join("<br>")}`
             : `${
                 t("noBookmarksFoundFor") ||
                 "I couldn't find any bookmarks matching"
               } '${params.keyword}'.`
+
           appendBotMessage(htmlContent)
         })
       } else if (action === "search_folder" && params.keyword) {
         searchFoldersByName(params.keyword).then((folders) => {
           hideTypingIndicator()
+
           const htmlContent = folders.length
             ? `${t("foundFolders") || "I found these folders"}:<br>${folders
+
                 .map(
                   (f, index) =>
                     `<span class="bookmark-item">${index + 1}. ${
                       f.title || t("unnamedFolder") || "Unnamed"
                     } (ID: ${f.id})</span>`
                 )
+
                 .join("<br>")}`
             : `${
                 t("noFoldersFoundFor") || "I couldn't find any folders matching"
               } '${params.keyword}'.`
+
           appendBotMessage(htmlContent)
         })
       } else if (action === "favorite" && (params.title || params.id)) {
         let bookmarks = []
+
         let bookmarkId
+
         if (params.id) {
           const bookmark = await getBookmarkById(params.id)
+
           bookmarks = [bookmark]
+
           bookmarkId = params.id
         } else if (params.title) {
           bookmarks = await searchBookmarksByTitle(params.title)
         }
+
         if (bookmarks.length === 0) {
           throw new Error(
             `${t("noBookmarks") || "I couldn't find a bookmark with"} ${
@@ -1066,6 +1153,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }.`
           )
         }
+
         if (bookmarks.length > 1 && !params.id) {
           throw new Error(
             `${t("clarifyBookmark") || "I found multiple bookmarks named"} '${
@@ -1076,26 +1164,35 @@ document.addEventListener("DOMContentLoaded", () => {
             }`
           )
         }
+
         if (bookmarks.length === 1) {
           bookmarkId = bookmarks[0].id
+
           await toggleFavorite(bookmarkId, params.favorite)
+
           hideTypingIndicator()
+
           const htmlContent = `${
             params.favorite
               ? t("markedFavorite") || "I've marked the bookmark"
               : t("unmarkedFavorite") ||
                 "I've removed the bookmark from favorites"
           } '${bookmarks[0].title || bookmarks[0].url}' (ID: ${bookmarkId}).`
+
           const textContent = htmlContent
+
           appendBotMessage(htmlContent, textContent)
         }
       } else if (action === "suggest_website" && params.websites) {
         hideTypingIndicator()
+
         const websites = params.websites || []
+
         const htmlContent = websites.length
           ? `${
               t("suggestWebsite") || "I've suggested the following websites"
             }:<br>${websites
+
               .map(
                 (site, index) =>
                   `<span class="bookmark-item">${
@@ -1112,6 +1209,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     t("addToFolder") || "Bookmark"
                   }</button></span>`
               )
+
               .join("<br>")}`
           : `${
               t("noBookmarksFoundFor") ||
@@ -1121,31 +1219,42 @@ document.addEventListener("DOMContentLoaded", () => {
         appendBotMessage(htmlContent)
 
         // Add event listeners for bookmark buttons
-        // This part needs to query the last message, which now will be in a container
+
         const lastBotMessageContainer = chatMessages.lastElementChild
+
         if (lastBotMessageContainer) {
           const bookmarkButtons =
             lastBotMessageContainer.querySelectorAll(".bookmark-btn")
+
           bookmarkButtons.forEach((button) => {
             button.addEventListener("click", async () => {
               const url = button.getAttribute("data-url")
+
               const title = button.getAttribute("data-title")
+
               const folder = button.getAttribute("data-folder")
+
               try {
                 const existingBookmarks = await checkUrlExists(url)
+
                 if (existingBookmarks.length > 0) {
                   showCustomPopup(
                     `${
                       t("duplicateUrlError") ||
                       "A bookmark with this URL already exists"
                     }: ${url}.`,
+
                     "error",
+
                     true
                   )
+
                   return
                 }
+
                 chrome.bookmarks.create(
                   { parentId: await findFolderId(folder), title, url },
+
                   (bookmark) => {
                     showCustomPopup(
                       `${
@@ -1153,7 +1262,9 @@ document.addEventListener("DOMContentLoaded", () => {
                       } ${title} ${
                         t("toFolder") || "to the folder"
                       } '${folder}' (ID: ${bookmark.id}).`,
+
                       "success",
+
                       true
                     )
                   }
@@ -1161,7 +1272,9 @@ document.addEventListener("DOMContentLoaded", () => {
               } catch (error) {
                 showCustomPopup(
                   `${t("errorTitle") || "Error"}: ${error.message}`,
+
                   "error",
+
                   true
                 )
               }
@@ -1176,146 +1289,220 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       hideTypingIndicator()
+
       appendBotMessage(
         `<span class="error-text">${t("errorTitle") || "Oops"}: ${
           error.message
         }</span>`,
+
         `${t("errorTitle") || "Oops"}: ${error.message}`
       )
     }
   }
 
   // Handle user input
+
   async function handleUserInput() {
     const message = chatInput.value.trim()
+
     if (!message) return
 
     const userMessageContainer = document.createElement("div")
+
     userMessageContainer.className = "chatbox-message-container user"
+
     const timestamp = new Date().toLocaleTimeString([], {
       hour: "2-digit",
+
       minute: "2-digit",
     })
+
     userMessageContainer.innerHTML = `
-      <div class="chatbox-message">
-        ${message} <span class="timestamp">${timestamp}</span>
-      </div>
-      <div class="chat-avatar">
-        <i class="fas fa-user"></i>
-      </div>
-    `
+
+        <div class="chatbox-message">
+
+          ${message} <span class="timestamp">${timestamp}</span>
+
+        </div>
+
+        <div class="chat-avatar">
+
+          <i class="fas fa-user"></i>
+
+        </div>
+
+      `
+
     chatMessages.appendChild(userMessageContainer)
+
     addToChatHistory("user", message, timestamp)
+
     chatMessages.scrollTop = chatMessages.scrollHeight
+
     chatInput.value = ""
+
     chatInput.style.height = "auto"
 
     const config = getAiConfig()
+
     if (!config.model || !config.apiKey || !config.modelName) {
       appendBotMessage(
         `<span class="error-text">${
           t("errorTitle") || "Error"
         }: Please configure AI settings in 'Configure AI Chatbot'.</span>`,
+
         `${
           t("errorTitle") || "Error"
         }: Please configure AI settings in 'Configure AI Chatbot'.`
       )
+
       return
     }
 
     showTypingIndicator()
-    const apiRequest = buildApiRequest(
+
+    // Step 1: Classify user intent
+
+    const classificationRequest = buildApiRequest(
       config.modelName,
+
       config.apiKey,
+
       config.model,
-      message
+
+      message,
+
+      false // Use the main systemPrompt for classification
     )
-    if (!apiRequest) {
+
+    if (!classificationRequest) {
       hideTypingIndicator()
+
       return
     }
 
     try {
-      const response = await fetch(apiRequest.url, {
-        method: apiRequest.method,
-        headers: apiRequest.headers,
-        body: JSON.stringify(apiRequest.body),
+      const response = await fetch(classificationRequest.url, {
+        method: classificationRequest.method,
+
+        headers: classificationRequest.headers,
+
+        body: JSON.stringify(classificationRequest.body),
       })
+
       if (!response.ok) {
-        throw new Error(
-          `${t("errorUnexpected") || "Unexpected error"}: ${
-            response.statusText
-          }`
-        )
-      }
-      const data = await response.json()
-      let result
-      try {
-        if (config.model === "gemini") {
-          result = JSON.parse(
-            data.candidates?.[0]?.content?.parts?.[0]?.text || "{}"
-          )
-        } else if (config.model === "gpt") {
-          result = JSON.parse(data.choices?.[0]?.message?.content || "{}")
-        } else {
-          result = JSON.parse(data.text || "{}")
-        }
-      } catch (parseError) {
-        throw new Error(
-          `${
-            t("errorUnexpected") || "Unexpected error"
-          }: Invalid AI response format`
-        )
+        throw new Error(`API Error: ${response.statusText}`)
       }
 
-      await handleBookmarkCommand(result.action, result.params || {}, message)
-    } catch (error) {
-      // If API fails, try handling as off-topic question
-      const apiRequestGeneral = buildApiRequest(
-        config.modelName,
-        config.apiKey,
-        config.model,
-        message,
-        true
-      )
-      if (apiRequestGeneral) {
-        try {
-          const responseGeneral = await fetch(apiRequestGeneral.url, {
-            method: apiRequestGeneral.method,
-            headers: apiRequestGeneral.headers,
-            body: JSON.stringify(apiRequestGeneral.body),
+            const data = await response.json()
+
+            let result
+
+            try {
+
+              let textResponse
+
+              if (config.model === "gemini") {
+
+                textResponse =
+
+                  data.candidates?.[0]?.content?.parts?.[0]?.text || ""
+
+              } else if (config.model === "gpt") {
+
+                textResponse = data.choices?.[0]?.message?.content || ""
+
+              } else {
+
+                textResponse = data.text || ""
+
+              }
+
+      
+
+              // Clean the response: remove markdown backticks and trim
+
+              const cleanedResponse = textResponse
+
+                .replace(/```json/g, "")
+
+                .replace(/```/g, "")
+
+                .trim()
+
+              result = JSON.parse(cleanedResponse)
+
+            } catch (parseError) {
+
+              // If parsing fails, assume it's a general question
+
+              result = { action: "general" }
+
+            }
+
+      // Step 2: Handle the action
+
+      if (result.action === "general") {
+        // Handle general conversation
+
+        const generalRequest = buildApiRequest(
+          config.modelName,
+
+          config.apiKey,
+
+          config.model,
+
+          message,
+
+          true // Use the generalSystemPrompt
+        )
+
+        if (generalRequest) {
+          const generalResponse = await fetch(generalRequest.url, {
+            method: generalRequest.method,
+
+            headers: generalRequest.headers,
+
+            body: JSON.stringify(generalRequest.body),
           })
-          if (!responseGeneral.ok) {
-            throw new Error(
-              `${t("errorUnexpected") || "Unexpected error"}: ${
-                responseGeneral.statusText
-              }`
-            )
+
+          if (!generalResponse.ok) {
+            throw new Error(`API Error: ${generalResponse.statusText}`)
           }
-          const dataGeneral = await responseGeneral.json()
+
+          const generalData = await generalResponse.json()
+
           let answer
+
           if (config.model === "gemini") {
             answer =
-              dataGeneral.candidates?.[0]?.content?.parts?.[0]?.text ||
+              generalData.candidates?.[0]?.content?.parts?.[0]?.text ||
               "No response"
           } else if (config.model === "gpt") {
-            answer = dataGeneral.choices?.[0]?.message?.content || "No response"
+            answer = generalData.choices?.[0]?.message?.content || "No response"
           } else {
-            answer = dataGeneral.text || "No response"
+            answer = generalData.text || "No response"
           }
 
           hideTypingIndicator()
+
           appendBotMessage(answer, null, true)
-        } catch (generalError) {
-          hideTypingIndicator()
-          appendBotMessage(
-            `<span class="error-text">${t("errorTitle") || "Oops"}: ${
-              generalError.message
-            }</span>`,
-            `${t("errorTitle") || "Oops"}: ${generalError.message}`
-          )
         }
+      } else {
+        // Handle bookmark-specific command
+
+        await handleBookmarkCommand(result.action, result.params || {})
       }
+    } catch (error) {
+      hideTypingIndicator()
+
+      appendBotMessage(
+        `<span class="error-text">${t("errorTitle") || "Oops"}: ${
+          error.message
+        }</span>`,
+
+        `${t("errorTitle") || "Oops"}: ${error.message}`
+      )
     }
   }
 

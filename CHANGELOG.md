@@ -2,10 +2,11 @@
 
 ## Changelog:
 
-### [1.1.3] - [2026-01-01]
+### [1.1.3] - [2026-01-04]
 
 ## Added
 
+- CSS styling for rendered Markdown in chat responses (tables, code blocks, etc.).
 - New "Tet" theme with red and gold color palette.
 - Dynamic localization for sidebar section titles (Filters, Search, Folder actions, Selection).
 - Chatbox welcome message with localized text and a "Start Chat" button.
@@ -13,12 +14,17 @@
 
 ## Improved
 
+- Chatbot can now reliably answer non-bookmark-related questions.
+- Chat input now auto-resizes and supports `Shift+Enter` for newlines.
+- Robustness of AI API calls to prevent errors and handle various response formats.
 - "Tet" theme color palette adjusted for better contrast and readability.
 - Font switching mechanism enhanced with more choices and robust handling.
 - Overall localization experience improved with dedicated script and event handling.
 
 ## Updated
 
+- AI system prompts for a more reliable and efficient two-step (classify-then-respond) logic.
+- Localization system to dynamically translate elements using `data-i18n` attributes.
 - `README.md` to reflect new features, version, and usage examples.
 - Corrected HackNerd font file path in styles.
 

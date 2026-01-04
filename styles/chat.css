@@ -175,7 +175,7 @@
 /* === TIMESTAMP STYLING === */
 .timestamp {
   font-size: 0.7rem;
-  color: var(--bg-tertiary);
+  color: var(--hover--bg-option);
   margin-top: 4px;
 }
 
@@ -488,4 +488,60 @@
     135deg,
     var(--accent-color)
   ); /* Invert gradient on hover */
+}
+
+/* === Markdown Formatting === */
+.chatbox-message table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+
+.chatbox-message th,
+.chatbox-message td {
+  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.chatbox-message th {
+  background-color: var(--bg-secondary);
+  font-weight: 600;
+}
+
+.chatbox-message tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.chatbox-message pre {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: var(--border-radius-md);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: var(--font-family-monospace, monospace);
+  font-size: 0.85rem;
+}
+
+.chatbox-message code {
+  font-family: var(--font-family-monospace, monospace);
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.chatbox-message pre code {
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+}
+
+.chatbox-message blockquote {
+  border-left: 3px solid var(--accent-color);
+  margin: 1rem 0;
+  padding-left: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
 }

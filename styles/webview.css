@@ -138,8 +138,8 @@ body {
 }
 
 .toggle-sidebar:hover {
-  background-color: var(--accent-color);
-  color: white;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
   transform: translateY(-2px) scale(1.05);
   box-shadow: var(--shadow-md);
 }
