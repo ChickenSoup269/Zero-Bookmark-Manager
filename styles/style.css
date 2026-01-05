@@ -1478,7 +1478,7 @@ html {
 }
 
 .edit-tag-btn:hover {
-  color: var(--bg-primary);
+  color: var(--text-option);
 }
 
 .edit-tag-input {
@@ -1528,7 +1528,7 @@ html {
 #new-tag-color,
 #new-tag-text-color {
   padding: 6px;
-  border-radius: 8px;
+  border-radius: 50px;
   width: 100%;
   height: 40px;
   cursor: pointer;
@@ -1606,6 +1606,21 @@ html {
 
 .hidden {
   display: none;
+}
+
+/* css button xóa tag */
+.remove-tag-btn {
+  border-radius: 5px;
+  border: none;
+  color: var(--bg-primary);
+  background-color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+.remove-tag-btn:hover {
+  cursor: pointer;
+  background-color: var(--danger-color);
+  color: var(--bg-primary);
+  transition: all 0.2s ease;
 }
 
 /* Responsive Design for 480px and below */

@@ -319,7 +319,7 @@ async function openManageTagsPopup(bookmarkId) {
       // Inherit value from placeholder if it exists, otherwise default
       newPicker.value = textColorInput.value || "#ffffff"
       newPicker.style.cssText =
-        "width: 28px; height: 28px; border: none; background: var(--bg-primary); padding: 0; border-radius: 10px; vertical-align: middle; cursor: pointer;"
+        "width: 28px; height: 28px; border: none; background: var(--bg-primary); padding: 0; border-radius: 50px; vertical-align: middle; cursor: pointer;"
 
       if (textColorInput.parentNode) {
         textColorInput.parentNode.replaceChild(newPicker, textColorInput)
@@ -496,10 +496,21 @@ async function openManageTagsPopup(bookmarkId) {
   els.existingTags.onclick = (e) => {
     const tag = e.target.dataset.tag
     if (e.target.classList.contains("remove-tag-btn")) {
-      uiState.bookmarkTags[bookmarkId] = uiState.bookmarkTags[
-        bookmarkId
-      ].filter((t) => t !== tag)
-      saveTagData(renderTags)
+      showCustomConfirm(
+        getTranslation("confirmDeleteTag", "Are you sure you want to delete this tag from the bookmark?"),
+        () => {
+          uiState.bookmarkTags[bookmarkId] = uiState.bookmarkTags[
+            bookmarkId
+          ].filter((t) => t !== tag)
+          saveTagData(() => {
+            renderTags()
+            showCustomPopup(
+              getTranslation("deleteTagSuccess", "Tag deleted successfully!"),
+              "success"
+            )
+          })
+        }
+      )
     } else if (e.target.classList.contains("edit-tag-btn")) {
       // Edit logic (simplified for brevity, similar structure to original but cleaner DOM calls)
       handleEditTagUI(

@@ -6,6 +6,7 @@
 
 ## Added
 
+- Confirmation popup for deleting tags.
 - CSS styling for rendered Markdown in chat responses (tables, code blocks, etc.).
 - New "Tet" theme with red and gold color palette.
 - Dynamic localization for sidebar section titles (Filters, Search, Folder actions, Selection).

@@ -39,6 +39,8 @@ export const translations = {
     deleteConfirm: "Are you sure you want to delete this bookmark?",
     deleteFolderConfirm:
       "Are you sure you want to delete this folder? Bookmarks that exist in other folders will be preserved.",
+    confirmDeleteTag: "Are you sure you want to delete this tag from the bookmark?",
+    deleteTagSuccess: "Tag deleted successfully!",
     discardFolderPrompt:
       "You entered a folder name but didn't save. Discard it?",
     noBookmarks: "No bookmarks found. Please check permissions.",
@@ -287,6 +289,8 @@ export const translations = {
     deleteConfirm: "Bạn có chắc chắn muốn xóa Bookmark này không?",
     deleteFolderConfirm:
       "Bạn có chắc chắn muốn xóa thư mục này không? Các Bookmark có trong thư mục khác sẽ được giữ lại.",
+    confirmDeleteTag: "Bạn có chắc chắn muốn xóa thẻ này khỏi bookmark không?",
+    deleteTagSuccess: "Đã xóa thẻ thành công!",
     discardFolderPrompt: "Bạn đã nhập tên thư mục nhưng chưa lưu. Hủy bỏ nó?",
     noBookmarks: "Không tìm thấy Bookmark. Vui lòng kiểm tra quyền truy cập.",
     emptyTitleError: "Tiêu đề không được để trống",
