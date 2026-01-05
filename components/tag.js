@@ -68,15 +68,14 @@ export function saveTags(
   }
 
   if (updatedTagColors) {
-    tagColors = { ...tagColors, ...updatedTagColors }
-    dataToSave.tagColors = tagColors
-    // Cập nhật uiState tagColors (nếu có trong uiState)
-    uiState.tagColors = tagColors
+    tagColors = updatedTagColors;
+    dataToSave.tagColors = tagColors;
+    uiState.tagColors = tagColors;
   }
 
   if (updatedTagTextColors) {
-    uiState.tagTextColors = { ...uiState.tagTextColors, ...updatedTagTextColors }
-    dataToSave.tagTextColors = uiState.tagTextColors
+    uiState.tagTextColors = updatedTagTextColors;
+    dataToSave.tagTextColors = uiState.tagTextColors;
   }
 
   chrome.storage.local.set(dataToSave)
@@ -84,8 +83,10 @@ export function saveTags(
 
 // Add tag to bookmark
 export async function addTagToBookmark(bookmarkId, tag, color, textColor) {
-  const data = await getStorage("bookmarkTags")
+  const data = await getStorage(["bookmarkTags", "tagColors", "tagTextColors"])
   const bookmarkTags = data.bookmarkTags || {}
+  const allTagColors = data.tagColors || {}
+  const allTagTextColors = data.tagTextColors || {}
 
   if (!bookmarkTags[bookmarkId]) {
     bookmarkTags[bookmarkId] = []
@@ -105,7 +106,11 @@ export async function addTagToBookmark(bookmarkId, tag, color, textColor) {
 
   if (!bookmarkTags[bookmarkId].includes(tag)) {
     bookmarkTags[bookmarkId].push(tag)
-    saveTags(bookmarkTags, { [tag]: color }, { [tag]: textColor })
+
+    allTagColors[tag] = color || "#cccccc"
+    allTagTextColors[tag] = textColor || "#000000"
+
+    saveTags(bookmarkTags, allTagColors, allTagTextColors)
     refreshUI()
   }
 }
@@ -170,11 +175,11 @@ export async function updateTag(oldTag, newTag, newBgColor, newTextColor) {
   }
 
   // Luôn cập nhật màu cho tag mới
-  storedColors[newTag] = newBgColor
+  storedColors[newTag] = newBgColor || "#cccccc"
   if (!storedTextColors) {
     storedTextColors = {}
   }
-  storedTextColors[newTag] = newTextColor
+  storedTextColors[newTag] = newTextColor || "#000000"
 
   saveTags(bookmarkTags, storedColors, storedTextColors)
   refreshUI()
@@ -211,13 +216,10 @@ export async function renameTagGlobal(oldTag, newTag) {
   if (storedColors[oldTag]) {
     storedColors[newTag] = storedColors[oldTag]
     delete storedColors[oldTag]
-    // Cập nhật biến local export
-    tagColors = storedColors
   }
   if (storedTextColors[oldTag]) {
     storedTextColors[newTag] = storedTextColors[oldTag]
     delete storedTextColors[oldTag]
-    uiState.tagTextColors = storedTextColors
   }
 
   // 4. Lưu và Render lại nếu có thay đổi

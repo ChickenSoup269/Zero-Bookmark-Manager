@@ -186,11 +186,11 @@
         </div>
         <div id="manage-tags-popup" class="rename-popup hidden" role="dialog" aria-labelledby="manage-tags-title">
             <div class="rename-popup-content">
-                <h3 id="manage-tags-title">Manage Tags</h3>
+                <h3 id="manage-tags-title" data-i18n="manageTags">Manage Tags</h3>
 
                 <!-- Section for existing tags -->
                 <div class="form-section">
-                    <label>Current Tags:</label>
+                    <label data-i18n="currentTagsLabel">Current Tags:</label>
                     <div id="existing-tags" class="tags-container">
                         <!-- Tags will be dynamically inserted here -->
                     </div>
@@ -198,19 +198,12 @@
 
                 <!-- Section for adding a new tag -->
                 <div class="form-section">
-                    <label for="new-tag-input">Add New Tag:</label>
+                    <label for="new-tag-input" data-i18n="addNewTagLabel">Add New Tag:</label>
                     <div class="add-tag-form">
-                        <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name...">
-                        <div class="color-picker-wrapper">
-                            <label for="new-tag-color">BG</label>
-                            <input type="color" id="new-tag-color" value="#cccccc" class="tag-color-picker"
-                                title="Tag Background Color">
-                        </div>
-                        <div class="color-picker-wrapper">
-                            <label for="new-tag-text-color">Text</label>
-                            <input type="color" id="new-tag-text-color" value="#000000" class="tag-color-picker"
-                                title="Tag Text Color">
-                        </div>
+                        <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name..."
+                            data-i18n-placeholder="newTagPlaceholder">
+                        <input type="hidden" id="new-tag-color" value="#cccccc">
+                        <input type="hidden" id="new-tag-text-color" value="#000000">
                     </div>
                     <div class="color-palette-container">
                         <button class="color-swatch" data-color="#4CAF50" style="background-color:#4CAF50;"></button>
@@ -223,18 +216,18 @@
                         <button class="color-swatch" data-color="#FFFFFF" style="background-color:#FFFFFF;"></button>
                     </div>
                 </div>
-                
+
                 <!-- Section for adding from existing global tags -->
                 <div class="form-section">
-                    <label for="existing-tags-select">Or add from existing:</label>
+                    <label for="existing-tags-select" data-i18n="addFromExistingLabel">Or add from existing:</label>
                     <select id="existing-tags-select" class="select existing-tags-select"></select>
                 </div>
 
 
                 <!-- Action buttons -->
                 <div class="rename-popup-buttons">
-                    <button id="add-tag-btn" class="button save">Add Tag</button>
-                    <button class="close-modal button cancel">Done</button>
+                    <button id="add-tag-btn" class="button save" data-i18n="addTag">Add Tag</button>
+                    <button class="close-modal button cancel" data-i18n="doneLabel">Done</button>
                 </div>
             </div>
         </div>
