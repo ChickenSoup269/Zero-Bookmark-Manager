@@ -93,6 +93,7 @@
   --text-option: white;
   --shadow-hover-tree: rgba(255, 255, 255, 0.35) 0px 5px 15px;
   --hover-bg-option: #2b2b2b;
+  --bg-tags-select: rgba(0, 0, 0, 0.9);
 }
 
 /* Light theme */
@@ -127,6 +128,7 @@
   --text-option: #308ef9;
   --shadow-hover-tree: rgba(0, 0, 0, 0.35) px 5px 15px;
   --hover-bg-option: #d7d7d7;
+  --bg-tags-select: rgba(0, 0, 0, 0.9);
 }
 
 /* Dracula theme */
@@ -154,6 +156,7 @@ body.dracula-theme {
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --text-option: #ff79c6;
   --hover-bg-option: #3a3c4e;
+  --bg-tags-select: rgba(40, 42, 54, 0.9);
 }
 
 /* OneDark theme */
@@ -182,6 +185,7 @@ body.onedark-theme {
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --text-option: #98c379;
   --hover-bg-option: #323842;
+  --bg-tags-select: rgba(40, 44, 52, 0.9);
 }
 
 /* Tet theme */
@@ -217,6 +221,7 @@ body.tet-theme {
   --health-icon-dead-color: #fee209;
   --text-option: white;
   --hover-bg-option: rgba(255, 215, 0, 0.15);
+  --bg-tags-select: rgba(87, 78, 25, 0.801);
 }
 
 /* Kích hoạt khả năng tùy chỉnh cho select */
@@ -1195,7 +1200,8 @@ html {
   top: 100%;
   left: 0;
   right: 0;
-  background: var(--bg-secondary, #fff);
+  background-color: var(--bg-tags-select);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -1522,7 +1528,6 @@ html {
 #new-tag-color,
 #new-tag-text-color {
   padding: 6px;
-  border: 1px solid var(--border-color, #d1d1d1);
   border-radius: 8px;
   width: 100%;
   height: 40px;

@@ -319,7 +319,7 @@ async function openManageTagsPopup(bookmarkId) {
       // Inherit value from placeholder if it exists, otherwise default
       newPicker.value = textColorInput.value || "#ffffff"
       newPicker.style.cssText =
-        "width: 28px; height: 28px; border: none; padding: 0; border-radius: 50%; vertical-align: middle; cursor: pointer;"
+        "width: 28px; height: 28px; border: none; background: var(--bg-primary); padding: 0; border-radius: 10px; vertical-align: middle; cursor: pointer;"
 
       if (textColorInput.parentNode) {
         textColorInput.parentNode.replaceChild(newPicker, textColorInput)

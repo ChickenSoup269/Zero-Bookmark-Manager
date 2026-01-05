@@ -448,8 +448,6 @@ body {
   top: 100%;
   right: 0;
   margin-top: -2px;
-  background-color: rgba(var(--bg-primary), 1);
-  backdrop-filter: blur(40px); /* Glass effect */
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   min-width: 240px;
@@ -474,8 +472,8 @@ body {
 /* Dropdown menu - Glassmorphism với blur */
 .dropdown-menu-2 {
   position: fixed;
-  top: 60px; /* Thay đổi thành giá trị cụ thể - điều chỉnh theo vị trí bạn muốn */
-  right: 20px; /* Cách mép phải một chút */
+  top: 60px;
+  right: 20px;
   margin-top: 8px;
   background-color: rgba(var(--bg-primary), 0.9);
   backdrop-filter: blur(40px); /* Glass effect */
@@ -762,19 +760,11 @@ body {
 #tag-filter-dropdown {
   position: absolute;
   z-index: 1000;
-  background: rgba(var(--bg-secondary), 0.9); /* Glass */
-  backdrop-filter: blur(10px);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px;
   min-width: 200px;
   box-shadow: var(--shadow-lg);
-}
-
-#tag-filter-dropdown label {
-  display: block;
-  margin: 5px 0;
-  cursor: pointer;
 }
 
 #tag-filter-dropdown input[type="checkbox"] {

@@ -68,14 +68,14 @@ export function saveTags(
   }
 
   if (updatedTagColors) {
-    tagColors = updatedTagColors;
-    dataToSave.tagColors = tagColors;
-    uiState.tagColors = tagColors;
+    tagColors = updatedTagColors
+    dataToSave.tagColors = tagColors
+    uiState.tagColors = tagColors
   }
 
   if (updatedTagTextColors) {
-    uiState.tagTextColors = updatedTagTextColors;
-    dataToSave.tagTextColors = uiState.tagTextColors;
+    uiState.tagTextColors = updatedTagTextColors
+    dataToSave.tagTextColors = uiState.tagTextColors
   }
 
   chrome.storage.local.set(dataToSave)
@@ -107,7 +107,7 @@ export async function addTagToBookmark(bookmarkId, tag, color, textColor) {
   if (!bookmarkTags[bookmarkId].includes(tag)) {
     bookmarkTags[bookmarkId].push(tag)
 
-    allTagColors[tag] = color || "#cccccc"
+    allTagColors[tag] = color || "#FFFFFF"
     allTagTextColors[tag] = textColor || "#000000"
 
     saveTags(bookmarkTags, allTagColors, allTagTextColors)
@@ -175,7 +175,7 @@ export async function updateTag(oldTag, newTag, newBgColor, newTextColor) {
   }
 
   // Luôn cập nhật màu cho tag mới
-  storedColors[newTag] = newBgColor || "#cccccc"
+  storedColors[newTag] = newBgColor || "#FFFFFF"
   if (!storedTextColors) {
     storedTextColors = {}
   }
