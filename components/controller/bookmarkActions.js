@@ -281,8 +281,8 @@ function setupThumbnailInteraction(thumbEl) {
 
 async function openManageTagsPopup(bookmarkId) {
   const popup = document.getElementById("manage-tags-popup")
-  const addTagContainer = popup?.querySelector(".add-tag-container")
-  if (!popup || !addTagContainer)
+  const addTagForm = popup?.querySelector(".add-tag-form")
+  if (!popup || !addTagForm)
     return handleError("Tags popup missing", "errorUnexpected")
 
   const els = {
@@ -291,6 +291,7 @@ async function openManageTagsPopup(bookmarkId) {
     color: document.getElementById("new-tag-color"),
     addBtn: document.getElementById("add-tag-btn"),
     close: popup.querySelector(".close-modal"),
+    title: popup.querySelector("h3"),
   }
 
   // --- Utility inside Manage Tags ---
@@ -303,21 +304,60 @@ async function openManageTagsPopup(bookmarkId) {
   }
 
   // --- Get Elements (They should already exist from bookmarks.html) ---
-  const textColorInput = document.getElementById("new-tag-text-color")
+  // --- START CHANGE: Replace placeholder with real color picker and add logic ---
+  let textColorInput = document.getElementById("new-tag-text-color")
+  if (textColorInput) {
+    // If it's not a proper color input, replace it with one.
+    if (
+      textColorInput.tagName.toLowerCase() !== "input" ||
+      textColorInput.type !== "color"
+    ) {
+      const newPicker = document.createElement("input")
+      newPicker.id = textColorInput.id
+      newPicker.className = textColorInput.className
+      newPicker.type = "color"
+      // Inherit value from placeholder if it exists, otherwise default
+      newPicker.value = textColorInput.value || "#ffffff"
+      newPicker.style.cssText =
+        "width: 28px; height: 28px; border: none; padding: 0; border-radius: 50%; vertical-align: middle; cursor: pointer;"
+
+      if (textColorInput.parentNode) {
+        textColorInput.parentNode.replaceChild(newPicker, textColorInput)
+      }
+      textColorInput = newPicker // Update variable to the new element
+    }
+  }
+
   const tagSelect = document.querySelector(".existing-tags-select")
 
   if (!textColorInput) console.error("new-tag-text-color input not found!")
   if (!tagSelect) console.error("existing-tags-select dropdown not found!")
 
-  // Predefined Colors (màu nền tag, hiển thị gọn)
-  // Ensure this block runs only once when the popup is first initialized or when a bookmark is selected that triggers it.
-  // The HTML structure should already contain the .color-palette-container from bookmarks.html
-  // So we only need to attach event listeners here.
+  let userHasManuallySetTextColor = false
+  if (textColorInput) {
+    // Reset flag when popup opens
+    userHasManuallySetTextColor = false
+    attachListener(textColorInput, "input", () => {
+      userHasManuallySetTextColor = true
+    })
+  }
+
+  const suggestTextColor = (bgColor) => {
+    if (textColorInput && !userHasManuallySetTextColor) {
+      textColorInput.value = getContrastColor(bgColor)
+    }
+  }
+
+  attachListener(els.color, "input", (e) => suggestTextColor(e.target.value))
+  // --- END CHANGE ---
+
   const colorPaletteContainer = popup.querySelector(".color-palette-container")
   if (colorPaletteContainer) {
     // Clear existing listeners to prevent duplicates
     Array.from(colorPaletteContainer.children).forEach((btn) => {
       btn.removeEventListener("click", handleSwatchClick)
+      // Set background color for each swatch
+      btn.style.backgroundColor = btn.dataset.color // ADD THIS LINE
     })
 
     // Attach new listeners
@@ -341,7 +381,7 @@ async function openManageTagsPopup(bookmarkId) {
     const selectedColor = e.target.dataset.color
     if (selectedColor) {
       els.color.value = selectedColor
-      textColorInput.value = getContrastColor(selectedColor)
+      suggestTextColor(selectedColor)
 
       // Remove .selected from all swatches
       const swatches = colorPaletteContainer.querySelectorAll(".color-swatch")
@@ -358,7 +398,7 @@ async function openManageTagsPopup(bookmarkId) {
     countDisplay.className = "tag-count"
     countDisplay.style.cssText =
       "font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px;"
-    addTagContainer.before(countDisplay)
+    els.title.after(countDisplay)
   }
 
   // --- Logic ---
@@ -384,18 +424,22 @@ async function openManageTagsPopup(bookmarkId) {
     const currentTags = uiState.bookmarkTags[bookmarkId] || []
     countDisplay.textContent = `${currentTags.length}/${MAX_TAGS} tags`
     els.existingTags.innerHTML = currentTags
-      .map(
-        (tag) => `
-        <div class="tag-item" style="display: inline-flex; align-items: center; gap: 6px; margin: 0 8px 8px 0;">
-          <span class="bookmark-tag" style="background-color: ${
-            uiState.tagColors[tag] || "#ccc"
-          }; color: ${
-          uiState.tagTextColors?.[tag] || "#fff"
-        }; padding: 4px 10px; border-radius: 6px; font-size: 12px;">${tag}</span>
-          <button class="edit-tag-btn" data-tag="${tag}" style="background: none; border: none; color: var(--primary-color); cursor: pointer;">✎</button>
-          <button class="remove-tag-btn" data-tag="${tag}" style="background: none; border: none; color: var(--text-danger); cursor: pointer;">✕</button>
-        </div>`
-      )
+      .map((tag) => {
+        const hasBgColor = uiState.tagColors && uiState.tagColors[tag]
+        const bg = hasBgColor ? uiState.tagColors[tag] : "#ffffff"
+        const textColor = hasBgColor
+          ? (uiState.tagTextColors && uiState.tagTextColors[tag]) ||
+            getContrastColor(bg)
+          : "#000000"
+        const borderStyle = !hasBgColor ? "border: 1px solid #ccc;" : ""
+
+        return `
+            <div class="tag-item">
+              <span class="bookmark-tag" style="background-color: ${bg}; color: ${textColor}; ${borderStyle}">${tag}</span>
+              <button class="edit-tag-btn" data-tag="${tag}">✎</button>
+              <button class="remove-tag-btn" data-tag="${tag}">✕</button>
+            </div>`
+      })
       .join("")
   }
 
@@ -445,6 +489,7 @@ async function openManageTagsPopup(bookmarkId) {
     els.input.value = ""
     els.color.value = "#cccccc"
     textColorInput.value = "#ffffff"
+    userHasManuallySetTextColor = false
   }
 
   // Edit/Remove Delegation
@@ -492,49 +537,42 @@ function handleEditTagUI(
   renderFn,
   updateDropdownFn
 ) {
-  // 1. Lưu lại HTML cũ để phục hồi nếu bấm Cancel
   const originalHTML = container.innerHTML
-
-  // 2. Tạo giao diện Edit
-  container.classList.add("editing-container") // Đánh dấu đang edit
-  container.style.display = "flex"
-  container.style.alignItems = "center"
-  container.style.gap = "4px"
-  container.innerHTML = "" // Xóa nội dung cũ
+  container.classList.add("editing-container")
+  container.innerHTML = ""
 
   const input = document.createElement("input")
+  input.className = "edit-tag-input"
   input.value = oldTag
-  input.style.cssText =
-    "padding: 4px 6px; border-radius: 4px; border: 1px solid var(--accent-color); width: 80px; font-size: 12px;"
 
   const bgColorPicker = document.createElement("input")
   bgColorPicker.type = "color"
+  bgColorPicker.className = "edit-tag-color-picker"
   bgColorPicker.value = uiState.tagColors[oldTag] || "#cccccc"
-  bgColorPicker.style.cssText =
-    "width: 24px; height: 24px; border: none; padding: 0; border-radius: 50%;"
 
   const textColorPicker = document.createElement("input")
   textColorPicker.type = "color"
-  textColorPicker.value = uiState.tagTextColors[oldTag] || "#ffffff"
-  textColorPicker.style.cssText =
-    "width: 24px; height: 24px; border: none; padding: 0; border-radius: 50%;"
+  textColorPicker.className = "edit-tag-color-picker"
+  textColorPicker.value =
+    (uiState.tagTextColors && uiState.tagTextColors[oldTag]) || "#000000"
 
-  // Tự động focus và bôi đen text
   setTimeout(() => input.select(), 0)
 
   const saveBtn = document.createElement("button")
-  saveBtn.innerHTML = "✓" // Icon tick
+  saveBtn.innerHTML = "✓"
   saveBtn.title = "Save"
-  saveBtn.style.cssText =
-    "background: var(--success-color, #28a745); color: #fff; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;"
+  saveBtn.className = "edit-tag-actions edit-tag-save"
 
   const cancelBtn = document.createElement("button")
-  cancelBtn.innerHTML = "✕" // Icon x
+  cancelBtn.innerHTML = "✕"
   cancelBtn.title = "Cancel"
-  cancelBtn.style.cssText =
-    "background: var(--text-danger, #dc3545); color: #fff; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;"
+  cancelBtn.className = "edit-tag-actions edit-tag-cancel"
 
-  container.append(input, bgColorPicker, textColorPicker, saveBtn, cancelBtn)
+  const actionsDiv = document.createElement("div")
+  actionsDiv.className = "edit-tag-actions"
+  actionsDiv.append(saveBtn, cancelBtn)
+
+  container.append(input, bgColorPicker, textColorPicker, actionsDiv)
 
   // 3. Xử lý nút Cancel
   cancelBtn.onclick = (e) => {

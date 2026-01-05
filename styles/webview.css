@@ -714,7 +714,7 @@ body {
   border-radius: 4px;
   font-size: 10px;
   margin-left: 4px;
-  color: white;
+  color: rgb(0, 0, 0);
   background: var(--accent-color); /* Default color, JS có thể override */
 }
 
@@ -1235,4 +1235,37 @@ textarea.error {
 
 .scroll-to-top {
   bottom: 50px;
+}
+
+/* detail thumbnail view detial button */
+#bookmark-detail-popup .rename-popup-content {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+#bookmark-detail-popup .bookmark-thumbnail {
+  flex: 0 0 120px;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+#bookmark-detail-popup #detail-thumbnail {
+  width: 200%;
+  height: auto;
+  display: block;
+}
+
+#bookmark-detail-popup .bookmark-info {
+  flex: 1;
+}
+
+#bookmark-detail-popup .bookmark-info p {
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.5;
+}
+
+#bookmark-detail-popup .bookmark-info strong {
+  color: var(--text-secondary);
 }

@@ -21,6 +21,8 @@ function getFaviconUrl(url) {
   }
 }
 
+
+
 function getContrastColor(hex) {
   if (!hex || typeof hex !== "string" || !hex.startsWith("#")) return "#ffffff"
   const safe = hex.replace("#", "")
@@ -306,108 +308,6 @@ function openWebPreviewModal(bookmark) {
 }
 
 // --- HELPER: Open Properties (Metadata) ---
-// Dùng cho nút Detail trong Dropdown menu
-function openBookmarkPropertiesModal(bookmark) {
-  const language = localStorage.getItem("appLanguage") || "en"
-  const t = translations[language] || translations.en
-  const favicon = getFaviconUrl(bookmark.url)
-  const tagsHtml = createTagsHTML(bookmark.tags)
-  const parentFolder = findParentFolder(bookmark.id, uiState.bookmarkTree)
-
-  const existingOverlay = document.querySelector(".bookmark-modal-overlay")
-  if (existingOverlay) existingOverlay.remove()
-
-  const overlay = document.createElement("div")
-  overlay.className = "bookmark-modal-overlay"
-
-  // Giao diện nhỏ gọn, chỉ hiển thị thông tin text
-  overlay.innerHTML = `
-    <div class="bookmark-modal" style="width: 400px; height: auto; max-height: 80vh;">
-      <div class="modal-header">
-        <h3>${t.viewDetail || "Bookmark Details"}</h3>
-        <button class="modal-close" title="Close">✕</button>
-      </div>
-      
-      <div class="modal-info" style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
-         
-         <div style="display:flex; justify-content:center; margin-bottom:10px;">
-            <img src="${favicon}" style="width:48px; height:48px;" onerror="this.src='./images/default-favicon.png'">
-         </div>
-
-         <div class="detail-row">
-            <strong style="display:block; color:var(--text-secondary); font-size:12px;">Title</strong>
-            <span style="display:block; font-size:14px; color:var(--text-primary);">${
-              bookmark.title
-            }</span>
-         </div>
-
-         <div class="detail-row">
-            <strong style="display:block; color:var(--text-secondary); font-size:12px;">URL</strong>
-            <a href="${
-              bookmark.url
-            }" target="_blank" style="font-size:13px; color:var(--accent-color); word-break:break-all;">${
-    bookmark.url
-  }</a>
-         </div>
-
-         <div style="display:flex; gap: 20px;">
-             <div class="detail-row">
-                <strong style="display:block; color:var(--text-secondary); font-size:12px;">${
-                  t.detailDateAdded || "Date Added"
-                }</strong>
-                <span style="font-size:13px; color:var(--text-primary);">
-                    ${
-                      bookmark.dateAdded
-                        ? new Date(bookmark.dateAdded).toLocaleDateString()
-                        : "-"
-                    }
-                </span>
-             </div>
-             <div class="detail-row">
-                <strong style="display:block; color:var(--text-secondary); font-size:12px;">${
-                  t.detailFolder || "Folder"
-                }</strong>
-                <span style="font-size:13px; color:var(--text-primary);">
-                    ${parentFolder ? parentFolder.title : t.noFolder || "None"}
-                </span>
-             </div>
-         </div>
-
-         <div class="detail-row">
-            <strong style="display:block; color:var(--text-secondary); font-size:12px;">${
-              t.manageTags || "Tags"
-            }</strong>
-            <div style="margin-top:4px;">${
-              tagsHtml ||
-              '<span style="color:#888; font-style:italic;">No tags</span>'
-            }</div>
-         </div>
-         
-         <div class="detail-row">
-            <strong style="display:block; color:var(--text-secondary); font-size:12px;">ID</strong>
-            <span style="font-size:12px; color:#888;">${bookmark.id}</span>
-         </div>
-
-      </div>
-      
-      <div class="modal-footer" style="padding: 15px; border-top: 1px solid var(--border-color); text-align: right;">
-        <button class="button modal-close-btn" style="background: var(--bg-secondary);">Close</button>
-      </div>
-    </div>`
-
-  document.body.appendChild(overlay)
-
-  const closeBtn = overlay.querySelector(".modal-close")
-  const footerCloseBtn = overlay.querySelector(".modal-close-btn")
-
-  const closeAction = () => overlay.remove()
-
-  closeBtn.onclick = closeAction
-  footerCloseBtn.onclick = closeAction
-  overlay.onclick = (evt) => {
-    if (evt.target === overlay) closeAction()
-  }
-}
 
 // ==========================================
 // MAIN LOGIC
@@ -1289,14 +1189,15 @@ function renderTreeView(nodes, elements, depth = 0) {
         ? node.tags?.some((tag) => uiState.selectedTags.includes(tag))
         : true
 
-    const status = uiState.healthStatus ? uiState.healthStatus[node.id] : null;
+    const status = uiState.healthStatus ? uiState.healthStatus[node.id] : null
     const matchesHealth =
       !uiState.healthFilter || uiState.healthFilter === "all"
         ? true
         : status &&
           ((uiState.healthFilter === "dead" && status === "dead") ||
-          (uiState.healthFilter === "suspicious" && status === "alive_suspicious") ||
-          (uiState.healthFilter === "safe" && status === "alive_safe"));
+            (uiState.healthFilter === "suspicious" &&
+              status === "alive_suspicious") ||
+            (uiState.healthFilter === "safe" && status === "alive_safe"))
 
     // >>> TRƯỜNG HỢP LÀ FOLDER <<<
     if (node.children) {
@@ -1344,22 +1245,23 @@ function renderTreeView(nodes, elements, depth = 0) {
         e.stopPropagation()
 
         // Chỉ nhận Bookmark hoặc Folder
-        if (currentDragType !== "bookmark" && currentDragType !== "folder") return
+        if (currentDragType !== "bookmark" && currentDragType !== "folder")
+          return
 
         const draggedId = e.dataTransfer.getData("text/plain")
         // Prevent dropping a folder onto itself or into its own subfolder
         if (currentDragType === "folder") {
-            // Cannot drop a folder onto itself
-            if (draggedId === node.id) {
-                e.dataTransfer.dropEffect = "none"
-                return
-            }
-            // Cannot drop a folder into one of its own descendants
-            const draggedNode = findNodeById(draggedId, uiState.bookmarkTree);
-            if (draggedNode && isAncestorOf(draggedNode, node.id)) {
-                e.dataTransfer.dropEffect = "none"
-                return
-            }
+          // Cannot drop a folder onto itself
+          if (draggedId === node.id) {
+            e.dataTransfer.dropEffect = "none"
+            return
+          }
+          // Cannot drop a folder into one of its own descendants
+          const draggedNode = findNodeById(draggedId, uiState.bookmarkTree)
+          if (draggedNode && isAncestorOf(draggedNode, node.id)) {
+            e.dataTransfer.dropEffect = "none"
+            return
+          }
         }
 
         e.dataTransfer.dropEffect = "move"
@@ -1397,49 +1299,64 @@ function renderTreeView(nodes, elements, depth = 0) {
 
             if (bookmark.parentId === targetFolderId) return
 
-            chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
-              if (chrome.runtime.lastError) {
-                showCustomPopup(
-                  translations[language].errorUnexpected,
-                  "error",
-                  true
-                )
+            chrome.bookmarks.move(
+              draggedId,
+              { parentId: targetFolderId },
+              () => {
+                if (chrome.runtime.lastError) {
+                  showCustomPopup(
+                    translations[language].errorUnexpected,
+                    "error",
+                    true
+                  )
+                }
               }
-            }) // Removed else block to avoid double reload
+            ) // Removed else block to avoid double reload
           })
         } else if (currentDragType === "folder") {
-            // New folder drop logic
-            // Prevent dropping a folder onto itself
-            if (draggedId === targetFolderId) {
-                showCustomPopup(translations[language].errorCannotMoveFolderToSelf || "Cannot move folder to itself.", "error", true);
-                return;
-            }
+          // New folder drop logic
+          // Prevent dropping a folder onto itself
+          if (draggedId === targetFolderId) {
+            showCustomPopup(
+              translations[language].errorCannotMoveFolderToSelf ||
+                "Cannot move folder to itself.",
+              "error",
+              true
+            )
+            return
+          }
 
-            // Prevent dropping a folder into one of its own descendants
-            const draggedNode = findNodeById(draggedId, uiState.bookmarkTree);
-            if (draggedNode && isAncestorOf(draggedNode, targetFolderId)) {
-                showCustomPopup(translations[language].errorCannotMoveFolderToDescendant || "Cannot move folder to its descendant.", "error", true);
-                return;
+          // Prevent dropping a folder into one of its own descendants
+          const draggedNode = findNodeById(draggedId, uiState.bookmarkTree)
+          if (draggedNode && isAncestorOf(draggedNode, targetFolderId)) {
+            showCustomPopup(
+              translations[language].errorCannotMoveFolderToDescendant ||
+                "Cannot move folder to its descendant.",
+              "error",
+              true
+            )
+            return
+          }
+
+          chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
+            if (chrome.runtime.lastError) {
+              showCustomPopup(
+                translations[language].errorUnexpected ||
+                  "An unexpected error occurred while moving folder.",
+                "error",
+                true
+              )
+            } else {
+              chrome.bookmarks.getTree((tree) =>
+                renderFilteredBookmarks(tree, elements)
+              )
             }
-            
-            chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
-                if (chrome.runtime.lastError) {
-                    showCustomPopup(
-                        translations[language].errorUnexpected || "An unexpected error occurred while moving folder.",
-                        "error",
-                        true
-                    );
-                } else {
-                    chrome.bookmarks.getTree((tree) =>
-                        renderFilteredBookmarks(tree, elements)
-                    );
-                }
-            });
+          })
         }
         // Reload tree after any successful move operation (bookmark or folder)
         chrome.bookmarks.getTree((tree) =>
-            renderFilteredBookmarks(tree, elements)
-        );
+          renderFilteredBookmarks(tree, elements)
+        )
       })
 
       fragment.appendChild(folderDiv)
@@ -1458,7 +1375,13 @@ function renderTreeView(nodes, elements, depth = 0) {
       fragment.appendChild(childrenContainer)
     }
     // >>> TRƯỜNG HỢP LÀ BOOKMARK <<<
-    else if (node.url && matchesSearch && matchesFavorite && matchesTag && matchesHealth) {
+    else if (
+      node.url &&
+      matchesSearch &&
+      matchesFavorite &&
+      matchesTag &&
+      matchesHealth
+    ) {
       // Gọi hàm tạo bookmark (đã update ở trên để có thể drag)
       fragment.appendChild(createEnhancedBookmarkElement(node, depth, elements))
     }

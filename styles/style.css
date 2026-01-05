@@ -246,7 +246,7 @@ option:hover {
 }
 
 input[type="checkbox"] {
-  accent-color: var(--text-option);
+  accent-color: var(--focus-outline);
   cursor: pointer;
 }
 
@@ -1347,22 +1347,6 @@ html {
   margin-bottom: var(--spacing-md, 16px);
 }
 
-/* thumbnail icon hover zoom */
-#detail-thumbnail {
-  width: 250px;
-  height: auto;
-  border-radius: var(--border-radius-md);
-  object-fit: cover;
-  box-shadow: var(--box-shadow);
-  background: var(--bg-tertiary);
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-#detail-thumbnail:hover {
-  opacity: 0.8;
-}
-
 .thumbnail-container:hover .magnify-icon {
   opacity: 1;
 }
@@ -1522,7 +1506,6 @@ html {
 #new-tag-input {
   padding: 10px;
   border: 1px solid var(--border-color, #d1d1d1);
-  border-radius: 8px;
   font-size: 0.95rem;
   color: var(--text-primary, #333333);
   background: var(--bg-secondary, #ffffff);
@@ -2312,4 +2295,151 @@ html {
   color: var(--bg-primary);
   background-color: var(--text-primary);
   transition: all 0.2s ease;
+}
+
+/* --- Manage Tags Popup --- */
+#manage-tags-popup .rename-popup-content {
+  width: 450px; /* Wider popup */
+  text-align: left;
+}
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-section > label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  min-height: 40px;
+  background-color: var(--bg-primary);
+}
+
+.add-tag-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-tag-form .input {
+  flex-grow: 1;
+}
+
+.color-picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.color-picker-wrapper label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tag-color-picker {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.tag-color-picker::-webkit-color-swatch {
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary);
+}
+.tag-color-picker::-moz-color-swatch {
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary);
+}
+
+.small-btn {
+  padding: 5px 10px;
+  font-size: 16px;
+  min-width: 40px;
+}
+
+#manage-tags-popup #add-tag-btn {
+  width: auto;
+  padding: 0 12px;
+  height: 36px;
+  font-size: 14px;
+  background-color: var(--accent-color);
+  color: var(--bg-primary);
+}
+
+#manage-tags-popup .rename-popup-buttons {
+  justify-content: flex-end;
+}
+
+/* Tag editing UI */
+.tag-item.editing-container {
+  padding: 4px;
+  border: 1px dashed var(--accent-color);
+  border-radius: 6px;
+}
+
+.edit-tag-input,
+.edit-tag-color-picker {
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.edit-tag-input {
+  width: 100px;
+  padding: 0 6px;
+}
+
+.edit-tag-color-picker {
+  width: 28px;
+  padding: 2px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: transparent;
+}
+
+.edit-tag-color-picker::-webkit-color-swatch {
+  border-radius: 4px;
+  border: none;
+}
+.edit-tag-color-picker::-moz-color-swatch {
+  border-radius: 4px;
+  border: none;
+}
+
+.edit-tag-actions button {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-tag-save {
+  background-color: #28a745;
+}
+
+.edit-tag-cancel {
+  background-color: #dc3545;
 }

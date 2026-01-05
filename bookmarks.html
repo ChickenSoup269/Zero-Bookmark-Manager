@@ -263,41 +263,57 @@
             </div>
         </div>
 
-        <div id="manage-tags-popup" class="rename-popup hidden popup-animate" role="dialog"
-            aria-labelledby="manage-tags-title">
+        <div id="manage-tags-popup" class="rename-popup hidden" role="dialog" aria-labelledby="manage-tags-title">
             <div class="rename-popup-content">
                 <h3 id="manage-tags-title">Manage Tags</h3>
-                <div id="existing-tags"></div>
-                <select class="existing-tags-select select" style="margin-bottom: 12px;"
-                    aria-label="Select existing tag"></select>
-                <input type="hidden" id="new-tag-text-color">
-                <div class="color-palette-container">
-                    <button class="color-swatch" style="background-color: #FF69B4;" data-color="#FF69B4"
-                        aria-label="Hot pink"></button>
-                    <button class="color-swatch" style="background-color: #BA55D3;" data-color="#BA55D3"
-                        aria-label="Medium orchid"></button>
-                    <button class="color-swatch" style="background-color: #4169E1;" data-color="#4169E1"
-                        aria-label="Royal blue"></button>
-                    <button class="color-swatch" style="background-color: #20B2AA;" data-color="#20B2AA"
-                        aria-label="Light sea green"></button>
-                    <button class="color-swatch" style="background-color: #32CD32;" data-color="#32CD32"
-                        aria-label="Lime green"></button>
-                    <button class="color-swatch" style="background-color: #FFD700;" data-color="#FFD700"
-                        aria-label="Gold"></button>
-                    <button class="color-swatch" style="background-color: #FF8C00;" data-color="#FF8C00"
-                        aria-label="Dark orange"></button>
-                    <button class="color-swatch" style="background-color: #FF4500;" data-color="#FF4500"
-                        aria-label="Orange red"></button>
+
+                <!-- Section for existing tags -->
+                <div class="form-section">
+                    <label>Current Tags:</label>
+                    <div id="existing-tags" class="tags-container">
+                        <!-- Tags will be dynamically inserted here -->
+                    </div>
                 </div>
-                <div class="add-tag-container">
-                    <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name..."
-                        aria-label="New tag name">
-                    <input type="color" id="new-tag-color" value="#cccccc" class="tag-color-picker"
-                        aria-label="Tag color">
+
+                <!-- Section for adding a new tag -->
+                <div class="form-section">
+                    <label for="new-tag-input">Add New Tag:</label>
+                    <div class="add-tag-form">
+                        <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name...">
+                        <div class="color-picker-wrapper">
+                            <label for="new-tag-color">BG</label>
+                            <input type="color" id="new-tag-color" value="#cccccc" class="tag-color-picker"
+                                title="Tag Background Color">
+                        </div>
+                        <div class="color-picker-wrapper">
+                            <label for="new-tag-text-color">Text</label>
+                            <input type="color" id="new-tag-text-color" value="#000000" class="tag-color-picker"
+                                title="Tag Text Color">
+                        </div>
+                    </div>
+                    <div class="color-palette-container">
+                        <button class="color-swatch" data-color="#4CAF50" style="background-color:#4CAF50;"></button>
+                        <button class="color-swatch" data-color="#2196F3" style="background-color:#2196F3;"></button>
+                        <button class="color-swatch" data-color="#FF9800" style="background-color:#FF9800;"></button>
+                        <button class="color-swatch" data-color="#E91E63" style="background-color:#E91E63;"></button>
+                        <button class="color-swatch" data-color="#9C27B0" style="background-color:#9C27B0;"></button>
+                        <button class="color-swatch" data-color="#795548" style="background-color:#795548;"></button>
+                        <button class="color-swatch" data-color="#607D8B" style="background-color:#607D8B;"></button>
+                        <button class="color-swatch" data-color="#FFFFFF" style="background-color:#FFFFFF;"></button>
+                    </div>
                 </div>
+
+                <!-- Section for adding from existing global tags -->
+                <div class="form-section">
+                    <label for="existing-tags-select">Or add from existing:</label>
+                    <select id="existing-tags-select" class="select existing-tags-select"></select>
+                </div>
+
+
+                <!-- Action buttons -->
                 <div class="rename-popup-buttons">
                     <button id="add-tag-btn" class="button save">Add Tag</button>
-                    <button class="close-modal button cancel">Cancel</button>
+                    <button class="close-modal button cancel">Done</button>
                 </div>
             </div>
         </div>

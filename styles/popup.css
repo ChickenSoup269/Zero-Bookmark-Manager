@@ -395,8 +395,8 @@
 }
 
 .detail-bookmark-item .bookmark-tag {
-  background-color: #ccc;
-  color: white;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
