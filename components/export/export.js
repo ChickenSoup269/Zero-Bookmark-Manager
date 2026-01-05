@@ -750,23 +750,20 @@ export function setupExportImportListeners(elements) {
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result)
-          importNonDuplicateBookmarks(data.bookmarks, elements)
-          // ... kiểm tra tính hợp lệ của data ...
+          
+          // Kiểm tra cấu trúc mới có "theme" hay không
+          const bookmarksToImport = data.bookmarks || data; // Hỗ trợ cả file cũ chỉ có array
+          const themeData = data.theme || {}; // Lấy theme data nếu có
 
-          // THAY VÌ: flattenBookmarks(data.bookmarks)
-          // HÃY LẤY: dữ liệu gốc để giữ cấu trúc folder
-          const rawImportData = data.bookmarks
+          importNonDuplicateBookmarks(bookmarksToImport, themeData, elements);
 
-          // Thu thập Tags và AccessCount từ file JSON (vẫn dùng bản flatten để lấy map id)
-          const flatData = flattenBookmarks(rawImportData)
-          const importedTags = {}
-          const importedAccessCounts = {}
-          flatData.forEach((b) => {
-            if (b.tags) importedTags[b.id] = b.tags
-            if (b.accessCount) importedAccessCounts[b.id] = b.accessCount
-          })
         } catch (e) {
-          console.error(e)
+          console.error("Failed to parse or import JSON file:", e)
+          const language = localStorage.getItem("appLanguage") || "en"
+          showCustomPopup(
+            translations[language].errorImporting || "Error importing file. Check console.",
+            "error"
+          )
         }
       }
       reader.readAsText(file)
@@ -776,26 +773,15 @@ export function setupExportImportListeners(elements) {
   })
 }
 
-async function importNonDuplicateBookmarks(nodesToImport, elements) {
+async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   const idMapping = {}
-  const tagsFromJSON = {}
 
-  // 1. Quét Tag từ JSON
-  function extractTags(nodes) {
-    nodes.forEach((node) => {
-      if (node.tags && node.tags.length > 0) tagsFromJSON[node.id] = node.tags
-      if (node.children) extractTags(node.children)
-    })
-  }
-  extractTags(nodesToImport)
-
-  // 2. Lấy cây hiện tại để tìm ID hệ thống của Edge/Chrome mới
+  // 1. Lấy cây bookmark hiện tại để so sánh
   const existingTree = await new Promise((r) => chrome.bookmarks.getTree(r))
   const flatExisting = flattenBookmarks(existingTree)
   const existingUrls = new Set(flatExisting.map((b) => b.url).filter((u) => u))
 
-  // Ánh xạ ID hệ thống: [0] thường là root, con của nó là Bar(1) và Other(2)
   const localBarId = existingTree[0]?.children?.[0]?.id || "1"
   const localOtherId = existingTree[0]?.children?.[1]?.id || "2"
 
@@ -808,62 +794,42 @@ async function importNonDuplicateBookmarks(nodesToImport, elements) {
     })
   }
 
-  // 3. Hàm đệ quy xử lý logic ánh xạ thư mục gốc
+  // 2. Hàm đệ quy xử lý tạo bookmark và folder
   async function processNodes(nodes, currentParentId) {
     for (const node of nodes) {
-      let targetParentIdForChildren = currentParentId
-
-      // KIỂM TRA NẾU LÀ THƯ MỤC HỆ THỐNG TRONG FILE JSON
       if (node.id === "1") {
-        // Nếu là Bookmark Bar từ máy cũ -> Ánh xạ vào Bookmark Bar máy mới
         await processNodes(node.children, localBarId)
         continue
       }
       if (node.id === "2") {
-        // Nếu là Other Bookmarks từ máy cũ -> Ánh xạ vào Other Bookmarks máy mới
         await processNodes(node.children, localOtherId)
         continue
       }
       if (node.id === "0") {
-        // Gốc của cây -> Đi tiếp vào con
         await processNodes(node.children, currentParentId)
         continue
       }
 
-      // XỬ LÝ THƯ MỤC NGƯỜI DÙNG TẠO (FE, BE, v.v.)
       if (node.children) {
-        const currentChildren = await new Promise((r) =>
-          chrome.bookmarks.getChildren(currentParentId, r)
-        )
-        let targetFolder = currentChildren.find(
-          (c) => !c.url && c.title === node.title
-        )
+        const currentChildren = await new Promise((r) => chrome.bookmarks.getChildren(currentParentId, r))
+        let targetFolder = currentChildren.find((c) => !c.url && c.title === node.title)
 
         if (!targetFolder) {
-          targetFolder = await createBookmark({
-            parentId: currentParentId,
-            title: node.title,
-          })
+          targetFolder = await createBookmark({ parentId: currentParentId, title: node.title })
         }
 
         if (targetFolder) {
           idMapping[node.id] = targetFolder.id
           await processNodes(node.children, targetFolder.id)
         }
-      }
-      // XỬ LÝ BOOKMARK
-      else if (node.url) {
+      } else if (node.url) {
         if (existingUrls.has(node.url)) {
           const eb = flatExisting.find((b) => b.url === node.url)
           if (eb) idMapping[node.id] = eb.id
           continue
         }
 
-        const newB = await createBookmark({
-          parentId: currentParentId,
-          title: node.title,
-          url: node.url,
-        })
+        const newB = await createBookmark({ parentId: currentParentId, title: node.title, url: node.url })
         if (newB) {
           idMapping[node.id] = newB.id
           existingUrls.add(node.url)
@@ -873,81 +839,104 @@ async function importNonDuplicateBookmarks(nodesToImport, elements) {
   }
 
   try {
-    // 1. Đợi quá trình tạo bookmark trên Edge/Chrome hoàn tất
+    // 1. Chạy quá trình tạo bookmark
     await processNodes(nodesToImport, localOtherId)
 
-    // 2. Lấy dữ liệu hiện có từ Storage máy mới
+    // 2. Lấy dữ liệu metadata hiện có từ Storage
     const storageData = await chrome.storage.local.get([
       "bookmarkTags",
       "bookmarkAccessCounts",
       "favoriteBookmarks",
       "pinnedBookmarks",
+      "tagColors",
+      "tagTextColors"
     ])
 
     const bookmarkTags = storageData.bookmarkTags || {}
     const bookmarkAccessCounts = storageData.bookmarkAccessCounts || {}
     const favoriteBookmarks = storageData.favoriteBookmarks || {}
     const pinnedBookmarks = storageData.pinnedBookmarks || {}
+    const tagColors = storageData.tagColors || {}
+    const tagTextColors = storageData.tagTextColors || {}
 
-    // 3. Hàm đệ quy duy nhất để khôi phục toàn bộ Metadata
+    // Hợp nhất màu từ file JSON vào storage
+    if (themeData.tagColors) {
+      Object.assign(tagColors, themeData.tagColors)
+    }
+    if (themeData.tagTextColors) {
+      Object.assign(tagTextColors, themeData.tagTextColors)
+    }
+
+    // 3. Hàm đệ quy để khôi phục Metadata
     function restoreMetadata(nodes) {
       nodes.forEach((node) => {
-        const newId = idMapping[node.id] // Tìm ID mới tương ứng trên máy này
-
+        const newId = idMapping[node.id]
         if (newId) {
-          // Khôi phục Yêu thích & Ghim
           if (node.isFavorite) favoriteBookmarks[newId] = true
           if (node.isPinned) pinnedBookmarks[newId] = true
 
-          // Khôi phục Tags (Hợp nhất với tag cũ nếu đã có)
+          // KHÔI PHỤC TAGS: Đọc cả tên và màu sắc
           if (node.tags && node.tags.length > 0) {
-            const existingTags = bookmarkTags[newId] || []
-            // Dùng Set để tránh bị trùng tag
-            bookmarkTags[newId] = [...new Set([...existingTags, ...node.tags])]
+            const tagNames = []
+            node.tags.forEach(tag => {
+              const tagName = (typeof tag === 'object' && tag.name) ? tag.name : tag;
+              tagNames.push(tagName);
+
+              // Khôi phục màu từ chính bookmark nếu là object
+              if (typeof tag === 'object' && tag.name) {
+                if (tag.bgColor) {
+                  tagColors[tagName] = tag.bgColor;
+                }
+                if (tag.textColor) {
+                  tagTextColors[tagName] = tag.textColor;
+                }
+              }
+            });
+
+            const existingTags = bookmarkTags[newId] || [];
+            bookmarkTags[newId] = [...new Set([...existingTags, ...tagNames])];
           }
 
-          // Khôi phục số lần truy cập (Cộng dồn)
           if (node.accessCount) {
-            bookmarkAccessCounts[newId] =
-              (bookmarkAccessCounts[newId] || 0) + node.accessCount
+            bookmarkAccessCounts[newId] = (bookmarkAccessCounts[newId] || 0) + node.accessCount
           }
         }
-
-        // Đi sâu vào các thư mục con
         if (node.children) restoreMetadata(node.children)
       })
     }
 
-    // Chạy khôi phục
     restoreMetadata(nodesToImport)
 
-    // 4. Lưu tất cả vào Storage
+    // 4. Cập nhật uiState và lưu tất cả metadata đã hợp nhất vào Storage
+    // Cập nhật uiState để UI phản hồi ngay lập tức
+    uiState.tagColors = tagColors;
+    uiState.tagTextColors = tagTextColors;
+
     await chrome.storage.local.set({
       bookmarkTags,
       bookmarkAccessCounts,
       favoriteBookmarks,
       pinnedBookmarks,
+      tagColors,
+      tagTextColors
     })
 
     // 5. Cập nhật giao diện
     setTimeout(() => {
       chrome.bookmarks.getTree((newTree) => {
-        uiState.bookmarkTree = newTree
-        uiState.bookmarks = flattenBookmarks(newTree)
-        uiState.folders = getFolders(newTree)
-
-        // Đảm bảo uiState cũng được cập nhật dữ liệu mới nhất
-        uiState.bookmarkTags = bookmarkTags
-
         renderFilteredBookmarks(newTree, elements)
         saveUIState()
         showCustomPopup(
-          translations[language].importSuccess || "Import thành công!",
+          translations[language].importSuccess || "Import successful!",
           "success"
         )
       })
     }, 200)
   } catch (error) {
     console.error("Import Error:", error)
+    showCustomPopup(
+      translations[language].errorImporting || "Error importing file. Check console.",
+      "error"
+    );
   }
 }

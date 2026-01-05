@@ -2,13 +2,13 @@
 
 ## Changelog:
 
-### [1.1.3] - [2026-01-04]
+### [1.1.3] - [2026-01-06]
 
 ## Added
 
 - Confirmation popup for deleting tags.
 - CSS styling for rendered Markdown in chat responses (tables, code blocks, etc.).
-- New "Tet" theme with red and gold color palette.
+- New "Tet" theme with red and gold color palette, fully implemented in HTML export.
 - Dynamic localization for sidebar section titles (Filters, Search, Folder actions, Selection).
 - Chatbox welcome message with localized text and a "Start Chat" button.
 - Color palette for tag management in the "Manage Tags" popup.
@@ -21,6 +21,7 @@
 - "Tet" theme color palette adjusted for better contrast and readability.
 - Font switching mechanism enhanced with more choices and robust handling.
 - Overall localization experience improved with dedicated script and event handling.
+- Improved tag color import logic to correctly restore colors from imported JSON files.
 
 ## Updated
 

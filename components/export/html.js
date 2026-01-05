@@ -127,6 +127,27 @@ export async function exportToHTML(
         --tag-bg: #3e4451;
         --tag-text: #abb2bf;
         `
+            : currentTheme === "tet"
+            ? `
+        --bg-primary: #fff0e0; /* Light cream */
+        --bg-secondary: #ffe6cc; /* Lighter orange */
+        --bg-tertiary: #ffd299; /* Orange */
+        --bg-card: #ffffff;
+        --text-primary: #8b0000; /* Dark red */
+        --text-secondary: #a0522d; /* Sienna */
+        --text-muted: #cd853f; /* Peru */
+        --border-color: #ff9933; /* Bright orange */
+        --accent-color: #cc3333; /* Crimson */
+        --accent-hover: #ff0000; /* Red */
+        --hover-bg: #fff5cc; /* Light yellow */
+        --folder-title-color: #8b0000; /* Dark red */
+        --folder-bg: var(--bg-primary);
+        --folder-hover-bg: rgba(255, 153, 51, 0.2); /* Orange transparent */
+        --bookmark-bg: rgba(255, 255, 255, 0.02);
+        --bookmark-hover-bg: rgba(255, 153, 51, 0.1);
+        --tag-bg: #ffcc99; /* Light orange */
+        --tag-text: #8b0000; /* Dark red */
+        `
             : `
         /* Default: light theme */
         --bg-primary: #ffffff;

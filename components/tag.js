@@ -134,9 +134,12 @@ export async function removeTagFromBookmark(bookmarkId, tag) {
 }
 
 // Change color of a tag
-export function changeTagColor(tag, color) {
-  const updatedColors = { [tag]: color }
-  saveTags(null, updatedColors)
+export async function changeTagColor(tag, color) {
+  const data = await getStorage(["tagColors"]) // Get existing colors
+  const allColors = data.tagColors || {}
+  allColors[tag] = color // Update the specific color
+
+  saveTags(null, allColors) // Save the entire updated object
   refreshUI()
 }
 
