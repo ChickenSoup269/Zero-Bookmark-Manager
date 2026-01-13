@@ -35,6 +35,8 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 - **Giao diện (Themes):** Chuyển đổi giữa các chủ đề sáng, tối, dracula, one dark hoặc theo hệ thống.
 - **Phông chữ:** Tùy chỉnh giao diện với các kiểu phông chữ khác nhau.
 - **Đa ngôn ngữ:** Hỗ trợ tiếng Anh và tiếng Việt để mang lại trải nghiệm thân thiện hơn.
+- **Kiểm tra tình trạng liên kết:** Xác minh tính khả dụng và an toàn của các liên kết đã đánh dấu của bạn.
+- **Tạo mã QR cho Bookmark:** Tạo mã QR cho các dấu trang của bạn để dễ dàng chia sẻ và truy cập trên các thiết bị khác.
 
 ## Running Tests
 
@@ -98,6 +100,8 @@ Cài đặt Bookmark-Manager
 | `Cài đặt lưu trữ ở local chrome` | Lưu dữ liệu tùy chỉnh cho tìm kiếm, chọn, sắp xếp, chế độ xem, trạng thái thư mục thu gọn, thẻ, và checkbox.          |
 | `Tags`                           | Chọn tùy chọn sắp xếp theo thẻ.                                                                                       |
 | `Ghim lên đầu`                   | Chọn bookmark ghim lên đầu trang                                                                                      |
+| `Kiểm tra tình trạng liên kết`  | Xác minh tình trạng liên kết bookmark qua cài đặt hoặc menu thả xuống.                                                |
+| `Tạo mã QR cho Bookmark`       | Tạo mã QR cho các bookmark của bạn từ menu thả xuống.                                                                 |
 | `Chatbot`                        | Xem hướng dẫn trợ giúp trong chatbot (biểu tượng [?]). (beta version)                                                 |
 
 ## How to get Gemini APi ?

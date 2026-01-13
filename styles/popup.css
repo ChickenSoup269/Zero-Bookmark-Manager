@@ -675,3 +675,47 @@
   border-top: 1px solid var(--border-color);
   margin: var(--spacing-sm) 0;
 }
+/* Styles for Custom Context Menu */
+.context-menu {
+  position: fixed;
+  background-color: rgba(var(--bg-primary), 1);
+  backdrop-filter: blur(40px); /* Glass effect */
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-xs);
+  z-index: 2000; /* Ensure it's on top of other elements */
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  min-width: 150px;
+}
+
+.context-menu.hidden {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+
+.context-menu .menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: var(--bg-primary); /* Match parent background */
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease,
+    transform 0.15s ease;
+  display: flex; /* For icon alignment */
+  align-items: center;
+}
+
+.context-menu .menu-item:hover {
+  background-color: var(--text-primary); /* Invert colors on hover */
+  color: var(--bg-primary);
+  transform: translateY(-1px);
+}

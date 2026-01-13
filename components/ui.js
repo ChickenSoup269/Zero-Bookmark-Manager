@@ -21,7 +21,44 @@ function getFaviconUrl(url) {
   }
 }
 
+// Global variable to keep track of autoscroll interval
+let autoscrollInterval = null;
 
+function startAutoscroll(container, event) {
+  stopAutoscroll(); // Clear any existing interval
+
+  const rect = container.getBoundingClientRect();
+  const scrollThreshold = 50; // Pixels from edge to start scrolling
+  const scrollSpeed = 10; // Pixels per interval
+
+  const checkScroll = () => {
+    if (!container) {
+      stopAutoscroll();
+      return;
+    }
+
+    // Determine current mouse position relative to container
+    const mouseY = event.clientY;
+
+    // Check for vertical scrolling
+    if (mouseY < rect.top + scrollThreshold) {
+      // Scroll up
+      container.scrollTop -= scrollSpeed;
+    } else if (mouseY > rect.bottom - scrollThreshold) {
+      // Scroll down
+      container.scrollTop += scrollSpeed;
+    }
+  };
+
+  autoscrollInterval = setInterval(checkScroll, 50); // Check every 50ms
+}
+
+function stopAutoscroll() {
+  if (autoscrollInterval) {
+    clearInterval(autoscrollInterval);
+    autoscrollInterval = null;
+  }
+}
 
 function getContrastColor(hex) {
   if (!hex || typeof hex !== "string" || !hex.startsWith("#")) return "#ffffff"
@@ -178,6 +215,11 @@ function createDropdownHTML(bookmark, language) {
         }"><i class="fas fa-tags" style="${iconStyle}"></i>${
     t.manageTags || "Tags"
   }</button>
+        <button class="menu-item qr-code-btn" data-id="${
+          bookmark.id
+        }"><i class="fas fa-qrcode" style="${iconStyle}"></i>${
+    t.generateQrCode || "Generate QR"
+  }</button>
         <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;"/>
         <button class="menu-item favorite-btn" data-id="${bookmark.id}">
             <i class="fas fa-star" style="${iconStyle}"></i>
@@ -305,6 +347,86 @@ function openWebPreviewModal(bookmark) {
   overlay.onclick = (evt) => {
     if (evt.target === overlay) overlay.remove()
   }
+}
+
+function generateQRCodePopup(url, title, faviconUrl) {
+  // Remove existing QR code popup
+  const existingPopup = document.querySelector(".qr-code-popup-overlay")
+  if (existingPopup) {
+    existingPopup.remove()
+  }
+
+  const overlay = document.createElement("div")
+  overlay.className = "qr-code-popup-overlay"
+  overlay.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 2000;
+      `
+
+  const popup = document.createElement("div")
+  popup.className = "qr-code-popup"
+  popup.style.cssText = `
+        background: var(--bg-primary, #fff); padding: 20px; border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center;
+        max-width: 300px; position: relative;
+      `
+
+  overlay.appendChild(popup)
+
+  popup.innerHTML = `
+        <button class="modal-close" title="Close" style="position:absolute; top: 10px; right: 10px; background:transparent; border:none; font-size: 20px; cursor:pointer; color: var(--text-primary);">✕</button>
+        <h3 style="margin-top: 0; margin-bottom: 15px; color: var(--text-primary);">${title}</h3>
+        <div id="qrcode-container" style="position: relative; margin-bottom: 15px; display: inline-block;"></div>
+        <p style="font-size: 12px; color: var(--text-secondary); word-break: break-all;">${url}</p>
+      `
+
+  document.body.appendChild(overlay)
+
+  // Generate QR Code
+  try {
+    const qrCodeContainer = document.getElementById("qrcode-container")
+    qrCodeContainer.innerHTML = "" // Clear previous content
+
+    // Use the new QRCode library API
+    new window.QRCode(qrCodeContainer, {
+      text: url,
+      width: 256,
+      height: 256,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: window.QRCode.CorrectLevel.H,
+    })
+
+    // Add favicon overlay - wait a bit for the QR code to render
+    setTimeout(() => {
+      const faviconImg = document.createElement("img")
+      faviconImg.src = faviconUrl
+      faviconImg.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 10%;
+                height: 10%;
+                padding: 2px;
+                border-radius: 8px;
+                background: var(--bg-primary);
+            `
+      qrCodeContainer.style.position = "relative" // Ensure container has relative positioning
+      qrCodeContainer.appendChild(faviconImg)
+    }, 100)
+  } catch (e) {
+    console.error("Error generating QR code:", e)
+    const qrCodeContainer = document.getElementById("qrcode-container")
+    qrCodeContainer.textContent = "Could not generate QR code."
+  }
+
+  overlay.onclick = (evt) => {
+    if (evt.target === overlay) {
+      overlay.remove()
+    }
+  }
+  popup.querySelector(".modal-close").onclick = () => overlay.remove()
 }
 
 // --- HELPER: Open Properties (Metadata) ---
@@ -783,6 +905,8 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 }
 
 let currentDragType = null
+let selectedFolderForContextMenu = null;
+
 function renderDetailView(bookmarksList, elements) {
   const fragment = document.createDocumentFragment()
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
@@ -1139,14 +1263,16 @@ function renderBookmarks(bookmarksList, elements) {
   commonPostRenderOps(elements)
 }
 
-function renderTreeView(nodes, elements, depth = 0) {
+function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
   const fragment = document.createDocumentFragment()
   const language = localStorage.getItem("appLanguage") || "en"
 
+  const actualTargetElement = targetElement || elements.folderListDiv; // Use targetElement or default
+
   // Setup container lần đầu
   if (depth === 0) {
-    elements.folderListDiv.innerHTML = ""
-    elements.folderListDiv.classList.add("tree-view")
+    actualTargetElement.innerHTML = ""
+    actualTargetElement.classList.add("tree-view")
     if (uiState.checkboxesVisible) {
       const selectAllDiv = document.createElement("div")
       selectAllDiv.className = "select-all"
@@ -1267,6 +1393,8 @@ function renderTreeView(nodes, elements, depth = 0) {
         e.dataTransfer.dropEffect = "move"
         folderDiv.style.background = "var(--bg-tertiary, #e0e0f0)"
         folderDiv.style.border = "1px dashed var(--accent-color)"
+
+        startAutoscroll(actualTargetElement, e); // Start autoscroll
       })
 
       // >>> SỰ KIỆN 2: DRAG LEAVE (Khi rê bookmark ra khỏi Folder này)
@@ -1275,6 +1403,7 @@ function renderTreeView(nodes, elements, depth = 0) {
         // Trả lại style cũ
         folderDiv.style.background = "transparent"
         folderDiv.style.border = "none"
+        stopAutoscroll(); // Stop autoscroll
       })
 
       // >>> SỰ KIỆN 3: DROP (Khi thả bookmark hoặc folder vào Folder này)
@@ -1282,6 +1411,7 @@ function renderTreeView(nodes, elements, depth = 0) {
         e.preventDefault()
         e.stopPropagation()
 
+        stopAutoscroll(); // Stop autoscroll
         // Reset style
         folderDiv.style.background = "transparent"
         folderDiv.style.border = "none"
@@ -1389,8 +1519,13 @@ function renderTreeView(nodes, elements, depth = 0) {
 
   // Chỉ gắn listener tổng ở lần gọi đầu tiên (root)
   if (depth === 0) {
-    elements.folderListDiv.appendChild(fragment)
-    attachTreeListeners(elements)
+    actualTargetElement.appendChild(fragment)
+    // Call attachTreeListeners with the correct element for event delegation
+    if (targetElement) { // If rendering to a specific target (popup), attach listeners to it
+        attachTreeListeners(elements, actualTargetElement); // Pass elements and the popup's target element
+    } else { // If rendering to the main folderListDiv
+        attachTreeListeners(elements);
+    }
   }
   return fragment
 }
@@ -1564,6 +1699,22 @@ function commonPostRenderOps(elements) {
         .forEach((m) => m.classList.add("hidden"))
     })
   })
+
+  // 3. QR Code Buttons
+  const qrCodeButtons = elements.folderListDiv.querySelectorAll(".qr-code-btn")
+  qrCodeButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation()
+      const bookmarkId = btn.getAttribute("data-id")
+      const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
+      if (bookmark) {
+        const faviconUrl = getFaviconUrl(bookmark.url)
+        generateQRCodePopup(bookmark.url, bookmark.title, faviconUrl)
+      }
+      const dropdownMenu = btn.closest(".dropdown-menu")
+      if (dropdownMenu) dropdownMenu.classList.add("hidden")
+    })
+  })
 }
 
 function attachSelectAllListener(elements) {
@@ -1629,10 +1780,38 @@ export function setupTagFilterListener(elements) {
   }
 }
 
-export function attachTreeListeners(elements) {
-  const folderListDiv = elements.folderListDiv
+export function attachTreeListeners(elements, targetContainer = null) {
+  const container = targetContainer || elements.folderListDiv;
 
-  folderListDiv.onclick = (e) => {
+  // Add contextmenu listener to the container
+  container.addEventListener("contextmenu", (e) => {
+    const folderItem = e.target.closest(".folder-item");
+    if (folderItem) {
+      e.preventDefault(); // Prevent default browser context menu
+      selectedFolderForContextMenu = folderItem.dataset.id; // Store folder ID
+
+      const contextMenu = elements.folderContextMenu;
+      contextMenu.style.left = `${e.clientX}px`;
+      contextMenu.style.top = `${e.clientY}px`;
+      contextMenu.classList.remove("hidden");
+
+      // Apply current theme to context menu
+      const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+      const allThemes = ["light", "dark", "dracula", "onedark"];
+      allThemes.forEach((theme) => contextMenu.classList.remove(`${theme}-theme`));
+      contextMenu.classList.add(`${currentTheme}-theme`);
+    } else {
+      // If right-clicked outside a folder item, hide the menu
+      elements.folderContextMenu?.classList.add("hidden");
+    }
+  });
+
+  // Hide context menu when clicking anywhere else
+  document.body.addEventListener("click", () => {
+    elements.folderContextMenu?.classList.add("hidden");
+  });
+
+  container.onclick = (e) => {
     // 1. PIN Button in Tree View
     const pinBtn = e.target.closest(".pin-btn")
     if (pinBtn) {
@@ -1710,10 +1889,46 @@ export function attachTreeListeners(elements) {
     }
   }
 
-  // Giữ lại các listener phụ trợ
-  attachSelectAllListener(elements)
-  attachDropdownListeners(elements)
-  setupBookmarkActionListeners(elements)
+  // QR Code Buttons
+  const qrCodeButtons = container.querySelectorAll(".qr-code-btn")
+  qrCodeButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation()
+      const bookmarkId = btn.getAttribute("data-id")
+      const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
+      if (bookmark) {
+        const faviconUrl = getFaviconUrl(bookmark.url)
+        generateQRCodePopup(bookmark.url, bookmark.title, faviconUrl)
+      }
+      const dropdownMenu = btn.closest(".dropdown-menu")
+      if (dropdownMenu) dropdownMenu.classList.add("hidden")
+    })
+  })
+
+  // Attach listener for "Move to Folder" context menu item
+  if (elements.contextMenuMoveFolderButton) {
+    elements.contextMenuMoveFolderButton.onclick = (e) => {
+      e.stopPropagation(); // Prevent document.body click from immediately closing it
+      elements.folderContextMenu?.classList.add("hidden"); // Hide context menu
+
+      if (selectedFolderForContextMenu) {
+        showMoveFolderToFolderPopup(elements, selectedFolderForContextMenu);
+      } else {
+        showCustomPopup(
+          translations[localStorage.getItem("appLanguage") || "en"].errorUnexpected || "An unexpected error occurred.",
+          "error",
+          true
+        );
+      }
+    };
+  }
+
+  // Giữ lại các listener phụ trợ (Chỉ gọi cho main UI, không gọi cho popup)
+  if (!targetContainer) {
+    attachSelectAllListener(elements)
+    attachDropdownListeners(elements)
+    setupBookmarkActionListeners(elements)
+  }
 }
 
 function populateFolderFilter(bookmarkTreeNodes, elements) {
@@ -1755,6 +1970,94 @@ function populateFolderFilter(bookmarkTreeNodes, elements) {
     uiState.selectedFolderId = ""
     folderFilter.value = ""
   }
+}
+
+export function showMoveFolderToFolderPopup(elements, folderToMoveId) {
+  const popup = elements.addToFolderPopup;
+  const select = elements.addToFolderSelect;
+  const saveButton = elements.addToFolderSaveButton;
+  const cancelButton = elements.addToFolderCancelButton;
+  const language = localStorage.getItem("appLanguage") || "en";
+  const t = translations[language] || translations.en;
+
+  // Clear previous options and populate with folders
+  select.innerHTML = `<option value="">${t.selectFolder}</option>`;
+  uiState.folders.forEach((folder) => {
+    // Cannot move to root, or to itself
+    if (folder.id === "0" || folder.id === folderToMoveId) return; 
+
+    // Prevent moving to a descendant folder
+    const folderToMoveNode = findNodeById(folderToMoveId, uiState.bookmarkTree);
+    if (folderToMoveNode && isAncestorOf(folderToMoveNode, folder.id)) return;
+
+    const option = document.createElement("option");
+    option.value = folder.id;
+    option.textContent = folder.title || `Folder ${folder.id}`;
+    select.appendChild(option);
+  });
+
+  // Set popup title
+  popup.querySelector("h3").textContent = t.moveToFolderTitle || "Move Folder";
+
+  popup.classList.remove("hidden");
+
+  // Apply current theme
+  const currentTheme =
+    document.documentElement.getAttribute("data-theme") || "light";
+  const allThemes = ["light", "dark", "dracula", "onedark"];
+  allThemes.forEach((theme) => popup.classList.remove(`${theme}-theme`));
+  popup.classList.add(`${currentTheme}-theme`);
+
+  const closePopup = () => {
+    popup.classList.add("hidden");
+    document.removeEventListener("keydown", handleKeydown);
+  };
+
+  saveButton.onclick = () => {
+    const targetFolderId = select.value;
+    if (!targetFolderId) {
+      showCustomPopup(t.selectFolderError, "error", true);
+      return;
+    }
+
+    // Perform the move using chrome.bookmarks.move
+    chrome.bookmarks.move(folderToMoveId, { parentId: targetFolderId }, () => {
+      if (chrome.runtime.lastError) {
+        showCustomPopup(t.errorUnexpected, "error", true);
+      } else {
+        showCustomPopup(t.moveFolderSuccess || "Folder moved successfully!", "success", true);
+        chrome.bookmarks.getTree((tree) =>
+          renderFilteredBookmarks(tree, elements)
+        ); // Re-render the UI
+      }
+      closePopup();
+    });
+  };
+
+  cancelButton.onclick = () => closePopup();
+
+  popup.onclick = (e) => {
+    if (e.target === popup) {
+      closePopup();
+    }
+  };
+
+  const handleKeydown = (e) => {
+    if (e.key === "Escape") {
+      closePopup();
+    }
+  };
+
+  document.addEventListener("keydown", handleKeydown);
+}
+
+// Helper function to render the tree view specifically for the Organize Folders popup
+function renderOrganizeFoldersTree(elements, container) {
+  chrome.bookmarks.getTree((tree) => {
+    // uiState.bookmarkTree needs to be updated with the latest tree for findNodeById and isAncestorOf
+    uiState.bookmarkTree = tree;
+    renderTreeView(tree[0].children, elements, 0, container);
+  });
 }
 
 function updateBookmarkCount(bookmarks, elements) {
@@ -1893,6 +2196,66 @@ function isAncestorOf(node, targetFolderId) {
 document.querySelectorAll(".close-modal").forEach((btn) => {
   btn.onclick = () => btn.closest(".rename-popup")?.classList.add("hidden")
 })
+
+export function openOrganizeFoldersModal(elements) {
+  const popup = document.getElementById("organize-folders-popup")
+  const treeViewContainer = document.getElementById("organize-folders-tree-view")
+  const closeButton = document.getElementById("organize-folders-close")
+  const language = localStorage.getItem("appLanguage") || "en"
+  const titleEl = document.getElementById("organize-folders-title")
+
+  if (!popup || !treeViewContainer || !closeButton || !titleEl) {
+    console.error("Organize folders popup elements missing.")
+    showCustomPopup(
+      translations[language].errorUnexpected || "An unexpected error occurred",
+      "error",
+      true
+    )
+    return
+  }
+
+  titleEl.textContent = translations[language].organizeFoldersTitle || "Organize Folders"
+  
+  // Clear previous content
+  treeViewContainer.innerHTML = ""
+  
+  // Render the draggable tree view inside the popup
+  // We'll adapt renderTreeView to render into this specific container
+  chrome.bookmarks.getTree((tree) => {
+    renderTreeView(tree[0].children, elements, 0, treeViewContainer);
+  });
+
+
+  popup.classList.remove("hidden")
+
+  // Apply current theme
+  const currentTheme =
+    document.documentElement.getAttribute("data-theme") || "light"
+  const allThemes = ["light", "dark", "dracula", "onedark"]
+  allThemes.forEach((theme) => popup.classList.remove(`${theme}-theme`))
+  popup.classList.add(`${currentTheme}-theme`)
+
+  const closePopup = () => {
+    popup.classList.add("hidden")
+    document.removeEventListener("keydown", handleKeydown)
+  }
+
+  closeButton.onclick = () => closePopup()
+
+  popup.onclick = (e) => {
+    if (e.target === popup) {
+      closePopup()
+    }
+  }
+
+  const handleKeydown = (e) => {
+    if (e.key === "Escape") {
+      closePopup()
+    }
+  }
+
+  document.addEventListener("keydown", handleKeydown)
+}
 
 export function togglePin(bookmarkId, elements) {
   chrome.storage.local.get("pinnedBookmarks", (data) => {

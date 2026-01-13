@@ -56,6 +56,8 @@ Bookmark Manager is a and intuitive Chrome extension that simplifies bookmark or
 - **Themes:** Switch between light, dark, dracula, one dark, Tet, or system-based themes.
 - **Fonts:** Customize interface with various font styles, including improved Nerd Fonts support.
 - **Multilingual:** Supports English and Vietnamese for a localized experience.
+- **Check Link Health:** Verify the availability and safety of your bookmarked links.
+- **Generate QR Code:** Create QR codes for your bookmarks for easy sharing and access on other devices.
 
 ## Running Tests
 
@@ -122,6 +124,8 @@ Install Bookmark-Manager
 | `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs                            |
 | `Tags`                   | Choose a sorting tags option                                                                                           |
 | `Pin to top`             | Choose a bookmark to pin on top                                                                                        |
+| `Check Link Health`      | Verify bookmark health via settings or dropdown.                                                                       |
+| `Generate QR Code`       | Create QR codes for your bookmarks from the dropdown.                                                                  |
 | `Chatbot`                | Now features an interactive welcome message and start button. Check Help Guide in chatbot with icon [?] (beta version) |
 | `Localization`           | Sidebar section titles (Filters, Search, Folder actions, Selection) are now dynamically translated.                    |
 
