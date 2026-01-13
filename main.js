@@ -2,6 +2,7 @@ import {
   updateTheme,
   renderFilteredBookmarks,
   updateUILanguage,
+  openOrganizeFoldersModal,
 } from "./components/ui.js"
 import { getBookmarkTree } from "./components/bookmarks.js"
 import { translations, debounce } from "./components/utils/utils.js"
@@ -76,6 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
     tagFilterOptions: document.getElementById("tag-filter-options"),
     checkHealthButton: document.getElementById("check-health-btn"),
     healthSortFilter: document.getElementById("health-sort-filter"),
+    organizeFoldersButton: document.getElementById("organize-folders-button"),
+    folderContextMenu: document.getElementById("folder-context-menu"),
+    contextMenuMoveFolderButton: document.getElementById("context-menu-move-folder"),
   }
 
   const init = () => {
@@ -136,6 +140,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Thiết lập event listeners
     setupEventListeners(elements)
+
+    // Event listener for Organize Folders button
+    if (elements.organizeFoldersButton) {
+        elements.organizeFoldersButton.addEventListener("click", () => {
+            openOrganizeFoldersModal(elements);
+        });
+    }
 
     // Sự kiện cho showBookmarkIdsOption
     if (elements.showBookmarkIdsOption) {

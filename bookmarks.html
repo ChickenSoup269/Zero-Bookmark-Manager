@@ -86,6 +86,10 @@
                         <i class="fas fa-trash" aria-hidden="true"></i>
                         <span>Delete Folder</span>
                     </button>
+                    <button id="organize-folders-button" class="button organize">
+                        <i class="fas fa-sitemap" aria-hidden="true"></i>
+                        <span>Organize Folders</span>
+                    </button>
                     <button id="delete-bookmarks-button" class="button delete-bookmarks hidden">
                         <i class="fas fa-trash" aria-hidden="true"></i>
                         <span>Delete Bookmarks</span>
@@ -176,6 +180,27 @@
         </div>
 
         <div id="folder-list" class="folder-list card-grid"></div>
+
+        <div id="organize-folders-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="organize-folders-title">
+            <div class="rename-popup-content">
+                <h3 id="organize-folders-title">Organize Folders</h3>
+                <div class="organize-folders-tree-container" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+                    <!-- Tree view of folders and bookmarks will be rendered here -->
+                    <div id="organize-folders-tree-view"></div>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="organize-folders-close" class="button cancel">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="folder-context-menu" class="context-menu hidden" style="position: fixed; z-index: 2000; min-width: 150px;">
+            <div class="menu-item" id="context-menu-move-folder">
+                <i class="fas fa-folder-open" style="width: 14px; text-align: center; margin-right: 8px;"></i>
+                <span>Move to Folder</span>
+            </div>
+        </div>
 
         <div id="rename-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="rename-title">
             <div class="rename-popup-content">
@@ -454,6 +479,7 @@
     </div>
 
     <script src="./components/lib/marked.min.js"></script>
+    <script src="./components/lib/qrcode.min.js"></script>
     <script src="./components/option/option.js" type="module"></script>
     <script src="./components/tag.js" type="module"></script>
     <script src="./components/chat.js" type="module"></script>
