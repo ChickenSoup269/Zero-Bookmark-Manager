@@ -1940,7 +1940,6 @@ html {
 
 .bookmark-item.dragging {
   opacity: 0.5;
-  background: var(--accent-color);
 }
 
 .bookmark-content {
@@ -2462,4 +2461,147 @@ html {
 
 .edit-tag-cancel {
   background-color: #dc3545;
+}
+
+/* --- Organize Folders Popup --- */
+#organize-folders-popup .organize-folders-popup-content {
+  width: 700px;
+  max-width: 90vw;
+  max-height: 85vh;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.organize-folders-tree-container {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  background: var(--bg-primary);
+  margin: 16px 0;
+  flex: 1;
+  min-height: 200px;
+}
+
+.organize-folders-tree-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.organize-folders-tree-container::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+.organize-folders-tree-container::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.organize-folders-tree-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+#organize-folders-tree-view {
+  width: 100%;
+}
+
+#organize-folders-tree-view .tree-view {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#organize-folders-tree-view .folder-item,
+#organize-folders-tree-view .bookmark-item {
+  margin: 2px 0;
+}
+
+/* Compact bookmark style trong organize folders popup */
+#organize-folders-tree-view .bookmark-item {
+  padding: 6px 10px !important;
+  margin: 2px 0 !important;
+  font-size: 12px;
+}
+
+#organize-folders-tree-view .bookmark-item .bookmark-favicon {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px;
+}
+
+#organize-folders-tree-view .bookmark-item .bookmark-favicon img {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+#organize-folders-tree-view .bookmark-item .bookmark-title {
+  font-size: 11px !important;
+  max-width: 200px;
+}
+
+#organize-folders-tree-view .bookmark-item .bookmark-url {
+  font-size: 10px !important;
+  max-width: 100px;
+  display: none; /* Ẩn URL để compact hơn */
+}
+
+#organize-folders-tree-view .bookmark-item .bookmark-tags {
+  display: none !important; /* Ẩn tags để compact hơn */
+}
+
+#organize-folders-tree-view .bookmark-item .bookmark-id {
+  display: none !important; /* Ẩn ID */
+}
+
+#organize-folders-tree-view .bookmark-item .dropdown-btn {
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 10px;
+}
+
+#organize-folders-tree-view .bookmark-item .health-icon {
+  font-size: 12px;
+  margin-right: 2px;
+}
+
+/* Compact folder item */
+#organize-folders-tree-view .folder-item {
+  padding: 6px 10px;
+  margin: 2px 0;
+}
+
+#organize-folders-tree-view .folder-item .folder-toggle {
+  width: 22px !important;
+  height: 22px !important;
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+#organize-folders-tree-view .folder-item .folder-icon {
+  font-size: 14px !important;
+  margin-right: 6px;
+}
+
+#organize-folders-tree-view .folder-item .folder-title {
+  font-size: 12px;
+}
+
+#organize-folders-tree-view .folder-item .folder-count {
+  font-size: 10px;
+  padding: 1px 6px;
+}
+
+@media (max-width: 768px) {
+  #organize-folders-popup .organize-folders-popup-content {
+    width: 95vw;
+    max-height: 90vh;
+  }
+  
+  .organize-folders-tree-container {
+    max-height: 400px;
+    padding: 12px;
+  }
 }

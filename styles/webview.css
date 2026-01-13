@@ -284,6 +284,17 @@ body {
   box-shadow: var(--shadow-md);
 }
 
+/* Folder item drag-over state */
+.folder-item.drag-over {
+  background: var(--bg-tertiary, #e0e0f0) !important;
+  border: 1px dashed var(--accent-color) !important;
+}
+
+/* Folder item dragging state */
+.folder-item.dragging {
+  opacity: 0.5;
+}
+
 .webview-mode .folder-item {
   padding: var(--spacing-xs);
   background: var(--folder-bg);
