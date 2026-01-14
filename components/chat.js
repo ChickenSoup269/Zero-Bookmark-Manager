@@ -5,6 +5,12 @@ import {
   showCustomConfirm,
   showCustomGuide,
 } from "./utils/utils.js"
+import { uiState } from "./state.js"
+import {
+  updateTheme,
+  renderFilteredBookmarks,
+  handleCheckHealth,
+} from "./ui.js"
 
 document.addEventListener("DOMContentLoaded", () => {
   const chatToggle = document.getElementById("chat-toggle")
@@ -29,6 +35,54 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatHelp = document.getElementById("chat-help")
   const chatHistoryBtn = document.getElementById("chat-history")
 
+  function getUiElements() {
+    const elements = {}
+    const requiredElements = [
+      { key: "folderFilter", selector: "#folder-filter" },
+      { key: "tagFilterContainer", selector: "#tag-filter-container" },
+      { key: "sortFilter", selector: "#sort-filter" },
+      { key: "createFolderButton", selector: "#create-folder-button" },
+      { key: "addToFolderButton", selector: "#add-to-folder-button" },
+      { key: "deleteFolderButton", selector: "#delete-folder-button" },
+      { key: "renameFolderButton", selector: "#rename-folder-button" },
+      { key: "deleteBookmarksButton", selector: "#delete-bookmarks-button" },
+      { key: "exportBookmarksOption", selector: "#export-bookmarks-option" },
+      { key: "importBookmarksOption", selector: "#import-bookmarks-option" },
+      { key: "editInNewTabOption", selector: "#edit-in-new-tab-option" },
+      { key: "toggleCheckboxesButton", selector: "#toggle-checkboxes-button" },
+      { key: "searchInput", selector: "#search-input" },
+      { key: "renamePopup", selector: "#rename-popup" },
+      { key: "renameInput", selector: "#rename-input" },
+      { key: "addToFolderPopup", selector: "#add-to-folder-popup" },
+      { key: "addToFolderSelect", selector: "#add-to-folder-select" },
+      { key: "addToFolderSaveButton", selector: "#add-to-folder-save" },
+      { key: "addToFolderCancelButton", selector: "#add-to-folder-cancel" },
+      { key: "bookmarkCountDiv", selector: "#bookmark-count" },
+      { key: "scrollToTopButton", selector: "#scroll-to-top" },
+      { key: "clearRenameButton", selector: "#clear-rename" },
+      { key: "clearSearchButton", selector: "#clear-search" },
+      { key: "settingsButton", selector: "#settings-button" },
+      { key: "renameFolderPopup", selector: "#rename-folder-popup" },
+      { key: "renameFolderSelect", selector: "#rename-folder-select" },
+      { key: "renameFolderInput", selector: "#rename-folder-input" },
+      { key: "bookmarkDetailPopup", selector: "#bookmark-detail-popup" },
+      { key: "manageTagsPopup", selector: "#manage-tags-popup" },
+      { key: "folderListDiv", selector: "#folder-list" },
+      { key: "healthSortFilter", selector: "#health-sort-filter" },
+      { key: "checkHealthButton", selector: "#check-health-button" },
+      { key: "organizeFoldersButton", selector: "#organize-folders-button" },
+      { key: "folderContextMenu", selector: "#folder-context-menu" },
+      {
+        key: "contextMenuMoveFolderButton",
+        selector: "#context-menu-move-folder",
+      },
+    ]
+    requiredElements.forEach(({ key, selector }) => {
+      elements[key] = document.querySelector(selector)
+    })
+    return elements
+  }
+
   // System Prompt: Includes suggest_website action
   const systemPrompt = `
         You are a bookmark management assistant integrated into a browser extension. Your role is to classify user intent for managing bookmarks. Based on the user's query, you must return a JSON object with an "action" and optional "params".
@@ -43,10 +97,17 @@ document.addEventListener("DOMContentLoaded", () => {
         - move: Move a bookmark to a different folder.
         - edit: Edit a bookmark's title or folder.
         - delete: Delete a bookmark.
+        - create_folder: Create a new folder.
+        - rename_folder: Rename an existing folder.
+        - delete_folder: Delete a folder and all its contents.
         - search_bookmark: Search for bookmarks.
         - search_folder: Search for folders.
         - favorite: Mark or unmark a bookmark as a favorite.
         - suggest_website: Suggest websites on a given topic.
+        - change_view: Change the layout of the bookmark list (list, detail, card, tree).
+        - change_theme: Change the color theme (light, dark, dracula, onedark, tet, system).
+        - change_sort: Change the sort order of bookmarks (default, favorites, most-visited, old, last-opened, a-z, z-a, domain).
+        - check_links: Check all bookmarks for broken links.
         - general: For any query that is not related to bookmark management, is a greeting, or is too vague.
 
         Guidelines:
@@ -58,6 +119,13 @@ document.addEventListener("DOMContentLoaded", () => {
         - User: "how many bookmarks do I have?" -> Response: { "action": "count" }
         - User: "add https://google.com to my work folder" -> Response: { "action": "add", "params": { "url": "https://google.com", "folder": "work" } }
         - User: "delete bookmark with id 123" -> Response: { "action": "delete", "params": { "id": "123", "confirm": true } }
+        - User: "create a new folder called 'social media'" -> Response: { "action": "create_folder", "params": { "folderName": "social media" } }
+        - User: "rename folder 'work' to 'office'" -> Response: { "action": "rename_folder", "params": { "oldName": "work", "newName": "office" } }
+        - User: "delete the 'temp' folder" -> Response: { "action": "delete_folder", "params": { "folderName": "temp", "confirm": true } }
+        - User: "switch to card view" -> Response: { "action": "change_view", "params": { "view_mode": "card" } }
+        - User: "use the dracula theme" -> Response: { "action": "change_theme", "params": { "theme_name": "dracula" } }
+        - User: "sort my bookmarks by name" -> Response: { "action": "change_sort", "params": { "sort_by": "a-z" } }
+        - User: "check for broken links" -> Response: { "action": "check_links" }
         - User: "what is python?" -> Response: { "action": "general" }
         - User: "hi there" -> Response: { "action": "general" }
     `
@@ -726,6 +794,154 @@ document.addEventListener("DOMContentLoaded", () => {
             appendBotMessage(htmlContent)
           })
         })
+      } else if (action === "create_folder" && params.folderName) {
+        const { folderName, parentFolder } = params
+        let parentId = "1" // Default to Bookmarks Bar
+
+        const existingFolders = await searchFoldersByName(folderName)
+        if (existingFolders.length > 0) {
+          throw new Error(
+            `${
+              t("duplicateFolderError") ||
+              "A folder with this name already exists"
+            }: ${folderName}.`
+          )
+        }
+
+        if (parentFolder) {
+          const parentFolders = await searchFoldersByName(parentFolder)
+          if (parentFolders.length === 0) {
+            throw new Error(
+              `${
+                t("noFoldersFound") || "No parent folder found with name"
+              }: ${parentFolder}`
+            )
+          }
+          if (parentFolders.length > 1) {
+            throw new Error(
+              `${
+                t("duplicateFolderError") ||
+                "Multiple parent folders found with name"
+              }: ${parentFolder}.`
+            )
+          }
+          parentId = parentFolders[0].id
+        }
+
+        chrome.bookmarks.create(
+          { parentId, title: folderName },
+          (newFolder) => {
+            hideTypingIndicator()
+            const content = `${
+              t("createdFolder") || "I have created the folder"
+            } '${newFolder.title}' (ID: ${newFolder.id}).`
+            appendBotMessage(content, content)
+          }
+        )
+      } else if (
+        action === "rename_folder" &&
+        params.oldName &&
+        params.newName
+      ) {
+        const { oldName, newName } = params
+
+        const folders = await searchFoldersByName(oldName)
+        if (folders.length === 0) {
+          throw new Error(
+            `${t("noFoldersFound") || "No folder found with name"}: ${oldName}`
+          )
+        }
+        if (folders.length > 1) {
+          throw new Error(
+            `${
+              t("duplicateFolderError") || "Multiple folders found with name"
+            }: ${oldName}. Please be more specific.`
+          )
+        }
+
+        const folderToRename = folders[0]
+
+        const existingNewNameFolders = await searchFoldersByName(newName)
+        if (existingNewNameFolders.length > 0) {
+          throw new Error(
+            `${
+              t("duplicateFolderError") || "A folder with the name"
+            } '${newName}' ${t("alreadyExists") || "already exists."}`
+          )
+        }
+
+        chrome.bookmarks.update(
+          folderToRename.id,
+          { title: newName },
+          (updatedFolder) => {
+            hideTypingIndicator()
+            const content = `${
+              t("renamedFolder") || "I have renamed the folder"
+            } '${oldName}' ${t("to") || "to"} '${updatedFolder.title}'.`
+            appendBotMessage(content, content)
+          }
+        )
+      } else if (action === "delete_folder" && params.folderName) {
+        const { folderName } = params
+
+        const folders = await searchFoldersByName(folderName)
+        if (folders.length === 0) {
+          throw new Error(
+            `${
+              t("noFoldersFound") || "No folder found with name"
+            }: ${folderName}`
+          )
+        }
+        if (folders.length > 1) {
+          throw new Error(
+            `${
+              t("duplicateFolderError") || "Multiple folders found with name"
+            }: ${folderName}. Please be more specific.`
+          )
+        }
+
+        const folderToDelete = folders[0]
+
+        if (params.confirm) {
+          hideTypingIndicator()
+          const confirmMsg = `${
+            t("deleteFolderConfirm") ||
+            "Are you sure you want to delete the folder"
+          } '${folderToDelete.title}' (ID: ${folderToDelete.id}) ${
+            t("andAllItsContents") || "and all its contents"
+          }?`
+
+          appendBotMessage(confirmMsg, confirmMsg)
+
+          showCustomConfirm(
+            confirmMsg,
+            () => {
+              chrome.bookmarks.removeTree(folderToDelete.id, () => {
+                if (chrome.runtime.lastError) {
+                  const errorMsg = `${t("errorTitle") || "Oops"}: ${
+                    chrome.runtime.lastError.message
+                  }`
+                  appendBotMessage(
+                    `<span class="error-text">${errorMsg}</span>`,
+                    errorMsg
+                  )
+                  return
+                }
+                const successMsg = `${
+                  t("deletedFolder") || "I have deleted the folder"
+                }: ${folderToDelete.title}.`
+                appendBotMessage(successMsg, successMsg)
+                showCustomPopup(t("successTitle") || "Success", "success", true)
+              })
+            },
+            () => {
+              const cancelMsg = `${t("cancel") || "Cancelled"}: ${
+                t("deleteFolderCancelled") || "Folder deletion cancelled"
+              }.`
+              appendBotMessage(cancelMsg, cancelMsg)
+            }
+          )
+        }
       } else if (action === "add" && params.url) {
         let { url, title, folder } = params
 
@@ -1281,6 +1497,81 @@ document.addEventListener("DOMContentLoaded", () => {
             })
           })
         }
+      } else if (action === "change_view" && params.view_mode) {
+        const validViews = ["list", "detail", "card", "tree"]
+        if (validViews.includes(params.view_mode)) {
+          uiState.viewMode = params.view_mode
+          chrome.bookmarks.getTree((tree) => {
+            const elements = getUiElements()
+            renderFilteredBookmarks(tree, elements)
+          })
+          hideTypingIndicator()
+          const content = `${t("viewChanged") || "View changed to"} ${
+            params.view_mode
+          }.`
+          appendBotMessage(content, content)
+        } else {
+          throw new Error(
+            `${t("invalidView") || "Invalid view mode"}: ${params.view_mode}`
+          )
+        }
+      } else if (action === "change_theme" && params.theme_name) {
+        const validThemes = [
+          "light",
+          "dark",
+          "dracula",
+          "onedark",
+          "tet",
+          "system",
+        ]
+        if (validThemes.includes(params.theme_name)) {
+          const elements = getUiElements()
+          updateTheme(elements, params.theme_name)
+          hideTypingIndicator()
+          const content = `${t("themeChanged") || "Theme changed to"} ${
+            params.theme_name
+          }.`
+          appendBotMessage(content, content)
+        } else {
+          throw new Error(
+            `${t("invalidTheme") || "Invalid theme"}: ${params.theme_name}`
+          )
+        }
+      } else if (action === "change_sort" && params.sort_by) {
+        const validSorts = [
+          "default",
+          "favorites",
+          "most-visited",
+          "old",
+          "last-opened",
+          "a-z",
+          "z-a",
+          "domain",
+        ]
+        if (validSorts.includes(params.sort_by)) {
+          uiState.sortType = params.sort_by
+          chrome.bookmarks.getTree((tree) => {
+            const elements = getUiElements()
+            renderFilteredBookmarks(tree, elements)
+          })
+          hideTypingIndicator()
+          const content = `${t("sortChanged") || "Sort order changed to"} ${
+            params.sort_by
+          }.`
+          appendBotMessage(content, content)
+        } else {
+          throw new Error(
+            `${t("invalidSort") || "Invalid sort type"}: ${params.sort_by}`
+          )
+        }
+      } else if (action === "check_links") {
+        const elements = getUiElements()
+        handleCheckHealth(elements)
+        hideTypingIndicator()
+        const content =
+          t("checkingLinks") ||
+          "Started checking for broken links. Results will appear in the UI."
+        appendBotMessage(content, content)
       } else {
         throw new Error(
           t("notSupported") ||
@@ -1394,51 +1685,37 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(`API Error: ${response.statusText}`)
       }
 
-            const data = await response.json()
+      const data = await response.json()
 
-            let result
+      let result
 
-            try {
+      try {
+        let textResponse
 
-              let textResponse
+        if (config.model === "gemini") {
+          textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || ""
+        } else if (config.model === "gpt") {
+          textResponse = data.choices?.[0]?.message?.content || ""
+        } else {
+          textResponse = data.text || ""
+        }
 
-              if (config.model === "gemini") {
+        // Clean the response: remove markdown backticks and trim
 
-                textResponse =
+        const cleanedResponse = textResponse
 
-                  data.candidates?.[0]?.content?.parts?.[0]?.text || ""
+          .replace(/```json/g, "")
 
-              } else if (config.model === "gpt") {
+          .replace(/```/g, "")
 
-                textResponse = data.choices?.[0]?.message?.content || ""
+          .trim()
 
-              } else {
+        result = JSON.parse(cleanedResponse)
+      } catch (parseError) {
+        // If parsing fails, assume it's a general question
 
-                textResponse = data.text || ""
-
-              }
-
-      
-
-              // Clean the response: remove markdown backticks and trim
-
-              const cleanedResponse = textResponse
-
-                .replace(/```json/g, "")
-
-                .replace(/```/g, "")
-
-                .trim()
-
-              result = JSON.parse(cleanedResponse)
-
-            } catch (parseError) {
-
-              // If parsing fails, assume it's a general question
-
-              result = { action: "general" }
-
-            }
+        result = { action: "general" }
+      }
 
       // Step 2: Handle the action
 
@@ -1525,8 +1802,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startButton.className = "button chatbox-start-button"
     startButton.textContent = t("startButton") || "Start Chat"
     startButton.addEventListener("click", () => {
-      const initialMessage =
-        getLanguage() === "vi" ? "Xin chào Zero" : "Hello Zero"
+      const initialMessage = getLanguage() === "vi" ? "Xin chào" : "Hello"
       chatInput.value = initialMessage // Set the input value
       handleUserInput() // Trigger sending the message
       // After sending, the welcome message should be removed by handleUserInput if it detects messages

@@ -144,6 +144,20 @@ export const translations = {
     noFoldersFoundFor: "I couldn't find any folders matching",
     movedBookmark: "I've moved the bookmark",
     noFolders: "You don't have any folders yet.",
+    createdFolder: "I have created the folder",
+    renamedFolder: "I have renamed the folder",
+    to: "to",
+    alreadyExists: "already exists.",
+    andAllItsContents: "and all its contents",
+    deletedFolder: "I have deleted the folder",
+    deleteFolderCancelled: "Folder deletion cancelled",
+    viewChanged: "View changed to",
+    invalidView: "Invalid view mode",
+    themeChanged: "Theme changed to",
+    invalidTheme: "Invalid theme",
+    sortChanged: "Sort order changed to",
+    invalidSort: "Invalid sort type",
+    checkingLinks: "Started checking for broken links. Results will appear in the UI.",
     helpGuide: `
   <h4>Help Guide:</h4>
   <ol>
@@ -178,6 +192,33 @@ export const translations = {
       - Command: <code>"delete bookmark https://example.com"</code>, <code>"delete bookmark titled 'My Page'"</code>, or <code>"delete bookmark id 123"</code>.<br>
       - Or ask: <code>"Delete my bookmark https://example.com"</code> or <code>"Delete bookmark ID 123"</code>.<br>
       - <strong>Note:</strong> You will be prompted to confirm before deleting a bookmark.
+    </li>
+    <li><strong>Create Folder:</strong><br>
+      - Command: <code>"create folder 'New Folder Name'"</code> or ask: <code>"Make a new folder called 'Work Projects'"</code>.<br>
+      - To specify a parent folder: <code>"create folder 'Sub Folder' in 'Parent Folder'"</code>.
+    </li>
+    <li><strong>Rename Folder:</strong><br>
+      - Command: <code>"rename folder 'Old Name' to 'New Name'"</code> or ask: <code>"Change the name of folder 'Work' to 'Office'"</code>.
+    </li>
+    <li><strong>Delete Folder:</strong><br>
+      - Command: <code>"delete folder 'Folder Name'"</code> or ask: <code>"Remove the 'Temporary' folder"</code>.<br>
+      - <strong>Note:</strong> You will be prompted to confirm before deleting a folder and its contents.
+    </li>
+    <li><strong>Change View Mode:</strong><br>
+      - Command: <code>"change view to card"</code> or ask: <code>"Switch to tree view"</code>.<br>
+      - Available views: <code>list</code>, <code>detail</code>, <code>card</code>, <code>tree</code>.
+    </li>
+    <li><strong>Change Theme:</strong><br>
+      - Command: <code>"change theme to dark"</code> or ask: <code>"Apply the dracula theme"</code>.<br>
+      - Available themes: <code>light</code>, <code>dark</code>, <code>dracula</code>, <code>onedark</code>, <code>tet</code>, <code>system</code>.
+    </li>
+    <li><strong>Change Sort Order:</strong><br>
+      - Command: <code>"sort by name (A-Z)"</code> or ask: <code>"Change sorting to most visited"</code>.<br>
+      - Available sorts: <code>default</code>, <code>favorites</code>, <code>most-visited</code>, <code>old</code>, <code>last-opened</code>, <code>a-z</code>, <code>z-a</code>, <code>domain</code>.
+    </li>
+    <li><strong>Check Link Health:</strong><br>
+      - Command: <code>"check links"</code> or ask: <code>"Check my bookmarks for broken links"</code>.<br>
+      - The bot will initiate a scan and report progress in the UI.
     </li>
     <li><strong>Bot Features:</strong><br>
       - Configure in "Configure Chatbot" for suggestions.<br>
@@ -400,6 +441,20 @@ export const translations = {
     noFoldersFoundFor: "Tôi không tìm thấy thư mục nào khớp với",
     movedBookmark: "Tôi đã chuyển bookmark",
     noFolders: "Bạn chưa có thư mục nào.",
+    createdFolder: "Tôi đã tạo thư mục",
+    renamedFolder: "Tôi đã đổi tên thư mục",
+    to: "thành",
+    alreadyExists: "đã tồn tại.",
+    andAllItsContents: "và tất cả nội dung của nó",
+    deletedFolder: "Tôi đã xóa thư mục",
+    deleteFolderCancelled: "Hủy xóa thư mục",
+    viewChanged: "Chế độ xem đã thay đổi thành",
+    invalidView: "Chế độ xem không hợp lệ",
+    themeChanged: "Chủ đề đã thay đổi thành",
+    invalidTheme: "Chủ đề không hợp lệ",
+    sortChanged: "Thứ tự sắp xếp đã thay đổi thành",
+    invalidSort: "Kiểu sắp xếp không hợp lệ",
+    checkingLinks: "Đã bắt đầu kiểm tra các liên kết hỏng. Kết quả sẽ hiển thị trên giao diện.",
     helpGuide: `
         <h4>Hướng Dẫn:</h4>
           <ol>
@@ -434,6 +489,33 @@ export const translations = {
               - Lệnh: <code>"delete bookmark https://example.com"</code>, <code>"delete bookmark titled 'Trang Của Tôi'"</code>, hoặc <code>"delete bookmark id 123"</code>.<br>
               - Hoặc hỏi: <code>"Xóa bookmark https://example.com của tôi"</code> hoặc <code>"Xóa bookmark ID 123"</code>.<br>
               - <strong>Lưu ý:</strong> Bạn sẽ được yêu cầu xác nhận trước khi xóa bookmark.
+            </li>
+            <li><strong>Tạo Thư mục:</strong><br>
+              - Lệnh: <code>"tạo thư mục 'Tên Thư mục Mới'"</code> hoặc hỏi: <code>"Tạo một thư mục mới tên 'Dự án Công việc'"</code>.<br>
+              - Để chỉ định thư mục cha: <code>"tạo thư mục 'Thư mục Con' trong 'Thư mục Cha'"</code>.
+            </li>
+            <li><strong>Đổi tên Thư mục:</strong><br>
+              - Lệnh: <code>"đổi tên thư mục 'Tên Cũ' thành 'Tên Mới'"</code> hoặc hỏi: <code>"Đổi tên thư mục 'Công việc' thành 'Văn phòng'"</code>.
+            </li>
+            <li><strong>Xóa Thư mục:</strong><br>
+              - Lệnh: <code>"xóa thư mục 'Tên Thư mục'"</code> hoặc hỏi: <code>"Xóa thư mục 'Tạm thời'"</code>.<br>
+              - <strong>Lưu ý:</strong> Bạn sẽ được yêu cầu xác nhận trước khi xóa thư mục và tất cả nội dung của nó.
+            </li>
+            <li><strong>Thay đổi Chế độ Xem:</strong><br>
+              - Lệnh: <code>"thay đổi chế độ xem thành card"</code> hoặc hỏi: <code>"Chuyển sang chế độ xem cây"</code>.<br>
+              - Các chế độ xem có sẵn: <code>list</code>, <code>detail</code>, <code>card</code>, <code>tree</code>.
+            </li>
+            <li><strong>Thay đổi Chủ đề:</strong><br>
+              - Lệnh: <code>"thay đổi chủ đề thành tối"</code> hoặc hỏi: <code>"Áp dụng chủ đề dracula"</code>.<br>
+              - Các chủ đề có sẵn: <code>light</code>, <code>dark</code>, <code>dracula</code>, <code>onedark</code>, <code>tet</code>, <code>system</code>.
+            </li>
+            <li><strong>Thay đổi Thứ tự Sắp xếp:</strong><br>
+              - Lệnh: <code>"sắp xếp theo tên (A-Z)"</code> hoặc hỏi: <code>"Thay đổi sắp xếp thành được truy cập nhiều nhất"</code>.<br>
+              - Các kiểu sắp xếp có sẵn: <code>default</code>, <code>favorites</code>, <code>most-visited</code>, <code>old</code>, <code>last-opened</code>, <code>a-z</code>, <code>z-a</code>, <code>domain</code>.
+            </li>
+            <li><strong>Kiểm tra Tình trạng Liên kết:</strong><br>
+              - Lệnh: <code>"kiểm tra liên kết"</code> hoặc hỏi: <code>"Kiểm tra các bookmark của tôi xem có liên kết hỏng không"</code>.<br>
+              - Bot sẽ bắt đầu quét và báo cáo tiến độ trên giao diện.
             </li>
             <li><strong>Tính năng AI:</strong><br>
               - Cấu hình trong "Cấu hình AI Chatbot" để gợi ý.<br>

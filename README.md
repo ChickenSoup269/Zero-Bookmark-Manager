@@ -30,7 +30,7 @@
 <p>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Generic badge](https://img.shields.io/badge/Version-1.1.3-white.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Version-1.1.4-white.svg)](https://shields.io/)
 
 </p>
 <p>
@@ -58,6 +58,7 @@ Bookmark Manager is a and intuitive Chrome extension that simplifies bookmark or
 - **Multilingual:** Supports English and Vietnamese for a localized experience.
 - **Check Link Health:** Verify the availability and safety of your bookmarked links.
 - **Generate QR Code:** Create QR codes for your bookmarks for easy sharing and access on other devices.
+- **Chatbot (Beta):** Manage bookmarks and control the extension using natural language. Create, delete, and organize bookmarks and folders, change themes, views, and more, all from the chat interface.
 
 ## Running Tests
 
@@ -126,7 +127,7 @@ Install Bookmark-Manager
 | `Pin to top`             | Choose a bookmark to pin on top                                                                                        |
 | `Check Link Health`      | Verify bookmark health via settings or dropdown.                                                                       |
 | `Generate QR Code`       | Create QR codes for your bookmarks from the dropdown.                                                                  |
-| `Chatbot`                | Now features an interactive welcome message and start button. Check Help Guide in chatbot with icon [?] (beta version) |
+| `Chatbot`                | Now supports full bookmark and folder management (add, edit, delete, move, create/rename/delete folders), UI control (themes, views, sorting), and can answer general questions. See the in-chat Help Guide for all commands. (beta version) |
 | `Localization`           | Sidebar section titles (Filters, Search, Folder actions, Selection) are now dynamically translated.                    |
 
 ## How to get Gemini APi ?
