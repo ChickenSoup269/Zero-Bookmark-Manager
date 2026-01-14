@@ -2,6 +2,27 @@
 
 ## Changelog:
 
+### [1.1.4] - [2026-01-14]
+
+## Added
+
+- Generate QR code for bookmark
+- Move to folder in "tree view" and "Organize Folders" with right click in folder
+
+## Improved
+
+- **Chatbot:**
+  - Can now manage folders directly through chat commands (create, rename, delete).
+  - Can now control UI settings like view mode, theme, and sort order via chat.
+  - Can now initiate a link health check for all bookmarks.
+- Enhanced "Add to Folder" functionality with an improved user interface, theme support, and rendering of the folder structure.
+- Improved the "Organize Folders" popup with new styling and enhanced drag-and-drop capabilities.
+- Refactored code structure for better readability and maintainability.
+
+## Updated
+
+- Updated Help Guide in chatbot to include all new commands.
+
 ### [1.1.3] - [2026-01-06]
 
 ## Added
@@ -12,6 +33,7 @@
 - Dynamic localization for sidebar section titles (Filters, Search, Folder actions, Selection).
 - Chatbox welcome message with localized text and a "Start Chat" button.
 - Color palette for tag management in the "Manage Tags" popup.
+- Check Link Health verify bookmark health
 
 ## Improved
 
