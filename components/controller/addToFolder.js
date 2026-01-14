@@ -1,58 +1,122 @@
-// ./components/controller/addToFolder.js
 import { translations, showCustomPopup } from "../utils/utils.js"
 import { moveBookmarksToFolder } from "../bookmarks.js"
-import { uiState, saveUIState, selectedBookmarks } from "../state.js"
+import { saveUIState, selectedBookmarks } from "../state.js"
+import { renderFilteredBookmarks } from "../ui.js"
 
 export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
   const language = localStorage.getItem("appLanguage") || "en"
+  const t = translations[language] || translations.en
 
-  // Xóa các tùy chọn hiện có và thêm tùy chọn mặc định
-  elements.addToFolderSelect.innerHTML = `<option value="">${translations[language].selectFolder}</option>`
-
-  // Lọc bỏ thư mục có id === "0" và thêm các thư mục khác
-  uiState.folders
-    .filter((folder) => folder.id !== "0") // Bỏ qua thư mục gốc
-    .forEach((folder) => {
-      const option = document.createElement("option")
-      option.value = folder.id
-      option.textContent =
-        folder.id === "1"
-          ? translations[language].bookmarksBar || "Bookmarks Bar"
-          : folder.id === "2"
-          ? translations[language].otherBookmarks || "Other Bookmarks"
-          : folder.title || "Unnamed Folder"
-      elements.addToFolderSelect.appendChild(option)
-    })
-
-  // Hiển thị popup và focus vào select
+  // 1. Reset select và hiện trạng thái loading
+  elements.addToFolderSelect.innerHTML = `<option value="">${
+    t.loading || "Loading folders..."
+  }</option>`
   elements.addToFolderPopup.classList.remove("hidden")
-  elements.addToFolderSelect.focus()
 
-  // Xóa các listener cũ để tránh trùng lặp
-  elements.addToFolderSaveButton.removeEventListener("click", handleSave)
+  // Áp dụng theme
+  const currentTheme =
+    document.documentElement.getAttribute("data-theme") || "light"
+  const allThemes = ["light", "dark", "dracula", "onedark", "tet"]
+  allThemes.forEach((theme) =>
+    elements.addToFolderPopup.classList.remove(`${theme}-theme`)
+  )
+  elements.addToFolderPopup.classList.add(`${currentTheme}-theme`)
+
+  // 2. Hàm đệ quy tạo Tree View (Logic tạo dấu └─ nằm ở đây)
+  function buildOptions(nodes, depth = 0) {
+    // Chỉ lấy folder và sắp xếp theo tên
+    const folders = nodes
+      .filter((node) => node.children)
+      .sort((a, b) => (a.title || "").localeCompare(b.title || ""))
+
+    folders.forEach((node) => {
+      // Bỏ qua thư mục gốc (0)
+      if (node.id === "0") {
+        if (node.children.length > 0) buildOptions(node.children, depth)
+        return
+      }
+
+      const option = document.createElement("option")
+      option.value = node.id
+
+      // Xử lý tên hiển thị
+      let displayName = node.title || "Unnamed Folder"
+      if (node.id === "1") displayName = t.bookmarksBar || "Bookmarks Bar"
+      else if (node.id === "2")
+        displayName = t.otherBookmarks || "Other Bookmarks"
+
+      // --- TẠO THỤT ĐẦU DÒNG ---
+      // depth 0: Bookmarks Bar
+      // depth 1:   └─ Folder A
+      const prefix = depth > 0 ? "\u00A0\u00A0".repeat(depth) + "└─ " : ""
+
+      option.textContent = `${prefix}${displayName}`
+      elements.addToFolderSelect.appendChild(option)
+
+      // Đệ quy cho con
+      if (node.children.length > 0) {
+        buildOptions(node.children, depth + 1)
+      }
+    })
+  }
+
+  // 3. GỌI TRỰC TIẾP API ĐỂ LẤY CÂY MỚI NHẤT
+  chrome.bookmarks.getTree((tree) => {
+    // Xóa loading, thêm option mặc định
+    elements.addToFolderSelect.innerHTML = `<option value="">${
+      t.selectFolder || "Select Folder"
+    }</option>`
+
+    if (tree && tree.length > 0) {
+      buildOptions(tree[0].children, 0)
+    }
+    // Focus sau khi load xong
+    elements.addToFolderSelect.focus()
+  })
+
+  // 4. Xử lý các Listener (Clone button để xóa event cũ)
+
+  // Clone nút Save
+  const newSaveBtn = elements.addToFolderSaveButton.cloneNode(true)
+  elements.addToFolderSaveButton.parentNode.replaceChild(
+    newSaveBtn,
+    elements.addToFolderSaveButton
+  )
+  elements.addToFolderSaveButton = newSaveBtn
+
+  // Clone nút Cancel
+  const newCancelBtn = elements.addToFolderCancelButton.cloneNode(true)
+  elements.addToFolderCancelButton.parentNode.replaceChild(
+    newCancelBtn,
+    elements.addToFolderCancelButton
+  )
+  elements.addToFolderCancelButton = newCancelBtn
+
   elements.addToFolderSaveButton.addEventListener("click", handleSave)
-
-  elements.addToFolderCancelButton.removeEventListener("click", handleCancel)
   elements.addToFolderCancelButton.addEventListener("click", handleCancel)
 
-  elements.addToFolderSelect.removeEventListener(
-    "keypress",
-    handleSelectKeypress
-  )
-  elements.addToFolderSelect.addEventListener("keypress", handleSelectKeypress)
+  // Phím tắt
+  const handleKeydown = (e) => {
+    if (e.key === "Escape") handleCancel()
+    if (e.key === "Enter") handleSave()
+  }
+  elements.addToFolderSelect.removeEventListener("keydown", handleKeydown)
+  elements.addToFolderSelect.addEventListener("keydown", handleKeydown)
 
-  elements.addToFolderSelect.removeEventListener("keydown", handleSelectKeydown)
-  elements.addToFolderSelect.addEventListener("keydown", handleSelectKeydown)
+  // Click ra ngoài để đóng
+  const handleClickOutside = (e) => {
+    if (e.target === elements.addToFolderPopup) handleCancel()
+  }
+  elements.addToFolderPopup.removeEventListener("click", handleClickOutside)
+  elements.addToFolderPopup.addEventListener("click", handleClickOutside)
 
-  elements.addToFolderPopup.removeEventListener("click", handlePopupClick)
-  elements.addToFolderPopup.addEventListener("click", handlePopupClick)
-
+  // --- HANDLERS ---
   function handleSave() {
     const targetFolderId = elements.addToFolderSelect.value
     if (!targetFolderId) {
       elements.addToFolderSelect.classList.add("error")
       showCustomPopup(
-        translations[language].selectFolderError || "Please select a folder.",
+        t.selectFolderError || "Please select a folder.",
         "error",
         false
       )
@@ -60,36 +124,36 @@ export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
       return
     }
 
-    if (bookmarkIds.length === 0) {
-      console.warn("No bookmarks provided to handleSave:", bookmarkIds)
-      showCustomPopup(
-        translations[language].noBookmarksSelected,
-        "error",
-        false
-      )
-      elements.addToFolderPopup.classList.add("hidden")
+    if (!bookmarkIds || bookmarkIds.length === 0) {
+      showCustomPopup(t.noBookmarksSelected, "error", false)
+      handleCancel()
       return
     }
 
     moveBookmarksToFolder(bookmarkIds, targetFolderId, elements, () => {
-      elements.addToFolderPopup.classList.add("hidden")
-      elements.addToFolderSelect.classList.remove("error")
+      // Đóng popup
+      handleCancel()
 
-      // Hiển thị thông báo thành công và reload khi nhấn OK
+      // Clear trạng thái chọn
+      selectedBookmarks.clear()
+      if (elements.addToFolderButton)
+        elements.addToFolderButton.classList.add("hidden")
+      if (elements.deleteBookmarksButton)
+        elements.deleteBookmarksButton.classList.add("hidden")
+
+      // Thông báo thành công
       showCustomPopup(
-        translations[language].addToFolderSuccess ||
-          "Bookmark(s) moved successfully!",
+        t.addToFolderSuccess || "Moved successfully!",
         "success",
-        false, // Không tự động đóng
-        () => {
-          // Callback khi nhấn OK - reload trang
-          window.location.reload()
-        }
+        false
       )
-
       saveUIState()
 
-      // Gọi callback nếu có (để cập nhật UI trong trường hợp cần)
+      // QUAN TRỌNG: Cập nhật lại giao diện chính (reload list bookmark)
+      chrome.bookmarks.getTree((tree) => {
+        renderFilteredBookmarks(tree, elements)
+      })
+
       if (onSuccess && typeof onSuccess === "function") {
         onSuccess()
       }
@@ -99,52 +163,35 @@ export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
   function handleCancel() {
     elements.addToFolderPopup.classList.add("hidden")
     elements.addToFolderSelect.classList.remove("error")
-  }
-
-  function handleSelectKeypress(e) {
-    if (e.key === "Enter") {
-      elements.addToFolderSaveButton.click()
-    }
-  }
-
-  function handleSelectKeydown(e) {
-    if (e.key === "Escape") {
-      elements.addToFolderCancelButton.click()
-    }
-  }
-
-  function handlePopupClick(e) {
-    if (e.target === elements.addToFolderPopup) {
-      elements.addToFolderCancelButton.click()
-    }
+    // Cleanup events
+    elements.addToFolderSelect.removeEventListener("keydown", handleKeydown)
+    elements.addToFolderPopup.removeEventListener("click", handleClickOutside)
   }
 }
 
 export function setupAddToFolderListeners(elements) {
   if (elements.addToFolderButton) {
-    elements.addToFolderButton.removeEventListener(
-      "click",
-      handleAddToFolderButton
+    // Clone nút mở popup ở sidebar để xóa event cũ
+    const newBtn = elements.addToFolderButton.cloneNode(true)
+    elements.addToFolderButton.parentNode.replaceChild(
+      newBtn,
+      elements.addToFolderButton
     )
-    elements.addToFolderButton.addEventListener(
-      "click",
-      handleAddToFolderButton
-    )
+    elements.addToFolderButton = newBtn
+
+    elements.addToFolderButton.addEventListener("click", () => {
+      if (selectedBookmarks.size > 0) {
+        openAddToFolderPopup(elements, Array.from(selectedBookmarks))
+      } else {
+        const language = localStorage.getItem("appLanguage") || "en"
+        showCustomPopup(
+          translations[language].noBookmarksSelected,
+          "error",
+          false
+        )
+      }
+    })
   } else {
     console.error("addToFolderButton not found in elements!")
-  }
-
-  function handleAddToFolderButton() {
-    if (selectedBookmarks.size > 0) {
-      openAddToFolderPopup(elements, Array.from(selectedBookmarks))
-    } else {
-      console.warn("No bookmarks selected!")
-      const language = localStorage.getItem("appLanguage") || "en"
-      showCustomPopup(
-        translations[language].noBookmarksSelected,
-        "error",
-        false
-      )
-    }
   }
 }

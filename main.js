@@ -79,7 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
     healthSortFilter: document.getElementById("health-sort-filter"),
     organizeFoldersButton: document.getElementById("organize-folders-button"),
     folderContextMenu: document.getElementById("folder-context-menu"),
-    contextMenuMoveFolderButton: document.getElementById("context-menu-move-folder"),
+    contextMenuMoveFolderButton: document.getElementById(
+      "context-menu-move-folder"
+    ),
   }
 
   const init = () => {
@@ -143,9 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Event listener for Organize Folders button
     if (elements.organizeFoldersButton) {
-        elements.organizeFoldersButton.addEventListener("click", () => {
-            openOrganizeFoldersModal(elements);
-        });
+      elements.organizeFoldersButton.addEventListener("click", () => {
+        openOrganizeFoldersModal(elements)
+      })
     }
 
     // Sự kiện cho showBookmarkIdsOption
