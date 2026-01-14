@@ -831,6 +831,17 @@ document.addEventListener("DOMContentLoaded", () => {
         chrome.bookmarks.create(
           { parentId, title: folderName },
           (newFolder) => {
+            if (chrome.runtime.lastError) {
+              hideTypingIndicator()
+              const errorMsg = `${t("errorTitle") || "Oops"}: ${
+                chrome.runtime.lastError.message
+              }`
+              appendBotMessage(
+                `<span class="error-text">${errorMsg}</span>`,
+                errorMsg
+              )
+              return
+            }
             hideTypingIndicator()
             const content = `${
               t("createdFolder") || "I have created the folder"
@@ -874,6 +885,16 @@ document.addEventListener("DOMContentLoaded", () => {
           folderToRename.id,
           { title: newName },
           (updatedFolder) => {
+            if (chrome.runtime.lastError) {
+              console.error("Rename error:", chrome.runtime.lastError)
+              hideTypingIndicator()
+              const errorMsg =
+                chrome.runtime.lastError.message ||
+                t("renameError") ||
+                "Error renaming folder"
+              appendBotMessage(errorMsg, errorMsg)
+              return
+            }
             hideTypingIndicator()
             const content = `${
               t("renamedFolder") || "I have renamed the folder"
@@ -903,6 +924,45 @@ document.addEventListener("DOMContentLoaded", () => {
         const folderToDelete = folders[0]
 
         if (params.confirm) {
+          hideTypingIndicator()
+          const confirmMsg = `${
+            t("deleteFolderConfirm") ||
+            "Are you sure you want to delete the folder"
+          } '${folderToDelete.title}' (ID: ${folderToDelete.id}) ${
+            t("andAllItsContents") || "and all its contents"
+          }?`
+
+          appendBotMessage(confirmMsg, confirmMsg)
+
+          showCustomConfirm(
+            confirmMsg,
+            () => {
+              chrome.bookmarks.removeTree(folderToDelete.id, () => {
+                if (chrome.runtime.lastError) {
+                  const errorMsg = `${t("errorTitle") || "Oops"}: ${
+                    chrome.runtime.lastError.message
+                  }`
+                  appendBotMessage(
+                    `<span class="error-text">${errorMsg}</span>`,
+                    errorMsg
+                  )
+                  return
+                }
+                const successMsg = `${
+                  t("deletedFolder") || "I have deleted the folder"
+                }: ${folderToDelete.title}.`
+                appendBotMessage(successMsg, successMsg)
+                showCustomPopup(t("successTitle") || "Success", "success", true)
+              })
+            },
+            () => {
+              const cancelMsg = `${t("cancel") || "Cancelled"}: ${
+                t("deleteFolderCancelled") || "Folder deletion cancelled"
+              }.`
+              appendBotMessage(cancelMsg, cancelMsg)
+            }
+          )
+        } else {
           hideTypingIndicator()
           const confirmMsg = `${
             t("deleteFolderConfirm") ||
