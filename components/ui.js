@@ -1946,27 +1946,59 @@ export function populateFolderDropdown(
   language,
   initialOptionText
 ) {
+  // Lấy bản dịch
+  const t = translations[language] || translations.en
+
+  // Reset select và thêm option mặc định (ví dụ: "Tất cả bookmarks")
   selectElement.innerHTML = `<option value="">${initialOptionText}</option>`
 
+  // --- HÀM ĐỆ QUY ĐỂ TẠO CÁC OPTION ---
   function buildFolderOptions(nodes, depth = 0) {
-    nodes.forEach((node) => {
-      if (node.children) {
-        const option = document.createElement("option")
-        option.value = node.id
-        const prefix = "\u00A0\u00A0".repeat(depth)
-        const folderName = node.title || `Folder ${node.id}`
-        option.textContent = `${prefix}${folderName}`
-        selectElement.appendChild(option)
+    // Sắp xếp các thư mục theo tên trước khi render
+    const folders = nodes
+      .filter((node) => node.children) // Chỉ lấy những node là folder
+      .sort((a, b) => (a.title || "").localeCompare(b.title || ""))
 
-        if (node.children.length > 0) {
-          buildFolderOptions(node.children, depth + 1)
-        }
+    folders.forEach((node) => {
+      // Bỏ qua thư mục gốc hệ thống (id="0")
+      if (node.id === "0") {
+        // Nếu muốn render con của root, gọi đệ quy tiếp
+        if (node.children.length > 0) buildFolderOptions(node.children, depth)
+        return
+      }
+
+      const option = document.createElement("option")
+      option.value = node.id
+
+      // --- LOGIC MỚI: Xử lý tên và ký tự thụt đầu dòng ---
+
+      // Xử lý tên hiển thị đa ngôn ngữ cho các folder đặc biệt
+      let displayName = node.title || `Folder ${node.id}`
+      if (node.id === "1") displayName = t.bookmarksBar || "Bookmarks Bar"
+      else if (node.id === "2")
+        displayName = t.otherBookmarks || "Other Bookmarks"
+
+      // Tạo ký tự thụt đầu dòng (prefix)
+      // depth = 0: không có gì
+      // depth = 1:   └─
+      // depth = 2:     └─
+      const prefix = depth > 0 ? "\u00A0\u00A0".repeat(depth) + "└─ " : ""
+
+      option.textContent = `${prefix}${displayName}`
+      selectElement.appendChild(option)
+      // --- KẾT THÚC LOGIC MỚI ---
+
+      // Gọi đệ quy cho các thư mục con
+      if (node.children.length > 0) {
+        buildFolderOptions(node.children, depth + 1)
       }
     })
   }
 
+  // Bắt đầu quá trình build từ cây bookmark
   if (bookmarkTreeNodes && bookmarkTreeNodes.length > 0) {
-    buildFolderOptions(bookmarkTreeNodes[0].children)
+    // Thường bắt đầu từ children của node gốc (vì node gốc id="0" không hiển thị)
+    buildFolderOptions(bookmarkTreeNodes[0].children, 0)
   }
 }
 
@@ -1996,78 +2028,159 @@ export function showMoveFolderToFolderPopup(elements, folderToMoveId) {
   const language = localStorage.getItem("appLanguage") || "en"
   const t = translations[language] || translations.en
 
-  // Clear previous options and populate with folders
-  select.innerHTML = `<option value="">${t.selectFolder}</option>`
-  uiState.folders.forEach((folder) => {
-    // Cannot move to root, or to itself
-    if (folder.id === "0" || folder.id === folderToMoveId) return
+  // 1. Reset select và hiện popup
+  select.innerHTML = `<option value="">${t.loading || "Loading..."}</option>`
 
-    // Prevent moving to a descendant folder
-    const folderToMoveNode = findNodeById(folderToMoveId, uiState.bookmarkTree)
-    if (folderToMoveNode && isAncestorOf(folderToMoveNode, folder.id)) return
-
-    const option = document.createElement("option")
-    option.value = folder.id
-    option.textContent = folder.title || `Folder ${folder.id}`
-    select.appendChild(option)
-  })
-
-  // Set popup title
-  popup.querySelector("h3").textContent = t.moveToFolderTitle || "Move Folder"
+  // Đổi tiêu đề popup cho đúng ngữ cảnh
+  const titleElement = popup.querySelector("h3")
+  if (titleElement)
+    titleElement.textContent = t.moveToFolderTitle || "Move Folder"
 
   popup.classList.remove("hidden")
 
-  // Apply current theme
+  // Áp dụng theme
   const currentTheme =
     document.documentElement.getAttribute("data-theme") || "light"
-  const allThemes = ["light", "dark", "dracula", "onedark"]
+  const allThemes = ["light", "dark", "dracula", "onedark", "tet"]
   allThemes.forEach((theme) => popup.classList.remove(`${theme}-theme`))
   popup.classList.add(`${currentTheme}-theme`)
 
-  const closePopup = () => {
-    popup.classList.add("hidden")
-    document.removeEventListener("keydown", handleKeydown)
+  // 2. Hàm đệ quy tạo Options (Tree View)
+  function buildOptions(nodes, depth = 0) {
+    const folders = nodes
+      .filter((node) => node.children) // Chỉ lấy folder
+      .sort((a, b) => (a.title || "").localeCompare(b.title || ""))
+
+    folders.forEach((node) => {
+      // --- LOGIC QUAN TRỌNG: NGĂN CHẶN DI CHUYỂN VÀO CHÍNH MÌNH ---
+      // Nếu node hiện tại chính là folder đang muốn di chuyển -> Bỏ qua nó và toàn bộ con của nó.
+      // Điều này ngăn chặn việc hiển thị folder đó và các folder con trong danh sách chọn.
+      if (node.id === folderToMoveId) return
+
+      // Bỏ qua root (0) nhưng vẫn duyệt con
+      if (node.id === "0") {
+        if (node.children.length > 0) buildOptions(node.children, depth)
+        return
+      }
+
+      const option = document.createElement("option")
+      option.value = node.id
+
+      // Tên hiển thị
+      let displayName = node.title || "Unnamed Folder"
+      if (node.id === "1") displayName = t.bookmarksBar || "Bookmarks Bar"
+      else if (node.id === "2")
+        displayName = t.otherBookmarks || "Other Bookmarks"
+
+      // Tạo thụt đầu dòng
+      const prefix = depth > 0 ? "\u00A0\u00A0".repeat(depth) + "└─ " : ""
+
+      option.textContent = `${prefix}${displayName}`
+      select.appendChild(option)
+
+      // Đệ quy
+      if (node.children.length > 0) {
+        buildOptions(node.children, depth + 1)
+      }
+    })
   }
 
-  saveButton.onclick = () => {
+  // 3. Gọi API lấy cây mới nhất
+  chrome.bookmarks.getTree((tree) => {
+    select.innerHTML = `<option value="">${
+      t.selectFolder || "Select Folder"
+    }</option>`
+    if (tree && tree.length > 0) {
+      buildOptions(tree[0].children, 0)
+    }
+    select.focus()
+  })
+
+  // 4. Xử lý Listeners (Clone để xóa event cũ)
+
+  // Clone nút Save
+  const newSaveBtn = saveButton.cloneNode(true)
+  saveButton.parentNode.replaceChild(newSaveBtn, saveButton)
+
+  // Clone nút Cancel
+  const newCancelBtn = cancelButton.cloneNode(true)
+  cancelButton.parentNode.replaceChild(newCancelBtn, cancelButton)
+
+  // Gán lại biến tham chiếu (để dùng bên dưới nếu cần, dù ở đây dùng biến local newSaveBtn là được)
+  const currentSaveBtn = newSaveBtn
+  const currentCancelBtn = newCancelBtn
+
+  const closePopup = () => {
+    popup.classList.add("hidden")
+    // Trả lại tiêu đề mặc định cho popup (vì popup này dùng chung cho cả Add Bookmark)
+    if (titleElement)
+      titleElement.textContent = t.addToFolderTitle || "Add to Folder"
+
+    document.removeEventListener("keydown", handleKeydown)
+    popup.removeEventListener("click", handleClickOutside)
+  }
+
+  // Handler Save
+  currentSaveBtn.addEventListener("click", () => {
     const targetFolderId = select.value
     if (!targetFolderId) {
-      showCustomPopup(t.selectFolderError, "error", true)
+      // Hiển thị lỗi trên select (thêm class error css nếu có)
+      select.classList.add("error")
+      showCustomPopup(
+        t.selectFolderError || "Please select a destination.",
+        "error",
+        true
+      )
       return
     }
 
-    // Perform the move using chrome.bookmarks.move
+    // Thực hiện di chuyển Folder
     chrome.bookmarks.move(folderToMoveId, { parentId: targetFolderId }, () => {
       if (chrome.runtime.lastError) {
-        showCustomPopup(t.errorUnexpected, "error", true)
+        console.error(chrome.runtime.lastError)
+        showCustomPopup(t.errorUnexpected || "Move failed.", "error", true)
       } else {
         showCustomPopup(
           t.moveFolderSuccess || "Folder moved successfully!",
           "success",
           true
         )
-        chrome.bookmarks.getTree((tree) =>
+
+        // Render lại giao diện chính
+        chrome.bookmarks.getTree(async (tree) => {
+          // Giả định hàm renderFilteredBookmarks được import trong ui.js hoặc file này
+          // Nếu trong ui.js hàm này gọi lại chính nó thì ok.
+          // Nếu không, bạn cần đảm bảo hàm renderFilteredBookmarks khả dụng.
+          // Trong file ui.js gốc của bạn hàm renderFilteredBookmarks đã được export, nên gọi đệ quy hoặc gọi trực tiếp đều ổn.
+
+          // Vì đây là file ui.js, ta có thể gọi hàm renderFilteredBookmarks trực tiếp (nếu nó nằm cùng file)
+          // hoặc gọi thông qua đệ quy nếu cần thiết.
+          // Dựa vào code cũ, hàm renderFilteredBookmarks nằm ngay trong file ui.js
+          const { renderFilteredBookmarks } = await import("./ui.js") // Dynamic import để tránh lỗi vòng lặp nếu cần, hoặc gọi trực tiếp nếu cùng scope
+
+          // Tuy nhiên, vì showMoveFolderToFolderPopup nằm cùng file ui.js với renderFilteredBookmarks,
+          // ta có thể gọi trực tiếp (do hoisting function):
           renderFilteredBookmarks(tree, elements)
-        ) // Re-render the UI
+        })
       }
       closePopup()
     })
+  })
+
+  // Handler Cancel
+  currentCancelBtn.addEventListener("click", closePopup)
+
+  // Handler Click Outside
+  const handleClickOutside = (e) => {
+    if (e.target === popup) closePopup()
   }
+  popup.addEventListener("click", handleClickOutside)
 
-  cancelButton.onclick = () => closePopup()
-
-  popup.onclick = (e) => {
-    if (e.target === popup) {
-      closePopup()
-    }
-  }
-
+  // Handler Keyboard
   const handleKeydown = (e) => {
-    if (e.key === "Escape") {
-      closePopup()
-    }
+    if (e.key === "Escape") closePopup()
+    if (e.key === "Enter") currentSaveBtn.click()
   }
-
   document.addEventListener("keydown", handleKeydown)
 }
 
