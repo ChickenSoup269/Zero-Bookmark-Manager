@@ -128,7 +128,7 @@
   --text-option: #308ef9;
   --shadow-hover-tree: rgba(0, 0, 0, 0.35) px 5px 15px;
   --hover-bg-option: #d7d7d7;
-  --bg-tags-select: rgba(0, 0, 0, 0.9);
+  --bg-tags-select: rgba(37, 38, 38, 0.825);
 }
 
 /* Dracula theme */
@@ -1464,6 +1464,7 @@ html {
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 500;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   transition: background-color 0.2s ease;
 }
 
