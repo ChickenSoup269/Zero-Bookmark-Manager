@@ -255,6 +255,32 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
+/* css textarean */
+textarea {
+  resize: vertical; /* Allow vertical resizing */
+  overflow: auto; /* Show scrollbar only when needed */
+  font-family: inherit; /* Inherit font from body */
+  line-height: 1.5;
+  white-space: pre-wrap; /* Ensure text wraps */
+}
+
+/* Specific styling for textarea with class 'input' */
+textarea.input {
+  width: 100%;
+  min-height: 50px;
+  height: auto;
+
+  padding: 0.8rem 2rem 1rem 0.8rem;
+  border: 1px solid var(--text-primary);
+  border-radius: var(--border-radius);
+  background-color: var(--bg-primary);
+  color: var(--accent-color);
+  font-size: 0.8rem;
+
+  resize: none; /* nếu bạn auto-resize bằng JS */
+  overflow: hidden; /* ẩn scrollbar */
+}
+
 /* Reset and base styles */
 * {
   box-sizing: border-box;

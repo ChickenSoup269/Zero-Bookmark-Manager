@@ -195,7 +195,8 @@
             </div>
         </div>
 
-        <div id="folder-context-menu" class="context-menu hidden" style="position: fixed; z-index: 2000; min-width: 150px;">
+        <div id="folder-context-menu" class="context-menu hidden"
+            style="position: fixed; z-index: 2000; min-width: 150px;">
             <div class="menu-item" id="context-menu-move-folder">
                 <i class="fas fa-folder-open" style="width: 14px; text-align: center; margin-right: 8px;"></i>
                 <span>Move to Folder</span>
@@ -206,8 +207,8 @@
             <div class="rename-popup-content">
                 <h3 id="rename-title">Rename</h3>
                 <div class="rename-input-container">
-                    <input type="text" id="rename-input" class="input" placeholder="Enter new name..."
-                        aria-label="New bookmark title" maxlength="255">
+                    <textarea id="rename-input" class="input" placeholder="Enter new name..."
+                        aria-label="New bookmark title" maxlength="255" rows="1"></textarea>
                     <button id="clear-rename" class="button clear" aria-label="Clear rename input">✖</button>
                 </div>
                 <div class="rename-popup-buttons">
@@ -225,8 +226,8 @@
                     <select id="rename-folder-select" class="select" aria-label="Select folder to rename">
                         <option value="">Select Folder</option>
                     </select>
-                    <input type="text" id="rename-folder-input" class="input" placeholder="Enter new folder name..."
-                        aria-label="New folder name" maxlength="255">
+                    <textarea id="rename-folder-input" class="input" placeholder="Enter new folder name..."
+                        aria-label="New folder name" maxlength="255" rows="1"></textarea>
                     <button id="clear-rename-folder" class="button clear"
                         aria-label="Clear rename folder input">✖</button>
                 </div>
@@ -258,8 +259,8 @@
             <div class="rename-popup-content">
                 <h3 id="create-folder-title">Create Folder</h3>
                 <div class="rename-input-container">
-                    <input type="text" id="create-folder-input" class="input" placeholder="Enter folder name..."
-                        aria-label="Folder name" maxlength="255">
+                    <textarea id="create-folder-input" class="input" placeholder="Enter folder name..."
+                        aria-label="Folder name" maxlength="255" rows="1"></textarea>
                     <button id="clear-create-folder" class="button clear" aria-label="Clear folder name">✖</button>
                 </div>
                 <div class="rename-popup-buttons">
@@ -362,8 +363,8 @@
                     </div>
                     <div class="input-container">
                         <div class="rename-input-container">
-                            <input type="password" id="api-key-input" class="input" placeholder="Enter API key..."
-                                aria-label="API key" maxlength="255">
+                            <textarea id="api-key-input" class="input" placeholder="Enter API key..."
+                                aria-label="API key" maxlength="255" rows="1"></textarea>
                             <button type="button" id="toggle-api-visibility" class="button eye"
                                 aria-label="Toggle API key visibility"><i class="fas fa-eye-slash"></i></button>
                         </div>
