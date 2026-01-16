@@ -112,23 +112,23 @@ Install Bookmark-Manager
 
 ## Usage/Examples
 
-| Parameter                | Description                                                                                                            |
-| :----------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `Search`                 | Type keywords in the search box.                                                                                       |
-| `Filter folders`         | Select a folder from the dropdown.                                                                                     |
-| `Sort`                   | Choose a sorting option.                                                                                               |
-| `Manage folders`         | Create, rename, or delete fodlers                                                                                      |
-| `Manage bookmarks`       | Click "⋮" to add to folder, rename, or delete, Viewdetail, Manage tags (now with a color palette), Favourite           |
-| `Export/Import`          | Use Settings to export as JSON/HTML/CSV or import with Json duplicate check.                                           |
-| `Customize`              | Adjust theme (including the new Tet theme), font, or language in Settings, Render view                                 |
-| `Edit in new tabs`       | Use extension with web view                                                                                            |
-| `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs                            |
-| `Tags`                   | Choose a sorting tags option                                                                                           |
-| `Pin to top`             | Choose a bookmark to pin on top                                                                                        |
-| `Check Link Health`      | Verify bookmark health via settings or dropdown.                                                                       |
-| `Generate QR Code`       | Create QR codes for your bookmarks from the dropdown.                                                                  |
+| Parameter                | Description                                                                                                                                                                                                                                  |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Search`                 | Type keywords in the search box.                                                                                                                                                                                                             |
+| `Filter folders`         | Select a folder from the dropdown.                                                                                                                                                                                                           |
+| `Sort`                   | Choose a sorting option.                                                                                                                                                                                                                     |
+| `Manage folders`         | Create, rename, or delete fodlers                                                                                                                                                                                                            |
+| `Manage bookmarks`       | Click "⋮" to add to folder, rename, or delete, Viewdetail, Manage tags (now with a color palette), Favourite                                                                                                                                 |
+| `Export/Import`          | Use Settings to export as JSON/HTML/CSV or import with Json duplicate check.                                                                                                                                                                 |
+| `Customize`              | Adjust theme (including the new Tet theme), font, or language in Settings, Render view                                                                                                                                                       |
+| `Edit in new tabs`       | Use extension with web view                                                                                                                                                                                                                  |
+| `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs                                                                                                                                                  |
+| `Tags`                   | Choose a sorting tags option                                                                                                                                                                                                                 |
+| `Pin to top`             | Choose a bookmark to pin on top                                                                                                                                                                                                              |
+| `Check Link Health`      | Verify bookmark health via settings or dropdown.                                                                                                                                                                                             |
+| `Generate QR Code`       | Create QR codes for your bookmarks from the dropdown.                                                                                                                                                                                        |
 | `Chatbot`                | Now supports full bookmark and folder management (add, edit, delete, move, create/rename/delete folders), UI control (themes, views, sorting), and can answer general questions. See the in-chat Help Guide for all commands. (beta version) |
-| `Localization`           | Sidebar section titles (Filters, Search, Folder actions, Selection) are now dynamically translated.                    |
+| `Localization`           | Sidebar section titles (Filters, Search, Folder actions, Selection) are now dynamically translated.                                                                                                                                          |
 
 ## How to get Gemini APi ?
 
@@ -150,10 +150,15 @@ Video Updating
 <!-- image -->
 <p align="center">
 
-<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/1.png?raw=true" alt="Screenshot" width="580"/><img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/2.png?raw=true" alt="Screenshot" width="580"/>
-<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/3.png?raw=true" alt="Screenshot" width="580"/>
-<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/4.png?raw=true" alt="Screenshot" width="580"/>
-<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/about_bookmark/5.png?raw=true" alt="Screenshot" width="580"/>
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/extension_bookmark_114/1.png?raw=true" alt="Screenshot" width=""/>
+
+---
+
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/extension_bookmark_114/2.png?raw=true" alt="Screenshot" width=""/>
+
+---
+
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/extension_bookmark_114/3.png?raw=true" alt="Screenshot" width=""/>
 
  </p>
 
