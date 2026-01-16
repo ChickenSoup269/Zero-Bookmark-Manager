@@ -1961,15 +1961,27 @@ document.addEventListener("DOMContentLoaded", () => {
     chatEditConfig.addEventListener("click", () => {
       const config = getAiConfig()
       if (aiModelSelect) aiModelSelect.value = config.model || ""
-      if (apiKeyInput) apiKeyInput.value = config.apiKey || ""
+      if (apiKeyInput) {
+        apiKeyInput.value = config.apiKey || ""
+        if (toggleApiVisibility) {
+          // Set visibility based on saved config. Default to visible.
+          if (config.apiVisible === false) {
+            apiKeyInput.type = "password"
+            toggleApiVisibility.innerHTML = '<i class="fas fa-eye-slash"></i>'
+          } else {
+            apiKeyInput.type = "text"
+            toggleApiVisibility.innerHTML = '<i class="fas fa-eye"></i>'
+          }
+        }
+      }
       if (curlInput) curlInput.value = config.modelName || ""
-      if (aiConfigPopup)
-        aiConfigPopup.classList.remove("hidden")[
-          // Reset validation styles
-          (aiModelSelect, apiKeyInput, curlInput)
-        ].forEach((input) => {
+      if (aiConfigPopup) {
+        aiConfigPopup.classList.remove("hidden")
+        // Reset validation styles
+        ;[aiModelSelect, apiKeyInput, curlInput].forEach((input) => {
           if (input) input.classList.remove("error")
         })
+      }
       ;["ai-model-error", "api-key-error", "curl-error"].forEach((errorId) => {
         const errorElement = document.getElementById(errorId)
         if (errorElement) errorElement.classList.add("hidden")
