@@ -88,21 +88,21 @@ Cài đặt Bookmark-Manager
 
 ## Usage/Examples
 
-| Parameter                        | Description                                                                                                           |
-| :------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| `Tìm kiếm`                       | Nhập từ khóa vào ô tìm kiếm.                                                                                          |
-| `Lọc thư mục`                    | Chọn thư mục từ dropdown.                                                                                             |
-| `Sắp xếp`                        | Chọn tùy chọn sắp xếp.                                                                                                |
-| `Quản lý thư mục`                | Hiển thị tạo, sửa, xóa thư mục.                                                                                       |
-| `Quản lý bookmark`               | Nhấn vào biểu tượng “⋮” để thêm vào thư mục, đổi tên hoặc xóa. Xem chi tiết, quản lý thẻ (tags), đánh dấu yêu thích.  |
-| `Xuất/Nhập`                      | Dùng phần Cài đặt (Settings) để xuất bookmarks ra JSON/HTML/CSV hoặc nhập vào với kiểm tra trùng lặp (dựa trên JSON). |
-| `Tùy chỉnh`                      | Điều chỉnh giao diện, phông chữ hoặc ngôn ngữ trong phần Cài đặt, chế độ hiển thị (Render view).                      |
-| `Chỉnh sửa trong tab mới`        | Sử dụng tiện ích trong chế độ xem web.                                                                                |
-| `Cài đặt lưu trữ ở local chrome` | Lưu dữ liệu tùy chỉnh cho tìm kiếm, chọn, sắp xếp, chế độ xem, trạng thái thư mục thu gọn, thẻ, và checkbox.          |
-| `Tags`                           | Chọn tùy chọn sắp xếp theo thẻ.                                                                                       |
-| `Ghim lên đầu`                   | Chọn bookmark ghim lên đầu trang                                                                                      |
-| `Kiểm tra tình trạng liên kết`  | Xác minh tình trạng liên kết bookmark qua cài đặt hoặc menu thả xuống.                                                |
-| `Tạo mã QR cho Bookmark`       | Tạo mã QR cho các bookmark của bạn từ menu thả xuống.                                                                 |
+| Parameter                        | Description                                                                                                                                                                                                                                                       |
+| :------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Tìm kiếm`                       | Nhập từ khóa vào ô tìm kiếm.                                                                                                                                                                                                                                      |
+| `Lọc thư mục`                    | Chọn thư mục từ dropdown.                                                                                                                                                                                                                                         |
+| `Sắp xếp`                        | Chọn tùy chọn sắp xếp.                                                                                                                                                                                                                                            |
+| `Quản lý thư mục`                | Hiển thị tạo, sửa, xóa thư mục.                                                                                                                                                                                                                                   |
+| `Quản lý bookmark`               | Nhấn vào biểu tượng “⋮” để thêm vào thư mục, đổi tên hoặc xóa. Xem chi tiết, quản lý thẻ (tags), đánh dấu yêu thích.                                                                                                                                              |
+| `Xuất/Nhập`                      | Dùng phần Cài đặt (Settings) để xuất bookmarks ra JSON/HTML/CSV hoặc nhập vào với kiểm tra trùng lặp (dựa trên JSON).                                                                                                                                             |
+| `Tùy chỉnh`                      | Điều chỉnh giao diện, phông chữ hoặc ngôn ngữ trong phần Cài đặt, chế độ hiển thị (Render view).                                                                                                                                                                  |
+| `Chỉnh sửa trong tab mới`        | Sử dụng tiện ích trong chế độ xem web.                                                                                                                                                                                                                            |
+| `Cài đặt lưu trữ ở local chrome` | Lưu dữ liệu tùy chỉnh cho tìm kiếm, chọn, sắp xếp, chế độ xem, trạng thái thư mục thu gọn, thẻ, và checkbox.                                                                                                                                                      |
+| `Tags`                           | Chọn tùy chọn sắp xếp theo thẻ.                                                                                                                                                                                                                                   |
+| `Ghim lên đầu`                   | Chọn bookmark ghim lên đầu trang                                                                                                                                                                                                                                  |
+| `Kiểm tra tình trạng liên kết`   | Xác minh tình trạng liên kết bookmark qua cài đặt hoặc menu thả xuống.                                                                                                                                                                                            |
+| `Tạo mã QR cho Bookmark`         | Tạo mã QR cho các bookmark của bạn từ menu thả xuống.                                                                                                                                                                                                             |
 | `Chatbot`                        | Hiện hỗ trợ quản lý bookmark và thư mục (thêm, sửa, xóa, di chuyển, tạo/đổi tên/xóa thư mục), điều khiển giao diện (chủ đề, chế độ xem, sắp xếp) và có thể trả lời các câu hỏi chung. Xem Hướng dẫn Trợ giúp trong chat để biết tất cả các lệnh. (phiên bản beta) |
 
 ## How to get Gemini APi ?
