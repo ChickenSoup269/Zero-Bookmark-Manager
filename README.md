@@ -93,13 +93,13 @@ To run tests, ensure the following environment:
 Install Bookmark-Manager
 
 ```bash
-  git clone https://github.com/ChickenSoup269/Bookmark-Manager.git
-  cd Bookmark-Manager
+  git clone https://github.com/ChickenSoup269/Zero-Bookmark-Manager
+  cd Zero-Bookmark-Manager
 ```
 
 ### Step by step to use without Chrome store:
 
-1. Clone the repository or download/Releases you can chosse version you like here <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
+1. Clone the repository or download/Releases you can chosse version you like here <a href="https://github.com/ChickenSoup269/Zero-Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
 2. Open Chrome and navigate to **chrome://extensions**
 
 <p align=center>3.  Enable Developer Mode.</p>
