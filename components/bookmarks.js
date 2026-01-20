@@ -217,3 +217,53 @@ export function moveBookmarksToFolder(
       callback()
     })
 }
+
+export function removeDuplicateBookmarks(callback) {
+  const bookmarks = uiState.bookmarks;
+  const urls = {};
+  const duplicates = [];
+
+  // Group bookmarks by URL
+  bookmarks.forEach(bookmark => {
+    if (bookmark.url) {
+      if (!urls[bookmark.url]) {
+        urls[bookmark.url] = [];
+      }
+      urls[bookmark.url].push(bookmark);
+    }
+  });
+
+  // Find duplicates and decide which one to keep
+  for (const url in urls) {
+    if (urls[url].length > 1) {
+      // Sort by date added (newest first)
+      urls[url].sort((a, b) => b.dateAdded - a.dateAdded);
+      // The first one is the newest, the rest are duplicates
+      const toRemove = urls[url].slice(1);
+      toRemove.forEach(bookmark => duplicates.push(bookmark.id));
+    }
+  }
+
+  const language = localStorage.getItem("appLanguage") || "en";
+
+  if (duplicates.length === 0) {
+    showCustomPopup(translations[language].noDuplicatesFound || "No duplicate bookmarks found.");
+    if (callback) callback(0);
+    return;
+  }
+
+  // Remove duplicates
+  let removedCount = 0;
+  const totalDuplicates = duplicates.length;
+  duplicates.forEach(id => {
+    chrome.bookmarks.remove(id, () => {
+      removedCount++;
+      if (removedCount === totalDuplicates) {
+        showCustomPopup(`${totalDuplicates} ${translations[language].duplicatesRemoved || "duplicate(s) removed."}`);
+        if (callback) {
+          callback(totalDuplicates);
+        }
+      }
+    });
+  });
+}

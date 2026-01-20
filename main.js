@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tagFilterDropdown: document.getElementById("tag-filter-dropdown"),
     tagFilterOptions: document.getElementById("tag-filter-options"),
     checkHealthButton: document.getElementById("check-health-btn"),
+    checkDuplicatesButton: document.getElementById("check-duplicates-btn"),
     healthSortFilter: document.getElementById("health-sort-filter"),
     organizeFoldersButton: document.getElementById("organize-folders-button"),
     folderContextMenu: document.getElementById("folder-context-menu"),
