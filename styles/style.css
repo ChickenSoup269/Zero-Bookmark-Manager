@@ -67,6 +67,7 @@
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --check-link-color: linear-gradient(135deg, #4781ff, #47e6ff);
+  --check-dup-color: linear-gradient(135deg, #2563eb, #5151fe);
   --health-icon-dead-color: #dc3545;
 
   /* Spacing */
@@ -157,6 +158,9 @@ body.dracula-theme {
   --text-option: #ff79c6;
   --hover-bg-option: #3a3c4e;
   --bg-tags-select: rgba(40, 42, 54, 0.9);
+
+  --check-link-color: linear-gradient(135deg, #ff79c6, #bd93f9);
+  --check-dup-color: linear-gradient(135deg, #2563eb, #ff79c6);
 }
 
 /* OneDark theme */
@@ -186,6 +190,9 @@ body.onedark-theme {
   --text-option: #98c379;
   --hover-bg-option: #323842;
   --bg-tags-select: rgba(40, 44, 52, 0.9);
+
+  --check-link-color: linear-gradient(135deg, #4781ff, #c678dd);
+  --check-dup-color: linear-gradient(135deg, #2563eb, #98c379);
 }
 
 /* Tet theme */
@@ -217,11 +224,14 @@ body.tet-theme {
     0,
     0.12
   ); /* Slightly more pronounced golden bookmark bg */
-  --check-link-color: linear-gradient(90deg, #8c001a, #ebdd57);
+
   --health-icon-dead-color: #fee209;
   --text-option: white;
   --hover-bg-option: rgba(255, 215, 0, 0.15);
   --bg-tags-select: rgba(87, 78, 25, 0.801);
+
+  --check-link-color: linear-gradient(135deg, #4781ff, #fee209);
+  --check-dup-color: linear-gradient(135deg, #2563eb, #fee209);
 }
 
 /* Kích hoạt khả năng tùy chỉnh cho select */
@@ -317,7 +327,8 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.5;
-  transition: background-color var(--transition-normal),
+  transition:
+    background-color var(--transition-normal),
     color var(--transition-normal);
 }
 
@@ -407,7 +418,9 @@ html {
 .button.add,
 .button.delete-folder,
 .button.delete-bookmarks {
-  transition: opacity var(--transition-fast), transform var(--transition-fast),
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
     height var(--transition-fast);
   visibility: visible;
   opacity: 1;
@@ -587,7 +600,7 @@ html {
   box-shadow: var(--shadow-sm);
 }
 
-/* Warning / utility buttons / cho check link button */
+/* Warning / utility buttons / cho check link button  */
 .button-warning {
   background: var(--check-link-color);
   color: white;
@@ -630,6 +643,41 @@ html {
   to {
     transform: rotate(360deg);
   }
+}
+/* button check dup */
+.button-primary {
+  background: var(--check-dup-color);
+  color: white;
+  font-weight: 600;
+  border-radius: 5px;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  border: none;
+  transition: all var(--transition-fast);
+}
+
+.button-primary i {
+  font-size: 0.85rem;
+}
+
+.button-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.button-primary.is-loading {
+  cursor: wait;
+}
+
+.button-primary.is-loading i {
+  animation: spin 0.9s linear infinite;
 }
 
 #create-folder-title,
@@ -730,7 +778,9 @@ html {
   transform: translateY(0);
   height: auto;
   overflow: hidden;
-  transition: opacity var(--transition-fast), transform var(--transition-fast),
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
     height var(--transition-fast);
 }
 
@@ -740,7 +790,9 @@ html {
   height: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--transition-fast), transform var(--transition-fast),
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
     height var(--transition-fast);
 }
 
@@ -749,8 +801,11 @@ html {
   transform: scale(1);
   height: auto;
   width: auto;
-  transition: opacity var(--transition-fast), transform var(--transition-fast),
-    height var(--transition-fast), width var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    height var(--transition-fast),
+    width var(--transition-fast);
 }
 
 .bookmark-checkbox.hidden {
@@ -760,8 +815,11 @@ html {
   width: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--transition-fast), transform var(--transition-fast),
-    height var(--transition-fast), width var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    height var(--transition-fast),
+    width var(--transition-fast);
 }
 
 ::-webkit-scrollbar {
@@ -945,7 +1003,9 @@ html {
   animation-timeline: scroll();
   animation-range: 0px 400px;
 
-  transition: background-color var(--transition-fast), transform 0.2s ease;
+  transition:
+    background-color var(--transition-fast),
+    transform 0.2s ease;
 }
 
 .scroll-to-top:hover {
@@ -1121,7 +1181,9 @@ html {
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
-  transition: background 0.25s ease, transform 0.15s ease;
+  transition:
+    background 0.25s ease,
+    transform 0.15s ease;
 }
 
 .rename-popup-buttons .save {
@@ -1595,7 +1657,9 @@ html {
   border-radius: 8px;
   border: 1px solid var(--border-color, #d1d1d1);
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .color-buttons-container button:hover {
@@ -1610,7 +1674,9 @@ html {
   border-radius: 8px;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
 }
 
 #add-tag-btn {
@@ -1801,9 +1867,12 @@ html {
   border: none;
   background: #ffffff; /* sáng để dễ nhìn */
   border-radius: 0 0 12px 12px; /* bo góc dưới */
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.15),
+  box-shadow:
+    inset 0 0 4px rgba(0, 0, 0, 0.15),
     0 0 10px rgba(255, 255, 255, 0.08);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
 }
 
 /* Fullscreen */
@@ -2092,7 +2161,9 @@ html {
   border-radius: 50%; /* Make them round */
   border: 2px solid var(--border-color);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   padding: 0; /* Remove default padding */
   flex-shrink: 0; /* Prevent shrinking */
 }

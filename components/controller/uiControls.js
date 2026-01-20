@@ -1,6 +1,6 @@
 // components/controller/uiControls.js
 import { translations, debounce } from "../utils/utils.js"
-import { isInFolder } from "../bookmarks.js"
+import { getBookmarkTree, isInFolder, removeDuplicateBookmarks } from "../bookmarks.js"
 import {
   updateUILanguage,
   updateTheme,
@@ -238,6 +238,22 @@ export function setupUIControlListeners(elements) {
     })
   } else {
     console.warn("check-health-btn element not found")
+  }
+
+  // Nút kiểm tra trùng lặp (Check Duplicates)
+  if (elements.checkDuplicatesButton) {
+    elements.checkDuplicatesButton.addEventListener("click", (e) => {
+      e.stopPropagation();
+      removeDuplicateBookmarks((removedCount) => {
+        if (removedCount > 0) {
+          getBookmarkTree((bookmarkTreeNodes) => {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements);
+          });
+        }
+      });
+    });
+  } else {
+    console.warn("check-duplicates-btn element not found");
   }
 
   // elements.renameFolderOption.addEventListener("click", () => {

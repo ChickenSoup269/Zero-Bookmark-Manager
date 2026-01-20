@@ -8,6 +8,8 @@
 
 - Generate QR code for bookmark
 - Move to folder in "tree view" and "Organize Folders" with right click in folder
+- Automatically remove duplicate bookmarks when a new one is added, keeping the newest.
+- Added a manual option to check for and remove duplicate bookmarks.
 
 ## Improved
 

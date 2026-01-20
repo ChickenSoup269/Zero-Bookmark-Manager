@@ -297,6 +297,8 @@ export const translations = {
     healthSortSuspicious: "Suspicious Links",
     healthSortSafe: "Safe Links",
     generateQrCode: "Generate QR",
+    noDuplicatesFound: "No duplicate bookmarks found.",
+    duplicatesRemoved: "duplicate(s) removed.",
   },
   vi: {
     welcomeMessage: "Chào mừng đến với Zero Bookmark Manager Chat!",
@@ -593,6 +595,8 @@ export const translations = {
     healthSortSuspicious: "Liên kết đáng ngờ",
     healthSortSafe: "Liên kết an toàn",
     generateQrCode: "Tạo mã QR",
+    noDuplicatesFound: "Không tìm thấy bookmark trùng lặp.",
+    duplicatesRemoved: "bookmark trùng lặp đã được xóa.",
   },
 }
 
