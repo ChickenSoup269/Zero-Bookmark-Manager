@@ -113,6 +113,14 @@ Cài đặt Bookmark-Manager
 
 3. Chọn model của bạn ở đây và get API key là xong
 
+| Model                                       | Loại           | Truy cập miễn phí  | Giới hạn          | Ghi chú                                                             |
+| ------------------------------------------- | -------------- | ------------------ | ----------------- | ------------------------------------------------------------------- |
+| **Gemini 2.5 Pro (Experimental / Preview)** | Pro            | Có (Web/App)       | Thấp, bị giới hạn | Có trên Gemini Web/App cho free user, không đảm bảo ổn định lâu dài |
+| **Gemini 2.5 Flash**                        | Fast / General | Có (Free Tier API) | Rất thấp          | Dùng được trong Google AI Studio & API free tier                    |
+| **Gemini 2.5 Flash-Lite**                   | Lightweight    | Có (Free Tier)     | Thấp              | Nhẹ hơn Flash, phù hợp task đơn giản                                |
+| **Gemini 2.5 Flash (Preview)**              | Preview        | Có (tùy thời điểm) | Thấp              | Thường mở free để test model mới                                    |
+| **Gemini 2.5 Flash-TTS**                    | Text-to-Speech | Có thể             | Giới hạn          | TTS, tùy khu vực & cấu hình API                                     |
+
 Video hướng dẫn
 
 ## Video & screenshots

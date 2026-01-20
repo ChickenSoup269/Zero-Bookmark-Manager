@@ -18,7 +18,9 @@
       <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/CHANGELOG.md">CHANGELOG.md</a>
     </td>
     <td align="right">
-      <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">Link Extension </a>
+      <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en"> 
+       Link Extension 🌐 
+      </a>
     </td>
   </tr>
   
@@ -28,6 +30,10 @@
 <div align="center">
 
 <p>
+
+<a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/available_chrome_web.png?raw=true" width="200px"  >
+</a>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![Generic badge](https://img.shields.io/badge/Version-1.1.4-white.svg)](https://shields.io/)
@@ -44,6 +50,19 @@
 ## Introduction
 
 Bookmark Manager is a and intuitive Chrome extension that simplifies bookmark organization. Easily view, search, sort, and manage your bookmarks with a sleek interface. It supports light/dark themes, multilingual display (English/Vietnamese), and export/import functionality for seamless backup and restore.
+
+## How to add bookmark ?
+
+- Web Browsers ![Chrome](https://img.shields.io/badge/Chrome-4285F4?logo=google-chrome&logoColor=white), ![Firefox](https://img.shields.io/badge/Firefox-FF7139?logo=firefox&logoColor=white), ![Edge](https://img.shields.io/badge/Edge-0078D7?logo=microsoft-edge&logoColor=white), ![Safari](https://img.shields.io/badge/Safari-000000?logo=safari&logoColor=white)
+  The universal shortcut to bookmark your current page is:
+  - Windows/Linux: Ctrl + D
+  - Mac: Command (⌘) + D
+
+* Pro Tip: To bookmark all open tabs into a single folder, use Ctrl + Shift + D (Windows) or ⌘ + Shift + D (Mac).
+
+# OR
+
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/add_bookmark.png?raw=true"/>
 
 ## Features
 
@@ -76,7 +95,7 @@ Install Bookmark-Manager
   cd Bookmark-Manager
 ```
 
-### Step by step to use offline:
+### Step by step to use without Chrome store:
 
 1. Clone the repository or download/Releases you can chosse version you like here <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
 2. Open Chrome and navigate to **chrome://extensions**
@@ -136,6 +155,14 @@ Install Bookmark-Manager
 2. Get API key at this website
    https://aistudio.google.com/api-keys
 3. Select your model here and get API key and curl http you're done
+
+| Model                                       | Type           | Free Access         | Limits        | Notes                                                                |
+| ------------------------------------------- | -------------- | ------------------- | ------------- | -------------------------------------------------------------------- |
+| **Gemini 2.5 Pro (Experimental / Preview)** | Pro            | Yes (Web/App)       | Low / limited | Available for free users on Gemini Web/App, not guaranteed long-term |
+| **Gemini 2.5 Flash**                        | Fast / General | Yes (Free Tier API) | Very low      | Available in Google AI Studio & API free tier                        |
+| **Gemini 2.5 Flash-Lite**                   | Lightweight    | Yes (Free Tier)     | Low           | Lighter than Flash, suitable for simple tasks                        |
+| **Gemini 2.5 Flash (Preview)**              | Preview        | Sometimes           | Low           | Often opened temporarily for testing                                 |
+| **Gemini 2.5 Flash-TTS**                    | Text-to-Speech | Limited             | Limited       | TTS model, availability depends on region & API config               |
 
 Video tutorial
 
