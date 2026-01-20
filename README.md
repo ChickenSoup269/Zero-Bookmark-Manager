@@ -62,7 +62,9 @@ Bookmark Manager is a and intuitive Chrome extension that simplifies bookmark or
 
 # OR
 
-<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/add_bookmark.png?raw=true"/>
+<p align="center">
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/add_bookmark.png?raw=true" width="450px"/>
+</p>
 
 ## Features
 
