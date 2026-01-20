@@ -51,13 +51,13 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 Cài đặt Bookmark-Manager
 
 ```bash
-  git clone https://github.com/ChickenSoup269/Bookmark-Manager.git
-  cd Bookmark-Manager
+  git clone https://github.com/ChickenSoup269/Zero-Bookmark-Manager
+  cd Zero-Bookmark-Manager
 ```
 
 ### Step by step to use offline:
 
-1. Clone repository hoặc tải bản phát hành (Releases) mà bạn muốn tại đây <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
+1. Clone repository hoặc tải bản phát hành (Releases) mà bạn muốn tại đây <a href="https://github.com/ChickenSoup269/Zero-Bookmark-Manager/releases">All Zero Bookmarks releases</a>.
 2. Mở Chrome và truy cập vào đường dẫn **chrome://extensions**
 
 <p align="center"> 3. Bật chế độ Nhà phát triển (Developer Mode).</p>
