@@ -49,7 +49,7 @@
 
 ## Introduction
 
-Bookmark Manager is a and intuitive Chrome extension that simplifies bookmark organization. Easily view, search, sort, and manage your bookmarks with a sleek interface. It supports light/dark themes, multilingual display (English/Vietnamese), and export/import functionality for seamless backup and restore.
+Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bookmark organization. Easily view, search, sort, and manage your bookmarks with a sleek interface. It supports light/dark themes, multilingual display (English/Vietnamese), and export/import functionality for seamless backup and restore.
 
 ## How to add bookmark ?
 
@@ -80,7 +80,6 @@ Bookmark Manager is a and intuitive Chrome extension that simplifies bookmark or
 - **Check Link Health:** Verify the availability and safety of your bookmarked links.
 - **Generate QR Code:** Create QR codes for your bookmarks for easy sharing and access on other devices.
 - **Chatbot (Beta):** Manage bookmarks and control the extension using natural language. Create, delete, and organize bookmarks and folders, change themes, views, and more, all from the chat interface.
-- **Duplicate Management:** Automatically removes duplicate bookmarks upon creation. Includes a manual option in the settings menu to scan and clean all existing duplicates.
 
 ## Running Tests
 
@@ -148,7 +147,6 @@ Install Bookmark-Manager
 | `Tags`                   | Choose a sorting tags option                                                                                                                                                                                                                 |
 | `Pin to top`             | Choose a bookmark to pin on top                                                                                                                                                                                                              |
 | `Check Link Health`      | Verify bookmark health via settings or dropdown.                                                                                                                                                                                             |
-| `Check Duplicates`       | Find and remove all duplicate bookmarks manually via the settings menu.                                                                                                                                                                      |
 | `Generate QR Code`       | Create QR codes for your bookmarks from the dropdown.                                                                                                                                                                                        |
 | `Chatbot`                | Now supports full bookmark and folder management (add, edit, delete, move, create/rename/delete folders), UI control (themes, views, sorting), and can answer general questions. See the in-chat Help Guide for all commands. (beta version) |
 | `Localization`           | Sidebar section titles (Filters, Search, Folder actions, Selection) are now dynamically translated.                                                                                                                                          |
@@ -158,7 +156,7 @@ Install Bookmark-Manager
 1. First you need to have Gemini API key (required) and its model name
 2. Get API key at this website
    https://aistudio.google.com/api-keys
-3. Select your model here and get API key and curl http you're done
+3. Select your model here and get API key you're done
 
 | Model                                       | Type           | Free Access         | Limits        | Notes                                                                |
 | ------------------------------------------- | -------------- | ------------------- | ------------- | -------------------------------------------------------------------- |
