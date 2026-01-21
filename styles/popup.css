@@ -613,7 +613,7 @@
   right: 0;
   margin-top: -2px;
   background-color: rgba(var(--bg-primary), 1);
-  backdrop-filter: blur(40px); /* Glass effect */
+  backdrop-filter: blur(80px); /* Glass effect */
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   width: 240px;

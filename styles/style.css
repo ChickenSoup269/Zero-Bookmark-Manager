@@ -778,20 +778,18 @@ html {
 }
 
 .dropdown-section-title {
-  display: flex; /* Use flexbox for centering text between lines */
-  align-items: center; /* Vertically align text and lines */
-  text-align: center; /* Center the text content within the span */
-  padding: 0 12px; /* Adjust padding for spacing */
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 0 12px;
   font-weight: bold;
   color: var(--text-muted);
   font-size: 0.85em;
-  margin: 10px 0; /* Adjust margin as needed for spacing */
+  margin: 10px 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  /* Remove border-bottom as pseudo-elements will create the lines */
 }
 
-/* Pseudo-elements for the lines on either side of the text */
 .dropdown-section-title::before,
 .dropdown-section-title::after {
   content: "";
