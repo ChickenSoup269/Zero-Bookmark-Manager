@@ -1265,7 +1265,7 @@ textarea.error {
 }
 
 #bookmark-detail-popup #detail-thumbnail {
-  width: 200%;
+  width: 100%;
   height: auto;
   display: block;
 }
