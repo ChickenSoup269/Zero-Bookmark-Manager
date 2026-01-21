@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zero Bookmark Manager</title>
+    <title>Zero Bookmark Manager 1.1.4</title>
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="./styles/chat.css">
     <link rel="stylesheet" href="./styles/webview.css">
@@ -131,6 +131,7 @@
                 <button id="settings-button" class="button settings" title="Settings"
                     aria-label="Open settings">⋮</button>
                 <div id="settings-menu" class="dropdown-menu-2 hidden">
+                    <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
                     <select id="language-switcher" class="select" aria-label="Select language">
                         <option value="en">English</option>
                         <option value="vi">Tiếng Việt</option>
@@ -156,18 +157,23 @@
                         <option value="detail">&#xf05a; Detail View</option>
                         <option value="card">&#xf009; Card View</option>
                     </select>
-                    <hr>
+                    <!-- <hr> First HR after general settings -->
+                    <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
                     <button id="edit-in-new-tab-option" class="menu-item">Edit in New Tab</button>
                     <button id="export-bookmarks-option" class="menu-item">Export Bookmarks</button>
                     <button id="import-bookmarks-option" class="menu-item">Import Bookmarks</button>
                     <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
+                    <!-- <hr> Second HR after bookmark actions -->
+                    <span class="dropdown-section-title" data-i18n="bookmarkHealthTitle">Bookmark Health &
+                        Duplicates</span>
                     <button id="check-health-btn" class="button button-warning">
-                        <i class="fas fa-stethoscope"></i> Check Links
+                        <i class="fas fa-stethoscope"></i> <span data-i18n="checkLinks">Check Links</span>
                     </button>
                     <button id="check-duplicates-btn" class="button button-primary">
-                        <i class="fas fa-copy"></i> Check Duplicates
+                        <i class="fas fa-copy"></i> <span data-i18n="checkDuplicates">Check Duplicates</span>
                     </button>
-                    <hr>
+                    <!-- <hr> Third HR after health checks -->
+                    <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
                     <button id="localstorage-settings-option" class="menu-item">
                         <i class="fas fa-cog"></i> Local Storage Settings
                     </button>

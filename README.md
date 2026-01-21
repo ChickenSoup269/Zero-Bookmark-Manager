@@ -36,7 +36,7 @@
 </a>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Generic badge](https://img.shields.io/badge/Version-1.1.4-white.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Version-1.1.5-white.svg)](https://shields.io/)
 
 </p>
 <p>
@@ -77,9 +77,11 @@ Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bo
 - **Themes:** Switch between light, dark, dracula, one dark, Tet, or system-based themes.
 - **Fonts:** Customize interface with various font styles, including improved Nerd Fonts support.
 - **Multilingual:** Supports English and Vietnamese for a localized experience.
+- **Enhanced Dropdown UI:** Dropdown menus are now scrollable (with `max-height` and `overflow-y`), and section titles feature a clear 'centered line' design for better readability and navigation. All dropdown section titles are now dynamically translated.
 - **Check Link Health:** Verify the availability and safety of your bookmarked links.
 - **Generate QR Code:** Create QR codes for your bookmarks for easy sharing and access on other devices.
 - **Chatbot (Beta):** Manage bookmarks and control the extension using natural language. Create, delete, and organize bookmarks and folders, change themes, views, and more, all from the chat interface.
+- **Duplicate Management:** Automatically removes duplicate bookmarks upon creation. Includes a manual option in the settings menu to scan and clean all existing duplicates.
 
 ## Running Tests
 
@@ -147,6 +149,7 @@ Install Bookmark-Manager
 | `Tags`                   | Choose a sorting tags option                                                                                                                                                                                                                 |
 | `Pin to top`             | Choose a bookmark to pin on top                                                                                                                                                                                                              |
 | `Check Link Health`      | Verify bookmark health via settings or dropdown.                                                                                                                                                                                             |
+| `Check Duplicates`       | Find and remove all duplicate bookmarks manually via the settings menu.                                                                                                                                                                      |
 | `Generate QR Code`       | Create QR codes for your bookmarks from the dropdown.                                                                                                                                                                                        |
 | `Chatbot`                | Now supports full bookmark and folder management (add, edit, delete, move, create/rename/delete folders), UI control (themes, views, sorting), and can answer general questions. See the in-chat Help Guide for all commands. (beta version) |
 | `Localization`           | Sidebar section titles (Filters, Search, Folder actions, Selection) are now dynamically translated.                                                                                                                                          |
