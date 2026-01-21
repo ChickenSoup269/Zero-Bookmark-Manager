@@ -91,7 +91,9 @@
   background: var(--bg-primary);
   border-radius: var(--border-radius-md);
   transition: all 0.2s ease !important;
-  box-shadow: var(--transition-fast), background-color var(--transition-fast),
+  box-shadow:
+    var(--transition-fast),
+    background-color var(--transition-fast),
     z-index var(--transition-fast);
   cursor: pointer;
 }
@@ -358,7 +360,9 @@
 
 .detail-bookmark-item {
   position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .detail-bookmark-item:hover {
@@ -522,7 +526,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: width 0.3s ease, height 0.3s ease, max-width 0.3s ease;
+  transition:
+    width 0.3s ease,
+    height 0.3s ease,
+    max-width 0.3s ease;
   /* Default size is set via inline styles in JS */
 }
 
@@ -619,7 +626,11 @@
   flex-direction: column;
   gap: var(--spacing-sm);
   transform: translateY(0);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  max-height: 80vh; /* Allow dropdown to scroll if content exceeds this height */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 #settings-menu.hidden {
@@ -638,7 +649,9 @@
   background-color: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color 0.25s ease, border-color 0.25s ease,
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
     transform 0.15s ease;
 }
 
@@ -656,10 +669,12 @@
   font-size: 0.9rem;
   border: none;
   border-radius: var(--border-radius-md);
-  background: var(--bg-primary);
+  background-color: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color 0.25s ease, color 0.25s ease,
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
     transform 0.15s ease;
 }
 
@@ -688,7 +703,9 @@
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
   min-width: 150px;
 }
 
@@ -708,7 +725,9 @@
   background: var(--bg-primary); /* Match parent background */
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color 0.25s ease, color 0.25s ease,
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
     transform 0.15s ease;
   display: flex; /* For icon alignment */
   align-items: center;

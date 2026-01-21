@@ -39,7 +39,8 @@ export const translations = {
     deleteConfirm: "Are you sure you want to delete this bookmark?",
     deleteFolderConfirm:
       "Are you sure you want to delete this folder? Bookmarks that exist in other folders will be preserved.",
-    confirmDeleteTag: "Are you sure you want to delete this tag from the bookmark?",
+    confirmDeleteTag:
+      "Are you sure you want to delete this tag from the bookmark?",
     deleteTagSuccess: "Tag deleted successfully!",
     discardFolderPrompt:
       "You entered a folder name but didn't save. Discard it?",
@@ -157,7 +158,8 @@ export const translations = {
     invalidTheme: "Invalid theme",
     sortChanged: "Sort order changed to",
     invalidSort: "Invalid sort type",
-    checkingLinks: "Started checking for broken links. Results will appear in the UI.",
+    checkingLinks:
+      "Started checking for broken links. Results will appear in the UI.",
     helpGuide: `
   <h4>Help Guide:</h4>
   <ol>
@@ -299,6 +301,13 @@ export const translations = {
     generateQrCode: "Generate QR",
     noDuplicatesFound: "No duplicate bookmarks found.",
     duplicatesRemoved: "duplicate(s) removed.",
+    checkLinks: "Check Links",
+    checkDuplicates: "Check Duplicates",
+    bookmarkActionsTitle: "Bookmark Actions",
+    appSettingsTitle: "Application Settings",
+    extensionOptionsTitle: "Extension Options",
+    bookmarkHealthTitle: "Bookmark Health & Duplicates",
+    bookmarkHealthSmallTitle: "Check Bookmarks",
   },
   vi: {
     welcomeMessage: "Chào mừng đến với Zero Bookmark Manager Chat!",
@@ -456,7 +465,8 @@ export const translations = {
     invalidTheme: "Chủ đề không hợp lệ",
     sortChanged: "Thứ tự sắp xếp đã thay đổi thành",
     invalidSort: "Kiểu sắp xếp không hợp lệ",
-    checkingLinks: "Đã bắt đầu kiểm tra các liên kết hỏng. Kết quả sẽ hiển thị trên giao diện.",
+    checkingLinks:
+      "Đã bắt đầu kiểm tra các liên kết hỏng. Kết quả sẽ hiển thị trên giao diện.",
     helpGuide: `
         <h4>Hướng Dẫn:</h4>
           <ol>
@@ -581,7 +591,8 @@ export const translations = {
     pinToTop: "Ghim lên Đầu",
     unpin: "Bỏ ghim khỏi Đầu",
     errorCannotMoveFolderToSelf: "Không thể di chuyển thư mục vào chính nó.",
-    errorCannotMoveFolderToDescendant: "Không thể di chuyển thư mục vào thư mục con của nó.",
+    errorCannotMoveFolderToDescendant:
+      "Không thể di chuyển thư mục vào thư mục con của nó.",
     organizeFolders: "Sắp xếp Thư mục",
     organizeFoldersTitle: "Sắp xếp Thư mục",
     moveToFolderTitle: "Di chuyển Thư mục",
@@ -597,6 +608,13 @@ export const translations = {
     generateQrCode: "Tạo mã QR",
     noDuplicatesFound: "Không tìm thấy bookmark trùng lặp.",
     duplicatesRemoved: "bookmark trùng lặp đã được xóa.",
+    checkLinks: "Kiểm tra liên kết",
+    checkDuplicates: "Kiểm tra trùng lặp",
+    bookmarkActionsTitle: "Thao tác Bookmark",
+    appSettingsTitle: "Cài đặt ứng dụng",
+    extensionOptionsTitle: "Tùy chọn tiện ích",
+    bookmarkHealthTitle: "Kiểm tra Bookmark",
+    bookmarkHealthSmallTitle: "Kiểm tra Bookmark",
   },
 }
 
@@ -640,7 +658,7 @@ export function showCustomPopup(
   type = "success",
   autoClose = true,
   onConfirm = null,
-  showCancel = false
+  showCancel = false,
 ) {
   const popup = document.getElementById("custom-popup")
   const title = document.getElementById("custom-popup-title")
@@ -818,7 +836,7 @@ export function showCustomGuide() {
   // Ensure DOM is loaded
   if (!document.getElementById("custom-guide")) {
     console.error(
-      "Custom guide popup not found. Waiting for DOMContentLoaded..."
+      "Custom guide popup not found. Waiting for DOMContentLoaded...",
     )
     document.addEventListener("DOMContentLoaded", showCustomGuide)
     return
@@ -845,7 +863,7 @@ export function showCustomGuide() {
           translations[language].errorUnexpected || "Unexpected error"
         }`,
         "error",
-        true
+        true,
       )
     } else {
       alert("Error: Help guide cannot be displayed due to missing elements.")
@@ -904,7 +922,7 @@ export function showCustomGuide() {
           translations[language].errorUnexpected || "Unexpected error"
         }`,
         "error",
-        true
+        true,
       )
     } else {
       alert("Error: Help guide cannot be displayed.")
@@ -937,7 +955,7 @@ export function showLocalStorageSettingsPopup() {
 
   // Debug checkbox visibility
   const checkboxes = document.querySelectorAll(
-    '.localstorage-settings-container input[type="checkbox"]'
+    '.localstorage-settings-container input[type="checkbox"]',
   )
 
   popup.classList.remove("hidden")

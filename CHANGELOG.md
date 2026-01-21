@@ -1,8 +1,6 @@
 <!-- ---Extension version---- -->
 
-## Changelog:
-
-### [1.1.4] - [2026-01-14]
+### [1.1.4] - [2026-01-21]
 
 ## Added
 
@@ -17,7 +15,9 @@
   - Can now manage folders directly through chat commands (create, rename, delete).
   - Can now control UI settings like view mode, theme, and sort order via chat.
   - Can now initiate a link health check for all bookmarks.
-- Enhanced "Add to Folder" functionality with an improved user interface, theme support, and rendering of the folder structure.
+- Enhanced "Add to Folder" functionality with an improved user interface, theme support, and rendering of the folder
+- Dropdown menus (Settings) are now scrollable for better usability with extensive options.
+- Visual styling of dropdown section titles improved with a 'centered line' effect for better readability.structure.
 - Improved the "Organize Folders" popup with new styling and enhanced drag-and-drop capabilities.
 - Refactored code structure for better readability and maintainability.
 

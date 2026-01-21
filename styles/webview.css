@@ -273,7 +273,8 @@ body {
   padding: var(--spacing-sm);
   border-radius: var(--border-radius-md);
   background: var(--folder-bg);
-  transition: background var(--transition-fast),
+  transition:
+    background var(--transition-fast),
     transform var(--transition-fast);
   box-shadow: var(--shadow-sm);
 }
@@ -471,7 +472,9 @@ body {
   flex-direction: column;
   gap: var(--spacing-sm);
   transform: translateY(0);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .dropdown-menu .menu-item:hover {
@@ -500,7 +503,9 @@ body {
   flex-direction: column;
   gap: var(--spacing-sm);
   transform: translateY(0);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .dropdown-menu-2.hidden {
@@ -519,7 +524,9 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color 0.25s ease, border-color 0.25s ease,
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
     transform 0.15s ease;
 }
 
@@ -537,14 +544,14 @@ body {
   font-size: 0.9rem;
   border: none;
   border-radius: var(--border-radius-md);
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--text-primary);
+  color: var(--bg-primary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .dropdown-menu-2 .menu-item:hover {
-  background-color: var(--text-primary);
+  background-color: var(--text-secondary);
   color: var(--bg-primary);
   transform: translateY(-2px);
   transition: all 0.2s ease;
@@ -927,7 +934,10 @@ textarea.error {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: width 0.3s ease, height 0.3s ease, max-width 0.3s ease;
+  transition:
+    width 0.3s ease,
+    height 0.3s ease,
+    max-width 0.3s ease;
 }
 
 .bookmark-modal.fullscreen {
@@ -993,8 +1003,10 @@ textarea.error {
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   padding: 32px;
   border-radius: 10px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
   z-index: 1001;
   width: 560px;
   max-height: 85vh;

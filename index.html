@@ -17,6 +17,7 @@
             <div class="settings-container" id="settings-container">
                 <button id="settings-button" class="button settings" title="Settings">⋮</button>
                 <div id="settings-menu" class="dropdown-menu hidden">
+                    <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
                     <select id="language-switcher" class="select">
                         <option value="en">English</option>
                         <option value="vi">Tiếng Việt</option>
@@ -48,18 +49,23 @@
                         <option value="detail">&#xf05a; Detail View</option>
                         <option value="card">&#xf009; Card View</option>
                     </select>
-                    <hr>
+                    <hr> <!-- First HR after general settings -->
+                    <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
                     <button id="edit-in-new-tab-option" class="menu-item">Edit in New Tab</button>
                     <button id="export-bookmarks-option" class="menu-item">Export Bookmarks</button>
                     <button id="import-bookmarks-option" class="menu-item">Import Bookmarks</button>
                     <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
+                    <hr> <!-- Second HR after bookmark actions -->
+                    <span class="dropdown-section-title" data-i18n="bookmarkHealthTitle">Bookmark Health &
+                        Duplicates</span>
                     <button id="check-health-btn" class="button button-warning">
-                        <i class="fas fa-stethoscope"></i> Check Links
+                        <i class="fas fa-stethoscope"></i> <span data-i18n="checkLinks">Check Links</span>
                     </button>
                     <button id="check-duplicates-btn" class="button button-primary">
-                        <i class="fas fa-copy"></i> Check Duplicates
+                        <i class="fas fa-copy"></i> <span data-i18n="checkDuplicates">Check Duplicates</span>
                     </button>
-                    <hr>
+                    <hr> <!-- Third HR after health checks -->
+                    <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
                     <button id="localstorage-settings-option" class="menu-item"><i class="fas fa-cog"></i> Local Storage
                         Settings</button>
                 </div>
@@ -281,6 +287,7 @@
     <script src="./components/year.js" type="module"></script>
     <script src="./components/option/option.js" type="module"></script>
     <script src="main.js" type="module"></script>
+    <script src="./components/localization.js" type="module"></script>
 </body>
 
 </html>

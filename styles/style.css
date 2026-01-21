@@ -66,8 +66,9 @@
   --folder-hover-bg: rgba(112, 161, 70, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
-  --check-link-color: linear-gradient(135deg, #4781ff, #47e6ff);
-  --check-dup-color: linear-gradient(135deg, #2563eb, #5151fe);
+  --check-link-color: linear-gradient(135deg, #0f5a66, #fafafa);
+  --check-dup-color: linear-gradient(135deg, #0f5a66, #fafafa);
+  --check-hover-link: linear-gradient(90deg, #0f5a66, #ffffff);
   --health-icon-dead-color: #dc3545;
 
   /* Spacing */
@@ -130,6 +131,10 @@
   --shadow-hover-tree: rgba(0, 0, 0, 0.35) px 5px 15px;
   --hover-bg-option: #d7d7d7;
   --bg-tags-select: rgba(37, 38, 38, 0.825);
+
+  --check-link-color: linear-gradient(135deg, #4282e1, #47e6ff);
+  --check-dup-color: linear-gradient(135deg, #4282e1, #47e6ff);
+  --check-hover-link: linear-gradient(90deg, #4282e1, #47e6ff);
 }
 
 /* Dracula theme */
@@ -159,8 +164,9 @@ body.dracula-theme {
   --hover-bg-option: #3a3c4e;
   --bg-tags-select: rgba(40, 42, 54, 0.9);
 
-  --check-link-color: linear-gradient(135deg, #ff79c6, #bd93f9);
-  --check-dup-color: linear-gradient(135deg, #2563eb, #ff79c6);
+  --check-link-color: linear-gradient(135deg, #bd93f9, #50fa7b);
+  --check-dup-color: linear-gradient(135deg, #bd93f9, #50fa7b);
+  --check-hover-link: linear-gradient(90deg, #bd93f9, #50fa7b);
 }
 
 /* OneDark theme */
@@ -191,8 +197,9 @@ body.onedark-theme {
   --hover-bg-option: #323842;
   --bg-tags-select: rgba(40, 44, 52, 0.9);
 
-  --check-link-color: linear-gradient(135deg, #4781ff, #c678dd);
-  --check-dup-color: linear-gradient(135deg, #2563eb, #98c379);
+  --check-link-color: linear-gradient(135deg, #c678dd, #ffffff);
+  --check-dup-color: linear-gradient(135deg, #c678dd, #ffffff);
+  --check-hover-link: linear-gradient(90deg, #c678dd, #ffffff);
 }
 
 /* Tet theme */
@@ -230,8 +237,9 @@ body.tet-theme {
   --hover-bg-option: rgba(255, 215, 0, 0.15);
   --bg-tags-select: rgba(87, 78, 25, 0.801);
 
-  --check-link-color: linear-gradient(135deg, #4781ff, #fee209);
-  --check-dup-color: linear-gradient(135deg, #2563eb, #fee209);
+  --check-link-color: linear-gradient(135deg, #8c001a, #fee209);
+  --check-dup-color: linear-gradient(135deg, #8c001a, #fee209);
+  --check-hover-link: linear-gradient(90deg, #8c001a, #fffacd);
 }
 
 /* Kích hoạt khả năng tùy chỉnh cho select */
@@ -256,7 +264,7 @@ option {
 /* Màu sắc khi hover hoặc được chọn */
 option:checked,
 option:hover {
-  color: var(--text-option);
+  color: var(--text-secondary);
   background-color: var(--hover-bg-option);
 }
 
@@ -606,7 +614,7 @@ html {
   color: white;
   font-weight: 600;
   border-radius: 5px;
-  padding: 6px 14px;
+  padding: 8px 14px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -616,16 +624,17 @@ html {
   transition: all var(--transition-fast);
 }
 
-.button-warning i {
-  font-size: 0.85rem;
-}
-
 .button-warning:hover {
+  background: var(--check-hover-link);
   filter: brightness(1.05);
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
   transition: all var(--transition-fast);
   cursor: pointer;
+}
+
+.button-warning i {
+  font-size: 0.85rem;
 }
 
 .button-warning.is-loading {
@@ -650,14 +659,15 @@ html {
   color: white;
   font-weight: 600;
   border-radius: 5px;
-  padding: 6px 14px;
+  padding: 8px 14px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 0.8rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   border: none;
-  transition: all var(--transition-fast);
+  /* transition: all var(--transition-fast); */
+  transition: all 0.4s ease;
 }
 
 .button-primary i {
@@ -665,10 +675,12 @@ html {
 }
 
 .button-primary:hover {
+  background: var(--check-hover-link);
   filter: brightness(1.05);
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
-  transition: all var(--transition-fast);
+  /* transition: all var(--transition-fast); */
+  transition: all 0.2s ease;
   cursor: pointer;
 }
 
@@ -765,6 +777,43 @@ html {
   transform: translateX(2px);
 }
 
+.dropdown-section-title {
+  display: flex; /* Use flexbox for centering text between lines */
+  align-items: center; /* Vertically align text and lines */
+  text-align: center; /* Center the text content within the span */
+  padding: 0 12px; /* Adjust padding for spacing */
+  font-weight: bold;
+  color: var(--text-muted);
+  font-size: 0.85em;
+  margin: 10px 0; /* Adjust margin as needed for spacing */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  /* Remove border-bottom as pseudo-elements will create the lines */
+}
+
+/* Pseudo-elements for the lines on either side of the text */
+.dropdown-section-title::before,
+.dropdown-section-title::after {
+  content: "";
+  flex: 1; /* Allow lines to take up available space */
+  border-bottom: 1px dashed var(--border-color);
+}
+
+/* Add some space between the lines and the text */
+.dropdown-section-title:not(:empty)::before {
+  margin-right: 0.5em;
+}
+
+.dropdown-section-title:not(:empty)::after {
+  margin-left: 0.5em;
+}
+
+/* Ensure dropdown-menu-2 is scrollable */
+.dropdown-menu-2 {
+  max-height: 550px; /* Example height, adjust as needed */
+  overflow-y: auto;
+}
+
 .menu-item:focus {
   outline: 2px solid var(--focus-outline);
   outline-offset: 1px;
@@ -833,7 +882,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--bg-tertiary);
+  background-color: var(--border-color);
   border-radius: 10px;
   border: 2px solid transparent;
   background-clip: content-box;
