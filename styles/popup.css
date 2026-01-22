@@ -267,7 +267,7 @@
   object-fit: cover;
   transition: transform var(--transition-fast);
   background-color: var(--bg-white-none);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); */
 }
 
 .favicon:hover {
@@ -668,7 +668,6 @@
   font-size: 0.9rem;
   border: none;
   border-radius: var(--border-radius-md);
-  background-color: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
   transition:
