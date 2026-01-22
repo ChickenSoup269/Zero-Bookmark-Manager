@@ -393,7 +393,7 @@ body {
   border-radius: 5px;
   object-fit: cover;
   transition: transform var(--transition-fast);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); */
   background-color: var(--bg-white-none);
 }
 

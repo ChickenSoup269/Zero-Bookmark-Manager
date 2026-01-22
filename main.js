@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.themeSwitcher.value = savedTheme
     updateTheme(elements, savedTheme)
 
-    const savedFont = localStorage.getItem("appFont") || "normal"
+    const savedFont = localStorage.getItem("appFont") || "gohu"
     document.body.classList.add(`font-${savedFont}`)
     elements.fontSwitcher.value = savedFont
 

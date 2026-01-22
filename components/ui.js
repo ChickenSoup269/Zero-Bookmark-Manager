@@ -12,11 +12,24 @@ import { checkBrokenLinks } from "./health/health.js"
 // ==========================================
 
 function getFaviconUrl(url) {
+  if (!url) {
+    return "./images/default-favicon.png"
+  }
+
+  if (url.startsWith("chrome-extension://")) {
+    const manifest = chrome.runtime.getManifest()
+    const iconPath =
+      manifest.icons["128"] ||
+      manifest.icons["48"] ||
+      manifest.icons["16"] ||
+      "icons/icon.png"
+    return iconPath
+  }
+
   try {
-    return `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(
-      url
-    )}`
-  } catch {
+    const domain = new URL(url).hostname
+    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
+  } catch (e) {
     return "./images/default-favicon.png"
   }
 }
@@ -159,8 +172,8 @@ function createDropdownHTML(bookmark, language) {
   return `
     <div class="dropdown-btn-group" style="position: relative;">
       <button class="dropdown-btn ${isFav ? "favorited" : ""} ${
-    isPinned ? "pinned-active" : ""
-  }" 
+        isPinned ? "pinned-active" : ""
+      }" 
               data-id="${bookmark.id}" 
               aria-label="Bookmark options"
               style="width: 24px; height: 24px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
@@ -193,33 +206,33 @@ function createDropdownHTML(bookmark, language) {
         <button class="menu-item add-to-folder" data-id="${
           bookmark.id
         }"><i class="fas fa-folder" style="${iconStyle}"></i>${
-    t.addToFolderOption || "Add to Folder"
-  }</button>
+          t.addToFolderOption || "Add to Folder"
+        }</button>
         <button class="menu-item delete-btn" data-id="${
           bookmark.id
         }"><i class="fas fa-trash" style="${iconStyle}"></i>${
-    t.deleteBookmarkOption || "Delete"
-  }</button>
+          t.deleteBookmarkOption || "Delete"
+        }</button>
         <button class="menu-item rename-btn" data-id="${
           bookmark.id
         }"><i class="fas fa-edit" style="${iconStyle}"></i>${
-    t.renameBookmarkOption || "Rename"
-  }</button>
+          t.renameBookmarkOption || "Rename"
+        }</button>
         <button class="menu-item view-detail-btn" data-id="${
           bookmark.id
         }"><i class="fas fa-info-circle" style="${iconStyle}"></i>${
-    t.viewDetail || "Details"
-  }</button>
+          t.viewDetail || "Details"
+        }</button>
         <button class="menu-item manage-tags-btn" data-id="${
           bookmark.id
         }"><i class="fas fa-tags" style="${iconStyle}"></i>${
-    t.manageTags || "Tags"
-  }</button>
+          t.manageTags || "Tags"
+        }</button>
         <button class="menu-item qr-code-btn" data-id="${
           bookmark.id
         }"><i class="fas fa-qrcode" style="${iconStyle}"></i>${
-    t.generateQrCode || "Generate QR"
-  }</button>
+          t.generateQrCode || "Generate QR"
+        }</button>
         <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;"/>
         <button class="menu-item favorite-btn" data-id="${bookmark.id}">
             <i class="fas fa-star" style="${iconStyle}"></i>
@@ -241,7 +254,7 @@ function handleBookmarkLinkClick(bookmarkId, elements) {
     chrome.storage.local.set({ bookmarkAccessCounts: counts }, () => {
       if (uiState.sortType === "most-visited") {
         chrome.bookmarks.getTree((tree) =>
-          renderFilteredBookmarks(tree, elements)
+          renderFilteredBookmarks(tree, elements),
         )
       }
     })
@@ -287,6 +300,11 @@ function attachDropdownToggle(element) {
 function openWebPreviewModal(bookmark) {
   const favicon = getFaviconUrl(bookmark.url)
 
+  let hostname = ""
+  try {
+    hostname = new URL(bookmark.url).hostname
+  } catch (e) {}
+
   // Remove existing overlay
   const existingOverlay = document.querySelector(".bookmark-modal-overlay")
   if (existingOverlay) existingOverlay.remove()
@@ -298,10 +316,10 @@ function openWebPreviewModal(bookmark) {
     <div class="bookmark-modal" style="width: 90%; height: 90%; max-width: 1200px;">
       <div class="modal-header">
         <div style="display:flex;align-items:center;gap:10px;">
-          <img src="${favicon}" class="modal-favicon" alt="icon" onerror="this.src='./images/default-favicon.png'">
+          <img src="${favicon}" class="modal-favicon" alt="icon" onerror="this.onerror=()=>{this.src='./images/default-favicon.png'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';">
           <h3 class="modal-title" title="${bookmark.title}">${
-    bookmark.title || bookmark.url
-  }</h3>
+            bookmark.title || bookmark.url
+          }</h3>
         </div>
         <div class="modal-actions">
            <a href="${
@@ -520,7 +538,7 @@ export function updateUILanguage(elements, language) {
     showCustomPopup(
       t.errorUnexpected || "An unexpected error occurred",
       "error",
-      true
+      true,
     )
     return
   }
@@ -620,7 +638,7 @@ export function handleCheckHealth(elements) {
       ? "Đang kiểm tra tình trạng các liên kết... Vui lòng đợi."
       : "Checking link health... Please wait.",
     "loading",
-    false
+    false,
   )
 
   checkBrokenLinks(
@@ -642,8 +660,8 @@ export function handleCheckHealth(elements) {
             ? `Hoàn tất! Phát hiện ${brokenCount} liên kết có vấn đề.`
             : `Finished! Found ${brokenCount} broken links.`
           : language === "vi"
-          ? "Hoàn tất! Tất cả liên kết có vẻ vẫn hoạt động."
-          : "Finished! All links appear healthy."
+            ? "Hoàn tất! Tất cả liên kết có vẻ vẫn hoạt động."
+            : "Finished! All links appear healthy."
       const type = brokenCount > 0 ? "warning" : "success"
       showCustomPopup(msg, type, true)
       elements.healthSortFilter.style.display = "block" // Show the filter
@@ -657,7 +675,7 @@ export function handleCheckHealth(elements) {
         }
       }
       reRenderCurrentView(elements)
-    }
+    },
   )
 }
 
@@ -692,7 +710,7 @@ function reRenderCurrentView(elements) {
 
 export async function populateTagFilter(elements) {
   const tagFilterOptions = elements.tagFilterContainer?.querySelector(
-    "#tag-filter-options"
+    "#tag-filter-options",
   )
   const tagFilterToggle =
     elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
@@ -740,7 +758,7 @@ export function updateTheme(elements, theme) {
   elementsToUpdate.forEach((element) => {
     if (element) {
       availableThemes.forEach((themeName) =>
-        element.classList.remove(`${themeName}-theme`)
+        element.classList.remove(`${themeName}-theme`),
       )
       element.classList.remove("light-theme", "dark-theme")
     }
@@ -752,8 +770,8 @@ export function updateTheme(elements, theme) {
         ? "dark"
         : "light"
       : availableThemes.includes(theme)
-      ? theme
-      : "light"
+        ? theme
+        : "light"
 
   const logoSrcMap = {
     light: "images/logo_tet.png", // qua tết đổi lại ố kề
@@ -782,11 +800,11 @@ export function updateTheme(elements, theme) {
 
   document
     .querySelectorAll(
-      ".input, .select, .button, .rename-popup, .folder-item, .folder-title, .custom-popup"
+      ".input, .select, .button, .rename-popup, .folder-item, .folder-title, .custom-popup",
     )
     .forEach((el) => {
       availableThemes.forEach((themeName) =>
-        el.classList.remove(`${themeName}-theme`)
+        el.classList.remove(`${themeName}-theme`),
       )
       el.classList.remove("light-theme", "dark-theme")
       el.classList.add(`${activeTheme}-theme`)
@@ -796,7 +814,7 @@ export function updateTheme(elements, theme) {
   window.dispatchEvent(
     new CustomEvent("themeChanged", {
       detail: { theme: activeTheme, originalSelection: theme },
-    })
+    }),
   )
 }
 
@@ -860,7 +878,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 
       if (uiState.selectedTags.length > 0) {
         filtered = filtered.filter((bookmark) =>
-          uiState.selectedTags.some((tag) => bookmark.tags.includes(tag))
+          uiState.selectedTags.some((tag) => bookmark.tags.includes(tag)),
         )
       }
       if (uiState.sortType === "favorites") {
@@ -872,7 +890,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         folders.some((f) => f.id === uiState.selectedFolderId)
       ) {
         filtered = filtered.filter((bookmark) =>
-          isInFolder(bookmark, uiState.selectedFolderId)
+          isInFolder(bookmark, uiState.selectedFolderId),
         )
       } else if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
         uiState.selectedFolderId = ""
@@ -883,7 +901,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         filtered = filtered.filter(
           (bookmark) =>
             bookmark.title?.toLowerCase().includes(query) ||
-            bookmark.url?.toLowerCase().includes(query)
+            bookmark.url?.toLowerCase().includes(query),
         )
       }
 
@@ -901,7 +919,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 
       toggleFolderButtons(elements)
       customSaveUIState()
-    }
+    },
   )
 }
 
@@ -928,7 +946,7 @@ function renderDetailView(bookmarksList, elements) {
   sortedBookmarks.forEach((bookmark) => {
     if (bookmark.url) {
       fragment.appendChild(
-        createDetailBookmarkElement(bookmark, language, elements)
+        createDetailBookmarkElement(bookmark, language, elements),
       )
     }
   })
@@ -959,7 +977,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     // --- VIEW 1: Đang xem nội dung 1 Folder cụ thể (Giữ nguyên) ---
     const selectedFolder = findNodeById(
       uiState.selectedFolderId,
-      bookmarkTreeNodes
+      bookmarkTreeNodes,
     )
     if (selectedFolder && selectedFolder.children) {
       // Logic lọc giữ nguyên như cũ
@@ -991,7 +1009,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         uiState.selectedFolderId = ""
         elements.folderFilter.value = ""
         chrome.bookmarks.getTree((tree) =>
-          renderFilteredBookmarks(tree, elements)
+          renderFilteredBookmarks(tree, elements),
         )
       })
       fragment.appendChild(backButton)
@@ -1037,7 +1055,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
               .includes(uiState.searchQuery.toLowerCase())) &&
           (uiState.sortType !== "favorites" || bookmark.isFavorite) &&
           (uiState.selectedTags.length === 0 ||
-            bookmark.tags?.some((tag) => uiState.selectedTags.includes(tag)))
+            bookmark.tags?.some((tag) => uiState.selectedTags.includes(tag))),
       )
 
       const sortedBookmarks = sortBookmarks(folderBookmarks, uiState.sortType)
@@ -1062,14 +1080,14 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       folderCard.addEventListener("click", (e) => {
         if (
           e.target.closest(
-            ".bookmarks-container, .dropdown-btn, .bookmark-item"
+            ".bookmarks-container, .dropdown-btn, .bookmark-item",
           )
         )
           return
         uiState.selectedFolderId = folder.id
         elements.folderFilter.value = folder.id
         chrome.bookmarks.getTree((tree) =>
-          renderFilteredBookmarks(tree, elements)
+          renderFilteredBookmarks(tree, elements),
         )
       })
 
@@ -1097,13 +1115,13 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
           folderCard,
           bookmarkTreeNodes,
           language,
-          elements
-        )
+          elements,
+        ),
       )
 
       // Render Preview Bookmarks
       const bookmarksContainer = folderCard.querySelector(
-        ".bookmarks-container"
+        ".bookmarks-container",
       )
       sortedBookmarks.forEach((bookmark) => {
         if (bookmark.url) {
@@ -1138,7 +1156,7 @@ function handleFolderDrop(
   folderCard,
   bookmarkTreeNodes,
   language,
-  elements
+  elements,
 ) {
   e.preventDefault()
   e.stopPropagation()
@@ -1164,7 +1182,7 @@ function handleFolderDrop(
         showCustomPopup(translations[language].errorUnexpected, "error", true)
       } else {
         chrome.bookmarks.getTree((tree) =>
-          renderFilteredBookmarks(tree, elements)
+          renderFilteredBookmarks(tree, elements),
         )
       }
     })
@@ -1180,15 +1198,20 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
   const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
   const isChecked = uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
 
+  let hostname = ""
+  try {
+    hostname = new URL(bookmark.url).hostname
+  } catch (e) {}
+
   div.innerHTML = `
     <input type="checkbox" class="bookmark-checkbox" data-id="${
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
     <div class="bookmark-content">
-      <div class="bookmark-favicon"><img src="${favicon}" alt="icon" onerror="this.style.display='none';"></div>
+      <div class="bookmark-favicon"><img src="${favicon}" alt="icon" onerror="this.onerror=()=>{this.style.display='none'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';"></div>
       <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">${
-    bookmark.title || bookmark.url
-  }</a>
+        bookmark.title || bookmark.url
+      }</a>
    ${healthIcon} 
     ${createDropdownHTML(bookmark, language)}
     </div>
@@ -1197,7 +1220,7 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
   div
     .querySelector(".card-bookmark-title")
     .addEventListener("click", () =>
-      handleBookmarkLinkClick(bookmark.id, elements)
+      handleBookmarkLinkClick(bookmark.id, elements),
     )
   attachDropdownToggle(div)
   return div
@@ -1212,10 +1235,16 @@ function createDetailBookmarkElement(bookmark, language, elements) {
   div.dataset.id = bookmark.id
   div.style.cssText = `display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--hover-bg); box-shadow: var(--shadow-sm);`
   const healthIcon = renderHealthIcon(bookmark.id) // Lấy icon
+
+  let hostname = ""
+  try {
+    hostname = new URL(bookmark.url).hostname
+  } catch (e) {}
+
   div.innerHTML = `
     <div style="display:flex;align-items:center;gap:12px;">
-      <div class="bookmark-favicon" style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:white;border:1px solid var(--border-color);display:flex;justify-content:center;align-items:center;">
-        <img src="${favicon}" style="width:20px;height:20px;object-fit:contain;" onerror="this.src='./images/default-favicon.png'">
+      <div class="bookmark-favicon" style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:white; display:flex;justify-content:center;align-items:center;">
+        <img src="${favicon}" style="width:20px;height:20px;object-fit:contain;" onerror="this.onerror=()=>{this.src='./images/default-favicon.png'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';">
       </div>
       <a href="${
         bookmark.url
@@ -1252,7 +1281,7 @@ function renderBookmarks(bookmarksList, elements) {
   elements.folderListDiv.classList.remove(
     "tree-view",
     "card-view",
-    "detail-view"
+    "detail-view",
   )
 
   sortedBookmarks.forEach((bookmark) => {
@@ -1290,7 +1319,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
   ) {
     const selectedFolder = findNodeById(
       uiState.selectedFolderId,
-      uiState.bookmarkTree
+      uiState.bookmarkTree,
     )
     nodesToRender =
       selectedFolder && selectedFolder.children ? [selectedFolder] : []
@@ -1347,7 +1376,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
           node.title || `Folder ${node.id}`
         }</span>
         <span class="folder-count" style="background:var(--bg-secondary);padding:2px 8px;border-radius:12px;font-size:12px;">${countFolderItems(
-          node
+          node,
         )}</span>
       `
 
@@ -1439,10 +1468,10 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
                   showCustomPopup(
                     translations[language].errorUnexpected,
                     "error",
-                    true
+                    true,
                   )
                 }
-              }
+              },
             ) // Removed else block to avoid double reload
           })
         } else if (currentDragType === "folder") {
@@ -1453,7 +1482,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
               translations[language].errorCannotMoveFolderToSelf ||
                 "Cannot move folder to itself.",
               "error",
-              true
+              true,
             )
             return
           }
@@ -1465,7 +1494,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
               translations[language].errorCannotMoveFolderToDescendant ||
                 "Cannot move folder to its descendant.",
               "error",
-              true
+              true,
             )
             return
           }
@@ -1476,11 +1505,11 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
                 translations[language].errorUnexpected ||
                   "An unexpected error occurred while moving folder.",
                 "error",
-                true
+                true,
               )
             } else {
               chrome.bookmarks.getTree((tree) =>
-                renderFilteredBookmarks(tree, elements)
+                renderFilteredBookmarks(tree, elements),
               )
             }
           })
@@ -1505,7 +1534,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
       // Tự gọi lại chính nó nếu folder mở
       if (!isCollapsed)
         childrenContainer.appendChild(
-          renderTreeView(node.children, elements, depth + 1)
+          renderTreeView(node.children, elements, depth + 1),
         )
       fragment.appendChild(childrenContainer)
     }
@@ -1576,6 +1605,11 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
     currentDragType = null // Reset biến toàn cục
   })
 
+  let hostname = ""
+  try {
+    hostname = new URL(bookmark.url).hostname
+  } catch (e) {}
+
   // (Phần render HTML bên trong giữ nguyên)
   const tagsHtml = createTagsHTML(bookmark.tags)
   const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
@@ -1586,18 +1620,18 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
     <div class="bookmark-favicon" style="width: 22px; height: 22px; border-radius: 4px; overflow: hidden; background: white; display: flex; justify-content: center; align-items: center;">
-      <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" onerror="this.style.display='none';">
+      <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" onerror="this.onerror=()=>{this.style.display='none'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';">
     </div>
     <a href="${
       bookmark.url
     }" target="_blank" class="bookmark-title" style="flex: 1; color: var(--text-primary); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${
-    bookmark.title
-  }">
+      bookmark.title
+    }">
       ${bookmark.title || bookmark.url}
     </a>
        ${healthIcon} 
     <div class="bookmark-url" style="font-size: 11px; color: var(--text-secondary); opacity: 0.7; max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${extractDomain(
-      bookmark.url
+      bookmark.url,
     )}</div>
     <div class="bookmark-tags" style="display: flex; gap: 4px;">${tagsHtml}</div>
     ${
@@ -1611,7 +1645,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
   div
     .querySelector(".bookmark-title")
     .addEventListener("click", () =>
-      handleBookmarkLinkClick(bookmark.id, elements)
+      handleBookmarkLinkClick(bookmark.id, elements),
     )
   attachDropdownToggle(div)
   return div
@@ -1627,15 +1661,19 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
 
   const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
   const isChecked = uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
+  let hostname = ""
+  try {
+    hostname = new URL(bookmark.url).hostname
+  } catch (e) {}
 
   div.innerHTML = `
     <input type="checkbox" class="bookmark-checkbox" data-id="${
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}">
-    <img src="${favicon}" alt="fav" class="favicon">
+    <img src="${favicon}" alt="fav" class="favicon" onerror="this.onerror=()=>{this.src='./images/default-favicon.png'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';">
     <a href="${bookmark.url}" target="_blank" class="link">${
-    bookmark.title || bookmark.url
-  }</a>
+      bookmark.title || bookmark.url
+    }</a>
     ${healthIcon} 
     ${
       uiState.showBookmarkIds
@@ -1648,7 +1686,7 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
   div
     .querySelector(".link")
     .addEventListener("click", () =>
-      handleBookmarkLinkClick(bookmark.id, elements)
+      handleBookmarkLinkClick(bookmark.id, elements),
     )
   attachDropdownToggle(div)
   return div
@@ -1688,7 +1726,7 @@ function commonPostRenderOps(elements) {
 
   // 2. DETAIL Buttons (In Dropdown Menu)
   const detailButtons = elements.folderListDiv.querySelectorAll(
-    ".menu-item.view-detail-btn"
+    ".menu-item.view-detail-btn",
   )
   detailButtons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
@@ -1742,11 +1780,11 @@ function attachSelectAllListener(elements) {
     }
     elements.addToFolderButton.classList.toggle(
       "hidden",
-      uiState.selectedBookmarks.size === 0
+      uiState.selectedBookmarks.size === 0,
     )
     elements.deleteBookmarksButton.classList.toggle(
       "hidden",
-      uiState.selectedBookmarks.size === 0
+      uiState.selectedBookmarks.size === 0,
     )
   }
 }
@@ -1755,7 +1793,7 @@ export function setupTagFilterListener(elements) {
   const tagFilterToggle =
     elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
   const tagFilterDropdown = elements.tagFilterContainer?.querySelector(
-    "#tag-filter-dropdown"
+    "#tag-filter-dropdown",
   )
   if (!tagFilterToggle || !tagFilterDropdown) return
 
@@ -1771,7 +1809,7 @@ export function setupTagFilterListener(elements) {
   tagFilterDropdown.onchange = (e) => {
     if (e.target.type === "checkbox") {
       uiState.selectedTags = Array.from(
-        tagFilterDropdown.querySelectorAll('input[type="checkbox"]:checked')
+        tagFilterDropdown.querySelectorAll('input[type="checkbox"]:checked'),
       ).map((cb) => cb.value)
       tagFilterToggle.textContent =
         uiState.selectedTags.length > 0
@@ -1779,7 +1817,7 @@ export function setupTagFilterListener(elements) {
           : translations[localStorage.getItem("appLanguage") || "en"].allTags
       customSaveUIState()
       chrome.bookmarks.getTree((tree) =>
-        renderFilteredBookmarks(tree, elements)
+        renderFilteredBookmarks(tree, elements),
       )
     }
   }
@@ -1805,7 +1843,7 @@ export function attachTreeListeners(elements, targetContainer = null) {
         document.documentElement.getAttribute("data-theme") || "light"
       const allThemes = ["light", "dark", "dracula", "onedark"]
       allThemes.forEach((theme) =>
-        contextMenu.classList.remove(`${theme}-theme`)
+        contextMenu.classList.remove(`${theme}-theme`),
       )
       contextMenu.classList.add(`${currentTheme}-theme`)
     } else {
@@ -1870,8 +1908,8 @@ export function attachTreeListeners(elements, targetContainer = null) {
                 renderTreeView(
                   node.children,
                   elements,
-                  parseInt(childrenContainer.getAttribute("data-depth")) || 1
-                )
+                  parseInt(childrenContainer.getAttribute("data-depth")) || 1,
+                ),
               )
           }
         }
@@ -1926,7 +1964,7 @@ export function attachTreeListeners(elements, targetContainer = null) {
           translations[localStorage.getItem("appLanguage") || "en"]
             .errorUnexpected || "An unexpected error occurred.",
           "error",
-          true
+          true,
         )
       }
     }
@@ -1944,7 +1982,7 @@ export function populateFolderDropdown(
   selectElement,
   bookmarkTreeNodes,
   language,
-  initialOptionText
+  initialOptionText,
 ) {
   // Lấy bản dịch
   const t = translations[language] || translations.en
@@ -2009,7 +2047,7 @@ export function populateFolderFilter(bookmarkTreeNodes, elements) {
     folderFilter,
     bookmarkTreeNodes,
     language,
-    translations[language].allBookmarks
+    translations[language].allBookmarks,
   )
 
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
@@ -2129,7 +2167,7 @@ export function showMoveFolderToFolderPopup(elements, folderToMoveId) {
       showCustomPopup(
         t.selectFolderError || "Please select a destination.",
         "error",
-        true
+        true,
       )
       return
     }
@@ -2143,7 +2181,7 @@ export function showMoveFolderToFolderPopup(elements, folderToMoveId) {
         showCustomPopup(
           t.moveFolderSuccess || "Folder moved successfully!",
           "success",
-          true
+          true,
         )
 
         // Render lại giao diện chính
@@ -2197,7 +2235,7 @@ function renderOrganizeFoldersTree(elements, container) {
 function refreshOrganizeFoldersPopup(elements) {
   const popup = document.getElementById("organize-folders-popup")
   const treeViewContainer = document.getElementById(
-    "organize-folders-tree-view"
+    "organize-folders-tree-view",
   )
 
   if (popup && !popup.classList.contains("hidden") && treeViewContainer) {
@@ -2226,13 +2264,13 @@ function updateBookmarkCount(bookmarks, elements) {
     // SỬA LỖI: Đếm những bookmark là con trực tiếp của folder này
     // Dùng parentId === id sẽ chính xác hơn isInFolder trong trường hợp này
     count = bookmarks.filter(
-      (b) => b.url && b.parentId === currentFolderId
+      (b) => b.url && b.parentId === currentFolderId,
     ).length
 
     // Nếu vẫn bằng 0 (có thể do logic đệ quy), thử dùng isInFolder làm phương án dự phòng
     if (count === 0 && bookmarks.some((b) => b.parentId === currentFolderId)) {
       count = bookmarks.filter(
-        (b) => b.url && isInFolder(b, currentFolderId)
+        (b) => b.url && isInFolder(b, currentFolderId),
       ).length
     }
   }
@@ -2350,7 +2388,7 @@ document.querySelectorAll(".close-modal").forEach((btn) => {
 export function openOrganizeFoldersModal(elements) {
   const popup = document.getElementById("organize-folders-popup")
   const treeViewContainer = document.getElementById(
-    "organize-folders-tree-view"
+    "organize-folders-tree-view",
   )
   const closeButton = document.getElementById("organize-folders-close")
   const language = localStorage.getItem("appLanguage") || "en"
@@ -2362,7 +2400,7 @@ export function openOrganizeFoldersModal(elements) {
     showCustomPopup(
       t.errorUnexpected || "An unexpected error occurred",
       "error",
-      true
+      true,
     )
     return
   }
@@ -2428,7 +2466,7 @@ export function togglePin(bookmarkId, elements) {
 
     chrome.storage.local.set({ pinnedBookmarks }, () => {
       chrome.bookmarks.getTree((tree) =>
-        renderFilteredBookmarks(tree, elements)
+        renderFilteredBookmarks(tree, elements),
       )
       const language = localStorage.getItem("appLanguage") || "en"
       const msg = pinnedBookmarks[bookmarkId]
