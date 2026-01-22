@@ -628,8 +628,8 @@
   transition:
     opacity 0.2s ease,
     transform 0.2s ease;
-  max-height: 80vh; /* Allow dropdown to scroll if content exceeds this height */
-  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 #settings-menu.hidden {
@@ -668,18 +668,17 @@
   font-size: 0.9rem;
   border: none;
   border-radius: var(--border-radius-md);
-  color: var(--text-primary);
+  background: var(--text-primary);
+  color: var(--bg-primary);
   cursor: pointer;
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    transform 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .dropdown-menu .menu-item:hover {
-  background-color: var(--text-primary);
+  background-color: var(--text-secondary);
   color: var(--bg-primary);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
 }
 
 /* HR in dropdown */
