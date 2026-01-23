@@ -1,5 +1,20 @@
 <!-- ---Extension version---- -->
 
+### [1.1.5] - [2026-01-23]
+
+## Added
+
+- Added default favicon handling.
+
+## Improved
+
+- Improved favicon loading logic.
+
+## Updated
+
+- Automatically uses local "Gohu" font as the default on first-time install
+- Version updated to 1.1.5
+
 ### [1.1.4] - [2026-01-21]
 
 ## Added
