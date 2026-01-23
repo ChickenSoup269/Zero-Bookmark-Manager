@@ -668,17 +668,18 @@
   font-size: 0.9rem;
   border: none;
   border-radius: var(--border-radius-md);
-  background: var(--text-primary);
-  color: var(--bg-primary);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.15s ease;
 }
 
 .dropdown-menu .menu-item:hover {
-  background-color: var(--text-secondary);
+  background-color: var(--text-primary);
   color: var(--bg-primary);
-  transform: translateY(-2px);
-  transition: all 0.2s ease;
+  transform: translateY(-1px);
 }
 
 /* HR in dropdown */
