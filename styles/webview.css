@@ -544,8 +544,7 @@ body {
   font-size: 0.9rem;
   border: none;
   border-radius: var(--border-radius-md);
-  background: var(--text-primary);
-  color: var(--bg-primary);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
 }

@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addToFolderCancelButton: document.getElementById("add-to-folder-cancel"),
     settingsButton: document.getElementById("settings-button"),
     settingsMenu: document.getElementById("settings-menu"),
+    openSidePanelOption: document.getElementById("open-side-panel-option"),
     exportBookmarksOption: document.getElementById("export-bookmarks-option"),
     importBookmarksOption: document.getElementById("import-bookmarks-option"),
     languageSwitcher: document.getElementById("language-switcher"),
@@ -165,6 +166,27 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         })
       })
+    }
+
+    // Sự kiện cho open-side-panel-option
+    if (elements.openSidePanelOption) {
+      elements.openSidePanelOption.addEventListener("click", () => {
+        if (chrome.sidePanel) {
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs && tabs[0]) {
+              chrome.sidePanel.open({ tabId: tabs[0].id });
+            } else {
+              console.error("No active tab found to open side panel.");
+              // Fallback if no active tab, though open() generally needs one.
+              // For demonstration, we'll just show an alert.
+              alert("Could not open side panel: No active tab found.");
+            }
+          });
+        } else {
+          console.error("Side Panel API not available.");
+          alert("Side Panel API not available in this browser.");
+        }
+      });
     }
 
     // Sự kiện cho languageSwitcher

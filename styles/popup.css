@@ -736,3 +736,21 @@
   color: var(--bg-primary);
   transform: translateY(-1px);
 }
+
+/* bookmark link view card */
+.bookmark_link {
+  font-size: 12px !important;
+  color: var(--text-muted);
+  opacity: 0.85;
+  display: flex;
+  gap: 8px;
+  max-width: 120px; /* hoặc width: 100% theo card */
+}
+
+.bookmark_domain {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 2;
+}

@@ -4,6 +4,7 @@
 
 ## Added
 
+- Added open side panel
 - Added default favicon handling.
 
 ## Improved
@@ -13,6 +14,7 @@
 ## Updated
 
 - Automatically uses local "Gohu" font as the default on first-time install
+- Update small UI
 - Version updated to 1.1.5
 
 ### [1.1.4] - [2026-01-21]
