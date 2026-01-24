@@ -325,7 +325,7 @@ function openWebPreviewModal(bookmark) {
            <a href="${
              bookmark.url
            }" target="_blank" class="modal-external-link" title="Open in New Tab" style="text-decoration:none; color:var(--text-secondary); margin-right:10px;">
-             <i class="fas fa-external-link-alt"></i> ↗
+             <i class="fas fa-link"></i> ↗
            </a>
            <button class="modal-fullscreen" title="Fullscreen">⤢</button>
            <button class="modal-close" title="Close">✕</button>
@@ -447,12 +447,38 @@ function generateQRCodePopup(url, title, faviconUrl) {
   popup.querySelector(".modal-close").onclick = () => overlay.remove()
 }
 
+function handleOpenSidePanel(bookmark) {
+  if (chrome.sidePanel) {
+    chrome.sidePanel
+      .setOptions({
+        path: "components/sidepanel/sidepanel.html",
+        enabled: true,
+      })
+      .then(() => {
+        chrome.storage.local.set({ sidePanelBookmarkId: bookmark.id }, () => {
+          chrome.sidePanel.open({ windowId: chrome.windows.WINDOW_ID_CURRENT })
+        })
+      })
+      .catch((error) => {
+        console.error("Error setting side panel options:", error)
+        showCustomPopup("Error opening side panel.", "error", true)
+      })
+  } else {
+    console.warn("chrome.sidePanel API not available.")
+    showCustomPopup(
+      "Side panel not supported or API not available.",
+      "error",
+      true,
+    )
+    chrome.tabs.create({ url: bookmark.url })
+  }
+}
+
 // --- HELPER: Open Properties (Metadata) ---
 
 // ==========================================
 // MAIN LOGIC
 // ==========================================
-
 export function updateUILanguage(elements, language) {
   const t = translations[language] || translations.en
   const requiredElements = [
@@ -581,7 +607,8 @@ export function updateUILanguage(elements, language) {
   updateButtonText(elements.organizeFoldersButton, t.organizeFolders)
   elements.exportBookmarksOption.innerHTML = `${t.exportBookmarks}  <i class="fas fa-download"></i>`
   elements.importBookmarksOption.innerHTML = `${t.importBookmarks}  <i class="fas fa-upload"></i>`
-  elements.editInNewTabOption.innerHTML = `${t.editInNewTabOption}  <i class="fas fa-external-link-alt"></i>`
+  elements.editInNewTabOption.innerHTML = `${t.editInNewTabOption} <i class="fas fa-location-arrow"></i>`
+  elements.openSidePanelOption.innerHTML = `${t.openSidePanel}  <i class="far fa-caret-square-right"></i>`
   elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
     ? t.hideCheckboxes
     : t.showCheckboxes
@@ -1254,7 +1281,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
        ${healthIcon} 
       ${createDropdownHTML(bookmark, language)}
     </div>
-    <div style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px;">
+    <div class="bookmark_link" style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px;">
         <span>${extractDomain(bookmark.url)}</span>
     </div>
     <button class="view-detail-btn-action" style="background:var(--text-primary);color:var(--bg-primary);border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:600;margin-top:8px; width:100%;">
@@ -1753,6 +1780,23 @@ function commonPostRenderOps(elements) {
       if (bookmark) {
         const faviconUrl = getFaviconUrl(bookmark.url)
         generateQRCodePopup(bookmark.url, bookmark.title, faviconUrl)
+      }
+      const dropdownMenu = btn.closest(".dropdown-menu")
+      if (dropdownMenu) dropdownMenu.classList.add("hidden")
+    })
+  })
+
+  // 4. Open Side Panel Buttons
+  const openSidePanelButtons = elements.folderListDiv.querySelectorAll(
+    ".open-side-panel-btn",
+  )
+  openSidePanelButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation()
+      const bookmarkId = btn.getAttribute("data-id")
+      const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
+      if (bookmark) {
+        handleOpenSidePanel(bookmark)
       }
       const dropdownMenu = btn.closest(".dropdown-menu")
       if (dropdownMenu) dropdownMenu.classList.add("hidden")
