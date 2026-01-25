@@ -364,7 +364,7 @@ export const translations = {
     deleteBookmarkOption: "Xóa",
     renameBookmarkOption: "Đổi tên",
     editInNewTabOption: "Mở Tab Web",
-    openSidePanel: "Mở Bảng Điều Khiển",
+    openSidePanel: "Mở popup bên phải",
     deleteBookmarks: "Xóa bookmark",
     importSuccess: "Bookmark đã được nhập thành công!",
     importDuplicatePrompt:

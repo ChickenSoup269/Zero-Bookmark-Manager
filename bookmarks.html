@@ -165,6 +165,20 @@
                     <button id="export-bookmarks-option" class="menu-item">Export Bookmarks</button>
                     <button id="import-bookmarks-option" class="menu-item">Import Bookmarks</button>
                     <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
+                    <div id="quick-open-settings" class="quick-open-settings">
+                        <label>
+                            <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup" />
+                            <span data-i18n="quickOpenPopup">Popup</span>
+                        </label>
+                        <label>
+                            <input type="radio" id="quick-open-sidepanel" name="quickOpenAction" value="sidepanel" />
+                            <span data-i18n="quickOpenSidePanel">Side Panel</span>
+                        </label>
+                        <label>
+                            <input type="radio" id="quick-open-web" name="quickOpenAction" value="web" />
+                            <span data-i18n="quickOpenWeb">Full Page</span>
+                        </label>
+                    </div>
                     <!-- <hr> Second HR after bookmark actions -->
                     <span class="dropdown-section-title" data-i18n="bookmarkHealthTitle">Bookmark Health &
                         Duplicates</span>

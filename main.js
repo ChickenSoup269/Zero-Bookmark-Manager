@@ -172,21 +172,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (elements.openSidePanelOption) {
       elements.openSidePanelOption.addEventListener("click", () => {
         if (chrome.sidePanel) {
-          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs && tabs[0]) {
-              chrome.sidePanel.open({ tabId: tabs[0].id });
+          // Get the last focused window that is a normal browser window
+          chrome.windows.getLastFocused({ windowTypes: ["normal"] }, (window) => {
+            if (window) {
+              // Open the side panel for that window
+              // It will open on the window's active tab by default
+              chrome.sidePanel.open({ windowId: window.id })
             } else {
-              console.error("No active tab found to open side panel.");
-              // Fallback if no active tab, though open() generally needs one.
-              // For demonstration, we'll just show an alert.
-              alert("Could not open side panel: No active tab found.");
+              console.error("No normal window found to open side panel.")
+              alert("Could not open side panel: No active window found.")
             }
-          });
+          })
         } else {
-          console.error("Side Panel API not available.");
-          alert("Side Panel API not available in this browser.");
+          console.error("Side Panel API not available.")
+          alert("Side Panel API not available in this browser.")
         }
-      });
+      })
     }
 
     // Sự kiện cho languageSwitcher
