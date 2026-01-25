@@ -36,7 +36,7 @@
 </a>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Generic badge](https://img.shields.io/badge/Version-1.1.5-white.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Version-1.1.6-white.svg)](https://shields.io/)
 
 </p>
 <p>
@@ -81,6 +81,7 @@ Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bo
 - **Generate QR Code:** Create QR codes for your bookmarks for easy sharing and access on other devices.
 - **Chatbot (Beta):** Manage bookmarks and control the extension using natural language. Create, delete, and organize bookmarks and folders, change themes, views, and more, all from the chat interface.
 - **Duplicate Management:** Automatically removes duplicate bookmarks upon creation. Includes a manual option in the settings menu to scan and clean all existing duplicates.
+- **Configurable Click Action:** Choose whether clicking the extension icon opens a popup, the full page, or the side panel.
 
 ## Running Tests
 
@@ -146,6 +147,7 @@ Install Bookmark-Manager
 | `Edit in new tabs`       | Use extension with web view                                                                                                                                                                                                                  |
 | `Open Side Panel`        | Open bookmark in a side panel for quick viewing.                                                                                                                                                                                             |
 | `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs                                                                                                                                                  |
+| `Quick Open Action`      | In the main settings menu, choose the default action (Popup, Full Page, Side Panel) for clicking the extension icon.                                                                                                                           |
 | `Tags`                   | Choose a sorting tags option                                                                                                                                                                                                                 |
 | `Pin to top`             | Choose a bookmark to pin on top                                                                                                                                                                                                              |
 | `Check Link Health`      | Verify bookmark health via settings or dropdown.                                                                                                                                                                                             |

@@ -39,6 +39,7 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 - **Tạo mã QR cho Bookmark:** Tạo mã QR cho các dấu trang của bạn để dễ dàng chia sẻ và truy cập trên các thiết bị khác.
 - **Chatbot (Beta):** Quản lý bookmark và kiểm soát tiện ích mở rộng bằng ngôn ngữ tự nhiên. Tạo, xóa và tổ chức bookmark và thư mục, thay đổi chủ đề, chế độ xem, v.v., tất cả từ giao diện chat.
 - **Quản lý Bookmark Trùng lặp:** Tự động xóa bookmark trùng lặp khi tạo. Bao gồm tùy chọn thủ công trong menu cài đặt để quét và dọn dẹp tất cả các mục trùng lặp hiện có.
+- **Hành động mở nhanh có thể tùy chỉnh:** Cho phép người dùng chọn hành động mặc định khi nhấp vào biểu tượng tiện ích (mở Popup, Trang đầy đủ hoặc Bảng điều khiển bên).
 
 ## Running Tests
 
@@ -101,6 +102,7 @@ Cài đặt Bookmark-Manager
 | `Chỉnh sửa trong tab mới`        | Sử dụng tiện ích trong chế độ xem web.                                                                                                                                                                                                                            |
 | `Mở trong bảng điều khiển`      | Mở bookmark trong bảng điều khiển bên cạnh để xem nhanh.                                                                                                                                                                                   |
 | `Cài đặt lưu trữ ở local chrome` | Lưu dữ liệu tùy chỉnh cho tìm kiếm, chọn, sắp xếp, chế độ xem, trạng thái thư mục thu gọn, thẻ, và checkbox.                                                                                                                                                      |
+| `Hành động mở nhanh`      | Trong menu cài đặt chính, chọn hành động mặc định (Popup, Trang đầy đủ, Bảng điều khiển bên) khi nhấp vào biểu tượng tiện ích.                                                                                                                           |
 | `Tags`                           | Chọn tùy chọn sắp xếp theo thẻ.                                                                                                                                                                                                                                   |
 | `Ghim lên đầu`                   | Chọn bookmark ghim lên đầu trang                                                                                                                                                                                                                                  |
 | `Kiểm tra tình trạng liên kết`   | Xác minh tình trạng liên kết bookmark qua cài đặt hoặc menu thả xuống.                                                                                                                                                                                            |

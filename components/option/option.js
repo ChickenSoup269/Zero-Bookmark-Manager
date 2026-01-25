@@ -159,8 +159,10 @@ function saveStorageSettings() {
 }
 
 export function customSaveUIState() {
-  chrome.storage.local.get(["storageSettings"], (result) => {
+  // Get the existing quickOpenAction along with storageSettings
+  chrome.storage.local.get(["storageSettings", "quickOpenAction"], (result) => {
     const storageSettings = result.storageSettings || defaultStorageSettings
+    const existingQuickOpenAction = result.quickOpenAction // Get existing value
 
     const state = {
       uiState: {},
@@ -171,6 +173,12 @@ export function customSaveUIState() {
       tagColors: uiState.tagColors,
       tagTextColors: uiState.tagTextColors,
     }
+
+    // Add the existing quickOpenAction to the state object to preserve it
+    if (existingQuickOpenAction) {
+      state.quickOpenAction = existingQuickOpenAction
+    }
+
     if (storageSettings.searchQuery) {
       state.uiState.searchQuery = uiState.searchQuery
     }
@@ -345,6 +353,34 @@ export function loadUIState(callback) {
   customLoadUIState(callback)
 }
 
+function saveQuickOpenSetting() {
+  const selectedAction = document.querySelector(
+    'input[name="quickOpenAction"]:checked'
+  )
+  if (selectedAction) {
+    chrome.storage.local.set({ quickOpenAction: selectedAction.value }, () => {
+      if (chrome.runtime.lastError) {
+        console.error(
+          "Error saving Quick Open setting:",
+          chrome.runtime.lastError
+        )
+      } else {
+        console.log("Quick Open Action saved:", selectedAction.value)
+      }
+    })
+  }
+}
+
+function loadQuickOpenSetting() {
+  chrome.storage.local.get(["quickOpenAction"], (result) => {
+    const quickOpenAction = result.quickOpenAction || "popup" // Default to 'popup'
+    const radio = document.getElementById(`quick-open-${quickOpenAction}`)
+    if (radio) {
+      radio.checked = true
+    }
+  })
+}
+
 function initializeEventListeners() {
   const settingsButton = document.getElementById("localstorage-settings-option")
   const saveButton = document.getElementById("localstorage-settings-save")
@@ -470,14 +506,22 @@ function initializeEventListeners() {
     }
   }
   document.addEventListener("keydown", handleKeydown)
+
+  // Quick Open Settings
+  const quickOpenRadios = document.querySelectorAll(
+    'input[name="quickOpenAction"]'
+  )
+  quickOpenRadios.forEach((radio) => {
+    radio.addEventListener("change", saveQuickOpenSetting)
+  })
 }
 
 if (document.readyState === "loading") {
-  chrome.bookmarks.getTree((bookmarkTreeNodes) => {
-    populateTagFilter(elements)
-    renderFilteredBookmarks(bookmarkTreeNodes, elements)
-    attachTreeListeners(elements)
+  document.addEventListener("DOMContentLoaded", () => {
+    initializeEventListeners()
+    loadQuickOpenSetting()
   })
 } else {
   initializeEventListeners()
+  loadQuickOpenSetting()
 }

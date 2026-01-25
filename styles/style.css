@@ -2756,3 +2756,40 @@ html {
     padding: 12px;
   }
 }
+
+/* Quick Open Settings */
+.quick-open-settings {
+  display: flex;
+  flex-direction: column; /* xuống hàng */
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.quick-open-settings label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.quick-open-settings label:hover {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+}
+
+.quick-open-settings input[type="radio"] {
+  accent-color: var(--bg-primary);
+  cursor: pointer;
+}
+
+.quick-open-settings input[type="radio"]:checked + span {
+  font-weight: 600;
+  color: var(--text-primary);
+}
