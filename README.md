@@ -36,7 +36,7 @@
 </a>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Generic badge](https://img.shields.io/badge/Version-1.1.6-white.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Version-1.1.5-white.svg)](https://shields.io/)
 
 </p>
 <p>
@@ -147,7 +147,7 @@ Install Bookmark-Manager
 | `Edit in new tabs`       | Use extension with web view                                                                                                                                                                                                                  |
 | `Open Side Panel`        | Open bookmark in a side panel for quick viewing.                                                                                                                                                                                             |
 | `Local Storage Settings` | Custom save data use in search, select, sort, view mode, collapsed folders, tags, checkboxs                                                                                                                                                  |
-| `Quick Open Action`      | In the main settings menu, choose the default action (Popup, Full Page, Side Panel) for clicking the extension icon.                                                                                                                           |
+| `Quick Open Action`      | In the main settings menu, choose the default action (Popup, Full Page, Side Panel) for clicking the extension icon.                                                                                                                         |
 | `Tags`                   | Choose a sorting tags option                                                                                                                                                                                                                 |
 | `Pin to top`             | Choose a bookmark to pin on top                                                                                                                                                                                                              |
 | `Check Link Health`      | Verify bookmark health via settings or dropdown.                                                                                                                                                                                             |
