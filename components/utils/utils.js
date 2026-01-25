@@ -309,6 +309,10 @@ export const translations = {
     extensionOptionsTitle: "Extension Options",
     bookmarkHealthTitle: "Bookmark Health & Duplicates",
     bookmarkHealthSmallTitle: "Check Bookmarks",
+    quickOpenTitle: "Quick Open Action",
+    quickOpenPopup: "Default Popup",
+    quickOpenSidePanel: "Default Side Panel",
+    quickOpenWeb: "Default Web Tab",
   },
   vi: {
     welcomeMessage: "Chào mừng đến với Zero Bookmark Manager Chat!",
@@ -617,6 +621,10 @@ export const translations = {
     extensionOptionsTitle: "Tùy chọn tiện ích",
     bookmarkHealthTitle: "Kiểm tra Bookmark",
     bookmarkHealthSmallTitle: "Kiểm tra Bookmark",
+    quickOpenTitle: "Hành động Mở Nhanh",
+    quickOpenPopup: "Popup mặc định",
+    quickOpenSidePanel: "Mở panel mặc định",
+    quickOpenWeb: "Mở web mặc định",
   },
 }
 

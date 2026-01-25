@@ -30,17 +30,45 @@ chrome.bookmarks.onCreated.addListener(handleDuplicateBookmarks)
 let popupWindowId = null
 
 function createPopupWindow() {
-  chrome.windows.create(
-    {
-      url: "index.html",
-      type: "popup",
-      width: 380,
-      height: 680,
-    },
-    (window) => {
-      popupWindowId = window.id
-    },
-  )
+  chrome.system.display.getInfo((displays) => {
+    const display = displays[0]
+    const screenWidth = display.workArea.width
+
+    const popupWidth = 380
+    const popupHeight = 680
+    const padding = 20
+
+    chrome.windows.create(
+      {
+        url: "index.html",
+        type: "popup",
+        width: popupWidth,
+        height: popupHeight,
+        left: screenWidth - popupWidth - padding,
+        top: display.workArea.height - popupHeight - padding,
+      },
+      (window) => {
+        popupWindowId = window.id
+      },
+    )
+  })
+}
+
+function findExistingPopup(callback) {
+  const popupUrl = chrome.runtime.getURL("index.html")
+
+  chrome.windows.getAll({ populate: true }, (windows) => {
+    for (const win of windows) {
+      if (win.type !== "popup") continue
+
+      const hasPopupTab = win.tabs?.some((tab) => tab.url === popupUrl)
+
+      if (hasPopupTab) {
+        return callback(win)
+      }
+    }
+    callback(null)
+  })
 }
 
 chrome.action.onClicked.addListener((tab) => {
@@ -63,20 +91,15 @@ chrome.action.onClicked.addListener((tab) => {
     } else if (action === "sidepanel") {
       chrome.sidePanel.open({ windowId: tab.windowId })
     } else {
-      // 'popup'
-      if (popupWindowId !== null) {
-        chrome.windows.get(popupWindowId, (window) => {
-          if (chrome.runtime.lastError) {
-            // Window was closed, create a new one.
-            createPopupWindow()
-          } else {
-            // Window exists, just focus it.
-            chrome.windows.update(popupWindowId, { focused: true })
-          }
-        })
-      } else {
-        createPopupWindow()
-      }
+      // popup
+      findExistingPopup((existingWindow) => {
+        if (existingWindow) {
+          chrome.windows.update(existingWindow.id, { focused: true })
+          popupWindowId = existingWindow.id
+        } else {
+          createPopupWindow()
+        }
+      })
     }
   })
 })
