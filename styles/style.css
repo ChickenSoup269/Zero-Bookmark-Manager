@@ -2773,15 +2773,17 @@ html {
   border: 1px solid #ddd;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
   background: var(--bg-primary);
   color: var(--text-primary);
+  transition: all 0.3s ease;
 }
 
 .quick-open-settings label:hover {
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--text-primary);
+  color: var(--bg-primary);
   border-color: var(--accent-color);
+  transition: all 0.2s ease;
+  transform: translateY(-4px);
 }
 
 .quick-open-settings input[type="radio"] {
@@ -2789,7 +2791,9 @@ html {
   cursor: pointer;
 }
 
-.quick-open-settings input[type="radio"]:checked + span {
+.quick-open-settings label:has(input[type="radio"]:checked) {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--bg-primary);
   font-weight: 600;
-  color: var(--text-primary);
 }
