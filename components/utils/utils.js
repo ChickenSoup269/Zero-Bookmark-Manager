@@ -55,7 +55,7 @@ export const translations = {
     addToFolderOption: "Add to Folder",
     deleteBookmarkOption: "Delete",
     renameBookmarkOption: "Rename",
-    editInNewTabOption: "Edit in New Tab",
+    editInNewTabOption: "Open Web View",
     openSidePanel: "Open Side Panel",
     deleteBookmarks: "Delete bookmark",
     importSuccess: "Bookmarks imported successfully!",

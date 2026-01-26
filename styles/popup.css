@@ -754,3 +754,17 @@
   min-width: 0;
   flex: 2;
 }
+
+/* settings hidden menu  */
+#settings-menu > select.hidden,
+#settings-menu > button.hidden,
+#settings-menu > div.hidden,
+#settings-menu > hr.hidden {
+  height: 0;
+  opacity: 0;
+  display: none;
+  visibility: hidden;
+  margin: 0;
+  padding: 0;
+  border: none;
+}

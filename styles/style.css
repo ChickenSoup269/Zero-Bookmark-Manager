@@ -780,30 +780,66 @@ html {
 .dropdown-section-title {
   display: flex;
   align-items: center;
-  text-align: center;
-  padding: 0 12px;
+  text-align: left; /* Changed from center */
   font-weight: bold;
+  padding: 4px;
   color: var(--text-muted);
   font-size: 0.85em;
-  margin: 10px 0;
+  margin: 2px 0px 2px 0px;
+  border-radius: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  user-select: none;
+  justify-content: flex-start; /* Align content to the start (left) */
+  transition: all 0.2s ease-in-out;
 }
 
-.dropdown-section-title::before,
-.dropdown-section-title::after {
-  content: "";
-  flex: 1; /* Allow lines to take up available space */
-  border-bottom: 1px dashed var(--border-color);
+.dropdown-section-title:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  transition: all 0.2s ease-in-out;
+}
+
+.dropdown-section-title::before {
+  content: "−";
+}
+
+.dropdown-section-title.collapsed::before {
+  content: "+";
 }
 
 /* Add some space between the lines and the text */
 .dropdown-section-title:not(:empty)::before {
-  margin-right: 0.5em;
+  margin-right: 1em;
 }
 
 .dropdown-section-title:not(:empty)::after {
-  margin-left: 0.5em;
+  content: ">";
+  font-size: 0.9em;
+  margin-left: auto;
+  margin-right: 0;
+  transition: all 0.2s ease-in-out;
+  display: inline-block;
+  flex: 0 0 auto;
+  border-bottom: none;
+  transform: rotate(0deg);
+}
+
+.dropdown-section-title.collapsed {
+  color: var(--focus-outline);
+  transition: all 0.2s ease-in-out;
+}
+
+.dropdown-section-title.collapsed:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  transform: translateY(-2px);
+  transition: all 0.2s ease-in-out;
+}
+
+.dropdown-section-title:not(.collapsed):not(:empty)::after {
+  transform: rotate(90deg);
 }
 
 /* Ensure dropdown-menu-2 is scrollable */
