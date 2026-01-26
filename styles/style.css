@@ -2811,15 +2811,15 @@ html {
   cursor: pointer;
   background: var(--bg-primary);
   color: var(--text-primary);
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
 }
 
 .quick-open-settings label:hover {
   background: var(--text-primary);
   color: var(--bg-primary);
   border-color: var(--accent-color);
-  transition: all 0.2s ease;
-  transform: translateY(-4px);
+  transition: all 0.3s ease;
+  transform: translateY(-2px);
 }
 
 .quick-open-settings input[type="radio"] {
