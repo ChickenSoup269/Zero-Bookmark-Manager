@@ -1,6 +1,10 @@
 // components/controller/uiControls.js
 import { translations, debounce } from "../utils/utils.js"
-import { getBookmarkTree, isInFolder, removeDuplicateBookmarks } from "../bookmarks.js"
+import {
+  getBookmarkTree,
+  isInFolder,
+  removeDuplicateBookmarks,
+} from "../bookmarks.js"
 import {
   updateUILanguage,
   updateTheme,
@@ -8,7 +12,6 @@ import {
   handleCheckHealth,
 } from "../ui.js"
 import { uiState, saveUIState } from "../state.js"
-import { openRenameFolderPopup } from "./renameFolder.js"
 import { handleDeleteSelectedBookmarks } from "./bookmarkActions.js"
 
 export function setupUIControlListeners(elements) {
@@ -28,7 +31,7 @@ export function setupUIControlListeners(elements) {
       "font-normal",
       "font-anonymiceProNerd",
       "font-proFontWindowsNerdFontPropo",
-      "font-jetBrainsMonoNerdFont"
+      "font-jetBrainsMonoNerdFont",
     )
     document.body.classList.add(`font-${e.target.value}`)
     localStorage.setItem("appFont", e.target.value)
@@ -104,7 +107,7 @@ export function setupUIControlListeners(elements) {
   })
 
   elements.editInNewTabOption = document.getElementById(
-    "edit-in-new-tab-option"
+    "edit-in-new-tab-option",
   )
   if (elements.editInNewTabOption) {
     elements.editInNewTabOption.addEventListener("click", () => {
@@ -127,7 +130,7 @@ export function setupUIControlListeners(elements) {
     elements.addToFolderButton.classList.toggle("hidden", !hasSelectedBookmarks)
     elements.deleteBookmarksButton.classList.toggle(
       "hidden",
-      !hasSelectedBookmarks
+      !hasSelectedBookmarks,
     )
     elements.deleteFolderButton.classList.toggle("hidden", !hasSelectedFolder)
   }
@@ -149,19 +152,19 @@ export function setupUIControlListeners(elements) {
       let filtered = uiState.bookmarks
       if (uiState.selectedFolderId) {
         filtered = filtered.filter((bookmark) =>
-          isInFolder(bookmark, uiState.selectedFolderId)
+          isInFolder(bookmark, uiState.selectedFolderId),
         )
       }
       if (uiState.searchQuery) {
         filtered = filtered.filter(
           (bookmark) =>
             bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
-            bookmark.url?.toLowerCase().includes(uiState.searchQuery)
+            bookmark.url?.toLowerCase().includes(uiState.searchQuery),
         )
       }
       renderFilteredBookmarks(uiState.bookmarkTree, elements)
       saveUIState()
-    }, 150)
+    }, 150),
   )
 
   elements.clearSearchButton.addEventListener("click", () => {
@@ -170,7 +173,7 @@ export function setupUIControlListeners(elements) {
     let filtered = uiState.bookmarks
     if (uiState.selectedFolderId) {
       filtered = filtered.filter((bookmark) =>
-        isInFolder(bookmark, uiState.selectedFolderId)
+        isInFolder(bookmark, uiState.selectedFolderId),
       )
     }
     renderFilteredBookmarks(uiState.bookmarkTree, elements)
@@ -184,14 +187,14 @@ export function setupUIControlListeners(elements) {
     let filtered = uiState.bookmarks
     if (uiState.selectedFolderId) {
       filtered = filtered.filter((bookmark) =>
-        isInFolder(bookmark, uiState.selectedFolderId)
+        isInFolder(bookmark, uiState.selectedFolderId),
       )
     }
     if (uiState.searchQuery) {
       filtered = filtered.filter(
         (bookmark) =>
           bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
-          bookmark.url?.toLowerCase().includes(uiState.searchQuery)
+          bookmark.url?.toLowerCase().includes(uiState.searchQuery),
       )
     }
     renderFilteredBookmarks(uiState.bookmarkTree, elements)
@@ -205,14 +208,14 @@ export function setupUIControlListeners(elements) {
     let filtered = uiState.bookmarks
     if (uiState.selectedFolderId) {
       filtered = filtered.filter((bookmark) =>
-        isInFolder(bookmark, uiState.selectedFolderId)
+        isInFolder(bookmark, uiState.selectedFolderId),
       )
     }
     if (uiState.searchQuery) {
       filtered = filtered.filter(
         (bookmark) =>
           bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
-          bookmark.url?.toLowerCase().includes(uiState.searchQuery)
+          bookmark.url?.toLowerCase().includes(uiState.searchQuery),
       )
     }
     renderFilteredBookmarks(uiState.bookmarkTree, elements)
@@ -230,6 +233,40 @@ export function setupUIControlListeners(elements) {
     elements.settingsMenu.classList.toggle("hidden")
   })
 
+  // ADD THIS
+  elements.settingsMenu.addEventListener("click", (e) => {
+    const target = e.target
+    if (target.classList.contains("dropdown-section-title")) {
+      e.stopPropagation()
+      target.classList.toggle("collapsed")
+      let nextElement = target.nextElementSibling
+      while (
+        nextElement &&
+        !nextElement.classList.contains("dropdown-section-title")
+      ) {
+        nextElement.classList.toggle("hidden")
+        nextElement = nextElement.nextElementSibling
+      }
+
+      // Save collapsed state to local storage
+      let collapsedStates = JSON.parse(
+        localStorage.getItem("settingsSectionCollapsedStates") || "{}",
+      )
+      const sectionId = target.dataset.i18n
+
+      if (target.classList.contains("collapsed")) {
+        collapsedStates[sectionId] = true
+      } else {
+        delete collapsedStates[sectionId]
+      }
+      localStorage.setItem(
+        "settingsSectionCollapsedStates",
+        JSON.stringify(collapsedStates),
+      )
+    }
+  })
+  // END ADD
+
   // Nút kiểm tra tình trạng link (Check Links)
   if (elements.checkHealthButton) {
     elements.checkHealthButton.addEventListener("click", (e) => {
@@ -243,17 +280,17 @@ export function setupUIControlListeners(elements) {
   // Nút kiểm tra trùng lặp (Check Duplicates)
   if (elements.checkDuplicatesButton) {
     elements.checkDuplicatesButton.addEventListener("click", (e) => {
-      e.stopPropagation();
+      e.stopPropagation()
       removeDuplicateBookmarks((removedCount) => {
         if (removedCount > 0) {
           getBookmarkTree((bookmarkTreeNodes) => {
-            renderFilteredBookmarks(bookmarkTreeNodes, elements);
-          });
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          })
         }
-      });
-    });
+      })
+    })
   } else {
-    console.warn("check-duplicates-btn element not found");
+    console.warn("check-duplicates-btn element not found")
   }
 
   // elements.renameFolderOption.addEventListener("click", () => {

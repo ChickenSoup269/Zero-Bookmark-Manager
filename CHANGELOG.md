@@ -1,25 +1,29 @@
 <!-- ---Extension version---- -->
 
-### [1.1.5] - [2026-01-25]
+### [1.1.5] - 2026-01-25
 
 ## Added
 
-- **Configurable Click Action:** Added a setting in the settings menu to allow users to choose the default action when clicking the extension icon (open Popup, Full Page, or Side Panel).
-- Added open side panel
-- Added default favicon handling.
+- **Configurable Click Action:** Added a setting that lets users choose what happens when clicking the extension icon (Popup, Full Page, or Side Panel).
+- Side Panel support.
+- Default favicon handling for bookmarks without icons.
 
 ## Improved
 
-- **Popup Window Behavior:** The popup window is now reused if it is already open, preventing multiple popup windows from being created.
-- **Side Panel Opening:** The "Open Side Panel" button in the popup window now correctly opens the side panel in the main browser window.
+- **Popup Window Behavior:** The popup window is now reused if already open, preventing duplicate popup windows.
+- **Side Panel Opening:** Opening the side panel from the popup now correctly focuses the main browser window.
 - Improved favicon loading logic.
+- Settings: bookmark options can now be shown or hidden with a section title.
+
+## Fixed
+
+- Fixed an issue where saving other UI settings could reset the **Quick Open Action** preference.
 
 ## Updated
 
-- Fixed an issue where saving other UI settings would inadvertently reset the "Quick Open Action" preference.
-- Automatically uses local "Gohu" font as the default on first-time install
-- Update small UI
-- Version updated to 1.1.5
+- Automatically uses the local **Gohu** font on first install.
+- Minor UI refinements.
+- Version bumped to **1.1.5**.
 
 ### [1.1.4] - [2026-01-21]
 

@@ -130,6 +130,38 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     })
 
+    // Load saved states for settings sections
+    const savedCollapsedStates = JSON.parse(localStorage.getItem("settingsSectionCollapsedStates") || "{}");
+
+    document.querySelectorAll('#settings-menu .dropdown-section-title').forEach(title => {
+        const sectionId = title.dataset.i18n;
+        let shouldBeCollapsed = savedCollapsedStates[sectionId] === true;
+
+        let nextElement = title.nextElementSibling;
+        while(nextElement && !nextElement.classList.contains('dropdown-section-title')) {
+            if (shouldBeCollapsed) {
+                if (!nextElement.classList.contains('hidden')) {
+                    nextElement.classList.add('hidden');
+                }
+            } else {
+                if (nextElement.classList.contains('hidden')) {
+                    nextElement.classList.remove('hidden');
+                }
+            }
+            nextElement = nextElement.nextElementSibling;
+        }
+
+        if (shouldBeCollapsed) {
+            if (!title.classList.contains('collapsed')) {
+                title.classList.add('collapsed');
+            }
+        } else {
+            if (title.classList.contains('collapsed')) {
+                title.classList.remove('collapsed');
+            }
+        }
+    });
+
     // Lấy dữ liệu bookmark
     getBookmarkTree((bookmarkTreeNodes) => {
       if (bookmarkTreeNodes) {
