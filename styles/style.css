@@ -1,41 +1,27 @@
 @font-face {
   font-family: "GohuFont";
-  src: url("/fonts/GohuFont11NerdFontPropo-Regular.ttf") format("truetype");
-  font-weight: normal;
-  font-size: small;
-  font-style: normal;
-}
-@font-face {
-  font-family: "AnonymiceProNerdFont";
-  src: url("/fonts/AnonymiceProNerdFontPropo-Regular.ttf") format("truetype");
+  src: url("/fonts/GohuFont11NerdFontPropo-Regular.woff2") format("woff2");
   font-weight: normal;
   font-size: small;
   font-style: normal;
 }
 @font-face {
   font-family: "ProFontWindowsNerdFontPropo";
-  src: url("/fonts/ProFontWindowsNerdFontPropo-Regular.ttf") format("truetype");
+  src: url("/fonts/ProFontWindowsNerdFontPropo-Regular.woff2") format("woff2");
   font-weight: normal;
   font-size: small;
   font-style: normal;
 }
 @font-face {
   font-family: "JetBrainsMonoNerdFont";
-  src: url("/fonts/JetBrainsMonoNerdFontPropo-Regular.ttf") format("truetype");
+  src: url("/fonts/JetBrainsMonoNerdFontPropo-Regular.woff2") format("woff2");
   font-weight: normal;
   font-size: small;
   font-style: normal;
 }
 @font-face {
   font-family: "0xProtoNerdFontMono";
-  src: url("/fonts/0xProtoNerdFontMono-Regular.ttf") format("truetype");
-  font-weight: normal;
-  font-size: small;
-  font-style: normal;
-}
-@font-face {
-  font-family: "HackNerdFontPropo";
-  src: url("/fonts/HackNerdFontPropo-Regular.ttf") format("truetype");
+  src: url("/fonts/0xProtoNerdFontMono-Regular.woff2") format("woff2");
   font-weight: normal;
   font-size: small;
   font-style: normal;
@@ -304,17 +290,9 @@ textarea.input {
   box-sizing: border-box;
 }
 
-body.font-hackNerd,
-body.font-hackNerd * {
-  font-family: "HackNerdFontPropo", Arial, sans-serif !important;
-}
 body.font-gohu,
 body.font-gohu * {
   font-family: "GohuFont", Arial, sans-serif !important;
-}
-body.font-anonymiceProNerd,
-body.font-anonymiceProNerd * {
-  font-family: "AnonymiceProNerdFont", Arial, sans-serif !important;
 }
 body.font-proFontWindowsNerdFontPropo,
 body.font-proFontWindowsNerdFontPropo * {
