@@ -4,7 +4,7 @@
 
 ## Added
 
-xxx
+[none]
 
 ## Improved
 
@@ -12,12 +12,12 @@ xxx
 
 ## Fixed
 
-xxx
+[none]
 
 ## Updated
 
 - Cleaned up unused heavy fonts (HackNerd and AnonymiceProNerd)
-- Bundle Size: Reduced total extension size from 6.1MiB down to ~2MiB
+- Bundle Size: Reduced total extension size from 6.1MiB down to ~3MiB
 
 ### [1.1.5] - 2026-01-25
 
