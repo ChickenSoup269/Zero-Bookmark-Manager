@@ -1,5 +1,24 @@
 <!-- ---Extension version---- -->
 
+### [1.1.6] - 2026-01-27
+
+## Added
+
+xxx
+
+## Improved
+
+- Performance: Converted all font assets from .ttf to .woff2 to boost loading speed and reduce memory usage
+
+## Fixed
+
+xxx
+
+## Updated
+
+- Cleaned up unused heavy fonts (HackNerd and AnonymiceProNerd)
+- Bundle Size: Reduced total extension size from 6.1MiB down to ~2MiB
+
 ### [1.1.5] - 2026-01-25
 
 ## Added
