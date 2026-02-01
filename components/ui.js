@@ -1585,6 +1585,8 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
   // Chỉ gắn listener tổng ở lần gọi đầu tiên (root)
   if (depth === 0) {
     actualTargetElement.appendChild(fragment)
+    // Call commonPostRenderOps to attach listeners for buttons inside bookmarks
+    commonPostRenderOps(elements)
     // Call attachTreeListeners with the correct element for event delegation
     if (targetElement) {
       // If rendering to a specific target (popup), attach listeners to it
@@ -1933,7 +1935,7 @@ export function attachTreeListeners(elements, targetContainer = null) {
       return
     }
 
-    // 3. Folder Toggle (Logic đóng mở folder)
+    // 4. Folder Toggle (Logic đóng mở folder)
     const toggle = e.target.closest(".folder-toggle")
     if (toggle) {
       e.stopPropagation()
