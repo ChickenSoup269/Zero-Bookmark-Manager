@@ -54,6 +54,10 @@
                     <button id="export-bookmarks-option" class="menu-item">Export Bookmarks</button>
                     <button id="import-bookmarks-option" class="menu-item">Import Bookmarks</button>
                     <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
+                    <button id="organize-folders-button" class="menu-item">
+
+                        <i class="fas fa-sitemap" aria-hidden="true"></i>
+                        Organize Folders</button>
                     <span class="dropdown-section-title" data-i18n="quickOpenTitle">Quick Open Action</span>
                     <div id="quick-open-settings" class="quick-open-settings">
                         <label>
@@ -126,6 +130,15 @@
             <button id="clear-search" class="button clear">✖</button>
         </div>
         <div id="folder-list" class="folder-list"></div>
+
+        <div id="folder-context-menu" class="context-menu hidden"
+            style="position: fixed; z-index: 2000; min-width: 150px;">
+            <div class="menu-item" id="context-menu-move-folder">
+                <i class="fas fa-folder-open" style="width: 14px; text-align: center; margin-right: 8px;"></i>
+                <span>Move to Folder</span>
+            </div>
+        </div>
+
         <div id="rename-popup" class="rename-popup hidden" role="dialog" aria-labelledby="rename-title">
             <div class="rename-popup-content">
                 <h3 id="rename-title">Rename</h3>
@@ -282,6 +295,21 @@
                 <div class="rename-popup-buttons">
                     <button id="localstorage-settings-save" class="button save">Save</button>
                     <button id="localstorage-settings-cancel" class="button cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="organize-folders-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="organize-folders-title">
+            <div class="rename-popup-content organize-folders-popup-content">
+
+                <h3 id="organize-folders-title">Organize Folders</h3>
+                <div class="organize-folders-tree-container">
+                    <!-- Tree view of folders and bookmarks will be rendered here -->
+                    <div id="organize-folders-tree-view"></div>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="organize-folders-close" class="button cancel">Close</button>
                 </div>
             </div>
         </div>

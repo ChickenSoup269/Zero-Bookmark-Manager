@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     checkDuplicatesButton: document.getElementById("check-duplicates-btn"),
     healthSortFilter: document.getElementById("health-sort-filter"),
     organizeFoldersButton: document.getElementById("organize-folders-button"),
+    organizeFoldersPopup: document.getElementById("organize-folders-popup"),
     folderContextMenu: document.getElementById("folder-context-menu"),
     contextMenuMoveFolderButton: document.getElementById(
       "context-menu-move-folder"
@@ -179,9 +180,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Event listener for Organize Folders button
     if (elements.organizeFoldersButton) {
-      elements.organizeFoldersButton.addEventListener("click", () => {
-        openOrganizeFoldersModal(elements)
-      })
+      elements.organizeFoldersButton.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent dropdown from closing immediately
+        openOrganizeFoldersModal(elements);
+        elements.settingsMenu.classList.add("hidden"); // Close settings menu after opening modal
+      });
     }
 
     // Sự kiện cho showBookmarkIdsOption
