@@ -25,7 +25,7 @@ export function setupDeleteFolderListeners(elements) {
   })
 }
 
-function handleDeleteFolder(folderId, elements) {
+export function handleDeleteFolder(folderId, elements) {
   if (!folderId || folderId === "1" || folderId === "2") {
     console.error("Invalid or protected folder ID:", folderId)
     const language = localStorage.getItem("appLanguage") || "en"

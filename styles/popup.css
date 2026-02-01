@@ -768,3 +768,7 @@
   padding: 0;
   border: none;
 }
+
+#custom-popup {
+    z-index: 2001 !important;
+}

@@ -10,6 +10,7 @@ import { uiState, saveUIState } from "../state.js"
 import { exportToJSON } from "./json.js"
 import { exportToHTML } from "./html.js"
 import { exportToCSV } from "./csv.js"
+import { exportToNetscape } from "./netscape.js"
 
 export function setupExportImportListeners(elements) {
   elements.exportBookmarksOption.addEventListener("click", async () => {
@@ -103,6 +104,18 @@ export function setupExportImportListeners(elements) {
             <h3>CSV</h3>
             <p>${
               translations[language].csvDescription || "Spreadsheet format"
+            }</p>
+          </div>
+          <div class="format-card" data-format="netscape">
+            <div class="format-icon">
+              <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+            </div>
+            <h3>HTML (Browser)</h3>
+            <p>${
+              translations[language].netscapeDescription ||
+              "Standard browser format"
             }</p>
           </div>
         </div>
@@ -253,7 +266,7 @@ export function setupExportImportListeners(elements) {
     const includeIconInput = document.getElementById("includeIconData")
     const includeCreationInput = document.getElementById("includeCreationDates")
     const includeFolderModInput = document.getElementById(
-      "includeFolderModDates"
+      "includeFolderModDates",
     )
     const includeFolderPathInput = document.getElementById("includeFolderPath")
     const exportOnlySelectedInput =
@@ -293,10 +306,10 @@ export function setupExportImportListeners(elements) {
         const includeIconData =
           document.getElementById("includeIconData").checked
         const includeCreationDates = document.getElementById(
-          "includeCreationDates"
+          "includeCreationDates",
         ).checked
         const includeFolderModDates = document.getElementById(
-          "includeFolderModDates"
+          "includeFolderModDates",
         ).checked
         const includeFolderPath =
           document.getElementById("includeFolderPath").checked
@@ -328,7 +341,7 @@ export function setupExportImportListeners(elements) {
               translations[language].errorUnexpected ||
                 "Unexpected error occurred",
               "error",
-              false
+              false,
             )
             document.body.removeChild(popup)
             return
@@ -349,7 +362,7 @@ export function setupExportImportListeners(elements) {
                 includeCreationDates,
                 includeFolderModDates,
                 language,
-                currentTheme
+                currentTheme,
               )
             } else if (exportChoice === "CSV") {
               await exportToCSV(
@@ -358,8 +371,10 @@ export function setupExportImportListeners(elements) {
                 includeFolderModDates,
                 includeIconData,
                 includeFolderPath,
-                exportOnlySelected
+                exportOnlySelected,
               )
+            } else if (exportChoice === "NETSCAPE") {
+              await exportToNetscape(bookmarkTreeNodes)
             }
           } catch (error) {
             console.error("Export error:", error)
@@ -367,7 +382,7 @@ export function setupExportImportListeners(elements) {
               translations[language].errorUnexpected ||
                 "Unexpected error occurred",
               "error",
-              false
+              false,
             )
           } finally {
             // Reset button state
@@ -750,19 +765,19 @@ export function setupExportImportListeners(elements) {
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result)
-          
+
           // Kiểm tra cấu trúc mới có "theme" hay không
-          const bookmarksToImport = data.bookmarks || data; // Hỗ trợ cả file cũ chỉ có array
-          const themeData = data.theme || {}; // Lấy theme data nếu có
+          const bookmarksToImport = data.bookmarks || data // Hỗ trợ cả file cũ chỉ có array
+          const themeData = data.theme || {} // Lấy theme data nếu có
 
-          importNonDuplicateBookmarks(bookmarksToImport, themeData, elements);
-
+          importNonDuplicateBookmarks(bookmarksToImport, themeData, elements)
         } catch (e) {
           console.error("Failed to parse or import JSON file:", e)
           const language = localStorage.getItem("appLanguage") || "en"
           showCustomPopup(
-            translations[language].errorImporting || "Error importing file. Check console.",
-            "error"
+            translations[language].errorImporting ||
+              "Error importing file. Check console.",
+            "error",
           )
         }
       }
@@ -811,11 +826,18 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
       }
 
       if (node.children) {
-        const currentChildren = await new Promise((r) => chrome.bookmarks.getChildren(currentParentId, r))
-        let targetFolder = currentChildren.find((c) => !c.url && c.title === node.title)
+        const currentChildren = await new Promise((r) =>
+          chrome.bookmarks.getChildren(currentParentId, r),
+        )
+        let targetFolder = currentChildren.find(
+          (c) => !c.url && c.title === node.title,
+        )
 
         if (!targetFolder) {
-          targetFolder = await createBookmark({ parentId: currentParentId, title: node.title })
+          targetFolder = await createBookmark({
+            parentId: currentParentId,
+            title: node.title,
+          })
         }
 
         if (targetFolder) {
@@ -829,7 +851,11 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
           continue
         }
 
-        const newB = await createBookmark({ parentId: currentParentId, title: node.title, url: node.url })
+        const newB = await createBookmark({
+          parentId: currentParentId,
+          title: node.title,
+          url: node.url,
+        })
         if (newB) {
           idMapping[node.id] = newB.id
           existingUrls.add(node.url)
@@ -849,7 +875,7 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
       "favoriteBookmarks",
       "pinnedBookmarks",
       "tagColors",
-      "tagTextColors"
+      "tagTextColors",
     ])
 
     const bookmarkTags = storageData.bookmarkTags || {}
@@ -878,27 +904,29 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
           // KHÔI PHỤC TAGS: Đọc cả tên và màu sắc
           if (node.tags && node.tags.length > 0) {
             const tagNames = []
-            node.tags.forEach(tag => {
-              const tagName = (typeof tag === 'object' && tag.name) ? tag.name : tag;
-              tagNames.push(tagName);
+            node.tags.forEach((tag) => {
+              const tagName =
+                typeof tag === "object" && tag.name ? tag.name : tag
+              tagNames.push(tagName)
 
               // Khôi phục màu từ chính bookmark nếu là object
-              if (typeof tag === 'object' && tag.name) {
+              if (typeof tag === "object" && tag.name) {
                 if (tag.bgColor) {
-                  tagColors[tagName] = tag.bgColor;
+                  tagColors[tagName] = tag.bgColor
                 }
                 if (tag.textColor) {
-                  tagTextColors[tagName] = tag.textColor;
+                  tagTextColors[tagName] = tag.textColor
                 }
               }
-            });
+            })
 
-            const existingTags = bookmarkTags[newId] || [];
-            bookmarkTags[newId] = [...new Set([...existingTags, ...tagNames])];
+            const existingTags = bookmarkTags[newId] || []
+            bookmarkTags[newId] = [...new Set([...existingTags, ...tagNames])]
           }
 
           if (node.accessCount) {
-            bookmarkAccessCounts[newId] = (bookmarkAccessCounts[newId] || 0) + node.accessCount
+            bookmarkAccessCounts[newId] =
+              (bookmarkAccessCounts[newId] || 0) + node.accessCount
           }
         }
         if (node.children) restoreMetadata(node.children)
@@ -909,8 +937,8 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
 
     // 4. Cập nhật uiState và lưu tất cả metadata đã hợp nhất vào Storage
     // Cập nhật uiState để UI phản hồi ngay lập tức
-    uiState.tagColors = tagColors;
-    uiState.tagTextColors = tagTextColors;
+    uiState.tagColors = tagColors
+    uiState.tagTextColors = tagTextColors
 
     await chrome.storage.local.set({
       bookmarkTags,
@@ -918,7 +946,7 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
       favoriteBookmarks,
       pinnedBookmarks,
       tagColors,
-      tagTextColors
+      tagTextColors,
     })
 
     // 5. Cập nhật giao diện
@@ -928,15 +956,16 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
         saveUIState()
         showCustomPopup(
           translations[language].importSuccess || "Import successful!",
-          "success"
+          "success",
         )
       })
     }, 200)
   } catch (error) {
     console.error("Import Error:", error)
     showCustomPopup(
-      translations[language].errorImporting || "Error importing file. Check console.",
-      "error"
-    );
+      translations[language].errorImporting ||
+        "Error importing file. Check console.",
+      "error",
+    )
   }
 }

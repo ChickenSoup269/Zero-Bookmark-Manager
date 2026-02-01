@@ -6,6 +6,7 @@ import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
 import { getAllTags } from "./tag.js"
 import { customSaveUIState } from "./option/option.js"
 import { checkBrokenLinks } from "./health/health.js"
+import { handleDeleteFolder } from "./controller/deleteFolder.js"
 
 // ==========================================
 // HELPER FUNCTIONS
@@ -1405,6 +1406,9 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
         <span class="folder-count" style="background:var(--bg-secondary);padding:2px 8px;border-radius:12px;font-size:12px;">${countFolderItems(
           node,
         )}</span>
+        <button class="button delete-folder-tree-btn" data-id="${node.id}" style="margin-left: 8px; background: none; border: none; color: var(--text-muted); cursor: pointer;" title="${translations[language].deleteFolder}">
+            <i class="fas fa-trash"></i>
+        </button>
       `
 
       // Add dragstart event listener for folders
@@ -1971,7 +1975,8 @@ export function attachTreeListeners(elements, targetContainer = null) {
     // 4. Dropdown closing logic
     if (
       !e.target.closest(".dropdown-btn") &&
-      !e.target.closest(".dropdown-menu")
+      !e.target.closest(".dropdown-menu") &&
+      !e.target.closest(".delete-folder-tree-btn") // Allow delete button to not close dropdown
     ) {
       document
         .querySelectorAll(".dropdown-menu")
@@ -1979,19 +1984,31 @@ export function attachTreeListeners(elements, targetContainer = null) {
     }
   }
 
-  // QR Code Buttons
-  const qrCodeButtons = container.querySelectorAll(".qr-code-btn")
-  qrCodeButtons.forEach((btn) => {
+  // Handle delete folder button clicks in tree view
+  const deleteFolderTreeButtons = container.querySelectorAll(
+    ".delete-folder-tree-btn",
+  )
+  deleteFolderTreeButtons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      e.stopPropagation()
-      const bookmarkId = btn.getAttribute("data-id")
-      const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
-      if (bookmark) {
-        const faviconUrl = getFaviconUrl(bookmark.url)
-        generateQRCodePopup(bookmark.url, bookmark.title, faviconUrl)
+      e.stopPropagation() // Prevent folder toggle and other click handlers
+      const folderId = btn.dataset.id
+      const language = localStorage.getItem("appLanguage") || "en"
+      const t = translations[language] || translations.en
+
+      console.log("Calling handleDeleteFolder for folder:", folderId) // Debugging line
+      try {
+        // Call the centralized deleteFolder function
+        handleDeleteFolder(folderId, elements)
+        // showCustomConfirm is handled internally by handleDeleteFolder
+      } catch (deleteError) {
+        console.error("Error initiating folder deletion:", deleteError)
+        showCustomPopup(
+          t.errorUnexpected ||
+            "An unexpected error occurred while trying to delete the folder.",
+          "error",
+          true,
+        )
       }
-      const dropdownMenu = btn.closest(".dropdown-menu")
-      if (dropdownMenu) dropdownMenu.classList.add("hidden")
     })
   })
 
