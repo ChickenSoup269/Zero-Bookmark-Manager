@@ -1,4 +1,9 @@
-import { translations, showCustomPopup } from "./utils/utils.js"
+import {
+  translations,
+  showCustomPopup,
+  fuzzyMatchSearch,
+  calculateMatchScore,
+} from "./utils/utils.js"
 import { flattenBookmarks, getFolders, isInFolder } from "./bookmarks.js"
 import { uiState, setBookmarks, setFolders, setBookmarkTree } from "./state.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
@@ -72,6 +77,29 @@ function stopAutoscroll() {
     clearInterval(autoscrollInterval)
     autoscrollInterval = null
   }
+}
+
+// Helper function for fuzzy search matching
+function matchesSearchQuery(bookmark) {
+  if (!uiState.searchQuery) return true
+  const query = uiState.searchQuery.trim()
+
+  // Check title match
+  const titleScore = calculateMatchScore(bookmark.title || "", query)
+  if (titleScore >= 0.4) return true
+
+  // Check URL match
+  const urlScore = calculateMatchScore(bookmark.url || "", query)
+  if (urlScore >= 0.4) return true
+
+  // Check tags match
+  if (bookmark.tags && bookmark.tags.length > 0) {
+    for (const tag of bookmark.tags) {
+      if (calculateMatchScore(tag, query) >= 0.5) return true
+    }
+  }
+
+  return false
 }
 
 function getContrastColor(hex) {
@@ -925,12 +953,25 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         elements.folderFilter.value = ""
       }
       if (uiState.searchQuery) {
-        const query = uiState.searchQuery.toLowerCase()
-        filtered = filtered.filter(
-          (bookmark) =>
-            bookmark.title?.toLowerCase().includes(query) ||
-            bookmark.url?.toLowerCase().includes(query),
-        )
+        const query = uiState.searchQuery.trim()
+        // Use improved fuzzy search with scoring
+        filtered = filtered
+          .map((bookmark) => {
+            const titleScore = calculateMatchScore(bookmark.title || "", query)
+            const urlScore = calculateMatchScore(bookmark.url || "", query)
+            // Also check tags
+            let tagScore = 0
+            if (bookmark.tags && bookmark.tags.length > 0) {
+              for (const tag of bookmark.tags) {
+                tagScore = Math.max(tagScore, calculateMatchScore(tag, query))
+              }
+            }
+            const maxScore = Math.max(titleScore, urlScore, tagScore)
+            return { bookmark, score: maxScore }
+          })
+          .filter(({ score }) => score >= 0.4) // Lower threshold for better recall
+          .sort((a, b) => b.score - a.score) // Sort by relevance
+          .map(({ bookmark }) => bookmark)
       }
 
       // Render Views
@@ -1012,13 +1053,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       const folderBookmarks = filteredBookmarks.filter((bookmark) => {
         return (
           bookmark.parentId === selectedFolder.id &&
-          (!uiState.searchQuery ||
-            bookmark.title
-              ?.toLowerCase()
-              .includes(uiState.searchQuery.toLowerCase()) ||
-            bookmark.url
-              ?.toLowerCase()
-              .includes(uiState.searchQuery.toLowerCase())) &&
+          matchesSearchQuery(bookmark) &&
           (uiState.sortType !== "favorites" || bookmark.isFavorite) &&
           (uiState.selectedTags.length === 0 ||
             bookmark.tags?.some((tag) => uiState.selectedTags.includes(tag)))
@@ -1074,13 +1109,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       const folderBookmarks = filteredBookmarks.filter(
         (bookmark) =>
           bookmark.parentId === folder.id &&
-          (!uiState.searchQuery ||
-            bookmark.title
-              ?.toLowerCase()
-              .includes(uiState.searchQuery.toLowerCase()) ||
-            bookmark.url
-              ?.toLowerCase()
-              .includes(uiState.searchQuery.toLowerCase())) &&
+          matchesSearchQuery(bookmark) &&
           (uiState.sortType !== "favorites" || bookmark.isFavorite) &&
           (uiState.selectedTags.length === 0 ||
             bookmark.tags?.some((tag) => uiState.selectedTags.includes(tag))),
@@ -1362,10 +1391,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
   // --- LOOP QUA TỪNG NODE ---
   ;[...folders, ...sortedBookmarks].forEach((node) => {
     // Logic filter (Search, Tag, Favorite...)
-    const matchesSearch = uiState.searchQuery
-      ? node.title?.toLowerCase().includes(uiState.searchQuery.toLowerCase()) ||
-        node.url?.toLowerCase().includes(uiState.searchQuery.toLowerCase())
-      : true
+    const matchesSearch = matchesSearchQuery(node)
     const matchesFavorite =
       uiState.sortType === "favorites" ? node.isFavorite : true
     const matchesTag =
