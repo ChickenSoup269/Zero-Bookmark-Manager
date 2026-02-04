@@ -1,6 +1,23 @@
 <!-- ---Extension version---- -->
 
-### [1.1.7] - 2026-02-1
+### [1.1.7] - 2026-02-04
+
+## Added
+
+- **Pure HTML Export:** Added new export format to generate clean, standalone HTML files with bookmarks
+- **Folder Delete Icon in Tree View:** Added delete icon for folders directly in tree view for easier folder management
+
+## Improved
+
+[none]
+
+## Fixed
+
+[none]
+
+## Updated
+
+[none]
 
 ### [1.1.6] - 2026-01-27
 
