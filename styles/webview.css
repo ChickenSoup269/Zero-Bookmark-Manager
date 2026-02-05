@@ -499,7 +499,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 8px;
+  padding: 4px 6px;
   border-radius: 4px;
   cursor: pointer;
   color: var(--text-primary);
@@ -620,7 +620,7 @@ body {
 .folder-children {
   list-style: none;
   padding: 0;
-  margin: 0 0 0 16px;
+  margin: 0 0 0 6px;
   overflow: hidden;
   transition:
     max-height 0.3s ease,
@@ -645,7 +645,7 @@ body {
   max-height: 0;
   opacity: 0;
   pointer-events: none;
-  margin: 0;
+  margin: 0 0 4px 0;
 }
 
 /* Sort Divider */
@@ -692,11 +692,6 @@ body {
   font-size: 0.8rem;
 }
 
-/* Tags Container */
-.sidebar-tag-container {
-  /* No max-height or overflow */
-}
-
 .sidebar-tag-list {
   display: flex;
   flex-wrap: wrap;
@@ -721,9 +716,6 @@ body {
   background: var(--hover-bg);
   border-color: var(--accent-color);
   color: var(--text-primary);
-}
-
-.sidebar-tag-item.active {
 }
 
 /* Options */
@@ -756,17 +748,17 @@ body {
 
 .sidebar-admin-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 6px;
 }
 
 .sidebar-admin-btn {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 10px 8px;
+  gap: 8px;
+  padding: 10px 12px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -1155,6 +1147,7 @@ body.sidebar-style-modern .sidebar-modern {
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-lg);
+  overflow: visible;
 }
 
 /* Webview-mode overrides */
@@ -1171,8 +1164,8 @@ body.sidebar-style-modern .sidebar-modern {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--spacing-sm);
   padding: var(--spacing-sm);
+  margin-bottom: 6px;
   border-radius: var(--border-radius-md);
   background: var(--folder-bg);
   transition:
@@ -1213,6 +1206,7 @@ body.sidebar-style-modern .sidebar-modern {
   position: relative;
   margin-top: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
+  overflow: visible;
 }
 
 .webview-mode .folder-children {
@@ -1236,6 +1230,7 @@ body.sidebar-style-modern .sidebar-modern {
   background-color: var(--bg-primary);
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease !important;
+  overflow: visible;
 }
 
 .folder-list.tree-view .bookmark-item:hover {
