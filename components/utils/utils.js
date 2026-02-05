@@ -314,6 +314,17 @@ export const translations = {
     quickOpenPopup: "Default Popup",
     quickOpenSidePanel: "Default Side Panel",
     quickOpenWeb: "Default Web Tab",
+    // Sidebar translations
+    sidebarAllBookmarks: "All Bookmarks",
+    sidebarFavorites: "Favorites",
+    sidebarUnsorted: "Unsorted",
+    sidebarRecentlyAdded: "Recently Added",
+    sidebarFolders: "Folders",
+    sidebarTags: "Tags",
+    sidebarSort: "Sort",
+    sidebarManage: "Manage",
+    sidebarMoreFolders: "more folders",
+    sidebarBookmarks: "bookmarks",
   },
   vi: {
     welcomeMessage: "Chào mừng đến với Zero Bookmark Manager Chat!",
@@ -627,6 +638,17 @@ export const translations = {
     quickOpenPopup: "Popup mặc định",
     quickOpenSidePanel: "Mở panel mặc định",
     quickOpenWeb: "Mở web mặc định",
+    // Sidebar translations
+    sidebarAllBookmarks: "Tất cả Bookmarks",
+    sidebarFavorites: "Yêu thích",
+    sidebarUnsorted: "Chưa phân loại",
+    sidebarRecentlyAdded: "Thêm gần đây",
+    sidebarFolders: "Thư mục",
+    sidebarTags: "Thẻ",
+    sidebarSort: "Sắp xếp",
+    sidebarManage: "Quản lý",
+    sidebarMoreFolders: "thư mục khác",
+    sidebarBookmarks: "bookmarks",
   },
 }
 

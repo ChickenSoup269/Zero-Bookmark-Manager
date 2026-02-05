@@ -1,7 +1,6 @@
 import {
   translations,
   showCustomPopup,
-  fuzzyMatchSearch,
   calculateMatchScore,
 } from "./utils/utils.js"
 import { flattenBookmarks, getFolders, isInFolder } from "./bookmarks.js"
@@ -771,32 +770,59 @@ export async function populateTagFilter(elements) {
   const tagFilterToggle =
     elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
 
-  if (!tagFilterOptions || !tagFilterToggle) return
+  if (!tagFilterOptions) return
 
   const allTags = await getAllTags()
   tagFilterOptions.innerHTML = ""
+
+  // Render tags as clickable pills (Raindrop style)
   allTags.forEach((tag) => {
-    const label = document.createElement("label")
-    label.style.display = "block"
-    const checkbox = document.createElement("input")
-    checkbox.type = "checkbox"
-    checkbox.value = tag
-    checkbox.checked = uiState.selectedTags.includes(tag)
-    checkbox.dataset.tag = tag
+    const tagColor = uiState.tagColors[tag] || "var(--text-secondary)"
+    const isActive = uiState.selectedTags.includes(tag)
+    const contrastColor = getContrastColor(tagColor)
 
-    const tagText = document.createElement("span")
-    tagText.textContent = tag
-    tagText.style.color = uiState.tagColors[tag] || "#000000"
+    const tagItem = document.createElement("div")
+    tagItem.className = `sidebar-tag-item${isActive ? " active" : ""}`
+    tagItem.setAttribute("data-tag", tag)
+    tagItem.style.cssText = isActive
+      ? `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
+      : `border-color: ${tagColor}; color: ${tagColor};`
 
-    label.appendChild(checkbox)
-    label.appendChild(tagText)
-    tagFilterOptions.appendChild(label)
+    tagItem.innerHTML = `
+      <i class="fas fa-tag" style="font-size: 0.65rem;"></i>
+      <span>${tag}</span>
+    `
+
+    tagItem.addEventListener("click", () => {
+      const idx = uiState.selectedTags.indexOf(tag)
+      if (idx > -1) {
+        uiState.selectedTags.splice(idx, 1)
+        tagItem.classList.remove("active")
+        tagItem.style.cssText = `border-color: ${tagColor}; color: ${tagColor};`
+      } else {
+        uiState.selectedTags.push(tag)
+        tagItem.classList.add("active")
+        tagItem.style.cssText = `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
+      }
+
+      // Trigger re-render
+      chrome.bookmarks.getTree((tree) => {
+        import("./ui.js").then(({ renderFilteredBookmarks }) => {
+          renderFilteredBookmarks(tree, elements)
+        })
+      })
+    })
+
+    tagFilterOptions.appendChild(tagItem)
   })
 
-  tagFilterToggle.textContent =
-    uiState.selectedTags.length > 0
-      ? uiState.selectedTags.join(", ")
-      : translations[localStorage.getItem("appLanguage") || "en"].allTags
+  // Update toggle button text if exists
+  if (tagFilterToggle) {
+    tagFilterToggle.textContent =
+      uiState.selectedTags.length > 0
+        ? uiState.selectedTags.join(", ")
+        : translations[localStorage.getItem("appLanguage") || "en"].allTags
+  }
 }
 
 export function updateTheme(elements, theme) {
@@ -874,6 +900,204 @@ export function updateTheme(elements, theme) {
   )
 }
 
+// Render folder tree in sidebar (Raindrop style)
+function renderSidebarFolderTree(folders) {
+  const treeContainer = document.getElementById("sidebar-folder-tree")
+  if (!treeContainer) return
+
+  treeContainer.innerHTML = ""
+  const language = localStorage.getItem("appLanguage") || "en"
+
+  console.log("Rendering sidebar folders:", folders.length, "folders")
+
+  // Build folder hierarchy
+  const folderMap = new Map()
+  folders.forEach((f) => {
+    folderMap.set(f.id, { ...f, children: [] })
+  })
+
+  const rootFolders = []
+  folderMap.forEach((folder) => {
+    // Skip root node (id=0)
+    if (folder.id === "0") return
+
+    // If has parent and parent exists in map, add as child
+    if (
+      folder.parentId &&
+      folder.parentId !== "0" &&
+      folderMap.has(folder.parentId)
+    ) {
+      folderMap.get(folder.parentId).children.push(folder)
+    } else {
+      // Otherwise treat as root folder (including folders with parentId=0 or null)
+      rootFolders.push(folder)
+    }
+  })
+
+  // Sort folders: Bookmarks Bar (1) and Other Bookmarks (2) first
+  rootFolders.sort((a, b) => {
+    if (a.id === "1") return -1
+    if (b.id === "1") return 1
+    if (a.id === "2") return -1
+    if (b.id === "2") return 1
+    return a.title.localeCompare(b.title)
+  })
+
+  // Sort children alphabetically
+  const sortChildren = (folder) => {
+    if (folder.children && folder.children.length > 0) {
+      folder.children.sort((a, b) => a.title.localeCompare(b.title))
+      folder.children.forEach(sortChildren)
+    }
+  }
+  rootFolders.forEach(sortChildren)
+
+  console.log("Root folders to render:", rootFolders.length)
+  console.log(
+    "Root folders:",
+    rootFolders.map((f) => ({
+      id: f.id,
+      title: f.title,
+      childCount: f.children.length,
+    })),
+  )
+
+  // Load collapsed state from localStorage
+  const collapsedFolders = new Set(
+    JSON.parse(localStorage.getItem("collapsedSidebarFolders") || "[]"),
+  )
+
+  // Render folder with nesting (tree view style)
+  function renderFolder(
+    folder,
+    level = 0,
+    parent = treeContainer,
+    isLast = false,
+  ) {
+    const li = document.createElement("li")
+    li.className = "sidebar-folder-item"
+    li.setAttribute("data-folder-id", folder.id)
+    li.setAttribute("data-level", level)
+    if (isLast) li.classList.add("is-last")
+
+    if (uiState.selectedFolderId === folder.id) {
+      li.classList.add("active")
+    }
+
+    const hasChildren = folder.children && folder.children.length > 0
+    const isCollapsed = collapsedFolders.has(folder.id)
+
+    // Build tree lines
+    let treeLine = ""
+    if (level > 0) {
+      treeLine = `<span class="tree-line ${isLast ? "last" : ""}"></span>`
+    }
+
+    li.innerHTML = `
+      ${treeLine}
+      ${hasChildren ? `<i class="fas fa-chevron-${isCollapsed ? "right" : "down"} folder-toggle" data-folder-id="${folder.id}"></i>` : '<span class="folder-spacer"></span>'}
+      <i class="fas fa-folder${isCollapsed && hasChildren ? "" : "-open"} folder-icon"></i>
+      <span class="folder-name">${folder.title}</span>
+      ${hasChildren ? `<span class="folder-child-count">${folder.children.length}</span>` : ""}
+    `
+
+    // Toggle handler
+    const toggleIcon = li.querySelector(".folder-toggle")
+    if (toggleIcon) {
+      toggleIcon.addEventListener("click", (e) => {
+        e.stopPropagation()
+        const folderId = e.target.getAttribute("data-folder-id")
+
+        if (collapsedFolders.has(folderId)) {
+          collapsedFolders.delete(folderId)
+          e.target.className = "fas fa-chevron-down folder-toggle"
+        } else {
+          collapsedFolders.add(folderId)
+          e.target.className = "fas fa-chevron-right folder-toggle"
+        }
+
+        // Save state
+        localStorage.setItem(
+          "collapsedSidebarFolders",
+          JSON.stringify([...collapsedFolders]),
+        )
+
+        // Toggle children visibility
+        const childrenContainer = li.nextElementSibling
+        if (
+          childrenContainer &&
+          childrenContainer.classList.contains("folder-children")
+        ) {
+          childrenContainer.classList.toggle("collapsed")
+        }
+      })
+    }
+
+    // Folder click handler
+    li.addEventListener("click", (e) => {
+      if (e.target.classList.contains("folder-toggle")) return
+
+      // Update folder filter select
+      const folderFilter = document.getElementById("folder-filter")
+      if (folderFilter) {
+        folderFilter.value = folder.id
+        folderFilter.dispatchEvent(new Event("change", { bubbles: true }))
+      }
+
+      // Update active state
+      treeContainer
+        .querySelectorAll(".sidebar-folder-item")
+        .forEach((item) => item.classList.remove("active"))
+      li.classList.add("active")
+
+      // Update menu items
+      document
+        .querySelectorAll(".sidebar-menu-item")
+        .forEach((item) => item.classList.remove("active"))
+    })
+
+    parent.appendChild(li)
+
+    // Render children
+    if (hasChildren) {
+      const childrenContainer = document.createElement("ul")
+      childrenContainer.className = `folder-children${isCollapsed ? " collapsed" : ""}`
+      folder.children.forEach((child, index) => {
+        const isLast = index === folder.children.length - 1
+        renderFolder(child, level + 1, childrenContainer, isLast)
+      })
+      parent.appendChild(childrenContainer)
+    }
+  }
+
+  // Render all root folders
+  rootFolders.forEach((folder, index) => {
+    const isLast = index === rootFolders.length - 1
+    renderFolder(folder, 0, treeContainer, isLast)
+  })
+}
+
+// Update sidebar counts
+function updateSidebarCounts(bookmarks, favoriteBookmarks) {
+  const bookmarkCountNumber = document.getElementById("bookmark-count-number")
+  const sidebarAllCount = document.getElementById("sidebar-all-count")
+  const favoritesCount = document.getElementById("favorites-count")
+  const unsortedCount = document.getElementById("unsorted-count")
+  const sidebarTotalCount = document.getElementById("sidebar-total-count")
+
+  const total = bookmarks.length
+  const favorites = Object.keys(favoriteBookmarks || {}).length
+  const unsorted = bookmarks.filter(
+    (b) => b.parentId === "1" || b.parentId === "2",
+  ).length
+
+  if (bookmarkCountNumber) bookmarkCountNumber.textContent = total
+  if (sidebarAllCount) sidebarAllCount.textContent = total
+  if (favoritesCount) favoritesCount.textContent = favorites
+  if (unsortedCount) unsortedCount.textContent = unsorted
+  if (sidebarTotalCount) sidebarTotalCount.textContent = `${total} bookmarks`
+}
+
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
   chrome.storage.local.get(
     [
@@ -918,6 +1142,10 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       populateFolderFilter(bookmarkTreeNodes, elements)
       setupTagFilterListener(elements)
       updateBookmarkCount(bookmarks, elements)
+
+      // Update sidebar (Raindrop style)
+      renderSidebarFolderTree(folders)
+      updateSidebarCounts(bookmarks, favoriteBookmarks)
 
       let filtered = bookmarks.filter((bookmark) => bookmark.url)
 

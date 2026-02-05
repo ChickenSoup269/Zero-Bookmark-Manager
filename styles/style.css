@@ -40,7 +40,9 @@
   --text-muted: #999999;
   --border-color: #333333;
   --accent-color: #ffffff;
+  --accent-color-light: rgba(255, 255, 255, 0.1);
   --danger-color: #e13939;
+  --danger-color-light: rgba(225, 57, 57, 0.1);
   --danger-hover: #e13939;
   --hover-bg: #151a25b2;
   --focus-outline: #4a90e2;
@@ -97,6 +99,9 @@
   --text-muted: #666666;
   --border-color: #cccccc;
   --accent-color: #000000;
+  --accent-color-light: rgba(0, 0, 0, 0.05);
+  --danger-color: #dc3545;
+  --danger-color-light: rgba(220, 53, 69, 0.1);
   --hover-bg: #ffffffcd;
   --focus-outline: #4a90e2;
   --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.753);
@@ -134,8 +139,10 @@ body.dracula-theme {
   --text-secondary: #50fa7b;
   --text-muted: #6272a4;
   --accent-color: #ffffff;
+  --accent-color-light: rgba(255, 255, 255, 0.08);
   --border-color: #6272a4;
   --danger-color: #ff5555;
+  --danger-color-light: rgba(255, 85, 85, 0.1);
   --danger-hover: #ff4444;
   --hover-bg: #3a3c4e;
   --focus-outline: #ff79c6;
@@ -166,8 +173,10 @@ body.onedark-theme {
   --text-secondary: #c678dd;
   --text-muted: #5c6370;
   --accent-color: #ffffff;
+  --accent-color-light: rgba(255, 255, 255, 0.08);
   --border-color: #3e4451;
   --danger-color: #e06c75;
+  --danger-color-light: rgba(224, 108, 117, 0.1);
   --danger-hover: #be5046;
   --hover-bg: #323842;
   --focus-outline: #98c379;
@@ -200,8 +209,10 @@ body.tet-theme {
   --text-secondary: #ebdd57; /* Creamy white for secondary text */
   --text-muted: #fffacd; /* Muted gold */
   --accent-color: rgb(240, 230, 137); /* Vibrant gold for accents */
+  --accent-color-light: rgba(255, 215, 0, 0.15);
   --border-color: #700014; /* Darker red for borders */
   --danger-color: #ff5555; /* Unchanged */
+  --danger-color-light: rgba(255, 85, 85, 0.1);
   --danger-hover: #ff4444; /* Unchanged */
   --hover-bg: rgba(255, 215, 0, 0.15); /* Subtle gold hover */
   --focus-outline: #e8d739; /* Vibrant gold for focus */
