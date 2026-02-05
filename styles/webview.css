@@ -335,7 +335,7 @@ body {
 
 .sidebar-badge {
   background: var(--bg-tertiary);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-size: 0.7rem;
   padding: 2px 6px;
   border-radius: 10px;
@@ -352,7 +352,7 @@ body {
 
 .sidebar-menu-item.active .sidebar-badge {
   color: var(--bg-primary);
-  background: var(--text-secondary);
+  background: var(--text-primary);
   font-weight: 700;
 }
 
@@ -592,11 +592,10 @@ body {
 
 .sidebar-folder-item .folder-child-count {
   font-size: 10px;
-  color: var(--text-secondary);
-  opacity: 0.8;
   flex-shrink: 0;
   margin-left: auto;
-  background: var(--bg-tertiary);
+  color: var(--bg-primary);
+  background: var(--text-primary);
   padding: 2px 6px;
   border-radius: 10px;
   font-weight: 600;
@@ -722,6 +721,9 @@ body {
   background: var(--hover-bg);
   border-color: var(--accent-color);
   color: var(--text-primary);
+}
+
+.sidebar-tag-item.active {
 }
 
 /* Options */
