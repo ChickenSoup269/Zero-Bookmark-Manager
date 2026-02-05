@@ -6,18 +6,24 @@
 
 - **Pure HTML Export:** Added new export format to generate clean, standalone HTML files with bookmarks
 - **Folder Delete Icon in Tree View:** Added delete icon for folders directly in tree view for easier folder management
+- **Sidebar Tag Contrast Detection:** Auto-detect and apply optimal text color (black/white) for tag pills based on background color
 
 ## Improved
 
-[none]
+- **Sidebar Section Animations:** Changed section collapse/expand from instant to smooth animation using max-height transition (0.3s)
+- **Sidebar Layout:** Removed excessive padding between Folders and Manage sections for better space utilization
+- **Tag Pill Display:** Enhanced tag pill styling in sidebar with automatic contrast color calculation for better readability
 
 ## Fixed
 
-[none]
+- **Sidebar Section State Persistence:** Fixed issue where sidebar section state (collapsed/expanded) wasn't being restored correctly after page refresh
+- **Sidebar Content Overflow:** Removed unwanted overflow-y scrollbars from folder tree and tag container to allow full content display
+- **Sidebar Icon Display:** Fixed bookmark icon visibility and color in sidebar-total-count (now uses accent-color)
+- **Collapsed Sidebar CSS:** Consolidated and fixed duplicate CSS rules for collapsed state to prevent elements from showing incorrectly
 
 ## Updated
 
-[none]
+- Removed deprecated sidebar-footer-stats component - total count now displays in header section
 
 ### [1.1.6] - 2026-01-27
 
