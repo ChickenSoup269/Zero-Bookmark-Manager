@@ -201,42 +201,37 @@ body.onedark-theme {
 
 [data-theme="tet"],
 body.tet-theme {
-  --bg-primary: #8c001a; /* Deeper, richer red */
-  --bg-secondary: #bc1823; /* Slightly lighter, still deep red */
-  --bg-secondary-rgb: 188, 24, 35;
-  --bg-tertiary: #5c000d; /* Very dark, almost brownish-red */
-  --text-primary: #d4c154; /* Vibrant gold for primary text */
-  --text-secondary: #ebdd57; /* Creamy white for secondary text */
-  --text-muted: #fffacd; /* Muted gold */
-  --accent-color: rgb(240, 230, 137); /* Vibrant gold for accents */
-  --accent-color-light: rgba(255, 215, 0, 0.15);
-  --border-color: #700014; /* Darker red for borders */
-  --danger-color: #ff5555; /* Unchanged */
-  --danger-color-light: rgba(255, 85, 85, 0.1);
-  --danger-hover: #ff4444; /* Unchanged */
-  --hover-bg: rgba(255, 215, 0, 0.15); /* Subtle gold hover */
-  --focus-outline: #e8d739; /* Vibrant gold for focus */
-  --box-shadow: 0 6px 15px rgba(255, 215, 0, 0.25); /* Softer golden glow */
-  --tree-line-color: rgba(255, 215, 0, 0.4); /* Soft gold tree lines */
-  --folder-title-color: #fffacd; /* Vibrant gold for folder titles */
+  --bg-primary: #5e0000; /* Đỏ truyền thống Tết vừa phải */
+  --bg-secondary: #2a0505; /* Đỏ cam tươi sáng */
+  --bg-secondary-rgb: 211, 47, 47;
+  --bg-tertiary: #8b1a1a; /* Đỏ nâu trầm ấm */
+  --text-primary: #f9e79f; /* Vàng gold dịu nhẹ */
+  --text-secondary: #fef5e7; /* Vàng kem nhạt */
+  --text-muted: #f8e295; /* Vàng gold muted */
+  --accent-color: rgb(249, 231, 159); /* Vàng gold trang nhã */
+  --accent-color-light: rgba(249, 231, 159, 0.2);
+  --border-color: #a82525; /* Đỏ nâu viền */
+  --danger-color: #ff6b6b; /* Đỏ cảnh báo dịu */
+  --danger-color-light: rgba(255, 107, 107, 0.15);
+  --danger-hover: #ff5252; /* Đỏ hover */
+  --hover-bg: rgba(249, 231, 159, 0.18); /* Hover vàng gold nhẹ */
+  --focus-outline: #f4d03f; /* Vàng focus tươi sáng */
+  --box-shadow: 0 4px 12px rgba(249, 231, 159, 0.3); /* Shadow vàng dịu */
+  --tree-line-color: rgba(249, 231, 159, 0.45); /* Line vàng gold */
+  --folder-title-color: #fef5e7; /* Vàng kem tiêu đề */
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(255, 215, 0, 0.2); /* Subtle gold hover for folders */
-  --bookmark-bg: rgba(255, 215, 0, 0.05); /* Very subtle golden bookmark bg */
-  --bookmark-hover-bg: rgba(
-    255,
-    215,
-    0,
-    0.12
-  ); /* Slightly more pronounced golden bookmark bg */
+  --folder-hover-bg: rgba(249, 231, 159, 0.22); /* Hover folder vàng */
+  --bookmark-bg: rgba(249, 231, 159, 0.08); /* Background bookmark nhẹ */
+  --bookmark-hover-bg: rgba(249, 231, 159, 0.15); /* Hover bookmark vàng */
 
-  --health-icon-dead-color: #fee209;
-  --text-option: white;
-  --hover-bg-option: rgba(255, 215, 0, 0.15);
-  --bg-tags-select: rgba(87, 78, 25, 0.801);
+  --health-icon-dead-color: #ffd54f;
+  --text-option: #fef5e7;
+  --hover-bg-option: rgba(249, 231, 159, 0.2);
+  --bg-tags-select: rgba(139, 26, 26, 0.85);
 
-  --check-link-color: linear-gradient(135deg, #8c001a, #fee209);
-  --check-dup-color: linear-gradient(135deg, #8c001a, #fee209);
-  --check-hover-link: linear-gradient(90deg, #8c001a, #fffacd);
+  --check-link-color: linear-gradient(135deg, #d32f2f, #f9e79f);
+  --check-dup-color: linear-gradient(135deg, #c62828, #ffd54f);
+  --check-hover-link: linear-gradient(90deg, #d32f2f, #fef5e7);
 }
 
 /* Kích hoạt khả năng tùy chỉnh cho select */
