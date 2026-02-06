@@ -907,7 +907,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--hover-bg);
+  background-color: var(--text-secondary);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2142,6 +2142,37 @@ html {
 
 .card-bookmark-title:hover {
   color: var(--text-secondary);
+}
+
+/* Visit count badge - flat list style */
+.visit-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--bg-primary);
+  background: var(--text-secondary);
+  border: 1px solid var(--text-secondary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+}
+
+/* Flat list: keep badge to the right by default */
+.folder-list:not(.tree-view):not(.card-view):not(.detail-view)
+  .visit-count-badge {
+  margin-left: auto;
+}
+
+.visit-count-badge i {
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+.visit-count-number {
+  letter-spacing: 0.2px;
 }
 
 .dropdown-btn {

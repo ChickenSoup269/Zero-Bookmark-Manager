@@ -197,6 +197,7 @@ function renderHealthIcon(bookmarkId) {
 
 // Render visit count badge
 function renderVisitCount(bookmarkId) {
+  if (uiState.sortType !== "most-visited") return ""
   const visitCount = uiState.visitCounts ? uiState.visitCounts[bookmarkId] : 0
   if (!visitCount || visitCount === 0) return ""
 
@@ -206,21 +207,9 @@ function renderVisitCount(bookmarkId) {
       ? `Đã truy cập ${visitCount} lần`
       : `Visited ${visitCount} times`
 
-  return `<span class="visit-count-badge" title="${tooltipText}" style="
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
-    white-space: nowrap;
-  ">
-    <i class="fas fa-eye" style="font-size: 10px;"></i>
-    <span>${visitCount}</span>
+  return `<span class="visit-count-badge" title="${tooltipText}">
+    <i class="fas fa-eye" aria-hidden="true"></i>
+    <span class="visit-count-number">${visitCount}</span>
   </span>`
 }
 
@@ -1279,20 +1268,46 @@ function updateSidebarCounts(bookmarks, favoriteBookmarks) {
   const bookmarkCountNumber = document.getElementById("bookmark-count-number")
   const sidebarAllCount = document.getElementById("sidebar-all-count")
   const favoritesCount = document.getElementById("favorites-count")
-  const unsortedCount = document.getElementById("unsorted-count")
   const sidebarTotalCount = document.getElementById("sidebar-total-count")
 
   const total = bookmarks.length
-  const favorites = Object.keys(favoriteBookmarks || {}).length
-  const unsorted = bookmarks.filter(
-    (b) => b.parentId === "1" || b.parentId === "2",
-  ).length
+  const favorites = bookmarks.filter((b) => b.isFavorite).length
 
   if (bookmarkCountNumber) bookmarkCountNumber.textContent = total
   if (sidebarAllCount) sidebarAllCount.textContent = total
   if (favoritesCount) favoritesCount.textContent = favorites
-  if (unsortedCount) unsortedCount.textContent = unsorted
   if (sidebarTotalCount) sidebarTotalCount.textContent = `${total} bookmarks`
+}
+
+function updateSidebarActiveState() {
+  const menuItems = document.querySelectorAll(".sidebar-menu-item")
+  const sortItems = document.querySelectorAll(".sidebar-sort-item")
+
+  menuItems.forEach((item) => item.classList.remove("active"))
+  sortItems.forEach((item) => item.classList.remove("active"))
+
+  const sortType = uiState.sortType || "default"
+  const sortItem = document.querySelector(
+    `.sidebar-sort-item[data-sort="${sortType}"]`,
+  )
+  if (sortItem) sortItem.classList.add("active")
+
+  if (uiState.selectedFolderId === "1") {
+    return
+  }
+
+  if (sortType === "new") {
+    const recentItem = document.querySelector(
+      '.sidebar-menu-item[data-filter="recent"]',
+    )
+    if (recentItem) recentItem.classList.add("active")
+    return
+  }
+
+  const allItem = document.querySelector(
+    '.sidebar-menu-item[data-filter="all"]',
+  )
+  if (allItem) allItem.classList.add("active")
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
@@ -1343,6 +1358,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       // Update sidebar (Raindrop style)
       renderSidebarFolderTree(folders)
       updateSidebarCounts(bookmarks, favoriteBookmarks)
+      updateSidebarActiveState()
 
       let filtered = bookmarks.filter((bookmark) => bookmark.url)
 
@@ -1363,6 +1379,10 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         )
       }
       if (uiState.sortType === "favorites") {
+        if (uiState.selectedFolderId) {
+          uiState.selectedFolderId = ""
+          elements.folderFilter.value = ""
+        }
         filtered = filtered.filter((bookmark) => bookmark.isFavorite)
       }
       if (
