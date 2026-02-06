@@ -302,8 +302,8 @@ body {
   padding: 10px 16px;
   cursor: pointer;
   color: var(--text-primary);
+  border-radius: 5px;
   transition: all 0.15s ease;
-  border-left: 3px solid transparent;
   font-size: 0.9rem;
 }
 
@@ -313,7 +313,7 @@ body {
 }
 
 .sidebar-menu-item.active {
-  background: var(--accent-color-light);
+  background: var(--bg-tertiary);
   color: var(--text-secondary);
   border-left-color: var(--accent-color);
   font-weight: 500;
@@ -335,7 +335,7 @@ body {
 
 .sidebar-badge {
   background: var(--bg-tertiary);
-  color: var(--text-primary);
+  color: var(--text-secondary);
   font-size: 0.7rem;
   padding: 2px 6px;
   border-radius: 10px;
@@ -676,13 +676,13 @@ body {
 }
 
 .sidebar-sort-item:hover {
-  background: var(--text-secondary);
-  color: var(--bg-primary);
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .sidebar-sort-item.active {
-  background: var(--text-secondary);
-  color: var(--bg-primary);
+  color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
   font-weight: 500;
 }
 
