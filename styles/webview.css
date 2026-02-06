@@ -1358,6 +1358,12 @@ body.sidebar-style-modern .sidebar-modern {
   overflow: visible;
 }
 
+/* Tree view should grow with its children (avoid max-height clipping) */
+.folder-list.tree-view .folder-children {
+  max-height: none;
+  overflow: visible;
+}
+
 .webview-mode .folder-children {
   border-left: 1px solid var(--text-primary);
   padding-left: var(--spacing-sm);
@@ -1383,11 +1389,16 @@ body.sidebar-style-modern .sidebar-modern {
 }
 
 .folder-list.tree-view .bookmark-item:hover {
-  z-index: 1000;
-  transform: translateY(-2px);
+  z-index: 2;
+  transform: none;
   transition: all 0.4s ease !important;
   background-color: var(--bg-tertiary);
   backdrop-filter: blur(10px) !important;
+}
+
+/* Prevent hover lift from overlapping siblings in tree view */
+.folder-list.tree-view .folder-item:hover {
+  transform: none;
 }
 
 .webview-mode .folder-list.tree-view .bookmark-item {

@@ -8,7 +8,8 @@
     "storage",
     "sidePanel",
     "tabs",
-    "system.display"
+    "system.display",
+    "webNavigation"
   ],
   "action": {},
   "side_panel": {

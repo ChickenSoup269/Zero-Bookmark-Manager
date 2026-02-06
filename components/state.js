@@ -18,7 +18,7 @@ export const uiState = {
   selectedTags: [],
   healthFilter: "all", // "all", "dead", "suspicious", "safe"
   healthStatus: {},
-
+  visitCounts: {}, // { bookmarkId: count }
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -51,6 +51,10 @@ export function setSelectedTags(tags) {
   uiState.selectedTags = [...tags]
 }
 
+export function setVisitCounts(visitCounts) {
+  uiState.visitCounts = { ...visitCounts }
+}
+
 export function saveUIState() {
   const state = {
     uiState: {
@@ -76,7 +80,13 @@ export function saveUIState() {
 
 export function loadUIState(callback) {
   chrome.storage.local.get(
-    ["uiState", "checkboxesVisible", "bookmarkTags", "tagColors", "tagTextColors"],
+    [
+      "uiState",
+      "checkboxesVisible",
+      "bookmarkTags",
+      "tagColors",
+      "tagTextColors",
+    ],
     (result) => {
       if (chrome.runtime.lastError) {
         console.error("Error loading UI state:", chrome.runtime.lastError)
@@ -88,7 +98,7 @@ export function loadUIState(callback) {
         uiState.sortType = result.uiState.sortType || "default"
         uiState.viewMode = result.uiState.viewMode || "flat"
         uiState.collapsedFolders = new Set(
-          result.uiState.collapsedFolders || []
+          result.uiState.collapsedFolders || [],
         )
         uiState.selectedTags = result.uiState.selectedTags || []
       }
@@ -98,6 +108,6 @@ export function loadUIState(callback) {
       uiState.tagTextColors = result.tagTextColors || {}
 
       if (callback) callback()
-    }
+    },
   )
 }

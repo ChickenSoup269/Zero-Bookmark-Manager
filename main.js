@@ -4,7 +4,7 @@ import {
   updateUILanguage,
   openOrganizeFoldersModal,
 } from "./components/ui.js"
-import { getBookmarkTree } from "./components/bookmarks.js"
+import { getBookmarkTree, loadVisitCounts } from "./components/bookmarks.js"
 import { translations, debounce } from "./components/utils/utils.js"
 import { setupEventListeners } from "./components/events.js"
 import { uiState } from "./components/state.js"
@@ -83,8 +83,9 @@ document.addEventListener("DOMContentLoaded", () => {
     organizeFoldersPopup: document.getElementById("organize-folders-popup"),
     folderContextMenu: document.getElementById("folder-context-menu"),
     contextMenuMoveFolderButton: document.getElementById(
-      "context-menu-move-folder"
+      "context-menu-move-folder",
     ),
+    viewVisitCountsOption: document.getElementById("view-visit-counts-option"),
   }
 
   const init = () => {
@@ -132,43 +133,53 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     // Load saved states for settings sections
-    const savedCollapsedStates = JSON.parse(localStorage.getItem("settingsSectionCollapsedStates") || "{}");
+    const savedCollapsedStates = JSON.parse(
+      localStorage.getItem("settingsSectionCollapsedStates") || "{}",
+    )
 
-    document.querySelectorAll('#settings-menu .dropdown-section-title').forEach(title => {
-        const sectionId = title.dataset.i18n;
-        let shouldBeCollapsed = savedCollapsedStates[sectionId] === true;
+    document
+      .querySelectorAll("#settings-menu .dropdown-section-title")
+      .forEach((title) => {
+        const sectionId = title.dataset.i18n
+        let shouldBeCollapsed = savedCollapsedStates[sectionId] === true
 
-        let nextElement = title.nextElementSibling;
-        while(nextElement && !nextElement.classList.contains('dropdown-section-title')) {
-            if (shouldBeCollapsed) {
-                if (!nextElement.classList.contains('hidden')) {
-                    nextElement.classList.add('hidden');
-                }
-            } else {
-                if (nextElement.classList.contains('hidden')) {
-                    nextElement.classList.remove('hidden');
-                }
+        let nextElement = title.nextElementSibling
+        while (
+          nextElement &&
+          !nextElement.classList.contains("dropdown-section-title")
+        ) {
+          if (shouldBeCollapsed) {
+            if (!nextElement.classList.contains("hidden")) {
+              nextElement.classList.add("hidden")
             }
-            nextElement = nextElement.nextElementSibling;
+          } else {
+            if (nextElement.classList.contains("hidden")) {
+              nextElement.classList.remove("hidden")
+            }
+          }
+          nextElement = nextElement.nextElementSibling
         }
 
         if (shouldBeCollapsed) {
-            if (!title.classList.contains('collapsed')) {
-                title.classList.add('collapsed');
-            }
+          if (!title.classList.contains("collapsed")) {
+            title.classList.add("collapsed")
+          }
         } else {
-            if (title.classList.contains('collapsed')) {
-                title.classList.remove('collapsed');
-            }
+          if (title.classList.contains("collapsed")) {
+            title.classList.remove("collapsed")
+          }
         }
-    });
+      })
 
     // Lấy dữ liệu bookmark
     getBookmarkTree((bookmarkTreeNodes) => {
       if (bookmarkTreeNodes) {
-        customLoadUIState(() => {
-          renderFilteredBookmarks(bookmarkTreeNodes, elements)
-          setupBookmarkChangeListeners(elements)
+        // Load visit counts from background script
+        loadVisitCounts(() => {
+          customLoadUIState(() => {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+            setupBookmarkChangeListeners(elements)
+          })
         })
       } else {
         elements.folderListDiv.innerHTML = `<p>${translations[savedLanguage].noBookmarks}</p>`
@@ -181,10 +192,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Event listener for Organize Folders button
     if (elements.organizeFoldersButton) {
       elements.organizeFoldersButton.addEventListener("click", (e) => {
-        e.stopPropagation(); // Prevent dropdown from closing immediately
-        openOrganizeFoldersModal(elements);
-        elements.settingsMenu.classList.add("hidden"); // Close settings menu after opening modal
-      });
+        e.stopPropagation() // Prevent dropdown from closing immediately
+        openOrganizeFoldersModal(elements)
+        elements.settingsMenu.classList.add("hidden") // Close settings menu after opening modal
+      })
     }
 
     // Sự kiện cho showBookmarkIdsOption
@@ -208,16 +219,19 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.openSidePanelOption.addEventListener("click", () => {
         if (chrome.sidePanel) {
           // Get the last focused window that is a normal browser window
-          chrome.windows.getLastFocused({ windowTypes: ["normal"] }, (window) => {
-            if (window) {
-              // Open the side panel for that window
-              // It will open on the window's active tab by default
-              chrome.sidePanel.open({ windowId: window.id })
-            } else {
-              console.error("No normal window found to open side panel.")
-              alert("Could not open side panel: No active window found.")
-            }
-          })
+          chrome.windows.getLastFocused(
+            { windowTypes: ["normal"] },
+            (window) => {
+              if (window) {
+                // Open the side panel for that window
+                // It will open on the window's active tab by default
+                chrome.sidePanel.open({ windowId: window.id })
+              } else {
+                console.error("No normal window found to open side panel.")
+                alert("Could not open side panel: No active window found.")
+              }
+            },
+          )
         } else {
           console.error("Side Panel API not available.")
           alert("Side Panel API not available in this browser.")
@@ -237,17 +251,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       })
     })
+
+    // View Visit Counts option
+    if (elements.viewVisitCountsOption) {
+      elements.viewVisitCountsOption.addEventListener("click", () => {
+        chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
+          if (chrome.runtime.lastError) {
+            alert("Error: " + chrome.runtime.lastError.message)
+            return
+          }
+          const visitCounts = response?.visitCounts || {}
+          const count = Object.keys(visitCounts).length
+          const total = Object.values(visitCounts).reduce(
+            (sum, c) => sum + c,
+            0,
+          )
+
+          console.log("Visit Counts:", visitCounts)
+          alert(
+            `Visit Counts Debug:\n\n` +
+              `Tracked bookmarks: ${count}\n` +
+              `Total visits: ${total}\n\n` +
+              `Details in console (F12)`,
+          )
+        })
+      })
+    }
   }
 
   function setupBookmarkChangeListeners(elements) {
     const refreshBookmarks = debounce(() => {
-      getBookmarkTree((bookmarkTreeNodes) => {
-        if (bookmarkTreeNodes) {
-          renderFilteredBookmarks(bookmarkTreeNodes, elements)
-        } else {
-          const language = localStorage.getItem("appLanguage") || "en"
-          console.error(translations[language].errorUnexpected)
-        }
+      // Reload visit counts whenever bookmarks change
+      loadVisitCounts(() => {
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          } else {
+            const language = localStorage.getItem("appLanguage") || "en"
+            console.error(translations[language].errorUnexpected)
+          }
+        })
       })
     }, 500)
 

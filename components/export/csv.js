@@ -8,12 +8,33 @@ export async function exportToCSV(
   includeFolderModDates,
   includeIconData,
   includeFolderPath,
-  exportOnlySelected
+  exportOnlySelected,
 ) {
   try {
-    const { bookmarkAccessCounts, bookmarkTags } =
-      await chrome.storage.local.get(["bookmarkAccessCounts", "bookmarkTags"])
-    const accessCounts = bookmarkAccessCounts || {}
+    // Get visit counts from background script and tags from storage
+    let visitCounts = {}
+    try {
+      visitCounts = await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.warn(
+              "Error getting visit counts:",
+              chrome.runtime.lastError,
+            )
+            resolve({})
+          } else {
+            resolve(response?.visitCounts || {})
+          }
+        })
+        // Timeout fallback
+        setTimeout(() => resolve({}), 2000)
+      })
+    } catch (err) {
+      console.warn("Failed to get visit counts, using empty object:", err)
+      visitCounts = {}
+    }
+
+    const { bookmarkTags } = await chrome.storage.local.get(["bookmarkTags"])
     const allTags = bookmarkTags || {}
 
     if (!Array.isArray(bookmarkTreeNodes)) {
@@ -21,7 +42,7 @@ export async function exportToCSV(
     }
 
     const flatBookmarks = flattenBookmarks(bookmarkTreeNodes).filter(
-      (b) => b.url
+      (b) => b.url,
     )
 
     let allBookmarks = flatBookmarks
@@ -38,7 +59,7 @@ export async function exportToCSV(
       if (!url) return ""
       try {
         const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(
-          url
+          url,
         )}`
         const response = await fetch(faviconUrl)
         if (!response.ok) return ""
@@ -94,20 +115,20 @@ export async function exportToCSV(
         row.push(
           bookmark.dateAdded
             ? `"${new Date(bookmark.dateAdded).toLocaleString()}"`
-            : '""'
+            : '""',
         )
       }
       if (includeFolderModDates) {
         row.push(
           bookmark.dateGroupModified
             ? `"${new Date(bookmark.dateGroupModified).toLocaleString()}"`
-            : '""'
+            : '""',
         )
       }
       if (includeFolderPath) {
         const folderPath = getFolderPathCSV(
           bookmarkTreeNodes,
-          bookmark.parentId
+          bookmark.parentId,
         )
         row.push(`"${folderPath.replace(/"/g, '""')}"`)
       }
@@ -116,7 +137,7 @@ export async function exportToCSV(
         .map((tag) => tag.replace(/"/g, '""'))
         .join(", ")
       row.push(`"${escapedTagsJoin}"`)
-      row.push(accessCounts[bookmark.id] || 0)
+      row.push(visitCounts[bookmark.id] || 0)
       if (includeIconData) {
         const faviconBase64 = await getFaviconBase64(bookmark.url)
         row.push(`"${faviconBase64.replace(/"/g, '""')}"`)
