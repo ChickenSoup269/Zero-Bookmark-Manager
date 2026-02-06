@@ -37,6 +37,8 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 - **Đa ngôn ngữ:** Hỗ trợ tiếng Anh và tiếng Việt để mang lại trải nghiệm thân thiện hơn.
 - **Kiểm tra tình trạng liên kết:** Xác minh tính khả dụng và an toàn của các liên kết đã đánh dấu của bạn.
 - **Tạo mã QR cho Bookmark:** Tạo mã QR cho các dấu trang của bạn để dễ dàng chia sẻ và truy cập trên các thiết bị khác.
+- **Theo doi luot truy cap:** Theo doi so lan mo cua moi bookmark khi mo trong extension va khi duyet binh thuong (su dung quyen `webNavigation`).
+- **Bieu tuong luot truy cap:** Hien thi bieu tuong cho biet tong so luot truy cap cua bookmark.
 - **Chatbot (Beta):** Quản lý bookmark và kiểm soát tiện ích mở rộng bằng ngôn ngữ tự nhiên. Tạo, xóa và tổ chức bookmark và thư mục, thay đổi chủ đề, chế độ xem, v.v., tất cả từ giao diện chat.
 - **Quản lý Bookmark Trùng lặp:** Tự động xóa bookmark trùng lặp khi tạo. Bao gồm tùy chọn thủ công trong menu cài đặt để quét và dọn dẹp tất cả các mục trùng lặp hiện có.
 - **Hành động mở nhanh có thể tùy chỉnh:** Cho phép người dùng chọn hành động mặc định khi nhấp vào biểu tượng tiện ích (mở Popup, Trang đầy đủ hoặc Bảng điều khiển bên).
@@ -108,6 +110,7 @@ Cài đặt Bookmark-Manager
 | `Kiểm tra tình trạng liên kết`   | Xác minh tình trạng liên kết bookmark qua cài đặt hoặc menu thả xuống.                                                                                                                                                                                            |
 | `Kiểm tra trùng lặp`             | Tìm và xóa tất cả các bookmark trùng lặp theo cách thủ công thông qua menu cài đặt.                                                                                                                                                                               |
 | `Tạo mã QR cho Bookmark`         | Tạo mã QR cho các bookmark của bạn từ menu thả xuống.                                                                                                                                                                                                             |
+| `Lượt truy cập`                  | Theo dõi và hiện thị số lần mở bookmark , cả trong extension và ở trình duyệt                                                                                                                                                                                     |
 | `Chatbot`                        | Hiện hỗ trợ quản lý bookmark và thư mục (thêm, sửa, xóa, di chuyển, tạo/đổi tên/xóa thư mục), điều khiển giao diện (chủ đề, chế độ xem, sắp xếp) và có thể trả lời các câu hỏi chung. Xem Hướng dẫn Trợ giúp trong chat để biết tất cả các lệnh. (phiên bản beta) |
 
 ## How to get Gemini APi ?

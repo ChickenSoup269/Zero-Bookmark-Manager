@@ -842,26 +842,6 @@ body {
   gap: 6px;
 }
 
-.sidebar-tag-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 5px;
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  border: 1px solid var(--border-color);
-  background: var(--bg-tertiary);
-  color: red;
-}
-
-.sidebar-tag-item:hover {
-  background: var(--hover-bg);
-  border-color: var(--accent-color);
-  color: var(--text-primary);
-}
-
 /* Options */
 .sidebar-option-group {
   margin-bottom: 8px;

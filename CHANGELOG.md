@@ -7,12 +7,15 @@
 - **Pure HTML Export:** Added new export format to generate clean, standalone HTML files with bookmarks
 - **Folder Delete Icon in Tree View:** Added delete icon for folders directly in tree view for easier folder management
 - **Sidebar Tag Contrast Detection:** Auto-detect and apply optimal text color (black/white) for tag pills based on background color
+- **Visit Count Tracking:** Track how many times each bookmark is opened inside the extension and during normal browsing (via `webNavigation`)
+- **Visit Count Icon:** Added a visit count icon indicator per bookmark
 
 ## Improved
 
 - **Sidebar Section Animations:** Changed section collapse/expand from instant to smooth animation using max-height transition (0.3s)
 - **Sidebar Layout:** Removed excessive padding between Folders and Manage sections for better space utilization
 - **Tag Pill Display:** Enhanced tag pill styling in sidebar with automatic contrast color calculation for better readability
+- **Visit Count Accuracy:** Improved counting when users open a bookmark page
 
 ## Fixed
 
@@ -24,6 +27,7 @@
 ## Updated
 
 - Removed deprecated sidebar-footer-stats component - total count now displays in header section
+- Added `webNavigation` permission to support visit count tracking
 
 ### [1.1.6] - 2026-01-27
 
