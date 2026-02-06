@@ -120,6 +120,11 @@ document.addEventListener("DOMContentLoaded", () => {
       item.classList.add("active")
       const sortValue = item.getAttribute("data-sort")
 
+      if (sortValue === "favorites") {
+        const folderFilter = document.getElementById("folder-filter")
+        if (folderFilter) folderFilter.value = ""
+      }
+
       // Update hidden select and trigger change
       const sortFilter = document.getElementById("sort-filter")
       if (sortFilter) {
@@ -252,13 +257,8 @@ function handleSmartFilter(filter) {
       if (folderFilter) folderFilter.value = ""
       if (sortFilter) sortFilter.value = "default"
       break
-    case "favorites":
-      if (sortFilter) sortFilter.value = "favorites"
-      break
-    case "unsorted":
-      if (folderFilter) folderFilter.value = "1"
-      break
     case "recent":
+      if (folderFilter) folderFilter.value = ""
       if (sortFilter) sortFilter.value = "new"
       break
   }
@@ -274,22 +274,17 @@ export function updateSidebarCounts(bookmarks, favorites) {
   // Modern sidebar counts
   const totalCount = document.getElementById("bookmark-count")
   const favoritesCount = document.getElementById("favorites-count")
-  const unsortedCount = document.getElementById("unsorted-count")
+
   const sidebarTotalCount = document.getElementById("sidebar-total-count")
 
   // Classic sidebar count
   const bookmarkCountClassic = document.getElementById("bookmark-count-classic")
 
+  const favoritesTotal = bookmarks.filter((b) => b.isFavorite).length
+
   if (totalCount) totalCount.textContent = bookmarks.length
-  if (favoritesCount) favoritesCount.textContent = favorites || 0
+  if (favoritesCount) favoritesCount.textContent = favoritesTotal
   if (sidebarTotalCount)
     sidebarTotalCount.textContent = `${bookmarks.length} bookmarks`
   if (bookmarkCountClassic) bookmarkCountClassic.textContent = bookmarks.length
-
-  if (unsortedCount) {
-    const unsorted = bookmarks.filter(
-      (b) => b.parentId === "1" || b.parentId === "2",
-    ).length
-    unsortedCount.textContent = unsorted
-  }
 }
