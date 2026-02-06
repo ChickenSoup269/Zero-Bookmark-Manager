@@ -3,7 +3,12 @@ import {
   showCustomPopup,
   calculateMatchScore,
 } from "./utils/utils.js"
-import { flattenBookmarks, getFolders, isInFolder } from "./bookmarks.js"
+import {
+  flattenBookmarks,
+  getFolders,
+  isInFolder,
+  loadVisitCounts,
+} from "./bookmarks.js"
 import { uiState, setBookmarks, setFolders, setBookmarkTree } from "./state.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
 import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
@@ -190,6 +195,35 @@ function renderHealthIcon(bookmarkId) {
   return ""
 }
 
+// Render visit count badge
+function renderVisitCount(bookmarkId) {
+  const visitCount = uiState.visitCounts ? uiState.visitCounts[bookmarkId] : 0
+  if (!visitCount || visitCount === 0) return ""
+
+  const language = localStorage.getItem("appLanguage") || "en"
+  const tooltipText =
+    language === "vi"
+      ? `Đã truy cập ${visitCount} lần`
+      : `Visited ${visitCount} times`
+
+  return `<span class="visit-count-badge" title="${tooltipText}" style="
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+    white-space: nowrap;
+  ">
+    <i class="fas fa-eye" style="font-size: 10px;"></i>
+    <span>${visitCount}</span>
+  </span>`
+}
+
 function createDropdownHTML(bookmark, language) {
   const t = translations[language] || translations.en
   const isFav = bookmark.isFavorite
@@ -276,17 +310,18 @@ function createDropdownHTML(bookmark, language) {
 }
 
 function handleBookmarkLinkClick(bookmarkId, elements) {
-  chrome.storage.local.get(["bookmarkAccessCounts"], (data) => {
-    const counts = data.bookmarkAccessCounts || {}
-    counts[bookmarkId] = (counts[bookmarkId] || 0) + 1
-    chrome.storage.local.set({ bookmarkAccessCounts: counts }, () => {
-      if (uiState.sortType === "most-visited") {
+  // Background script automatically tracks visits via webNavigation API
+  // No need to manually increment here
+  // Just reload UI if sorting by most-visited to show updated counts
+  setTimeout(() => {
+    if (uiState.sortType === "most-visited") {
+      loadVisitCounts(() => {
         chrome.bookmarks.getTree((tree) =>
           renderFilteredBookmarks(tree, elements),
         )
-      }
-    })
-  })
+      })
+    }
+  }, 500) // Small delay to allow background script to update
 }
 
 function attachDropdownToggle(element) {
@@ -1642,6 +1677,7 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
   div.className = `bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`
   div.dataset.id = bookmark.id
   const healthIcon = renderHealthIcon(bookmark.id)
+  const visitCountBadge = renderVisitCount(bookmark.id)
   const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
   const isChecked = uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
 
@@ -1660,6 +1696,7 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
         bookmark.title || bookmark.url
       }</a>
    ${healthIcon} 
+   ${visitCountBadge}
     ${createDropdownHTML(bookmark, language)}
     </div>
   `
@@ -1682,6 +1719,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
   div.dataset.id = bookmark.id
   div.style.cssText = `display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--hover-bg); box-shadow: var(--shadow-sm);`
   const healthIcon = renderHealthIcon(bookmark.id) // Lấy icon
+  const visitCountBadge = renderVisitCount(bookmark.id)
 
   let hostname = ""
   try {
@@ -1699,6 +1737,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
         ${bookmark.title || bookmark.url}
       </a>
        ${healthIcon} 
+       ${visitCountBadge}
       ${createDropdownHTML(bookmark, language)}
     </div>
     <div class="bookmark_link" style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px;">
@@ -2020,6 +2059,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
   const favicon = getFaviconUrl(bookmark.url)
   const div = document.createElement("div")
   const healthIcon = renderHealthIcon(bookmark.id) // Lấy icon
+  const visitCountBadge = renderVisitCount(bookmark.id)
   // Class css
   div.className = `bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`
   div.dataset.id = bookmark.id
@@ -2079,6 +2119,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
       ${bookmark.title || bookmark.url}
     </a>
        ${healthIcon} 
+       ${visitCountBadge}
     <div class="bookmark-url" style="font-size: 11px; color: var(--text-secondary); opacity: 0.7; max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${extractDomain(
       bookmark.url,
     )}</div>
@@ -2107,6 +2148,7 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
   div.className = "bookmark-item"
   div.style.marginLeft = `${depth * 20}px`
   const healthIcon = renderHealthIcon(bookmark.id)
+  const visitCountBadge = renderVisitCount(bookmark.id)
 
   const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
   const isChecked = uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
@@ -2124,6 +2166,7 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
       bookmark.title || bookmark.url
     }</a>
     ${healthIcon} 
+    ${visitCountBadge}
     ${
       uiState.showBookmarkIds
         ? `<span class="bookmark-id">[ID: ${bookmark.id}]</span>`
@@ -2781,8 +2824,16 @@ function toggleFolderButtons(elements) {
 }
 
 function sortBookmarks(list, type) {
-  const pinned = list.filter((b) => b.isPinned)
-  const unpinned = list.filter((b) => !b.isPinned)
+  // Map visit counts from background script to accessCount for sorting
+  const bookmarksWithCounts = list.map((bookmark) => ({
+    ...bookmark,
+    accessCount: uiState.visitCounts
+      ? uiState.visitCounts[bookmark.id] || 0
+      : 0,
+  }))
+
+  const pinned = bookmarksWithCounts.filter((b) => b.isPinned)
+  const unpinned = bookmarksWithCounts.filter((b) => !b.isPinned)
 
   const sortFn = (a, b) => {
     switch (type) {

@@ -8,10 +8,22 @@ import {
   setBookmarks,
   setFolders,
   setBookmarkTree,
+  setVisitCounts,
   uiState,
   selectedBookmarks,
 } from "./state.js"
 import { renderFilteredBookmarks } from "./ui.js"
+
+// Load visit counts from background script
+export function loadVisitCounts(callback) {
+  chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
+    if (response && response.visitCounts) {
+      setVisitCounts(response.visitCounts)
+      console.log("Loaded visit counts:", response.visitCounts)
+    }
+    if (callback) callback()
+  })
+}
 
 export function getBookmarkTree(callback) {
   safeChromeBookmarksCall("getTree", [], (bookmarkTreeNodes) => {

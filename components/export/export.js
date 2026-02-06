@@ -868,10 +868,32 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
     // 1. Chạy quá trình tạo bookmark
     await processNodes(nodesToImport, localOtherId)
 
-    // 2. Lấy dữ liệu metadata hiện có từ Storage
+    // 2. Get current visit counts from background script
+    let currentVisitCounts = {}
+    try {
+      currentVisitCounts = await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.warn(
+              "Error getting visit counts:",
+              chrome.runtime.lastError,
+            )
+            resolve({})
+          } else {
+            resolve(response?.visitCounts || {})
+          }
+        })
+        // Timeout fallback
+        setTimeout(() => resolve({}), 2000)
+      })
+    } catch (err) {
+      console.warn("Failed to get visit counts, using empty object:", err)
+      currentVisitCounts = {}
+    }
+
+    // 2b. Lấy dữ liệu metadata hiện có từ Storage
     const storageData = await chrome.storage.local.get([
       "bookmarkTags",
-      "bookmarkAccessCounts",
       "favoriteBookmarks",
       "pinnedBookmarks",
       "tagColors",
@@ -879,7 +901,6 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
     ])
 
     const bookmarkTags = storageData.bookmarkTags || {}
-    const bookmarkAccessCounts = storageData.bookmarkAccessCounts || {}
     const favoriteBookmarks = storageData.favoriteBookmarks || {}
     const pinnedBookmarks = storageData.pinnedBookmarks || {}
     const tagColors = storageData.tagColors || {}
@@ -925,8 +946,8 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
           }
 
           if (node.accessCount) {
-            bookmarkAccessCounts[newId] =
-              (bookmarkAccessCounts[newId] || 0) + node.accessCount
+            currentVisitCounts[newId] =
+              (currentVisitCounts[newId] || 0) + node.accessCount
           }
         }
         if (node.children) restoreMetadata(node.children)
@@ -935,21 +956,23 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
 
     restoreMetadata(nodesToImport)
 
-    // 4. Cập nhật uiState và lưu tất cả metadata đã hợp nhất vào Storage
+    // 4. Save visit counts back to background script
+    await chrome.storage.local.set({ visitCounts: currentVisitCounts })
+
+    // 5. Cập nhật uiState và lưu tất cả metadata đã hợp nhất vào Storage
     // Cập nhật uiState để UI phản hồi ngay lập tức
     uiState.tagColors = tagColors
     uiState.tagTextColors = tagTextColors
 
     await chrome.storage.local.set({
       bookmarkTags,
-      bookmarkAccessCounts,
       favoriteBookmarks,
       pinnedBookmarks,
       tagColors,
       tagTextColors,
     })
 
-    // 5. Cập nhật giao diện
+    // 6. Cập nhật giao diện
     setTimeout(() => {
       chrome.bookmarks.getTree((newTree) => {
         renderFilteredBookmarks(newTree, elements)

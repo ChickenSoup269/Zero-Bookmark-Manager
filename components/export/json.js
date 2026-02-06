@@ -1,15 +1,36 @@
 export async function exportToJSON(exportData) {
   try {
-    // 1. Lấy tất cả dữ liệu bổ sung từ Storage
+    // 1. Get visit counts from background script
+    let visitCounts = {}
+    try {
+      visitCounts = await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.warn(
+              "Error getting visit counts:",
+              chrome.runtime.lastError,
+            )
+            resolve({})
+          } else {
+            resolve(response?.visitCounts || {})
+          }
+        })
+        // Timeout fallback
+        setTimeout(() => resolve({}), 2000)
+      })
+    } catch (err) {
+      console.warn("Failed to get visit counts, using empty object:", err)
+      visitCounts = {}
+    }
+
+    // Get other data from storage
     const {
-      bookmarkAccessCounts,
       bookmarkTags,
       favoriteBookmarks,
       pinnedBookmarks,
       tagColors,
       tagTextColors,
     } = await chrome.storage.local.get([
-      "bookmarkAccessCounts",
       "bookmarkTags",
       "favoriteBookmarks",
       "pinnedBookmarks",
@@ -17,7 +38,6 @@ export async function exportToJSON(exportData) {
       "tagTextColors",
     ])
 
-    const accessCounts = bookmarkAccessCounts || {}
     const allTags = bookmarkTags || {}
     const favorites = favoriteBookmarks || {}
     const pins = pinnedBookmarks || {}
@@ -43,7 +63,7 @@ export async function exportToJSON(exportData) {
             bgColor: allTagColors[tagName] || "#FFFFFF", // Default màu nền
             textColor: allTagTextColors[tagName] || "#000000", // Default màu chữ
           }))
-          node.accessCount = accessCounts[node.id] || 0
+          node.accessCount = visitCounts[node.id] || 0
           node.isFavorite = !!favorites[node.id] // Chuyển thành boolean true/false
           node.isPinned = !!pins[node.id]
         }
@@ -79,7 +99,7 @@ export async function exportToJSON(exportData) {
     URL.revokeObjectURL(url)
 
     console.log(
-      "✅ Exported JSON with full tag details, Favorites & Pins status"
+      "✅ Exported JSON with full tag details, Favorites & Pins status",
     )
   } catch (error) {
     console.error("JSON export failed:", error)
