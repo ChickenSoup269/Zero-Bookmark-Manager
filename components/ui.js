@@ -1056,6 +1056,168 @@ function renderSidebarFolderTree(folders) {
         .forEach((item) => item.classList.remove("active"))
     })
 
+    // Enable drag & drop for folders
+    li.setAttribute("draggable", "true")
+
+    // Dragstart event
+    li.addEventListener("dragstart", (e) => {
+      e.stopPropagation()
+      e.dataTransfer.setData("text/plain", folder.id)
+      currentDragType = "folder"
+      e.dataTransfer.effectAllowed = "move"
+      li.classList.add("dragging")
+    })
+
+    // Dragend event
+    li.addEventListener("dragend", () => {
+      li.classList.remove("dragging")
+      currentDragType = null
+    })
+
+    // Dragover event
+    li.addEventListener("dragover", (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+
+      // Only accept folders
+      if (currentDragType !== "folder") return
+
+      const draggedId = e.dataTransfer.getData("text/plain")
+
+      // Cannot drop a folder onto itself
+      if (draggedId === folder.id) {
+        e.dataTransfer.dropEffect = "none"
+        li.classList.remove("drag-over")
+        return
+      }
+
+      // Cannot drop a folder into one of its own descendants
+      const draggedNode = findNodeById(draggedId, uiState.bookmarkTree)
+      if (draggedNode && isAncestorOf(draggedNode, folder.id)) {
+        e.dataTransfer.dropEffect = "none"
+        li.classList.remove("drag-over")
+        return
+      }
+
+      e.dataTransfer.dropEffect = "move"
+      li.classList.add("drag-over")
+    })
+
+    // Dragleave event
+    li.addEventListener("dragleave", (e) => {
+      e.stopPropagation()
+      if (!li.contains(e.relatedTarget)) {
+        li.classList.remove("drag-over")
+      }
+    })
+
+    // Drop event
+    li.addEventListener("drop", (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+
+      li.classList.remove("drag-over")
+
+      const draggedId = e.dataTransfer.getData("text/plain")
+      const targetFolderId = folder.id
+
+      if (!draggedId || !targetFolderId || draggedId === targetFolderId) return
+
+      // Move folder to new parent
+      chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
+        if (chrome.runtime.lastError) {
+          console.error("Error moving folder:", chrome.runtime.lastError)
+          return
+        }
+
+        // Refresh bookmark tree
+        chrome.bookmarks.getTree((tree) => {
+          renderFilteredBookmarks(tree, {
+            bookmarkList: document.getElementById("bookmark-list"),
+            searchInput: document.getElementById("search-bar"),
+            folderFilter: document.getElementById("folder-filter"),
+            sortType: document.getElementById("sort-type"),
+            viewSwitcher: document.getElementById("view-switcher"),
+            tagFilterContainer: document.getElementById("tag-filter-container"),
+          })
+        })
+      })
+    })
+
+    // Context menu (right-click)
+    li.addEventListener("contextmenu", (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+
+      // Remove existing context menu if any
+      const existingMenu = document.querySelector(
+        ".sidebar-folder-context-menu",
+      )
+      if (existingMenu) {
+        existingMenu.remove()
+      }
+
+      // Create context menu
+      const contextMenu = document.createElement("div")
+      contextMenu.className = "sidebar-folder-context-menu"
+
+      const language = localStorage.getItem("appLanguage") || "en"
+      const t = translations[language] || translations.en
+
+      contextMenu.innerHTML = `
+        <div class="context-menu-item" data-action="move-to-folder">
+          <i class="fas fa-folder-open"></i>
+          <span>${t.moveToFolder || "Move to Folder"}</span>
+        </div>
+      `
+
+      // Position context menu
+      contextMenu.style.position = "fixed"
+      contextMenu.style.left = `${e.clientX}px`
+      contextMenu.style.top = `${e.clientY}px`
+      contextMenu.style.zIndex = "10000"
+
+      document.body.appendChild(contextMenu)
+
+      // Handle context menu click
+      contextMenu.addEventListener("click", (menuEvent) => {
+        menuEvent.stopPropagation()
+        const action =
+          menuEvent.target.closest(".context-menu-item")?.dataset.action
+
+        if (action === "move-to-folder") {
+          // Call existing move folder popup
+          const elements = {
+            addToFolderPopup: document.getElementById("add-to-folder-popup"),
+            addToFolderSelect: document.getElementById("add-to-folder-select"),
+            addToFolderSaveButton:
+              document.getElementById("add-to-folder-save"),
+            addToFolderCancelButton: document.getElementById(
+              "add-to-folder-cancel",
+            ),
+          }
+
+          if (elements.addToFolderPopup) {
+            showMoveFolderToFolderPopup(elements, folder.id)
+          }
+        }
+
+        contextMenu.remove()
+      })
+
+      // Close context menu on outside click
+      const closeMenu = (event) => {
+        if (!contextMenu.contains(event.target)) {
+          contextMenu.remove()
+          document.removeEventListener("click", closeMenu)
+        }
+      }
+
+      setTimeout(() => {
+        document.addEventListener("click", closeMenu)
+      }, 0)
+    })
+
     parent.appendChild(li)
 
     // Render children
@@ -2452,6 +2614,12 @@ export function showMoveFolderToFolderPopup(elements, folderToMoveId) {
   })
 
   // 4. Xử lý Listeners (Clone để xóa event cũ)
+
+  // Check if buttons exist
+  if (!saveButton || !cancelButton) {
+    console.error("Save or Cancel button not found in popup")
+    return
+  }
 
   // Clone nút Save
   const newSaveBtn = saveButton.cloneNode(true)

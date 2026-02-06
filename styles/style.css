@@ -201,29 +201,28 @@ body.onedark-theme {
 
 [data-theme="tet"],
 body.tet-theme {
-  --bg-primary: #5e0000; /* Đỏ truyền thống Tết vừa phải */
-  --bg-secondary: #2a0505; /* Đỏ cam tươi sáng */
+  --bg-primary: #5e0000;
+  --bg-secondary: #2a0505;
   --bg-secondary-rgb: 211, 47, 47;
-  --bg-tertiary: #8b1a1a; /* Đỏ nâu trầm ấm */
-  --text-primary: #f9e79f; /* Vàng gold dịu nhẹ */
-  --text-secondary: #fef5e7; /* Vàng kem nhạt */
-  --text-muted: #f8e295; /* Vàng gold muted */
-  --accent-color: rgb(249, 231, 159); /* Vàng gold trang nhã */
+  --bg-tertiary: #8b1a1a;
+  --text-primary: #f9e79f;
+  --text-secondary: #fef5e7;
+  --text-muted: #f8e295;
+  --accent-color: rgb(249, 231, 159);
   --accent-color-light: rgba(249, 231, 159, 0.2);
-  --border-color: #a82525; /* Đỏ nâu viền */
-  --danger-color: #ff6b6b; /* Đỏ cảnh báo dịu */
+  --border-color: #a82525;
+  --danger-color: #ff6b6b;
   --danger-color-light: rgba(255, 107, 107, 0.15);
-  --danger-hover: #ff5252; /* Đỏ hover */
-  --hover-bg: rgba(249, 231, 159, 0.18); /* Hover vàng gold nhẹ */
-  --focus-outline: #f4d03f; /* Vàng focus tươi sáng */
-  --box-shadow: 0 4px 12px rgba(249, 231, 159, 0.3); /* Shadow vàng dịu */
-  --tree-line-color: rgba(249, 231, 159, 0.45); /* Line vàng gold */
-  --folder-title-color: #fef5e7; /* Vàng kem tiêu đề */
+  --danger-hover: #ff5252;
+  --hover-bg: rgba(249, 231, 159, 0.18);
+  --focus-outline: #f4d03f;
+  --box-shadow: 0 4px 12px rgba(249, 231, 159, 0.3);
+  --tree-line-color: rgba(249, 231, 159, 0.45);
+  --folder-title-color: #fef5e7;
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(249, 231, 159, 0.22); /* Hover folder vàng */
-  --bookmark-bg: rgba(249, 231, 159, 0.08); /* Background bookmark nhẹ */
-  --bookmark-hover-bg: rgba(249, 231, 159, 0.15); /* Hover bookmark vàng */
-
+  --folder-hover-bg: rgba(249, 231, 159, 0.22);
+  --bookmark-bg: rgba(249, 231, 159, 0.08);
+  --bookmark-hover-bg: rgba(249, 231, 159, 0.15);
   --health-icon-dead-color: #ffd54f;
   --text-option: #fef5e7;
   --hover-bg-option: rgba(249, 231, 159, 0.2);
