@@ -113,24 +113,6 @@ Cài đặt Bookmark-Manager
 | `Lượt truy cập`                  | Theo dõi và hiện thị số lần mở bookmark , cả trong extension và ở trình duyệt                                                                                                                                                                                     |
 | `Chatbot`                        | Hiện hỗ trợ quản lý bookmark và thư mục (thêm, sửa, xóa, di chuyển, tạo/đổi tên/xóa thư mục), điều khiển giao diện (chủ đề, chế độ xem, sắp xếp) và có thể trả lời các câu hỏi chung. Xem Hướng dẫn Trợ giúp trong chat để biết tất cả các lệnh. (phiên bản beta) |
 
-## How to get Gemini APi ?
-
-1. Đầu tiên các bạn cần có API key của Gemini (bắt buộc) và tên model của nó
-2. Lấy API key ở tại trang web này
-   https://aistudio.google.com/prompts/new_chat
-
-3. Chọn model của bạn ở đây và get API key là xong
-
-| Model                                       | Loại           | Truy cập miễn phí  | Giới hạn          | Ghi chú                                                             |
-| ------------------------------------------- | -------------- | ------------------ | ----------------- | ------------------------------------------------------------------- |
-| **Gemini 2.5 Pro (Experimental / Preview)** | Pro            | Có (Web/App)       | Thấp, bị giới hạn | Có trên Gemini Web/App cho free user, không đảm bảo ổn định lâu dài |
-| **Gemini 2.5 Flash**                        | Fast / General | Có (Free Tier API) | Rất thấp          | Dùng được trong Google AI Studio & API free tier                    |
-| **Gemini 2.5 Flash-Lite**                   | Lightweight    | Có (Free Tier)     | Thấp              | Nhẹ hơn Flash, phù hợp task đơn giản                                |
-| **Gemini 2.5 Flash (Preview)**              | Preview        | Có (tùy thời điểm) | Thấp              | Thường mở free để test model mới                                    |
-| **Gemini 2.5 Flash-TTS**                    | Text-to-Speech | Có thể             | Giới hạn          | TTS, tùy khu vực & cấu hình API                                     |
-
-Video hướng dẫn
-
 ## Video & screenshots
 
 - (để tiết kiệm bạn hãy qua readme chính để xem, xin cảm ơn)

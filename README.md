@@ -159,23 +159,6 @@ Install Bookmark-Manager
 | `Chatbot`                | Now supports full bookmark and folder management (add, edit, delete, move, create/rename/delete folders), UI control (themes, views, sorting), and can answer general questions. See the in-chat Help Guide for all commands. (beta version) |
 | `Localization`           | Sidebar section titles (Filters, Search, Folder actions, Selection) are now dynamically translated.                                                                                                                                          |
 
-## How to get Gemini APi ?
-
-1. First you need to have Gemini API key (required) and its model name
-2. Get API key at this website
-   https://aistudio.google.com/api-keys
-3. Select your model here and get API key you're done
-
-| Model                                       | Type           | Free Access         | Limits        | Notes                                                                |
-| ------------------------------------------- | -------------- | ------------------- | ------------- | -------------------------------------------------------------------- |
-| **Gemini 2.5 Pro (Experimental / Preview)** | Pro            | Yes (Web/App)       | Low / limited | Available for free users on Gemini Web/App, not guaranteed long-term |
-| **Gemini 2.5 Flash**                        | Fast / General | Yes (Free Tier API) | Very low      | Available in Google AI Studio & API free tier                        |
-| **Gemini 2.5 Flash-Lite**                   | Lightweight    | Yes (Free Tier)     | Low           | Lighter than Flash, suitable for simple tasks                        |
-| **Gemini 2.5 Flash (Preview)**              | Preview        | Sometimes           | Low           | Often opened temporarily for testing                                 |
-| **Gemini 2.5 Flash-TTS**                    | Text-to-Speech | Limited             | Limited       | TTS model, availability depends on region & API config               |
-
-Video tutorial
-
 ## Video & screenshots
 
 <div style="text-align: center;">
