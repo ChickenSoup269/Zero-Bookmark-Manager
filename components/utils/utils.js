@@ -184,8 +184,11 @@ export const translations = {
         <li><strong>search bookmarks "keyword"</strong></li>
         <li><strong>search folders "keyword"</strong></li>
         <li><strong>favorite bookmark "Title"</strong></li>
-        <li><strong>change view to card</strong></li>
-        <li><strong>change theme to dark</strong></li>
+        <li><strong>change view to flat/tree/detail/card</strong></li>
+        <li><strong>switch to flat view</strong></li>
+        <li><strong>change theme to light/dark/dracula/onedark/tet/system</strong></li>
+        <li><strong>use the dracula theme</strong></li>
+        <li><strong>switch to dark mode</strong></li>
         <li><strong>sort by a-z</strong></li>
         <li><strong>check links</strong></li>
       </ul>
@@ -225,8 +228,16 @@ export const translations = {
     <li><strong>Favorite:</strong><br>
       - <code>"favorite bookmark \"Title\""</code>.
     </li>
-    <li><strong>View / Theme / Sort:</strong><br>
-      - <code>"change view to card"</code>, <code>"change theme to dark"</code>, <code>"sort by a-z"</code>.
+    <li><strong>View Modes:</strong><br>
+      - <code>"change view to flat"</code>, <code>"change view to tree"</code>, <code>"change view to detail"</code>, <code>"change view to card"</code>.<br>
+      - <code>"switch to flat view"</code>, <code>"use tree layout"</code>, <code>"card view"</code>.
+    </li>
+    <li><strong>Theme:</strong><br>
+      - <code>"change theme to light"</code>, <code>"change theme to dark"</code>, <code>"change theme to dracula"</code>, <code>"change theme to onedark"</code>, <code>"change theme to tet"</code>, <code>"change theme to system"</code>.<br>
+      - <code>"use the dracula theme"</code>, <code>"switch to dark mode"</code>.
+    </li>
+    <li><strong>Sort:</strong><br>
+      - <code>"sort by a-z"</code>, <code>"sort by z-a"</code>, <code>"sort by newest"</code>, <code>"sort by oldest"</code>, <code>"sort by favorites"</code>.
     </li>
     <li><strong>Check Links:</strong><br>
       - <code>"check links"</code>.
@@ -489,69 +500,81 @@ export const translations = {
     helpCommands: `
       <h4>Danh sach lenh</h4>
       <ul>
-        <li><strong>/help</strong> - Xem danh sach lenh</li>
-        <li><strong>dem bookmark</strong> - Dem bookmark</li>
-        <li><strong>dem thu muc</strong> - Dem thu muc</li>
-        <li><strong>liet ke bookmark</strong> - Liet ke tat ca bookmark</li>
-        <li><strong>liet ke thu muc</strong> - Liet ke tat ca thu muc</li>
-        <li><strong>liet ke bookmark trong thu muc "Work"</strong></li>
-        <li><strong>dung @Work de chon thu muc</strong></li>
-        <li><strong>them https://example.com vao thu muc "Work"</strong></li>
-        <li><strong>chuyen bookmark "Tieu de" sang thu muc "Work"</strong></li>
-        <li><strong>sua bookmark "Tieu de"</strong></li>
-        <li><strong>xoa bookmark "Tieu de"</strong></li>
-        <li><strong>tao thu muc "Work"</strong></li>
-        <li><strong>doi ten thu muc "Cu" thanh "Moi"</strong></li>
-        <li><strong>xoa thu muc "Work"</strong></li>
-        <li><strong>tim bookmark "tu khoa"</strong></li>
-        <li><strong>tim thu muc "tu khoa"</strong></li>
-        <li><strong>yeu thich bookmark "Tieu de"</strong></li>
-        <li><strong>doi che do xem card</strong></li>
-        <li><strong>doi chu de dark</strong></li>
-        <li><strong>sap xep a-z</strong></li>
-        <li><strong>kiem tra link</strong></li>
+        <li><strong>/help</strong> - Show this list</li>
+        <li><strong>count bookmarks</strong> - Count bookmarks</li>
+        <li><strong>count folders</strong> - Count folders</li>
+        <li><strong>list bookmarks</strong> - List all bookmarks</li>
+        <li><strong>list folders</strong> - List all folders</li>
+        <li><strong>list bookmarks in folder "Work"</strong></li>
+        <li><strong>use @Work to pick a folder</strong></li>
+        <li><strong>add https://example.com to folder "Work"</strong></li>
+        <li><strong>move bookmark "Title" to folder "Work"</strong></li>
+        <li><strong>edit bookmark "Title"</strong></li>
+        <li><strong>delete bookmark "Title"</strong></li>
+        <li><strong>create folder "Work"</strong></li>
+        <li><strong>rename folder "Old" to "New"</strong></li>
+        <li><strong>delete folder "Work"</strong></li>
+        <li><strong>search bookmarks "keyword"</strong></li>
+        <li><strong>search folders "keyword"</strong></li>
+        <li><strong>favorite bookmark "Title"</strong></li>
+        <li><strong>change view to flat/tree/detail/card</strong></li>
+        <li><strong>switch to flat view</strong></li>
+        <li><strong>use tree layout</strong></li>
+        <li><strong>change theme to light/dark/dracula/onedark/tet/system</strong></li>
+        <li><strong>use the dracula theme</strong></li>
+        <li><strong>switch to dark mode</strong></li>
+        <li><strong>sort by a-z</strong></li>
+        <li><strong>check links</strong></li>
       </ul>
     `,
     helpGuide: `
-        <h4>Hướng Dẫn:</h4>
+        <h4>Huong dan:</h4>
           <ol>
             <li><strong>/help</strong><br>
-              - Xem danh sach lenh.
+              - Hiện danh sác lệnh
             </li>
-            <li><strong>Dem:</strong><br>
-              - <code>"dem bookmark"</code>, <code>"dem thu muc"</code>.
+            <li><strong>Đếm:</strong><br>
+              - <code>"count bookmarks"</code>, <code>"count folders"</code>.
             </li>
-            <li><strong>Liet ke:</strong><br>
-              - <code>"liet ke bookmark"</code>, <code>"liet ke thu muc"</code>.<br>
-              - <code>"liet ke bookmark trong thu muc \"Work\""</code>.<br>
+            <li><strong>Liệt kê:</strong><br>
+              - <code>"list bookmarks"</code>, <code>"list folders"</code>.<br>
+              - <code>"list bookmarks in folder \"Work\""</code>.<br>
               - Dung <code>@Work</code> de chon thu muc.
             </li>
-            <li><strong>Them Bookmark:</strong><br>
-              - <code>"them https://example.com vao thu muc \"Work\""</code>.
+            <li><strong>Thêm bookmark:</strong><br>
+              - <code>"add https://example.com to folder \"Work\""</code>.
             </li>
-            <li><strong>Chuyen Bookmark:</strong><br>
-              - <code>"chuyen bookmark \"Tieu de\" sang thu muc \"Work\""</code> hoac <code>"chuyen bookmark id 123 sang thu muc \"Work\""</code>.
+            <li><strong>Chuyển bookmark:</strong><br>
+              - <code>"move bookmark \"Title\" to folder \"Work\""</code> or <code>"move bookmark id 123 to folder \"Work\""</code>.
             </li>
-            <li><strong>Sua Bookmark:</strong><br>
-              - <code>"sua bookmark \"Tieu de\""</code> hoac <code>"sua bookmark id 123"</code>.
+            <li><strong>Sửa bookmark:</strong><br>
+              - <code>"edit bookmark \"Title\""</code> or <code>"edit bookmark id 123"</code>.
             </li>
-            <li><strong>Xoa Bookmark:</strong><br>
-              - <code>"xoa bookmark \"Tieu de\""</code> hoac <code>"xoa bookmark id 123"</code>.
+            <li><strong>Xóa bookmark:</strong><br>
+              - <code>"delete bookmark \"Title\""</code> or <code>"delete bookmark id 123"</code>.
             </li>
-            <li><strong>Thu muc:</strong><br>
-              - <code>"tao thu muc \"Work\""</code>, <code>"doi ten thu muc \"Cu\" thanh \"Moi\""</code>, <code>"xoa thu muc \"Work\""</code>.
+            <li><strong>Thư mục:</strong><br>
+              - <code>"create folder \"Work\""</code>, <code>"rename folder \"Old\" to \"New\""</code>, <code>"delete folder \"Work\""</code>.
             </li>
-            <li><strong>Tim kiem:</strong><br>
-              - <code>"tim bookmark \"tu khoa\""</code>, <code>"tim thu muc \"tu khoa\""</code>.
+            <li><strong>Tìm kiếm:</strong><br>
+              - <code>"search bookmarks \"keyword\""</code>, <code>"search folders \"keyword\""</code>.
             </li>
-            <li><strong>Yeu thich:</strong><br>
-              - <code>"yeu thich bookmark \"Tieu de\""</code>.
+            <li><strong>Yêu thích:</strong><br>
+              - <code>"favorite bookmark \"Title\""</code>.
             </li>
-            <li><strong>Che do xem / Chu de / Sap xep:</strong><br>
-              - <code>"doi che do xem card"</code>, <code>"doi chu de dark"</code>, <code>"sap xep a-z"</code>.
+            <li><strong>Che do xem:</strong><br>
+              - <code>"change view to flat"</code>, <code>"change view to tree"</code>, <code>"change view to detail"</code>, <code>"change view to card"</code>.<br>
+              - <code>"switch to flat view"</code>, <code>"use tree layout"</code>, <code>"card view"</code>.
+            </li>
+            <li><strong>Chu de / Theme:</strong><br>
+              - <code>"change theme to light"</code>, <code>"change theme to dark"</code>, <code>"change theme to dracula"</code>, <code>"change theme to onedark"</code>, <code>"change theme to tet"</code>, <code>"change theme to system"</code>.<br>
+              - <code>"use the dracula theme"</code>, <code>"switch to dark mode"</code>.
+            </li>
+            <li><strong>Sap xep:</strong><br>
+              - <code>"sort by a-z"</code>, <code>"sort by z-a"</code>, <code>"sort by newest"</code>, <code>"sort by oldest"</code>, <code>"sort by favorites"</code>.
             </li>
             <li><strong>Kiem tra lien ket:</strong><br>
-              - <code>"kiem tra link"</code>.
+              - <code>"check links"</code>.
             </li>
             <li><strong>Luu y:</strong><br>
               - Che do local chi ho tro lenh bookmark.
