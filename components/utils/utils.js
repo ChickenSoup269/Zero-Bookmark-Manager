@@ -130,8 +130,7 @@ export const translations = {
     searchFolderResult: "Found folders",
     noFoldersFound: "No folders found for",
     aiBookmarkResponse: "AI Response",
-    notSupported:
-      "Sorry, I can only help with bookmark-related tasks or simple questions like the time or day.",
+    notSupported: "Sorry, I can only help with bookmark-related tasks",
     youHave: "You have",
     hereAreYourBookmarks: "Here are your bookmarks",
     hereAreYourFolders: "Here are your folders",
@@ -464,7 +463,7 @@ export const translations = {
     noFoldersFound: "Không tìm thấy thư mục cho",
     aiBookmarkResponse: "Phản hồi AI",
     notSupported:
-      "Xin lỗi, tôi chỉ có thể giúp với các tác vụ liên quan đến bookmark hoặc các câu hỏi đơn giản như giờ hoặc ngày.",
+      "Xin lỗi, tôi chỉ có thể giúp với các tác vụ liên quan đến bookmark",
     youHave: "Bạn có",
     hereAreYourBookmarks: "Đây là danh sách bookmark của bạn",
     hereAreYourFolders: "Đây là danh sách thư mục của bạn",
