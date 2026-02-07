@@ -42,6 +42,31 @@
                 </button>
             </div>
 
+
+            <!-- Folders Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-header" data-toggle="folders">
+                    <div class="sidebar-section-title">
+                        <i class="fas fa-folder"></i>
+                        <span data-i18n="sidebarFolders">Folders</span>
+                    </div>
+                    <div class="sidebar-section-actions">
+                        <button id="create-folder" class="sidebar-action-btn" title="Create folder">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <i class="fas fa-chevron-down sidebar-section-toggle"></i>
+                    </div>
+                </div>
+                <div class="sidebar-section-content" id="folders-content">
+                    <select id="folder-filter" class="sidebar-folder-select" aria-label="Folder filter">
+                        <option value="">All Folders</option>
+                    </select>
+                    <ul class="sidebar-folder-tree" id="sidebar-folder-tree">
+                        <!-- Folders will be rendered here dynamically -->
+                    </ul>
+                </div>
+            </div>
+
             <!-- Sort Section -->
             <div class="sidebar-section">
                 <div class="sidebar-section-header" data-toggle="options">
@@ -52,21 +77,8 @@
                     <i class="fas fa-chevron-down sidebar-section-toggle"></i>
                 </div>
                 <div class="sidebar-section-content" id="options-content">
-                    <!-- Quick Filters -->
-                    <ul class="sidebar-menu">
-                        <li class="sidebar-menu-item active" data-filter="all">
-                            <i class="fas fa-inbox"></i>
-                            <span data-i18n="sidebarAllBookmarks">All Bookmarks</span>
-                            <span class="sidebar-badge" id="sidebar-all-count">0</span>
-                        </li>
-                        <li class="sidebar-menu-item" data-filter="recent">
-                            <i class="fas fa-clock"></i>
-                            <span data-i18n="sidebarRecentlyAdded">Recently Added</span>
-                        </li>
-                    </ul>
-
                     <!-- Sort Options -->
-                    <div class="sidebar-sort-divider"></div>
+                    <!-- <div class="sidebar-sort-divider"></div> -->
                     <select id="sort-filter" class="sidebar-select hidden" aria-label="Sort bookmarks">
                         <option value="default">Default</option>
                         <option value="new">Newest First</option>
@@ -118,29 +130,7 @@
                 </div>
             </div>
 
-            <!-- Folders Section -->
-            <div class="sidebar-section">
-                <div class="sidebar-section-header" data-toggle="folders">
-                    <div class="sidebar-section-title">
-                        <i class="fas fa-folder"></i>
-                        <span data-i18n="sidebarFolders">Folders</span>
-                    </div>
-                    <div class="sidebar-section-actions">
-                        <button id="create-folder" class="sidebar-action-btn" title="Create folder">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <i class="fas fa-chevron-down sidebar-section-toggle"></i>
-                    </div>
-                </div>
-                <div class="sidebar-section-content" id="folders-content">
-                    <select id="folder-filter" class="sidebar-folder-select" aria-label="Folder filter">
-                        <option value="">All Folders</option>
-                    </select>
-                    <ul class="sidebar-folder-tree" id="sidebar-folder-tree">
-                        <!-- Folders will be rendered here dynamically -->
-                    </ul>
-                </div>
-            </div>
+
 
             <!-- Folder Actions (Admin Tools) -->
             <div class="sidebar-section sidebar-admin-section">

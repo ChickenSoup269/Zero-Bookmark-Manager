@@ -20,7 +20,7 @@
   --bg-secondary-rgb: 22, 27, 34;
   --bg-tertiary: #21262d;
   --bg-white-none: white;
-  --bg-side: #bebebe;
+  --bg-side: #161b22;
   --text-primary: #ffffff;
   --text-secondary: #cccccc;
   --text-muted: #999999;
@@ -2849,8 +2849,7 @@ html {
   cursor: pointer;
   transition: all 0.15s ease;
   border: 1px solid var(--border-color);
-  background: var(--bg-tertiary);
-  color: red;
+  background: var(--bg-side);
 }
 
 .sidebar-tag-item:hover {
