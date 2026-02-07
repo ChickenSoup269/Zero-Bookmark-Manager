@@ -101,17 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
 
-  // Smart filter menu items (Modern sidebar)
-  const menuItems = document.querySelectorAll(".sidebar-menu-item")
-  menuItems.forEach((item) => {
-    item.addEventListener("click", () => {
-      menuItems.forEach((i) => i.classList.remove("active"))
-      item.classList.add("active")
-      const filter = item.getAttribute("data-filter")
-      handleSmartFilter(filter)
-    })
-  })
-
   // Sort list items (Raindrop style)
   const sortItems = document.querySelectorAll(".sidebar-sort-item")
   sortItems.forEach((item) => {
@@ -256,10 +245,6 @@ function handleSmartFilter(filter) {
     case "all":
       if (folderFilter) folderFilter.value = ""
       if (sortFilter) sortFilter.value = "default"
-      break
-    case "recent":
-      if (folderFilter) folderFilter.value = ""
-      if (sortFilter) sortFilter.value = "new"
       break
   }
 

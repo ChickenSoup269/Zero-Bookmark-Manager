@@ -967,6 +967,16 @@ function renderSidebarFolderTree(folders) {
     return a.title.localeCompare(b.title)
   })
 
+  // Add "All Bookmarks" pseudo folder at the beginning
+  const t = translations[language] || translations.en
+  const allBookmarksFolder = {
+    id: "__all_bookmarks",
+    title: t.sidebarAllBookmarks || "All Bookmarks",
+    children: [],
+    isVirtual: true,
+  }
+  rootFolders.unshift(allBookmarksFolder)
+
   // Sort children alphabetically
   const sortChildren = (folder) => {
     if (folder.children && folder.children.length > 0) {
@@ -1004,7 +1014,12 @@ function renderSidebarFolderTree(folders) {
     li.setAttribute("data-level", level)
     if (isLast) li.classList.add("is-last")
 
-    if (uiState.selectedFolderId === folder.id) {
+    // Mark "All Bookmarks" as active when no folder is selected
+    const isActive =
+      (folder.id === "__all_bookmarks" && !uiState.selectedFolderId) ||
+      uiState.selectedFolderId === folder.id
+
+    if (isActive) {
       li.classList.add("active")
     }
 
@@ -1064,7 +1079,12 @@ function renderSidebarFolderTree(folders) {
       // Update folder filter select
       const folderFilter = document.getElementById("folder-filter")
       if (folderFilter) {
-        folderFilter.value = folder.id
+        // For "All Bookmarks" pseudo folder, set empty filter
+        if (folder.id === "__all_bookmarks") {
+          folderFilter.value = ""
+        } else {
+          folderFilter.value = folder.id
+        }
         folderFilter.dispatchEvent(new Event("change", { bubbles: true }))
       }
 
@@ -1073,15 +1093,12 @@ function renderSidebarFolderTree(folders) {
         .querySelectorAll(".sidebar-folder-item")
         .forEach((item) => item.classList.remove("active"))
       li.classList.add("active")
-
-      // Update menu items
-      document
-        .querySelectorAll(".sidebar-menu-item")
-        .forEach((item) => item.classList.remove("active"))
     })
 
-    // Enable drag & drop for folders
-    li.setAttribute("draggable", "true")
+    // Enable drag & drop for folders (but not for virtual folders)
+    if (!folder.isVirtual) {
+      li.setAttribute("draggable", "true")
+    }
 
     // Dragstart event
     li.addEventListener("dragstart", (e) => {
@@ -1168,8 +1185,15 @@ function renderSidebarFolderTree(folders) {
       })
     })
 
-    // Context menu (right-click)
+    // Context menu (right-click) - disabled for virtual folders
     li.addEventListener("contextmenu", (e) => {
+      // Don't show context menu for virtual folders like "All Bookmarks"
+      if (folder.isVirtual) {
+        e.preventDefault()
+        e.stopPropagation()
+        return
+      }
+
       e.preventDefault()
       e.stopPropagation()
 
@@ -1266,7 +1290,6 @@ function renderSidebarFolderTree(folders) {
 // Update sidebar counts
 function updateSidebarCounts(bookmarks, favoriteBookmarks) {
   const bookmarkCountNumber = document.getElementById("bookmark-count-number")
-  const sidebarAllCount = document.getElementById("sidebar-all-count")
   const favoritesCount = document.getElementById("favorites-count")
   const sidebarTotalCount = document.getElementById("sidebar-total-count")
 
@@ -1274,16 +1297,13 @@ function updateSidebarCounts(bookmarks, favoriteBookmarks) {
   const favorites = bookmarks.filter((b) => b.isFavorite).length
 
   if (bookmarkCountNumber) bookmarkCountNumber.textContent = total
-  if (sidebarAllCount) sidebarAllCount.textContent = total
   if (favoritesCount) favoritesCount.textContent = favorites
   if (sidebarTotalCount) sidebarTotalCount.textContent = `${total} bookmarks`
 }
 
 function updateSidebarActiveState() {
-  const menuItems = document.querySelectorAll(".sidebar-menu-item")
   const sortItems = document.querySelectorAll(".sidebar-sort-item")
 
-  menuItems.forEach((item) => item.classList.remove("active"))
   sortItems.forEach((item) => item.classList.remove("active"))
 
   const sortType = uiState.sortType || "default"
@@ -1291,23 +1311,6 @@ function updateSidebarActiveState() {
     `.sidebar-sort-item[data-sort="${sortType}"]`,
   )
   if (sortItem) sortItem.classList.add("active")
-
-  if (uiState.selectedFolderId === "1") {
-    return
-  }
-
-  if (sortType === "new") {
-    const recentItem = document.querySelector(
-      '.sidebar-menu-item[data-filter="recent"]',
-    )
-    if (recentItem) recentItem.classList.add("active")
-    return
-  }
-
-  const allItem = document.querySelector(
-    '.sidebar-menu-item[data-filter="all"]',
-  )
-  if (allItem) allItem.classList.add("active")
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
