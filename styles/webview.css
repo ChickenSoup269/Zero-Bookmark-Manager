@@ -39,12 +39,21 @@ body {
   border-right: 1px solid var(--border-color);
 }
 
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-secondary);
+}
+
 .sidebar::-webkit-scrollbar {
   width: 4px;
 }
 
+.sidebar::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-radius: 10px;
+}
+
 .sidebar::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
+  background: var(--border-color);
   border-radius: 4px;
 }
 
@@ -231,7 +240,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    var(--text-secondary),
+    var(--hover-light-dazz),
     transparent
   );
   transition: left 0.5s ease;
@@ -402,8 +411,8 @@ body {
 }
 
 .sidebar-badge {
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
+  background: var(--text-secondary);
+  color: var(--bg-primary);
   font-size: 0.7rem;
   padding: 2px 6px;
   border-radius: 10px;

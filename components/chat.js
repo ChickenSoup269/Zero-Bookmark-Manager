@@ -5,7 +5,7 @@ import {
   showCustomConfirm,
   showCustomGuide,
 } from "./utils/utils.js"
-import { uiState } from "./state.js"
+import { uiState, saveUIState } from "./state.js"
 import {
   updateTheme,
   renderFilteredBookmarks,
@@ -22,18 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatClose = document.getElementById("chat-close")
   const chatMaximize = document.getElementById("chat-maximize")
   const chatScrollBottom = document.getElementById("chat-scroll-bottom")
-  const aiConfigPopup = document.getElementById("ai-config-popup")
-  const aiModelSelect = document.getElementById("ai-model-select")
-  const apiKeyInput = document.getElementById("api-key-input")
-  const toggleApiVisibility = document.getElementById("toggle-api-visibility")
-  const curlInput = document.getElementById("curl-input")
-  const clearApiKey = document.getElementById("clear-api-key")
-  const clearCurl = document.getElementById("clear-curl")
-  const aiConfigSave = document.getElementById("ai-config-save")
-  const aiConfigCancel = document.getElementById("ai-config-cancel")
-  const chatEditConfig = document.getElementById("chat-edit-config")
   const chatHelp = document.getElementById("chat-help")
   const chatHistoryBtn = document.getElementById("chat-history")
+  const chatFolderSuggestions = document.getElementById(
+    "chat-folder-suggestions",
+  )
 
   function getUiElements() {
     const elements = {}
@@ -158,20 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (chatHelp) chatHelp.title = t("helpGuideTitle")
   if (chatHistoryBtn) chatHistoryBtn.title = t("exportChatHistory")
   if (chatMaximize) chatMaximize.title = t("maximizeMinimize")
-  if (chatEditConfig) chatEditConfig.title = t("editAIConfig")
   if (chatClose) chatClose.title = t("closeChat")
-  if (toggleApiVisibility && apiKeyInput) {
-    toggleApiVisibility.addEventListener("click", () => {
-      const isHidden = apiKeyInput.type === "password"
-      apiKeyInput.type = isHidden ? "text" : "password"
-      toggleApiVisibility.innerHTML = isHidden
-        ? '<i class="fas fa-eye"></i>'
-        : '<i class="fas fa-eye-slash"></i>'
-      const config = getAiConfig()
-      config.apiVisible = !isHidden
-      localStorage.setItem("aiConfig", JSON.stringify(config))
-    })
-  }
 
   // Chat history management
   let chatHistory = []
@@ -228,6 +208,278 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   // ===== END OF NEW HELPERS =====
 
+  function normalizeText(text) {
+    return text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+  }
+
+  function extractFirstUrl(text) {
+    const match = text.match(/https?:\/\/[^\s]+/i)
+    return match ? match[0] : ""
+  }
+
+  function extractId(text) {
+    const match = text.match(/\b(?:id|ID)\s*[:#]?\s*(\d+)\b/)
+    return match ? match[1] : ""
+  }
+
+  function extractQuotedText(text) {
+    const match = text.match(/"([^"]+)"|'([^']+)'/)
+    return match ? match[1] || match[2] : ""
+  }
+
+  function extractMentionedFolder(text) {
+    const quotedMatch = text.match(/@"([^"]+)"|@'([^']+)'/)
+    if (quotedMatch) return quotedMatch[1] || quotedMatch[2]
+    const wordMatch = text.match(/@([^\s]+)/)
+    return wordMatch ? wordMatch[1] : ""
+  }
+
+  function extractFolderName(text) {
+    const mention = extractMentionedFolder(text)
+    if (mention) return mention
+    const quoted = extractQuotedText(text)
+    if (quoted) return quoted
+    const match = text.match(/(?:folder|thu muc)\s*[:\-]?\s*(.+)$/i)
+    return match ? match[1].trim() : ""
+  }
+
+  function getMentionContext(text, cursorPosition) {
+    const beforeCursor = text.slice(0, cursorPosition)
+    const atIndex = beforeCursor.lastIndexOf("@")
+    if (atIndex === -1) return null
+    if (atIndex > 0 && !/\s/.test(beforeCursor[atIndex - 1])) return null
+    const mentionText = beforeCursor.slice(atIndex + 1)
+    if (/\s/.test(mentionText)) return null
+    return { atIndex, query: mentionText }
+  }
+
+  function getFolderSuggestionList(query) {
+    const normalized = query.toLowerCase()
+    const seen = new Set()
+    const folders = []
+    ;(uiState.folders || []).forEach((folder) => {
+      if (!folder || !folder.title) return
+      if (seen.has(folder.title)) return
+      seen.add(folder.title)
+      folders.push(folder.title)
+    })
+
+    if (!normalized) return folders
+    return folders.filter((title) => title.toLowerCase().includes(normalized))
+  }
+
+  function hideFolderSuggestions() {
+    if (chatFolderSuggestions) {
+      chatFolderSuggestions.classList.add("hidden")
+      chatFolderSuggestions.innerHTML = ""
+    }
+  }
+
+  function insertFolderMention(folderName, atIndex, cursorPosition) {
+    if (!chatInput) return
+    const needsQuotes = /\s/.test(folderName)
+    const mention = needsQuotes ? `@"${folderName}"` : `@${folderName}`
+    const value = chatInput.value
+    const before = value.slice(0, atIndex)
+    const after = value.slice(cursorPosition)
+    const nextValue = `${before}${mention}${after}`
+    chatInput.value = nextValue
+    const nextCursor = before.length + mention.length
+    chatInput.setSelectionRange(nextCursor, nextCursor)
+    chatInput.focus()
+    hideFolderSuggestions()
+    chatInput.dispatchEvent(new Event("input"))
+  }
+
+  function renderFolderSuggestions(context) {
+    if (!chatFolderSuggestions || !context || !chatInput) return
+    const suggestions = getFolderSuggestionList(context.query).slice(0, 8)
+    if (suggestions.length === 0) {
+      hideFolderSuggestions()
+      return
+    }
+
+    chatFolderSuggestions.innerHTML = ""
+    suggestions.forEach((title) => {
+      const item = document.createElement("div")
+      item.className = "chat-suggestion-item"
+      item.textContent = title
+      item.addEventListener("click", () => {
+        insertFolderMention(title, context.atIndex, chatInput.selectionStart)
+      })
+      chatFolderSuggestions.appendChild(item)
+    })
+    chatFolderSuggestions.classList.remove("hidden")
+  }
+
+  function parseLocalCommand(message) {
+    const raw = message
+    const text = normalizeText(message)
+    const url = extractFirstUrl(raw)
+    const id = extractId(raw)
+
+    if (/^(\/help|help|tro giup|giup|huong dan)$/i.test(text)) {
+      return { action: "help" }
+    }
+
+    if (/(goi y|suggest).*(website|web|site)/i.test(text)) {
+      return { action: "general", reason: "suggest_disabled" }
+    }
+
+    if (/(check|kiem tra).*(link|broken|suc khoe|health)/i.test(text)) {
+      return { action: "check_links" }
+    }
+
+    if (
+      /(doi giao dien|theme|chu de|mau).*(light|dark|dracula|onedark|tet|system)/i.test(
+        text,
+      )
+    ) {
+      const themeMatch = text.match(/(light|dark|dracula|onedark|tet|system)/i)
+      return {
+        action: "change_theme",
+        params: { theme_name: themeMatch ? themeMatch[1] : "system" },
+      }
+    }
+
+    if (/(view|che do).*(list|detail|card|tree)/i.test(text)) {
+      const viewMatch = text.match(/(list|detail|card|tree)/i)
+      return {
+        action: "change_view",
+        params: { view_mode: viewMatch ? viewMatch[1] : "list" },
+      }
+    }
+
+    if (/(sort|sap xep)/i.test(text)) {
+      const sortMap = {
+        "a-z": "a-z",
+        "z-a": "z-a",
+        default: "default",
+        favorites: "favorites",
+        favorite: "favorites",
+        "most-visited": "most-visited",
+        old: "old",
+        "last-opened": "last-opened",
+        domain: "domain",
+      }
+      const sortMatch = text.match(
+        /(a-z|z-a|default|favorites|favorite|most-visited|old|last-opened|domain)/i,
+      )
+      return {
+        action: "change_sort",
+        params: { sort_by: sortMatch ? sortMap[sortMatch[1]] : "default" },
+      }
+    }
+
+    if (/(bao nhieu|dem|count).*(folder|thu muc)/i.test(text)) {
+      return { action: "count_folders" }
+    }
+
+    if (/(bao nhieu|dem|count).*(bookmark|dau trang)/i.test(text)) {
+      return { action: "count" }
+    }
+
+    if (/(liet ke|list|show).*(folder|thu muc)/i.test(text)) {
+      return { action: "list_folders" }
+    }
+
+    if (/(liet ke|list|show).*(bookmark|dau trang)/i.test(text)) {
+      return { action: "list" }
+    }
+
+    if (/(trong|in).*(folder|thu muc)/i.test(text)) {
+      const folder = extractFolderName(raw)
+      if (folder) {
+        return {
+          action: "list_bookmarks_in_folder",
+          params: { folder },
+        }
+      }
+    }
+
+    if (/(tao|create|new).*(folder|thu muc)/i.test(text)) {
+      const folderName = extractFolderName(raw) || extractQuotedText(raw)
+      return { action: "create_folder", params: { folderName } }
+    }
+
+    if (/(doi ten|rename).*(folder|thu muc)/i.test(text)) {
+      const parts = raw.split(/to|sang|thanh|->/i)
+      const oldName = extractQuotedText(parts[0])
+      const newName = parts[1] ? extractQuotedText(parts[1]) : ""
+      return { action: "rename_folder", params: { oldName, newName } }
+    }
+
+    if (/(xoa|delete|remove).*(folder|thu muc)/i.test(text)) {
+      const folderName = extractFolderName(raw) || extractQuotedText(raw)
+      return { action: "delete_folder", params: { folderName, confirm: true } }
+    }
+
+    if (/(xoa|delete|remove).*(bookmark|dau trang)/i.test(text)) {
+      const title = extractQuotedText(raw)
+      return {
+        action: "delete",
+        params: { id: id || undefined, url: url || undefined, title },
+      }
+    }
+
+    if (/(them|add|save|luu).*(bookmark|dau trang)/i.test(text) || url) {
+      const folder = extractFolderName(raw)
+      const title = extractQuotedText(raw)
+      return { action: "add", params: { url, folder, title } }
+    }
+
+    if (/(chuyen|move).*(folder|thu muc)/i.test(text)) {
+      const folder = extractFolderName(raw)
+      const title = extractQuotedText(raw)
+      return {
+        action: "move",
+        params: { id: id || undefined, title, folder },
+      }
+    }
+
+    if (/(sua|edit|doi).*(bookmark|dau trang)/i.test(text)) {
+      const title = extractQuotedText(raw)
+      const folder = extractFolderName(raw)
+      return {
+        action: "edit",
+        params: {
+          id: id || undefined,
+          url: url || undefined,
+          title,
+          new_title: title,
+          folder,
+        },
+      }
+    }
+
+    if (/(tim|search|find).*(folder|thu muc)/i.test(text)) {
+      const keyword =
+        extractQuotedText(raw) || raw.replace(/.*(tim|search|find)/i, "").trim()
+      return { action: "search_folder", params: { keyword } }
+    }
+
+    if (/(tim|search|find).*(bookmark|dau trang)/i.test(text)) {
+      const keyword =
+        extractQuotedText(raw) || raw.replace(/.*(tim|search|find)/i, "").trim()
+      return { action: "search_bookmark", params: { keyword } }
+    }
+
+    if (/(yeu thich|favorite|star|unstar|bo yeu thich)/i.test(text)) {
+      const favorite = !/(unstar|bo yeu thich)/i.test(text)
+      const title = extractQuotedText(raw)
+      return {
+        action: "favorite",
+        params: { id: id || undefined, title, favorite },
+      }
+    }
+
+    return { action: "general" }
+  }
+
   const getChatHistory = () => {
     return chatHistory
   }
@@ -260,7 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const txtContent = history
           .map(
             (msg) =>
-              `[${msg.timestamp}] ${msg.type.toUpperCase()}: ${msg.content}`
+              `[${msg.timestamp}] ${msg.type.toUpperCase()}: ${msg.content}`,
           )
           .join("\n\n---\n\n")
         const blob = new Blob([txtContent], { type: "text/plain" })
@@ -282,7 +534,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       () => {
         showCustomPopup(t("cancel") || "Cancelled", "success", true)
-      }
+      },
     )
   }
 
@@ -297,7 +549,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveAiConfig = (model, apiKey, modelName, apiVisible = true) => {
     localStorage.setItem(
       "aiConfig",
-      JSON.stringify({ model, apiKey, modelName, apiVisible })
+      JSON.stringify({ model, apiKey, modelName, apiVisible }),
     )
   }
 
@@ -317,7 +569,7 @@ document.addEventListener("DOMContentLoaded", () => {
     apiKey,
     model,
     message,
-    isGeneral = false
+    isGeneral = false,
   ) => {
     try {
       let apiUrl
@@ -392,7 +644,7 @@ document.addEventListener("DOMContentLoaded", () => {
           error.message
         }`,
         "error",
-        true
+        true,
       )
       return null
     }
@@ -405,7 +657,7 @@ document.addEventListener("DOMContentLoaded", () => {
       config.modelName,
       config.apiKey,
       config.model,
-      `Analyze the website at ${url} and suggest a title and folder for the bookmark. Return JSON: { "title": string, "folder": string }`
+      `Analyze the website at ${url} and suggest a title and folder for the bookmark. Return JSON: { "title": string, "folder": string }`,
     )
     if (!apiRequest) {
       throw new Error(t("errorUnexpected") || "Invalid model name")
@@ -420,7 +672,7 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(
           `${t("errorUnexpected") || "Unexpected error"}: ${
             response.statusText
-          }`
+          }`,
         )
       }
       const data = await response.json()
@@ -428,7 +680,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         if (config.model === "gemini") {
           result = JSON.parse(
-            data.candidates?.[0]?.content?.parts?.[0]?.text || "{}"
+            data.candidates?.[0]?.content?.parts?.[0]?.text || "{}",
           )
         } else if (config.model === "gpt") {
           result = JSON.parse(data.choices?.[0]?.message?.content || "{}")
@@ -439,7 +691,7 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(
           `${
             t("errorUnexpected") || "Unexpected error"
-          }: Invalid AI response format`
+          }: Invalid AI response format`,
         )
       }
       return result
@@ -456,7 +708,7 @@ document.addEventListener("DOMContentLoaded", () => {
       config.modelName,
       config.apiKey,
       config.model,
-      `Suggest websites for ${topic}. Return JSON: { "websites": [{ "url": string, "title": string, "description": string }, ...] }`
+      `Suggest websites for ${topic}. Return JSON: { "websites": [{ "url": string, "title": string, "description": string }, ...] }`,
     )
     if (!apiRequest) {
       throw new Error(t("errorUnexpected") || "Invalid model name")
@@ -471,7 +723,7 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(
           `${t("errorUnexpected") || "Unexpected error"}: ${
             response.statusText
-          }`
+          }`,
         )
       }
       const data = await response.json()
@@ -479,7 +731,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         if (config.model === "gemini") {
           result = JSON.parse(
-            data.candidates?.[0]?.content?.parts?.[0]?.text || "{}"
+            data.candidates?.[0]?.content?.parts?.[0]?.text || "{}",
           )
         } else if (config.model === "gpt") {
           result = JSON.parse(data.choices?.[0]?.message?.content || "{}")
@@ -490,7 +742,7 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(
           `${
             t("errorUnexpected") || "Unexpected error"
-          }: Invalid AI response format`
+          }: Invalid AI response format`,
         )
       }
       return result
@@ -519,8 +771,8 @@ document.addEventListener("DOMContentLoaded", () => {
             new Error(
               `${
                 t("duplicateFolderError") || "Duplicate folders found with name"
-              }: ${folderName}. Please specify a unique name.`
-            )
+              }: ${folderName}. Please specify a unique name.`,
+            ),
           )
         } else if (folders.length === 1) {
           resolve(folders[0].id)
@@ -569,8 +821,8 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (results.length === 0) {
           reject(
             new Error(
-              `${t("noBookmarks") || "No bookmark found with"} ID: ${id}.`
-            )
+              `${t("noBookmarks") || "No bookmark found with"} ID: ${id}.`,
+            ),
           )
         } else {
           resolve(results[0])
@@ -695,7 +947,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       new URL(b.url).hostname
                     }" class="favicon" alt="Favicon" onerror="this.src='./images/default-favicon.png';"> <a href="${
                       b.url
-                    }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
+                    }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`,
                 )
 
                 .join("<br>")}`
@@ -734,7 +986,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   (f, index) =>
                     `<span class="bookmark-item">${index + 1}. ${
                       f.title
-                    } (ID: ${f.id})</span>`
+                    } (ID: ${f.id})</span>`,
                 )
 
                 .join("<br>")}`
@@ -748,7 +1000,7 @@ document.addEventListener("DOMContentLoaded", () => {
             throw new Error(
               `${t("noFoldersFound") || "No folder found with name"}: ${
                 params.folder
-              }`
+              }`,
             )
           }
 
@@ -756,7 +1008,7 @@ document.addEventListener("DOMContentLoaded", () => {
             throw new Error(
               `${
                 t("duplicateFolderError") || "Multiple folders found with name"
-              }: ${params.folder}. Please specify a unique name.`
+              }: ${params.folder}. Please specify a unique name.`,
             )
           }
 
@@ -783,7 +1035,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         b.url
                       }" target="_blank">${b.title || b.url}</a> (ID: ${
                         b.id
-                      })</span>`
+                      })</span>`,
                   )
 
                   .join("<br>")}`
@@ -804,7 +1056,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `${
               t("duplicateFolderError") ||
               "A folder with this name already exists"
-            }: ${folderName}.`
+            }: ${folderName}.`,
           )
         }
 
@@ -814,7 +1066,7 @@ document.addEventListener("DOMContentLoaded", () => {
             throw new Error(
               `${
                 t("noFoldersFound") || "No parent folder found with name"
-              }: ${parentFolder}`
+              }: ${parentFolder}`,
             )
           }
           if (parentFolders.length > 1) {
@@ -822,7 +1074,7 @@ document.addEventListener("DOMContentLoaded", () => {
               `${
                 t("duplicateFolderError") ||
                 "Multiple parent folders found with name"
-              }: ${parentFolder}.`
+              }: ${parentFolder}.`,
             )
           }
           parentId = parentFolders[0].id
@@ -838,7 +1090,7 @@ document.addEventListener("DOMContentLoaded", () => {
               }`
               appendBotMessage(
                 `<span class="error-text">${errorMsg}</span>`,
-                errorMsg
+                errorMsg,
               )
               return
             }
@@ -847,7 +1099,7 @@ document.addEventListener("DOMContentLoaded", () => {
               t("createdFolder") || "I have created the folder"
             } '${newFolder.title}' (ID: ${newFolder.id}).`
             appendBotMessage(content, content)
-          }
+          },
         )
       } else if (
         action === "rename_folder" &&
@@ -859,14 +1111,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const folders = await searchFoldersByName(oldName)
         if (folders.length === 0) {
           throw new Error(
-            `${t("noFoldersFound") || "No folder found with name"}: ${oldName}`
+            `${t("noFoldersFound") || "No folder found with name"}: ${oldName}`,
           )
         }
         if (folders.length > 1) {
           throw new Error(
             `${
               t("duplicateFolderError") || "Multiple folders found with name"
-            }: ${oldName}. Please be more specific.`
+            }: ${oldName}. Please be more specific.`,
           )
         }
 
@@ -877,7 +1129,7 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(
             `${
               t("duplicateFolderError") || "A folder with the name"
-            } '${newName}' ${t("alreadyExists") || "already exists."}`
+            } '${newName}' ${t("alreadyExists") || "already exists."}`,
           )
         }
 
@@ -900,7 +1152,7 @@ document.addEventListener("DOMContentLoaded", () => {
               t("renamedFolder") || "I have renamed the folder"
             } '${oldName}' ${t("to") || "to"} '${updatedFolder.title}'.`
             appendBotMessage(content, content)
-          }
+          },
         )
       } else if (action === "delete_folder" && params.folderName) {
         const { folderName } = params
@@ -910,14 +1162,14 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(
             `${
               t("noFoldersFound") || "No folder found with name"
-            }: ${folderName}`
+            }: ${folderName}`,
           )
         }
         if (folders.length > 1) {
           throw new Error(
             `${
               t("duplicateFolderError") || "Multiple folders found with name"
-            }: ${folderName}. Please be more specific.`
+            }: ${folderName}. Please be more specific.`,
           )
         }
 
@@ -944,7 +1196,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   }`
                   appendBotMessage(
                     `<span class="error-text">${errorMsg}</span>`,
-                    errorMsg
+                    errorMsg,
                   )
                   return
                 }
@@ -960,7 +1212,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 t("deleteFolderCancelled") || "Folder deletion cancelled"
               }.`
               appendBotMessage(cancelMsg, cancelMsg)
-            }
+            },
           )
         } else {
           hideTypingIndicator()
@@ -983,7 +1235,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   }`
                   appendBotMessage(
                     `<span class="error-text">${errorMsg}</span>`,
-                    errorMsg
+                    errorMsg,
                   )
                   return
                 }
@@ -999,7 +1251,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 t("deleteFolderCancelled") || "Folder deletion cancelled"
               }.`
               appendBotMessage(cancelMsg, cancelMsg)
-            }
+            },
           )
         }
       } else if (action === "add" && params.url) {
@@ -1012,7 +1264,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `${
               t("duplicateUrlError") ||
               "A bookmark with this URL already exists"
-            }: ${url}. Found ${existingBookmarks.length} bookmark(s).`
+            }: ${url}. Found ${existingBookmarks.length} bookmark(s).`,
           )
         }
 
@@ -1044,7 +1296,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }).`
 
             appendBotMessage(htmlContent, textContent)
-          }
+          },
         )
       } else if (
         action === "edit" &&
@@ -1064,7 +1316,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!newTitle && !newFolder) {
           throw new Error(
-            t("emptyTitleError") || "Please provide a new title or folder."
+            t("emptyTitleError") || "Please provide a new title or folder.",
           )
         }
 
@@ -1084,7 +1336,7 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(
             `${t("noBookmarks") || "I couldn't find a bookmark with"} ${
               id ? `ID: ${id}` : url ? `URL: ${url}` : `title: ${oldTitle}`
-            }.`
+            }.`,
           )
         }
 
@@ -1102,7 +1354,7 @@ document.addEventListener("DOMContentLoaded", () => {
               }'. ${
                 t("clarifyBookmark") ||
                 "Please provide the URL, ID, or folder to specify which one."
-              }`
+              }`,
             )
           }
         }
@@ -1124,7 +1376,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
                       resolve(updatedBookmark)
                     }
-                  }
+                  },
                 )
               })
             }
@@ -1144,7 +1396,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
                       resolve(movedBookmark)
                     }
-                  }
+                  },
                 )
               })
             }
@@ -1180,7 +1432,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 error.message
               }</span>`,
 
-              `${t("errorTitle") || "Oops"}: ${error.message}`
+              `${t("errorTitle") || "Oops"}: ${error.message}`,
             )
           })
         }
@@ -1212,9 +1464,9 @@ document.addEventListener("DOMContentLoaded", () => {
               params.id
                 ? `ID: ${params.id}`
                 : params.url
-                ? `URL: ${params.url}`
-                : `title: ${params.title}`
-            }.`
+                  ? `URL: ${params.url}`
+                  : `title: ${params.title}`
+            }.`,
           )
         }
 
@@ -1225,7 +1477,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }'. ${
               t("clarifyBookmark") ||
               "Please provide the URL, ID, or folder to specify which one."
-            }`
+            }`,
           )
         }
 
@@ -1278,7 +1530,7 @@ document.addEventListener("DOMContentLoaded", () => {
               const textContent = htmlContent
 
               appendBotMessage(htmlContent, textContent)
-            }
+            },
           )
         }
       } else if (
@@ -1304,7 +1556,7 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(
             `${t("noBookmarks") || "I couldn't find a bookmark with"} ${
               params.id ? `ID: ${params.id}` : `title: ${params.title}`
-            }.`
+            }.`,
           )
         }
 
@@ -1315,7 +1567,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }'. ${
               t("clarifyBookmark") ||
               "Please provide the URL, ID, or folder to specify which one."
-            }`
+            }`,
           )
         }
 
@@ -1336,7 +1588,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                   resolve(movedBookmark)
                 }
-              }
+              },
             )
           })
 
@@ -1375,7 +1627,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       b.url
                     }" target="_blank">${b.title || b.url}</a> (ID: ${
                       b.id
-                    })</span>`
+                    })</span>`,
                 )
 
                 .join("<br>")}`
@@ -1397,7 +1649,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   (f, index) =>
                     `<span class="bookmark-item">${index + 1}. ${
                       f.title || t("unnamedFolder") || "Unnamed"
-                    } (ID: ${f.id})</span>`
+                    } (ID: ${f.id})</span>`,
                 )
 
                 .join("<br>")}`
@@ -1426,7 +1678,7 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(
             `${t("noBookmarks") || "I couldn't find a bookmark with"} ${
               params.id ? `ID: ${params.id}` : `title: ${params.title}`
-            }.`
+            }.`,
           )
         }
 
@@ -1437,7 +1689,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }'. ${
               t("clarifyBookmark") ||
               "Please provide the URL, ID, or folder to specify which one."
-            }`
+            }`,
           )
         }
 
@@ -1483,7 +1735,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     site.url
                   }" data-title="${site.title}" data-folder="Suggested">${
                     t("addToFolder") || "Bookmark"
-                  }</button></span>`
+                  }</button></span>`,
               )
 
               .join("<br>")}`
@@ -1522,7 +1774,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     "error",
 
-                    true
+                    true,
                   )
 
                   return
@@ -1541,9 +1793,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                       "success",
 
-                      true
+                      true,
                     )
-                  }
+                  },
                 )
               } catch (error) {
                 showCustomPopup(
@@ -1551,7 +1803,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                   "error",
 
-                  true
+                  true,
                 )
               }
             })
@@ -1561,6 +1813,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const validViews = ["list", "detail", "card", "tree"]
         if (validViews.includes(params.view_mode)) {
           uiState.viewMode = params.view_mode
+          localStorage.setItem("appView", params.view_mode)
+          saveUIState()
           chrome.bookmarks.getTree((tree) => {
             const elements = getUiElements()
             renderFilteredBookmarks(tree, elements)
@@ -1572,7 +1826,7 @@ document.addEventListener("DOMContentLoaded", () => {
           appendBotMessage(content, content)
         } else {
           throw new Error(
-            `${t("invalidView") || "Invalid view mode"}: ${params.view_mode}`
+            `${t("invalidView") || "Invalid view mode"}: ${params.view_mode}`,
           )
         }
       } else if (action === "change_theme" && params.theme_name) {
@@ -1585,6 +1839,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "system",
         ]
         if (validThemes.includes(params.theme_name)) {
+          localStorage.setItem("appTheme", params.theme_name)
           const elements = getUiElements()
           updateTheme(elements, params.theme_name)
           hideTypingIndicator()
@@ -1594,7 +1849,7 @@ document.addEventListener("DOMContentLoaded", () => {
           appendBotMessage(content, content)
         } else {
           throw new Error(
-            `${t("invalidTheme") || "Invalid theme"}: ${params.theme_name}`
+            `${t("invalidTheme") || "Invalid theme"}: ${params.theme_name}`,
           )
         }
       } else if (action === "change_sort" && params.sort_by) {
@@ -1621,7 +1876,7 @@ document.addEventListener("DOMContentLoaded", () => {
           appendBotMessage(content, content)
         } else {
           throw new Error(
-            `${t("invalidSort") || "Invalid sort type"}: ${params.sort_by}`
+            `${t("invalidSort") || "Invalid sort type"}: ${params.sort_by}`,
           )
         }
       } else if (action === "check_links") {
@@ -1635,7 +1890,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         throw new Error(
           t("notSupported") ||
-            "Sorry, I can only help with bookmark-related tasks or simple questions."
+            "Sorry, I can only help with bookmark-related tasks or simple questions.",
         )
       }
     } catch (error) {
@@ -1646,7 +1901,7 @@ document.addEventListener("DOMContentLoaded", () => {
           error.message
         }</span>`,
 
-        `${t("errorTitle") || "Oops"}: ${error.message}`
+        `${t("errorTitle") || "Oops"}: ${error.message}`,
       )
     }
   }
@@ -1694,142 +1949,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     chatInput.style.height = "auto"
 
-    const config = getAiConfig()
-
-    if (!config.model || !config.apiKey || !config.modelName) {
-      appendBotMessage(
-        `<span class="error-text">${
-          t("errorTitle") || "Error"
-        }: Please configure AI settings in 'Configure AI Chatbot'.</span>`,
-
-        `${
-          t("errorTitle") || "Error"
-        }: Please configure AI settings in 'Configure AI Chatbot'.`
-      )
-
-      return
-    }
-
     showTypingIndicator()
 
-    // Step 1: Classify user intent
-
-    const classificationRequest = buildApiRequest(
-      config.modelName,
-
-      config.apiKey,
-
-      config.model,
-
-      message,
-
-      false // Use the main systemPrompt for classification
-    )
-
-    if (!classificationRequest) {
-      hideTypingIndicator()
-
-      return
-    }
-
     try {
-      const response = await fetch(classificationRequest.url, {
-        method: classificationRequest.method,
+      const result = parseLocalCommand(message)
 
-        headers: classificationRequest.headers,
-
-        body: JSON.stringify(classificationRequest.body),
-      })
-
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`)
+      if (result.action === "help") {
+        hideTypingIndicator()
+        const helpContent = t("helpCommands") || ""
+        appendBotMessage(helpContent, helpContent)
+        return
       }
-
-      const data = await response.json()
-
-      let result
-
-      try {
-        let textResponse
-
-        if (config.model === "gemini") {
-          textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || ""
-        } else if (config.model === "gpt") {
-          textResponse = data.choices?.[0]?.message?.content || ""
-        } else {
-          textResponse = data.text || ""
-        }
-
-        // Clean the response: remove markdown backticks and trim
-
-        const cleanedResponse = textResponse
-
-          .replace(/```json/g, "")
-
-          .replace(/```/g, "")
-
-          .trim()
-
-        result = JSON.parse(cleanedResponse)
-      } catch (parseError) {
-        // If parsing fails, assume it's a general question
-
-        result = { action: "general" }
-      }
-
-      // Step 2: Handle the action
 
       if (result.action === "general") {
-        // Handle general conversation
-
-        const generalRequest = buildApiRequest(
-          config.modelName,
-
-          config.apiKey,
-
-          config.model,
-
-          message,
-
-          true // Use the generalSystemPrompt
-        )
-
-        if (generalRequest) {
-          const generalResponse = await fetch(generalRequest.url, {
-            method: generalRequest.method,
-
-            headers: generalRequest.headers,
-
-            body: JSON.stringify(generalRequest.body),
-          })
-
-          if (!generalResponse.ok) {
-            throw new Error(`API Error: ${generalResponse.statusText}`)
-          }
-
-          const generalData = await generalResponse.json()
-
-          let answer
-
-          if (config.model === "gemini") {
-            answer =
-              generalData.candidates?.[0]?.content?.parts?.[0]?.text ||
-              "No response"
-          } else if (config.model === "gpt") {
-            answer = generalData.choices?.[0]?.message?.content || "No response"
-          } else {
-            answer = generalData.text || "No response"
-          }
-
-          hideTypingIndicator()
-
-          appendBotMessage(answer, null, true)
-        }
-      } else {
-        // Handle bookmark-specific command
-
-        await handleBookmarkCommand(result.action, result.params || {})
+        hideTypingIndicator()
+        const reply =
+          result.reason === "suggest_disabled"
+            ? t("featureDisabled") ||
+              "Website suggestions are disabled in local mode."
+            : t("notSupported") ||
+              "I can only help with bookmark commands in local mode."
+        appendBotMessage(reply, reply)
+        return
       }
+
+      await handleBookmarkCommand(result.action, result.params || {})
     } catch (error) {
       hideTypingIndicator()
 
@@ -1838,7 +1982,7 @@ document.addEventListener("DOMContentLoaded", () => {
           error.message
         }</span>`,
 
-        `${t("errorTitle") || "Oops"}: ${error.message}`
+        `${t("errorTitle") || "Oops"}: ${error.message}`,
       )
     }
   }
@@ -1877,7 +2021,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to remove the welcome message
   const removeWelcomeMessage = () => {
     const welcomeContainer = chatMessages.querySelector(
-      ".chatbox-welcome-container"
+      ".chatbox-welcome-container",
     )
     if (welcomeContainer) {
       welcomeContainer.remove()
@@ -1897,12 +2041,22 @@ document.addEventListener("DOMContentLoaded", () => {
     chatInput.addEventListener("input", () => {
       chatInput.style.height = "auto"
       chatInput.style.height = `${chatInput.scrollHeight}px`
+      const context = getMentionContext(
+        chatInput.value,
+        chatInput.selectionStart || 0,
+      )
+      if (context) {
+        renderFolderSuggestions(context)
+      } else {
+        hideFolderSuggestions()
+      }
     })
 
     chatInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault() // Prevent newline
         removeWelcomeMessage() // Remove welcome message when user types and presses enter
+        hideFolderSuggestions()
         handleUserInput()
       }
     })
@@ -1957,117 +2111,16 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
-  if (chatEditConfig) {
-    chatEditConfig.addEventListener("click", () => {
-      const config = getAiConfig()
-      if (aiModelSelect) aiModelSelect.value = config.model || ""
-      if (apiKeyInput) {
-        apiKeyInput.value = config.apiKey || ""
-        if (toggleApiVisibility) {
-          // Set visibility based on saved config. Default to visible.
-          if (config.apiVisible === false) {
-            apiKeyInput.type = "password"
-            toggleApiVisibility.innerHTML = '<i class="fas fa-eye-slash"></i>'
-          } else {
-            apiKeyInput.type = "text"
-            toggleApiVisibility.innerHTML = '<i class="fas fa-eye"></i>'
-          }
-        }
-      }
-      if (curlInput) curlInput.value = config.modelName || ""
-      if (aiConfigPopup) {
-        aiConfigPopup.classList.remove("hidden")
-        // Reset validation styles
-        ;[aiModelSelect, apiKeyInput, curlInput].forEach((input) => {
-          if (input) input.classList.remove("error")
-        })
-      }
-      ;["ai-model-error", "api-key-error", "curl-error"].forEach((errorId) => {
-        const errorElement = document.getElementById(errorId)
-        if (errorElement) errorElement.classList.add("hidden")
-      })
-    })
-  }
-  if (clearApiKey) {
-    clearApiKey.addEventListener("click", () => {
-      if (apiKeyInput) apiKeyInput.value = ""
-    })
-  }
-
-  if (clearCurl) {
-    clearCurl.addEventListener("click", () => {
-      if (curlInput) curlInput.value = ""
-    })
-  }
-
-  if (aiConfigSave) {
-    aiConfigSave.addEventListener("click", () => {
-      const model = aiModelSelect ? aiModelSelect.value : ""
-      const apiKey = apiKeyInput ? apiKeyInput.value.trim() : ""
-      const modelName = curlInput ? curlInput.value.trim() : ""
-      const apiVisible = apiKeyInput
-        ? apiKeyInput.type === "text"
-        : true[
-            // Reset previous error states
-            (aiModelSelect, apiKeyInput, curlInput)
-          ].forEach((input) => {
-            if (input) input.classList.remove("error")
-          })
-      ;["ai-model-error", "api-key-error", "curl-error"].forEach((errorId) => {
-        const errorElement = document.getElementById(errorId)
-        if (errorElement) errorElement.classList.add("hidden")
-      })
-
-      // Validate inputs
-      let hasError = false
-      const errors = []
-
-      if (!model) {
-        if (aiModelSelect) aiModelSelect.classList.add("error")
-        const errorElement = document.getElementById("ai-model-error")
-        if (errorElement) errorElement.classList.remove("hidden")
-        errors.push("Please select an AI model.")
-        hasError = true
-      }
-
-      if (!apiKey) {
-        if (apiKeyInput) apiKeyInput.classList.add("error")
-        const errorElement = document.getElementById("api-key-error")
-        if (errorElement) errorElement.classList.remove("hidden")
-        errors.push("Please enter an API key.")
-        hasError = true
-      }
-
-      if (!modelName) {
-        if (curlInput) curlInput.classList.add("error")
-        const errorElement = document.getElementById("curl-error")
-        if (errorElement) errorElement.classList.remove("hidden")
-        errors.push("Please enter a model name.")
-        hasError = true
-      }
-
-      // Show combined error popup if any validation fails
-      if (hasError) {
-        showCustomPopup(
-          t("errorTitle") || "Error",
-          errors.join(" "),
-          "error",
-          true
-        )
-        return
-      }
-
-      // Save configuration if all validations pass
-      saveAiConfig(model, apiKey, modelName, apiVisible)
-      if (aiConfigPopup) aiConfigPopup.classList.add("hidden")
-      showCustomPopup(t("successTitle") || "Success", "success", true)
-    })
-  }
-  if (aiConfigCancel) {
-    aiConfigCancel.addEventListener("click", () => {
-      if (aiConfigPopup) aiConfigPopup.classList.add("hidden")
-    })
-  }
+  document.addEventListener("click", (event) => {
+    if (!chatFolderSuggestions || !chatInput) return
+    if (
+      event.target === chatInput ||
+      chatFolderSuggestions.contains(event.target)
+    ) {
+      return
+    }
+    hideFolderSuggestions()
+  })
 
   if (chatHelp) {
     chatHelp.addEventListener("click", showCustomGuide)

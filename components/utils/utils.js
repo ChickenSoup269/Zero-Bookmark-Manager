@@ -164,79 +164,75 @@ export const translations = {
     invalidSort: "Invalid sort type",
     checkingLinks:
       "Started checking for broken links. Results will appear in the UI.",
+    helpCommands: `
+      <h4>Command List</h4>
+      <ul>
+        <li><strong>/help</strong> - Show this list</li>
+        <li><strong>count bookmarks</strong> - Count bookmarks</li>
+        <li><strong>count folders</strong> - Count folders</li>
+        <li><strong>list bookmarks</strong> - List all bookmarks</li>
+        <li><strong>list folders</strong> - List all folders</li>
+        <li><strong>list bookmarks in folder "Work"</strong></li>
+        <li><strong>use @Work to pick a folder</strong></li>
+        <li><strong>add https://example.com to folder "Work"</strong></li>
+        <li><strong>move bookmark "Title" to folder "Work"</strong></li>
+        <li><strong>edit bookmark "Title"</strong></li>
+        <li><strong>delete bookmark "Title"</strong></li>
+        <li><strong>create folder "Work"</strong></li>
+        <li><strong>rename folder "Old" to "New"</strong></li>
+        <li><strong>delete folder "Work"</strong></li>
+        <li><strong>search bookmarks "keyword"</strong></li>
+        <li><strong>search folders "keyword"</strong></li>
+        <li><strong>favorite bookmark "Title"</strong></li>
+        <li><strong>change view to card</strong></li>
+        <li><strong>change theme to dark</strong></li>
+        <li><strong>sort by a-z</strong></li>
+        <li><strong>check links</strong></li>
+      </ul>
+    `,
     helpGuide: `
   <h4>Help Guide:</h4>
   <ol>
-    <li><strong>Natural Language Queries:</strong><br>
-      - Ask freely, e.g., <code>"How many bookmarks do I have?"</code>, <code>"Show my bookmarks"</code>, or <code>"Find bookmarks about technology"</code>.<br>
-      - The bot will interpret and respond with bookmark actions or answers.
+    <li><strong>/help</strong><br>
+      - Show the command list.
+    </li>
+    <li><strong>Count:</strong><br>
+      - <code>"count bookmarks"</code>, <code>"count folders"</code>.
+    </li>
+    <li><strong>List:</strong><br>
+      - <code>"list bookmarks"</code>, <code>"list folders"</code>.<br>
+      - <code>"list bookmarks in folder \"Work\""</code>.<br>
+      - Use <code>@Work</code> to pick a folder.
     </li>
     <li><strong>Add Bookmark:</strong><br>
-      - Command: <code>"bookmark add https://example.com title 'My Page' to folder News"</code><br>
-      - Or use the "Create Folder" button in the sidebar.
+      - <code>"add https://example.com to folder \"Work\""</code>.
     </li>
     <li><strong>Move Bookmark:</strong><br>
-      - Command: <code>"move bookmark 'My Page' to folder News"</code> or <code>"move bookmark id 123 to folder News"</code>.<br>
-      - Or ask: <code>"Move the bookmark titled 'My Page' to the News folder"</code> or <code>"Move bookmark ID 123 to the News folder"</code>.
-    </li>
-    <li><strong>Search Bookmarks:</strong><br>
-      - Command: <code>"search bookmarks keyword"</code> or ask: <code>"Find bookmarks with the keyword technology"</code>.<br>
-      - Use the search bar or the "Sort: Default" dropdown for manual search.
-    </li>
-    <li><strong>Search Folders:</strong><br>
-      - Command: <code>"search folders keyword"</code> or ask: <code>"Which folders have News in their name?"</code>.
-    </li>
-    <li><strong>List Bookmarks:</strong><br>
-      - Command: <code>"list bookmarks"</code> or ask: <code>"What bookmarks do I have?"</code>.<br>
-      - Results will show the title, URL, and ID of each bookmark.
+      - <code>"move bookmark \"Title\" to folder \"Work\""</code> or <code>"move bookmark id 123 to folder \"Work\""</code>.
     </li>
     <li><strong>Edit Bookmark:</strong><br>
-      - Command: <code>"edit bookmark https://example.com title 'New Title' to folder Work"</code> or <code>"edit bookmark id 123 title 'New Title' to folder Work"</code>.<br>
-      - Or ask: <code>"Rename the bookmark https://example.com to New Title"</code> or <code>"Edit bookmark ID 123 to title 'New Title' in folder Work"</code>.
+      - <code>"edit bookmark \"Title\""</code> or <code>"edit bookmark id 123"</code>.
     </li>
     <li><strong>Delete Bookmark:</strong><br>
-      - Command: <code>"delete bookmark https://example.com"</code>, <code>"delete bookmark titled 'My Page'"</code>, or <code>"delete bookmark id 123"</code>.<br>
-      - Or ask: <code>"Delete my bookmark https://example.com"</code> or <code>"Delete bookmark ID 123"</code>.<br>
-      - <strong>Note:</strong> You will be prompted to confirm before deleting a bookmark.
+      - <code>"delete bookmark \"Title\""</code> or <code>"delete bookmark id 123"</code>.
     </li>
-    <li><strong>Create Folder:</strong><br>
-      - Command: <code>"create folder 'New Folder Name'"</code> or ask: <code>"Make a new folder called 'Work Projects'"</code>.<br>
-      - To specify a parent folder: <code>"create folder 'Sub Folder' in 'Parent Folder'"</code>.
+    <li><strong>Folders:</strong><br>
+      - <code>"create folder \"Work\""</code>, <code>"rename folder \"Old\" to \"New\""</code>, <code>"delete folder \"Work\""</code>.
     </li>
-    <li><strong>Rename Folder:</strong><br>
-      - Command: <code>"rename folder 'Old Name' to 'New Name'"</code> or ask: <code>"Change the name of folder 'Work' to 'Office'"</code>.
+    <li><strong>Search:</strong><br>
+      - <code>"search bookmarks \"keyword\""</code>, <code>"search folders \"keyword\""</code>.
     </li>
-    <li><strong>Delete Folder:</strong><br>
-      - Command: <code>"delete folder 'Folder Name'"</code> or ask: <code>"Remove the 'Temporary' folder"</code>.<br>
-      - <strong>Note:</strong> You will be prompted to confirm before deleting a folder and its contents.
+    <li><strong>Favorite:</strong><br>
+      - <code>"favorite bookmark \"Title\""</code>.
     </li>
-    <li><strong>Change View Mode:</strong><br>
-      - Command: <code>"change view to card"</code> or ask: <code>"Switch to tree view"</code>.<br>
-      - Available views: <code>list</code>, <code>detail</code>, <code>card</code>, <code>tree</code>.
+    <li><strong>View / Theme / Sort:</strong><br>
+      - <code>"change view to card"</code>, <code>"change theme to dark"</code>, <code>"sort by a-z"</code>.
     </li>
-    <li><strong>Change Theme:</strong><br>
-      - Command: <code>"change theme to dark"</code> or ask: <code>"Apply the dracula theme"</code>.<br>
-      - Available themes: <code>light</code>, <code>dark</code>, <code>dracula</code>, <code>onedark</code>, <code>tet</code>, <code>system</code>.
+    <li><strong>Check Links:</strong><br>
+      - <code>"check links"</code>.
     </li>
-    <li><strong>Change Sort Order:</strong><br>
-      - Command: <code>"sort by name (A-Z)"</code> or ask: <code>"Change sorting to most visited"</code>.<br>
-      - Available sorts: <code>default</code>, <code>favorites</code>, <code>most-visited</code>, <code>old</code>, <code>last-opened</code>, <code>a-z</code>, <code>z-a</code>, <code>domain</code>.
-    </li>
-    <li><strong>Check Link Health:</strong><br>
-      - Command: <code>"check links"</code> or ask: <code>"Check my bookmarks for broken links"</code>.<br>
-      - The bot will initiate a scan and report progress in the UI.
-    </li>
-    <li><strong>Bot Features:</strong><br>
-      - Configure in "Configure Chatbot" for suggestions.<br>
-      - The bot understands natural questions and commands to manage bookmarks, including by ID.
-    </li>
-    <li><strong>Recommended Websites to Bookmark:</strong><br>
-      - You can add useful sites to your Bookmark Bar for quick access, such as:<br>
-       - Command: <code>"Suggest me 3 websites about python"</code>
-       - <code>" Suggest me 3 websites about {the keyword you want to search}"</code>
-    </li>
-    <li><strong>Export/Import Bookmarks:</strong><br>
-      - Access via the "Settings" menu.
+    <li><strong>Note:</strong><br>
+      - Local mode only supports bookmark commands.
     </li>
   </ol>
 `,
@@ -490,79 +486,75 @@ export const translations = {
     invalidSort: "Kiểu sắp xếp không hợp lệ",
     checkingLinks:
       "Đã bắt đầu kiểm tra các liên kết hỏng. Kết quả sẽ hiển thị trên giao diện.",
+    helpCommands: `
+      <h4>Danh sach lenh</h4>
+      <ul>
+        <li><strong>/help</strong> - Xem danh sach lenh</li>
+        <li><strong>dem bookmark</strong> - Dem bookmark</li>
+        <li><strong>dem thu muc</strong> - Dem thu muc</li>
+        <li><strong>liet ke bookmark</strong> - Liet ke tat ca bookmark</li>
+        <li><strong>liet ke thu muc</strong> - Liet ke tat ca thu muc</li>
+        <li><strong>liet ke bookmark trong thu muc "Work"</strong></li>
+        <li><strong>dung @Work de chon thu muc</strong></li>
+        <li><strong>them https://example.com vao thu muc "Work"</strong></li>
+        <li><strong>chuyen bookmark "Tieu de" sang thu muc "Work"</strong></li>
+        <li><strong>sua bookmark "Tieu de"</strong></li>
+        <li><strong>xoa bookmark "Tieu de"</strong></li>
+        <li><strong>tao thu muc "Work"</strong></li>
+        <li><strong>doi ten thu muc "Cu" thanh "Moi"</strong></li>
+        <li><strong>xoa thu muc "Work"</strong></li>
+        <li><strong>tim bookmark "tu khoa"</strong></li>
+        <li><strong>tim thu muc "tu khoa"</strong></li>
+        <li><strong>yeu thich bookmark "Tieu de"</strong></li>
+        <li><strong>doi che do xem card</strong></li>
+        <li><strong>doi chu de dark</strong></li>
+        <li><strong>sap xep a-z</strong></li>
+        <li><strong>kiem tra link</strong></li>
+      </ul>
+    `,
     helpGuide: `
         <h4>Hướng Dẫn:</h4>
           <ol>
-            <li><strong>Câu hỏi Ngôn ngữ Tự nhiên:</strong><br>
-              - Hỏi tự do, ví dụ: <code>"Tôi có bao nhiêu bookmark?"</code>, <code>"Hiển thị bookmark của tôi"</code>, hoặc <code>"Tìm bookmark về công nghệ"</code>.<br>
-              - AI sẽ diễn giải và trả lời bằng hành động bookmark hoặc câu trả lời.
+            <li><strong>/help</strong><br>
+              - Xem danh sach lenh.
             </li>
-            <li><strong>Thêm Bookmark:</strong><br>
-              - Lệnh: <code>"bookmark add https://example.com title 'Trang Của Tôi' to folder Tin Tức"</code><br>
-              - Hoặc dùng nút "Tạo Thư mục" trong sidebar.
+            <li><strong>Dem:</strong><br>
+              - <code>"dem bookmark"</code>, <code>"dem thu muc"</code>.
             </li>
-            <li><strong>Di chuyển Bookmark:</strong><br>
-              - Lệnh: <code>"chuyển bookmark 'Trang Của Tôi' sang thư mục Tin Tức"</code> hoặc <code>"chuyển bookmark id 123 sang thư mục Tin Tức"</code>.<br>
-              - Hoặc hỏi: <code>"Chuyển bookmark có tiêu đề 'Trang Của Tôi' sang thư mục Tin Tức"</code> hoặc <code>"Chuyển bookmark ID 123 sang thư mục Tin Tức"</code>.
+            <li><strong>Liet ke:</strong><br>
+              - <code>"liet ke bookmark"</code>, <code>"liet ke thu muc"</code>.<br>
+              - <code>"liet ke bookmark trong thu muc \"Work\""</code>.<br>
+              - Dung <code>@Work</code> de chon thu muc.
             </li>
-            <li><strong>Tìm kiếm Bookmark:</strong><br>
-              - Lệnh: <code>"tìm bookmark từ khóa"</code> hoặc hỏi: <code>"Tìm bookmark có từ khóa công nghệ"</code>.<br>
-              - Dùng thanh tìm kiếm hoặc dropdown "Sắp xếp: Mặc định" để tìm thủ công.
+            <li><strong>Them Bookmark:</strong><br>
+              - <code>"them https://example.com vao thu muc \"Work\""</code>.
             </li>
-            <li><strong>Tìm kiếm Thư mục:</strong><br>
-              - Lệnh: <code>"tìm thư mục từ khóa"</code> hoặc hỏi: <code>"Thư mục nào có từ News trong tên?"</code>.
+            <li><strong>Chuyen Bookmark:</strong><br>
+              - <code>"chuyen bookmark \"Tieu de\" sang thu muc \"Work\""</code> hoac <code>"chuyen bookmark id 123 sang thu muc \"Work\""</code>.
             </li>
-            <li><strong>Liệt kê Bookmark:</strong><br>
-              - Lệnh: <code>"danh sách bookmark"</code> hoặc hỏi: <code>"Tôi có những bookmark nào?"</code>.<br>
-              - Kết quả sẽ hiển thị tiêu đề, URL và ID của bookmark.
+            <li><strong>Sua Bookmark:</strong><br>
+              - <code>"sua bookmark \"Tieu de\""</code> hoac <code>"sua bookmark id 123"</code>.
             </li>
-            <li><strong>Sửa Bookmark:</strong><br>
-              - Lệnh: <code>"edit bookmark https://example.com title 'Tiêu Đề Mới' to folder Công Việc"</code> hoặc <code>"edit bookmark id 123 title 'Tiêu Đề Mới' to folder Công Việc"</code>.<br>
-              - Hoặc hỏi: <code>"Đổi tên bookmark https://example.com thành Tiêu Đề Mới"</code> hoặc <code>"Sửa bookmark ID 123 thành tiêu đề 'Tiêu Đề Mới' trong thư mục Công Việc"</code>.
+            <li><strong>Xoa Bookmark:</strong><br>
+              - <code>"xoa bookmark \"Tieu de\""</code> hoac <code>"xoa bookmark id 123"</code>.
             </li>
-            <li><strong>Xóa Bookmark:</strong><br>
-              - Lệnh: <code>"delete bookmark https://example.com"</code>, <code>"delete bookmark titled 'Trang Của Tôi'"</code>, hoặc <code>"delete bookmark id 123"</code>.<br>
-              - Hoặc hỏi: <code>"Xóa bookmark https://example.com của tôi"</code> hoặc <code>"Xóa bookmark ID 123"</code>.<br>
-              - <strong>Lưu ý:</strong> Bạn sẽ được yêu cầu xác nhận trước khi xóa bookmark.
+            <li><strong>Thu muc:</strong><br>
+              - <code>"tao thu muc \"Work\""</code>, <code>"doi ten thu muc \"Cu\" thanh \"Moi\""</code>, <code>"xoa thu muc \"Work\""</code>.
             </li>
-            <li><strong>Tạo Thư mục:</strong><br>
-              - Lệnh: <code>"tạo thư mục 'Tên Thư mục Mới'"</code> hoặc hỏi: <code>"Tạo một thư mục mới tên 'Dự án Công việc'"</code>.<br>
-              - Để chỉ định thư mục cha: <code>"tạo thư mục 'Thư mục Con' trong 'Thư mục Cha'"</code>.
+            <li><strong>Tim kiem:</strong><br>
+              - <code>"tim bookmark \"tu khoa\""</code>, <code>"tim thu muc \"tu khoa\""</code>.
             </li>
-            <li><strong>Đổi tên Thư mục:</strong><br>
-              - Lệnh: <code>"đổi tên thư mục 'Tên Cũ' thành 'Tên Mới'"</code> hoặc hỏi: <code>"Đổi tên thư mục 'Công việc' thành 'Văn phòng'"</code>.
+            <li><strong>Yeu thich:</strong><br>
+              - <code>"yeu thich bookmark \"Tieu de\""</code>.
             </li>
-            <li><strong>Xóa Thư mục:</strong><br>
-              - Lệnh: <code>"xóa thư mục 'Tên Thư mục'"</code> hoặc hỏi: <code>"Xóa thư mục 'Tạm thời'"</code>.<br>
-              - <strong>Lưu ý:</strong> Bạn sẽ được yêu cầu xác nhận trước khi xóa thư mục và tất cả nội dung của nó.
+            <li><strong>Che do xem / Chu de / Sap xep:</strong><br>
+              - <code>"doi che do xem card"</code>, <code>"doi chu de dark"</code>, <code>"sap xep a-z"</code>.
             </li>
-            <li><strong>Thay đổi Chế độ Xem:</strong><br>
-              - Lệnh: <code>"thay đổi chế độ xem thành card"</code> hoặc hỏi: <code>"Chuyển sang chế độ xem cây"</code>.<br>
-              - Các chế độ xem có sẵn: <code>list</code>, <code>detail</code>, <code>card</code>, <code>tree</code>.
+            <li><strong>Kiem tra lien ket:</strong><br>
+              - <code>"kiem tra link"</code>.
             </li>
-            <li><strong>Thay đổi Chủ đề:</strong><br>
-              - Lệnh: <code>"thay đổi chủ đề thành tối"</code> hoặc hỏi: <code>"Áp dụng chủ đề dracula"</code>.<br>
-              - Các chủ đề có sẵn: <code>light</code>, <code>dark</code>, <code>dracula</code>, <code>onedark</code>, <code>tet</code>, <code>system</code>.
-            </li>
-            <li><strong>Thay đổi Thứ tự Sắp xếp:</strong><br>
-              - Lệnh: <code>"sắp xếp theo tên (A-Z)"</code> hoặc hỏi: <code>"Thay đổi sắp xếp thành được truy cập nhiều nhất"</code>.<br>
-              - Các kiểu sắp xếp có sẵn: <code>default</code>, <code>favorites</code>, <code>most-visited</code>, <code>old</code>, <code>last-opened</code>, <code>a-z</code>, <code>z-a</code>, <code>domain</code>.
-            </li>
-            <li><strong>Kiểm tra Tình trạng Liên kết:</strong><br>
-              - Lệnh: <code>"kiểm tra liên kết"</code> hoặc hỏi: <code>"Kiểm tra các bookmark của tôi xem có liên kết hỏng không"</code>.<br>
-              - Bot sẽ bắt đầu quét và báo cáo tiến độ trên giao diện.
-            </li>
-            <li><strong>Tính năng AI:</strong><br>
-              - Cấu hình trong "Cấu hình AI Chatbot" để gợi ý.<br>
-              - AI hiểu các câu hỏi và lệnh tự nhiên để quản lý bookmark, bao gồm sử dụng ID.
-            </li>
-            <li><strong>Trang web Đề xuất để Bookmark:</strong><br>
-              - Bạn có thể thêm các trang hữu ích vào Thanh Bookmark để truy cập nhanh, ví dụ:<br>
-               - Lệnh: <code>"Đề xuất cho tôi 3 trang web về python"</code>
-               - <code>"Đề xuất cho tôi 3 trang web {tên bạn muốn tìm}"</code>
-            </li>
-            <li><strong>Xuất/Nhập Bookmark:</strong><br>
-              - Truy cập qua menu "Cài đặt".
+            <li><strong>Luu y:</strong><br>
+              - Che do local chi ho tro lenh bookmark.
             </li>
           </ol>
         `,
