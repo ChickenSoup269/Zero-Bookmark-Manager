@@ -244,7 +244,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const quoted = extractQuotedText(text)
     if (quoted) return quoted
     const match = text.match(/(?:folder|thu muc)\s*[:\-]?\s*(.+)$/i)
-    return match ? match[1].trim() : ""
+    if (!match) return ""
+    return match[1].trim().replace(/\s+\d{1,2}:\d{2}\s*$/, "")
   }
 
   function getMentionContext(text, cursorPosition) {
@@ -383,14 +384,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return { action: "count" }
     }
 
-    if (/(liet ke|list|show).*(folder|thu muc)/i.test(text)) {
-      return { action: "list_folders" }
-    }
-
-    if (/(liet ke|list|show).*(bookmark|dau trang)/i.test(text)) {
-      return { action: "list" }
-    }
-
     if (/(trong|in).*(folder|thu muc)/i.test(text)) {
       const folder = extractFolderName(raw)
       if (folder) {
@@ -399,6 +392,14 @@ document.addEventListener("DOMContentLoaded", () => {
           params: { folder },
         }
       }
+    }
+
+    if (/(liet ke|list|show).*(folder|thu muc)/i.test(text)) {
+      return { action: "list_folders" }
+    }
+
+    if (/(liet ke|list|show).*(bookmark|dau trang)/i.test(text)) {
+      return { action: "list" }
     }
 
     if (/(tao|create|new).*(folder|thu muc)/i.test(text)) {
