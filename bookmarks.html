@@ -19,7 +19,7 @@
             <div class="sidebar-header">
                 <div class="sidebar-brand">
                     <img src="./icons/icon_vn_tet.png" alt="Zero Bookmark" class="sidebar-logo">
-                    <span class="sidebar-title">Zero Bookmark Manager</span>
+                    <span class="sidebar-title">Bookmark Manager</span>
                 </div>
                 <button id="sidebar-collapse-btn" class="sidebar-collapse-btn" title="Collapse sidebar">
                     <i class="fas fa-chevron-left"></i>
@@ -241,7 +241,6 @@
                         </select>
                         <select id="font-switcher" class="select select-with-icons" aria-label="Select font">
                             <option value="gohu">Aa: GohuFont</option>
-                            <option value="proFontWindowsNerdFontPropo">Aa: ProFont</option>
                             <option value="jetBrainsMonoNerdFont">Aa: JetBrains</option>
                         </select>
                         <select id="view-switcher" class="select select-with-icons" aria-label="Select view mode">
@@ -454,45 +453,6 @@
             </div>
         </div>
 
-        <div id="ai-config-popup" class="rename-popup hidden popup-animate" role="dialog"
-            aria-labelledby="ai-config-title">
-            <div class="rename-popup-content">
-                <h3 id="ai-config-title" class="ai-title">Configure AI Chatbot</h3>
-                <div class="ai-config-container">
-                    <div class="input-container">
-                        <select id="ai-model-select" class="select" aria-label="Select AI model">
-                            <option value="">Select AI Model</option>
-                            <option value="gemini">Gemini</option>
-                            <option value="gpt">GPT</option>
-                        </select>
-                        <div id="ai-model-error" class="error-message hidden">Please select an AI model.</div>
-                    </div>
-                    <div class="input-container">
-                        <div class="rename-input-container">
-                            <input type="password" id="api-key-input" class="input" placeholder="Enter API key..."
-                                aria-label="API key" maxlength="255" />
-                            <button type="button" id="toggle-api-visibility" class="button eye"
-                                aria-label="Toggle API key visibility"><i class="fas fa-eye-slash"></i></button>
-                        </div>
-                        <div id="api-key-error" class="error-message hidden">Please enter an API key.</div>
-                    </div>
-                    <div class="input-container">
-                        <div class="rename-input-container">
-                            <textarea id="curl-input" class="input"
-                                placeholder="Enter model name (e.g., gemini-2.0-flash or gpt-3.5-turbo)" rows="4"
-                                aria-label="Model name"></textarea>
-                            <button id="clear-curl" class="button clear" aria-label="Clear model name input">✖</button>
-                        </div>
-                        <div id="curl-error" class="error-message hidden">Please enter a model name.</div>
-                    </div>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="ai-config-save" class="button save">Save</button>
-                    <button id="ai-config-cancel" class="button cancel">Cancel</button>
-                </div>
-            </div>
-        </div>
-
         <div class="floating-buttons">
             <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
                 <i class="fas fa-caret-up"></i>
@@ -519,10 +479,6 @@
                             aria-label="Toggle maximize">
                             <i class="fas fa-expand"></i>
                         </button>
-                        <button id="chat-edit-config" class="chatbox-header-button" title="Edit AI Config"
-                            aria-label="Edit AI configuration">
-                            <i class="fas fa-cog"></i>
-                        </button>
                         <button id="chat-close" class="chatbox-header-button" title="Close Chat"
                             aria-label="Close chat">
                             <i class="fas fa-times"></i>
@@ -538,6 +494,7 @@
                     <div class="input-wrapper">
                         <textarea id="chat-input" class="input" placeholder="Type a message..." aria-label="Chat input"
                             rows="1"></textarea>
+                        <div id="chat-folder-suggestions" class="chat-suggestions hidden"></div>
                     </div>
                     <button id="chat-send" class="button send" aria-label="Send message">
                         <i class="fas fa-paper-plane"></i>

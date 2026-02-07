@@ -24,8 +24,10 @@
 
   z-index: 1000; /* Nút chat ở tầng 1000 */
 
-  transition: transform var(--transition-fast),
-    background-color var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    background-color var(--transition-fast),
+    opacity var(--transition-fast);
   border: none;
   cursor: pointer;
 }
@@ -62,7 +64,9 @@
   flex-direction: column;
   opacity: 0;
   transform: translateY(20px) scale(0.95);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
   z-index: 1000;
   resize: both;
   overflow: hidden;
@@ -298,6 +302,37 @@
   flex-grow: 1;
   display: flex;
   align-items: center;
+}
+
+.chat-suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 48px;
+  max-height: 180px;
+  overflow-y: auto;
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  z-index: 5;
+}
+
+.chat-suggestions.hidden {
+  display: none;
+}
+
+.chat-suggestion-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.chat-suggestion-item:hover,
+.chat-suggestion-item.active {
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 /* === Input Area === */

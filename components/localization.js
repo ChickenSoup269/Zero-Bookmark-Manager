@@ -14,11 +14,16 @@ export function updateBookmarksPageText() {
   })
 
   // Update sidebar section titles
-  document.getElementById("filters-title").textContent = t("filtersTitle")
-  document.getElementById("search-title").textContent = t("searchTitle")
-  document.getElementById("folder-actions-title").textContent =
-    t("folderActionsTitle")
-  document.getElementById("selection-title").textContent = t("selectionTitle")
+  const filtersTitle = document.getElementById("filters-title")
+  if (filtersTitle) filtersTitle.textContent = t("filtersTitle")
+  const searchTitle = document.getElementById("search-title")
+  if (searchTitle) searchTitle.textContent = t("searchTitle")
+  const folderActionsTitle = document.getElementById("folder-actions-title")
+  if (folderActionsTitle) {
+    folderActionsTitle.textContent = t("folderActionsTitle")
+  }
+  const selectionTitle = document.getElementById("selection-title")
+  if (selectionTitle) selectionTitle.textContent = t("selectionTitle")
 }
 
 // Ensure the text is updated on load

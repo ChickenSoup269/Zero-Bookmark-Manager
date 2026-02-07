@@ -2526,6 +2526,7 @@ export function populateFolderDropdown(
   language,
   initialOptionText,
 ) {
+  if (!selectElement) return
   // Lấy bản dịch
   const t = translations[language] || translations.en
 
@@ -2585,6 +2586,7 @@ export function populateFolderDropdown(
 export function populateFolderFilter(bookmarkTreeNodes, elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   const folderFilter = elements.folderFilter
+  if (!folderFilter) return
   populateFolderDropdown(
     folderFilter,
     bookmarkTreeNodes,

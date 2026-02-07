@@ -6,22 +6,8 @@
   font-style: normal;
 }
 @font-face {
-  font-family: "ProFontWindowsNerdFontPropo";
-  src: url("/fonts/ProFontWindowsNerdFontPropo-Regular.woff2") format("woff2");
-  font-weight: normal;
-  font-size: small;
-  font-style: normal;
-}
-@font-face {
   font-family: "JetBrainsMonoNerdFont";
   src: url("/fonts/JetBrainsMonoNerdFontPropo-Regular.woff2") format("woff2");
-  font-weight: normal;
-  font-size: small;
-  font-style: normal;
-}
-@font-face {
-  font-family: "0xProtoNerdFontMono";
-  src: url("/fonts/0xProtoNerdFontMono-Regular.woff2") format("woff2");
   font-weight: normal;
   font-size: small;
   font-style: normal;
@@ -84,6 +70,8 @@
   --shadow-hover-tree: rgba(255, 255, 255, 0.35) 0px 5px 15px;
   --hover-bg-option: #2b2b2b;
   --bg-tags-select: rgba(0, 0, 0, 0.9);
+  /* hover bookmark count webview */
+  --hover-light-dazz: rgba(255, 255, 255, 0.4);
 }
 
 /* Light theme */
@@ -126,6 +114,9 @@
   --check-link-color: linear-gradient(135deg, #4282e1, #47e6ff);
   --check-dup-color: linear-gradient(135deg, #4282e1, #47e6ff);
   --check-hover-link: linear-gradient(90deg, #4282e1, #47e6ff);
+
+  /* hover bookmark count webview */
+  --hover-light-dazz: rgba(61, 53, 53, 0.192);
 }
 
 /* Dracula theme */
@@ -231,6 +222,9 @@ body.tet-theme {
   --check-link-color: linear-gradient(135deg, #d32f2f, #f9e79f);
   --check-dup-color: linear-gradient(135deg, #c62828, #ffd54f);
   --check-hover-link: linear-gradient(90deg, #d32f2f, #fef5e7);
+
+  /* hover bookmark count webview */
+  --hover-light-dazz: rgba(248, 227, 149, 0.6);
 }
 
 /* Kích hoạt khả năng tùy chỉnh cho select */
@@ -298,10 +292,6 @@ textarea.input {
 body.font-gohu,
 body.font-gohu * {
   font-family: "GohuFont", Arial, sans-serif !important;
-}
-body.font-proFontWindowsNerdFontPropo,
-body.font-proFontWindowsNerdFontPropo * {
-  font-family: "ProFontWindowsNerdFontPropo", Arial, sans-serif !important;
 }
 body.font-jetBrainsMonoNerdFont,
 body.font-jetBrainsMonoNerdFont * {
