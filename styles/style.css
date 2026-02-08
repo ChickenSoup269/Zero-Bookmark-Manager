@@ -1256,9 +1256,11 @@ html {
 .rename-popup-buttons .cancel {
   background: var(--bg-side);
   color: var(--bg-primary);
+  background-color: var(--bg-side);
 }
 
 .rename-popup-buttons .cancel:hover {
+  color: var(--bg-primary);
   background-color: var(--bg-side);
   transform: scale(1.05);
 }
