@@ -1,16 +1,19 @@
 @font-face {
   font-family: "GohuFont";
-  src: url("/fonts/GohuFont11NerdFontPropo-Regular.woff2") format("woff2");
-  font-weight: normal;
-  font-size: small;
+  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/GohuFont11NerdFontPropo-Regular.woff2")
+    format("woff2");
   font-style: normal;
+  font-weight: normal;
+  font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMonoNerdFont";
-  src: url("/fonts/JetBrainsMonoNerdFontPropo-Regular.woff2") format("woff2");
+  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/JetBrainsMonoNerdFontPropo-Regular.woff2")
+    format("woff2");
   font-weight: normal;
-  font-size: small;
   font-style: normal;
+  font-display: swap;
 }
 
 :root {
@@ -296,6 +299,23 @@ body.font-gohu * {
 body.font-jetBrainsMonoNerdFont,
 body.font-jetBrainsMonoNerdFont * {
   font-family: "JetBrainsMonoNerdFont", Arial, sans-serif !important;
+}
+body.font-firaCode,
+body.font-firaCode * {
+  font-family: "FiraCodeNerdFont", Arial, sans-serif !important;
+}
+body.font-hack,
+body.font-hack * {
+  font-family: "HackNerdFont", Arial, sans-serif !important;
+}
+
+body.font-ubuntuMono,
+body.font-ubuntuMono * {
+  font-family: "UbuntuMonoNerdFont", Arial, sans-serif !important;
+}
+body.font-sourceCodePro,
+body.font-sourceCodePro * {
+  font-family: "SourceCodeProNerdFont", Arial, sans-serif !important;
 }
 
 body {
@@ -1254,14 +1274,12 @@ html {
 }
 
 .rename-popup-buttons .cancel {
-  background: var(--bg-side);
-  color: var(--bg-primary);
-  background-color: var(--bg-side);
+  color: var(--text-primary);
+  background-color: var(--border-color);
 }
 
 .rename-popup-buttons .cancel:hover {
-  color: var(--bg-primary);
-  background-color: var(--bg-side);
+  background-color: var(--border-color);
   transform: scale(1.05);
 }
 
