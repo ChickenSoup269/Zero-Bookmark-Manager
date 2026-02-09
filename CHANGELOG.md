@@ -2,13 +2,26 @@
 
 ### [1.1.8] - 2026-02-09
 
+## Added
+
+- **New Themes:** Added 5 new color themes for better customization:
+  - **Tokyo Night** - Popular dark theme with blue/purple accent colors inspired by Tokyo's night cityscape
+  - **GitHub Blue** - Dark theme matching GitHub's modern dark interface with blue accents
+  - **GitHub Light** - Clean light theme following GitHub's light mode color palette
+  - **Monokai** - Classic Monokai theme with vibrant green, cyan, and yellow highlights
+  - **Winter is Coming** - Deep blue dark theme inspired by VS Code's Winter is Coming extension
+
 ## Updated
 
 - Moved font assets to CDN (replaced local font files with CDN-hosted sources) to reduce extension bundle size and improve load performance.
+- Updated AI chat system to recognize all new theme names in natural language commands
+- Updated theme documentation in help guide (both English and Vietnamese)
 
 ## Improved
 
 - Reduced extension bundle size by offloading large font assets to CDN and improving initial load times.
+- Enhanced theme switcher UI with more diverse color scheme options (now 11 total themes)
+- Better theme coverage for different user preferences (light, dark, and colorful variants)
 
 ## Fixed
 

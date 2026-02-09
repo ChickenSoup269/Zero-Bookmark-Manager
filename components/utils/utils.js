@@ -185,7 +185,7 @@ export const translations = {
         <li><strong>favorite bookmark "Title"</strong></li>
         <li><strong>change view to flat/tree/detail/card</strong></li>
         <li><strong>switch to flat view</strong></li>
-        <li><strong>change theme to light/dark/dracula/onedark/tet/system</strong></li>
+        <li><strong>change theme to light/dark/dracula/onedark/tokyonight/monokai/winter-is-coming/github-blue/github-light/tet/system</strong></li>
         <li><strong>use the dracula theme</strong></li>
         <li><strong>switch to dark mode</strong></li>
         <li><strong>sort by a-z</strong></li>
@@ -232,8 +232,8 @@ export const translations = {
       - <code>"switch to flat view"</code>, <code>"use tree layout"</code>, <code>"card view"</code>.
     </li>
     <li><strong>Theme:</strong><br>
-      - <code>"change theme to light"</code>, <code>"change theme to dark"</code>, <code>"change theme to dracula"</code>, <code>"change theme to onedark"</code>, <code>"change theme to tet"</code>, <code>"change theme to system"</code>.<br>
-      - <code>"use the dracula theme"</code>, <code>"switch to dark mode"</code>.
+      - <code>"change theme to light"</code>, <code>"change theme to dark"</code>, <code>"change theme to dracula"</code>, <code>"change theme to onedark"</code>, <code>"change theme to tokyonight"</code>, <code>"change theme to monokai"</code>, <code>"change theme to winter-is-coming"</code>, <code>"change theme to github-blue"</code>, <code>"change theme to github-light"</code>, <code>"change theme to tet"</code>, <code>"change theme to system"</code>.<br>
+      - <code>"use the dracula theme"</code>, <code>"switch to dark mode"</code>, <code>"use tokyo night theme"</code>, <code>"use monokai theme"</code>, <code>"use winter is coming theme"</code>, <code>"use github blue theme"</code>.
     </li>
     <li><strong>Sort:</strong><br>
       - <code>"sort by a-z"</code>, <code>"sort by z-a"</code>, <code>"sort by newest"</code>, <code>"sort by oldest"</code>, <code>"sort by favorites"</code>.
@@ -519,7 +519,7 @@ export const translations = {
         <li><strong>change view to flat/tree/detail/card</strong></li>
         <li><strong>switch to flat view</strong></li>
         <li><strong>use tree layout</strong></li>
-        <li><strong>change theme to light/dark/dracula/onedark/tet/system</strong></li>
+        <li><strong>change theme to light/dark/dracula/onedark/tokyonight/monokai/winter-is-coming/github-blue/github-light/tet/system</strong></li>
         <li><strong>use the dracula theme</strong></li>
         <li><strong>switch to dark mode</strong></li>
         <li><strong>sort by a-z</strong></li>
@@ -566,8 +566,8 @@ export const translations = {
               - <code>"switch to flat view"</code>, <code>"use tree layout"</code>, <code>"card view"</code>.
             </li>
             <li><strong>Chu de / Theme:</strong><br>
-              - <code>"change theme to light"</code>, <code>"change theme to dark"</code>, <code>"change theme to dracula"</code>, <code>"change theme to onedark"</code>, <code>"change theme to tet"</code>, <code>"change theme to system"</code>.<br>
-              - <code>"use the dracula theme"</code>, <code>"switch to dark mode"</code>.
+              - <code>"change theme to light"</code>, <code>"change theme to dark"</code>, <code>"change theme to dracula"</code>, <code>"change theme to onedark"</code>, <code>"change theme to tokyonight"</code>, <code>"change theme to monokai"</code>, <code>"change theme to winter-is-coming"</code>, <code>"change theme to github-blue"</code>, <code>"change theme to github-light"</code>, <code>"change theme to tet"</code>, <code>"change theme to system"</code>.<br>
+              - <code>"use the dracula theme"</code>, <code>"switch to dark mode"</code>, <code>"use tokyo night theme"</code>, <code>"use monokai theme"</code>, <code>"use winter is coming theme"</code>, <code>"use github blue theme"</code>.
             </li>
             <li><strong>Sap xep:</strong><br>
               - <code>"sort by a-z"</code>, <code>"sort by z-a"</code>, <code>"sort by newest"</code>, <code>"sort by oldest"</code>, <code>"sort by favorites"</code>.
