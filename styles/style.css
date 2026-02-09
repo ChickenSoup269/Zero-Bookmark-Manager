@@ -16,6 +16,24 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "ProFontWindowsNerdFontPropo";
+  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/ProFontWindowsNerdFontPropo-Regular.ttf")
+    format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AnonymiceProNerdFont";
+  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/AnonymiceProNerdFontPropo-Regular.ttf")
+    format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Dark theme variables */
   --bg-primary: #0d1117;
@@ -300,22 +318,13 @@ body.font-jetBrainsMonoNerdFont,
 body.font-jetBrainsMonoNerdFont * {
   font-family: "JetBrainsMonoNerdFont", Arial, sans-serif !important;
 }
-body.font-firaCode,
-body.font-firaCode * {
-  font-family: "FiraCodeNerdFont", Arial, sans-serif !important;
+body.font-anonymiceProNerd,
+body.font-anonymiceProNerd * {
+  font-family: "AnonymiceProNerdFont", Arial, sans-serif !important;
 }
-body.font-hack,
-body.font-hack * {
-  font-family: "HackNerdFont", Arial, sans-serif !important;
-}
-
-body.font-ubuntuMono,
-body.font-ubuntuMono * {
-  font-family: "UbuntuMonoNerdFont", Arial, sans-serif !important;
-}
-body.font-sourceCodePro,
-body.font-sourceCodePro * {
-  font-family: "SourceCodeProNerdFont", Arial, sans-serif !important;
+body.font-proFontWindowsNerdFontPropo,
+body.font-proFontWindowsNerdFontPropo * {
+  font-family: "ProFontWindowsNerdFontPropo", Arial, sans-serif !important;
 }
 
 body {
