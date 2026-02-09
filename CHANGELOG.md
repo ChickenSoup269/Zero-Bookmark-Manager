@@ -1,5 +1,19 @@
 <!-- ---Extension version---- -->
 
+### [1.1.8] - 2026-02-09
+
+## Updated
+
+- Moved font assets to CDN (replaced local font files with CDN-hosted sources) to reduce extension bundle size and improve load performance.
+
+## Improved
+
+- Reduced extension bundle size by offloading large font assets to CDN and improving initial load times.
+
+## Fixed
+
+- Fixed CSS color for cancel buttons so they display correctly across light/dark themes.
+
 ### [1.1.7] - 2026-02-04
 
 ## Added

@@ -6,7 +6,6 @@
   font-weight: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "JetBrainsMonoNerdFont";
   src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/JetBrainsMonoNerdFontPropo-Regular.woff2")
@@ -15,21 +14,19 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "ProFontWindowsNerdFontPropo";
   src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/ProFontWindowsNerdFontPropo-Regular.ttf")
     format("truetype");
-  font-weight: 400;
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "AnonymiceProNerdFont";
   src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/AnonymiceProNerdFontPropo-Regular.ttf")
     format("truetype");
-  font-weight: 400;
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
