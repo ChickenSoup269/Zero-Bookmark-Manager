@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         - favorite: Mark or unmark a bookmark as a favorite.
         - suggest_website: Suggest websites on a given topic.
         - change_view: Change the layout of the bookmark list (list, detail, card, tree).
-        - change_theme: Change the color theme (light, dark, dracula, onedark, tet, system).
+        - change_theme: Change the color theme (light, dark, dracula, onedark, tokyonight, monokai, winter-is-coming, github-blue, github-light, tet, system).
         - change_sort: Change the sort order of bookmarks (default, favorites, most-visited, old, last-opened, a-z, z-a, domain).
         - check_links: Check all bookmarks for broken links.
         - general: For any query that is not related to bookmark management, is a greeting, or is too vague.
@@ -117,6 +117,9 @@ document.addEventListener("DOMContentLoaded", () => {
         - User: "delete the 'temp' folder" -> Response: { "action": "delete_folder", "params": { "folderName": "temp", "confirm": true } }
         - User: "switch to card view" -> Response: { "action": "change_view", "params": { "view_mode": "card" } }
         - User: "use the dracula theme" -> Response: { "action": "change_theme", "params": { "theme_name": "dracula" } }
+        - User: "use tokyo night theme" -> Response: { "action": "change_theme", "params": { "theme_name": "tokyonight" } }
+        - User: "use monokai theme" -> Response: { "action": "change_theme", "params": { "theme_name": "monokai" } }
+        - User: "use github blue theme" -> Response: { "action": "change_theme", "params": { "theme_name": "github-blue" } }
         - User: "sort my bookmarks by name" -> Response: { "action": "change_sort", "params": { "sort_by": "a-z" } }
         - User: "check for broken links" -> Response: { "action": "check_links" }
         - User: "what is python?" -> Response: { "action": "general" }
@@ -336,11 +339,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (
-      /(doi giao dien|theme|chu de|mau).*(light|dark|dracula|onedark|tet|system)/i.test(
+      /(doi giao dien|theme|chu de|mau).*(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|system)/i.test(
         text,
       )
     ) {
-      const themeMatch = text.match(/(light|dark|dracula|onedark|tet|system)/i)
+      const themeMatch = text.match(
+        /(light|dark|dracula|onedark|tokyonight|monokai|winter-is-coming|github-blue|github-light|tet|system)/i,
+      )
       return {
         action: "change_theme",
         params: { theme_name: themeMatch ? themeMatch[1] : "system" },

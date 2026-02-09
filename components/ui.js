@@ -850,7 +850,18 @@ export async function populateTagFilter(elements) {
 }
 
 export function updateTheme(elements, theme) {
-  const availableThemes = ["light", "dark", "dracula", "onedark", "tet"]
+  const availableThemes = [
+    "light",
+    "dark",
+    "dracula",
+    "onedark",
+    "tokyonight",
+    "monokai",
+    "winter-is-coming",
+    "github-blue",
+    "github-light",
+    "tet",
+  ]
   const isDarkMode =
     theme === "dark" ||
     (theme === "system" &&
@@ -884,6 +895,11 @@ export function updateTheme(elements, theme) {
     dark: "images/logo_tet.png",
     dracula: "images/logo_dracula.png",
     onedark: "images/logo_onedark.png",
+    tokyonight: "images/logo.png",
+    monokai: "images/logo.png",
+    "winter-is-coming": "images/logo.png",
+    "github-blue": "images/logo.png",
+    "github-light": "images/logo.pngg",
     tet: "images/logo_tet.png",
   }
 
