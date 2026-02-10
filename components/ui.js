@@ -899,7 +899,7 @@ export function updateTheme(elements, theme) {
     monokai: "images/logo.png",
     "winter-is-coming": "images/logo.png",
     "github-blue": "images/logo.png",
-    "github-light": "images/logo.pngg",
+    "github-light": "images/logo.png",
     tet: "images/logo_tet.png",
   }
 
