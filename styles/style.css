@@ -1,6 +1,6 @@
 @font-face {
   font-family: "GohuFont";
-  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/GohuFont11NerdFontPropo-Regular.ttf")
+  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/GohuFont11NerdFontPropo-Regular.woff2")
     format("truetype");
   font-style: normal;
   font-weight: normal;
@@ -8,7 +8,7 @@
 }
 @font-face {
   font-family: "JetBrainsMonoNerdFont";
-  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/JetBrainsMonoNerdFontPropo-Regular.ttf")
+  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/JetBrainsMonoNerdFontPropo-Regular.woff2")
     format("truetype");
   font-weight: normal;
   font-style: normal;
@@ -16,14 +16,14 @@
 }
 @font-face {
   font-family: "ProFontWindowsNerdFontPropo";
-  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/ProFontWindowsNerdFontPropo-Regular.ttf")
+  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/ProFontWindowsNerdFontPropo-Regular.woff2")
     format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: "AnonymiceProNerdFont";
-  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/AnonymiceProNerdFontPropo-Regular.ttf")
+  src: url("https://cdn.jsdelivr.net/gh/ChickenSoup269/Zero-Bookmark-Manager@main/fonts/AnonymiceProNerdFontPropo-Regular.woff2")
     format("truetype");
   font-weight: normal;
   font-style: normal;
