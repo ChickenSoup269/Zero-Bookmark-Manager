@@ -895,11 +895,11 @@ export function updateTheme(elements, theme) {
     dark: "images/logo_tet.png",
     dracula: "images/logo_dracula.png",
     onedark: "images/logo_onedark.png",
-    tokyonight: "images/logo.png",
-    monokai: "images/logo.png",
+    tokyonight: "images/logo_tokyo_night.png",
+    monokai: "images/logo_monokai.png",
     "winter-is-coming": "images/logo.png",
-    "github-blue": "images/logo.png",
-    "github-light": "images/logo.png",
+    "github-blue": "images/logo_github.png",
+    "github-light": "images/logo_github.png",
     tet: "images/logo_tet.png",
   }
 
