@@ -1115,7 +1115,6 @@ html {
 
 ::-webkit-scrollbar-track {
   background: var(--bg-primary);
-  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
