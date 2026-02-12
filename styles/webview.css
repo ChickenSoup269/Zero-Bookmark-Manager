@@ -1543,8 +1543,7 @@ body.sidebar-style-modern .sidebar-modern {
   top: 60px;
   right: 20px;
   margin-top: 8px;
-  background-color: rgba(var(--bg-primary), 0.9);
-  backdrop-filter: blur(40px); /* Glass effect */
+  background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   min-width: 240px;
