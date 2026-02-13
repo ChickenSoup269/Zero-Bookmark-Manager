@@ -184,4 +184,4 @@ Video Updating
 
 ## Feedback
 
-If you have any feedback, please reach out to us at thientran01345@icloud.com
+If you have any feedback, please reach out to me at thientran01345@icloud.com
