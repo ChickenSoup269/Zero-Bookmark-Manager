@@ -119,4 +119,4 @@ Cài đặt Bookmark-Manager
 
 ## Feedback
 
-Nếu bạn có bất kỳ phản hồi nào, vui lòng liên hệ với chúng tôi tại thientran01345@icloud.com.
+Nếu bạn có bất kỳ phản hồi nào, vui lòng liên hệ với mình tại thientran01345@icloud.com.
