@@ -948,8 +948,6 @@ function renderSidebarFolderTree(folders) {
   treeContainer.innerHTML = ""
   const language = localStorage.getItem("appLanguage") || "en"
 
-  console.log("Rendering sidebar folders:", folders.length, "folders")
-
   // Build folder hierarchy
   const folderMap = new Map()
   folders.forEach((f) => {
@@ -1001,16 +999,6 @@ function renderSidebarFolderTree(folders) {
     }
   }
   rootFolders.forEach(sortChildren)
-
-  console.log("Root folders to render:", rootFolders.length)
-  console.log(
-    "Root folders:",
-    rootFolders.map((f) => ({
-      id: f.id,
-      title: f.title,
-      childCount: f.children.length,
-    })),
-  )
 
   // Load collapsed state from localStorage
   const collapsedFolders = new Set(
@@ -2495,7 +2483,6 @@ export function attachTreeListeners(elements, targetContainer = null) {
       const language = localStorage.getItem("appLanguage") || "en"
       const t = translations[language] || translations.en
 
-      console.log("Calling handleDeleteFolder for folder:", folderId) // Debugging line
       try {
         // Call the centralized deleteFolder function
         handleDeleteFolder(folderId, elements)

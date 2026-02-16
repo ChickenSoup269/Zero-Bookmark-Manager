@@ -98,9 +98,6 @@ export async function exportToJSON(exportData) {
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
 
-    console.log(
-      "✅ Exported JSON with full tag details, Favorites & Pins status",
-    )
   } catch (error) {
     console.error("JSON export failed:", error)
     throw error

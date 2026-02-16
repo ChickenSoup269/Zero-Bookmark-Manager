@@ -19,7 +19,7 @@ export function loadVisitCounts(callback) {
   chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
     if (response && response.visitCounts) {
       setVisitCounts(response.visitCounts)
-      console.log("Loaded visit counts:", response.visitCounts)
+
     }
     if (callback) callback()
   })
