@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Open the side panel for that window
                 // It will open on the window's active tab by default
                 chrome.sidePanel.open({ windowId: window.id })
-              } else {
+              } else {  
                 console.error("No normal window found to open side panel.")
                 alert("Could not open side panel: No active window found.")
               }

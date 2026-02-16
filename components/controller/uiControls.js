@@ -30,7 +30,7 @@ export function setupUIControlListeners(elements) {
       "font-gohu",
       "font-normal",
       "font-anonymiceProNerd",
-      "font-proFontWindowsNerdFontPropo",
+      "font-proFontWindowsNerdFontPropo", 
       "font-jetBrainsMonoNerdFont",
     )
     document.body.classList.add(`font-${e.target.value}`)
