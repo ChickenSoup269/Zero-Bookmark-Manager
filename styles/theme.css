@@ -262,12 +262,12 @@ body.github-light-theme {
   --bg-secondary-rgb: 246, 248, 250;
   --bg-tertiary: #eaeef2;
   --bg-white-none: none;
-  --bg-side: #f6f8fa;
+  --bg-side: #272727;
   --text-primary: #24292f;
   --text-secondary: #0969da;
   --text-muted: #57606a;
   --border-color: #d0d7de;
-  --accent-color: #24292f;
+  --accent-color: #000000;
   --accent-color-light: rgba(9, 105, 218, 0.1);
   --danger-color: #cf222e;
   --danger-color-light: rgba(207, 34, 46, 0.1);
@@ -285,7 +285,7 @@ body.github-light-theme {
   --text-option: #0969da;
   --shadow-hover-tree: rgba(9, 105, 218, 0.25) 0px 5px 15px;
   --hover-bg-option: #eaeef2;
-  --bg-tags-select: rgba(246, 248, 250, 0.95);
+  --bg-tags-select: rgba(37, 38, 38, 0.825);
   --check-link-color: linear-gradient(135deg, #0969da, #1f883d);
   --check-dup-color: linear-gradient(135deg, #0969da, #218bff);
   --check-hover-link: linear-gradient(90deg, #0969da, #218bff);
