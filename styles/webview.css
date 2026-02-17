@@ -8,7 +8,11 @@ body {
   width: 100%;
   margin: 0;
   font-family: "Arial", sans-serif; /* Default font for consistency */
-  background: var(--bg-primary);
+  background: linear-gradient(
+    to bottom,
+    var(--bg-tertiary),
+    var(--bg-secondary)
+  );
   color: var(--text-primary);
   transition:
     background-color 0.3s ease,
@@ -943,7 +947,6 @@ body {
   margin-left: var(--sidebar-width);
   padding: var(--spacing-md);
   max-width: calc(1380px - var(--sidebar-width));
-  background: var(--bg-primary);
   transition:
     margin-left 0.25s ease,
     background-color 0.3s ease;
@@ -1151,7 +1154,6 @@ body.sidebar-style-modern .sidebar-modern {
   display: flex;
   align-items: center;
   padding: var(--spacing-md);
-  background: var(--bg-primary);
   border-bottom: 1px solid var(--border-color);
   transition:
     background-color 0.3s ease,
