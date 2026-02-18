@@ -36,7 +36,7 @@
 </a>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Generic badge](https://img.shields.io/badge/Version-1.1.8-white.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Version-1.1.9-white.svg)](https://shields.io/)
 
 </p>
 <p>
