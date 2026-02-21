@@ -1,5 +1,22 @@
 <!-- ---Extension version---- -->
 
+### [1.1.9] - 2026-02-21
+
+## Refactored
+
+- **CSS Architecture Overhaul:** Restructured styles into modular files for better maintainability:
+  - **fonts.css** - Isolated all @font-face declarations (GohuFont, JetBrainsMono, ProFontWindows, AnonymicePro)
+  - **variables.css** - Centralized common CSS variables (spacing, border-radius, transitions, shadows)
+  - **theme.css** - Separated all theme configurations (10 themes: Dark, Light, Dracula, OneDark, Tet, Tokyo Night, GitHub Blue/Light, Monokai, Winter is Coming)
+  - **style.css** - Main stylesheet now imports modular files using @import for cleaner structure
+
+## Improved
+
+- Better code organization with separation of concerns (fonts, variables, themes, components)
+- Easier theme customization and maintenance with dedicated theme.css file
+- Simplified debugging with clearly separated CSS modules
+- Reduced cognitive load when editing styles by having focused, single-purpose files
+
 ### [1.1.8] - 2026-02-09
 
 ## Added

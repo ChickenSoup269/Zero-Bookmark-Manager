@@ -22,7 +22,7 @@
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "icons": {
-    "128": "icons/icon_vn_tet.png"
+    "128": "icons/icon.png"
   },
   "web_accessible_resources": [
     {
