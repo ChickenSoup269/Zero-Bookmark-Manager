@@ -891,8 +891,8 @@ export function updateTheme(elements, theme) {
         : "light"
 
   const logoSrcMap = {
-    light: "images/logo_tet.png", // qua tết đổi lại ố kề
-    dark: "images/logo_tet.png",
+    light: "images/logo.png", // qua tết đổi lại ố kề
+    dark: "images/logo.png",
     dracula: "images/logo_dracula.png",
     onedark: "images/logo_onedark.png",
     tokyonight: "images/logo_tokyo_night.png",
