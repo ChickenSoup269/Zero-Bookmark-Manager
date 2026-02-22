@@ -3,6 +3,7 @@
 // ==================== Visit Count Tracking ====================
 let visitCounts = {}
 let bookmarkUrlMap = {} // Map URLs to bookmark IDs for quick lookup
+let recentlyClickedInExtension = new Set() // Track bookmarks clicked in extension to avoid double counting
 
 // Load visit counts and build URL map on startup
 // console.log("📌 Background script starting...")
@@ -126,6 +127,15 @@ chrome.webNavigation.onCompleted.addListener((details) => {
   }
 
   if (bookmarkId) {
+    // Check if this bookmark was just clicked in extension (avoid double counting)
+    if (recentlyClickedInExtension.has(bookmarkId)) {
+      // console.log(
+      //   `⏭️  Skipping count for ${bookmarkId} - already counted from extension click`,
+      // )
+      recentlyClickedInExtension.delete(bookmarkId) // Remove from set
+      return
+    }
+
     // This URL is a bookmark! Increment visit count
     visitCounts[bookmarkId] = (visitCounts[bookmarkId] || 0) + 1
 
@@ -231,6 +241,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // console.log("Sending visit counts:", visitCounts)
     sendResponse({ visitCounts: visitCounts })
     return true
+  } else if (request.action === "incrementVisitCount") {
+    // Increment visit count when user clicks bookmark in extension
+    const bookmarkId = request.bookmarkId
+    if (bookmarkId) {
+      visitCounts[bookmarkId] = (visitCounts[bookmarkId] || 0) + 1
+      saveVisitCounts()
+
+      // Mark this bookmark as recently clicked to avoid double counting from webNavigation
+      recentlyClickedInExtension.add(bookmarkId)
+
+      // Auto-remove from set after 3 seconds (in case navigation fails or is slow)
+      setTimeout(() => {
+        recentlyClickedInExtension.delete(bookmarkId)
+      }, 3000)
+
+      sendResponse({ success: true, count: visitCounts[bookmarkId] })
+      return true
+    }
   } else if (request.action === "resetVisitCount") {
     const bookmarkId = request.bookmarkId
     if (bookmarkId) {
