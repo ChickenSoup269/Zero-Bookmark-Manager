@@ -299,18 +299,20 @@ function createDropdownHTML(bookmark, language) {
 }
 
 function handleBookmarkLinkClick(bookmarkId, elements) {
-  // Background script automatically tracks visits via webNavigation API
-  // No need to manually increment here
-  // Just reload UI if sorting by most-visited to show updated counts
-  setTimeout(() => {
-    if (uiState.sortType === "most-visited") {
-      loadVisitCounts(() => {
-        chrome.bookmarks.getTree((tree) =>
-          renderFilteredBookmarks(tree, elements),
-        )
-      })
-    }
-  }, 500) // Small delay to allow background script to update
+  // Increment visit count immediately when clicked in extension
+  chrome.runtime.sendMessage(
+    { action: "incrementVisitCount", bookmarkId: bookmarkId },
+    () => {
+      // Reload UI if sorting by most-visited to show updated counts
+      if (uiState.sortType === "most-visited") {
+        loadVisitCounts(() => {
+          chrome.bookmarks.getTree((tree) =>
+            renderFilteredBookmarks(tree, elements),
+          )
+        })
+      }
+    },
+  )
 }
 
 function attachDropdownToggle(element) {
