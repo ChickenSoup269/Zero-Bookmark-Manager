@@ -1,6 +1,6 @@
 <div align="center">
 
-# Bookmark Manager Extension <img src="./icons/icon_vn_tet.png" alt="logoEX" width="30">
+# Bookmark Manager Extension <img src="./icons/icon.png" alt="logoEX" width="30">
 
 </div>
 
