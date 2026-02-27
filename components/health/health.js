@@ -1,4 +1,3 @@
- 
 import { uiState } from "../state.js" // Import state để cập nhật trạng thái
 import { showCustomPopup } from "../utils/utils.js"
 
@@ -54,7 +53,15 @@ function analyzeUrlRisk(url) {
     if (host.includes("xn--")) score += 2
 
     // Một số TLD thường bị lạm dụng (chỉ heuristic)
-    const suspiciousTlds = [".ru", ".cn", ".tk", ".top", ".xyz", ".click", ".link"]
+    const suspiciousTlds = [
+      ".ru",
+      ".cn",
+      ".tk",
+      ".top",
+      ".xyz",
+      ".click",
+      ".link",
+    ]
     if (suspiciousTlds.some((tld) => host.endsWith(tld))) score += 2
 
     // Ký tự @ trong URL (thường dùng cho phishing)
