@@ -48,11 +48,11 @@ input[type="checkbox"] {
 
 /* css textarean */
 textarea {
-  resize: vertical; /* Allow vertical resizing */
-  overflow: auto; /* Show scrollbar only when needed */
-  font-family: inherit; /* Inherit font from body */
+  resize: vertical;
+  overflow: auto;
+  font-family: inherit;
   line-height: 1.5;
-  white-space: pre-wrap; /* Ensure text wraps */
+  white-space: pre-wrap;
 }
 
 /* Specific styling for textarea with class 'input' */
@@ -60,7 +60,6 @@ textarea.input {
   width: 100%;
   min-height: 50px;
   height: auto;
-
   padding: 0.8rem 2rem 1rem 0.8rem;
   border: 1px solid var(--text-primary);
   border-radius: var(--border-radius);
@@ -100,6 +99,9 @@ body {
     var(--bg-tertiary),
     var(--bg-secondary)
   );
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   color: var(--text-primary);
   margin: 0;
   padding: 0;

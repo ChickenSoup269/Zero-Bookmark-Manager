@@ -156,6 +156,27 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
+  // Scroll to Top Button Handler
+  const scrollToTopBtn = document.getElementById("sidebar-scroll-to-top")
+  if (scrollToTopBtn && sidebarModern) {
+    // Show/hide button based on scroll position
+    sidebarModern.addEventListener("scroll", () => {
+      if (sidebarModern.scrollTop > 300) {
+        scrollToTopBtn.classList.add("visible")
+      } else {
+        scrollToTopBtn.classList.remove("visible")
+      }
+    })
+
+    // Scroll to top when button is clicked
+    scrollToTopBtn.addEventListener("click", () => {
+      sidebarModern.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      })
+    })
+  }
+
   // Sync inputs between modern and classic sidebars
   syncSidebarInputs()
 })
