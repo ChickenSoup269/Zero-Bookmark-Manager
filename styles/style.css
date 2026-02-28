@@ -675,8 +675,17 @@ html {
     height var(--transition-fast),
     width var(--transition-fast);
 }
-
+/* Ẩn mặc định */
 ::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  transition:
+    width 0.3s ease,
+    height 0.3s ease;
+}
+
+/* Khi hover vào vùng có scroll thì hiện */
+*:hover::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
@@ -690,7 +699,7 @@ html {
   border-radius: 10px;
   border: 2px solid transparent;
   background-clip: content-box;
-  transition: background-color var(--transition-fast);
+  transition: background-color 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
