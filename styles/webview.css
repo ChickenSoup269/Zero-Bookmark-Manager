@@ -164,6 +164,24 @@ body {
   padding: 8px 4px;
 }
 
+/* Hide scrollbar for webview sidebar and show on hover */
+.sidebar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+.sidebar:hover {
+  scrollbar-width: auto; /* Firefox */
+}
+
+.sidebar:hover::-webkit-scrollbar {
+  display: block; /* Chrome, Safari, and Opera */
+}
+
 /* Sidebar Header */
 .sidebar-header {
   display: flex;
@@ -501,7 +519,8 @@ body {
 }
 
 .sidebar-action-btn:hover {
-  background: var(--text-secondary);
+  background: var(--hover-bg-option);
+  color: var(--text-primary);
   transition: all 0.15s ease;
 }
 
@@ -695,7 +714,7 @@ body {
 
 .sidebar-folder-item:hover {
   background: var(--accent-color-light);
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .sidebar-folder-item.active {
@@ -835,7 +854,7 @@ body {
 }
 
 .sidebar-sort-item:hover {
-  background: var(--bg-primary);
+  background: var(--hover-bg-option);
   color: var(--text-primary);
 }
 
@@ -912,7 +931,7 @@ body {
 }
 
 .sidebar-admin-btn:hover {
-  background: var(--bg-primary);
+  background: var(--hover-bg-option);
   color: var(--text-primary);
   border-color: var(--accent-color);
   transform: translateY(-1px);
