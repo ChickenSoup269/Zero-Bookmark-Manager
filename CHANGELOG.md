@@ -1,5 +1,23 @@
 <!-- ---Extension version---- -->
 
+### [1.2.0] - 2026-03-02
+
+## Added
+
+- Scroll to Top button in sidebar
+
+## Improved
+
+- Updated scrollbar styling
+- Enhanced sidebar scrollbar visibility on hover
+
+## Fixed
+
+- Realtime UI sync in Bookmarks Webview (`bookmarks.html`) — page now updates automatically without requiring manual refresh (F5)
+  - Ensured `loadVisitCounts()` always triggers callback even when MV3 background service worker is inactive
+  - Added `chrome.storage.onChanged` listener to auto re-render UI when bookmark-related data changes
+  - Cleaned up storage listeners on page unload to prevent memory leaks
+
 ### [1.1.9] - 2026-02-21
 
 ## Refactored

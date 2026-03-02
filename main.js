@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Open the side panel for that window
                 // It will open on the window's active tab by default
                 chrome.sidePanel.open({ windowId: window.id })
-              } else {  
+              } else {
                 console.error("No normal window found to open side panel.")
                 alert("Could not open side panel: No active window found.")
               }
@@ -294,16 +294,44 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }, 500)
 
+    // Re-render when bookmark structure changes (add/remove/edit/move via Chrome or extension)
     chrome.bookmarks.onCreated.addListener(refreshBookmarks)
     chrome.bookmarks.onRemoved.addListener(refreshBookmarks)
     chrome.bookmarks.onChanged.addListener(refreshBookmarks)
     chrome.bookmarks.onMoved.addListener(refreshBookmarks)
+
+    // Re-render when extension storage changes (tags, favorites, pinned, visit counts, etc.)
+    // This keeps the webview tab in sync when popup or another context updates storage
+    const storageChangeKeys = new Set([
+      "bookmarkTags",
+      "tagColors",
+      "tagTextColors",
+      "visitCounts",
+      "favoriteBookmarks",
+      "pinnedBookmarks",
+    ])
+    const handleStorageChange = debounce((changes) => {
+      const relevantChange = Object.keys(changes).some((key) =>
+        storageChangeKeys.has(key),
+      )
+      if (relevantChange) {
+        loadVisitCounts(() => {
+          getBookmarkTree((bookmarkTreeNodes) => {
+            if (bookmarkTreeNodes) {
+              renderFilteredBookmarks(bookmarkTreeNodes, elements)
+            }
+          })
+        })
+      }
+    }, 500)
+    chrome.storage.onChanged.addListener(handleStorageChange)
 
     window.addEventListener("unload", () => {
       chrome.bookmarks.onCreated.removeListener(refreshBookmarks)
       chrome.bookmarks.onRemoved.removeListener(refreshBookmarks)
       chrome.bookmarks.onChanged.removeListener(refreshBookmarks)
       chrome.bookmarks.onMoved.removeListener(refreshBookmarks)
+      chrome.storage.onChanged.removeListener(handleStorageChange)
     })
   }
 

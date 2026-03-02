@@ -16,13 +16,24 @@ import { renderFilteredBookmarks } from "./ui.js"
 
 // Load visit counts from background script
 export function loadVisitCounts(callback) {
-  chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
-    if (response && response.visitCounts) {
-      setVisitCounts(response.visitCounts)
-
-    }
+  try {
+    chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
+      if (chrome.runtime.lastError) {
+        // Service worker may be inactive (MV3 lifecycle) - not critical, proceed anyway
+        console.warn(
+          "[loadVisitCounts] runtime.lastError:",
+          chrome.runtime.lastError.message,
+        )
+      } else if (response && response.visitCounts) {
+        setVisitCounts(response.visitCounts)
+      }
+      if (callback) callback()
+    })
+  } catch (e) {
+    // sendMessage can throw if extension context is invalidated
+    console.warn("[loadVisitCounts] sendMessage threw:", e)
     if (callback) callback()
-  })
+  }
 }
 
 export function getBookmarkTree(callback) {
