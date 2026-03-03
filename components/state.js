@@ -10,6 +10,7 @@ export const uiState = {
   selectedBookmarks: new Set(),
   currentBookmarkId: null,
   showBookmarkIds: false,
+  folderListBg: true,
   checkboxesVisible: false,
   bookmarkTags: {},
   tagColors: {},

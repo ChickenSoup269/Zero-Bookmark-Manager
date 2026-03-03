@@ -381,8 +381,8 @@ html {
 
 /* Warning / utility buttons / cho check link button  */
 .button-warning {
-  background: var(--check-link-color);
-  color: white;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   font-weight: 600;
   border-radius: 5px;
   padding: 8px 14px;
@@ -426,8 +426,8 @@ html {
 }
 /* button check dup */
 .button-primary {
-  background: var(--check-dup-color);
-  color: white;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   font-weight: 600;
   border-radius: 5px;
   padding: 8px 14px;
@@ -2654,4 +2654,55 @@ html {
   background: var(--hover-bg);
   border-color: var(--accent-color);
   color: var(--text-primary);
+}
+
+/* HR in dropdown */
+/* Toggle switch row in dropdown-menu-2 */
+
+.dropdown-menu-2 .toggle-row:hover {
+  background-color: var(--focus-outline);
+  color: var(--bg-primary);
+}
+
+.toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-knob {
+  position: absolute;
+  inset: 0;
+  background-color: var(--text-primary);
+  border-radius: 999px;
+  transition: background-color 0.25s ease;
+}
+
+.toggle-knob::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  top: 3px;
+  background: var(--bg-primary);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease;
+}
+
+.toggle-switch input:checked + .toggle-knob {
+  background: var(--text-option, #4a90e2);
+}
+
+.toggle-switch input:checked + .toggle-knob::before {
+  transform: translateX(16px);
 }

@@ -23,11 +23,6 @@ body {
   left: 0;
   width: var(--sidebar-width);
   height: 100%;
-  background: linear-gradient(
-    to bottom,
-    var(--bg-tertiary),
-    var(--bg-secondary)
-  );
   background-attachment: local;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -1251,10 +1246,30 @@ body.sidebar-style-modern .sidebar-modern {
   display: flex;
   align-items: center;
   padding: var(--spacing-md);
-  border-bottom: 1px solid var(--border-color);
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease;
+  position: relative;
+}
+
+/* Border slash-1 */
+.header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 10px;
+
+  background-image: linear-gradient(
+    -45deg,
+    transparent 0%,
+    transparent 25%,
+    var(--text-primary) 25%,
+    var(--text-primary) 50%,
+    transparent 50%,
+    transparent 75%,
+    var(--text-primary) 75%
+  );
+
+  background-size: 10px 10px;
 }
 
 /* Toggle sidebar button - Cải thiện hover từ [image:4] */
@@ -1369,10 +1384,22 @@ body.sidebar-style-modern .sidebar-modern {
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
-  transition: background-color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: var(--spacing-md);
+}
+
+.folder-list.no-bg,
+.folder-list.no-bg.tree-view {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* Tree view styling - Cải thiện indentation */
@@ -1708,7 +1735,20 @@ body.sidebar-style-modern .sidebar-modern {
   transition: all 0.2s ease;
 }
 
-/* HR in dropdown */
+.dropdown-menu-2 .toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: var(--border-radius-md);
+  transition: background-color 0.25s ease;
+  box-sizing: border-box;
+}
+
 .dropdown-menu-2 hr {
   border: none;
   border-top: 1px solid var(--border-color);

@@ -258,6 +258,8 @@ export const translations = {
     unmarkedFavorite: "I've removed the bookmark from favorites",
     showBookmarkIds: "Show Bookmark IDs",
     hideBookmarkIds: "Hide Bookmark IDs",
+    showFolderListBg: "Show List Background",
+    hideFolderListBg: "Hide List Background",
     localStorageSettingsTitle: "Local Storage Settings",
     saveSearchQuery: "Save Search Query",
     saveSelectedFolderId: "Save Selected Folder",
@@ -333,6 +335,7 @@ export const translations = {
     sidebarManage: "Manage",
     sidebarMoreFolders: "more folders",
     sidebarBookmarks: "bookmarks",
+    sidebarListBg: "BG Color Bookmarks",
   },
   vi: {
     welcomeMessage: "Chào mừng đến với Zero Bookmark Manager Chat!",
@@ -591,6 +594,8 @@ export const translations = {
     unmarkedFavorite: "Tui đã bỏ đánh dấu yêu thích cho bookmark",
     showBookmarkIds: "Hiển thị ID Bookmark",
     hideBookmarkIds: "Ẩn ID Bookmark",
+    showFolderListBg: "Hiện nền danh sách",
+    hideFolderListBg: "Ẩn nền danh sách",
     localStorageSettingsTitle: "Cài đặt Bộ nhớ tại web",
     saveSearchQuery: "Lưu Truy vấn Tìm kiếm",
     saveSelectedFolderId: "Lưu Thư mục Đã chọn",
@@ -667,6 +672,7 @@ export const translations = {
     sidebarManage: "Quản lý",
     sidebarMoreFolders: "thư mục khác",
     sidebarBookmarks: "bookmarks",
+    sidebarListBg: "Màu nền Bookmarks",
   },
 }
 
