@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     createFolderCancel: document.getElementById("create-folder-cancel"),
     clearCreateFolder: document.getElementById("clear-create-folder"),
     showBookmarkIdsOption: document.getElementById("show-bookmark-ids-option"),
+    toggleFolderListBgOption: document.getElementById("folder-list-bg-toggle"),
     tagFilterContainer: document.getElementById("tag-filter-container"),
     tagFilterToggle: document.getElementById("tag-filter-toggle"),
     tagFilterDropdown: document.getElementById("tag-filter-dropdown"),
@@ -129,6 +130,22 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.showBookmarkIdsOption.textContent = uiState.showBookmarkIds
           ? translations[savedLanguage].hideBookmarkIds
           : translations[savedLanguage].showBookmarkIds
+      }
+    })
+
+    // Khôi phục trạng thái folderListBg
+    chrome.storage.local.get(["folderListBg"], (data) => {
+      uiState.folderListBg =
+        data.folderListBg !== undefined ? data.folderListBg : true
+      if (elements.folderListDiv) {
+        if (uiState.folderListBg) {
+          elements.folderListDiv.classList.remove("no-bg")
+        } else {
+          elements.folderListDiv.classList.add("no-bg")
+        }
+      }
+      if (elements.toggleFolderListBgOption) {
+        elements.toggleFolderListBgOption.checked = uiState.folderListBg
       }
     })
 
@@ -211,6 +228,21 @@ document.addEventListener("DOMContentLoaded", () => {
             renderFilteredBookmarks(bookmarkTreeNodes, elements)
           }
         })
+      })
+    }
+
+    // Sự kiện cho toggleFolderListBgOption (toggle switch)
+    if (elements.toggleFolderListBgOption) {
+      elements.toggleFolderListBgOption.addEventListener("change", (e) => {
+        uiState.folderListBg = e.target.checked
+        chrome.storage.local.set({ folderListBg: uiState.folderListBg })
+        if (elements.folderListDiv) {
+          if (uiState.folderListBg) {
+            elements.folderListDiv.classList.remove("no-bg")
+          } else {
+            elements.folderListDiv.classList.add("no-bg")
+          }
+        }
       })
     }
 

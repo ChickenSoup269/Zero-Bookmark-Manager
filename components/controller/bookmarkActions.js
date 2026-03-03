@@ -25,7 +25,7 @@ const handleError = (logMsg, uiMsgKey, isError = true) => {
   showCustomPopup(
     getTranslation(uiMsgKey, "An unexpected error occurred"),
     isError ? "error" : "success",
-    isError
+    isError,
   )
 }
 
@@ -85,7 +85,7 @@ export function setupBookmarkActionListeners(elements) {
   // Checkboxes
   document.querySelectorAll(".bookmark-checkbox").forEach((checkbox) => {
     attachListener(checkbox, "change", (e) =>
-      handleBookmarkCheckbox(e, elements)
+      handleBookmarkCheckbox(e, elements),
     )
   })
 }
@@ -102,6 +102,7 @@ function handleMenuItemClick(e, elements) {
     "import-bookmarks-option",
     "rename-folder-option",
     "show-bookmark-ids-option",
+    "toggle-folder-list-bg-option",
     "edit-in-new-tab-option",
   ]
   if (ignoredIds.includes(target.id)) return
@@ -117,7 +118,7 @@ function handleMenuItemClick(e, elements) {
   }
 
   const actionKey = Object.keys(actions).find((key) =>
-    target.classList.contains(key)
+    target.classList.contains(key),
   )
 
   if (actionKey) {
@@ -157,7 +158,7 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     if (chrome.runtime.lastError || !results?.[0]) {
       return handleError(
         chrome.runtime.lastError?.message || "Bookmark not found",
-        "errorUnexpected"
+        "errorUnexpected",
       )
     }
 
@@ -169,7 +170,7 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     let thumbUrl = defaultThumb
     if (b.url && b.url.startsWith("http")) {
       thumbUrl = `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(
-        b.url
+        b.url,
       )}?w=800`
     }
 
@@ -181,7 +182,7 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     els.thumb.onerror = () => {
       // Nếu load mshots lỗi, thử dùng Google Favicon chất lượng cao
       els.thumb.src = `https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(
-        b.url
+        b.url,
       )}`
       // Nếu vẫn lỗi nữa thì về default
       els.thumb.onerror = () => {
@@ -216,13 +217,13 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
             display: inline-block;">
             ${tag}
           </span>
-        `
+        `,
         )
         .join("")
     } else {
       els.tags.innerHTML = `<span style="color: var(--text-secondary); font-style: italic;">${getTranslation(
         "noTags",
-        "No tags"
+        "No tags",
       )}</span>`
     }
 
@@ -406,7 +407,7 @@ async function openManageTagsPopup(bookmarkId) {
     const tags = await getAllTags()
     tagSelect.innerHTML = `<option value="">${getTranslation(
       "selectTag",
-      "Select Tag"
+      "Select Tag",
     )}</option>`
     tags.forEach((t) => {
       const opt = document.createElement("option")
@@ -450,7 +451,7 @@ async function openManageTagsPopup(bookmarkId) {
         tagColors: uiState.tagColors,
         tagTextColors: uiState.tagTextColors,
       },
-      cb
+      cb,
     )
   }
 
@@ -497,7 +498,10 @@ async function openManageTagsPopup(bookmarkId) {
     const tag = e.target.dataset.tag
     if (e.target.classList.contains("remove-tag-btn")) {
       showCustomConfirm(
-        getTranslation("confirmDeleteTag", "Are you sure you want to delete this tag from the bookmark?"),
+        getTranslation(
+          "confirmDeleteTag",
+          "Are you sure you want to delete this tag from the bookmark?",
+        ),
         () => {
           uiState.bookmarkTags[bookmarkId] = uiState.bookmarkTags[
             bookmarkId
@@ -506,10 +510,10 @@ async function openManageTagsPopup(bookmarkId) {
             renderTags()
             showCustomPopup(
               getTranslation("deleteTagSuccess", "Tag deleted successfully!"),
-              "success"
+              "success",
             )
           })
-        }
+        },
       )
     } else if (e.target.classList.contains("edit-tag-btn")) {
       // Edit logic (simplified for brevity, similar structure to original but cleaner DOM calls)
@@ -519,7 +523,7 @@ async function openManageTagsPopup(bookmarkId) {
         bookmarkId,
         saveTagData,
         renderTags,
-        updateDropdown
+        updateDropdown,
       )
     }
   }
@@ -546,7 +550,7 @@ function handleEditTagUI(
   bookmarkId,
   saveFn,
   renderFn,
-  updateDropdownFn
+  updateDropdownFn,
 ) {
   const originalHTML = container.innerHTML
   container.classList.add("editing-container")
@@ -604,7 +608,7 @@ function handleEditTagUI(
       return showCustomPopup(
         getTranslation("tagEmpty", "Tag cannot be empty"),
         "error",
-        true
+        true,
       )
 
     await updateTag(oldTag, newTag, newBgColor, newTextColor)
@@ -628,7 +632,7 @@ async function getAllTags() {
     chrome.storage.local.get(["bookmarkTags"], (data) => {
       const allTags = new Set()
       Object.values(data.bookmarkTags || {}).forEach((tags) =>
-        tags.forEach((tag) => allTags.add(tag))
+        tags.forEach((tag) => allTags.add(tag)),
       )
       resolve([...allTags].sort())
     })
@@ -659,7 +663,7 @@ function handleRenameSave(e, elements) {
         siblings?.some(
           (s) =>
             s.id !== uiState.currentBookmarkId &&
-            s.title.toLowerCase() === newTitle.toLowerCase()
+            s.title.toLowerCase() === newTitle.toLowerCase(),
         )
       ) {
         elements.renameInput.classList.add("error")
@@ -678,7 +682,7 @@ function handleRenameSave(e, elements) {
             showCustomPopup(getTranslation("renameSuccess"), "success")
             handleRenameCancel(e, elements)
           })
-        }
+        },
       )
     })
   })
@@ -771,7 +775,7 @@ function handleFavoriteBookmark(e, elements) {
         renderFilteredBookmarks(uiState.bookmarkTree, elements)
         showCustomPopup(
           getTranslation(isFav ? "favoriteSuccess" : "unfavoriteSuccess"),
-          "success"
+          "success",
         )
       })
     })
@@ -806,9 +810,9 @@ export function handleDeleteSelectedBookmarks(elements) {
       Array.from(uiState.selectedBookmarks).map(
         (id) =>
           new Promise((resolve) =>
-            safeChromeBookmarksCall("remove", [id], resolve)
-          )
-      )
+            safeChromeBookmarksCall("remove", [id], resolve),
+          ),
+      ),
     ).then(() => {
       uiState.selectedBookmarks.clear()
       elements.addToFolderButton.classList.add("hidden")

@@ -5,6 +5,7 @@
 ## Added
 
 - Scroll to Top button in sidebar
+- **List Background Toggle:** Added ON/OFF toggle switch in Extension Options to show/hide the background, border, and shadow of the bookmark list area
 
 ## Improved
 
