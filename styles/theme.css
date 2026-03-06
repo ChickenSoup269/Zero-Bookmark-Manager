@@ -28,7 +28,6 @@
   --folder-hover-bg: rgba(112, 161, 70, 0.1);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
-
   --health-icon-dead-color: #dc3545;
   --text-option: white;
   --shadow-hover-tree: rgba(255, 255, 255, 0.35) 0px 5px 15px;
@@ -69,7 +68,6 @@
   --shadow-hover-tree: rgba(0, 0, 0, 0.35) px 5px 15px;
   --hover-bg-option: #d7d7d7;
   --bg-tags-select: rgba(37, 38, 38, 0.825);
-
   --hover-light-dazz: rgba(61, 53, 53, 0.192);
 }
 
@@ -100,8 +98,7 @@ body.dracula-theme {
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --text-option: #ff79c6;
   --hover-bg-option: #3a3c4e;
-  --bg-tags-select: rgba(40, 42, 54, 0.9);
-}
+  --bg-tags-select: rgba(40, 42, 54, 0.9);}
 
 /* OneDark theme */
 [data-theme="onedark"],
@@ -130,7 +127,7 @@ body.onedark-theme {
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --text-option: #98c379;
   --hover-bg-option: #323842;
-  --bg-tags-select: rgba(40, 44, 52, 0.9);
+  --bg-tags-select: rgba(40, 44, 52, 0.9)
 }
 
 /* Tet theme */
@@ -162,7 +159,6 @@ body.tet-theme {
   --text-option: #fef5e7;
   --hover-bg-option: rgba(249, 231, 159, 0.2);
   --bg-tags-select: rgba(139, 26, 26, 0.85);
-
   --hover-light-dazz: rgba(248, 227, 149, 0.6);
 }
 
@@ -198,7 +194,6 @@ body.tokyonight-theme {
   --shadow-hover-tree: rgba(122, 162, 247, 0.35) 0px 5px 15px;
   --hover-bg-option: #292e42;
   --bg-tags-select: rgba(26, 27, 38, 0.9);
-
   --hover-light-dazz: rgba(122, 162, 247, 0.4);
 }
 
@@ -234,7 +229,6 @@ body.github-blue-theme {
   --shadow-hover-tree: rgba(88, 166, 255, 0.35) 0px 5px 15px;
   --hover-bg-option: #1c2128;
   --bg-tags-select: rgba(13, 17, 23, 0.9);
-
   --hover-light-dazz: rgba(88, 166, 255, 0.4);
 }
 
@@ -270,7 +264,6 @@ body.github-light-theme {
   --shadow-hover-tree: rgba(9, 105, 218, 0.25) 0px 5px 15px;
   --hover-bg-option: #eaeef2;
   --bg-tags-select: rgba(37, 38, 38, 0.825);
-
   --hover-light-dazz: rgba(9, 105, 218, 0.2);
 }
 
@@ -306,7 +299,6 @@ body.monokai-theme {
   --shadow-hover-tree: rgba(166, 226, 46, 0.35) 0px 5px 15px;
   --hover-bg-option: #3e3d32;
   --bg-tags-select: rgba(39, 40, 34, 0.9);
-
   --hover-light-dazz: rgba(166, 226, 46, 0.4);
 }
 
@@ -342,6 +334,5 @@ body.winter-is-coming-theme {
   --shadow-hover-tree: rgba(127, 219, 202, 0.35) 0px 5px 15px;
   --hover-bg-option: #0b2942;
   --bg-tags-select: rgba(1, 22, 39, 0.9);
-
   --hover-light-dazz: rgba(130, 170, 255, 0.4);
 }
