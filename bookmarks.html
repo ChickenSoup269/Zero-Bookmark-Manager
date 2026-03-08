@@ -183,12 +183,41 @@
                         <i class="fas fa-tags"></i>
                         <span data-i18n="sidebarTags">Tags</span>
                     </div>
-                    <i class="fas fa-chevron-down sidebar-section-toggle"></i>
+                    <div class="sidebar-section-actions">
+                        <span class="sidebar-badge sidebar-tag-active-count hidden" id="tags-active-count">0</span>
+                        <i class="fas fa-chevron-down sidebar-section-toggle"></i>
+                    </div>
                 </div>
                 <div class="sidebar-section-content" id="tags-content">
                     <div id="tag-filter-container" class="sidebar-tag-container">
+                        <!-- Search + Clear toolbar -->
+                        <div class="sidebar-tag-toolbar">
+                            <div class="sidebar-tag-search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="tag-search-input" placeholder="Search tags..."
+                                    class="sidebar-tag-search-input" autocomplete="off" aria-label="Search tags">
+                                <button id="tag-search-clear" class="sidebar-tag-search-clear hidden"
+                                    aria-label="Clear tag search">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <button id="tag-clear-all" class="sidebar-tag-clear-btn hidden" title="Clear tag filter"
+                                aria-label="Clear all selected tags">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                            <button id="tag-expand-btn" class="sidebar-tag-expand-btn" aria-label="Open tags browser">
+                                <i class="fas fa-table-cells-large"></i>
+                                <span data-i18n="openTagsBrowser">All Tags</span>
+                            </button>
+                        </div>
+                        <!-- Tags list (scrollable) -->
                         <div id="tag-filter-options" class="sidebar-tag-list">
                             <!-- Tags will be rendered here -->
+                        </div>
+                        <!-- Empty state -->
+                        <div id="tag-empty-state" class="sidebar-tag-empty hidden">
+                            <i class="fas fa-tag"></i>
+                            <span data-i18n="noTagsFound">No tags found</span>
                         </div>
                     </div>
                 </div>
@@ -309,6 +338,48 @@
             </div>
 
             <div id="folder-list" class="folder-list card-grid"></div>
+        </div>
+
+        <!-- ==================== TAGS BROWSER POPUP ==================== -->
+        <div id="tags-browser-popup" class="tags-browser-overlay hidden" role="dialog"
+            aria-labelledby="tags-browser-title" aria-modal="true">
+            <div class="tags-browser-panel">
+                <div class="tags-browser-header">
+                    <div class="tags-browser-title-row">
+                        <i class="fas fa-tags"></i>
+                        <h3 id="tags-browser-title" data-i18n="sidebarTags">Tags</h3>
+                        <span class="sidebar-badge sidebar-tag-active-count hidden"
+                            id="tags-browser-active-count">0</span>
+                    </div>
+                    <div class="tags-browser-header-actions">
+                        <button id="tags-browser-clear-all" class="sidebar-tag-clear-btn hidden"
+                            title="Clear tag filter" aria-label="Clear all selected tags">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <button id="tags-browser-close" class="tags-browser-close-btn" aria-label="Close tags browser">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="tags-browser-search">
+                    <div class="sidebar-tag-search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="tags-browser-search-input" placeholder="Search tags..."
+                            class="sidebar-tag-search-input" autocomplete="off" aria-label="Search tags">
+                        <button id="tags-browser-search-clear" class="sidebar-tag-search-clear hidden"
+                            aria-label="Clear search">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="tags-browser-list" class="tags-browser-list">
+                    <!-- Tags rendered by JS -->
+                </div>
+                <div id="tags-browser-empty" class="sidebar-tag-empty hidden">
+                    <i class="fas fa-tag"></i>
+                    <span data-i18n="noTagsFound">No tags found</span>
+                </div>
+            </div>
         </div>
 
         <!-- ==================== POPUPS & MODALS ==================== -->

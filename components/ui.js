@@ -789,60 +789,333 @@ function reRenderCurrentView(elements) {
   // ...
 }
 
+// Helper: count how many bookmarks each tag is used on
+function buildTagUsageCounts() {
+  const counts = {}
+  Object.values(uiState.bookmarkTags || {}).forEach((tags) => {
+    tags.forEach((t) => {
+      counts[t] = (counts[t] || 0) + 1
+    })
+  })
+  return counts
+}
+
+// Helper: update the active-count badge + clear-all button visibility
+function syncTagHeaderControls(container) {
+  const activeCount = uiState.selectedTags.length
+  const badge = document.getElementById("tags-active-count")
+  const clearBtn = container?.querySelector("#tag-clear-all")
+
+  if (badge) {
+    badge.textContent = activeCount
+    badge.classList.toggle("hidden", activeCount === 0)
+  }
+  if (clearBtn) {
+    clearBtn.classList.toggle("hidden", activeCount === 0)
+  }
+}
+
 export async function populateTagFilter(elements) {
   const tagFilterOptions = elements.tagFilterContainer?.querySelector(
     "#tag-filter-options",
   )
   const tagFilterToggle =
     elements.tagFilterContainer?.querySelector("#tag-filter-toggle")
+  const tagSearchInput =
+    elements.tagFilterContainer?.querySelector("#tag-search-input")
+  const tagSearchClear =
+    elements.tagFilterContainer?.querySelector("#tag-search-clear")
+  const tagClearAll =
+    elements.tagFilterContainer?.querySelector("#tag-clear-all")
+  const tagEmptyState =
+    elements.tagFilterContainer?.querySelector("#tag-empty-state")
 
   if (!tagFilterOptions) return
 
+  const lang = localStorage.getItem("appLanguage") || "en"
+  const t = translations[lang] || translations.en
+
+  // Apply translated placeholder
+  if (tagSearchInput) {
+    tagSearchInput.placeholder = t.searchTagsPlaceholder || "Search tags..."
+  }
+  if (tagClearAll) {
+    tagClearAll.title = t.clearTagFilter || "Clear tag filter"
+  }
+
   const allTags = await getAllTags()
-  tagFilterOptions.innerHTML = ""
+  const usageCounts = buildTagUsageCounts()
 
-  // Render tags as clickable pills (Raindrop style)
-  allTags.forEach((tag) => {
-    const tagColor = uiState.tagColors[tag] || "var(--text-secondary)"
-    const isActive = uiState.selectedTags.includes(tag)
-    const contrastColor = getContrastColor(tagColor)
+  // Sort: active (selected) tags first, then alphabetical
+  const sorted = [...allTags].sort((a, b) => {
+    const aActive = uiState.selectedTags.includes(a) ? 0 : 1
+    const bActive = uiState.selectedTags.includes(b) ? 0 : 1
+    if (aActive !== bActive) return aActive - bActive
+    return a.localeCompare(b)
+  })
 
-    const tagItem = document.createElement("div")
-    tagItem.className = `sidebar-tag-item${isActive ? " active" : ""}`
-    tagItem.setAttribute("data-tag", tag)
-    tagItem.style.cssText = isActive
-      ? `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
-      : `border-color: ${tagColor}; color: ${tagColor};`
+  // --- Render function (called on init + search input) ---
+  function renderTagPills(filterQuery = "") {
+    tagFilterOptions.innerHTML = ""
+    const query = filterQuery.trim().toLowerCase()
+    let visibleCount = 0
 
-    tagItem.innerHTML = `
-      <i class="fas fa-tag" style="font-size: 0.65rem;"></i>
-      <span>${tag}</span>
-    `
+    sorted.forEach((tag) => {
+      if (query && !tag.toLowerCase().includes(query)) return
+      visibleCount++
 
-    tagItem.addEventListener("click", () => {
-      const idx = uiState.selectedTags.indexOf(tag)
-      if (idx > -1) {
-        uiState.selectedTags.splice(idx, 1)
-        tagItem.classList.remove("active")
-        tagItem.style.cssText = `border-color: ${tagColor}; color: ${tagColor};`
-      } else {
-        uiState.selectedTags.push(tag)
-        tagItem.classList.add("active")
-        tagItem.style.cssText = `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
-      }
+      const tagColor = uiState.tagColors[tag] || "var(--text-secondary)"
+      const isActive = uiState.selectedTags.includes(tag)
+      const contrastColor = getContrastColor(tagColor)
+      const count = usageCounts[tag] || 0
 
-      // Trigger re-render
+      const tagItem = document.createElement("div")
+      tagItem.className = `sidebar-tag-item${isActive ? " active" : ""}`
+      tagItem.setAttribute("data-tag", tag)
+      tagItem.title = `${tag} (${count})`
+      tagItem.style.cssText = isActive
+        ? `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
+        : `border-color: ${tagColor}; color: ${tagColor};`
+
+      tagItem.innerHTML = `
+        <i class="fas fa-tag" style="font-size: 0.65rem; flex-shrink:0;"></i>
+        <span>${tag}</span>
+        <span class="sidebar-tag-count">${count}</span>
+      `
+
+      tagItem.addEventListener("click", () => {
+        const idx = uiState.selectedTags.indexOf(tag)
+        if (idx > -1) {
+          uiState.selectedTags.splice(idx, 1)
+          tagItem.classList.remove("active")
+          tagItem.style.cssText = `border-color: ${tagColor}; color: ${tagColor};`
+        } else {
+          uiState.selectedTags.push(tag)
+          tagItem.classList.add("active")
+          tagItem.style.cssText = `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
+        }
+        syncTagHeaderControls(elements.tagFilterContainer)
+        chrome.bookmarks.getTree((tree) => {
+          import("./ui.js").then(({ renderFilteredBookmarks }) => {
+            renderFilteredBookmarks(tree, elements)
+          })
+        })
+      })
+
+      tagFilterOptions.appendChild(tagItem)
+    })
+
+    // Show/hide empty state
+    if (tagEmptyState) {
+      tagEmptyState.classList.toggle("hidden", visibleCount > 0)
+    }
+  }
+
+  renderTagPills()
+  syncTagHeaderControls(elements.tagFilterContainer)
+
+  // --- Search input: filter tag pills (debounced) ---
+  if (tagSearchInput && !tagSearchInput._tagSearchBound) {
+    tagSearchInput._tagSearchBound = true
+    let _sidebarTagDebounce = null
+    tagSearchInput.addEventListener("input", () => {
+      const query = tagSearchInput.value
+      if (tagSearchClear) tagSearchClear.classList.toggle("hidden", !query)
+      clearTimeout(_sidebarTagDebounce)
+      _sidebarTagDebounce = setTimeout(() => renderTagPills(query), 400)
+    })
+    if (tagSearchClear) {
+      tagSearchClear.addEventListener("click", () => {
+        tagSearchInput.value = ""
+        tagSearchClear.classList.add("hidden")
+        clearTimeout(_sidebarTagDebounce)
+        renderTagPills()
+        tagSearchInput.focus()
+      })
+    }
+  }
+
+  // --- Clear all selected tags ---
+  if (tagClearAll && !tagClearAll._clearAllBound) {
+    tagClearAll._clearAllBound = true
+    tagClearAll.addEventListener("click", () => {
+      uiState.selectedTags = []
+      syncTagHeaderControls(elements.tagFilterContainer)
+      renderTagPills(tagSearchInput?.value || "")
       chrome.bookmarks.getTree((tree) => {
         import("./ui.js").then(({ renderFilteredBookmarks }) => {
           renderFilteredBookmarks(tree, elements)
         })
       })
     })
+  }
 
-    tagFilterOptions.appendChild(tagItem)
-  })
+  // --- Tags Browser Popup ---
+  const tagExpandBtn =
+    elements.tagFilterContainer?.querySelector("#tag-expand-btn")
+  const tagsBrowserPopup = document.getElementById("tags-browser-popup")
+  const tagsBrowserList = document.getElementById("tags-browser-list")
+  const tagsBrowserClose = document.getElementById("tags-browser-close")
+  const tagsBrowserClearAll = document.getElementById("tags-browser-clear-all")
+  const tagsBrowserSearch = document.getElementById("tags-browser-search-input")
+  const tagsBrowserSearchClear = document.getElementById(
+    "tags-browser-search-clear",
+  )
+  const tagsBrowserEmpty = document.getElementById("tags-browser-empty")
+  const tagsBrowserActiveCount = document.getElementById(
+    "tags-browser-active-count",
+  )
 
-  // Update toggle button text if exists
+  function syncBrowserControls() {
+    const count = uiState.selectedTags.length
+    if (tagsBrowserActiveCount) {
+      tagsBrowserActiveCount.textContent = count
+      tagsBrowserActiveCount.classList.toggle("hidden", count === 0)
+    }
+    if (tagsBrowserClearAll) {
+      tagsBrowserClearAll.classList.toggle("hidden", count === 0)
+    }
+  }
+
+  function renderBrowserPills(filterQuery = "") {
+    if (!tagsBrowserList) return
+    tagsBrowserList.innerHTML = ""
+    const query = filterQuery.trim().toLowerCase()
+    let visibleCount = 0
+
+    sorted.forEach((tag) => {
+      if (query && !tag.toLowerCase().includes(query)) return
+      visibleCount++
+
+      const tagColor = uiState.tagColors[tag] || "var(--text-secondary)"
+      const isActive = uiState.selectedTags.includes(tag)
+      const contrastColor = getContrastColor(tagColor)
+      const count = usageCounts[tag] || 0
+
+      const pill = document.createElement("div")
+      pill.className = `sidebar-tag-item${isActive ? " active" : ""}`
+      pill.setAttribute("data-tag", tag)
+      pill.title = `${tag} (${count})`
+      pill.style.cssText = isActive
+        ? `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
+        : `border-color: ${tagColor}; color: ${tagColor};`
+      pill.innerHTML = `
+        <i class="fas fa-tag" style="font-size:0.65rem;flex-shrink:0;"></i>
+        <span>${tag}</span>
+        <span class="sidebar-tag-count">${count}</span>
+      `
+
+      pill.addEventListener("click", () => {
+        const idx = uiState.selectedTags.indexOf(tag)
+        if (idx > -1) {
+          uiState.selectedTags.splice(idx, 1)
+          pill.classList.remove("active")
+          pill.style.cssText = `border-color: ${tagColor}; color: ${tagColor};`
+        } else {
+          uiState.selectedTags.push(tag)
+          pill.classList.add("active")
+          pill.style.cssText = `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
+        }
+        syncTagHeaderControls(elements.tagFilterContainer)
+        syncBrowserControls()
+        // Also sync sidebar pills
+        renderTagPills(tagSearchInput?.value || "")
+        chrome.bookmarks.getTree((tree) => {
+          import("./ui.js").then(({ renderFilteredBookmarks }) => {
+            renderFilteredBookmarks(tree, elements)
+          })
+        })
+      })
+
+      tagsBrowserList.appendChild(pill)
+    })
+
+    if (tagsBrowserEmpty) {
+      tagsBrowserEmpty.classList.toggle("hidden", visibleCount > 0)
+    }
+  }
+
+  function openTagsBrowser() {
+    if (!tagsBrowserPopup) return
+    if (tagsBrowserSearch) {
+      tagsBrowserSearch.value = ""
+      tagsBrowserSearch.placeholder =
+        t.searchTagsPlaceholder || "Search tags..."
+    }
+    if (tagsBrowserSearchClear) tagsBrowserSearchClear.classList.add("hidden")
+    renderBrowserPills()
+    syncBrowserControls()
+    tagsBrowserPopup.classList.remove("hidden")
+    tagsBrowserSearch?.focus()
+  }
+
+  if (tagExpandBtn && !tagExpandBtn._expandBound) {
+    tagExpandBtn._expandBound = true
+    tagExpandBtn.addEventListener("click", openTagsBrowser)
+  }
+
+  if (tagsBrowserClose && !tagsBrowserClose._closeBound) {
+    tagsBrowserClose._closeBound = true
+    tagsBrowserClose.addEventListener("click", () => {
+      tagsBrowserPopup?.classList.add("hidden")
+    })
+  }
+
+  // Close on overlay click
+  if (tagsBrowserPopup && !tagsBrowserPopup._overlayBound) {
+    tagsBrowserPopup._overlayBound = true
+    tagsBrowserPopup.addEventListener("click", (e) => {
+      if (e.target === tagsBrowserPopup)
+        tagsBrowserPopup.classList.add("hidden")
+    })
+  }
+
+  // Popup search
+  if (tagsBrowserSearch && !tagsBrowserSearch._searchBound) {
+    tagsBrowserSearch._searchBound = true
+    let _browserTagDebounce = null
+    tagsBrowserSearch.addEventListener("input", () => {
+      if (tagsBrowserSearchClear) {
+        tagsBrowserSearchClear.classList.toggle(
+          "hidden",
+          !tagsBrowserSearch.value,
+        )
+      }
+      clearTimeout(_browserTagDebounce)
+      _browserTagDebounce = setTimeout(
+        () => renderBrowserPills(tagsBrowserSearch.value),
+        400,
+      )
+    })
+    if (tagsBrowserSearchClear) {
+      tagsBrowserSearchClear.addEventListener("click", () => {
+        tagsBrowserSearch.value = ""
+        tagsBrowserSearchClear.classList.add("hidden")
+        clearTimeout(_browserTagDebounce)
+        renderBrowserPills()
+        tagsBrowserSearch.focus()
+      })
+    }
+  }
+
+  // Popup clear all
+  if (tagsBrowserClearAll && !tagsBrowserClearAll._clearBound) {
+    tagsBrowserClearAll._clearBound = true
+    tagsBrowserClearAll.addEventListener("click", () => {
+      uiState.selectedTags = []
+      syncTagHeaderControls(elements.tagFilterContainer)
+      syncBrowserControls()
+      renderTagPills(tagSearchInput?.value || "")
+      renderBrowserPills(tagsBrowserSearch?.value || "")
+      chrome.bookmarks.getTree((tree) => {
+        import("./ui.js").then(({ renderFilteredBookmarks }) => {
+          renderFilteredBookmarks(tree, elements)
+        })
+      })
+    })
+  }
+
+  // Update legacy toggle button text if exists
   if (tagFilterToggle) {
     tagFilterToggle.textContent =
       uiState.selectedTags.length > 0
