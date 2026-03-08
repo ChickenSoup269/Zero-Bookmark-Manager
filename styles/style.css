@@ -2648,6 +2648,15 @@ html {
   transition: all 0.15s ease;
   border: 1px solid var(--border-color);
   background: var(--bg-side);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.sidebar-tag-item span:not(.sidebar-tag-count) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
 }
 
 .sidebar-tag-item:hover {
@@ -2658,7 +2667,7 @@ html {
 /* HR in dropdown */
 /* Toggle switch row in dropdown-menu-2 */
 
-.dropdown-menu-2 .toggle-row:hover {
+.dropdown-menu .toggle-row:hover {
   background-color: var(--focus-outline);
   color: var(--bg-primary);
 }
