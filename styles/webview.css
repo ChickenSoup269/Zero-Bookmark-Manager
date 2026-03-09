@@ -1217,7 +1217,7 @@ body {
   gap: 8px;
   padding: 10px 12px;
   background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color) !important;
   border-radius: 8px;
   color: var(--text-primary);
   cursor: pointer;

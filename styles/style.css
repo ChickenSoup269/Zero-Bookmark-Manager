@@ -2641,6 +2641,7 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  margin-top: 4px;
   padding: 4px 8px;
   border-radius: 5px;
   font-size: 0.75rem;
@@ -2648,7 +2649,7 @@ html {
   transition: all 0.15s ease;
   border: 1px solid var(--border-color);
   background: var(--bg-side);
-  max-width: 100%;
+  max-width: 95%;
   overflow: hidden;
 }
 
@@ -2660,8 +2661,8 @@ html {
 }
 
 .sidebar-tag-item:hover {
-  transform: translateY(-2px);
-  background: var(--text-secondary);
+  transform: translateY(-2px) translateX(1px);
+  /* background: var(--text-secondary); */
 }
 
 /* HR in dropdown */
