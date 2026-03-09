@@ -1,14 +1,23 @@
 <!-- ---Extension version---- -->
 
-### [1.2.0] - 2026-03-02
+### [1.2.0] - 2026-03-08
 
 ## Added
 
+- **Tags Browser Popup:** Added a new "All Tags" button in the Tags sidebar section that opens a full-screen popup for browsing all tags at once — displays tags in multi-row wrap layout for easy overview
+- **Tag Search:** Added a live search input inside both the sidebar Tags section and the Tags Browser popup to quickly filter tags by name (with 400ms debounce — filters only after user stops typing)
+- **Tag Usage Count Badge:** Each tag pill now shows a small count indicating how many bookmarks use that tag
+- **Clear Tag Filter Button:** Added a one-click button to deselect all active tag filters (appears only when ≥1 tag is selected)
+- **Active Tags Badge:** The Tags section header now shows a badge with the number of currently active (selected) tag filters
 - Scroll to Top button in sidebar
 - **List Background Toggle:** Added ON/OFF toggle switch in Extension Options to show/hide the background, border, and shadow of the bookmark list area
 
 ## Improved
 
+- **Tag Layout in Sidebar:** Tags list now displays as a single horizontal scrollable row to save vertical space in the 260px sidebar
+- **Tags Browser Popup Layout:** Full popup displays tags in a flexible multi-row wrap layout (`flex-wrap`) with scrollable content for comfortable browsing of large tag collections
+- **Tag Pills:** Active (selected) tags are sorted to the top of the list; pills now have `overflow: hidden` with `text-overflow: ellipsis` to handle long tag names gracefully
+- **Tag Expand Button:** Button includes both icon and localized text (`openTagsBrowser`) with EN/VI translation support
 - Updated scrollbar styling
 - Enhanced sidebar scrollbar visibility on hover
 
