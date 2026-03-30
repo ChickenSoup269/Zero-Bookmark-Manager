@@ -20,6 +20,7 @@ export const uiState = {
   healthFilter: "all", // "all", "dead", "suspicious", "safe"
   healthStatus: {},
   visitCounts: {}, // { bookmarkId: count }
+  faviconOption: "auto", // "auto" | "google" | "hostname"
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -65,6 +66,7 @@ export function saveUIState() {
       viewMode: uiState.viewMode,
       collapsedFolders: Array.from(uiState.collapsedFolders),
       selectedTags: uiState.selectedTags,
+      faviconOption: uiState.faviconOption,
     },
     checkboxesVisible: uiState.checkboxesVisible,
     bookmarkTags: uiState.bookmarkTags,
@@ -102,6 +104,7 @@ export function loadUIState(callback) {
           result.uiState.collapsedFolders || [],
         )
         uiState.selectedTags = result.uiState.selectedTags || []
+        uiState.faviconOption = result.uiState.faviconOption || "auto"
       }
       uiState.checkboxesVisible = result.checkboxesVisible || false
       uiState.bookmarkTags = result.bookmarkTags || {}

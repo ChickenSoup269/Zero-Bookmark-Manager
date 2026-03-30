@@ -289,6 +289,7 @@
                                 <span class="toggle-knob"></span>
                             </span>
                         </label>
+
                         <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
                         <button id="edit-in-new-tab-option" class="menu-item">Edit in New Tab</button>
                         <button id="open-side-panel-option" class="menu-item">Open Side Panel</button>
@@ -320,6 +321,14 @@
                             <i class="fas fa-copy"></i> <span data-i18n="checkDuplicates">Check Duplicates</span>
                         </button>
                         <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
+
+                        <label for="favicon-option-select"><i class="fas fa-image"></i> Favicon Mode:</label>
+                        <select id="favicon-option-select" class="select">
+                            <option value="auto">Auto (Google → Hostname)</option>
+                            <option value="google">Google Only</option>
+                            <option value="hostname">Hostname Only</option>
+                        </select>
+
                         <button id="localstorage-settings-option" class="menu-item">
                             <!-- <button id="view-visit-counts-option" class="menu-item">
                                 <i class="fas fa-eye"></i> View Visit Counts
@@ -327,6 +336,7 @@
                             <i class="fas fa-cog"></i> Local Storage Settings
                         </button>
                     </div>
+
                 </div>
             </div>
 

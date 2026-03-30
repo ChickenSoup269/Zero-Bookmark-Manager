@@ -1,3 +1,27 @@
+// Sự kiện cho favicon option
+const faviconOptionSelect = document.getElementById("favicon-option-select")
+if (faviconOptionSelect) {
+  // Ưu tiên lấy từ localStorage nếu có
+  const savedFaviconOption =
+    localStorage.getItem("faviconOption") || uiState.faviconOption || "auto"
+  faviconOptionSelect.value = savedFaviconOption
+  uiState.faviconOption = savedFaviconOption
+  faviconOptionSelect.addEventListener("change", (e) => {
+    uiState.faviconOption = e.target.value
+    localStorage.setItem("faviconOption", uiState.faviconOption)
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.faviconOption = uiState.faviconOption
+      chrome.storage.local.set({ uiState: newUiState }, () => {
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          }
+        })
+      })
+    })
+  })
+}
 import {
   updateTheme,
   renderFilteredBookmarks,
