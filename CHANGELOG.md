@@ -1,5 +1,21 @@
 <!-- ---Extension version---- -->
 
+## [1.2.1] - 2026-03-31
+
+### Added
+
+- **Favicon Options:** Added support for selecting how favicons are fetched for bookmarks: Google, Hostname, or Auto (prioritizes Google with Hostname fallback) in Settings.
+- **UI Setting:** Added a "Favicon Mode" dropdown in the Extension Options, allowing users to choose their preferred favicon source.
+
+### Improved
+
+- Optimized favicon fetching logic: in Auto mode, the system prioritizes Google and automatically falls back to hostname-based favicon (DuckDuckGo) if unavailable.
+- When changing the favicon mode, the UI now automatically refreshes icons for all bookmarks.
+
+### Fixed
+
+- Fixed cases where favicons appeared blurry or failed to load by introducing a more flexible fallback mechanism between different favicon sources.
+
 ### [1.2.0] - 2026-03-08
 
 ## Added

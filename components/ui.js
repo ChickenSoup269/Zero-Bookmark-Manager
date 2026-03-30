@@ -22,10 +22,7 @@ import { handleDeleteFolder } from "./controller/deleteFolder.js"
 // ==========================================
 
 function getFaviconUrl(url) {
-  if (!url) {
-    return "./images/default-favicon.png"
-  }
-
+  if (!url) return "./images/default-favicon.png"
   if (url.startsWith("chrome-extension://")) {
     const manifest = chrome.runtime.getManifest()
     const iconPath =
@@ -35,12 +32,23 @@ function getFaviconUrl(url) {
       "icons/icon.png"
     return iconPath
   }
-
+  let domain = ""
   try {
-    const domain = new URL(url).hostname
-    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
+    domain = new URL(url).hostname
   } catch (e) {
     return "./images/default-favicon.png"
+  }
+  const opt =
+    (window.uiState && window.uiState.faviconOption) ||
+    (typeof uiState !== "undefined" && uiState.faviconOption) ||
+    "auto"
+  if (opt === "google") {
+    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
+  } else if (opt === "hostname") {
+    return `https://icons.duckduckgo.com/ip3/${domain}.ico`
+  } else {
+    // auto: ưu tiên Google, fallback hostname (xử lý ở onerror khi render <img>)
+    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
   }
 }
 
@@ -370,7 +378,9 @@ function openWebPreviewModal(bookmark) {
     <div class="bookmark-modal" style="width: 90%; height: 90%; max-width: 1200px;">
       <div class="modal-header">
         <div style="display:flex;align-items:center;gap:10px;">
-          <img src="${favicon}" class="modal-favicon" alt="icon" onerror="this.onerror=()=>{this.src='./images/default-favicon.png'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';">
+          <img src="${favicon}" class="modal-favicon" alt="icon" 
+            ${uiState.faviconOption === "hostname" ? "onerror=\"this.onerror=null;this.src='./images/default-favicon.png'\"" : "onerror=\"this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/" + hostname + ".ico'\""}
+          >
           <h3 class="modal-title" title="${bookmark.title}">${
             bookmark.title || bookmark.url
           }</h3>
@@ -2031,7 +2041,9 @@ function createDetailBookmarkElement(bookmark, language, elements) {
   div.innerHTML = `
     <div style="display:flex;align-items:center;gap:12px;">
       <div class="bookmark-favicon" style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:white; display:flex;justify-content:center;align-items:center;">
-        <img src="${favicon}" style="width:20px;height:20px;object-fit:contain;" onerror="this.onerror=()=>{this.src='./images/default-favicon.png'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';">
+        <img src="${favicon}" style="width:20px;height:20px;object-fit:contain;" 
+          ${uiState.faviconOption === "hostname" ? "onerror=\"this.onerror=null;this.src='./images/default-favicon.png'\"" : "onerror=\"this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/" + hostname + ".ico'\""}
+        >
       </div>
       <a href="${
         bookmark.url
@@ -2411,7 +2423,9 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
     <div class="bookmark-favicon" style="width: 22px; height: 22px; border-radius: 4px; overflow: hidden; background: white; display: flex; justify-content: center; align-items: center;">
-      <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" onerror="this.onerror=()=>{this.style.display='none'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';">
+      <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" 
+        ${uiState.faviconOption === "hostname" ? "onerror=\"this.onerror=null;this.src='./images/default-favicon.png'\"" : "onerror=\"this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/" + hostname + ".ico'\""}
+      >
     </div>
     <a href="${
       bookmark.url
@@ -2463,7 +2477,9 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
     <input type="checkbox" class="bookmark-checkbox" data-id="${
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}">
-    <img src="${favicon}" alt="fav" class="favicon" onerror="this.onerror=()=>{this.src='./images/default-favicon.png'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';">
+    <img src="${favicon}" alt="fav" class="favicon" 
+      ${uiState.faviconOption === "hostname" ? "onerror=\"this.onerror=null;this.src='./images/default-favicon.png'\"" : "onerror=\"this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/" + hostname + ".ico'\""}
+    >
     <a href="${bookmark.url}" target="_blank" class="link">${
       bookmark.title || bookmark.url
     }</a>
