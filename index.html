@@ -105,6 +105,13 @@
                         <option value="hostname">Hostname Only</option>
                     </select>
 
+                    <label for="header-line-select"><i class="fas fa-window-minimize"></i></label>
+                    <select id="header-line-select" class="select">
+                        <option value="pattern" data-i18n="linePattern">Slanted Pattern</option>
+                        <option value="simple" data-i18n="lineSimple">Simple Line</option>
+                        <option value="hidden" data-i18n="lineHidden">Hidden</option>
+                    </select>
+
                     <label for="duplicate-scope-select"><i class="fas fa-clone"></i> <span
                             data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
                     <select id="duplicate-scope-select" class="select">
@@ -305,6 +312,17 @@
                 <div class="rename-popup-buttons">
                     <button id="add-tag-btn" class="button save" data-i18n="addTag">Add Tag</button>
                     <button class="close-modal button cancel" data-i18n="doneLabel">Done</button>
+                </div>
+            </div>
+        </div>
+        <div id="update-popup" class="rename-popup hidden" role="dialog">
+            <div class="rename-popup-content">
+                <h3 id="update-popup-title">Updated Successfully!</h3>
+                <p id="update-popup-message">Zero Bookmark Manager updated to <strong id="update-version"></strong></p>
+                <div class="rename-popup-buttons">
+                    <a href="https://github.com/ChickenSoup269/Zero-Bookmark-Manager/releases" target="_blank"
+                        class="button save">Release Notes</a>
+                    <button id="update-popup-close" class="button cancel">Close</button>
                 </div>
             </div>
         </div>
