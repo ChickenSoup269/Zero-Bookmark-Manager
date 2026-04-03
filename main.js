@@ -23,7 +23,29 @@ if (faviconOptionSelect) {
   })
 }
 
-// Sự kiện cho Duplicate Scope
+
+  // Cài đặt cho Header Line
+  const headerLineSelect = document.getElementById("header-line-select");
+  if (headerLineSelect) {
+    const savedHeaderLine = localStorage.getItem("headerLineStyle") || window.uiState?.headerLineStyle || "pattern";
+    headerLineSelect.value = savedHeaderLine;
+    if (window.uiState) window.uiState.headerLineStyle = savedHeaderLine;
+    document.body.setAttribute("data-header-line", savedHeaderLine);
+
+    headerLineSelect.addEventListener("change", (e) => {
+      const val = e.target.value;
+      if (window.uiState) window.uiState.headerLineStyle = val;
+      localStorage.setItem("headerLineStyle", val);
+      document.body.setAttribute("data-header-line", val);
+      chrome.storage.local.get(["uiState"], (data) => {
+        const newUiState = data.uiState || {};
+        newUiState.headerLineStyle = val;
+        chrome.storage.local.set({ uiState: newUiState });
+      });
+    });
+  }
+
+  // Sự kiện cho Duplicate Scope
 const duplicateScopeSelect = document.getElementById("duplicate-scope-select")
 if (duplicateScopeSelect) {
   const savedDuplicateScope =
@@ -152,6 +174,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const init = () => {
+      // Update check logic
+      const manifest = chrome.runtime.getManifest();
+      const currentVersion = manifest.version;
+      const savedVersion = localStorage.getItem("lastSeenVersion");
+
+      if (savedVersion && savedVersion !== currentVersion) {
+        const updatePopup = document.getElementById("update-popup");
+        const updateVersion = document.getElementById("update-version");
+        const updateClose = document.getElementById("update-popup-close");
+        if (updatePopup && updateVersion && updateClose) {
+          updateVersion.textContent = currentVersion;
+          updatePopup.classList.remove("hidden");
+          updateClose.addEventListener("click", () => {
+            updatePopup.classList.add("hidden");
+          }, { once: true });
+        }
+      }
+      localStorage.setItem("lastSeenVersion", currentVersion);
+
+
+
     // Thêm import option vào settings menu
     if (!elements.importBookmarksOption) {
       const importBookmarksOption = document.createElement("button")

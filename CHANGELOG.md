@@ -1,20 +1,50 @@
 <!-- ---Extension version---- -->
 
-## [1.2.1] - 2026-03-31
+## [1.2.1] - 2026-04-03
 
-### Added
+### 🇬🇧 English (Tiếng Anh)
+
+#### Added
 
 - **Favicon Options:** Added support for selecting how favicons are fetched for bookmarks: Google, Hostname, or Auto (prioritizes Google with Hostname fallback) in Settings.
 - **UI Setting:** Added a "Favicon Mode" dropdown in the Extension Options, allowing users to choose their preferred favicon source.
+- **Update Notification:** Added a popup notification when the extension is successfully updated, including a button to view the Release Notes on GitHub.
 
-### Improved
+#### Improved
 
 - Optimized favicon fetching logic: in Auto mode, the system prioritizes Google and automatically falls back to hostname-based favicon (DuckDuckGo) if unavailable.
 - When changing the favicon mode, the UI now automatically refreshes icons for all bookmarks.
+- **Drag and Drop & Move Bookmarks:** Updated the Drag-and-Drop and "Add to folder" behaviors to fully respect the "Duplicate Scope" and "Auto Remove Duplicates" settings. Bookmarks will now accurately be cloned (instead of moved) when the scope is set to "Across folders" and auto-delete is turned off.
 
-### Fixed
+#### Fixed
 
 - Fixed cases where favicons appeared blurry or failed to load by introducing a more flexible fallback mechanism between different favicon sources.
+- Fixed an issue where the `logo.png` image was missing in the HTML resulting in a 404 (`net::ERR_FILE_NOT_FOUND`).
+- Fixed a console error (`popupWindowId is not defined`) in the background service worker script.
+- Fixed a JavaScript syntax error preventing the bulk "Add to Folder" functionality from completing.
+
+---
+
+### 🇻🇳 Vietnamese (Tiếng Việt)
+
+#### Tính năng mới
+
+- **Tùy chọn Favicon:** Bổ sung lựa chọn cách hiển thị Favicon của các trang web: lấy qua Google, qua Tên miền, hoặc Tự động (Ưu tiên Google, dự phòng quét Tên miền) trong màn hình Cài đặt.
+- **Cài đặt UI:** Thêm menu trỏ xuống "Favicon Mode" trong mục Tùy chọn Tiện ích (Options) để thiết lập nguồn lấy ảnh hiển thị cho thư trang.
+- **Thông báo cập nhật:** Thêm một màn hình Popup nổi thông báo khi tiện ích được nâng cấp cập nhật bản vá thành công lên phiên bản mới nhất, kèm theo nút mở trang Lịch sử Phiên bản (Release Notes).
+
+#### Cải tiến
+
+- Tối ưu hóa nguyên lý tải logic Favicon: Khi để chế độ Tự động, hệ thống ưu tiên gọi từ máy chủ của Google trước, rồi mới dùng DuckDuckGo với tên miền để quét nếu Google thất bại trả ảnh về.
+- Giao diện UI sẽ tự động làm mới ngay toàn bộ các biểu tượng favicon trang khi người dùng bật thử lựa chọn thay đổi chế độ.
+- **Kéo thả & Di chuyển Bookmark:** Cập nhật lại thao tác chuột tính năng "Kéo thả" cũng như "Thêm vào thư mục" để tương thích hoàn toàn cho "Duplicate Scope". Bookmark giờ đây sẽ chỉ làm bản sao (Copy) thay vì di chuyển nếu Scope là "Across folders" và bạn đang TẮT Chế độ tự động dọn dẹp bookmark trùng lặp bằng ngầm.
+
+#### Sửa lỗi
+
+- Sửa tình trạng các trường hợp favicon tải thất bại hoặc bị mờ.
+- Khắc phục lỗi báo 404 mất hoàn toàn đường dẫn hình ảnh của `logo.png` khi bật giao diện ở thư mục con.
+- Khắc phục lỗi văng console báo biến chưa khai báo `popupWindowId is not defined` hoạt động ở tiến trình ẩn phía sau (Background Worker).
+- Khắc phục lỗi văng ngoặc đóng cú pháp ngăn chặn quá trình chuyển đổi hàng loạt các bookmark đang chọn vào các thư mục mới qua nút Bulk.
 
 ### [1.2.0] - 2026-03-08
 

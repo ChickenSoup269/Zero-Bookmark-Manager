@@ -1576,6 +1576,19 @@ body.sidebar-style-modern .sidebar-modern {
   background-size: 10px 10px;
 }
 
+
+/* Option Simple pattern */
+body[data-header-line="simple"] .header::after {
+  background-image: none !important;
+  background-color: var(--border-color);
+  height: 2px;
+}
+
+/* Option Hide pattern */
+body[data-header-line="hidden"] .header::after {
+  display: none !important;
+}
+
 /* Toggle sidebar button - Cải thiện hover từ [image:4] */
 .toggle-sidebar {
   background: transparent;

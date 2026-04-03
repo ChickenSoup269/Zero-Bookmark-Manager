@@ -23,6 +23,7 @@ export const uiState = {
   faviconOption: "auto", // "auto" | "google" | "hostname"
   duplicateScope: "folder", // "folder" | "all"
   autoRemoveDup: false, // auto-delete background functionality
+  headerLineStyle: "pattern", // "pattern" | "simple" | "hidden"
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -71,6 +72,7 @@ export function saveUIState() {
       faviconOption: uiState.faviconOption,
       duplicateScope: uiState.duplicateScope,
       autoRemoveDup: uiState.autoRemoveDup,
+      headerLineStyle: uiState.headerLineStyle,
     },
     checkboxesVisible: uiState.checkboxesVisible,
     bookmarkTags: uiState.bookmarkTags,
@@ -111,6 +113,8 @@ export function loadUIState(callback) {
         uiState.faviconOption = result.uiState.faviconOption || "auto"
         uiState.duplicateScope = result.uiState.duplicateScope || "folder"
         uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
+        uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
+        document.body.setAttribute("data-header-line", uiState.headerLineStyle)
       }
       uiState.checkboxesVisible = result.checkboxesVisible || false
       uiState.bookmarkTags = result.bookmarkTags || {}
