@@ -317,6 +317,14 @@ export const translations = {
     generateQrCode: "Generate QR",
     noDuplicatesFound: "No duplicate bookmarks found.",
     duplicatesRemoved: "duplicate(s) removed.",
+    dupScopeTitle: "Duplicate Scope:",
+    dupScopeFolder: "Only 1 folder",
+    dupScopeAll: "Across folders",
+    dupConfirmMsgFolder:
+      "Found {0} duplicate bookmarks in the same folders. Do you want to remove them?",
+    dupConfirmMsgAll:
+      "Found {0} duplicate bookmarks across all folders. Do you want to remove them?",
+    autoRemoveDupTitle: "Auto Remove Duplicates (Background)",
     checkLinks: "Check Links",
     checkDuplicates: "Check Duplicates",
     bookmarkActionsTitle: "Bookmark Actions",
@@ -658,6 +666,14 @@ export const translations = {
     generateQrCode: "Tạo mã QR",
     noDuplicatesFound: "Không tìm thấy bookmark trùng lặp.",
     duplicatesRemoved: "bookmark trùng lặp đã được xóa.",
+    dupScopeTitle: "Phạm vi kiểm tra trùng lặp:",
+    dupScopeFolder: "Chỉ trong 1 thư mục",
+    dupScopeAll: "Toàn bộ thư mục (Across folders)",
+    dupConfirmMsgFolder:
+      "Tìm thấy {0} bookmark trùng lặp trong cùng thư mục. Bạn có muốn xóa chúng không?",
+    dupConfirmMsgAll:
+      "Tìm thấy {0} bookmark trùng lặp trên toàn hệ thống. Bạn có muốn xóa chúng không?",
+    autoRemoveDupTitle: "Tự động xóa lỗi trùng lặp (khi thêm mới)",
     checkLinks: "Kiểm tra liên kết",
     checkDuplicates: "Kiểm tra trùng lặp",
     bookmarkActionsTitle: "Thao tác Bookmark",

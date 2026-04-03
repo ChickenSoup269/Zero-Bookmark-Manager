@@ -21,6 +21,8 @@ export const uiState = {
   healthStatus: {},
   visitCounts: {}, // { bookmarkId: count }
   faviconOption: "auto", // "auto" | "google" | "hostname"
+  duplicateScope: "folder", // "folder" | "all"
+  autoRemoveDup: false, // auto-delete background functionality
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -67,6 +69,8 @@ export function saveUIState() {
       collapsedFolders: Array.from(uiState.collapsedFolders),
       selectedTags: uiState.selectedTags,
       faviconOption: uiState.faviconOption,
+      duplicateScope: uiState.duplicateScope,
+      autoRemoveDup: uiState.autoRemoveDup,
     },
     checkboxesVisible: uiState.checkboxesVisible,
     bookmarkTags: uiState.bookmarkTags,
@@ -105,6 +109,8 @@ export function loadUIState(callback) {
         )
         uiState.selectedTags = result.uiState.selectedTags || []
         uiState.faviconOption = result.uiState.faviconOption || "auto"
+        uiState.duplicateScope = result.uiState.duplicateScope || "folder"
+        uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
       }
       uiState.checkboxesVisible = result.checkboxesVisible || false
       uiState.bookmarkTags = result.bookmarkTags || {}

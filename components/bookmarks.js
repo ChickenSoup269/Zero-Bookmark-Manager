@@ -162,18 +162,44 @@ export function moveBookmarksToFolder(
 
   const movePromises = bookmarkIds.map((bookmarkId) => {
     return new Promise((resolve, reject) => {
-      safeChromeBookmarksCall(
-        "move",
-        [bookmarkId, { parentId: targetFolderId }],
-        (result) => {
-          if (result) {
-            resolve(result)
-          } else {
-            console.error(`Failed to move bookmark ${bookmarkId}`)
-            reject(new Error(`Failed to move bookmark ${bookmarkId}`))
-          }
-        },
-      )
+      safeChromeBookmarksCall("get", [bookmarkId], (results) => {
+        if (!results || !results.length)
+          return reject(new Error(`Failed to get ${bookmarkId}`))
+        const bookmark = results[0]
+
+        if (
+          bookmark.url &&
+          !uiState.autoRemoveDup && uiState.duplicateScope === "all"
+        ) {
+          safeChromeBookmarksCall(
+            "create",
+            [
+              {
+                parentId: targetFolderId,
+                title: bookmark.title,
+                url: bookmark.url,
+              },
+            ],
+            (result) => {
+              if (result) resolve(result)
+              else reject(new Error(`Failed to copy ${bookmarkId}`))
+            },
+          )
+        } else {
+          safeChromeBookmarksCall(
+            "move",
+            [bookmarkId, { parentId: targetFolderId }],
+            (result) => {
+              if (result) {
+                resolve(result)
+              } else {
+                console.error(`Failed to move bookmark ${bookmarkId}`)
+                reject(new Error(`Failed to move bookmark ${bookmarkId}`))
+              }
+            },
+          )
+        }
+      })
     })
   })
 
@@ -244,26 +270,38 @@ export function moveBookmarksToFolder(
 
 export function removeDuplicateBookmarks(callback) {
   const bookmarks = uiState.bookmarks
-  const urls = {}
+  const groups = {}
   const duplicates = []
+  const scope = uiState.duplicateScope || "folder" // "folder" or "all"
 
-  // Group bookmarks by URL
+  // Filter out separators before checking duplicates (e.g. titles with all dashes/equals)
+  const isSeparator = (b) => {
+    return b.title && b.title.match(/^[-=_+*~:]{3,}$/)
+  }
+
+  // Group bookmarks by URL (or URL + folder depending on scope)
   bookmarks.forEach((bookmark) => {
-    if (bookmark.url) {
-      if (!urls[bookmark.url]) {
-        urls[bookmark.url] = []
+    if (bookmark.url && !isSeparator(bookmark)) {
+      const key =
+        scope === "all" ? `${bookmark.parentId}|${bookmark.url}` : bookmark.url
+      if (!groups[key]) {
+        groups[key] = []
       }
-      urls[bookmark.url].push(bookmark)
+      groups[key].push(bookmark)
     }
   })
 
   // Find duplicates and decide which one to keep
-  for (const url in urls) {
-    if (urls[url].length > 1) {
-      // Sort by date added (newest first)
-      urls[url].sort((a, b) => b.dateAdded - a.dateAdded)
-      // The first one is the newest, the rest are duplicates
-      const toRemove = urls[url].slice(1)
+  for (const key in groups) {
+    if (groups[key].length > 1) {
+      // Sort to prefer longer/meaningful title. If same, prefer newer (larger dateAdded)
+      groups[key].sort((a, b) => {
+        const titleDiff = (b.title || "").length - (a.title || "").length
+        if (titleDiff !== 0) return titleDiff
+        return b.dateAdded - a.dateAdded // newest first
+      })
+      // The first one is the best/newest, the rest are duplicates
+      const toRemove = groups[key].slice(1)
       toRemove.forEach((bookmark) => duplicates.push(bookmark.id))
     }
   }
@@ -279,20 +317,38 @@ export function removeDuplicateBookmarks(callback) {
     return
   }
 
-  // Remove duplicates
-  let removedCount = 0
-  const totalDuplicates = duplicates.length
-  duplicates.forEach((id) => {
-    chrome.bookmarks.remove(id, () => {
-      removedCount++
-      if (removedCount === totalDuplicates) {
-        showCustomPopup(
-          `${totalDuplicates} ${translations[language].duplicatesRemoved || "duplicate(s) removed."}`,
-        )
-        if (callback) {
-          callback(totalDuplicates)
-        }
-      }
-    })
-  })
+  const msgTemplate =
+    scope === "folder"
+      ? translations[language].dupConfirmMsgFolder
+      : translations[language].dupConfirmMsgAll
+  const msg = (msgTemplate || "Found {0} duplicates. Remove?").replace(
+    "{0}",
+    duplicates.length,
+  )
+
+  showCustomPopup(
+    msg,
+    "warning",
+    false,
+    // onConfirm
+    () => {
+      // Remove duplicates
+      let removedCount = 0
+      const totalDuplicates = duplicates.length
+      duplicates.forEach((id) => {
+        chrome.bookmarks.remove(id, () => {
+          removedCount++
+          if (removedCount === totalDuplicates) {
+            showCustomPopup(
+              `${totalDuplicates} ${translations[language].duplicatesRemoved || "duplicate(s) removed."}`,
+            )
+            if (callback) {
+              callback(totalDuplicates)
+            }
+          }
+        })
+      })
+    },
+    true, // showCancel
+  )
 }

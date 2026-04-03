@@ -22,6 +22,44 @@ if (faviconOptionSelect) {
     })
   })
 }
+
+// Sự kiện cho Duplicate Scope
+const duplicateScopeSelect = document.getElementById("duplicate-scope-select")
+if (duplicateScopeSelect) {
+  const savedDuplicateScope =
+    localStorage.getItem("duplicateScope") || uiState.duplicateScope || "folder"
+  duplicateScopeSelect.value = savedDuplicateScope
+  uiState.duplicateScope = savedDuplicateScope
+  duplicateScopeSelect.addEventListener("change", (e) => {
+    uiState.duplicateScope = e.target.value
+    localStorage.setItem("duplicateScope", uiState.duplicateScope)
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.duplicateScope = uiState.duplicateScope
+      chrome.storage.local.set({ uiState: newUiState })
+    })
+  })
+}
+
+// Sự kiện cho Background Auto Remove Duplicates
+const autoRemoveDupToggle = document.getElementById("auto-remove-dup-toggle")
+if (autoRemoveDupToggle) {
+  const savedAutoRemove =
+    localStorage.getItem("autoRemoveDup") === "true" ||
+    uiState.autoRemoveDup ||
+    false
+  autoRemoveDupToggle.checked = savedAutoRemove
+  uiState.autoRemoveDup = savedAutoRemove
+  autoRemoveDupToggle.addEventListener("change", (e) => {
+    uiState.autoRemoveDup = e.target.checked
+    localStorage.setItem("autoRemoveDup", uiState.autoRemoveDup)
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.autoRemoveDup = uiState.autoRemoveDup
+      chrome.storage.local.set({ uiState: newUiState })
+    })
+  })
+}
 import {
   updateTheme,
   renderFilteredBookmarks,

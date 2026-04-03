@@ -1971,15 +1971,34 @@ function handleFolderDrop(
     // Nếu bookmark đã nằm trong folder này rồi thì thôi
     if (bookmark.parentId === targetFolderId) return
 
-    chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
-      if (chrome.runtime.lastError) {
-        showCustomPopup(translations[language].errorUnexpected, "error", true)
-      } else {
-        chrome.bookmarks.getTree((tree) =>
-          renderFilteredBookmarks(tree, elements),
-        )
-      }
-    })
+    if (!uiState.autoRemoveDup && uiState.duplicateScope === "all") {
+      chrome.bookmarks.create(
+        { parentId: targetFolderId, title: bookmark.title, url: bookmark.url },
+        () => {
+          if (chrome.runtime.lastError) {
+            showCustomPopup(
+              translations[language].errorUnexpected,
+              "error",
+              true,
+            )
+          } else {
+            chrome.bookmarks.getTree((tree) =>
+              renderFilteredBookmarks(tree, elements),
+            )
+          }
+        },
+      )
+    } else {
+      chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
+        if (chrome.runtime.lastError) {
+          showCustomPopup(translations[language].errorUnexpected, "error", true)
+        } else {
+          chrome.bookmarks.getTree((tree) =>
+            renderFilteredBookmarks(tree, elements),
+          )
+        }
+      })
+    }
   })
 }
 
@@ -2260,19 +2279,38 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
 
             if (bookmark.parentId === targetFolderId) return
 
-            chrome.bookmarks.move(
-              draggedId,
-              { parentId: targetFolderId },
-              () => {
-                if (chrome.runtime.lastError) {
-                  showCustomPopup(
-                    translations[language].errorUnexpected,
-                    "error",
-                    true,
-                  )
-                }
-              },
-            ) // Removed else block to avoid double reload
+            if (!uiState.autoRemoveDup && uiState.duplicateScope === "all") {
+              chrome.bookmarks.create(
+                {
+                  parentId: targetFolderId,
+                  title: bookmark.title,
+                  url: bookmark.url,
+                },
+                () => {
+                  if (chrome.runtime.lastError) {
+                    showCustomPopup(
+                      translations[language].errorUnexpected,
+                      "error",
+                      true,
+                    )
+                  }
+                },
+              )
+            } else {
+              chrome.bookmarks.move(
+                draggedId,
+                { parentId: targetFolderId },
+                () => {
+                  if (chrome.runtime.lastError) {
+                    showCustomPopup(
+                      translations[language].errorUnexpected,
+                      "error",
+                      true,
+                    )
+                  }
+                },
+              ) // Removed else block to avoid double reload
+            }
           })
         } else if (currentDragType === "folder") {
           // New folder drop logic

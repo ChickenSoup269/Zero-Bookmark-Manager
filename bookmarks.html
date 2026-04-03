@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zero Bookmark Manager 1.2.0</title>
+    <title>Zero Bookmark Manager 1.2.1</title>
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="./styles/chat.css">
     <link rel="stylesheet" href="./styles/webview.css">
@@ -18,7 +18,7 @@
             <!-- Sidebar Header -->
             <div class="sidebar-header">
                 <div class="sidebar-brand">
-                    <img src="./icons/icon.png" alt="Zero Bookmark" class="sidebar-logo">
+                    <img src="./icons/icon.png" alt="Zero Bookmark" class="sidebar-logo" width="32" height="32">
                     <span class="sidebar-title">Zero Bookmark Manager</span>
                 </div>
                 <button id="sidebar-collapse-btn" class="sidebar-collapse-btn" title="Collapse sidebar">
@@ -240,7 +240,7 @@
                     aria-label="Toggle Sidebar">
                     <i class="fas fa-bars"></i>
                 </button>
-                <img src="path/to/logo.png" alt="Zero Bookmark Manager Logo" class="logo">
+                <img src="images/logo.png" alt="Zero Bookmark Manager Logo" class="logo">
 
                 <div class="settings-container">
                     <select id="health-sort-filter" class="select" style="display: none;" aria-label="Sort by health">
@@ -328,6 +328,22 @@
                             <option value="google">Google Only</option>
                             <option value="hostname">Hostname Only</option>
                         </select>
+
+                        <label for="duplicate-scope-select"><i class="fas fa-clone"></i> <span
+                                data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
+                        <select id="duplicate-scope-select" class="select">
+                            <option value="folder" data-i18n="dupScopeFolder">Only 1 folder</option>
+                            <option value="all" data-i18n="dupScopeAll">Across folders</option>
+                        </select>
+
+                        <label class="toggle-row" for="auto-remove-dup-toggle">
+                            <span data-i18n="autoRemoveDupTitle"
+                                style="color:var(--text-secondary);font-size:0.9rem;">Auto Remove Duplicates</span>
+                            <span class="toggle-switch">
+                                <input type="checkbox" id="auto-remove-dup-toggle">
+                                <span class="toggle-knob"></span>
+                            </span>
+                        </label>
 
                         <button id="localstorage-settings-option" class="menu-item">
                             <!-- <button id="view-visit-counts-option" class="menu-item">
