@@ -2715,3 +2715,13 @@ html {
 .toggle-switch input:checked + .toggle-knob::before {
   transform: translateX(16px);
 }
+
+/* Anti-CLS placeholders for async DOM injection */
+#folder-list {
+  min-height: 400px;
+  align-content: start;
+}
+#sidebar-folder-tree {
+  min-height: 200px;
+  align-content: start;
+}

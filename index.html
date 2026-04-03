@@ -13,7 +13,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="" alt="logo" class="logo">
+            <img src="images/logo.png" alt="logo" class="logo" width="320" height="100">
             <div class="settings-container" id="settings-container">
                 <button id="settings-button" class="button settings" title="Settings">⋮</button>
                 <div id="settings-menu" class="dropdown-menu hidden">
@@ -104,6 +104,21 @@
                         <option value="google">Google Only</option>
                         <option value="hostname">Hostname Only</option>
                     </select>
+
+                    <label for="duplicate-scope-select"><i class="fas fa-clone"></i> <span
+                            data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
+                    <select id="duplicate-scope-select" class="select">
+                        <option value="folder" data-i18n="dupScopeFolder">Only 1 folder</option>
+                        <option value="all" data-i18n="dupScopeAll">Across folders</option>
+                    </select>
+
+                    <label class="toggle-row" for="auto-remove-dup-toggle">
+                        <span data-i18n="autoRemoveDupTitle">Auto Remove Duplicates (Background)</span>
+                        <span class="toggle-switch">
+                            <input type="checkbox" id="auto-remove-dup-toggle">
+                            <span class="toggle-knob"></span>
+                        </span>
+                    </label>
 
                     <!-- <button id="view-visit-counts-option" class="menu-item">
                         <i class="fas fa-eye"></i> View Visit Counts

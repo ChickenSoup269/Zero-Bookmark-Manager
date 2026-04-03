@@ -5,8 +5,6 @@ let visitCounts = {}
 let bookmarkUrlMap = {} // Map URLs to bookmark IDs for quick lookup
 let recentlyClickedInExtension = new Set() // Track bookmarks clicked in extension to avoid double counting
 
-// Load visit counts and build URL map on startup
-// console.log("📌 Background script starting...")
 chrome.storage.local.get(["visitCounts"], (result) => {
   visitCounts = result.visitCounts || {}
   // console.log(" Loaded visit counts from storage:", visitCounts)
@@ -278,31 +276,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 })
 
 // ==================== Original Code ====================
-// Function to handle duplicate bookmarks
+// The automatic background duplicate deletion is now optional.
+// It is controlled by the `autoRemoveDuplicates` setting in localStorage/uiState.
 const handleDuplicateBookmarks = (id, newBookmark) => {
-  if (newBookmark.url) {
-    chrome.bookmarks.search({ url: newBookmark.url }, (bookmarks) => {
-      // Filter out the newly created bookmark and find duplicates
-      const duplicates = bookmarks.filter((bookmark) => bookmark.id !== id)
+  chrome.storage.local.get(["uiState"], (data) => {
+    const state = data.uiState || {}
+    if (!state.autoRemoveDup) return // Only run if setting is turned ON
 
-      if (duplicates.length > 0) {
-        // console.log(
-        //   `Found ${duplicates.length} duplicate(s) for ${newBookmark.url}. Removing old ones.`,
-        // )
-        // Remove all duplicates, keeping the new one
-        duplicates.forEach((duplicate) => {
-          chrome.bookmarks.remove(duplicate.id, () => {
-            // console.log(
-            //   `Removed duplicate bookmark: ${duplicate.title} (ID: ${duplicate.id})`,
-            // )
+    if (newBookmark.url) {
+      chrome.bookmarks.search({ url: newBookmark.url }, (bookmarks) => {
+        // Filter out the newly created bookmark and find duplicates
+        let duplicates = bookmarks.filter((bookmark) => bookmark.id !== id)
+        const scope = state.duplicateScope || "folder"
+        if (scope === "folder") {
+          duplicates = duplicates.filter(
+            (b) => b.parentId === newBookmark.parentId,
+          )
+        }
+
+        if (duplicates.length > 0) {
+          // Same logic as before if it is turned on
+          duplicates.forEach((duplicate) => {
+            chrome.bookmarks.remove(duplicate.id, () => {})
           })
-        })
-      }
-    })
-  }
+        }
+      })
+    }
+  })
 }
-
-// Add listener for when a new bookmark is created
 chrome.bookmarks.onCreated.addListener(handleDuplicateBookmarks)
 
 let popupWindowId = null

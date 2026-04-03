@@ -951,7 +951,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       index + 1
                     }. <img src="https://www.google.com/s2/favicons?domain=${
                       new URL(b.url).hostname
-                    }" class="favicon" alt="Favicon" onerror="this.src='./images/default-favicon.png';"> <a href="${
+                    }" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, new URL(this.parentNode.href||'http://'+this.src).hostname, 'hostname')}else{this.src='./images/default-favicon.png'}"> <a href="${
                       b.url
                     }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`,
                 )
@@ -1037,7 +1037,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         index + 1
                       }. <img src="https://www.google.com/s2/favicons?domain=${
                         new URL(b.url).hostname
-                      }" class="favicon" alt="Favicon" onerror="this.src='./images/default-favicon.png';"> <a href="${
+                      }" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, new URL(this.parentNode.href||'http://'+this.src).hostname, 'hostname')}else{this.src='./images/default-favicon.png'}"> <a href="${
                         b.url
                       }" target="_blank">${b.title || b.url}</a> (ID: ${
                         b.id
@@ -1629,7 +1629,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       index + 1
                     }. <img src="https://www.google.com/s2/favicons?domain=${
                       new URL(b.url).hostname
-                    }" class="favicon" alt="Favicon" onerror="this.src='./images/default-favicon.png';"> <a href="${
+                    }" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, new URL(this.parentNode.href||'http://'+this.src).hostname, 'hostname')}else{this.src='./images/default-favicon.png'}"> <a href="${
                       b.url
                     }" target="_blank">${b.title || b.url}</a> (ID: ${
                       b.id
@@ -1733,7 +1733,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     index + 1
                   }. <img src="https://www.google.com/s2/favicons?domain=${
                     new URL(site.url).hostname
-                  }" class="favicon" alt="Favicon" onerror="this.src='./images/default-favicon.png';"> <a href="${
+                  }" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, new URL(this.parentNode.href||'http://'+this.src).hostname, 'hostname')}else{this.src='./images/default-favicon.png'}"> <a href="${
                     site.url
                   }" target="_blank">${site.title}</a>: ${
                     site.description
