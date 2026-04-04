@@ -1,5 +1,12 @@
 // background.js
 
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "update") {
+    // When the extension is updated, set a flag to show the update popup next time
+    chrome.storage.local.set({ showUpdatePopup: true })
+  }
+})
+
 // ==================== Visit Count Tracking ====================
 let visitCounts = {}
 let bookmarkUrlMap = {} // Map URLs to bookmark IDs for quick lookup
