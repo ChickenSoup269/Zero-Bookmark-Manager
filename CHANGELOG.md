@@ -1,5 +1,21 @@
 <!-- ---Extension version---- -->
 
+## [1.2.2] - 2026-04-07
+
+### FEAT
+
+- Added update notification popup with release notes link
+- Updated release notes link
+- Updated title to reflect new version
+
+### PERF
+
+- Updated DRC font URL
+
+### FIX
+
+- Removed unnecessary blank line in CSS
+
 ## [1.2.1] - 2026-04-03
 
 ### 🇬🇧 English (Tiếng Anh)
