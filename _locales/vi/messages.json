@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "Zero Bookmark Manager",
+    "description": "Tên của ứng dụng."
+  },
+  "extDesc": {
+    "message": "Một tiện ích Chrome tinh tế và dễ sử dụng để quản lý bookmark.",
+    "description": "Mô tả của tiện ích."
+  }
+}
