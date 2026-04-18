@@ -283,7 +283,7 @@ export async function customLoadUIState(callback) {
       elements.viewSwitcher.value = uiState.viewMode
     }
     if (elements.folderFilter) {
-      elements.folderFilter.value = uiState.selectedFolderId
+      if (elements.folderFilter) elements.folderFilter.value = uiState.selectedFolderId
     }
     if (elements.sortFilter) {
       elements.sortFilter.value = uiState.sortType

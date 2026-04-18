@@ -676,9 +676,11 @@ export function updateUILanguage(elements, language) {
   elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
     ? t.hideCheckboxes
     : t.showCheckboxes
-  elements.bookmarkCountDiv.textContent = `${t.totalBookmarks}: ${
-    elements.bookmarkCountDiv.textContent.match(/\d+$/)?.[0] || 0
-  }`
+  if (elements.bookmarkCountDiv) {
+    elements.bookmarkCountDiv.textContent = `${t.totalBookmarks}: ${
+      elements.bookmarkCountDiv.textContent.match(/\d+$/)?.[0] || 0
+    }`
+  }
 
   // Update attributes
   elements.scrollToTopButton.title = t.scrollToTop
@@ -1463,10 +1465,10 @@ function renderSidebarFolderTree(folders) {
         // Refresh bookmark tree
         chrome.bookmarks.getTree((tree) => {
           renderFilteredBookmarks(tree, {
-            bookmarkList: document.getElementById("bookmark-list"),
-            searchInput: document.getElementById("search-bar"),
+            folderListDiv: document.getElementById("folder-list"),
+            searchInput: document.getElementById("search"),
             folderFilter: document.getElementById("folder-filter"),
-            sortType: document.getElementById("sort-type"),
+            sortFilter: document.getElementById("sort-filter"),
             viewSwitcher: document.getElementById("view-switcher"),
             tagFilterContainer: document.getElementById("tag-filter-container"),
           })
@@ -1673,7 +1675,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       if (uiState.sortType === "favorites") {
         if (uiState.selectedFolderId) {
           uiState.selectedFolderId = ""
-          elements.folderFilter.value = ""
+          if (elements.folderFilter) elements.folderFilter.value = ""
         }
         filtered = filtered.filter((bookmark) => bookmark.isFavorite)
       }
@@ -1687,7 +1689,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         )
       } else if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
         uiState.selectedFolderId = ""
-        elements.folderFilter.value = ""
+        if (elements.folderFilter) elements.folderFilter.value = ""
       }
       if (uiState.searchQuery) {
         const query = uiState.searchQuery.trim()
@@ -1757,6 +1759,8 @@ function renderDetailView(bookmarksList, elements) {
     }
   })
 
+  if (!elements || !elements.folderListDiv) return
+
   elements.folderListDiv.innerHTML = ""
   elements.folderListDiv.classList.remove("tree-view", "card-view")
   elements.folderListDiv.classList.add("detail-view")
@@ -1766,6 +1770,7 @@ function renderDetailView(bookmarksList, elements) {
 }
 
 function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
+  if (!elements || !elements.folderListDiv) return
   const fragment = document.createDocumentFragment()
   const language = localStorage.getItem("appLanguage") || "en"
   const folders = getFolders(bookmarkTreeNodes)
@@ -1807,7 +1812,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       }`
       backButton.addEventListener("click", () => {
         uiState.selectedFolderId = ""
-        elements.folderFilter.value = ""
+        if (elements.folderFilter) elements.folderFilter.value = ""
         chrome.bookmarks.getTree((tree) =>
           renderFilteredBookmarks(tree, elements),
         )
@@ -1837,7 +1842,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       })
     } else {
       uiState.selectedFolderId = ""
-      elements.folderFilter.value = ""
+      if (elements.folderFilter) elements.folderFilter.value = ""
     }
   } else {
     folders.forEach((folder) => {
@@ -1879,7 +1884,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         )
           return
         uiState.selectedFolderId = folder.id
-        elements.folderFilter.value = folder.id
+        if (elements.folderFilter) elements.folderFilter.value = folder.id
         chrome.bookmarks.getTree((tree) =>
           renderFilteredBookmarks(tree, elements),
         )
@@ -2093,6 +2098,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
 }
 
 function renderBookmarks(bookmarksList, elements) {
+  if (!elements || !elements.folderListDiv) return
   const fragment = document.createDocumentFragment()
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
 
@@ -2120,6 +2126,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
 
   // Setup container lần đầu
   if (depth === 0) {
+    if (!actualTargetElement) return
     actualTargetElement.innerHTML = ""
     actualTargetElement.classList.add("tree-view")
     if (uiState.checkboxesVisible) {
@@ -2545,14 +2552,17 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
 // ==========================================
 
 function commonPostRenderOps(elements) {
-  elements.searchInput.value = uiState.searchQuery || ""
+  if (!elements) return
+  if (elements.searchInput) elements.searchInput.value = uiState.searchQuery || ""
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
-    elements.folderFilter.value = uiState.selectedFolderId
+    if (elements.folderFilter)
+      elements.folderFilter.value = uiState.selectedFolderId
   } else {
     uiState.selectedFolderId = ""
-    elements.folderFilter.value = ""
+    if (elements.folderFilter) elements.folderFilter.value = ""
   }
-  elements.sortFilter.value = uiState.sortType || "default"
+  if (elements.sortFilter)
+    elements.sortFilter.value = uiState.sortType || "default"
 
   attachSelectAllListener(elements)
   attachDropdownListeners(elements)
@@ -3138,7 +3148,11 @@ function updateBookmarkCount(bookmarks, elements) {
 
   // Lấy ID từ State. Nếu state rỗng mới lấy từ Dropdown.
   let currentFolderId = uiState.selectedFolderId
-  if (!currentFolderId || currentFolderId === "0") {
+  if (
+    (!currentFolderId || currentFolderId === "0") &&
+    elements &&
+    elements.folderFilter
+  ) {
     currentFolderId = elements.folderFilter.value
   }
 
@@ -3168,10 +3182,18 @@ function updateBookmarkCount(bookmarks, elements) {
     count = bookmarks.filter((b) => b.url).length
   }
 
-  elements.bookmarkCountDiv.textContent = `${translations[language].totalBookmarks}: ${count}`
+  if (elements && elements.bookmarkCountDiv) {
+    elements.bookmarkCountDiv.textContent = `${translations[language].totalBookmarks}: ${count}`
+  }
 }
 
 function toggleFolderButtons(elements) {
+  if (
+    !elements ||
+    !elements.deleteFolderButton ||
+    !elements.renameFolderButton
+  )
+    return
   const isUserCreated =
     uiState.selectedFolderId &&
     uiState.selectedFolderId !== "1" &&

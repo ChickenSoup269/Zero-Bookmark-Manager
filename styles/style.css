@@ -1077,6 +1077,7 @@ html {
   padding: var(--spacing-sm);
   font-size: 0.75rem;
   color: var(--text-muted);
+  min-height: 50px;
 }
 
 .footer span {
@@ -2723,5 +2724,9 @@ html {
 }
 #sidebar-folder-tree {
   min-height: 200px;
+  align-content: start;
+}
+#tag-filter-options {
+  min-height: 150px;
   align-content: start;
 }

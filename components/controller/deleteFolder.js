@@ -78,7 +78,7 @@ export function handleDeleteFolder(folderId, elements) {
           safeChromeBookmarksCall("remove", [folderId], () => {
             if (uiState.selectedFolderId === folderId) {
               uiState.selectedFolderId = ""
-              elements.folderFilter.value = ""
+              if (elements.folderFilter) elements.folderFilter.value = ""
             }
             getBookmarkTree((bookmarkTreeNodes) => {
               if (bookmarkTreeNodes) {

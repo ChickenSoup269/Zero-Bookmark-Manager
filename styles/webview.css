@@ -232,6 +232,7 @@ body {
   gap: 12px;
   padding: 14px 16px;
   margin: 8px 12px;
+  min-height: 52px;
   color: var(--text-primary);
   font-size: 0.9rem;
   font-weight: 600;
@@ -463,6 +464,7 @@ body {
   justify-content: space-between;
   padding: 10px 16px;
   cursor: pointer;
+  min-height: 40px;
   transition:
     background 0.15s ease,
     background-color 0.3s ease,
@@ -499,6 +501,7 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
+  min-height: 24px;
 }
 
 .sidebar-action-btn {
@@ -1551,6 +1554,7 @@ body.sidebar-style-modern .sidebar-modern {
   align-items: center;
   padding: var(--spacing-md);
   position: relative;
+  min-height: 80px;
 }
 
 /* Border slash-1 */
