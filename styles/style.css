@@ -551,72 +551,51 @@ html {
 .dropdown-section-title {
   display: flex;
   align-items: center;
-  text-align: left; /* Changed from center */
+  text-align: left;
   font-weight: bold;
-  padding: 4px;
-  color: var(--text-muted);
-  font-size: 0.85em;
-  margin: 2px 0px 2px 0px;
+  padding: 6px 8px;
+  color: var(--accent-color);
+  font-size: 0.75rem;
+  margin: 8px 0 4px 0;
   border-radius: 4px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
   cursor: pointer;
   user-select: none;
-  justify-content: flex-start; /* Align content to the start (left) */
-  transition: all 0.2s ease-in-out;
+  justify-content: flex-start;
+  transition: all 0.2s ease;
+  background-color: var(--bg-tertiary);
+  border-left: 3px solid var(--accent-color);
 }
 
 .dropdown-section-title:hover {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  transition: all 0.2s ease-in-out;
+  background: var(--accent-color);
+  color: var(--bg-primary);
 }
 
 .dropdown-section-title::before {
-  content: "−";
+  content: "\f0d7"; /* fa-caret-down */
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  margin-right: 10px;
+  width: 12px;
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dropdown-section-title.collapsed::before {
-  content: "+";
+  transform: rotate(-90deg);
 }
+
 
 /* Add some space between the lines and the text */
 .dropdown-section-title:not(:empty)::before {
   margin-right: 1em;
 }
 
-.dropdown-section-title:not(:empty)::after {
-  content: ">";
-  font-size: 0.9em;
-  margin-left: auto;
-  margin-right: 0;
-  transition: all 0.2s ease-in-out;
-  display: inline-block;
-  flex: 0 0 auto;
-  border-bottom: none;
-  transform: rotate(0deg);
-}
-
 .dropdown-section-title.collapsed {
   color: var(--focus-outline);
   transition: all 0.2s ease-in-out;
-}
-
-.dropdown-section-title.collapsed:hover {
-  background-color: var(--text-primary);
-  color: var(--bg-primary);
-  transform: translateY(-2px);
-  transition: all 0.2s ease-in-out;
-}
-
-.dropdown-section-title:not(.collapsed):not(:empty)::after {
-  transform: rotate(90deg);
-}
-
-/* Ensure dropdown-menu-2 is scrollable */
-.dropdown-menu-2 {
-  max-height: 550px; /* Example height, adjust as needed */
-  overflow-y: auto;
 }
 
 .menu-item:focus {
@@ -2723,7 +2702,6 @@ html {
   align-content: start;
 }
 #sidebar-folder-tree {
-  min-height: 200px;
   align-content: start;
 }
 #tag-filter-options {

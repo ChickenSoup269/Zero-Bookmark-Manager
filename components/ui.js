@@ -669,10 +669,10 @@ export function updateUILanguage(elements, language) {
   updateButtonText(elements.renameFolderButton, t.renameFolder)
   updateButtonText(elements.deleteBookmarksButton, t.deleteBookmarks)
   updateButtonText(elements.organizeFoldersButton, t.organizeFolders)
-  elements.exportBookmarksOption.innerHTML = `${t.exportBookmarks}  <i class="fas fa-download"></i>`
-  elements.importBookmarksOption.innerHTML = `${t.importBookmarks}  <i class="fas fa-upload"></i>`
-  elements.editInNewTabOption.innerHTML = `${t.editInNewTabOption} <i class="fas fa-location-arrow"></i>`
-  elements.openSidePanelOption.innerHTML = `${t.openSidePanel}  <i class="far fa-caret-square-right"></i>`
+  elements.exportBookmarksOption.innerHTML = `<i class="fas fa-file-export"></i> ${t.exportBookmarks}`
+  elements.importBookmarksOption.innerHTML = `<i class="fas fa-file-import"></i> ${t.importBookmarks}`
+  elements.editInNewTabOption.innerHTML = `<i class="fas fa-external-link-alt"></i> ${t.editInNewTabOption}`
+  elements.openSidePanelOption.innerHTML = `<i class="fas fa-columns"></i> ${t.openSidePanel}`
   elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
     ? t.hideCheckboxes
     : t.showCheckboxes

@@ -253,112 +253,133 @@
                         aria-label="Open settings">⋮</button>
                     <div id="settings-menu" class="dropdown-menu-2 hidden">
                         <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
-                        <select id="language-switcher" class="select" aria-label="Select language">
-                            <option value="en">English</option>
-                            <option value="vi">Tiếng Việt</option>
-                        </select>
-                        <select id="theme-switcher" class="select select-with-icons" aria-label="Select theme">
-                            <option value="system">&#xf108; System</option>
-                            <option value="light">&#9889; Light</option>
-                            <option value="dark">&#9889; Dark</option>
-                            <option value="dracula">&#9889; Dracula</option>
-                            <option value="onedark">&#9889; OneDark</option>
-                            <option value="tokyonight">&#9889; Tokyo Night</option>
-                            <option value="monokai">&#9889; Monokai</option>
-                            <option value="winter-is-coming">&#9889; Winter is Coming</option>
-                            <option value="github-blue">&#9889; GitHub Blue</option>
-                            <option value="github-light">&#9889; GitHub Light</option>
-                            <option value="tet">&#9889; Tet</option>
-                        </select>
-                        <select id="font-switcher" class="select select-with-icons" aria-label="Select font">
-                            <option value="gohu">Aa: GohuFont</option>
-                            <option value="jetBrainsMonoNerdFont">Aa: jetBrains</option>
-                            <option value="anonymiceProNerd">Aa: AnonymiceProNerd</option>
-                            <option value="proFontWindowsNerdFontPropo">Aa: ProFont</option>
-                        </select>
-                        <select id="view-switcher" class="select select-with-icons" aria-label="Select view mode">
-                            <option value="flat">&#xf03a; Flat List</option>
-                            <option value="tree">&#xf0e8; Tree View</option>
-                            <option value="detail">&#xf05a; Detail View</option>
-                            <option value="card">&#xf009; Card View</option>
-                        </select>
-                        <label class="toggle-row" for="folder-list-bg-toggle">
-                            <span data-i18n="sidebarListBg">List Background</span>
-                            <span class="toggle-switch">
-                                <input type="checkbox" id="folder-list-bg-toggle" checked>
-                                <span class="toggle-knob"></span>
-                            </span>
-                        </label>
-
-                        <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
-                        <button id="edit-in-new-tab-option" class="menu-item">Edit in New Tab</button>
-                        <button id="open-side-panel-option" class="menu-item">Open Side Panel</button>
-                        <button id="export-bookmarks-option" class="menu-item">Export Bookmarks</button>
-                        <button id="import-bookmarks-option" class="menu-item">Import Bookmarks</button>
-                        <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
-                        <span class="dropdown-section-title" data-i18n="quickOpenTitle">Quick Open Action</span>
-                        <div id="quick-open-settings" class="quick-open-settings">
-                            <label>
-                                <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup" />
-                                <span data-i18n="quickOpenPopup">Popup</span>
-                            </label>
-                            <label>
-                                <input type="radio" id="quick-open-sidepanel" name="quickOpenAction"
-                                    value="sidepanel" />
-                                <span data-i18n="quickOpenSidePanel">Side Panel</span>
-                            </label>
-                            <label>
-                                <input type="radio" id="quick-open-web" name="quickOpenAction" value="web" />
-                                <span data-i18n="quickOpenWeb">Full Page</span>
+                        <div class="menu-group">
+                            <select id="language-switcher" class="select" aria-label="Select language">
+                                <option value="en">English</option>
+                                <option value="vi">Tiếng Việt</option>
+                            </select>
+                            <select id="theme-switcher" class="select select-with-icons" aria-label="Select theme">
+                                <option value="system">&#xf108; System</option>
+                                <option value="light">&#9889; Light</option>
+                                <option value="dark">&#9889; Dark</option>
+                                <option value="dracula">&#9889; Dracula</option>
+                                <option value="onedark">&#9889; OneDark</option>
+                                <option value="tokyonight">&#9889; Tokyo Night</option>
+                                <option value="monokai">&#9889; Monokai</option>
+                                <option value="winter-is-coming">&#9889; Winter is Coming</option>
+                                <option value="github-blue">&#9889; GitHub Blue</option>
+                                <option value="github-light">&#9889; GitHub Light</option>
+                                <option value="tet">&#9889; Tet</option>
+                            </select>
+                            <select id="font-switcher" class="select select-with-icons" aria-label="Select font">
+                                <option value="gohu">Aa: GohuFont</option>
+                                <option value="jetBrainsMonoNerdFont">Aa: jetBrains</option>
+                                <option value="anonymiceProNerd">Aa: AnonymiceProNerd</option>
+                                <option value="proFontWindowsNerdFontPropo">Aa: ProFont</option>
+                            </select>
+                            <select id="view-switcher" class="select select-with-icons" aria-label="Select view mode">
+                                <option value="flat">&#xf03a; Flat List</option>
+                                <option value="tree">&#xf0e8; Tree View</option>
+                                <option value="detail">&#xf05a; Detail View</option>
+                                <option value="card">&#xf009; Card View</option>
+                            </select>
+                            <label class="toggle-row" for="folder-list-bg-toggle">
+                                <span data-i18n="sidebarListBg">List Background</span>
+                                <span class="toggle-switch">
+                                    <input type="checkbox" id="folder-list-bg-toggle" checked>
+                                    <span class="toggle-knob"></span>
+                                </span>
                             </label>
                         </div>
+
+                        <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
+                        <div class="menu-group">
+                            <button id="edit-in-new-tab-option" class="menu-item">
+                                <i class="fas fa-external-link-alt"></i> Edit in New Tab
+                            </button>
+                            <button id="open-side-panel-option" class="menu-item">
+                                <i class="fas fa-columns"></i> Open Side Panel
+                            </button>
+                            <button id="export-bookmarks-option" class="menu-item">
+                                <i class="fas fa-file-export"></i> Export Bookmarks
+                            </button>
+                            <button id="import-bookmarks-option" class="menu-item">
+                                <i class="fas fa-file-import"></i> Import Bookmarks
+                            </button>
+                            <button id="show-bookmark-ids-option" class="menu-item">
+                                <i class="fas fa-fingerprint"></i> Show Bookmark IDs
+                            </button>
+                        </div>
+
+                        <span class="dropdown-section-title" data-i18n="quickOpenTitle">Quick Open Action</span>
+                        <div class="menu-group">
+                            <div id="quick-open-settings" class="quick-open-settings">
+                                <label class="segmented-control-item">
+                                    <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup" />
+                                    <span class="control-label" data-i18n="quickOpenPopup">Popup</span>
+                                </label>
+                                <label class="segmented-control-item">
+                                    <input type="radio" id="quick-open-sidepanel" name="quickOpenAction"
+                                        value="sidepanel" />
+                                    <span class="control-label" data-i18n="quickOpenSidePanel">Side Panel</span>
+                                </label>
+                                <label class="segmented-control-item">
+                                    <input type="radio" id="quick-open-web" name="quickOpenAction" value="web" />
+                                    <span class="control-label" data-i18n="quickOpenWeb">Full Page</span>
+                                </label>
+                            </div>
+                        </div>
+
                         <span class="dropdown-section-title" data-i18n="bookmarkHealthTitle">Bookmark Health &
                             Duplicates</span>
-                        <button id="check-health-btn" class="button button-warning">
-                            <i class="fas fa-stethoscope"></i> <span data-i18n="checkLinks">Check Links</span>
-                        </button>
-                        <button id="check-duplicates-btn" class="button button-primary">
-                            <i class="fas fa-copy"></i> <span data-i18n="checkDuplicates">Check Duplicates</span>
-                        </button>
+                        <div class="menu-group">
+                            <button id="check-health-btn" class="button button-warning">
+                                <i class="fas fa-stethoscope"></i> <span data-i18n="checkLinks">Check Links</span>
+                            </button>
+                            <button id="check-duplicates-btn" class="button button-primary">
+                                <i class="fas fa-copy"></i> <span data-i18n="checkDuplicates">Check Duplicates</span>
+                            </button>
+
+                            <hr>
+
+                            <label for="duplicate-scope-select"><i class="fas fa-clone"></i> <span
+                                    data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
+                            <select id="duplicate-scope-select" class="select">
+                                <option value="folder" data-i18n="dupScopeFolder">Only 1 folder</option>
+                                <option value="all" data-i18n="dupScopeAll">Across folders</option>
+                            </select>
+
+                            <label class="toggle-row" for="auto-remove-dup-toggle">
+                                <span data-i18n="autoRemoveDupTitle"
+                                    style="color:var(--text-secondary);font-size:0.9rem;">Auto Remove Duplicates</span>
+                                <span class="toggle-switch">
+                                    <input type="checkbox" id="auto-remove-dup-toggle">
+                                    <span class="toggle-knob"></span>
+                                </span>
+                            </label>
+                        </div>
+
                         <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
+                        <div class="menu-group">
+                            <label for="favicon-option-select"><i class="fas fa-image"></i> Favicon Mode:</label>
+                            <select id="favicon-option-select" class="select">
+                                <option value="auto">Auto (Google → Hostname)</option>
+                                <option value="google">Google Only</option>
+                                <option value="hostname">Hostname Only</option>
+                            </select>
 
-                        <label for="favicon-option-select"><i class="fas fa-image"></i> Favicon Mode:</label>
-                        <select id="favicon-option-select" class="select">
-                            <option value="auto">Auto (Google → Hostname)</option>
-                            <option value="google">Google Only</option>
-                            <option value="hostname">Hostname Only</option>
-                        </select>
+                            <label for="header-line-select"><i class="fas fa-window-minimize"></i> <span
+                                    data-i18n="headerLineConfig">Header Line Style:</span></label>
+                            <select id="header-line-select" class="select">
+                                <option value="pattern" data-i18n="linePattern">Slanted Pattern</option>
+                                <option value="simple" data-i18n="lineSimple">Simple Line</option>
+                                <option value="hidden" data-i18n="lineHidden">Hidden</option>
+                            </select>
 
-                        <label for="header-line-select"><i class="fas fa-window-minimize"></i> <span
-                                data-i18n="headerLineConfig">Header Line Style:</span></label>
-                        <select id="header-line-select" class="select">
-                            <option value="pattern" data-i18n="linePattern">Slanted Pattern</option>
-                            <option value="simple" data-i18n="lineSimple">Simple Line</option>
-                            <option value="hidden" data-i18n="lineHidden">Hidden</option>
-                        </select>
-
-                        <label for="duplicate-scope-select"><i class="fas fa-clone"></i> <span
-                                data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
-                        <select id="duplicate-scope-select" class="select">
-                            <option value="folder" data-i18n="dupScopeFolder">Only 1 folder</option>
-                            <option value="all" data-i18n="dupScopeAll">Across folders</option>
-                        </select>
-
-                        <label class="toggle-row" for="auto-remove-dup-toggle">
-                            <span data-i18n="autoRemoveDupTitle"
-                                style="color:var(--text-secondary);font-size:0.9rem;">Auto Remove Duplicates</span>
-                            <span class="toggle-switch">
-                                <input type="checkbox" id="auto-remove-dup-toggle">
-                                <span class="toggle-knob"></span>
-                            </span>
-                        </label>
-
-                        <button id="localstorage-settings-option" class="menu-item">
-                            <!-- <button id="view-visit-counts-option" class="menu-item">
-                                <i class="fas fa-eye"></i> View Visit Counts
-                            </button> -->
-                            <i class="fas fa-cog"></i> Local Storage Settings
-                        </button>
+                            <button id="localstorage-settings-option" class="menu-item">
+                                <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage Settings</span>
+                            </button>
+                        </div>
                     </div>
 
                 </div>
