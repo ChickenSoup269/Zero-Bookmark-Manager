@@ -887,10 +887,10 @@ export async function populateTagFilter(elements) {
       tagItem.title = `${tag} (${count})`
       tagItem.style.cssText = isActive
         ? `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
-        : `border-color: ${tagColor}; color: ${tagColor};`
+        : `border-color: ${tagColor}; color: var(--text-primary); background: transparent;`
 
       tagItem.innerHTML = `
-        <i class="fas fa-tag" style="font-size: 0.65rem; flex-shrink:0;"></i>
+        <i class="fas fa-tag" style="font-size: 0.65rem; color: ${tagColor}; flex-shrink:0;"></i>
         <span>${tag}</span>
         <span class="sidebar-tag-count">${count}</span>
       `
@@ -900,7 +900,7 @@ export async function populateTagFilter(elements) {
         if (idx > -1) {
           uiState.selectedTags.splice(idx, 1)
           tagItem.classList.remove("active")
-          tagItem.style.cssText = `border-color: ${tagColor}; color: ${tagColor};`
+          tagItem.style.cssText = `border-color: ${tagColor}; color: var(--text-primary); background: transparent;`
         } else {
           uiState.selectedTags.push(tag)
           tagItem.classList.add("active")
@@ -1010,9 +1010,9 @@ export async function populateTagFilter(elements) {
       pill.title = `${tag} (${count})`
       pill.style.cssText = isActive
         ? `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
-        : `border-color: ${tagColor}; color: ${tagColor};`
+        : `border-color: ${tagColor}; color: var(--text-primary); background: transparent;`
       pill.innerHTML = `
-        <i class="fas fa-tag" style="font-size:0.65rem;flex-shrink:0;"></i>
+        <i class="fas fa-tag" style="font-size:0.65rem; color: ${tagColor}; flex-shrink:0;"></i>
         <span>${tag}</span>
         <span class="sidebar-tag-count">${count}</span>
       `
@@ -1022,7 +1022,7 @@ export async function populateTagFilter(elements) {
         if (idx > -1) {
           uiState.selectedTags.splice(idx, 1)
           pill.classList.remove("active")
-          pill.style.cssText = `border-color: ${tagColor}; color: ${tagColor};`
+          pill.style.cssText = `border-color: ${tagColor}; color: var(--text-primary); background: transparent;`
         } else {
           uiState.selectedTags.push(tag)
           pill.classList.add("active")
@@ -1721,6 +1721,8 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         renderDetailView(filtered, elements)
       } else if (uiState.viewMode === "card") {
         renderCardView(bookmarkTreeNodes, filtered, elements)
+      } else if (uiState.viewMode === "list") {
+        renderListView(filtered, elements)
       } else {
         renderBookmarks(filtered, elements)
       }
@@ -1767,6 +1769,123 @@ function renderDetailView(bookmarksList, elements) {
   elements.folderListDiv.appendChild(fragment)
 
   commonPostRenderOps(elements)
+}
+
+function renderListView(bookmarksList, elements) {
+  if (!elements || !elements.folderListDiv) return
+  const fragment = document.createDocumentFragment()
+  const language = localStorage.getItem("appLanguage") || "en"
+  const t = translations[language] || translations.en
+
+  elements.folderListDiv.innerHTML = ""
+  elements.folderListDiv.classList.remove(
+    "tree-view",
+    "card-view",
+    "detail-view",
+  )
+  elements.folderListDiv.classList.add("list-view")
+
+  // Header Row
+  const header = document.createElement("div")
+  header.className = "list-view-header"
+  header.innerHTML = `
+    <div class="header-col-check"></div>
+    <div class="header-col-icon"></div>
+    <div class="header-col-info">Name & URL</div>
+    <div class="header-col-tags" style="text-align: right;">Tags</div>
+    <div class="header-col-actions">Actions</div>
+  `
+  fragment.appendChild(header)
+
+  // Back Button if in a folder
+  if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
+    const backRow = document.createElement("div")
+    backRow.className = "list-bookmark-item back-row"
+    backRow.style.cursor = "pointer"
+    backRow.innerHTML = `
+      <div style="width: 40px;"></div>
+      <div class="list-info-main" style="display: flex; align-items: center; gap: 5px; width: 100%; min-width: 300px;">
+        <span style="font-size: 1.2rem; margin-right: 10px;">↩</span>
+        <span class="list-bookmark-title-link">${t.back || "Back"}</span>
+      </div>
+      <div class="list-bookmark-url-display" style="margin-left: 40px; font-size: 12px; color: var(--text-secondary);">
+        Go up one level
+      </div>
+      <div class="list-tags"></div>
+      <div class="list-actions"></div>
+    `
+    backRow.onclick = () => {
+      chrome.bookmarks.get(uiState.selectedFolderId, (results) => {
+        if (results && results[0]) {
+          uiState.selectedFolderId = results[0].parentId || "0"
+          if (elements.folderFilter)
+            elements.folderFilter.value = uiState.selectedFolderId
+          chrome.bookmarks.getTree((tree) =>
+            renderFilteredBookmarks(tree, elements),
+          )
+        }
+      })
+    }
+    fragment.appendChild(backRow)
+  }
+
+  // Render Folders (only if not searching/filtering by tags/favorites)
+  const isSearching =
+    uiState.searchQuery ||
+    uiState.selectedTags.length > 0 ||
+    uiState.sortType === "favorites"
+  if (!isSearching) {
+    const currentFolders = uiState.folders.filter(
+      (f) => f.parentId === uiState.selectedFolderId,
+    )
+    currentFolders.forEach((folder) => {
+      fragment.appendChild(createListFolderElement(folder, elements))
+    })
+  }
+
+  // Render Bookmarks
+  const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
+  sortedBookmarks.forEach((bookmark) => {
+    if (bookmark.url) {
+      fragment.appendChild(
+        createListBookmarkElement(bookmark, language, elements),
+      )
+    }
+  })
+
+  elements.folderListDiv.appendChild(fragment)
+  commonPostRenderOps(elements)
+}
+
+function createListFolderElement(folder, elements) {
+  const div = document.createElement("div")
+  div.className = "list-bookmark-item list-folder-item"
+  div.style.cursor = "pointer"
+  div.dataset.id = folder.id
+
+  div.innerHTML = `
+    <div style="width: 30px;"></div>
+    <div class="bookmark-favicon" style="width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: none; border: none;">
+      <span style="font-size: 1rem;">📂</span>
+    </div>
+    <div class="list-info-main" style="display: flex; flex-direction: column; gap: 2px; width: 100%; min-width: 0;">
+      <span class="list-bookmark-title-link">${folder.title || "Untitled Folder"}</span>
+      <div class="list-bookmark-url-display">Folder</div>
+    </div>
+    <div class="list-tags"></div>
+    <div class="list-actions">
+       <button class="dropdown-btn"><i class="fas fa-ellipsis-v"></i></button>
+    </div>
+  `
+
+  div.onclick = (e) => {
+    if (e.target.closest(".dropdown-btn")) return
+    uiState.selectedFolderId = folder.id
+    if (elements.folderFilter) elements.folderFilter.value = folder.id
+    chrome.bookmarks.getTree((tree) => renderFilteredBookmarks(tree, elements))
+  }
+
+  return div
 }
 
 function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
@@ -2093,6 +2212,53 @@ function createDetailBookmarkElement(bookmark, language, elements) {
       openWebPreviewModal(bookmark) // GỌI HÀM XEM WEB (IFRAME)
     })
 
+  attachDropdownToggle(div)
+  return div
+}
+
+function createListBookmarkElement(bookmark, language, elements) {
+  const favicon = getFaviconUrl(bookmark.url)
+  const div = document.createElement("div")
+  div.className = `bookmark-item list-bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`
+  div.dataset.id = bookmark.id
+
+  const healthIcon = renderHealthIcon(bookmark.id)
+  const visitCountBadge = renderVisitCount(bookmark.id)
+  const tagsHtml = createTagsHTML(bookmark.tags)
+  const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
+  const isChecked = uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
+
+  let hostname = ""
+  try {
+    hostname = new URL(bookmark.url).hostname
+  } catch (e) {}
+
+  div.innerHTML = `
+    <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(0.9);">
+    <div class="bookmark-favicon" style="width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; border-radius: 4px;">
+      <img src="${favicon}" style="width: 14px; height: 14px;" onerror="this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico'">
+    </div>
+    <div class="list-info-main" style="display: flex; flex-direction: column; gap: 2px; width: 600px; min-width: 0;">
+      <a href="${bookmark.url}" target="_blank" class="link list-bookmark-title-link" style="white-space: normal !important; word-break: break-word !important; min-width: 0; display: block;">
+        ${bookmark.title || bookmark.url}
+      </a>
+      <div class="list-bookmark-url-display" style="opacity: 0.6; font-size: 0.7rem;">
+        ${bookmark.url}
+      </div>
+    </div>
+    <div class="list-tags" style="display: flex; gap: 4px; align-items: center; justify-content: flex-end;">${tagsHtml}</div>
+    <div class="list-actions" style="display: flex !important;">
+       ${healthIcon} 
+       ${visitCountBadge}
+       ${createDropdownHTML(bookmark, language)}
+    </div>
+  `
+
+  div
+    .querySelector(".list-bookmark-title-link")
+    .addEventListener("click", () =>
+      handleBookmarkLinkClick(bookmark.id, elements),
+    )
   attachDropdownToggle(div)
   return div
 }
@@ -2553,7 +2719,8 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
 
 function commonPostRenderOps(elements) {
   if (!elements) return
-  if (elements.searchInput) elements.searchInput.value = uiState.searchQuery || ""
+  if (elements.searchInput)
+    elements.searchInput.value = uiState.searchQuery || ""
   if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
     if (elements.folderFilter)
       elements.folderFilter.value = uiState.selectedFolderId
@@ -3188,11 +3355,7 @@ function updateBookmarkCount(bookmarks, elements) {
 }
 
 function toggleFolderButtons(elements) {
-  if (
-    !elements ||
-    !elements.deleteFolderButton ||
-    !elements.renameFolderButton
-  )
+  if (!elements || !elements.deleteFolderButton || !elements.renameFolderButton)
     return
   const isUserCreated =
     uiState.selectedFolderId &&

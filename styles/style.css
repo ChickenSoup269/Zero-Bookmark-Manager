@@ -557,7 +557,7 @@ html {
   color: var(--accent-color);
   font-size: 0.75rem;
   margin: 8px 0 4px 0;
-  border-radius: 4px;
+  border-radius: 5px;
   text-transform: uppercase;
   letter-spacing: 1.2px;
   cursor: pointer;
