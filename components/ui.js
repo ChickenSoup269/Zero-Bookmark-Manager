@@ -2350,24 +2350,15 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
       const folderDiv = document.createElement("div")
       folderDiv.className = "folder-item"
       folderDiv.dataset.id = node.id
-      folderDiv.draggable = true // Enable dragging for folders
-      folderDiv.style.marginLeft = `${depth * 20}px`
+      folderDiv.draggable = true
+      // Indentation handled by .folder-children in CSS
 
-      // HTML hiển thị Folder
       folderDiv.innerHTML = `
-        <div class="folder-toggle" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid var(--text-primary);border-radius:6px;cursor:pointer;margin-right:8px;font-weight:bold;">${
-          isCollapsed ? "+" : "−"
-        }</div>
-        <span class="folder-icon" style="margin-right:8px;font-size:18px;">${
-          isCollapsed ? "📁" : "📂"
-        }</span>
-        <span class="folder-title" style="flex-grow:1;font-weight:600;">${
-          node.title || `Folder ${node.id}`
-        }</span>
-        <span class="folder-count" style="background:var(--bg-secondary);padding:2px 8px;border-radius:12px;font-size:12px;">${countFolderItems(
-          node,
-        )}</span>
-        <button class="button delete-folder-tree-btn" data-id="${node.id}" style="margin-left: 8px; background: none; border: none; color: var(--text-muted); cursor: pointer;" title="${translations[language].deleteFolder}">
+        <div class="folder-toggle">${isCollapsed ? "+" : "−"}</div>
+        <span class="folder-icon">${isCollapsed ? "📁" : "📂"}</span>
+        <span class="folder-title">${node.title || `Folder ${node.id}`}</span>
+        <span class="folder-count">${countFolderItems(node)}</span>
+        <button class="button delete-folder-tree-btn" data-id="${node.id}" style="background: none; border: none; color: var(--text-muted); cursor: pointer;" title="${translations[language].deleteFolder}">
             <i class="fas fa-trash"></i>
         </button>
       `
@@ -2592,10 +2583,10 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
   // >>> QUAN TRỌNG: Bật tính năng kéo
   div.draggable = true
 
-  // Style layout
-  div.style.cssText = `display: flex; align-items: center; gap: 8px; margin: 7px 0; padding: 12px 16px; border: 1px solid transparent; box-shadow: var(--shadow-sm); margin-left: ${
-    depth * 20
-  }px; transition: opacity 0.2s;`
+  // Style layout handled by CSS
+  div.style.display = "flex"
+  div.style.alignItems = "center"
+  div.style.gap = "8px"
 
   // >>> XỬ LÝ SỰ KIỆN KÉO (DRAG START)
   div.addEventListener("dragstart", (e) => {

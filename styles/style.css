@@ -2427,151 +2427,169 @@ html {
 }
 
 /* --- Organize Folders Popup --- */
-#organize-folders-popup .organize-folders-popup-content {
-  width: 700px;
-  max-width: 90vw;
-  max-height: 85vh;
-  text-align: left;
+#organize-folders-popup .rename-popup-content {
+  width: 800px;
+  max-width: 95vw;
+  height: 85vh;
+  max-height: 900px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   display: flex;
   flex-direction: column;
+  padding: 24px;
+  overflow: hidden;
+}
+
+#organize-folders-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: var(--accent-color);
+  text-align: left;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 10px;
 }
 
 .organize-folders-tree-container {
-  max-height: 500px;
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 16px;
-  background: var(--bg-primary);
-  margin: 16px 0;
-  flex: 1;
-  min-height: 200px;
-}
-
-.organize-folders-tree-container .bookmark-item {
-  max-height: 80px;
-  border-radius: 8px;
-  background: var(--bookmark-bg);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--bg-secondary);
+  margin-bottom: 20px;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .organize-folders-tree-container::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .organize-folders-tree-container::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-  border-radius: 4px;
+  background: transparent;
 }
 
 .organize-folders-tree-container::-webkit-scrollbar-thumb {
   background: var(--border-color);
-  border-radius: 4px;
+  border-radius: 10px;
+  border: 3px solid var(--bg-secondary);
 }
 
 .organize-folders-tree-container::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
-
-#organize-folders-tree-view {
-  width: 100%;
+  background: var(--accent-color);
 }
 
 #organize-folders-tree-view .tree-view {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
+/* Enhanced Item Styles */
 #organize-folders-tree-view .folder-item,
 #organize-folders-tree-view .bookmark-item {
-  margin: 2px 0;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
-/* Compact bookmark style trong organize folders popup */
+#organize-folders-tree-view .folder-item:hover,
+#organize-folders-tree-view .bookmark-item:hover {
+  transform: translateX(5px);
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+#organize-folders-tree-view .folder-item {
+  background: linear-gradient(to right, var(--bg-primary), var(--bg-secondary)) !important;
+}
+
+#organize-folders-tree-view .folder-toggle {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 14px !important;
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  color: var(--text-primary) !important;
+}
+
+#organize-folders-tree-view .folder-icon {
+  font-size: 18px !important;
+}
+
+#organize-folders-tree-view .folder-title {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+#organize-folders-tree-view .folder-count {
+  font-size: 11px !important;
+  background: var(--accent-color) !important;
+  color: white !important;
+  font-weight: bold !important;
+}
+
 #organize-folders-tree-view .bookmark-item {
-  padding: 6px 10px !important;
-  margin: 2px 0 !important;
-  font-size: 12px;
+  margin-left: 20px !important; /* Base indentation */
+  opacity: 0.9;
 }
 
 #organize-folders-tree-view .bookmark-item .bookmark-favicon {
-  width: 16px !important;
-  height: 16px !important;
-  min-width: 16px;
-}
-
-#organize-folders-tree-view .bookmark-item .bookmark-favicon img {
-  width: 14px !important;
-  height: 14px !important;
+  width: 20px !important;
+  height: 20px !important;
 }
 
 #organize-folders-tree-view .bookmark-item .bookmark-title {
-  font-size: 11px !important;
-  max-width: 200px;
-}
-
-#organize-folders-tree-view .bookmark-item .bookmark-url {
-  font-size: 10px !important;
-  max-width: 100px;
-  display: none; /* Ẩn URL để compact hơn */
-}
-
-#organize-folders-tree-view .bookmark-item .bookmark-tags {
-  display: none !important; /* Ẩn tags để compact hơn */
-}
-
-#organize-folders-tree-view .bookmark-item .bookmark-id {
-  display: none !important; /* Ẩn ID */
-}
-
-#organize-folders-tree-view .bookmark-item .dropdown-btn {
-  width: 20px !important;
-  height: 20px !important;
-  font-size: 10px;
-}
-
-#organize-folders-tree-view .bookmark-item .health-icon {
-  font-size: 12px;
-  margin-right: 2px;
-}
-
-/* Compact folder item */
-#organize-folders-tree-view .folder-item {
-  padding: 6px 10px;
-  margin: 2px 0;
-}
-
-#organize-folders-tree-view .folder-item .folder-toggle {
-  width: 22px !important;
-  height: 22px !important;
-  font-size: 12px;
-  margin-right: 6px;
-}
-
-#organize-folders-tree-view .folder-item .folder-icon {
   font-size: 14px !important;
-  margin-right: 6px;
+  font-weight: 500 !important;
+  max-width: none !important; /* Let it wrap/expand */
 }
 
-#organize-folders-tree-view .folder-item .folder-title {
-  font-size: 12px;
+/* Indentation Lines - Visual Guide */
+.folder-children {
+  position: relative;
+  margin-left: 24px !important;
+  padding-left: 10px !important;
+  border-left: 2px dashed var(--border-color);
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
-#organize-folders-tree-view .folder-item .folder-count {
-  font-size: 10px;
-  padding: 1px 6px;
+#organize-folders-popup .rename-popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+}
+
+#organize-folders-close {
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#organize-folders-close:hover {
+  background: var(--accent-dark);
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
-  #organize-folders-popup .organize-folders-popup-content {
-    width: 95vw;
-    max-height: 90vh;
-  }
-
-  .organize-folders-tree-container {
-    max-height: 400px;
-    padding: 12px;
+  #organize-folders-popup .rename-popup-content {
+    padding: 16px;
+    height: 95vh;
   }
 }
 
