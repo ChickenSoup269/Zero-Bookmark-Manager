@@ -166,25 +166,29 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     const defaultThumb = "./images/default-favicon.png" // Đảm bảo đường dẫn này đúng trong project của bạn
 
     // --- XỬ LÝ THUMBNAIL ---
-    // Dùng service của WordPress để lấy ảnh chụp màn hình web
+    // Sử dụng thum.io (thường nhanh hơn WordPress mshots)
     let thumbUrl = defaultThumb
     if (b.url && b.url.startsWith("http")) {
-      thumbUrl = `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(
-        b.url,
-      )}?w=800`
+      // Dùng thum.io với tham số wait=0 để lấy ảnh nhanh nếu đã có trong cache
+      thumbUrl = `https://image.thum.io/get/width/600/crop/800/${b.url}`
     }
 
     // Hiển thị ảnh
     els.thumb.style.display = "block"
     els.thumb.src = thumbUrl
 
-    // Nếu tải ảnh lỗi (web chặn hoặc không tồn tại), fallback về icon mặc định
+    // Nếu tải ảnh lỗi (web chặn hoặc không tồn tại), fallback về Google Favicon hoặc WordPress mshots
     els.thumb.onerror = () => {
-      // Nếu load mshots lỗi, thử dùng Google Favicon chất lượng cao
-      els.thumb.src = `https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(
-        b.url,
-      )}`
-      // Nếu vẫn lỗi nữa thì về default
+      // Fallback 1: Thử dùng WordPress mshots nếu thum.io lỗi
+      if (els.thumb.src !== `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(b.url)}?w=600`) {
+        els.thumb.src = `https://s0.wordpress.com/mshots/v1/${encodeURIComponent(b.url)}?w=600`
+        return
+      }
+      
+      // Fallback 2: Thử dùng Google Favicon chất lượng cao
+      els.thumb.src = `https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(b.url)}`
+      
+      // Fallback cuối cùng: Về icon mặc định
       els.thumb.onerror = () => {
         els.thumb.src = defaultThumb
       }

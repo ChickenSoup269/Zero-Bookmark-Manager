@@ -2524,10 +2524,10 @@ html {
   width: 26px !important;
   height: 26px !important;
   font-size: 16px !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid var(--border-color) !important;
+  background: var(--accent-color-light) !important;
+  border: 1px solid var(--accent-color) !important;
   border-radius: 8px !important;
-  color: var(--text-primary) !important;
+  color: var(--accent-color) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2586,7 +2586,7 @@ html {
 
 .tree-view .delete-folder-tree-btn {
   margin-left: auto;
-  opacity: 0.3;
+  opacity: 0.7;
   transition: all 0.3s ease !important;
   color: var(--danger-color) !important;
   padding: 8px !important;
@@ -2640,10 +2640,11 @@ html {
   font-weight: 700;
   border-radius: 12px;
   background: var(--accent-color);
-  color: white;
-  border: none;
+  color: var(--bg-primary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 #organize-folders-close:hover {

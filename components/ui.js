@@ -1764,7 +1764,11 @@ function renderDetailView(bookmarksList, elements) {
   if (!elements || !elements.folderListDiv) return
 
   elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.classList.remove("tree-view", "card-view")
+  elements.folderListDiv.classList.remove(
+    "tree-view",
+    "card-view",
+    "list-view",
+  )
   elements.folderListDiv.classList.add("detail-view")
   elements.folderListDiv.appendChild(fragment)
 
@@ -1895,7 +1899,11 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const folders = getFolders(bookmarkTreeNodes)
 
   elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.classList.remove("detail-view", "tree-view")
+  elements.folderListDiv.classList.remove(
+    "detail-view",
+    "tree-view",
+    "list-view",
+  )
   elements.folderListDiv.classList.add("card-view")
 
   const isViewingSpecificFolder =
@@ -2273,6 +2281,7 @@ function renderBookmarks(bookmarksList, elements) {
     "tree-view",
     "card-view",
     "detail-view",
+    "list-view",
   )
 
   sortedBookmarks.forEach((bookmark) => {
@@ -2294,6 +2303,11 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
   if (depth === 0) {
     if (!actualTargetElement) return
     actualTargetElement.innerHTML = ""
+    actualTargetElement.classList.remove(
+      "card-view",
+      "detail-view",
+      "list-view",
+    )
     actualTargetElement.classList.add("tree-view")
     if (uiState.checkboxesVisible) {
       const selectAllDiv = document.createElement("div")
