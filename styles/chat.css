@@ -206,11 +206,45 @@
 }
 
 .chatbox-message {
-  padding: 10px 14px;
-  border-radius: 16px;
+  padding: 12px 16px;
+  border-radius: 18px;
   font-size: 0.9rem;
   line-height: 1.5;
   word-wrap: break-word;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.chatbox-message:hover .chatbox-copy-btn {
+  opacity: 1;
+}
+
+.chatbox-copy-btn {
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 2;
+  box-shadow: var(--shadow-sm);
+}
+
+.chatbox-copy-btn:hover {
+  background: var(--accent-color);
+  color: white;
+  transform: translateY(-2px);
 }
 
 /* === User Message === */
@@ -581,4 +615,70 @@
   padding-left: 1rem;
   color: var(--text-muted);
   font-style: italic;
+}
+
+/* === Code Block Improvements === */
+.code-block-wrapper {
+  position: relative;
+  margin: 12px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.code-copy-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.code-copy-btn:hover {
+  color: var(--accent-color);
+}
+
+/* === AI Config Modal Specifics === */
+.ai-config-content {
+  min-width: 350px;
+  max-width: 450px;
+  background: rgba(var(--bg-secondary-rgb), 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.ai-config-content .form-section label {
+  font-weight: 500;
+  color: var(--text-primary) !important;
+}
+
+.ai-config-content label a:hover {
+  text-decoration: underline !important;
+  opacity: 0.8;
+}
+
+.ai-config-content select, 
+.ai-config-content input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.ai-config-content select:focus, 
+.ai-config-content input:focus {
+  border-color: var(--accent-color) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
 }

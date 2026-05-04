@@ -113,6 +113,19 @@ export const translations = {
     notAvailable: "N/A",
     scrollToTop: "Scroll to Top",
     aiTitle: "Configure AI Chatbot",
+    aiConfigTitle: "AI Settings",
+    aiProvider: "AI Provider",
+    apiKeyLabel: "API Key",
+    getApiKey: "Get API Key",
+    modelLabel: "Model Name",
+    aiLocalOption: "Chrome Local (Gemini Nano)",
+    localGeminiNotAvailable: "Chrome Built-in AI is not available. Please enable it in chrome://flags.",
+    learnHowToEnable: "Learn how to enable",
+    localAiGuideTitle: "How to Enable Chrome Built-in AI",
+    localAiGuideSteps: "1. Go to chrome://flags<br>2. Enable 'Prompt API for Gemini Nano'<br>3. Enable 'Enables optimization guide on device' (BypassPrefRequirement)<br>4. Relaunch Chrome and wait for model download in chrome://components",
+    copyToClipboard: "Copy to Clipboard",
+    copySuccess: "Copied!",
+    aiConfigSaveSuccess: "AI settings saved!",
     favourite: "Favourite",
     removeFavourite: "Remove from Favorites",
     favoriteSuccess: "Bookmark added to favorites!",
@@ -120,7 +133,7 @@ export const translations = {
     helpGuideTitle: "Help Guide",
     exportChatHistory: "Export Chat History",
     maximizeMinimize: "Maximize/Minimize",
-    editAIConfig: "Edit AI Config",
+    editAIConfig: "AI Settings",
     closeChat: "Close Chat",
     chatToggle: "Open Chat",
     noChatHistory: "No chat history available",
@@ -461,6 +474,19 @@ export const translations = {
     notAvailable: "N/A",
     scrollToTop: "Scroll to Top",
     aiTitle: "Cấu hình AI Chatbot",
+    aiConfigTitle: "Cài đặt AI",
+    aiProvider: "Nhà cung cấp AI",
+    apiKeyLabel: "Khóa API",
+    getApiKey: "Lấy Khóa API",
+    modelLabel: "Tên Model",
+    aiLocalOption: "Gemini Nội bộ (Chrome)",
+    localGeminiNotAvailable: "Gemini nội bộ không khả dụng. Vui lòng bật nó trong chrome://flags.",
+    learnHowToEnable: "Hướng dẫn kích hoạt",
+    localAiGuideTitle: "Cách kích hoạt Gemini nội bộ trong Chrome",
+    localAiGuideSteps: "1. Truy cập chrome://flags<br>2. Bật 'Prompt API for Gemini Nano'<br>3. Bật 'Enables optimization guide on device' (BypassPrefRequirement)<br>4. Khởi động lại Chrome và chờ tải mô hình trong chrome://components",
+    copyToClipboard: "Sao chép vào bộ nhớ tạm",
+    copySuccess: "Đã sao chép!",
+    aiConfigSaveSuccess: "Đã lưu cài đặt AI!",
     favourite: "Yêu thích",
     removeFavourite: "Bỏ yêu thích",
     favoriteSuccess: "Đã thêm bookmark vào yêu thích!",
@@ -468,7 +494,7 @@ export const translations = {
     helpGuideTitle: "Hướng Dẫn",
     exportChatHistory: "Xuất Lịch Sử Chat",
     maximizeMinimize: "Phóng To/Thu Nhỏ",
-    editAIConfig: "Chỉnh Sửa Cấu Hình AI",
+    editAIConfig: "Cài đặt AI",
     closeChat: "Đóng Chat",
     chatToggle: "Mở Chat",
     noChatHistory: "Không có lịch sử chat",
@@ -1004,7 +1030,11 @@ export function showCustomPopup(
       title.textContent = language === "vi" ? "Thông báo" : "Notification"
     }
 
-    messageEl.textContent = message
+    if (typeof message === 'string' && message.includes("<") && message.includes(">")) {
+      messageEl.innerHTML = message
+    } else {
+      messageEl.textContent = message
+    }
     popup.classList.remove("hidden")
 
     // Áp dụng class theo type để có thể style khác nhau (success, error, loading, warning,...)
@@ -1090,7 +1120,11 @@ export function showCustomConfirm(message, onConfirm, onCancel) {
   try {
     title.textContent = translations[language].confirmTitle || "Confirm"
 
-    messageEl.textContent = message
+    if (typeof message === 'string' && message.includes("<") && message.includes(">")) {
+      messageEl.innerHTML = message
+    } else {
+      messageEl.textContent = message
+    }
 
     popup.classList.remove("hidden")
 

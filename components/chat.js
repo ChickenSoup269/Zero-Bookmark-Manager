@@ -22,6 +22,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatClose = document.getElementById("chat-close")
   const chatMaximize = document.getElementById("chat-maximize")
   const chatScrollBottom = document.getElementById("chat-scroll-bottom")
+
+  // AI Config Elements
+  const aiSettingsOption = document.getElementById("ai-settings-option")
+  const aiConfigPopup = document.getElementById("ai-config-popup")
+  const aiConfigSave = document.getElementById("ai-config-save")
+  const aiConfigCancel = document.getElementById("ai-config-cancel")
+  const aiProviderSelect = document.getElementById("ai-provider-select")
+  const aiApiKeyInput = document.getElementById("ai-api-key")
+  const aiModelNameInput = document.getElementById("ai-model-name")
+  const aiApiGroup = document.getElementById("ai-api-group")
+  const aiLocalWarning = document.getElementById("ai-local-warning")
+  const localAiGuideBtn = document.getElementById("local-ai-guide-btn")
+  const settingsMenu = document.getElementById("settings-menu")
+
   const chatHelp = document.getElementById("chat-help")
   const chatHistoryBtn = document.getElementById("chat-history")
   const chatFolderSuggestions = document.getElementById(
@@ -168,18 +182,79 @@ document.addEventListener("DOMContentLoaded", () => {
       minute: "2-digit",
     })
 
-    const htmlContent = isMarkdown ? marked.parse(content) : content
+    let htmlContent = isMarkdown ? marked.parse(content) : content
+
+    // Wrap code blocks with custom wrapper for copy buttons if it's markdown
+    if (isMarkdown) {
+      htmlContent = htmlContent.replace(
+        /<pre><code([^>]*)>([\s\S]*?)<\/code><\/pre>/g,
+        (match, attrs, code) => {
+          const langMatch = attrs.match(/class="language-([^"]*)"/)
+          const lang = langMatch ? langMatch[1] : ""
+          return `
+                <div class="code-block-wrapper">
+                    <div class="code-block-header">
+                        <span>${lang}</span>
+                        <button class="code-copy-btn" title="${
+                          t("copyToClipboard") || "Copy"
+                        }">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </div>
+                    <pre><code ${attrs}>${code}</code></pre>
+                </div>
+            `
+        },
+      )
+    }
 
     botMessageContainer.innerHTML = `
-      <div class="chat-avatar">
-       <i class="fas fa-power-off"></i>
+      <div class="chat-avatar bot-avatar">
+       <i class="fas fa-robot"></i>
       </div>
       <div class="chatbox-message">
-        ${htmlContent}
+        <button class="chatbox-copy-btn" title="${
+          t("copyToClipboard") || "Copy"
+        }">
+          <i class="far fa-copy"></i>
+        </button>
+        <div class="message-text">${htmlContent}</div>
         <span class="timestamp">${timestamp}</span>
       </div>
     `
     chatMessages.appendChild(botMessageContainer)
+
+    // Add event listeners for copy buttons
+    const copyBtn = botMessageContainer.querySelector(".chatbox-copy-btn")
+    if (copyBtn) {
+      copyBtn.addEventListener("click", () => {
+        const textToCopy =
+          textContent ||
+          botMessageContainer.querySelector(".message-text").innerText
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          const icon = copyBtn.querySelector("i")
+          icon.className = "fas fa-check"
+          showCustomPopup(t("copySuccess") || "Copied!", "success", true)
+          setTimeout(() => (icon.className = "far fa-copy"), 2000)
+        })
+      })
+    }
+
+    const codeCopyBtns = botMessageContainer.querySelectorAll(".code-copy-btn")
+    codeCopyBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const code = btn
+          .closest(".code-block-wrapper")
+          .querySelector("code").innerText
+        navigator.clipboard.writeText(code).then(() => {
+          const icon = btn.querySelector("i")
+          icon.className = "fas fa-check"
+          showCustomPopup(t("copySuccess") || "Copied!", "success", true)
+          setTimeout(() => (icon.className = "far fa-copy"), 2000)
+        })
+      })
+    })
+
     const cleanText =
       textContent || (isMarkdown ? content : content.replace(/<[^>]*>/g, ""))
     addToChatHistory("bot", cleanText, timestamp)
@@ -192,8 +267,8 @@ document.addEventListener("DOMContentLoaded", () => {
     typingIndicator.id = "typing-indicator"
     typingIndicator.className = "chatbox-message-container bot"
     typingIndicator.innerHTML = `
-      <div class="chat-avatar">
-       <i class="fas fa-power-off"></i>
+      <div class="chat-avatar bot-avatar">
+       <i class="fas fa-robot"></i>
       </div>
       <div class="chatbox-message">
         <div class="typing-indicator">
@@ -549,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const config = localStorage.getItem("aiConfig")
     return config
       ? JSON.parse(config)
-      : { model: "", apiKey: "", modelName: "", apiVisible: true }
+      : { model: "gemini", apiKey: "", modelName: "gemini-1.5-flash", apiVisible: true }
   }
 
   const saveAiConfig = (model, apiKey, modelName, apiVisible = true) => {
@@ -557,6 +632,23 @@ document.addEventListener("DOMContentLoaded", () => {
       "aiConfig",
       JSON.stringify({ model, apiKey, modelName, apiVisible }),
     )
+  }
+
+  const checkLocalAiAvailability = async () => {
+    try {
+      if (typeof window.ai !== "undefined" && window.ai.languageModel) {
+        const capabilities = await window.ai.languageModel.capabilities()
+        return capabilities.available !== "no"
+      }
+      if (typeof window.ai !== "undefined" && window.ai.canCreateTextSession) {
+        const status = await window.ai.canCreateTextSession()
+        return status !== "no"
+      }
+      return false
+    } catch (e) {
+      console.error("Local AI Check Error:", e)
+      return false
+    }
   }
 
   // Validate URL
@@ -583,6 +675,10 @@ document.addEventListener("DOMContentLoaded", () => {
       let body
 
       const prompt = isGeneral ? generalSystemPrompt : systemPrompt
+
+      if (model === "local") {
+        return { isLocal: true, prompt, message }
+      }
 
       if (model === "gemini") {
         apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`
@@ -1914,6 +2010,73 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle user input
 
+  // API Call handler
+  async function callAiApi(message, isGeneral = false) {
+    try {
+      const config = getAiConfig()
+      const request = buildApiRequest(
+        config.modelName,
+        config.apiKey,
+        config.model,
+        message,
+        isGeneral,
+      )
+
+      let responseText = ""
+
+      if (request.isLocal) {
+        const isAvailable = await checkLocalAiAvailability()
+        if (!isAvailable) {
+          throw new Error(
+            t("localGeminiNotAvailable") || "Local Gemini not available",
+          )
+        }
+
+        let session
+        if (window.ai.languageModel) {
+          session = await window.ai.languageModel.create({
+            systemPrompt: request.prompt,
+          })
+          responseText = await session.prompt(request.message)
+        } else {
+          // Legacy Text Session API
+          session = await window.ai.createTextSession()
+          responseText = await session.prompt(
+            `${request.prompt}\n\nUser: ${request.message}`,
+          )
+        }
+        if (session.destroy) session.destroy()
+      } else {
+        const response = await fetch(request.url, {
+          method: request.method,
+          headers: request.headers,
+          body: JSON.stringify(request.body),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error?.message || response.statusText)
+        }
+
+        const data = await response.json()
+        if (config.model === "gemini") {
+          responseText = data.candidates[0].content.parts[0].text
+        } else if (config.model === "gpt") {
+          responseText = data.choices[0].message.content
+        } else {
+          responseText = data.response || data.text || JSON.stringify(data)
+        }
+      }
+
+      hideTypingIndicator()
+      return responseText
+    } catch (error) {
+      hideTypingIndicator()
+      console.error("AI API Error:", error)
+      throw error
+    }
+  }
+
   async function handleUserInput() {
     const message = chatInput.value.trim()
 
@@ -1968,14 +2131,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (result.action === "general") {
-        hideTypingIndicator()
-        const reply =
-          result.reason === "suggest_disabled"
-            ? t("featureDisabled") ||
-              "Website suggestions are disabled in local mode."
-            : t("notSupported") ||
-              "I can only help with bookmark commands in local mode."
-        appendBotMessage(reply, reply)
+        try {
+          const aiResponse = await callAiApi(message, true)
+          appendBotMessage(aiResponse, aiResponse, true)
+        } catch (aiError) {
+          hideTypingIndicator()
+          const reply =
+            t("notSupported") ||
+            "I can only help with bookmark-related tasks or simple questions."
+          appendBotMessage(
+            `${reply}<br><br><small style="opacity:0.6">${aiError.message}</small>`,
+            reply,
+          )
+        }
         return
       }
 
@@ -2135,4 +2303,139 @@ document.addEventListener("DOMContentLoaded", () => {
   if (chatHistoryBtn) {
     chatHistoryBtn.addEventListener("click", exportChatHistory)
   }
+
+  // --- AI Config Modal Logic ---
+  if (aiSettingsOption) {
+    aiSettingsOption.addEventListener("click", async (e) => {
+      e.stopPropagation()
+      const config = getAiConfig()
+      aiProviderSelect.value = config.model || "gemini"
+      aiApiKeyInput.value = config.apiKey || ""
+      aiModelNameInput.value = config.modelName || ""
+
+      // Check local availability
+      const isLocalAvailable = await checkLocalAiAvailability()
+      if (aiLocalWarning) {
+        aiLocalWarning.classList.toggle("hidden", isLocalAvailable)
+      }
+
+      // Toggle API group based on provider
+      if (aiApiGroup) {
+        aiApiGroup.classList.toggle("hidden", aiProviderSelect.value === "local")
+      }
+
+      aiConfigPopup.classList.remove("hidden")
+      if (settingsMenu) settingsMenu.classList.add("hidden")
+    })
+  }
+
+  if (aiProviderSelect) {
+    aiProviderSelect.addEventListener("change", () => {
+      if (aiApiGroup) {
+        aiApiGroup.classList.toggle("hidden", aiProviderSelect.value === "local")
+      }
+    })
+  }
+
+  if (aiConfigSave) {
+    aiConfigSave.addEventListener("click", () => {
+      saveAiConfig(
+        aiProviderSelect.value,
+        aiApiKeyInput.value,
+        aiModelNameInput.value,
+        aiProviderSelect.value !== "local",
+      )
+      aiConfigPopup.classList.add("hidden")
+      showCustomPopup(
+        t("aiConfigSaveSuccess") || "AI settings saved!",
+        "success",
+        true,
+      )
+    })
+  }
+
+  if (aiConfigCancel) {
+    aiConfigCancel.addEventListener("click", () => {
+      aiConfigPopup.classList.add("hidden")
+    })
+  }
+
+  // --- Draggable Chatbox Logic ---
+  const initDraggableChat = () => {
+    const header = chatbox.querySelector("h3")
+    if (!header) return
+
+    let isDragging = false
+    let startX, startY
+    let initialLeft, initialTop
+
+    header.addEventListener("mousedown", (e) => {
+      // Don't drag if clicking buttons or if maximized
+      if (
+        e.target.closest("button") ||
+        chatbox.classList.contains("maximized")
+      ) {
+        return
+      }
+
+      isDragging = true
+      startX = e.clientX
+      startY = e.clientY
+
+      const rect = chatbox.getBoundingClientRect()
+      initialLeft = rect.left
+      initialTop = rect.top
+
+      // Switch to absolute positioning for dragging
+      chatbox.style.bottom = "auto"
+      chatbox.style.right = "auto"
+      chatbox.style.left = `${initialLeft}px`
+      chatbox.style.top = `${initialTop}px`
+      chatbox.style.margin = "0"
+
+      document.addEventListener("mousemove", onMouseMove)
+      document.addEventListener("mouseup", onMouseUp)
+      header.style.cursor = "grabbing"
+      e.preventDefault()
+    })
+
+    const onMouseMove = (e) => {
+      if (!isDragging) return
+      const dx = e.clientX - startX
+      const dy = e.clientY - startY
+
+      // Constrain within window
+      let newLeft = initialLeft + dx
+      let newTop = initialTop + dy
+
+      newLeft = Math.max(
+        0,
+        Math.min(newLeft, window.innerWidth - chatbox.offsetWidth),
+      )
+      newTop = Math.max(
+        0,
+        Math.min(newTop, window.innerHeight - chatbox.offsetHeight),
+      )
+
+      chatbox.style.left = `${newLeft}px`
+      chatbox.style.top = `${newTop}px`
+    }
+
+    const onMouseUp = () => {
+      isDragging = false
+      document.removeEventListener("mousemove", onMouseMove)
+      document.removeEventListener("mouseup", onMouseUp)
+      header.style.cursor = "move"
+    }
+  }
+
+  if (localAiGuideBtn) {
+    localAiGuideBtn.addEventListener("click", (e) => {
+      e.preventDefault()
+      const steps = t("localAiGuideSteps") || "Instructions..."
+      showCustomPopup(steps, "info", false)
+    })
+  }
+
+  initDraggableChat()
 })

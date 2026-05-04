@@ -2435,33 +2435,36 @@ html {
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5); /* Increased shadow for more depth */
   display: flex;
   flex-direction: column;
   padding: 24px;
   overflow: hidden;
+  backdrop-filter: blur(20px); /* Glassmorphism effect */
 }
 
 #organize-folders-title {
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: 20px;
+  font-size: 26px; /* Slightly larger */
+  font-weight: 900; /* Extra bold */
+  margin-bottom: 24px;
   color: var(--accent-color);
   text-align: left;
-  border-bottom: 2px solid var(--accent-color);
-  padding-bottom: 10px;
+  border-bottom: 3px solid var(--accent-color);
+  padding-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .organize-folders-tree-container {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-  background: var(--bg-secondary);
+  border: 2px solid var(--border-color); /* Thicker border */
+  border-radius: 14px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.2); /* Darker, high-contrast background for the tree area */
   margin-bottom: 20px;
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: inset 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .organize-folders-tree-container::-webkit-scrollbar {
@@ -2482,85 +2485,147 @@ html {
   background: var(--accent-color);
 }
 
-#organize-folders-tree-view .tree-view {
+/* Global Tree View Styles - Restored Premium Look */
+.tree-view {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  padding: 4px;
 }
 
-/* Enhanced Item Styles */
-#organize-folders-tree-view .folder-item,
-#organize-folders-tree-view .bookmark-item {
-  padding: 10px 14px !important;
-  border-radius: 10px !important;
-  background: var(--bg-primary) !important;
-  border: 1px solid var(--border-color) !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-#organize-folders-tree-view .folder-item:hover,
-#organize-folders-tree-view .bookmark-item:hover {
-  transform: translateX(5px);
-  border-color: var(--accent-color) !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-#organize-folders-tree-view .folder-item {
-  background: linear-gradient(to right, var(--bg-primary), var(--bg-secondary)) !important;
-}
-
-#organize-folders-tree-view .folder-toggle {
-  width: 24px !important;
-  height: 24px !important;
-  font-size: 14px !important;
+.tree-view .folder-item,
+.tree-view .bookmark-item {
+  padding: 12px 16px !important;
+  border-radius: 12px !important;
   background: var(--bg-tertiary) !important;
   border: 1px solid var(--border-color) !important;
-  border-radius: 6px !important;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 4px 0 !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.tree-view .folder-item:hover,
+.tree-view .bookmark-item:hover {
+  transform: translateX(8px) scale(1.01);
+  border-color: var(--accent-color) !important;
+  background: var(--hover-bg) !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.tree-view .folder-item {
+  background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary)) !important;
+  cursor: pointer;
+}
+
+.tree-view .folder-toggle {
+  width: 26px !important;
+  height: 26px !important;
+  font-size: 16px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
   color: var(--text-primary) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  transition: all 0.2s ease;
 }
 
-#organize-folders-tree-view .folder-icon {
-  font-size: 18px !important;
+.tree-view .folder-toggle:hover {
+  background: var(--accent-color) !important;
+  color: var(--bg-primary) !important;
+  transform: rotate(90deg);
 }
 
-#organize-folders-tree-view .folder-title {
+.tree-view .folder-icon {
+  font-size: 20px !important;
+  margin-right: 12px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.tree-view .folder-title {
   font-size: 15px !important;
   font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  flex: 1;
 }
 
-#organize-folders-tree-view .folder-count {
-  font-size: 11px !important;
+.tree-view .folder-count {
+  font-size: 12px !important;
   background: var(--accent-color) !important;
-  color: white !important;
-  font-weight: bold !important;
+  color: var(--bg-primary) !important;
+  font-weight: 800 !important;
+  padding: 2px 8px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-#organize-folders-tree-view .bookmark-item {
-  margin-left: 20px !important; /* Base indentation */
-  opacity: 0.9;
+.tree-view .bookmark-item {
+  opacity: 0.95;
+  background: rgba(var(--bg-secondary-rgb), 0.5) !important;
 }
 
-#organize-folders-tree-view .bookmark-item .bookmark-favicon {
-  width: 20px !important;
-  height: 20px !important;
+.tree-view .bookmark-item .bookmark-favicon {
+  width: 22px !important;
+  height: 22px !important;
+  margin-right: 12px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-#organize-folders-tree-view .bookmark-item .bookmark-title {
+.tree-view .bookmark-item .bookmark-title {
   font-size: 14px !important;
-  font-weight: 500 !important;
-  max-width: none !important; /* Let it wrap/expand */
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  max-width: none !important;
+}
+
+.tree-view .delete-folder-tree-btn {
+  margin-left: auto;
+  opacity: 0.3;
+  transition: all 0.3s ease !important;
+  color: var(--danger-color) !important;
+  padding: 8px !important;
+  border-radius: 8px !important;
+}
+
+.tree-view .folder-item:hover .delete-folder-tree-btn {
+  opacity: 1;
+}
+
+.tree-view .delete-folder-tree-btn:hover {
+  background: var(--danger-color-light) !important;
+  transform: scale(1.1);
+}
+
+.tree-view .bookmark-item .dropdown-btn-group {
+  margin-left: 8px;
 }
 
 /* Indentation Lines - Visual Guide */
 .folder-children {
   position: relative;
-  margin-left: 24px !important;
-  padding-left: 10px !important;
-  border-left: 2px dashed var(--border-color);
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-left: 32px !important;
+  padding-left: 12px !important;
+  border-left: 2px solid var(--border-color);
+  margin-top: 6px;
+  margin-bottom: 6px;
+  transition: all 0.3s ease;
+}
+
+.folder-children::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -2px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent-color), transparent);
+  opacity: 0.3;
 }
 
 #organize-folders-popup .rename-popup-buttons {

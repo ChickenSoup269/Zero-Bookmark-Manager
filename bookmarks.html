@@ -623,6 +623,10 @@
                             aria-label="Open help guide">
                             <i class="fas fa-question-circle"></i>
                         </button>
+                        <button id="ai-settings-option" class="chatbox-header-button" title="AI Settings"
+                            aria-label="AI Settings">
+                            <i class="fas fa-robot"></i>
+                        </button>
                         <button id="chat-history" class="chatbox-header-button" title="Export Chat History"
                             aria-label="Export chat history">
                             <i class="fas fa-history"></i>
@@ -681,6 +685,59 @@
                 <div class="rename-popup-buttons">
                     <button id="localstorage-settings-save" class="button save">Save</button>
                     <button id="localstorage-settings-cancel" class="button cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="ai-config-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="ai-config-title">
+            <div class="rename-popup-content ai-config-content">
+                <h3 id="ai-config-title" data-i18n="aiConfigTitle">AI Settings</h3>
+                <div class="form-section">
+                    <label for="ai-provider-select" data-i18n="aiProvider"
+                        style="color: var(--text-secondary); margin-bottom: 8px; display: block; font-size: 0.9rem;">AI
+                        Provider</label>
+                    <select id="ai-provider-select" class="select" style="width: 100%;">
+                        <option value="gemini">Gemini API</option>
+                        <option value="gpt">OpenAI (GPT)</option>
+                        <option value="local" data-i18n="aiLocalOption">Chrome Local (Gemini Nano)</option>
+                    </select>
+                </div>
+                <div id="ai-api-group">
+                    <div class="form-section" style="margin-top: 15px;">
+                        <label for="ai-api-key"
+                            style="color: var(--text-secondary); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;">
+                            <span data-i18n="apiKeyLabel">API Key</span>
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank" 
+                                style="font-size: 0.75rem; color: var(--accent-color); text-decoration: none;" 
+                                data-i18n="getApiKey">Get API Key</a>
+                        </label>
+                        <input type="password" id="ai-api-key" class="input" placeholder="Enter API Key..."
+                            style="width: 100%;">
+                    </div>
+                    <div class="form-section" style="margin-top: 15px;">
+                        <label for="ai-model-name" data-i18n="modelLabel"
+                            style="color: var(--text-secondary); margin-bottom: 8px; display: block; font-size: 0.9rem;">Model
+                            Name</label>
+                        <input type="text" id="ai-model-name" class="input" placeholder="e.g. gemini-1.5-flash"
+                            style="width: 100%;">
+                    </div>
+                </div>
+                <div id="ai-local-warning" class="hidden"
+                    style="color: #ff4444; font-size: 0.8rem; margin-top: 10px; padding: 10px; background: rgba(255,68,68,0.1); border-radius: 6px; border-left: 3px solid #ff4444;">
+                    <div style="display: flex; align-items: flex-start; gap: 8px;">
+                        <i class="fas fa-exclamation-triangle" style="margin-top: 2px;"></i>
+                        <div>
+                            <span data-i18n="localGeminiNotAvailable">Local Gemini is not available...</span>
+                            <a href="#" id="local-ai-guide-btn" 
+                               style="color: #ff4444; text-decoration: underline; display: block; margin-top: 5px; font-weight: 600;" 
+                               data-i18n="learnHowToEnable">Learn how to enable</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="rename-popup-buttons" style="margin-top: 25px;">
+                    <button id="ai-config-save" class="button save" data-i18n="save">Save</button>
+                    <button id="ai-config-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                 </div>
             </div>
         </div>
