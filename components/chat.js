@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     botMessageContainer.innerHTML = `
       <div class="chat-avatar bot-avatar">
-       <i class="fas fa-robot"></i>
+        <i class="fas fa-smile"></i>
       </div>
       <div class="chatbox-message">
         <button class="chatbox-copy-btn" title="${
@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
     typingIndicator.className = "chatbox-message-container bot"
     typingIndicator.innerHTML = `
       <div class="chat-avatar bot-avatar">
-       <i class="fas fa-robot"></i>
+        <i class="fas fa-user"></i>
       </div>
       <div class="chatbox-message">
         <div class="typing-indicator">

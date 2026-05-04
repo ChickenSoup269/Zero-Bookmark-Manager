@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.storage.local.get(["showBookmarkIds"], (data) => {
       uiState.showBookmarkIds = data.showBookmarkIds || false
       if (elements.showBookmarkIdsOption) {
-        elements.showBookmarkIdsOption.innerHTML = `<i class="fas fa-fingerprint"></i> ${uiState.showBookmarkIds
+        elements.showBookmarkIdsOption.innerHTML = `<i class="fas fa-eye"></i> ${uiState.showBookmarkIds
           ? translations[savedLanguage].hideBookmarkIds
           : translations[savedLanguage].showBookmarkIds}`
       }
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.showBookmarkIdsOption.addEventListener("click", () => {
         uiState.showBookmarkIds = !uiState.showBookmarkIds
         chrome.storage.local.set({ showBookmarkIds: uiState.showBookmarkIds })
-        elements.showBookmarkIdsOption.innerHTML = `<i class="fas fa-fingerprint"></i> ${uiState.showBookmarkIds
+        elements.showBookmarkIdsOption.innerHTML = `<i class="fas fa-eye"></i> ${uiState.showBookmarkIds
           ? translations[savedLanguage].hideBookmarkIds
           : translations[savedLanguage].showBookmarkIds}`
         getBookmarkTree((bookmarkTreeNodes) => {
