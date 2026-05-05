@@ -876,7 +876,7 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 20000;
 }
 
 .rename-popup-content {
@@ -1305,7 +1305,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 21000;
 }
 
 .enlarged-image {
@@ -2791,4 +2791,128 @@ html {
 #tag-filter-options {
   min-height: 150px;
   align-content: start;
+}
+#custom-popup {
+  z-index: 25000;
+}
+
+/* Help Guide Content Styling */
+#custom-guide .rename-popup-content {
+  max-width: 600px;
+  width: 90%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+#custom-guide-message {
+  max-height: 50vh;
+  overflow-y: auto;
+  margin: 15px 0;
+  padding-right: 10px;
+}
+
+/* Custom Scrollbar for Help Guide */
+#custom-guide-message::-webkit-scrollbar {
+  width: 6px;
+}
+
+#custom-guide-message::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+#custom-guide-message::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 10px;
+  opacity: 0.5;
+}
+
+#custom-guide-message::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+  filter: brightness(1.2);
+}
+
+.guide-intro {
+  margin-bottom: 15px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.guide-section {
+  margin-bottom: 20px;
+}
+
+.guide-section h4 {
+  color: var(--accent-color);
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 3px;
+}
+
+.guide-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.guide-list li {
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.command-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guide-list code {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: #ff9d00;
+  font-family: 'Consolas', monospace;
+  font-size: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.copy-command-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.75rem;
+}
+
+.copy-command-btn:hover {
+  background: var(--accent-color);
+  color: var(--bg-primary);
+  transform: scale(1.1);
+}
+
+.copy-command-btn.copied {
+  background: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.guide-footer {
+  margin-top: 15px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 10px;
 }

@@ -206,58 +206,51 @@ export const translations = {
       </ul>
     `,
     helpGuide: `
-  <h4>Help Guide:</h4>
-  <ol>
-    <li><strong>/help</strong><br>
-      - Show the command list.
-    </li>
-    <li><strong>Count:</strong><br>
-      - <code>"count bookmarks"</code>, <code>"count folders"</code>.
-    </li>
-    <li><strong>List:</strong><br>
-      - <code>"list bookmarks"</code>, <code>"list folders"</code>.<br>
-      - <code>"list bookmarks in folder \"Work\""</code>.<br>
-      - Use <code>@Work</code> to pick a folder.
-    </li>
-    <li><strong>Add Bookmark:</strong><br>
-      - <code>"add https://example.com to folder \"Work\""</code>.
-    </li>
-    <li><strong>Move Bookmark:</strong><br>
-      - <code>"move bookmark \"Title\" to folder \"Work\""</code> or <code>"move bookmark id 123 to folder \"Work\""</code>.
-    </li>
-    <li><strong>Edit Bookmark:</strong><br>
-      - <code>"edit bookmark \"Title\""</code> or <code>"edit bookmark id 123"</code>.
-    </li>
-    <li><strong>Delete Bookmark:</strong><br>
-      - <code>"delete bookmark \"Title\""</code> or <code>"delete bookmark id 123"</code>.
-    </li>
-    <li><strong>Folders:</strong><br>
-      - <code>"create folder \"Work\""</code>, <code>"rename folder \"Old\" to \"New\""</code>, <code>"delete folder \"Work\""</code>.
-    </li>
-    <li><strong>Search:</strong><br>
-      - <code>"search bookmarks \"keyword\""</code>, <code>"search folders \"keyword\""</code>.
-    </li>
-    <li><strong>Favorite:</strong><br>
-      - <code>"favorite bookmark \"Title\""</code>.
-    </li>
-    <li><strong>View Modes:</strong><br>
-      - <code>"change view to flat"</code>, <code>"change view to tree"</code>, <code>"change view to detail"</code>, <code>"change view to card"</code>.<br>
-      - <code>"switch to flat view"</code>, <code>"use tree layout"</code>, <code>"card view"</code>.
-    </li>
-    <li><strong>Theme:</strong><br>
-      - <code>"change theme to light"</code>, <code>"change theme to dark"</code>, <code>"change theme to dracula"</code>, <code>"change theme to onedark"</code>, <code>"change theme to tokyonight"</code>, <code>"change theme to monokai"</code>, <code>"change theme to winter-is-coming"</code>, <code>"change theme to github-blue"</code>, <code>"change theme to github-light"</code>, <code>"change theme to tet"</code>, <code>"change theme to system"</code>.<br>
-      - <code>"use the dracula theme"</code>, <code>"switch to dark mode"</code>, <code>"use tokyo night theme"</code>, <code>"use monokai theme"</code>, <code>"use winter is coming theme"</code>, <code>"use github blue theme"</code>.
-    </li>
-    <li><strong>Sort:</strong><br>
-      - <code>"sort by a-z"</code>, <code>"sort by z-a"</code>, <code>"sort by newest"</code>, <code>"sort by oldest"</code>, <code>"sort by favorites"</code>.
-    </li>
-    <li><strong>Check Links:</strong><br>
-      - <code>"check links"</code>.
-    </li>
-    <li><strong>Note:</strong><br>
-      - Local mode only supports bookmark commands.
-    </li>
-  </ol>
+  <div class="guide-intro">
+    <p>Master your bookmarks with these powerful commands.</p>
+  </div>
+  
+  <div class="guide-section">
+    <h4>General & View</h4>
+    <ul class="guide-list">
+      <li>Show help guide: <code>/help</code></li>
+      <li>Switch view mode: <code>change view to card/list/tree</code></li>
+      <li>Change theme: <code>change theme to dark/dracula/onedark</code></li>
+      <li>Sort items: <code>sort by a-z / newest / oldest</code></li>
+    </ul>
+  </div>
+
+  <div class="guide-section">
+    <h4>Bookmarks</h4>
+    <ul class="guide-list">
+      <li>Add new: <code>add [URL] to "Folder"</code></li>
+      <li>Move: <code>move "Title" to "New Folder"</code></li>
+      <li>Edit: <code>edit bookmark "Title"</code></li>
+      <li>Delete: <code>delete bookmark "Title"</code> or <code>delete id 123</code></li>
+      <li>Toggle favorite: <code>favorite bookmark "Title"</code></li>
+    </ul>
+  </div>
+
+  <div class="guide-section">
+    <h4>Folders</h4>
+    <ul class="guide-list">
+      <li>Create: <code>create folder "News"</code></li>
+      <li>Rename: <code>rename folder "A" to "B"</code></li>
+      <li>Delete: <code>delete folder "News"</code></li>
+      <li>Quick pick: Use <code>@FolderName</code> shortcut</li>
+    </ul>
+  </div>
+
+  <div class="guide-section">
+    <h4>Search & Stats</h4>
+    <ul class="guide-list">
+      <li>Search: <code>search bookmarks "keyword"</code> or <code>search folders "keyword"</code></li>
+      <li>Count: <code>count bookmarks</code> or <code>count folders</code></li>
+      <li>Check for broken links: <code>check links</code></li>
+    </ul>
+  </div>
+  
+  <p class="guide-footer">Note: Local AI mode only supports bookmark management.</p>
 `,
 
     clarifyBookmark:
@@ -569,59 +562,52 @@ export const translations = {
       </ul>
     `,
     helpGuide: `
-        <h4>Huong dan:</h4>
-          <ol>
-            <li><strong>/help</strong><br>
-              - Hiện danh sác lệnh
-            </li>
-            <li><strong>Đếm:</strong><br>
-              - <code>"count bookmarks"</code>, <code>"count folders"</code>.
-            </li>
-            <li><strong>Liệt kê:</strong><br>
-              - <code>"list bookmarks"</code>, <code>"list folders"</code>.<br>
-              - <code>"list bookmarks in folder \"Work\""</code>.<br>
-              - Dung <code>@Work</code> de chon thu muc.
-            </li>
-            <li><strong>Thêm bookmark:</strong><br>
-              - <code>"add https://example.com to folder \"Work\""</code>.
-            </li>
-            <li><strong>Chuyển bookmark:</strong><br>
-              - <code>"move bookmark \"Title\" to folder \"Work\""</code> or <code>"move bookmark id 123 to folder \"Work\""</code>.
-            </li>
-            <li><strong>Sửa bookmark:</strong><br>
-              - <code>"edit bookmark \"Title\""</code> or <code>"edit bookmark id 123"</code>.
-            </li>
-            <li><strong>Xóa bookmark:</strong><br>
-              - <code>"delete bookmark \"Title\""</code> or <code>"delete bookmark id 123"</code>.
-            </li>
-            <li><strong>Thư mục:</strong><br>
-              - <code>"create folder \"Work\""</code>, <code>"rename folder \"Old\" to \"New\""</code>, <code>"delete folder \"Work\""</code>.
-            </li>
-            <li><strong>Tìm kiếm:</strong><br>
-              - <code>"search bookmarks \"keyword\""</code>, <code>"search folders \"keyword\""</code>.
-            </li>
-            <li><strong>Yêu thích:</strong><br>
-              - <code>"favorite bookmark \"Title\""</code>.
-            </li>
-            <li><strong>Che do xem:</strong><br>
-              - <code>"change view to flat"</code>, <code>"change view to tree"</code>, <code>"change view to detail"</code>, <code>"change view to card"</code>.<br>
-              - <code>"switch to flat view"</code>, <code>"use tree layout"</code>, <code>"card view"</code>.
-            </li>
-            <li><strong>Chu de / Theme:</strong><br>
-              - <code>"change theme to light"</code>, <code>"change theme to dark"</code>, <code>"change theme to dracula"</code>, <code>"change theme to onedark"</code>, <code>"change theme to tokyonight"</code>, <code>"change theme to monokai"</code>, <code>"change theme to winter-is-coming"</code>, <code>"change theme to github-blue"</code>, <code>"change theme to github-light"</code>, <code>"change theme to tet"</code>, <code>"change theme to system"</code>.<br>
-              - <code>"use the dracula theme"</code>, <code>"switch to dark mode"</code>, <code>"use tokyo night theme"</code>, <code>"use monokai theme"</code>, <code>"use winter is coming theme"</code>, <code>"use github blue theme"</code>.
-            </li>
-            <li><strong>Sap xep:</strong><br>
-              - <code>"sort by a-z"</code>, <code>"sort by z-a"</code>, <code>"sort by newest"</code>, <code>"sort by oldest"</code>, <code>"sort by favorites"</code>.
-            </li>
-            <li><strong>Kiem tra lien ket:</strong><br>
-              - <code>"check links"</code>.
-            </li>
-            <li><strong>Luu y:</strong><br>
-              - Che do local chi ho tro lenh bookmark.
-            </li>
-          </ol>
-        `,
+  <div class="guide-intro">
+    <p>Làm chủ bookmark của bạn với các lệnh mạnh mẽ dưới đây.</p>
+  </div>
+  
+  <div class="guide-section">
+    <h4>Cài đặt & Giao diện</h4>
+    <ul class="guide-list">
+      <li>Hiện hướng dẫn: <code>/help</code></li>
+      <li>Đổi chế độ xem: <code>change view to card/list/tree</code></li>
+      <li>Đổi chủ đề: <code>change theme to dark/dracula/onedark</code></li>
+      <li>Sắp xếp: <code>sort by a-z / newest / oldest</code></li>
+    </ul>
+  </div>
+
+  <div class="guide-section">
+    <h4>Bookmarks</h4>
+    <ul class="guide-list">
+      <li>Thêm mới: <code>add [URL] to "Thư mục"</code></li>
+      <li>Chuyển: <code>move "Tên" to "Thư mục mới"</code></li>
+      <li>Sửa: <code>edit bookmark "Tên"</code></li>
+      <li>Xóa: <code>delete bookmark "Tên"</code> hoặc <code>delete id 123</code></li>
+      <li>Yêu thích: <code>favorite bookmark "Tên"</code></li>
+    </ul>
+  </div>
+
+  <div class="guide-section">
+    <h4>Thư mục</h4>
+    <ul class="guide-list">
+      <li>Tạo mới: <code>create folder "Tên"</code></li>
+      <li>Đổi tên: <code>rename folder "A" to "B"</code></li>
+      <li>Xóa: <code>delete folder "Tên"</code></li>
+      <li>Chọn nhanh: Sử dụng phím tắt <code>@TênThưMục</code></li>
+    </ul>
+  </div>
+
+  <div class="guide-section">
+    <h4>Tìm kiếm & Thống kê</h4>
+    <ul class="guide-list">
+      <li>Tìm kiếm: <code>search bookmarks "từ khóa"</code></li>
+      <li>Đếm: <code>count bookmarks</code> hoặc <code>count folders</code></li>
+      <li>Kiểm tra link hỏng: <code>check links</code></li>
+    </ul>
+  </div>
+  
+  <p class="guide-footer">Lưu ý: Chế độ AI nội bộ chỉ hỗ trợ các lệnh quản lý bookmark.</p>
+`,
     clarifyBookmark:
       "Tui tìm thấy nhiều bookmark tên '{title}'. Bạn muốn chỉnh sửa cái nào? Hãy cung cấp URL hoặc thư mục.",
     noBookmarks: "Tui không tìm thấy bookmark nào có {0}.",
@@ -1223,6 +1209,34 @@ export function showCustomGuide() {
 
     messageEl.innerHTML = translations[language].helpGuide
 
+    // Add copy buttons to all code elements
+    const codeElements = messageEl.querySelectorAll('code')
+    codeElements.forEach((code) => {
+      const text = code.textContent
+      const wrapper = document.createElement('div')
+      wrapper.className = 'command-wrapper'
+      code.parentNode.insertBefore(wrapper, code)
+      wrapper.appendChild(code)
+
+      const copyBtn = document.createElement('button')
+      copyBtn.className = 'copy-command-btn'
+      copyBtn.innerHTML = '<i class="fas fa-copy"></i>'
+      copyBtn.title = language === 'vi' ? 'Sao chép lệnh' : 'Copy command'
+
+      copyBtn.onclick = (e) => {
+        e.stopPropagation()
+        navigator.clipboard.writeText(text).then(() => {
+          copyBtn.innerHTML = '<i class="fas fa-check"></i>'
+          copyBtn.classList.add('copied')
+          setTimeout(() => {
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i>'
+            copyBtn.classList.remove('copied')
+          }, 2000)
+        })
+      }
+      wrapper.appendChild(copyBtn)
+    })
+
     popup.classList.remove("hidden")
 
     const isDarkMode = document.body.classList.contains("dark-theme")
@@ -1232,27 +1246,18 @@ export function showCustomGuide() {
     const closePopup = () => {
       popup.classList.add("hidden")
       document.removeEventListener("keydown", handleKeydown)
-      document.removeEventListener("click", handleOutsideClick) // Thêm dòng này
     }
 
-    okButton.onclick = () => closePopup()
+    okButton.onclick = (e) => {
+      e.stopPropagation()
+      closePopup()
+    }
 
-    // Trong hàm showCustomGuide, thay thế phần event listener:
-    const handleOutsideClick = (e) => {
-      if (!popup.contains(e.target)) {
+    popup.onclick = (e) => {
+      if (e.target === popup) {
         closePopup()
       }
     }
-
-    // Sử dụng click thay vì mousedown, và thêm một độ trễ nhỏ
-    setTimeout(() => {
-      document.addEventListener("click", handleOutsideClick)
-    }, 100) // 100ms delay
-
-    // Ngăn sự kiện click từ nội dung popup lan ra ngoài
-    popup.addEventListener("click", (e) => {
-      e.stopPropagation()
-    })
 
     const handleKeydown = (e) => {
       if (e.key === "Enter" || e.key === "Escape") {

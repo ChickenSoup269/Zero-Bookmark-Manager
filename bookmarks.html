@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zero Bookmark Manager 1.2.3</title>
+    <title>Zero Bookmark Manager 1.3.0</title>
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="./styles/chat.css">
     <link rel="stylesheet" href="./styles/webview.css">
@@ -595,16 +595,6 @@
                 </div>
             </div>
         </div>
-        <div id="custom-popup" class="rename-popup hidden popup-animate" role="dialog"
-            aria-labelledby="custom-popup-title">
-            <div class="rename-popup-content">
-                <h3 id="custom-popup-title">Notification</h3>
-                <p id="custom-popup-message"></p>
-                <div class="rename-popup-buttons">
-                    <button id="custom-popup-ok" class="button save">OK</button>
-                </div>
-            </div>
-        </div>
 
         <div class="floating-buttons">
             <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
@@ -660,12 +650,14 @@
             </div>
         </div>
 
-        <div id="custom-guide" class="rename-popup custom-guide hidden popup-animate" role="dialog"
+        <div id="custom-guide" class="rename-popup hidden popup-animate" role="dialog"
             aria-labelledby="custom-guide-title">
-            <h3 id="custom-guide-title">Help Guide</h3>
-            <div id="custom-guide-message"></div>
-            <div class="rename-popup-buttons">
-                <button id="custom-guide-ok" class="button save">OK</button>
+            <div class="rename-popup-content">
+                <h3 id="custom-guide-title">Help Guide</h3>
+                <div id="custom-guide-message"></div>
+                <div class="rename-popup-buttons">
+                    <button id="custom-guide-ok" class="button save">OK</button>
+                </div>
             </div>
         </div>
 
@@ -739,6 +731,17 @@
                 <div class="rename-popup-buttons" style="margin-top: 25px;">
                     <button id="ai-config-save" class="button save" data-i18n="save">Save</button>
                     <button id="ai-config-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="custom-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="custom-popup-title">
+            <div class="rename-popup-content">
+                <h3 id="custom-popup-title">Notification</h3>
+                <p id="custom-popup-message"></p>
+                <div class="rename-popup-buttons">
+                    <button id="custom-popup-ok" class="button save">OK</button>
                 </div>
             </div>
         </div>
