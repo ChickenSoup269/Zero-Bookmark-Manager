@@ -644,6 +644,7 @@ export function updateUILanguage(elements, language) {
 
   elements.sortFilter.innerHTML = `
     <option value="default">${t.sortDefault}</option>
+    <option value="new">${t.sortNew}</option>
     <option value="favorites">${t.sortFavorites}</option>
     <option value="most-visited">${t.sortMostVisited || "Most Visited"}</option>
     <option value="old">${t.sortOld}</option>
@@ -2134,6 +2135,98 @@ function handleFolderDrop(
   })
 }
 
+function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
+  el.draggable = true
+
+  el.addEventListener("dragstart", (e) => {
+    e.stopPropagation()
+    e.dataTransfer.setData("text/plain", bookmark.id)
+    currentDragType = "bookmark"
+    e.dataTransfer.effectAllowed = "move"
+    el.classList.add("dragging")
+  })
+
+  el.addEventListener("dragend", (e) => {
+    e.stopPropagation()
+    el.classList.remove("dragging")
+    currentDragType = null
+    document.querySelectorAll('.drop-target-above, .drop-target-below').forEach(node => {
+        node.classList.remove('drop-target-above', 'drop-target-below')
+    })
+  })
+
+  el.addEventListener("dragover", (e) => {
+    if (currentDragType !== "bookmark") return
+    if (uiState.sortType !== "default" || uiState.searchQuery) return
+    e.preventDefault()
+    e.stopPropagation()
+    e.dataTransfer.dropEffect = "move"
+
+    const rect = el.getBoundingClientRect()
+    const midY = rect.top + rect.height / 2
+    if (e.clientY < midY) {
+      el.classList.add('drop-target-above')
+      el.classList.remove('drop-target-below')
+    } else {
+      el.classList.add('drop-target-below')
+      el.classList.remove('drop-target-above')
+    }
+  })
+
+  el.addEventListener("dragleave", (e) => {
+    el.classList.remove('drop-target-above', 'drop-target-below')
+  })
+
+  el.addEventListener("drop", (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    el.classList.remove('drop-target-above', 'drop-target-below')
+
+    if (currentDragType !== "bookmark") return
+    if (uiState.sortType !== "default" || uiState.searchQuery) {
+      showCustomPopup(translations[language].errorUnexpected || "Cannot reorder while sorting or searching", "error", true)
+      return
+    }
+    const draggedId = e.dataTransfer.getData("text/plain")
+    const targetId = bookmark.id
+    if (draggedId === targetId) return
+
+    const rect = el.getBoundingClientRect()
+    const midY = rect.top + rect.height / 2
+    const dropPosition = e.clientY < midY ? "before" : "after"
+
+    chrome.bookmarks.get([draggedId, targetId], (results) => {
+      if (!results || results.length < 2) {
+         showCustomPopup("Could not get bookmarks", "error", true)
+         return
+      }
+      let draggedNode, targetNode
+      if (results[0].id === draggedId) { draggedNode = results[0]; targetNode = results[1] }
+      else { draggedNode = results[1]; targetNode = results[0] }
+
+      let newIndex = targetNode.index
+      if (dropPosition === "after") newIndex++
+      
+      if (draggedNode.parentId === targetNode.parentId && draggedNode.index < targetNode.index) {
+        newIndex--
+      }
+      
+      chrome.bookmarks.move(draggedId, { 
+        parentId: targetNode.parentId, 
+        index: newIndex 
+      }, () => {
+        if (chrome.runtime.lastError) {
+          showCustomPopup(chrome.runtime.lastError.message, "error", true)
+        } else {
+          chrome.bookmarks.getTree((tree) => {
+              renderFilteredBookmarks(tree, elements)
+          })
+        }
+      })
+    })
+  })
+}
+
 function createSimpleBookmarkElement(bookmark, language, elements) {
   const favicon = getFaviconUrl(bookmark.url)
   const div = document.createElement("div")
@@ -2170,6 +2263,7 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
       handleBookmarkLinkClick(bookmark.id, elements),
     )
   attachDropdownToggle(div)
+  makeBookmarkDraggableAndDroppable(div, bookmark, elements, language)
   return div
 }
 
@@ -2221,6 +2315,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
     })
 
   attachDropdownToggle(div)
+  makeBookmarkDraggableAndDroppable(div, bookmark, elements, language)
   return div
 }
 
@@ -2268,6 +2363,7 @@ function createListBookmarkElement(bookmark, language, elements) {
       handleBookmarkLinkClick(bookmark.id, elements),
     )
   attachDropdownToggle(div)
+  makeBookmarkDraggableAndDroppable(div, bookmark, elements, language)
   return div
 }
 
@@ -2594,35 +2690,10 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
   div.className = `bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`
   div.dataset.id = bookmark.id
 
-  // >>> QUAN TRỌNG: Bật tính năng kéo
-  div.draggable = true
-
   // Style layout handled by CSS
   div.style.display = "flex"
   div.style.alignItems = "center"
   div.style.gap = "8px"
-
-  // >>> XỬ LÝ SỰ KIỆN KÉO (DRAG START)
-  div.addEventListener("dragstart", (e) => {
-    e.stopPropagation() // Ngăn sự kiện lan ra ngoài
-
-    // Lưu ID của bookmark đang kéo
-    e.dataTransfer.setData("text/plain", bookmark.id)
-    e.dataTransfer.effectAllowed = "move"
-
-    // Đánh dấu toàn cục là đang kéo bookmark
-    currentDragType = "bookmark"
-
-    // Hiệu ứng mờ đi khi đang kéo (dùng class thay vì inline style)
-    div.classList.add("dragging")
-  })
-
-  // >>> XỬ LÝ KẾT THÚC KÉO (DRAG END)
-  div.addEventListener("dragend", (e) => {
-    e.stopPropagation()
-    div.classList.remove("dragging")
-    currentDragType = null // Reset biến toàn cục
-  })
 
   let hostname = ""
   try {
@@ -2670,6 +2741,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
       handleBookmarkLinkClick(bookmark.id, elements),
     )
   attachDropdownToggle(div)
+  makeBookmarkDraggableAndDroppable(div, bookmark, elements, language)
   return div
 }
 
@@ -2715,6 +2787,7 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
       handleBookmarkLinkClick(bookmark.id, elements),
     )
   attachDropdownToggle(div)
+  makeBookmarkDraggableAndDroppable(div, bookmark, elements, language)
   return div
 }
 
@@ -3387,6 +3460,7 @@ function sortBookmarks(list, type) {
       case "favorites":
         return (b.dateAdded || 0) - (a.dateAdded || 0)
       case "default":
+        return (a.index || 0) - (b.index || 0)
       case "new":
         return (b.dateAdded || 0) - (a.dateAdded || 0)
       case "old":

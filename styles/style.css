@@ -2916,3 +2916,4 @@ html {
   border-top: 1px solid var(--border-color);
   padding-top: 10px;
 }
+\n.drop-target-above { border-top: 2px solid var(--accent-color) !important; }\n.drop-target-below { border-bottom: 2px solid var(--accent-color) !important; }\n

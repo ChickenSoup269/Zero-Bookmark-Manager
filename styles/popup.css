@@ -1148,3 +1148,6 @@
 .list-folder-item .list-bookmark-title-link {
   color: var(--accent-color);
 }
+
+.drop-target-above { border-top: 2px solid var(--accent-color) !important; }
+.drop-target-below { border-bottom: 2px solid var(--accent-color) !important; }

@@ -3198,3 +3198,4 @@ textarea.error {
     display: none !important;
   }
 }
+\n.drop-target-above { border-top: 2px solid var(--accent-color) !important; }\n.drop-target-below { border-bottom: 2px solid var(--accent-color) !important; }\n
