@@ -778,12 +778,59 @@ function reRenderCurrentView(elements) {
   const bookmarks = uiState.bookmarks
   const bookmarkTreeNodes = uiState.bookmarkTree
 
-  // Logic filter lại (copy từ renderFilteredBookmarks nhưng bỏ phần set data)
   let filtered = bookmarks.filter((bookmark) => bookmark.url)
 
-  // ... (Áp dụng lại logic filter search/tag/folder như cũ) ...
-  // Để ngắn gọn, bạn có thể tách logic filter ra hàm riêng.
-  // Ở đây tôi giả định ta gọi lại render view tương ứng:
+  // Apply Health Filter
+  if (uiState.healthFilter && uiState.healthFilter !== "all") {
+    filtered = filtered.filter((bookmark) => {
+      const status = uiState.healthStatus[bookmark.id]
+      if (uiState.healthFilter === "dead") return status === "dead"
+      if (uiState.healthFilter === "suspicious")
+        return status === "alive_suspicious"
+      if (uiState.healthFilter === "safe") return status === "alive_safe"
+      return false
+    })
+  }
+
+  // Apply Tag Filter
+  if (uiState.selectedTags.length > 0) {
+    filtered = filtered.filter((bookmark) =>
+      uiState.selectedTags.some((tag) => bookmark.tags.includes(tag)),
+    )
+  }
+
+  // Apply Favorites Filter (if sorting by favorites)
+  if (uiState.sortType === "favorites") {
+    filtered = filtered.filter((bookmark) => bookmark.isFavorite)
+  }
+
+  // Apply Folder Filter
+  if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
+    filtered = filtered.filter((bookmark) =>
+      isInFolder(bookmark, uiState.selectedFolderId),
+    )
+  }
+
+  // Apply Search Query
+  if (uiState.searchQuery) {
+    const query = uiState.searchQuery.trim()
+    filtered = filtered
+      .map((bookmark) => {
+        const titleScore = calculateMatchScore(bookmark.title || "", query)
+        const urlScore = calculateMatchScore(bookmark.url || "", query)
+        let tagScore = 0
+        if (bookmark.tags && bookmark.tags.length > 0) {
+          for (const tag of bookmark.tags) {
+            tagScore = Math.max(tagScore, calculateMatchScore(tag, query))
+          }
+        }
+        const maxScore = Math.max(titleScore, urlScore, tagScore)
+        return { bookmark, score: maxScore }
+      })
+      .filter(({ score }) => score >= 0.4)
+      .sort((a, b) => b.score - a.score)
+      .map(({ bookmark }) => bookmark)
+  }
 
   if (uiState.viewMode === "tree") {
     // Tree view dùng bookmarkTreeNodes
@@ -793,13 +840,16 @@ function reRenderCurrentView(elements) {
     renderDetailView(filtered, elements)
   } else if (uiState.viewMode === "card") {
     renderCardView(bookmarkTreeNodes, filtered, elements)
+  } else if (uiState.viewMode === "list") {
+    renderListView(filtered, elements)
   } else {
     renderBookmarks(filtered, elements)
   }
 
   // Gắn lại listener
-  attachTreeListeners(elements) // Nếu là tree
-  // ...
+  if (uiState.viewMode === "tree") {
+    attachTreeListeners(elements)
+  }
 }
 
 // Helper: count how many bookmarks each tag is used on
@@ -1229,7 +1279,7 @@ export function updateTheme(elements, theme) {
 }
 
 // Render folder tree in sidebar (Raindrop style)
-function renderSidebarFolderTree(folders) {
+function renderSidebarFolderTree(folders, elements) {
   const treeContainer = document.getElementById("sidebar-folder-tree")
   if (!treeContainer) return
 
@@ -1465,14 +1515,7 @@ function renderSidebarFolderTree(folders) {
 
         // Refresh bookmark tree
         chrome.bookmarks.getTree((tree) => {
-          renderFilteredBookmarks(tree, {
-            folderListDiv: document.getElementById("folder-list"),
-            searchInput: document.getElementById("search"),
-            folderFilter: document.getElementById("folder-filter"),
-            sortFilter: document.getElementById("sort-filter"),
-            viewSwitcher: document.getElementById("view-switcher"),
-            tagFilterContainer: document.getElementById("tag-filter-container"),
-          })
+          renderFilteredBookmarks(tree, elements)
         })
       })
     })
@@ -1527,7 +1570,7 @@ function renderSidebarFolderTree(folders) {
 
         if (action === "move-to-folder") {
           // Call existing move folder popup
-          const elements = {
+          const popupElements = {
             addToFolderPopup: document.getElementById("add-to-folder-popup"),
             addToFolderSelect: document.getElementById("add-to-folder-select"),
             addToFolderSaveButton:
@@ -1537,8 +1580,8 @@ function renderSidebarFolderTree(folders) {
             ),
           }
 
-          if (elements.addToFolderPopup) {
-            showMoveFolderToFolderPopup(elements, folder.id)
+          if (popupElements.addToFolderPopup) {
+            showMoveFolderToFolderPopup(popupElements, folder.id)
           }
         }
 
@@ -1565,8 +1608,8 @@ function renderSidebarFolderTree(folders) {
       const childrenContainer = document.createElement("ul")
       childrenContainer.className = `folder-children${isCollapsed ? " collapsed" : ""}`
       folder.children.forEach((child, index) => {
-        const isLast = index === folder.children.length - 1
-        renderFolder(child, level + 1, childrenContainer, isLast)
+        const isLastChild = index === folder.children.length - 1
+        renderFolder(child, level + 1, childrenContainer, isLastChild)
       })
       parent.appendChild(childrenContainer)
     }
@@ -1651,7 +1694,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       updateBookmarkCount(bookmarks, elements)
 
       // Update sidebar (Raindrop style)
-      renderSidebarFolderTree(folders)
+      renderSidebarFolderTree(folders, elements)
       updateSidebarCounts(bookmarks, favoriteBookmarks)
       updateSidebarActiveState()
 
@@ -1912,7 +1955,35 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     uiState.selectedFolderId !== "0" &&
     folders.some((f) => f.id === uiState.selectedFolderId)
 
-  if (isViewingSpecificFolder) {
+  const isSearching = uiState.searchQuery && uiState.searchQuery.trim() !== ""
+
+  if (isSearching) {
+    // --- VIEW 3: Đang tìm kiếm (Search Results) ---
+    const searchHeader = document.createElement("h3")
+    searchHeader.style.cssText = "margin: 10px; color: var(--text-primary);"
+    searchHeader.textContent = translations[language].searchResults || "Search Results"
+    fragment.appendChild(searchHeader)
+
+    const sortedBookmarks = sortBookmarks(filteredBookmarks, uiState.sortType)
+    sortedBookmarks.forEach((bookmark) => {
+      if (bookmark.url) {
+        const el = createSimpleBookmarkElement(bookmark, language, elements)
+        el.draggable = true
+        el.addEventListener("dragstart", (e) => {
+          e.stopPropagation()
+          e.dataTransfer.setData("text/plain", bookmark.id)
+          currentDragType = "bookmark"
+          e.dataTransfer.effectAllowed = "move"
+          el.classList.add("dragging")
+        })
+        el.addEventListener("dragend", () => {
+          el.classList.remove("dragging")
+          currentDragType = null
+        })
+        fragment.appendChild(el)
+      }
+    })
+  } else if (isViewingSpecificFolder) {
     // --- VIEW 1: Đang xem nội dung 1 Folder cụ thể (Giữ nguyên) ---
     const selectedFolder = findNodeById(
       uiState.selectedFolderId,
@@ -1946,8 +2017,6 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         )
       })
       fragment.appendChild(backButton)
-
-      elements.folderListDiv.classList.remove("card-view")
 
       sortedBookmarks.forEach((bookmark) => {
         if (bookmark.url) {
