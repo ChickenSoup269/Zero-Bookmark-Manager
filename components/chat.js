@@ -212,13 +212,15 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="chat-avatar bot-avatar">
         <i class="fas fa-smile"></i>
       </div>
-      <div class="chatbox-message">
-        <button class="chatbox-copy-btn" title="${
-          t("copyToClipboard") || "Copy"
-        }">
-          <i class="far fa-copy"></i>
-        </button>
-        <div class="message-text">${htmlContent}</div>
+      <div class="message-wrapper">
+        <div class="chatbox-message">
+          <button class="chatbox-copy-btn" title="${
+            t("copyToClipboard") || "Copy"
+          }">
+            <i class="far fa-copy"></i>
+          </button>
+          <div class="message-text">${htmlContent}</div>
+        </div>
         <span class="timestamp">${timestamp}</span>
       </div>
     `
@@ -1021,37 +1023,29 @@ document.addEventListener("DOMContentLoaded", () => {
               if (node.url) {
                 bookmarks.push({
                   title: node.title || node.url,
-
                   url: node.url,
-
                   id: node.id,
                 })
               }
-
               if (node.children) collectBookmarks(node.children)
             })
           }
 
           collectBookmarks(bookmarkTree[0].children)
-
           hideTypingIndicator()
 
           const htmlContent = bookmarks.length
             ? `${
                 t("hereAreYourBookmarks") || "Here are your bookmarks"
               }:<br>${bookmarks
-
-                .map(
-                  (b, index) =>
-                    `<span class="bookmark-item">${
-                      index + 1
-                    }. <img src="https://www.google.com/s2/favicons?domain=${
-                      new URL(b.url).hostname
-                    }" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, new URL(this.parentNode.href||'http://'+this.src).hostname, 'hostname')}else{this.src='./images/default-favicon.png'}"> <a href="${
-                      b.url
-                    }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`,
-                )
-
+                .map((b, index) => {
+                  const bHostname = new URL(b.url).hostname
+                  return `<span class="bookmark-item">${
+                    index + 1
+                  }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, '${bHostname}')}else{this.src='./images/default-favicon.png'}"> <a href="${
+                    b.url
+                  }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
+                })
                 .join("<br>")}`
             : `${t("noBookmarks") || "You don't have any bookmarks yet."}`
 
@@ -1128,16 +1122,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 } '${params.folder}':<br>${bookmarks
 
                   .map(
-                    (b, index) =>
-                      `<span class="bookmark-item">${
+                    (b, index) => {
+                      const bHostname = new URL(b.url).hostname
+                      return `<span class="bookmark-item">${
                         index + 1
-                      }. <img src="https://www.google.com/s2/favicons?domain=${
-                        new URL(b.url).hostname
-                      }" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, new URL(this.parentNode.href||'http://'+this.src).hostname, 'hostname')}else{this.src='./images/default-favicon.png'}"> <a href="${
+                      }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, '${bHostname}')}else{this.src='./images/default-favicon.png'}"> <a href="${
                         b.url
-                      }" target="_blank">${b.title || b.url}</a> (ID: ${
-                        b.id
-                      })</span>`,
+                      }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
+                    },
                   )
 
                   .join("<br>")}`
@@ -1718,20 +1710,14 @@ document.addEventListener("DOMContentLoaded", () => {
             ? `${t("foundBookmarks") || "I found"} ${bookmarks.length} ${
                 t("bookmarksMatching") || "bookmarks matching"
               } '${params.keyword}':<br>${bookmarks
-
-                .map(
-                  (b, index) =>
-                    `<span class="bookmark-item">${
-                      index + 1
-                    }. <img src="https://www.google.com/s2/favicons?domain=${
-                      new URL(b.url).hostname
-                    }" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, new URL(this.parentNode.href||'http://'+this.src).hostname, 'hostname')}else{this.src='./images/default-favicon.png'}"> <a href="${
-                      b.url
-                    }" target="_blank">${b.title || b.url}</a> (ID: ${
-                      b.id
-                    })</span>`,
-                )
-
+                .map((b, index) => {
+                  const bHostname = new URL(b.url).hostname
+                  return `<span class="bookmark-item">${
+                    index + 1
+                  }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, '${bHostname}')}else{this.src='./images/default-favicon.png'}"> <a href="${
+                    b.url
+                  }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
+                })
                 .join("<br>")}`
             : `${
                 t("noBookmarksFoundFor") ||
@@ -1822,24 +1808,20 @@ document.addEventListener("DOMContentLoaded", () => {
           ? `${
               t("suggestWebsite") || "I've suggested the following websites"
             }:<br>${websites
-
-              .map(
-                (site, index) =>
-                  `<span class="bookmark-item">${
-                    index + 1
-                  }. <img src="https://www.google.com/s2/favicons?domain=${
-                    new URL(site.url).hostname
-                  }" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, new URL(this.parentNode.href||'http://'+this.src).hostname, 'hostname')}else{this.src='./images/default-favicon.png'}"> <a href="${
-                    site.url
-                  }" target="_blank">${site.title}</a>: ${
-                    site.description
-                  } <button class="bookmark-btn" data-url="${
-                    site.url
-                  }" data-title="${site.title}" data-folder="Suggested">${
-                    t("addToFolder") || "Bookmark"
-                  }</button></span>`,
-              )
-
+              .map((site, index) => {
+                const sHostname = new URL(site.url).hostname
+                return `<span class="bookmark-item">${
+                  index + 1
+                }. <img src="https://www.google.com/s2/favicons?domain=${sHostname}" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, '${sHostname}')}else{this.src='./images/default-favicon.png'}"> <a href="${
+                  site.url
+                }" target="_blank">${site.title}</a> - ${
+                  site.description
+                } <button class="bookmark-btn" data-url="${
+                  site.url
+                }" data-title="${site.title}" data-folder="Suggested">${
+                  t("addToFolder") || "Bookmark"
+                }</button></span>`
+              })
               .join("<br>")}`
           : `${
               t("noBookmarksFoundFor") ||
@@ -2093,20 +2075,16 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     userMessageContainer.innerHTML = `
-
+      <div class="message-wrapper">
         <div class="chatbox-message">
-
-          ${message} <span class="timestamp">${timestamp}</span>
-
+          ${message}
         </div>
-
-        <div class="chat-avatar">
-
-          <i class="fas fa-user"></i>
-
-        </div>
-
-      `
+        <span class="timestamp">${timestamp}</span>
+      </div>
+      <div class="chat-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+    `
 
     chatMessages.appendChild(userMessageContainer)
 
@@ -2304,6 +2282,38 @@ document.addEventListener("DOMContentLoaded", () => {
     chatHistoryBtn.addEventListener("click", exportChatHistory)
   }
 
+  // --- AI Model Suggestions ---
+  const modelSuggestions = {
+    gemini: [
+      "gemini-2.0-flash",
+      "gemini-2.0-flash-lite-preview-02-05",
+      "gemini-1.5-flash",
+      "gemini-1.5-flash-8b",
+      "gemini-1.5-pro",
+    ],
+    gpt: ["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"],
+  }
+
+  const renderModelSuggestions = (provider) => {
+    const suggestionsContainer = document.getElementById("ai-model-suggestions")
+    if (!suggestionsContainer) return
+
+    suggestionsContainer.innerHTML = ""
+    const models = modelSuggestions[provider] || []
+
+    models.forEach((model) => {
+      const chip = document.createElement("span")
+      chip.className = "model-suggestion-chip"
+      chip.textContent = model
+      chip.addEventListener("click", () => {
+        if (aiModelNameInput) {
+          aiModelNameInput.value = model
+        }
+      })
+      suggestionsContainer.appendChild(chip)
+    })
+  }
+
   // --- AI Config Modal Logic ---
   if (aiSettingsOption) {
     aiSettingsOption.addEventListener("click", async (e) => {
@@ -2312,6 +2322,9 @@ document.addEventListener("DOMContentLoaded", () => {
       aiProviderSelect.value = config.model || "gemini"
       aiApiKeyInput.value = config.apiKey || ""
       aiModelNameInput.value = config.modelName || ""
+
+      // Render suggestions
+      renderModelSuggestions(aiProviderSelect.value)
 
       // Check local availability
       const isLocalAvailable = await checkLocalAiAvailability()
@@ -2334,6 +2347,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (aiApiGroup) {
         aiApiGroup.classList.toggle("hidden", aiProviderSelect.value === "local")
       }
+      renderModelSuggestions(aiProviderSelect.value)
     })
   }
 

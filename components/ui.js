@@ -21,6 +21,25 @@ import { handleDeleteFolder } from "./controller/deleteFolder.js"
 // HELPER FUNCTIONS
 // ==========================================
 
+// Centralized Favicon Error Handling
+window.handleFaviconError = function (img, hostname) {
+  if (!img || img.dataset.fallback === "final") return
+
+  const opt =
+    (window.uiState && window.uiState.faviconOption) ||
+    (typeof uiState !== "undefined" && uiState.faviconOption) ||
+    "auto"
+
+  if (img.dataset.fallback === "hostname" || opt === "hostname") {
+    img.src = "./images/default-favicon.png"
+    img.dataset.fallback = "final"
+  } else {
+    // Nếu đang dùng Google hoặc Auto, fallback sang DuckDuckGo
+    img.src = `https://icons.duckduckgo.com/ip3/${hostname}.ico`
+    img.dataset.fallback = "hostname"
+  }
+}
+
 function getFaviconUrl(url) {
   if (!url) return "./images/default-favicon.png"
   if (url.startsWith("chrome-extension://")) {
@@ -379,7 +398,7 @@ function openWebPreviewModal(bookmark) {
       <div class="modal-header">
         <div style="display:flex;align-items:center;gap:10px;">
           <img src="${favicon}" class="modal-favicon" alt="icon" 
-            ${uiState.faviconOption === "hostname" ? "onerror=\"this.onerror=null;this.src='./images/default-favicon.png'\"" : "onerror=\"this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/" + hostname + ".ico'\""}
+            onerror="window.handleFaviconError(this, '${hostname}')"
           >
           <h3 class="modal-title" title="${bookmark.title}">${
             bookmark.title || bookmark.url
@@ -1808,11 +1827,7 @@ function renderDetailView(bookmarksList, elements) {
   if (!elements || !elements.folderListDiv) return
 
   elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.classList.remove(
-    "tree-view",
-    "card-view",
-    "list-view",
-  )
+  elements.folderListDiv.classList.remove("tree-view", "card-view", "list-view")
   elements.folderListDiv.classList.add("detail-view")
   elements.folderListDiv.appendChild(fragment)
 
@@ -1961,7 +1976,8 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     // --- VIEW 3: Đang tìm kiếm (Search Results) ---
     const searchHeader = document.createElement("h3")
     searchHeader.style.cssText = "margin: 10px; color: var(--text-primary);"
-    searchHeader.textContent = translations[language].searchResults || "Search Results"
+    searchHeader.textContent =
+      translations[language].searchResults || "Search Results"
     fragment.appendChild(searchHeader)
 
     const sortedBookmarks = sortBookmarks(filteredBookmarks, uiState.sortType)
@@ -2219,9 +2235,11 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     e.stopPropagation()
     el.classList.remove("dragging")
     currentDragType = null
-    document.querySelectorAll('.drop-target-above, .drop-target-below').forEach(node => {
-        node.classList.remove('drop-target-above', 'drop-target-below')
-    })
+    document
+      .querySelectorAll(".drop-target-above, .drop-target-below")
+      .forEach((node) => {
+        node.classList.remove("drop-target-above", "drop-target-below")
+      })
   })
 
   el.addEventListener("dragover", (e) => {
@@ -2234,26 +2252,31 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     const rect = el.getBoundingClientRect()
     const midY = rect.top + rect.height / 2
     if (e.clientY < midY) {
-      el.classList.add('drop-target-above')
-      el.classList.remove('drop-target-below')
+      el.classList.add("drop-target-above")
+      el.classList.remove("drop-target-below")
     } else {
-      el.classList.add('drop-target-below')
-      el.classList.remove('drop-target-above')
+      el.classList.add("drop-target-below")
+      el.classList.remove("drop-target-above")
     }
   })
 
   el.addEventListener("dragleave", (e) => {
-    el.classList.remove('drop-target-above', 'drop-target-below')
+    el.classList.remove("drop-target-above", "drop-target-below")
   })
 
   el.addEventListener("drop", (e) => {
     e.preventDefault()
     e.stopPropagation()
-    el.classList.remove('drop-target-above', 'drop-target-below')
+    el.classList.remove("drop-target-above", "drop-target-below")
 
     if (currentDragType !== "bookmark") return
     if (uiState.sortType !== "default" || uiState.searchQuery) {
-      showCustomPopup(translations[language].errorUnexpected || "Cannot reorder while sorting or searching", "error", true)
+      showCustomPopup(
+        translations[language].errorUnexpected ||
+          "Cannot reorder while sorting or searching",
+        "error",
+        true,
+      )
       return
     }
     const draggedId = e.dataTransfer.getData("text/plain")
@@ -2266,32 +2289,44 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
 
     chrome.bookmarks.get([draggedId, targetId], (results) => {
       if (!results || results.length < 2) {
-         showCustomPopup("Could not get bookmarks", "error", true)
-         return
+        showCustomPopup("Could not get bookmarks", "error", true)
+        return
       }
       let draggedNode, targetNode
-      if (results[0].id === draggedId) { draggedNode = results[0]; targetNode = results[1] }
-      else { draggedNode = results[1]; targetNode = results[0] }
+      if (results[0].id === draggedId) {
+        draggedNode = results[0]
+        targetNode = results[1]
+      } else {
+        draggedNode = results[1]
+        targetNode = results[0]
+      }
 
       let newIndex = targetNode.index
       if (dropPosition === "after") newIndex++
-      
-      if (draggedNode.parentId === targetNode.parentId && draggedNode.index < targetNode.index) {
+
+      if (
+        draggedNode.parentId === targetNode.parentId &&
+        draggedNode.index < targetNode.index
+      ) {
         newIndex--
       }
-      
-      chrome.bookmarks.move(draggedId, { 
-        parentId: targetNode.parentId, 
-        index: newIndex 
-      }, () => {
-        if (chrome.runtime.lastError) {
-          showCustomPopup(chrome.runtime.lastError.message, "error", true)
-        } else {
-          chrome.bookmarks.getTree((tree) => {
+
+      chrome.bookmarks.move(
+        draggedId,
+        {
+          parentId: targetNode.parentId,
+          index: newIndex,
+        },
+        () => {
+          if (chrome.runtime.lastError) {
+            showCustomPopup(chrome.runtime.lastError.message, "error", true)
+          } else {
+            chrome.bookmarks.getTree((tree) => {
               renderFilteredBookmarks(tree, elements)
-          })
-        }
-      })
+            })
+          }
+        },
+      )
     })
   })
 }
@@ -2316,7 +2351,7 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
     <div class="bookmark-content">
-      <div class="bookmark-favicon"><img src="${favicon}" alt="icon" onerror="this.onerror=()=>{this.style.display='none'}; this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico';"></div>
+      <div class="bookmark-favicon"><img src="${favicon}" alt="icon" onerror="window.handleFaviconError(this, '${hostname}')"></div>
       <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">${
         bookmark.title || bookmark.url
       }</a>
@@ -2356,7 +2391,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
     <div style="display:flex;align-items:center;gap:12px;">
       <div class="bookmark-favicon" style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:white; display:flex;justify-content:center;align-items:center;">
         <img src="${favicon}" style="width:20px;height:20px;object-fit:contain;" 
-          ${uiState.faviconOption === "hostname" ? "onerror=\"this.onerror=null;this.src='./images/default-favicon.png'\"" : "onerror=\"this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/" + hostname + ".ico'\""}
+          onerror="window.handleFaviconError(this, '${hostname}')"
         >
       </div>
       <a href="${
@@ -2408,7 +2443,7 @@ function createListBookmarkElement(bookmark, language, elements) {
   div.innerHTML = `
     <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(0.9);">
     <div class="bookmark-favicon" style="width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; border-radius: 4px;">
-      <img src="${favicon}" style="width: 14px; height: 14px;" onerror="this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/${hostname}.ico'">
+      <img src="${favicon}" style="width: 14px; height: 14px;" onerror="window.handleFaviconError(this, '${hostname}')">
     </div>
     <div class="list-info-main" style="display: flex; flex-direction: column; gap: 2px; width: 600px; min-width: 0;">
       <a href="${bookmark.url}" target="_blank" class="link list-bookmark-title-link" style="white-space: normal !important; word-break: break-word !important; min-width: 0; display: block;">
@@ -2780,7 +2815,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
     }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
     <div class="bookmark-favicon" style="width: 22px; height: 22px; border-radius: 4px; overflow: hidden; background: white; display: flex; justify-content: center; align-items: center;">
       <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" 
-        ${uiState.faviconOption === "hostname" ? "onerror=\"this.onerror=null;this.src='./images/default-favicon.png'\"" : "onerror=\"this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/" + hostname + ".ico'\""}
+        onerror="window.handleFaviconError(this, '${hostname}')"
       >
     </div>
     <a href="${
@@ -2835,7 +2870,7 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}">
     <img src="${favicon}" alt="fav" class="favicon" 
-      ${uiState.faviconOption === "hostname" ? "onerror=\"this.onerror=null;this.src='./images/default-favicon.png'\"" : "onerror=\"this.onerror=null;this.src='https://icons.duckduckgo.com/ip3/" + hostname + ".ico'\""}
+      onerror="window.handleFaviconError(this, '${hostname}')"
     >
     <a href="${bookmark.url}" target="_blank" class="link">${
       bookmark.title || bookmark.url

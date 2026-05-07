@@ -2916,4 +2916,31 @@ html {
   border-top: 1px solid var(--border-color);
   padding-top: 10px;
 }
-\n.drop-target-above { border-top: 2px solid var(--accent-color) !important; }\n.drop-target-below { border-bottom: 2px solid var(--accent-color) !important; }\n
+\n.drop-target-above { border-top: 2px solid var(--accent-color) !important; }
+.drop-target-below { border-bottom: 2px solid var(--accent-color) !important; }
+
+/* AI Model Suggestions */
+.model-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.model-suggestion-chip {
+  padding: 4px 10px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.model-suggestion-chip:hover {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+\n
