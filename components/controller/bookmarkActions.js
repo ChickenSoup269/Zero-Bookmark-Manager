@@ -300,7 +300,7 @@ async function openManageTagsPopup(bookmarkId) {
   }
 
   // --- Utility inside Manage Tags ---
-  const MAX_TAGS = 8
+  const MAX_TAGS = 10
   const getContrastColor = (hex) => {
     const r = parseInt(hex.substr(1, 2), 16),
       g = parseInt(hex.substr(3, 2), 16),

@@ -664,9 +664,9 @@ export function updateUILanguage(elements, language) {
   elements.sortFilter.innerHTML = `
     <option value="default">${t.sortDefault}</option>
     <option value="new">${t.sortNew}</option>
+    <option value="old">${t.sortOld}</option>
     <option value="favorites">${t.sortFavorites}</option>
     <option value="most-visited">${t.sortMostVisited || "Most Visited"}</option>
-    <option value="old">${t.sortOld}</option>
     <option value="last-opened">${t.sortLastOpened}</option>
     <option value="a-z">${t.sortAZ}</option>
     <option value="z-a">${t.sortZA}</option>
@@ -3572,7 +3572,7 @@ function sortBookmarks(list, type) {
       case "a-z":
         return (a.title || a.url).localeCompare(b.title || b.url)
       case "z-a":
-        return (b.title || b.url).localeCompare(a.title || b.url)
+        return (b.title || b.url).localeCompare(a.title || a.url)
       case "most-visited":
         return (b.accessCount || 0) - (a.accessCount || 0)
       case "domain":
