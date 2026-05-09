@@ -594,6 +594,7 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
+  min-height: 5px; /* Safe placeholder for loading folders */
 }
 
 .sidebar-folder-tree::-webkit-scrollbar {
@@ -1640,7 +1641,7 @@ body.sidebar-style-modern .sidebar-modern {
   align-items: center;
   padding: var(--spacing-md);
   position: relative;
-  min-height: 80px;
+  min-height: 92px; /* Stable height for logo (60px) + padding (32px) */
 }
 
 /* Border slash-1 */
@@ -3194,4 +3195,10 @@ textarea.error {
     display: none !important;
   }
 }
-\n.drop-target-above { border-top: 2px solid var(--accent-color) !important; }\n.drop-target-below { border-bottom: 2px solid var(--accent-color) !important; }\n
+
+.drop-target-above { 
+  border-top: 2px solid var(--accent-color) !important; 
+}
+.drop-target-below { 
+  border-bottom: 2px solid var(--accent-color) !important; 
+}
