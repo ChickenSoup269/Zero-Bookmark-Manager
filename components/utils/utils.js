@@ -140,6 +140,13 @@ export const translations = {
     editAIConfig: "AI Settings",
     closeChat: "Close Chat",
     chatToggle: "Open Chat",
+    reportBug: "Report Bug",
+    reportBugUrl: "https://docs.google.com/forms/d/e/1FAIpQLSfnnh8zLc76qvb_eSzA73a3DYBSv72OCQ34qLZLFZogSMd8fA/viewform?usp=dialog",
+    reportBugConfirm: "You are about to be redirected to the bug report form. Please include the following information in your report to help us fix the issue faster:",
+    browserInfo: "Browser Info",
+    extensionVersion: "Extension Version",
+    continueToForm: "Continue to Form",
+    cancel: "Cancel",
     noChatHistory: "No chat history available",
     loadingChat: "Processing...",
     moveBookmarkSuccess: "Bookmark moved successfully",
@@ -553,6 +560,13 @@ export const translations = {
     editAIConfig: "Cài đặt AI",
     closeChat: "Đóng Chat",
     chatToggle: "Mở Chat",
+    reportBug: "Báo lỗi",
+    reportBugUrl: "https://docs.google.com/forms/d/e/1FAIpQLSeQnSKZycijyQds73GWCo4FT4tV78Hk4-fhkfcsHoI4LAqTww/viewform?usp=dialog",
+    reportBugConfirm: "Bạn sẽ được chuyển hướng đến biểu mẫu báo lỗi. Vui lòng kèm theo các thông tin sau trong báo cáo của bạn để giúp chúng tôi khắc phục sự cố nhanh hơn:",
+    browserInfo: "Thông tin trình duyệt",
+    extensionVersion: "Phiên bản tiện ích",
+    continueToForm: "Tiếp tục đến biểu mẫu",
+    cancel: "Hủy",
     noChatHistory: "Không có lịch sử chat",
     loadingChat: "Đang xử lý...",
     moveBookmarkSuccess: "Đã chuyển bookmark thành công",
@@ -1160,6 +1174,9 @@ export function showCustomPopup(
 
     const closePopup = () => {
       popup.classList.add("hidden")
+      popup.style.display = ""
+      popup.style.opacity = ""
+      popup.style.pointerEvents = ""
       document.removeEventListener("keydown", handleKeydown)
     }
 
@@ -1230,6 +1247,9 @@ export function showCustomConfirm(message, onConfirm, onCancel) {
     }
 
     popup.classList.remove("hidden")
+    popup.style.display = "flex"
+    popup.style.opacity = "1"
+    popup.style.pointerEvents = "auto"
 
     const cancelButton = document.createElement("button")
     cancelButton.className = "button cancel"
@@ -1243,6 +1263,9 @@ export function showCustomConfirm(message, onConfirm, onCancel) {
 
     const closePopup = () => {
       popup.classList.add("hidden")
+      popup.style.display = ""
+      popup.style.opacity = ""
+      popup.style.pointerEvents = ""
       if (buttonsContainer.contains(cancelButton)) {
         buttonsContainer.removeChild(cancelButton)
       }
@@ -1362,6 +1385,9 @@ export function showCustomGuide() {
 
     const closePopup = () => {
       popup.classList.add("hidden")
+      popup.style.display = ""
+      popup.style.opacity = ""
+      popup.style.pointerEvents = ""
       document.removeEventListener("keydown", handleKeydown)
     }
 

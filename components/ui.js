@@ -705,6 +705,12 @@ export function updateUILanguage(elements, language) {
   // Update attributes
   elements.scrollToTopButton.title = t.scrollToTop
   elements.scrollToTopButton.setAttribute("aria-label", t.scrollToTop)
+
+  if (elements.reportBugButton) {
+    elements.reportBugButton.title = t.reportBug
+    elements.reportBugButton.setAttribute("aria-label", t.reportBug)
+  }
+
   elements.clearRenameButton.setAttribute("aria-label", t.clearRenameAria)
   elements.clearSearchButton.setAttribute("aria-label", t.clearSearchAria)
   elements.settingsButton.setAttribute("aria-label", t.settingsButtonAria)

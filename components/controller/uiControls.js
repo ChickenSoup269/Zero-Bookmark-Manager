@@ -1,5 +1,5 @@
 // components/controller/uiControls.js
-import { translations, debounce } from "../utils/utils.js"
+import { translations, debounce, showCustomConfirm } from "../utils/utils.js"
 import {
   getBookmarkTree,
   isInFolder,
@@ -138,6 +138,81 @@ export function setupUIControlListeners(elements) {
   elements.scrollToTopButton.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
   })
+
+  if (elements.reportBugButton) {
+    elements.reportBugButton.addEventListener("click", () => {
+      try {
+        const language = localStorage.getItem("appLanguage") || "en"
+        const t = translations[language] || translations.en
+        const bugUrl = t.reportBugUrl
+        
+        let version = "N/A"
+        try {
+          version = chrome.runtime.getManifest().version
+        } catch (e) {
+          console.warn("Could not get extension version", e)
+        }
+        
+        const userAgent = navigator.userAgent
+
+        const message = `
+          <div class="bug-report-confirm">
+            <p>${t.reportBugConfirm}</p>
+            <div class="bug-info-box">
+              <div class="info-item">
+                <strong>${t.extensionVersion}:</strong> 
+                <code id="bug-version">${version}</code>
+                <button class="copy-btn-mini" data-copy="bug-version" title="Copy"><i class="fas fa-copy"></i></button>
+              </div>
+              <div class="info-item">
+                <strong>${t.browserInfo}:</strong> 
+                <code id="bug-browser">${userAgent}</code>
+                <button class="copy-btn-mini" data-copy="bug-browser" title="Copy"><i class="fas fa-copy"></i></button>
+              </div>
+            </div>
+          </div>
+        `
+
+        if (typeof showCustomConfirm === "function") {
+          showCustomConfirm(
+            message,
+            () => {
+              window.open(bugUrl, "_blank")
+            },
+            () => {}
+          )
+
+          // Add copy functionality to the mini buttons after the modal is shown
+          setTimeout(() => {
+            document.querySelectorAll(".copy-btn-mini").forEach(btn => {
+              btn.onclick = (e) => {
+                e.stopPropagation()
+                const targetId = btn.getAttribute("data-copy")
+                const targetEl = document.getElementById(targetId)
+                if (targetEl) {
+                  const text = targetEl.textContent
+                  navigator.clipboard.writeText(text).then(() => {
+                    const originalIcon = btn.innerHTML
+                    btn.innerHTML = '<i class="fas fa-check"></i>'
+                    setTimeout(() => btn.innerHTML = originalIcon, 2000)
+                  }).catch(err => console.error("Copy failed", err))
+                }
+              }
+            })
+          }, 200)
+        } else {
+          // Fallback if showCustomConfirm is not available
+          window.open(bugUrl, "_blank")
+        }
+      } catch (error) {
+        console.error("Error in reportBugButton listener:", error)
+        // Extreme fallback
+        const language = localStorage.getItem("appLanguage") || "en"
+        const bugUrl = (translations[language] || translations.en).reportBugUrl
+        window.open(bugUrl, "_blank")
+      }
+    })
+  }
 
   window.addEventListener("scroll", () => {
     elements.scrollToTopButton.classList.toggle("hidden", window.scrollY <= 0)

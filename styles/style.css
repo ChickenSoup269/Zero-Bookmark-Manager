@@ -816,9 +816,6 @@ html {
 }
 
 .scroll-to-top {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -830,7 +827,6 @@ html {
   font-size: 1rem;
   box-shadow: var(--shadow-md);
   border: none;
-  z-index: 1000;
 
   animation: fadeScroll linear both;
   animation-timeline: scroll();
@@ -952,7 +948,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000; /* Keep the higher z-index */
+  z-index: 20000; /* Increased to stay above all other elements */
   transition: opacity 0.3s ease;
 }
 

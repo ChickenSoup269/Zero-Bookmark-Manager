@@ -120,6 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     folderListDiv: document.getElementById("folder-list"),
     bookmarkCountDiv: document.getElementById("bookmark-count"),
     scrollToTopButton: document.getElementById("scroll-to-top"),
+    reportBugButton: document.getElementById("report-bug"),
     clearRenameButton: document.getElementById("clear-rename"),
     addToFolderPopup: document.getElementById("add-to-folder-popup"),
     addToFolderSelect: document.getElementById("add-to-folder-select"),
