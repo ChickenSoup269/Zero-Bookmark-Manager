@@ -712,3 +712,153 @@
   border-color: var(--accent-color) !important;
   background: rgba(255, 255, 255, 0.08) !important;
 }
+
+/* === Help Guide & Command List Styles === */
+.command-list-container, .guide-container {
+  padding: 5px;
+  color: var(--text-primary);
+  font-family: var(--font-family, sans-serif);
+}
+
+.command-list-container h4, .guide-header h3 {
+  margin-top: 0;
+  color: var(--accent-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid rgba(var(--accent-color-rgb, 112, 161, 70), 0.2);
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.command-grid, .guide-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Force single column for better readability */
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.command-group, .guide-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+
+.command-group:hover, .guide-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent-color);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.command-group h5, .guide-card h4 {
+  margin: 0 0 10px 0;
+  font-size: 0.95rem;
+  color: var(--accent-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.command-group ul, .guide-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.command-group li, .guide-card li {
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.command-group code, .guide-card code {
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.15);
+  color: var(--accent-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-family-monospace, monospace);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.command-tip, .guide-footer-note {
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
+  border-left: 4px solid var(--accent-color);
+  padding: 10px 15px;
+  border-radius: 4px 12px 12px 4px;
+  font-size: 0.85rem;
+  margin-top: 15px;
+  color: var(--text-primary);
+}
+
+.card-icon {
+  font-size: 1.5rem;
+  color: var(--accent-color);
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+/* Copy Command Button Styles */
+.command-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.copy-command-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+}
+
+.command-wrapper:hover .copy-command-btn {
+  opacity: 1;
+}
+
+.copy-command-btn:hover {
+  color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.copy-command-btn.copied {
+  color: #4caf50;
+}
+
+/* Light Theme Adjustments */
+[data-theme="light"] .command-group, 
+[data-theme="light"] .guide-card {
+  background: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+[data-theme="light"] .command-group:hover, 
+[data-theme="light"] .guide-card:hover {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .command-tip, 
+[data-theme="light"] .guide-footer-note {
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.05);
+}
+
+/* Responsive Grid */
+@media (max-width: 600px) {
+  .command-grid, .guide-grid {
+    grid-template-columns: 1fr;
+  }
+}

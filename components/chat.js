@@ -408,17 +408,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (/(goi y|suggest).*(website|web|site)/i.test(text)) {
-      return { action: "general", reason: "suggest_disabled" }
+      // Let it fall through to AI for better processing
+      return { action: "general" }
     }
 
     if (/(check|kiem tra).*(link|broken|suc khoe|health)/i.test(text)) {
       return { action: "check_links" }
     }
 
+    if (/(change|switch|doi|chuyen).*(view|che do|layout).*(list|detail|card|tree)/i.test(text) || 
+        /(list|detail|card|tree).*(view|che do|layout)/i.test(text) ||
+        /^(list|detail|card|tree)$/i.test(text)) {
+      const viewMatch = text.match(/(list|detail|card|tree)/i)
+      return {
+        action: "change_view",
+        params: { view_mode: viewMatch ? viewMatch[1] : "list" },
+      }
+    }
+
     if (
-      /(doi giao dien|theme|chu de|mau).*(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|system)/i.test(
+      /(doi giao dien|theme|chu de|mau|change theme).*(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|system)/i.test(
         text,
-      )
+      ) || /(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|system).*(theme|giao dien|mau)/i.test(text)
     ) {
       const themeMatch = text.match(
         /(light|dark|dracula|onedark|tokyonight|monokai|winter-is-coming|github-blue|github-light|tet|system)/i,
@@ -429,15 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    if (/(view|che do).*(list|detail|card|tree)/i.test(text)) {
-      const viewMatch = text.match(/(list|detail|card|tree)/i)
-      return {
-        action: "change_view",
-        params: { view_mode: viewMatch ? viewMatch[1] : "list" },
-      }
-    }
-
-    if (/(sort|sap xep)/i.test(text)) {
+    if (/(sort|sap xep).*(a-z|z-a|default|favorites|favorite|most-visited|old|new|last-opened|domain)/i.test(text)) {
       const sortMap = {
         "a-z": "a-z",
         "z-a": "z-a",
@@ -446,15 +449,17 @@ document.addEventListener("DOMContentLoaded", () => {
         favorite: "favorites",
         "most-visited": "most-visited",
         old: "old",
+        new: "new",
+        "newest": "new",
         "last-opened": "last-opened",
         domain: "domain",
       }
       const sortMatch = text.match(
-        /(a-z|z-a|default|favorites|favorite|most-visited|old|last-opened|domain)/i,
+        /(a-z|z-a|default|favorites|favorite|most-visited|old|newest|new|last-opened|domain)/i,
       )
       return {
         action: "change_sort",
-        params: { sort_by: sortMatch ? sortMap[sortMatch[1]] : "default" },
+        params: { sort_by: sortMatch ? sortMap[sortMatch[1]] || "default" : "default" },
       }
     }
 
@@ -2065,12 +2070,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!message) return
 
     const userMessageContainer = document.createElement("div")
-
     userMessageContainer.className = "chatbox-message-container user"
-
     const timestamp = new Date().toLocaleTimeString([], {
       hour: "2-digit",
-
       minute: "2-digit",
     })
 
@@ -2087,19 +2089,17 @@ document.addEventListener("DOMContentLoaded", () => {
     `
 
     chatMessages.appendChild(userMessageContainer)
-
     addToChatHistory("user", message, timestamp)
-
     chatMessages.scrollTop = chatMessages.scrollHeight
 
     chatInput.value = ""
-
     chatInput.style.height = "auto"
 
     showTypingIndicator()
 
     try {
       const result = parseLocalCommand(message)
+      console.log("Local Parser Result:", result)
 
       if (result.action === "help") {
         hideTypingIndicator()
@@ -2108,33 +2108,86 @@ document.addEventListener("DOMContentLoaded", () => {
         return
       }
 
-      if (result.action === "general") {
-        try {
-          const aiResponse = await callAiApi(message, true)
-          appendBotMessage(aiResponse, aiResponse, true)
-        } catch (aiError) {
-          hideTypingIndicator()
+      // If action is NOT general, it's a local command we recognize - handle it immediately
+      if (result.action !== "general") {
+        console.log("Executing local command:", result.action, result.params)
+        await handleBookmarkCommand(result.action, result.params || {})
+        return
+      }
+
+      // If we reach here, it's a "general" action - we need AI or Offline Check
+      const config = getAiConfig()
+      console.log("AI Config Model:", config.model)
+      
+      if (config.model === "none") {
+        hideTypingIndicator()
+        const reply = t("localOnlyNotSupported") || "This command is not supported in Offline Mode. Please enable an AI provider for advanced tasks."
+        appendBotMessage(reply, reply)
+        return
+      }
+
+      try {
+        // Special case for suggestions which use AI to generate data then call handleBookmarkCommand
+        const isSuggest = /(goi y|suggest).*(website|web|site)/i.test(normalizeText(message))
+        
+        if (isSuggest) {
+          const classificationResponse = await callAiApi(message, false)
+          let classification
+          try {
+            classification = JSON.parse(classificationResponse)
+          } catch (e) {
+            classification = { action: "general" }
+          }
+
+          if (classification.action && classification.action !== "general") {
+            await handleBookmarkCommand(classification.action, classification.params || {})
+            return
+          }
+        }
+
+        const aiResponse = await callAiApi(message, true)
+        appendBotMessage(aiResponse, aiResponse, true)
+      } catch (aiError) {
+        hideTypingIndicator()
+        
+        const errorMsg = aiError.message || ""
+        const isProviderError = errorMsg.includes("chrome://flags") || 
+                               errorMsg.includes("API Key") || 
+                               errorMsg.includes("model") ||
+                               errorMsg.includes("fetch")
+
+        if (isProviderError) {
+          appendBotMessage(
+            `<div class="error-container">
+              <p><strong><i class="fas fa-exclamation-triangle"></i> ${t("errorTitle") || "AI Error"}:</strong></p>
+              <p>${errorMsg}</p>
+              ${errorMsg.includes("chrome://flags") ? `<button class="button info-btn" id="fix-ai-btn" style="margin-top:10px; font-size:0.8rem;">${t("learnHowToEnable") || "How to fix"}</button>` : ""}
+            </div>`,
+            errorMsg
+          )
+          
+          setTimeout(() => {
+            const btn = document.getElementById("fix-ai-btn")
+            if (btn) btn.onclick = () => {
+              const steps = t("localAiGuideSteps") || "Instructions..."
+              showCustomPopup(steps, "info", false)
+            }
+          }, 100)
+        } else {
           const reply =
             t("notSupported") ||
             "I can only help with bookmark-related tasks or simple questions."
           appendBotMessage(
-            `${reply}<br><br><small style="opacity:0.6">${aiError.message}</small>`,
+            `${reply}<br><br><small style="opacity:0.6">${errorMsg}</small>`,
             reply,
           )
         }
-        return
       }
-
-      await handleBookmarkCommand(result.action, result.params || {})
     } catch (error) {
       hideTypingIndicator()
-
       appendBotMessage(
-        `<span class="error-text">${t("errorTitle") || "Oops"}: ${
-          error.message
-        }</span>`,
-
-        `${t("errorTitle") || "Oops"}: ${error.message}`,
+        `<span class="error-text">${t("errorTitle") || "Oops"}: ${error.message}</span>`,
+        `${t("errorTitle") || "Oops"}: ${error.message}`
       )
     }
   }
@@ -2329,12 +2382,18 @@ document.addEventListener("DOMContentLoaded", () => {
       // Check local availability
       const isLocalAvailable = await checkLocalAiAvailability()
       if (aiLocalWarning) {
-        aiLocalWarning.classList.toggle("hidden", isLocalAvailable)
+        aiLocalWarning.classList.toggle("hidden", isLocalAvailable || aiProviderSelect.value !== "local")
+      }
+
+      // Handle experimental note visibility
+      const expNote = document.getElementById("local-ai-experimental-note")
+      if (expNote) {
+        expNote.classList.toggle("hidden", aiProviderSelect.value !== "local")
       }
 
       // Toggle API group based on provider
       if (aiApiGroup) {
-        aiApiGroup.classList.toggle("hidden", aiProviderSelect.value === "local")
+        aiApiGroup.classList.toggle("hidden", aiProviderSelect.value === "local" || aiProviderSelect.value === "none")
       }
 
       aiConfigPopup.classList.remove("hidden")
@@ -2344,9 +2403,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (aiProviderSelect) {
     aiProviderSelect.addEventListener("change", () => {
+      const isApiProvider = aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none"
       if (aiApiGroup) {
-        aiApiGroup.classList.toggle("hidden", aiProviderSelect.value === "local")
+        aiApiGroup.classList.toggle("hidden", !isApiProvider)
       }
+      
+      const expNote = document.getElementById("local-ai-experimental-note")
+      if (expNote) {
+        expNote.classList.toggle("hidden", aiProviderSelect.value !== "local")
+      }
+
+      if (aiLocalWarning) {
+        checkLocalAiAvailability().then(isAvailable => {
+          aiLocalWarning.classList.toggle("hidden", isAvailable || aiProviderSelect.value !== "local")
+        })
+      }
+
       renderModelSuggestions(aiProviderSelect.value)
     })
   }
@@ -2357,7 +2429,7 @@ document.addEventListener("DOMContentLoaded", () => {
         aiProviderSelect.value,
         aiApiKeyInput.value,
         aiModelNameInput.value,
-        aiProviderSelect.value !== "local",
+        aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none",
       )
       aiConfigPopup.classList.add("hidden")
       showCustomPopup(

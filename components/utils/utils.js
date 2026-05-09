@@ -118,7 +118,11 @@ export const translations = {
     apiKeyLabel: "API Key",
     getApiKey: "Get API Key",
     modelLabel: "Model Name",
-    aiLocalOption: "Chrome Local (Gemini Nano)",
+    aiLocalOption: "Chrome Built-in AI (Experimental)",
+    localAiExperimentalNote: "Note: This is an experimental Chrome feature and may not be available in all browsers or regions (like Vietnam).",
+    localOnlyOption: "Offline Mode (No AI)",
+    localOnlyDescription: "No AI provider needed. Supports basic commands only.",
+    localOnlyNotSupported: "This command is not supported in Offline Mode. Please enable an AI provider for advanced tasks.",
     localGeminiNotAvailable: "Chrome Built-in AI is not available. Please enable it in chrome://flags.",
     learnHowToEnable: "Learn how to enable",
     localAiGuideTitle: "How to Enable Chrome Built-in AI",
@@ -140,6 +144,9 @@ export const translations = {
     loadingChat: "Processing...",
     moveBookmarkSuccess: "Bookmark moved successfully",
     moveBookmarkError: "Bookmark not found or invalid folder",
+    duplicateFolderError: "A folder with this name already exists or is invalid.",
+    renameError: "Failed to rename folder. Please try again.",
+    suggestWebsite: "I've suggested the following websites",
     searchFolderResult: "Found folders",
     noFoldersFound: "No folders found for",
     aiBookmarkResponse: "AI Response",
@@ -177,80 +184,68 @@ export const translations = {
     checkingLinks:
       "Started checking for broken links. Results will appear in the UI.",
     helpCommands: `
-      <h4>Command List</h4>
-      <ul>
-        <li><strong>/help</strong> - Show this list</li>
-        <li><strong>count bookmarks</strong> - Count bookmarks</li>
-        <li><strong>count folders</strong> - Count folders</li>
-        <li><strong>list bookmarks</strong> - List all bookmarks</li>
-        <li><strong>list folders</strong> - List all folders</li>
-        <li><strong>list bookmarks in folder "Work"</strong></li>
-        <li><strong>use @Work to pick a folder</strong></li>
-        <li><strong>add https://example.com to folder "Work"</strong></li>
-        <li><strong>move bookmark "Title" to folder "Work"</strong></li>
-        <li><strong>edit bookmark "Title"</strong></li>
-        <li><strong>delete bookmark "Title"</strong></li>
-        <li><strong>create folder "Work"</strong></li>
-        <li><strong>rename folder "Old" to "New"</strong></li>
-        <li><strong>delete folder "Work"</strong></li>
-        <li><strong>search bookmarks "keyword"</strong></li>
-        <li><strong>search folders "keyword"</strong></li>
-        <li><strong>favorite bookmark "Title"</strong></li>
-        <li><strong>change view to flat/tree/detail/card</strong></li>
-        <li><strong>switch to flat view</strong></li>
-        <li><strong>change theme to light/dark/dracula/onedark/tokyonight/monokai/winter-is-coming/github-blue/github-light/tet/system</strong></li>
-        <li><strong>use the dracula theme</strong></li>
-        <li><strong>switch to dark mode</strong></li>
-        <li><strong>sort by a-z</strong></li>
-        <li><strong>check links</strong></li>
-      </ul>
+      <div class="command-list-container">
+        <h4><i class="fas fa-terminal"></i> Command List / Danh sách lệnh</h4>
+        <div class="command-grid">
+          <div class="command-group">
+            <h5><i class="fas fa-bookmark"></i> Local Commands (No AI needed)</h5>
+            <ul>
+              <li><code>count bookmarks</code> - Total count</li>
+              <li><code>list bookmarks</code> - Show all</li>
+              <li><code>change view to card/list/tree</code> - Layout</li>
+              <li><code>change theme to dracula/dark</code> - Theme</li>
+              <li><code>sort by a-z/newest/domain</code> - Sorting</li>
+              <li><code>/help</code> - Show this guide</li>
+            </ul>
+          </div>
+          <div class="command-group">
+            <h5><i class="fas fa-magic"></i> AI Powered (Requires Provider)</h5>
+            <ul>
+              <li><code>add https://google.com</code> - Auto title/folder</li>
+              <li><code>suggest websites about "Design"</code> - Discovery</li>
+              <li><code>move "Title" to @FolderName</code> - Smart move</li>
+              <li><code>General questions</code> - "What is React?"</li>
+            </ul>
+          </div>
+        </div>
+        <p class="command-tip"><em>Tip: Switch to <strong>Offline Mode</strong> in AI Settings to use only local commands without an API Key!</em></p>
+      </div>
     `,
     helpGuide: `
-  <div class="guide-intro">
-    <p>Master your bookmarks with these powerful commands.</p>
-  </div>
-  
-  <div class="guide-section">
-    <h4>General & View</h4>
-    <ul class="guide-list">
-      <li>Show help guide: <code>/help</code></li>
-      <li>Switch view mode: <code>change view to card/list/tree</code></li>
-      <li>Change theme: <code>change theme to dark/dracula/onedark</code></li>
-      <li>Sort items: <code>sort by a-z / newest / oldest</code></li>
-    </ul>
-  </div>
+  <div class="guide-container">
+    <div class="guide-header">
+      <h3><i class="fas fa-book-open"></i> Bookmark Master Guide</h3>
+      <p>Control your bookmarks using natural language. Choose between <strong>Offline Mode</strong> or <strong>AI Powered</strong>.</p>
+    </div>
+    
+    <div class="guide-grid">
+      <div class="guide-card">
+        <div class="card-icon"><i class="fas fa-wifi-slash"></i></div>
+        <h4>Offline Mode (Basic)</h4>
+        <p>No API key required. Perfect for simple management.</p>
+        <ul>
+          <li><strong>Navigation:</strong> <code>switch to tree view</code>, <code>list folders</code>.</li>
+          <li><strong>Customization:</strong> <code>use dracula theme</code>, <code>sort by a-z</code>.</li>
+          <li><strong>Stats:</strong> <code>count bookmarks</code>, <code>how many folders?</code>.</li>
+        </ul>
+      </div>
 
-  <div class="guide-section">
-    <h4>Bookmarks</h4>
-    <ul class="guide-list">
-      <li>Add new: <code>add [URL] to "Folder"</code></li>
-      <li>Move: <code>move "Title" to "New Folder"</code></li>
-      <li>Edit: <code>edit bookmark "Title"</code></li>
-      <li>Delete: <code>delete bookmark "Title"</code> or <code>delete id 123</code></li>
-      <li>Toggle favorite: <code>favorite bookmark "Title"</code></li>
-    </ul>
+      <div class="guide-card">
+        <div class="card-icon"><i class="fas fa-robot"></i></div>
+        <h4>AI Mode (Advanced)</h4>
+        <p>Requires Gemini or GPT API. Unlocks smart features.</p>
+        <ul>
+          <li><strong>Smart Add:</strong> Paste any link to auto-organize.</li>
+          <li><strong>Discovery:</strong> <code>suggest websites for learning Python</code>.</li>
+          <li><strong>Conversation:</strong> Chat about anything beyond bookmarks.</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="guide-footer-note">
+      <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> Chrome's Built-in AI is experimental and may not be available in all regions. Use an API Key for the most stable experience.</p>
+    </div>
   </div>
-
-  <div class="guide-section">
-    <h4>Folders</h4>
-    <ul class="guide-list">
-      <li>Create: <code>create folder "News"</code></li>
-      <li>Rename: <code>rename folder "A" to "B"</code></li>
-      <li>Delete: <code>delete folder "News"</code></li>
-      <li>Quick pick: Use <code>@FolderName</code> shortcut</li>
-    </ul>
-  </div>
-
-  <div class="guide-section">
-    <h4>Search & Stats</h4>
-    <ul class="guide-list">
-      <li>Search: <code>search bookmarks "keyword"</code> or <code>search folders "keyword"</code></li>
-      <li>Count: <code>count bookmarks</code> or <code>count folders</code></li>
-      <li>Check for broken links: <code>check links</code></li>
-    </ul>
-  </div>
-  
-  <p class="guide-footer">Note: Local AI mode only supports bookmark management.</p>
 `,
 
     clarifyBookmark:
@@ -472,7 +467,11 @@ export const translations = {
     apiKeyLabel: "Khóa API",
     getApiKey: "Lấy Khóa API",
     modelLabel: "Tên Model",
-    aiLocalOption: "Gemini Nội bộ (Chrome)",
+    aiLocalOption: "AI Tích hợp Trình duyệt (Thử nghiệm)",
+    localAiExperimentalNote: "Lưu ý: Đây là tính năng thử nghiệm của Chrome và có thể không khả dụng ở một số trình duyệt hoặc khu vực (như Việt Nam).",
+    localOnlyOption: "Chế độ Ngoại tuyến (Không AI)",
+    localOnlyDescription: "Không cần nhà cung cấp AI. Chỉ hỗ trợ các lệnh cơ bản.",
+    localOnlyNotSupported: "Lệnh này không được hỗ trợ trong Chế độ Ngoại tuyến. Vui lòng bật AI để thực hiện các tác vụ nâng cao.",
     localGeminiNotAvailable: "Gemini nội bộ không khả dụng. Vui lòng bật nó trong chrome://flags.",
     learnHowToEnable: "Hướng dẫn kích hoạt",
     localAiGuideTitle: "Cách kích hoạt Gemini nội bộ trong Chrome",
@@ -494,6 +493,9 @@ export const translations = {
     loadingChat: "Đang xử lý...",
     moveBookmarkSuccess: "Đã chuyển bookmark thành công",
     moveBookmarkError: "Không tìm thấy bookmark hoặc thư mục không hợp lệ",
+    duplicateFolderError: "Thư mục với tên này đã tồn tại hoặc không hợp lệ.",
+    renameError: "Không thể đổi tên thư mục. Vui lòng thử lại.",
+    suggestWebsite: "Tôi đã gợi ý các website sau đây",
     searchFolderResult: "Các thư mục tìm thấy",
     noFoldersFound: "Không tìm thấy thư mục cho",
     aiBookmarkResponse: "Phản hồi AI",
@@ -532,81 +534,100 @@ export const translations = {
     checkingLinks:
       "Đã bắt đầu kiểm tra các liên kết hỏng. Kết quả sẽ hiển thị trên giao diện.",
     helpCommands: `
-      <h4>Danh sach lenh</h4>
-      <ul>
-        <li><strong>/help</strong> - Show this list</li>
-        <li><strong>count bookmarks</strong> - Count bookmarks</li>
-        <li><strong>count folders</strong> - Count folders</li>
-        <li><strong>list bookmarks</strong> - List all bookmarks</li>
-        <li><strong>list folders</strong> - List all folders</li>
-        <li><strong>list bookmarks in folder "Work"</strong></li>
-        <li><strong>use @Work to pick a folder</strong></li>
-        <li><strong>add https://example.com to folder "Work"</strong></li>
-        <li><strong>move bookmark "Title" to folder "Work"</strong></li>
-        <li><strong>edit bookmark "Title"</strong></li>
-        <li><strong>delete bookmark "Title"</strong></li>
-        <li><strong>create folder "Work"</strong></li>
-        <li><strong>rename folder "Old" to "New"</strong></li>
-        <li><strong>delete folder "Work"</strong></li>
-        <li><strong>search bookmarks "keyword"</strong></li>
-        <li><strong>search folders "keyword"</strong></li>
-        <li><strong>favorite bookmark "Title"</strong></li>
-        <li><strong>change view to flat/tree/detail/card</strong></li>
-        <li><strong>switch to flat view</strong></li>
-        <li><strong>use tree layout</strong></li>
-        <li><strong>change theme to light/dark/dracula/onedark/tokyonight/monokai/winter-is-coming/github-blue/github-light/tet/system</strong></li>
-        <li><strong>use the dracula theme</strong></li>
-        <li><strong>switch to dark mode</strong></li>
-        <li><strong>sort by a-z</strong></li>
-        <li><strong>check links</strong></li>
-      </ul>
+      <div class="command-list-container">
+        <h4><i class="fas fa-terminal"></i> Danh sách lệnh</h4>
+        <div class="command-grid">
+          <div class="command-group">
+            <h5><i class="fas fa-bookmark"></i> Bookmarks</h5>
+            <ul>
+              <li><code>đếm bookmark</code> - Đếm tổng số dấu trang</li>
+              <li><code>liệt kê bookmark</code> - Xem tất cả bookmark</li>
+              <li><code>thêm https://google.com vào "Công việc"</code> - Thêm mới</li>
+              <li><code>chuyển "Tiêu đề" sang "Cá nhân"</code> - Di chuyển</li>
+              <li><code>sửa bookmark "Tên cũ"</code> - Đổi tên/Sửa</li>
+              <li><code>xóa bookmark "Tiêu đề"</code> - Xóa bỏ</li>
+              <li><code>yêu thích bookmark "Tiêu đề"</code> - Thêm vào yêu thích</li>
+            </ul>
+          </div>
+          <div class="command-group">
+            <h5><i class="fas fa-folder"></i> Thư mục</h5>
+            <ul>
+              <li><code>đếm thư mục</code> - Đếm tổng số thư mục</li>
+              <li><code>liệt kê thư mục</code> - Hiển thị cây thư mục</li>
+              <li><code>tạo thư mục "Dự án"</code> - Tạo mới</li>
+              <li><code>đổi tên thư mục "Cũ" thành "Mới"</code> - Đổi tên</li>
+              <li><code>xóa thư mục "Tạm"</code> - Xóa toàn bộ cây</li>
+              <li><code>liệt kê bookmark trong "Nghiên cứu"</code> - Nội dung thư mục</li>
+            </ul>
+          </div>
+          <div class="command-group">
+            <h5><i class="fas fa-magic"></i> Giao diện & Công cụ</h5>
+            <ul>
+              <li><code>đổi chế độ xem sang card/list/tree</code> - Bố cục</li>
+              <li><code>đổi giao diện sang dracula/dark</code> - Chủ đề</li>
+              <li><code>sắp xếp theo a-z/mới nhất/truy cập nhiều</code> - Thứ tự</li>
+              <li><code>kiểm tra liên kết</code> - Kiểm tra sức khỏe link</li>
+              <li><code>tìm bookmark "tin tức"</code> - Tìm kiếm nhanh</li>
+            </ul>
+          </div>
+        </div>
+        <p class="command-tip"><em>Mẹo: Sử dụng <strong>@TenThuMuc</strong> để nhắc nhanh đến một thư mục!</em></p>
+      </div>
     `,
     helpGuide: `
-  <div class="guide-intro">
-    <p>Làm chủ bookmark của bạn với các lệnh mạnh mẽ dưới đây.</p>
-  </div>
-  
-  <div class="guide-section">
-    <h4>Cài đặt & Giao diện</h4>
-    <ul class="guide-list">
-      <li>Hiện hướng dẫn: <code>/help</code></li>
-      <li>Đổi chế độ xem: <code>change view to card/list/tree</code></li>
-      <li>Đổi chủ đề: <code>change theme to dark/dracula/onedark</code></li>
-      <li>Sắp xếp: <code>sort by a-z / newest / oldest</code></li>
-    </ul>
-  </div>
+  <div class="guide-container">
+    <div class="guide-header">
+      <h3><i class="fas fa-book-open"></i> Hướng Dẫn Sử Dụng Bookmark</h3>
+      <p>Quản lý bookmark của bạn bằng ngôn ngữ tự nhiên. Dưới đây là cách để tận dụng tối đa Zero Bookmark Manager.</p>
+    </div>
+    
+    <div class="guide-grid">
+      <div class="guide-card">
+        <div class="card-icon"><i class="fas fa-layer-group"></i></div>
+        <h4>Chế độ xem & Giao diện</h4>
+        <ul>
+          <li><strong>Bố cục:</strong> Thử <code>đổi chế độ xem sang card</code>, <code>list</code>, hoặc <code>tree</code>.</li>
+          <li><strong>Chủ đề:</strong> <code>đổi giao diện sang dracula</code>, <code>onedark</code>, <code>tokyonight</code>, hoặc <code>light</code>.</li>
+          <li><strong>Sắp xếp:</strong> <code>sắp xếp theo a-z</code>, <code>truy cập nhiều</code>, hoặc <code>mới nhất</code>.</li>
+        </ul>
+      </div>
 
-  <div class="guide-section">
-    <h4>Bookmarks</h4>
-    <ul class="guide-list">
-      <li>Thêm mới: <code>add [URL] to "Thư mục"</code></li>
-      <li>Chuyển: <code>move "Tên" to "Thư mục mới"</code></li>
-      <li>Sửa: <code>edit bookmark "Tên"</code></li>
-      <li>Xóa: <code>delete bookmark "Tên"</code> hoặc <code>delete id 123</code></li>
-      <li>Yêu thích: <code>favorite bookmark "Tên"</code></li>
-    </ul>
-  </div>
+      <div class="guide-card">
+        <div class="card-icon"><i class="fas fa-star"></i></div>
+        <h4>Quản lý Thông minh</h4>
+        <ul>
+          <li><strong>Thêm:</strong> Chỉ cần dán URL như <code>thêm https://github.com</code>.</li>
+          <li><strong>Di chuyển nhanh:</strong> <code>chuyển "React Docs" sang @Coding</code>.</li>
+          <li><strong>Yêu thích:</strong> <code>yêu thích "My Blog"</code> để ghim nó.</li>
+          <li><strong>Dọn dẹp:</strong> <code>kiểm tra liên kết</code> để tìm link hỏng.</li>
+        </ul>
+      </div>
 
-  <div class="guide-section">
-    <h4>Thư mục</h4>
-    <ul class="guide-list">
-      <li>Tạo mới: <code>create folder "Tên"</code></li>
-      <li>Đổi tên: <code>rename folder "A" to "B"</code></li>
-      <li>Xóa: <code>delete folder "Tên"</code></li>
-      <li>Chọn nhanh: Sử dụng phím tắt <code>@TênThưMục</code></li>
-    </ul>
-  </div>
+      <div class="guide-card">
+        <div class="card-icon"><i class="fas fa-folder-plus"></i></div>
+        <h4>Thư mục</h4>
+        <ul>
+          <li><strong>Tổ chức:</strong> <code>tạo thư mục "Nghiên cứu"</code>.</li>
+          <li><strong>Xem nhanh:</strong> <code>liệt kê bookmark trong "Tài chính"</code>.</li>
+          <li><strong>Đổi tên:</strong> <code>đổi tên thư mục "Linh tinh" thành "Hộp thư"</code>.</li>
+        </ul>
+      </div>
 
-  <div class="guide-section">
-    <h4>Tìm kiếm & Thống kê</h4>
-    <ul class="guide-list">
-      <li>Tìm kiếm: <code>search bookmarks "từ khóa"</code></li>
-      <li>Đếm: <code>count bookmarks</code> hoặc <code>count folders</code></li>
-      <li>Kiểm tra link hỏng: <code>check links</code></li>
-    </ul>
+      <div class="guide-card">
+        <div class="card-icon"><i class="fas fa-search"></i></div>
+        <h4>Khám phá</h4>
+        <ul>
+          <li><strong>Tìm kiếm:</strong> <code>tìm bookmark "python"</code>.</li>
+          <li><strong>Thư mục:</strong> <code>tìm thư mục "công việc"</code>.</li>
+          <li><strong>Thống kê:</strong> <code>tôi có bao nhiêu bookmark?</code>.</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="guide-footer-note">
+      <p><i class="fas fa-info-circle"></i> <strong>Mẹo chuyên gia:</strong> Bạn cũng có thể đặt các câu hỏi chung! "JavaScript là gì?" hoặc "Kể một câu chuyện cười."</p>
+    </div>
   </div>
-  
-  <p class="guide-footer">Lưu ý: Chế độ AI nội bộ chỉ hỗ trợ các lệnh quản lý bookmark.</p>
 `,
     clarifyBookmark:
       "Tui tìm thấy nhiều bookmark tên '{title}'. Bạn muốn chỉnh sửa cái nào? Hãy cung cấp URL hoặc thư mục.",

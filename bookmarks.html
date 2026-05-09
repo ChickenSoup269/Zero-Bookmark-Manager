@@ -693,8 +693,12 @@
                     <select id="ai-provider-select" class="select" style="width: 100%;">
                         <option value="gemini">Gemini API</option>
                         <option value="gpt">OpenAI (GPT)</option>
-                        <option value="local" data-i18n="aiLocalOption">Chrome Local (Gemini Nano)</option>
+                        <option value="local" data-i18n="aiLocalOption">Chrome Built-in AI (Experimental)</option>
+                        <option value="none" data-i18n="localOnlyOption">Offline Mode (No AI)</option>
                     </select>
+                    <p id="local-ai-experimental-note" class="experimental-note hidden" data-i18n="localAiExperimentalNote" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; font-style: italic; line-height: 1.3;">
+                        Note: This is an experimental Chrome feature and may not be available in all browsers or regions (like Vietnam).
+                    </p>
                 </div>
                 <div id="ai-api-group">
                     <div class="form-section" style="margin-top: 15px;">
