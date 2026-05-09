@@ -184,66 +184,130 @@ export const translations = {
     checkingLinks:
       "Started checking for broken links. Results will appear in the UI.",
     helpCommands: `
-      <div class="command-list-container">
-        <h4><i class="fas fa-terminal"></i> Command List / Danh sách lệnh</h4>
-        <div class="command-grid">
-          <div class="command-group">
-            <h5><i class="fas fa-bookmark"></i> Local Commands (No AI needed)</h5>
-            <ul>
-              <li><code>count bookmarks</code> - Total count</li>
-              <li><code>list bookmarks</code> - Show all</li>
-              <li><code>change view to card/list/tree</code> - Layout</li>
-              <li><code>change theme to dracula/dark</code> - Theme</li>
-              <li><code>sort by a-z/newest/domain</code> - Sorting</li>
-              <li><code>/help</code> - Show this guide</li>
-            </ul>
-          </div>
-          <div class="command-group">
-            <h5><i class="fas fa-magic"></i> AI Powered (Requires Provider)</h5>
-            <ul>
-              <li><code>add https://google.com</code> - Auto title/folder</li>
-              <li><code>suggest websites about "Design"</code> - Discovery</li>
-              <li><code>move "Title" to @FolderName</code> - Smart move</li>
-              <li><code>General questions</code> - "What is React?"</li>
-            </ul>
-          </div>
-        </div>
-        <p class="command-tip"><em>Tip: Switch to <strong>Offline Mode</strong> in AI Settings to use only local commands without an API Key!</em></p>
+      <div class="chat-help-list">
+        <p><strong>Available Commands:</strong></p>
+        <p>• <code>list bookmarks</code> / <code>count</code></p>
+        <p>• <code>search bookmark "keyword"</code></p>
+        <p>• <code>create folder "Name"</code></p>
+        <p>• <code>rename folder "Old" to "New"</code></p>
+        <p>• <code>move "Title" to @Folder</code></p>
+        <p>• <code>favorite "Title"</code> / <code>delete id [ID]</code></p>
+        <p>• <code>view [card/list/tree/detail]</code></p>
+        <p>• <code>theme [dark/dracula/light/...]</code></p>
+        <p>• <code>sort [a-z/newest/domain/...]</code></p>
+        <p>• <code>check links</code> / <code>check duplicates</code></p>
+        <p>• <code>suggest website about [topic]</code></p>
+        <p>• <code>generate qr</code> / <code>export chat</code></p>
+        <p style="margin-top:8px; opacity:0.8; font-size:0.8rem"><em>Click the (?) icon for full visual guide with cards.</em></p>
       </div>
     `,
     helpGuide: `
-  <div class="guide-container">
-    <div class="guide-header">
-      <h3><i class="fas fa-book-open"></i> Bookmark Master Guide</h3>
-      <p>Control your bookmarks using natural language. Choose between <strong>Offline Mode</strong> or <strong>AI Powered</strong>.</p>
+  <div class="guide-container v2">
+    <!-- Command List Section (Visual Cards) -->
+    <div class="guide-header-v2">
+      <h3><i class="fas fa-terminal"></i> Command Explorer</h3>
+      <p>Quick reference for all supported chat commands.</p>
     </div>
-    
-    <div class="guide-grid">
-      <div class="guide-card">
-        <div class="card-icon"><i class="fas fa-wifi-slash"></i></div>
-        <h4>Offline Mode (Basic)</h4>
-        <p>No API key required. Perfect for simple management.</p>
-        <ul>
-          <li><strong>Navigation:</strong> <code>switch to tree view</code>, <code>list folders</code>.</li>
-          <li><strong>Customization:</strong> <code>use dracula theme</code>, <code>sort by a-z</code>.</li>
-          <li><strong>Stats:</strong> <code>count bookmarks</code>, <code>how many folders?</code>.</li>
-        </ul>
+
+    <div class="command-list-container">
+        <div class="command-section">
+          <h5><i class="fas fa-magic"></i> AI & SMART</h5>
+          <div class="cmd-row"><code>suggest website [topic]</code> <span>AI Discovery</span></div>
+          <div class="cmd-row"><code>add [url]</code> <span>Auto organize</span></div>
+          <div class="cmd-row"><code>check links</code> <span>Health check</span></div>
+          <div class="cmd-row"><code>check duplicates</code> <span>Mass cleanup</span></div>
+        </div>
+
+        <div class="command-section">
+          <h5><i class="fas fa-bookmark"></i> BOOKMARKS</h5>
+          <div class="cmd-row"><code>list bookmarks</code> <span>Show all</span></div>
+          <div class="cmd-row"><code>search bookmark "key"</code> <span>Find items</span></div>
+          <div class="cmd-row"><code>favorite "Title"</code> <span>Pin/Fav</span></div>
+          <div class="cmd-row"><code>edit bookmark "Name"</code> <span>Update data</span></div>
+          <div class="cmd-row"><code>delete id [number]</code> <span>Exact remove</span></div>
+          <div class="cmd-row"><code>visit counts</code> <span>Usage stats</span></div>
+        </div>
+
+        <div class="command-section">
+          <h5><i class="fas fa-folder"></i> FOLDERS</h5>
+          <div class="cmd-row"><code>list folders</code> <span>Tree view</span></div>
+          <div class="cmd-row"><code>in "Folder"</code> <span>View contents</span></div>
+          <div class="cmd-row"><code>create folder "Name"</code> <span>New folder</span></div>
+          <div class="cmd-row"><code>rename folder "A" to "B"</code> <span>Rename</span></div>
+          <div class="cmd-row"><code>delete folder "Name"</code> <span>Wipe contents</span></div>
+        </div>
+
+        <div class="command-section">
+          <h5><i class="fas fa-palette"></i> UI & SETTINGS</h5>
+          <div class="cmd-row">
+            <code>view [mode]</code>
+            <span class="opt-pills">card, list, tree, detail</span>
+          </div>
+          <div class="cmd-row">
+            <code>theme [style]</code>
+            <span class="opt-pills">dark, light, dracula, onedark, tokyonight, monokai, tet, github-blue, winter-is-coming</span>
+          </div>
+          <div class="cmd-row">
+            <code>sort [mode]</code>
+            <span class="opt-pills">a-z, z-a, newest, oldest, most-visited, last-opened, domain</span>
+          </div>
+          <div class="cmd-row">
+            <code>font [family]</code>
+            <span class="opt-pills">gohu, anonymice, jetbrains, profont</span>
+          </div>
+        </div>
+    </div>
+
+    <!-- Feature Pillars Section -->
+    <div class="guide-header-v2" style="margin-top:25px">
+      <h3><i class="fas fa-book-open"></i> Feature Guide</h3>
+      <p>Master your library with these 5 core pillars.</p>
+    </div>
+
+    <div class="guide-section-v2">
+      <div class="guide-card-v2 main">
+        <div class="card-icon"><i class="fas fa-terminal"></i></div>
+        <div class="card-content">
+          <h4>1. Interactive Control</h4>
+          <p>Talk to the AI to manage everything. Type <code>list</code> to see your data or <code>card</code> to change layout.</p>
+        </div>
       </div>
 
-      <div class="guide-card">
-        <div class="card-icon"><i class="fas fa-robot"></i></div>
-        <h4>AI Mode (Advanced)</h4>
-        <p>Requires Gemini or GPT API. Unlocks smart features.</p>
-        <ul>
-          <li><strong>Smart Add:</strong> Paste any link to auto-organize.</li>
-          <li><strong>Discovery:</strong> <code>suggest websites for learning Python</code>.</li>
-          <li><strong>Conversation:</strong> Chat about anything beyond bookmarks.</li>
-        </ul>
+      <div class="guide-card-v2 main">
+        <div class="card-icon"><i class="fas fa-tags"></i></div>
+        <div class="card-content">
+          <h4>2. Tagging & Pinning</h4>
+          <p>Add up to 10 custom colored tags per bookmark. Use <code>favorite "My Site"</code> to keep important links at the top.</p>
+        </div>
+      </div>
+
+      <div class="guide-card-v2 ai">
+        <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="card-content">
+          <h4>3. System Health</h4>
+          <p>Keep your library clean. Use <code>check links</code> to find dead URLs and <code>check duplicates</code> to wipe clones.</p>
+        </div>
+      </div>
+
+      <div class="guide-card-v2 ai">
+        <div class="card-icon"><i class="fas fa-brain"></i></div>
+        <div class="card-content">
+          <h4>4. AI Discovery</h4>
+          <p>Configure Gemini/GPT to unlock: <code>suggest website about [topic]</code>, Auto-categorization, and Smart Search.</p>
+        </div>
+      </div>
+
+      <div class="guide-card-v2 main">
+        <div class="card-icon"><i class="fas fa-file-import"></i></div>
+        <div class="card-content">
+          <h4>5. Data Portability</h4>
+          <p>Export to <b>JSON</b>, <b>HTML</b>, <b>CSV</b>, or <b>Netscape</b>. Import instantly from any JSON backup.</p>
+        </div>
       </div>
     </div>
-    
-    <div class="guide-footer-note">
-      <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> Chrome's Built-in AI is experimental and may not be available in all regions. Use an API Key for the most stable experience.</p>
+
+    <div class="experimental-badge">
+      <i class="fas fa-lightbulb"></i> Shortcut: Type <code>@</code> or <strong>ID</strong> in any command for instant selection.
     </div>
   </div>
 `,
@@ -472,7 +536,7 @@ export const translations = {
     localOnlyOption: "Chế độ Ngoại tuyến (Không AI)",
     localOnlyDescription: "Không cần nhà cung cấp AI. Chỉ hỗ trợ các lệnh cơ bản.",
     localOnlyNotSupported: "Lệnh này không được hỗ trợ trong Chế độ Ngoại tuyến. Vui lòng bật AI để thực hiện các tác vụ nâng cao.",
-    localGeminiNotAvailable: "Gemini nội bộ không khả dụng. Vui lòng bật nó trong chrome://flags.",
+    localGeminiNotAvailable: "Chrome Built-in AI không khả dụng. Vui lòng bật nó trong chrome://flags.",
     learnHowToEnable: "Hướng dẫn kích hoạt",
     localAiGuideTitle: "Cách kích hoạt Gemini nội bộ trong Chrome",
     localAiGuideSteps: "1. Truy cập chrome://flags<br>2. Bật 'Prompt API for Gemini Nano'<br>3. Bật 'Enables optimization guide on device' (BypassPrefRequirement)<br>4. Khởi động lại Chrome và chờ tải mô hình trong chrome://components",
@@ -534,98 +598,130 @@ export const translations = {
     checkingLinks:
       "Đã bắt đầu kiểm tra các liên kết hỏng. Kết quả sẽ hiển thị trên giao diện.",
     helpCommands: `
-      <div class="command-list-container">
-        <h4><i class="fas fa-terminal"></i> Danh sách lệnh</h4>
-        <div class="command-grid">
-          <div class="command-group">
-            <h5><i class="fas fa-bookmark"></i> Bookmarks</h5>
-            <ul>
-              <li><code>đếm bookmark</code> - Đếm tổng số dấu trang</li>
-              <li><code>liệt kê bookmark</code> - Xem tất cả bookmark</li>
-              <li><code>thêm https://google.com vào "Công việc"</code> - Thêm mới</li>
-              <li><code>chuyển "Tiêu đề" sang "Cá nhân"</code> - Di chuyển</li>
-              <li><code>sửa bookmark "Tên cũ"</code> - Đổi tên/Sửa</li>
-              <li><code>xóa bookmark "Tiêu đề"</code> - Xóa bỏ</li>
-              <li><code>yêu thích bookmark "Tiêu đề"</code> - Thêm vào yêu thích</li>
-            </ul>
-          </div>
-          <div class="command-group">
-            <h5><i class="fas fa-folder"></i> Thư mục</h5>
-            <ul>
-              <li><code>đếm thư mục</code> - Đếm tổng số thư mục</li>
-              <li><code>liệt kê thư mục</code> - Hiển thị cây thư mục</li>
-              <li><code>tạo thư mục "Dự án"</code> - Tạo mới</li>
-              <li><code>đổi tên thư mục "Cũ" thành "Mới"</code> - Đổi tên</li>
-              <li><code>xóa thư mục "Tạm"</code> - Xóa toàn bộ cây</li>
-              <li><code>liệt kê bookmark trong "Nghiên cứu"</code> - Nội dung thư mục</li>
-            </ul>
-          </div>
-          <div class="command-group">
-            <h5><i class="fas fa-magic"></i> Giao diện & Công cụ</h5>
-            <ul>
-              <li><code>đổi chế độ xem sang card/list/tree</code> - Bố cục</li>
-              <li><code>đổi giao diện sang dracula/dark</code> - Chủ đề</li>
-              <li><code>sắp xếp theo a-z/mới nhất/truy cập nhiều</code> - Thứ tự</li>
-              <li><code>kiểm tra liên kết</code> - Kiểm tra sức khỏe link</li>
-              <li><code>tìm bookmark "tin tức"</code> - Tìm kiếm nhanh</li>
-            </ul>
-          </div>
-        </div>
-        <p class="command-tip"><em>Mẹo: Sử dụng <strong>@TenThuMuc</strong> để nhắc nhanh đến một thư mục!</em></p>
+      <div class="chat-help-list">
+        <p><strong>Danh sách lệnh khả dụng:</strong></p>
+        <p>• <code>liệt kê bookmark</code> / <code>đếm</code></p>
+        <p>• <code>tìm bookmark "từ khóa"</code></p>
+        <p>• <code>tạo thư mục "Tên"</code></p>
+        <p>• <code>đổi tên thư mục "A" thành "B"</code></p>
+        <p>• <code>chuyển "Tên" sang @ThưMục</code></p>
+        <p>• <code>yêu thích "Tên"</code> / <code>xóa id [ID]</code></p>
+        <p>• <code>view [card/list/tree/detail]</code></p>
+        <p>• <code>theme [dark/dracula/light/...]</code></p>
+        <p>• <code>sort [a-z/mới nhất/tên miền/...]</code></p>
+        <p>• <code>kiểm tra liên kết</code> / <code>trùng lặp</code></p>
+        <p>• <code>gợi ý website về [chủ đề]</code></p>
+        <p>• <code>tạo mã qr</code> / <code>xuất lịch sử chat</code></p>
+        <p style="margin-top:8px; opacity:0.8; font-size:0.8rem"><em>Nhấn vào icon (?) để xem hướng dẫn hình ảnh chi tiết.</em></p>
       </div>
     `,
     helpGuide: `
-  <div class="guide-container">
-    <div class="guide-header">
-      <h3><i class="fas fa-book-open"></i> Hướng Dẫn Sử Dụng Bookmark</h3>
-      <p>Quản lý bookmark của bạn bằng ngôn ngữ tự nhiên. Dưới đây là cách để tận dụng tối đa Zero Bookmark Manager.</p>
+  <div class="guide-container v2">
+    <!-- Command List Section (Visual Cards) -->
+    <div class="guide-header-v2">
+      <h3><i class="fas fa-terminal"></i> Tra cứu câu lệnh</h3>
+      <p>Danh sách đầy đủ các lệnh điều khiển chatbot.</p>
     </div>
-    
-    <div class="guide-grid">
-      <div class="guide-card">
-        <div class="card-icon"><i class="fas fa-layer-group"></i></div>
-        <h4>Chế độ xem & Giao diện</h4>
-        <ul>
-          <li><strong>Bố cục:</strong> Thử <code>đổi chế độ xem sang card</code>, <code>list</code>, hoặc <code>tree</code>.</li>
-          <li><strong>Chủ đề:</strong> <code>đổi giao diện sang dracula</code>, <code>onedark</code>, <code>tokyonight</code>, hoặc <code>light</code>.</li>
-          <li><strong>Sắp xếp:</strong> <code>sắp xếp theo a-z</code>, <code>truy cập nhiều</code>, hoặc <code>mới nhất</code>.</li>
-        </ul>
+
+    <div class="command-list-container">
+        <div class="command-section">
+          <h5><i class="fas fa-magic"></i> AI & THÔNG MINH</h5>
+          <div class="cmd-row"><code>suggest website [chủ đề]</code> <span>Gợi ý website</span></div>
+          <div class="cmd-row"><code>add [url]</code> <span>Tự động phân loại</span></div>
+          <div class="cmd-row"><code>check links</code> <span>Kiểm tra link hỏng</span></div>
+          <div class="cmd-row"><code>check duplicates</code> <span>Dọn bookmark trùng</span></div>
+        </div>
+
+        <div class="command-section">
+          <h5><i class="fas fa-bookmark"></i> BOOKMARKS</h5>
+          <div class="cmd-row"><code>list bookmarks</code> <span>Xem tất cả</span></div>
+          <div class="cmd-row"><code>search bookmark "từ"</code> <span>Tìm bookmark</span></div>
+          <div class="cmd-row"><code>favorite "Tên"</code> <span>Yêu thích</span></div>
+          <div class="cmd-row"><code>edit bookmark "Tên"</code> <span>Sửa tên/thư mục</span></div>
+          <div class="cmd-row"><code>delete id [số]</code> <span>Xóa theo ID</span></div>
+          <div class="cmd-row"><code>visit counts</code> <span>Thống kê truy cập</span></div>
+        </div>
+
+        <div class="command-section">
+          <h5><i class="fas fa-folder"></i> THƯ MỤC</h5>
+          <div class="cmd-row"><code>list folders</code> <span>Cây thư mục</span></div>
+          <div class="cmd-row"><code>trong "Thư Mục"</code> <span>Nội dung</span></div>
+          <div class="cmd-row"><code>create folder "Tên"</code> <span>Tạo mới</span></div>
+          <div class="cmd-row"><code>rename folder "A" to "B"</code> <span>Đổi tên</span></div>
+          <div class="cmd-row"><code>delete folder "Tên"</code> <span>Xóa toàn bộ</span></div>
+        </div>
+
+        <div class="command-section">
+          <h5><i class="fas fa-palette"></i> CẤU HÌNH</h5>
+          <div class="cmd-row">
+            <code>view [loại]</code>
+            <span class="opt-pills">card, list, tree, detail</span>
+          </div>
+          <div class="cmd-row">
+            <code>theme [tên]</code>
+            <span class="opt-pills">dark, light, dracula, onedark, tokyonight, monokai, tet, github-blue, winter-is-coming</span>
+          </div>
+          <div class="cmd-row">
+            <code>sort [kiểu]</code>
+            <span class="opt-pills">a-z, z-a, newest, oldest, most-visited, last-opened, domain</span>
+          </div>
+          <div class="cmd-row">
+            <code>font [font]</code>
+            <span class="opt-pills">gohu, anonymice, jetbrains, profont</span>
+          </div>
+        </div>
+    </div>
+
+    <!-- Feature Pillars Section -->
+    <div class="guide-header-v2" style="margin-top:25px">
+      <h3><i class="fas fa-book-open"></i> Hướng dẫn tính năng</h3>
+      <p>Làm chủ thư viện của bạn với 5 trụ cột chính.</p>
+    </div>
+
+    <div class="guide-section-v2">
+      <div class="guide-card-v2 main">
+        <div class="card-icon"><i class="fas fa-terminal"></i></div>
+        <div class="card-content">
+          <h4>1. Điều khiển tương tác</h4>
+          <p>Trò chuyện với AI để quản lý mọi thứ. Gõ <code>list</code> để xem dữ liệu hoặc <code>card</code> để đổi bố cục.</p>
+        </div>
       </div>
 
-      <div class="guide-card">
-        <div class="card-icon"><i class="fas fa-star"></i></div>
-        <h4>Quản lý Thông minh</h4>
-        <ul>
-          <li><strong>Thêm:</strong> Chỉ cần dán URL như <code>thêm https://github.com</code>.</li>
-          <li><strong>Di chuyển nhanh:</strong> <code>chuyển "React Docs" sang @Coding</code>.</li>
-          <li><strong>Yêu thích:</strong> <code>yêu thích "My Blog"</code> để ghim nó.</li>
-          <li><strong>Dọn dẹp:</strong> <code>kiểm tra liên kết</code> để tìm link hỏng.</li>
-        </ul>
+      <div class="guide-card-v2 main">
+        <div class="card-icon"><i class="fas fa-tags"></i></div>
+        <div class="card-content">
+          <h4>2. Gắn thẻ & Ghim</h4>
+          <p>Thêm tới 10 thẻ màu tùy chỉnh cho mỗi bookmark. Dùng <code>favorite "Tên"</code> để giữ các link quan trọng ở trên cùng.</p>
+        </div>
       </div>
 
-      <div class="guide-card">
-        <div class="card-icon"><i class="fas fa-folder-plus"></i></div>
-        <h4>Thư mục</h4>
-        <ul>
-          <li><strong>Tổ chức:</strong> <code>tạo thư mục "Nghiên cứu"</code>.</li>
-          <li><strong>Xem nhanh:</strong> <code>liệt kê bookmark trong "Tài chính"</code>.</li>
-          <li><strong>Đổi tên:</strong> <code>đổi tên thư mục "Linh tinh" thành "Hộp thư"</code>.</li>
-        </ul>
+      <div class="guide-card-v2 ai">
+        <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="card-content">
+          <h4>3. Sức khỏe hệ thống</h4>
+          <p>Giữ thư viện sạch sẽ. Dùng <code>check links</code> để tìm link chết và <code>check duplicates</code> để xóa bookmark trùng.</p>
+        </div>
       </div>
 
-      <div class="guide-card">
-        <div class="card-icon"><i class="fas fa-search"></i></div>
-        <h4>Khám phá</h4>
-        <ul>
-          <li><strong>Tìm kiếm:</strong> <code>tìm bookmark "python"</code>.</li>
-          <li><strong>Thư mục:</strong> <code>tìm thư mục "công việc"</code>.</li>
-          <li><strong>Thống kê:</strong> <code>tôi có bao nhiêu bookmark?</code>.</li>
-        </ul>
+      <div class="guide-card-v2 ai">
+        <div class="card-icon"><i class="fas fa-brain"></i></div>
+        <div class="card-content">
+          <h4>4. Khám phá cùng AI</h4>
+          <p>Cấu hình Gemini/GPT để mở khóa: <code>suggest website about [chủ đề]</code>, Tự động phân loại và Tìm kiếm thông minh.</p>
+        </div>
+      </div>
+
+      <div class="guide-card-v2 main">
+        <div class="card-icon"><i class="fas fa-file-import"></i></div>
+        <div class="card-content">
+          <h4>5. Di động dữ liệu</h4>
+          <p>Xuất dữ liệu sang <b>JSON</b>, <b>HTML</b>, <b>CSV</b>, hoặc <b>Netscape</b>. Nhập lại tức thì từ bất kỳ bản sao lưu JSON nào.</p>
+        </div>
       </div>
     </div>
-    
-    <div class="guide-footer-note">
-      <p><i class="fas fa-info-circle"></i> <strong>Mẹo chuyên gia:</strong> Bạn cũng có thể đặt các câu hỏi chung! "JavaScript là gì?" hoặc "Kể một câu chuyện cười."</p>
+
+    <div class="experimental-badge">
+      <i class="fas fa-lightbulb"></i> Mẹo: Gõ <code>@</code> hoặc <strong>ID</strong> trong câu lệnh để chọn nhanh thư mục/bookmark.
     </div>
   </div>
 `,
@@ -666,7 +762,7 @@ export const translations = {
     addNewTagLabel: "Thêm thẻ mới:",
     tagBgColorLabel: "Nền",
     tagTextColorLabel: "Chữ",
-    addFromExistingLabel: "Hoặc thêm từ các thẻ đã có:",
+    addFromExistingLabel: "Or add from existing:",
     doneLabel: "Xong",
     tagLimitReached: "Đã đạt giới hạn thẻ",
     viewListView: "Chế độ danh sách",

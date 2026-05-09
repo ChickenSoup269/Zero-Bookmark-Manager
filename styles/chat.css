@@ -713,93 +713,161 @@
   background: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* === Help Guide & Command List Styles === */
-.command-list-container, .guide-container {
-  padding: 5px;
-  color: var(--text-primary);
-  font-family: var(--font-family, sans-serif);
-}
-
-.command-list-container h4, .guide-header h3 {
-  margin-top: 0;
-  color: var(--accent-color);
+/* === Redesigned Help Guide & Command List === */
+.command-list-container {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 2px solid rgba(var(--accent-color-rgb, 112, 161, 70), 0.2);
-  padding-bottom: 8px;
-  margin-bottom: 15px;
-}
-
-.command-grid, .guide-grid {
-  display: grid;
-  grid-template-columns: 1fr; /* Force single column for better readability */
+  flex-direction: column;
   gap: 15px;
-  margin-bottom: 20px;
+  padding: 5px;
 }
 
-.command-group, .guide-card {
+.command-section {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 12px;
-  transition: all 0.3s ease;
 }
 
-.command-group:hover, .guide-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--accent-color);
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.command-group h5, .guide-card h4 {
+.command-section h5 {
   margin: 0 0 10px 0;
-  font-size: 0.95rem;
   color: var(--accent-color);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
   display: flex;
   align-items: center;
   gap: 8px;
+  opacity: 0.8;
 }
 
-.command-group ul, .guide-card ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.cmd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  gap: 10px;
 }
 
-.command-group li, .guide-card li {
-  font-size: 0.85rem;
-  margin-bottom: 8px;
-  line-height: 1.4;
-  color: var(--text-secondary);
+.cmd-row:last-child {
+  border-bottom: none;
 }
 
-.command-group code, .guide-card code {
-  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.15);
-  color: var(--accent-color);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: var(--font-family-monospace, monospace);
-  font-weight: 600;
+.cmd-row code {
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.15) !important;
+  color: var(--accent-color) !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  font-size: 0.8rem !important;
+  white-space: nowrap;
+}
+
+.cmd-row span:not(.opt-pills) {
   font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: right;
 }
 
-.command-tip, .guide-footer-note {
-  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
-  border-left: 4px solid var(--accent-color);
-  padding: 10px 15px;
-  border-radius: 4px 12px 12px 4px;
-  font-size: 0.85rem;
-  margin-top: 15px;
+.opt-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+  max-width: 60%;
+}
+
+.opt-pills::before {
+  content: "Options: ";
+  font-size: 0.65rem;
+  opacity: 0.5;
+  width: 100%;
+  text-align: right;
+  margin-bottom: 2px;
+}
+
+/* Guide Container V2 */
+.guide-container.v2 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guide-card-v2 {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  transition: transform 0.2s;
+}
+
+.guide-card-v2:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent-color);
+}
+
+.guide-card-v2 .card-icon {
+  font-size: 1.4rem;
+  color: var(--accent-color);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--accent-color-rgb), 0.1);
+  border-radius: 10px;
+}
+
+.guide-card-v2 h4 {
+  margin: 0 0 5px 0;
+  font-size: 0.95rem;
   color: var(--text-primary);
 }
 
-.card-icon {
-  font-size: 1.5rem;
-  color: var(--accent-color);
-  margin-bottom: 10px;
-  opacity: 0.8;
+.guide-card-v2 p {
+  margin: 0 0 10px 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.guide-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.guide-tags span {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  color: var(--text-muted);
+}
+
+.experimental-badge {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 10px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* Light Theme Overrides */
+[data-theme="light"] .command-section,
+[data-theme="light"] .guide-card-v2 {
+  background: #f1f3f5;
+  border-color: #e9ecef;
+}
+
+[data-theme="light"] .cmd-row {
+  border-bottom-color: #e9ecef;
+}
+
+[data-theme="light"] .guide-tags span {
+  background: #e9ecef;
+  color: #495057;
 }
 
 /* Copy Command Button Styles */
@@ -856,9 +924,49 @@
   background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.05);
 }
 
-/* Responsive Grid */
-@media (max-width: 600px) {
-  .command-grid, .guide-grid {
-    grid-template-columns: 1fr;
-  }
+/* Concise Help in Chat */
+.chat-help-list {
+  background: rgba(var(--accent-color-rgb), 0.05);
+  border-left: 3px solid var(--accent-color);
+  padding: 10px 15px;
+  border-radius: 4px 10px 10px 4px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.chat-help-list code {
+  background: rgba(var(--accent-color-rgb), 0.15) !important;
+  color: var(--accent-color) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  font-weight: 600;
+}
+
+/* Enhanced Guide Popup Styles */
+.guide-header-v2 {
+  border-bottom: 2px solid rgba(var(--accent-color-rgb), 0.2);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.guide-header-v2 h3 {
+  margin: 0;
+  color: var(--accent-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.guide-header-v2 p {
+  margin: 5px 0 0 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.guide-section-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
