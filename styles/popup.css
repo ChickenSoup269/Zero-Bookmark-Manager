@@ -1092,62 +1092,165 @@
     font-size: 0.7rem;
   }
 }
-/* ===== LIST VIEW STYLES (Aesthetic Only) ===== */
-.list-view {
-  background: var(--bg-secondary);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--border-color);
-  margin-top: var(--spacing-sm);
-  overflow: hidden;
+/* === AI Profiles Styling === */
+.ai-profiles-section {
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
 }
 
-.list-view-header {
-  background: var(--bg-tertiary);
-  backdrop-filter: blur(10px);
-  border-bottom: 2px solid var(--border-color);
-  font-weight: 700;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 12px 16px !important;
+.ai-profiles-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 }
 
-.list-bookmark-item {
-  background: var(--bg-primary);
-  border-bottom: 1px solid var(--border-color);
-  transition: all 0.2s ease;
-  margin: 0 !important;
-  padding: 8px 16px !important;
+.ai-profiles-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
-.list-bookmark-item:last-child {
-  border-bottom: none;
+.btn-save-profile {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.list-bookmark-item:hover {
-  background: var(--hover-bg);
-  box-shadow: inset 4px 0 0 var(--accent-color);
+.btn-save-profile:hover {
+    background: var(--hover-bg);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
 }
 
-.list-bookmark-title-link {
-  font-weight: 600;
-  color: var(--text-primary);
-  text-decoration: none;
-  transition: color 0.2s ease;
+.ai-profiles-list {
+    max-height: 150px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 4px;
 }
 
-.list-bookmark-title-link:hover {
-  color: var(--accent-color);
+.ai-profile-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-secondary);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
-.list-folder-item {
-  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.05);
+.ai-profile-item:hover {
+    border-color: var(--accent-color);
+    transform: translateX(4px);
+    background: var(--hover-bg);
 }
 
-.list-folder-item .list-bookmark-title-link {
-  color: var(--accent-color);
+.ai-profile-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.drop-target-above { border-top: 2px solid var(--accent-color) !important; }
-.drop-target-below { border-bottom: 2px solid var(--accent-color) !important; }
+.ai-profile-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.ai-profile-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.btn-delete-profile {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-delete-profile:hover {
+    color: var(--error-color);
+    background: rgba(255, 68, 68, 0.1);
+}
+
+.ai-profiles-empty {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 15px;
+    border: 1px dashed var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.ai-profile-dropdown-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--bg-secondary);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.ai-profile-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-action-icon {
+    background-color: var(--text-primary) !important;
+    color: var(--bg-primary) !important;
+    width: 38px;
+    height: 38px;
+    border: none !important;
+    border-radius: var(--border-radius-md) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.btn-action-icon:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-md) !important;
+    opacity: 0.9;
+}
+
+.btn-action-icon:active {
+    transform: translateY(0) scale(0.95) !important;
+}
+
+.btn-action-icon.delete {
+    background-color: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+.btn-action-icon.delete:hover {
+    background-color: var(--error-color) !important;
+    color: white !important;
+}
+
+.btn-action-icon i {
+    font-size: 0.9rem;
+}

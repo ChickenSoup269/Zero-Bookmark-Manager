@@ -695,7 +695,6 @@
                         Provider</label>
                     <select id="ai-provider-select" class="select" style="width: 100%;">
                         <option value="gemini">Gemini API</option>
-                        <option value="gpt">OpenAI (GPT)</option>
                         <option value="local" data-i18n="aiLocalOption">Chrome Built-in AI (Experimental)</option>
                         <option value="none" data-i18n="localOnlyOption">Offline Mode (No AI)</option>
                     </select>
@@ -712,8 +711,13 @@
                                 style="font-size: 0.75rem; color: var(--accent-color); text-decoration: none;"
                                 data-i18n="getApiKey">Get API Key</a>
                         </label>
-                        <input type="password" id="ai-api-key" class="input" placeholder="Enter API Key..."
-                            style="width: 100%;">
+                        <div class="rename-input-container">
+                            <input type="password" id="ai-api-key" class="input" placeholder="Enter API Key..."
+                                style="width: 100%;">
+                            <button id="toggle-api-key-visibility" class="button eye" title="Toggle Visibility">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-section" style="margin-top: 15px;">
                         <label for="ai-model-name" data-i18n="modelLabel"
@@ -736,6 +740,25 @@
                         </div>
                     </div>
                 </div>
+                <!-- NEW: Saved Profiles Section as Dropdown -->
+                <div class="ai-profiles-section">
+                    <div class="ai-profiles-header">
+                        <span class="ai-profiles-label">Quick Switch Profile</span>
+                    </div>
+                    <div class="ai-profile-dropdown-container">
+                        <select id="ai-profile-select" class="select" style="flex: 1; min-width: 0;">
+                            <option value="">-- Chọn Profile --</option>
+                        </select>
+                        <div class="ai-profile-controls">
+                            <button id="save-ai-profile" class="button btn-action-icon" title="Lưu Profile mới">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button id="delete-ai-profile" class="button btn-action-icon delete" title="Xóa Profile đang chọn">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="rename-popup-buttons" style="margin-top: 25px;">
                     <button id="ai-config-save" class="button save" data-i18n="save">Save</button>
                     <button id="ai-config-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
@@ -750,6 +773,21 @@
                 <div id="custom-popup-message"></div>
                 <div class="rename-popup-buttons">
                     <button id="custom-popup-ok" class="button save">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="ai-profile-name-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="ai-profile-name-title">
+            <div class="rename-popup-content">
+                <h3 id="ai-profile-name-title">Đặt tên Profile</h3>
+                <div class="rename-input-container">
+                    <input type="text" id="ai-profile-name-input" class="input" placeholder="Ví dụ: Gemini Free 1..."
+                        maxlength="50" style="width: 100%;">
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="ai-profile-name-save" class="button save">Lưu</button>
+                    <button id="ai-profile-name-cancel" class="button cancel">Hủy</button>
                 </div>
             </div>
         </div>

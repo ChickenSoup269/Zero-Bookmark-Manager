@@ -1,3 +1,5 @@
+<img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/zero_extension/zero%20colab.png?raw=true" width="1200px" />
+
 <div align="center">
 
 # Bookmark Manager Extension <img src="./icons/icon.png" alt="logoEX" width="30">

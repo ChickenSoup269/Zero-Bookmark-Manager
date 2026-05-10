@@ -90,9 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return elements
   }
 
-  // System Prompt: Includes suggest_website action
+  // Unified System Prompt: Handles both actions and general chat
   const systemPrompt = `
-        You are a bookmark management assistant integrated into a browser extension. Your role is to classify user intent for managing bookmarks. Based on the user's query, you must return a JSON object with an "action" and optional "params".
+        You are a highly capable bookmark management assistant and a helpful AI. Your role is to classify user intent and either execute bookmark tasks or engage in general conversation. You MUST return your response as a JSON object.
+
+        **SCENARIO 1: Bookmark Management**
+        If the user wants to manage bookmarks or folders, return:
+        { "action": "action_name", "params": { ... } }
 
         Available actions:
         - count: Count all bookmarks.
@@ -111,33 +115,25 @@ document.addEventListener("DOMContentLoaded", () => {
         - search_folder: Search for folders.
         - favorite: Mark or unmark a bookmark as a favorite.
         - suggest_website: Suggest websites on a given topic.
-        - change_view: Change the layout of the bookmark list (list, detail, card, tree).
-        - change_theme: Change the color theme (light, dark, dracula, onedark, tokyonight, monokai, winter-is-coming, github-blue, github-light, tet, system).
-        - change_sort: Change the sort order of bookmarks (default, favorites, most-visited, old, last-opened, a-z, z-a, domain).
-        - check_links: Check all bookmarks for broken links.
-        - general: For any query that is not related to bookmark management, is a greeting, or is too vague.
+        - change_view: Change the layout (list, detail, card, tree).
+        - change_theme: Change the color theme.
+        - change_sort: Change the sort order.
+        - check_links: Check for broken links.
 
-        Guidelines:
-        - For natural language queries, interpret the user's intent and provide the corresponding action and parameters.
-        - For deletion actions, include a "confirm" field in the params set to true.
-        - If a query is not about managing bookmarks (e.g., "hello", "what is the capital of France?"), or is vague ("hmm"), you MUST return: { "action": "general" }. Do not attempt to answer the question yourself.
+        **SCENARIO 2: General Chat / Questions**
+        If the user is greeting you, asking a general question, or just chatting, return:
+        { "action": "general", "answer": "Your Markdown-formatted response here" }
+
+        Guidelines for Chat:
+        - Use a natural, friendly tone.
+        - Use Markdown (bold, lists, tables).
+        - Respond in the user's language (e.g., Vietnamese if they speak Vietnamese).
 
         Example Flows:
-        - User: "how many bookmarks do I have?" -> Response: { "action": "count" }
-        - User: "add https://google.com to my work folder" -> Response: { "action": "add", "params": { "url": "https://google.com", "folder": "work" } }
-        - User: "delete bookmark with id 123" -> Response: { "action": "delete", "params": { "id": "123", "confirm": true } }
-        - User: "create a new folder called 'social media'" -> Response: { "action": "create_folder", "params": { "folderName": "social media" } }
-        - User: "rename folder 'work' to 'office'" -> Response: { "action": "rename_folder", "params": { "oldName": "work", "newName": "office" } }
-        - User: "delete the 'temp' folder" -> Response: { "action": "delete_folder", "params": { "folderName": "temp", "confirm": true } }
-        - User: "switch to card view" -> Response: { "action": "change_view", "params": { "view_mode": "card" } }
-        - User: "use the dracula theme" -> Response: { "action": "change_theme", "params": { "theme_name": "dracula" } }
-        - User: "use tokyo night theme" -> Response: { "action": "change_theme", "params": { "theme_name": "tokyonight" } }
-        - User: "use monokai theme" -> Response: { "action": "change_theme", "params": { "theme_name": "monokai" } }
-        - User: "use github blue theme" -> Response: { "action": "change_theme", "params": { "theme_name": "github-blue" } }
-        - User: "sort my bookmarks by name" -> Response: { "action": "change_sort", "params": { "sort_by": "a-z" } }
-        - User: "check for broken links" -> Response: { "action": "check_links" }
-        - User: "what is python?" -> Response: { "action": "general" }
-        - User: "hi there" -> Response: { "action": "general" }
+        - User: "how many bookmarks do I have?" -> { "action": "count" }
+        - User: "delete bookmark 123" -> { "action": "delete", "params": { "id": "123", "confirm": true } }
+        - User: "what is the capital of France?" -> { "action": "general", "answer": "The capital of France is **Paris**." }
+        - User: "hi" -> { "action": "general", "answer": "Hello! How can I help you manage your bookmarks today?" }
     `
 
   // General System Prompt for off-topic questions
@@ -627,18 +623,33 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Load saved AI config
-  const getAiConfig = () => {
-    const config = localStorage.getItem("aiConfig")
-    return config
-      ? JSON.parse(config)
-      : { model: "gemini", apiKey: "", modelName: "gemini-1.5-flash", apiVisible: true }
+  const getAiConfig = async () => {
+    return new Promise((resolve) => {
+      chrome.storage.local.get("aiConfig", (result) => {
+        if (result.aiConfig) {
+          resolve(result.aiConfig)
+        } else {
+          // Default config
+          resolve({
+            model: "gemini",
+            apiKey: "",
+            modelName: "gemini-1.5-flash",
+            apiVisible: true,
+          })
+        }
+      })
+    })
   }
 
-  const saveAiConfig = (model, apiKey, modelName, apiVisible = true) => {
-    localStorage.setItem(
-      "aiConfig",
-      JSON.stringify({ model, apiKey, modelName, apiVisible }),
-    )
+  const saveAiConfig = async (model, apiKey, modelName, apiVisible = true) => {
+    return new Promise((resolve) => {
+      chrome.storage.local.set(
+        { aiConfig: { model, apiKey, modelName, apiVisible } },
+        () => {
+          resolve()
+        },
+      )
+    })
   }
 
   const checkLocalAiAvailability = async () => {
@@ -761,7 +772,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Suggest bookmark details
   async function suggestBookmarkDetails(url) {
-    const config = getAiConfig()
+    const config = await getAiConfig()
     const apiRequest = buildApiRequest(
       config.modelName,
       config.apiKey,
@@ -812,7 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Suggest websites
   async function suggestWebsites(topic) {
-    const config = getAiConfig()
+    const config = await getAiConfig()
     const apiRequest = buildApiRequest(
       config.modelName,
       config.apiKey,
@@ -2000,7 +2011,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // API Call handler
   async function callAiApi(message, isGeneral = false) {
     try {
-      const config = getAiConfig()
+      const config = await getAiConfig()
       const request = buildApiRequest(
         config.modelName,
         config.apiKey,
@@ -2116,7 +2127,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // If we reach here, it's a "general" action - we need AI or Offline Check
-      const config = getAiConfig()
+      const config = await getAiConfig()
       console.log("AI Config Model:", config.model)
       
       if (config.model === "none") {
@@ -2127,26 +2138,30 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        // Special case for suggestions which use AI to generate data then call handleBookmarkCommand
-        const isSuggest = /(goi y|suggest).*(website|web|site)/i.test(normalizeText(message))
+        // Unified AI Call: Always get JSON for intent and answer
+        const responseText = await callAiApi(message, false)
+        let aiResult
         
-        if (isSuggest) {
-          const classificationResponse = await callAiApi(message, false)
-          let classification
-          try {
-            classification = JSON.parse(classificationResponse)
-          } catch (e) {
-            classification = { action: "general" }
-          }
-
-          if (classification.action && classification.action !== "general") {
-            await handleBookmarkCommand(classification.action, classification.params || {})
-            return
-          }
+        try {
+          // Clean the response in case AI includes markdown code blocks
+          const cleanedText = responseText.replace(/```json\n?|\n?```/g, "").trim()
+          aiResult = JSON.parse(cleanedText)
+        } catch (parseError) {
+          console.error("Failed to parse AI JSON:", responseText)
+          // Fallback: If AI didn't return JSON, treat the whole response as a chat message
+          appendBotMessage(responseText, responseText, true)
+          return
         }
 
-        const aiResponse = await callAiApi(message, true)
-        appendBotMessage(aiResponse, aiResponse, true)
+        if (aiResult.action && aiResult.action !== "general") {
+          // It's a bookmark action
+          console.log("AI executing action:", aiResult.action, aiResult.params)
+          await handleBookmarkCommand(aiResult.action, aiResult.params || {})
+        } else {
+          // It's a general chat or the AI decided it's general
+          const answer = aiResult.answer || responseText
+          appendBotMessage(answer, answer, true)
+        }
       } catch (aiError) {
         hideTypingIndicator()
         
@@ -2338,13 +2353,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- AI Model Suggestions ---
   const modelSuggestions = {
     gemini: [
+      "gemini-2.5-flash",
+      "gemini-2.5-flash-lite",
+      "gemini-3.1-flash-lite",
+      "gemini-3.0-flash",
       "gemini-2.0-flash",
-      "gemini-2.0-flash-lite-preview-02-05",
       "gemini-1.5-flash",
-      "gemini-1.5-flash-8b",
-      "gemini-1.5-pro",
     ],
-    gpt: ["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"],
   }
 
   const renderModelSuggestions = (provider) => {
@@ -2367,17 +2382,143 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
+  const saveAiProfileBtn = document.getElementById("save-ai-profile")
+  const deleteAiProfileBtn = document.getElementById("delete-ai-profile")
+  const aiProfileSelect = document.getElementById("ai-profile-select")
+  const aiProfileNamePopup = document.getElementById("ai-profile-name-popup")
+  const aiProfileNameInput = document.getElementById("ai-profile-name-input")
+  const aiProfileNameSave = document.getElementById("ai-profile-name-save")
+  const aiProfileNameCancel = document.getElementById("ai-profile-name-cancel")
+
+  const getAiProfiles = async () => {
+    return new Promise((resolve) => {
+      chrome.storage.local.get("aiProfiles", (result) => {
+        resolve(result.aiProfiles || [])
+      })
+    })
+  }
+
+  const saveAiProfiles = async (profiles) => {
+    return new Promise((resolve) => {
+      chrome.storage.local.set({ aiProfiles: profiles }, () => {
+        resolve()
+      })
+    })
+  }
+
+  const renderAiProfiles = async () => {
+    if (!aiProfileSelect) return
+    const profiles = await getAiProfiles()
+    
+    // Save current selection to restore if possible
+    const currentVal = aiProfileSelect.value
+    
+    aiProfileSelect.innerHTML = `<option value="">-- Chọn Profile --</option>`
+
+    profiles.forEach((profile, index) => {
+      const option = document.createElement("option")
+      option.value = index
+      option.textContent = profile.name || `Profile ${index + 1}`
+      aiProfileSelect.appendChild(option)
+    })
+
+    // Restore selection or keep default
+    if (currentVal !== "" && currentVal < profiles.length) {
+      aiProfileSelect.value = currentVal
+    }
+  }
+
+  if (aiProfileSelect) {
+    aiProfileSelect.addEventListener("change", async () => {
+      const index = aiProfileSelect.value
+      if (index === "") return
+
+      const profiles = await getAiProfiles()
+      const profile = profiles[index]
+      if (profile) {
+        aiProviderSelect.value = profile.model || "gemini"
+        aiApiKeyInput.value = profile.apiKey || ""
+        aiModelNameInput.value = profile.modelName || ""
+        aiProviderSelect.dispatchEvent(new Event("change"))
+        showCustomPopup(`Đã áp dụng profile: ${profile.name}`, "success", true)
+      }
+    })
+  }
+
+  if (saveAiProfileBtn) {
+    saveAiProfileBtn.addEventListener("click", () => {
+      if (aiProfileNamePopup) {
+        aiProfileNameInput.value = `Profile ${new Date().toLocaleDateString()}`
+        aiProfileNamePopup.classList.remove("hidden")
+        aiProfileNameInput.focus()
+        aiProfileNameInput.select()
+      }
+    })
+  }
+
+  if (deleteAiProfileBtn) {
+    deleteAiProfileBtn.addEventListener("click", async () => {
+      const index = aiProfileSelect.value
+      if (index === "") {
+        showCustomPopup("Vui lòng chọn Profile để xóa", "info", true)
+        return
+      }
+
+      const profiles = await getAiProfiles()
+      const profileName = profiles[index]?.name || "này"
+      
+      showCustomConfirm(`Bạn có chắc chắn muốn xóa profile "${profileName}"?`, async () => {
+        profiles.splice(index, 1)
+        await saveAiProfiles(profiles)
+        await renderAiProfiles()
+        showCustomPopup(`Đã xóa profile: ${profileName}`, "success", true)
+      })
+    })
+  }
+
+  if (aiProfileNameSave) {
+    aiProfileNameSave.addEventListener("click", async () => {
+      const name = aiProfileNameInput.value.trim()
+      if (!name) return
+
+      const newProfile = {
+        name,
+        model: aiProviderSelect.value,
+        apiKey: aiApiKeyInput.value,
+        modelName: aiModelNameInput.value
+      }
+
+      const profiles = await getAiProfiles()
+      profiles.push(newProfile)
+      await saveAiProfiles(profiles)
+      await renderAiProfiles()
+      
+      // Select the newly added profile
+      aiProfileSelect.value = profiles.length - 1
+      
+      aiProfileNamePopup.classList.add("hidden")
+      showCustomPopup("Đã lưu Profile thành công!", "success", true)
+    })
+  }
+
+  if (aiProfileNameCancel) {
+    aiProfileNameCancel.addEventListener("click", () => {
+      aiProfileNamePopup.classList.add("hidden")
+    })
+  }
+
   // --- AI Config Modal Logic ---
   if (aiSettingsOption) {
     aiSettingsOption.addEventListener("click", async (e) => {
       e.stopPropagation()
-      const config = getAiConfig()
+      const config = await getAiConfig()
       aiProviderSelect.value = config.model || "gemini"
       aiApiKeyInput.value = config.apiKey || ""
       aiModelNameInput.value = config.modelName || ""
 
-      // Render suggestions
+      // Render suggestions and profiles
       renderModelSuggestions(aiProviderSelect.value)
+      renderAiProfiles()
 
       // Check local availability
       const isLocalAvailable = await checkLocalAiAvailability()
@@ -2424,8 +2565,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (aiConfigSave) {
-    aiConfigSave.addEventListener("click", () => {
-      saveAiConfig(
+    aiConfigSave.addEventListener("click", async () => {
+      await saveAiConfig(
         aiProviderSelect.value,
         aiApiKeyInput.value,
         aiModelNameInput.value,
@@ -2437,6 +2578,20 @@ document.addEventListener("DOMContentLoaded", () => {
         "success",
         true,
       )
+    })
+  }
+
+  const toggleApiKeyVisibilityBtn = document.getElementById("toggle-api-key-visibility")
+  if (toggleApiKeyVisibilityBtn && aiApiKeyInput) {
+    toggleApiKeyVisibilityBtn.addEventListener("click", (e) => {
+      e.preventDefault()
+      const type = aiApiKeyInput.getAttribute("type") === "password" ? "text" : "password"
+      aiApiKeyInput.setAttribute("type", type)
+      
+      const icon = toggleApiKeyVisibilityBtn.querySelector("i")
+      if (icon) {
+        icon.className = type === "password" ? "fas fa-eye" : "fas fa-eye-slash"
+      }
     })
   }
 
