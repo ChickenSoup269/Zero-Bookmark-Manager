@@ -29,19 +29,17 @@
 </table>
 </div>
 
-<p align="center">
+<div align="center">
   <a href="https://unikorn.vn/p/zero-bookmark-manager?ref=embed-zero-bookmark-manager" target="_blank">
     <img src="https://unikorn.vn/api/widgets/badge/zero-bookmark-manager?theme=light" alt="Zero Bookmark Manager trên Unikorn.vn" width="256" height="64" />
   </a>
-  &nbsp;&nbsp;
   <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">
     <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/available_chrome_web.png?raw=true" width="200" />
   </a>
-  &nbsp;&nbsp;
   <a href="https://launch.j2team.dev/products/zero-bookmark-manager-v122?utm_source=badge-launched&utm_medium=badge&utm_campaign=badge-zero-bookmark-manager-v122" target="_blank" rel="noopener noreferrer">
     <img src="https://launch.j2team.dev/badge/zero-bookmark-manager-v122/light" alt="Zero Bookmark Manager - Launched on J2TEAM Launch" width="250" height="54" />
   </a>
-</p>
+</div>
 
 <div align="center">
 
@@ -94,7 +92,7 @@ Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bo
 - **Generate QR Code:** Create QR codes for your bookmarks for easy sharing and access on other devices.
 - **Visit Count Tracking:** Track how many times each bookmark is opened inside the extension and in normal browsing.
 - **Tag Management:** Manage tags with a color palette and a dedicated **Tags Browser Popup**.
-- **Chatbot (AI Assistant):** Manage bookmarks using natural language. Supports multiple AI providers and **Local AI (Ollama)**.
+- **Chatbot (AI Assistant):** Manage bookmarks using natural language. Supports major AI providers.
 - **Duplicate Management:** Automatically removes duplicate bookmarks upon creation. Includes a manual scan option.
 - **Configurable Settings:** Customize Favicon provider, click actions, and more.
 
@@ -166,7 +164,7 @@ Install Bookmark-Manager
 | `Pin to top`        | Pin important bookmarks to the top of your list.                                           |
 | `Check Link Health` | Verify bookmark health (Alive, Dead, or Suspicious).                                       |
 | `Visit Count`       | Track and display how many times a bookmark was opened.                                    |
-| `Chatbot`           | Control extension via natural language. Supports local AI (Ollama) and major AI providers. |
+| `Chatbot`           | Control extension via natural language. Supports major AI providers.                       |
 | `Favicon Provider`  | Choose between Google, DuckDuckGo, or Auto for fetching icons.                             |
 
 ## Video & screenshots

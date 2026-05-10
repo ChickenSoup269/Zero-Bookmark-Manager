@@ -20,19 +20,17 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-<p align="center">
+<div align="center">
   <a href="https://unikorn.vn/p/zero-bookmark-manager?ref=embed-zero-bookmark-manager" target="_blank">
     <img src="https://unikorn.vn/api/widgets/badge/zero-bookmark-manager?theme=light" alt="Zero Bookmark Manager trên Unikorn.vn" width="256" height="64" />
   </a>
-  &nbsp;&nbsp;
   <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">
     <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/available_chrome_web.png?raw=true" width="200" />
   </a>
-  &nbsp;&nbsp;
   <a href="https://launch.j2team.dev/products/zero-bookmark-manager-v122?utm_source=badge-launched&utm_medium=badge&utm_campaign=badge-zero-bookmark-manager-v122" target="_blank" rel="noopener noreferrer">
     <img src="https://launch.j2team.dev/badge/zero-bookmark-manager-v122/light" alt="Zero Bookmark Manager - Launched on J2TEAM Launch" width="250" height="54" />
   </a>
-</p>
+</div>
 
 
 
@@ -56,7 +54,7 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 - **Tạo mã QR cho Bookmark:** Tạo mã QR để dễ dàng chia sẻ và truy cập trên các thiết bị khác.
 - **Theo dõi lượt truy cập:** Theo dõi số lần mở của mỗi bookmark trong extension và khi duyệt bình thường.
 - **Quản lý Thẻ (Tags):** Quản lý thẻ với bảng màu và một **Popup trình duyệt Thẻ** riêng biệt.
-- **Chatbot (AI Assistant):** Quản lý bookmark bằng ngôn ngữ tự nhiên. Hỗ trợ nhiều nhà cung cấp AI và **Local AI (Ollama)**.
+- **Chatbot (AI Assistant):** Quản lý bookmark bằng ngôn ngữ tự nhiên. Hỗ trợ các nhà cung cấp AI phổ biến.
 - **Quản lý Bookmark Trùng lặp:** Tự động xóa bookmark trùng lặp khi tạo hoặc quét thủ công.
 - **Cấu hình linh hoạt:** Tùy chỉnh nguồn Favicon (Google, DuckDuckGo, Auto), hành động khi nhấp icon, v.v.
 
@@ -125,7 +123,7 @@ Cài đặt Bookmark-Manager
 | `Ghim lên đầu`             | Ghim các bookmark quan trọng lên trên cùng.                                              |
 | `Kiểm tra tình trạng`      | Xác minh link sống/chết hoặc nghi ngờ.                                                   |
 | `Lượt truy cập`            | Theo dõi và hiển thị số lần mở bookmark.                                                 |
-| `Chatbot`                  | Điều khiển qua ngôn ngữ tự nhiên. Hỗ trợ Local AI (Ollama) và các nhà cung cấp phổ biến. |
+| `Chatbot`                  | Điều khiển qua ngôn ngữ tự nhiên. Hỗ trợ các nhà cung cấp AI phổ biến.                   |
 | `Nguồn Favicon`            | Chọn giữa Google, DuckDuckGo hoặc Auto để lấy biểu tượng.                                |
 
 ## Video & screenshots
