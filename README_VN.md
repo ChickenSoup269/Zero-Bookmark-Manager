@@ -21,15 +21,25 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
 <div align="center">
-  <a href="https://unikorn.vn/p/zero-bookmark-manager?ref=embed-zero-bookmark-manager" target="_blank">
-    <img src="https://unikorn.vn/api/widgets/badge/zero-bookmark-manager?theme=light" alt="Zero Bookmark Manager trên Unikorn.vn" width="256" height="64" />
-  </a>
-  <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">
-    <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/available_chrome_web.png?raw=true" width="200" />
-  </a>
-  <a href="https://launch.j2team.dev/products/zero-bookmark-manager-v122?utm_source=badge-launched&utm_medium=badge&utm_campaign=badge-zero-bookmark-manager-v122" target="_blank" rel="noopener noreferrer">
-    <img src="https://launch.j2team.dev/badge/zero-bookmark-manager-v122/light" alt="Zero Bookmark Manager - Launched on J2TEAM Launch" width="250" height="54" />
-  </a>
+  <table>
+    <tr>
+      <td valign="middle">
+        <a href="https://unikorn.vn/p/zero-bookmark-manager?ref=embed-zero-bookmark-manager" target="_blank">
+          <img src="https://unikorn.vn/api/widgets/badge/zero-bookmark-manager?theme=light" alt="Zero Bookmark Manager trên Unikorn.vn" width="256" height="64" />
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">
+          <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/available_chrome_web.png?raw=true" width="200" />
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="https://launch.j2team.dev/products/zero-bookmark-manager-v122?utm_source=badge-launched&utm_medium=badge&utm_campaign=badge-zero-bookmark-manager-v122" target="_blank" rel="noopener noreferrer">
+          <img src="https://launch.j2team.dev/badge/zero-bookmark-manager-v122/light" alt="Zero Bookmark Manager - Launched on J2TEAM Launch" width="250" height="54" />
+        </a>
+      </td>
+    </tr>
+  </table>
 </div>
 
 

@@ -7,41 +7,48 @@
 </div>
 
 <div align="center">
-<img src="./images/logo.png" alt="logo" width="520">
+  <img src="./images/logo.png" alt="logo" width="520">
 </div>
 
 <div align="center">
- <table width="100%" border="none">
-  <tr>
-    <td align="left">
-    English | <a href="https://github.com/ChickenSoup269/Bookmark-Manager/blob/main/README_VN.md">Tiếng Việt</a>
-    </td>
-    <td align="right">
-      <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/CHANGELOG.md">CHANGELOG.md</a>
-    </td>
-    <td align="right">
-      <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en"> 
-       Link Extension 🌐 
-      </a>
-    </td>
-  </tr>
-  
-</table>
+  <table width="100%" border="none">
+    <tr>
+      <td align="left">
+      English | <a href="https://github.com/ChickenSoup269/Bookmark-Manager/blob/main/README_VN.md">Tiếng Việt</a>
+      </td>
+      <td align="right">
+        <a href="https://github.com/ChickenSoup269/Extension_Bookmark-Manager/blob/main/CHANGELOG.md">CHANGELOG.md</a>
+      </td>
+      <td align="right">
+        <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en"> 
+        Link Extension 🌐 
+        </a>
+      </td>
+    </tr>
+  </table>
 </div>
 
-<p align="center">
- <a href="https://unikorn.vn/p/zero-bookmark-manager?ref=embed-zero-bookmark-manager" target="_blank">
-    <img src="https://unikorn.vn/api/widgets/badge/zero-bookmark-manager?theme=light" alt="Zero Bookmark Manager trên Unikorn.vn" width="256" height="64" />
-  </a>
-  &nbsp;
-  <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">
-    <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/available_chrome_web.png?raw=true" width="200" />
-  </a>
-  &nbsp;
-   <a href="https://launch.j2team.dev/products/zero-bookmark-manager-v122?utm_source=badge-launched&utm_medium=badge&utm_campaign=badge-zero-bookmark-manager-v122" target="_blank" rel="noopener noreferrer">
-    <img src="https://launch.j2team.dev/badge/zero-bookmark-manager-v122/light" alt="Zero Bookmark Manager - Launched on J2TEAM Launch" width="250" height="54" />
-  </a>
-</p>
+<div align="center">
+  <table>
+    <tr>
+      <td valign="middle">
+        <a href="https://unikorn.vn/p/zero-bookmark-manager?ref=embed-zero-bookmark-manager" target="_blank">
+          <img src="https://unikorn.vn/api/widgets/badge/zero-bookmark-manager?theme=light" alt="Zero Bookmark Manager trên Unikorn.vn" width="256" height="64" />
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">
+          <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/available_chrome_web.png?raw=true" width="200" />
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="https://launch.j2team.dev/products/zero-bookmark-manager-v122?utm_source=badge-launched&utm_medium=badge&utm_campaign=badge-zero-bookmark-manager-v122" target="_blank" rel="noopener noreferrer">
+          <img src="https://launch.j2team.dev/badge/zero-bookmark-manager-v122/light" alt="Zero Bookmark Manager - Launched on J2TEAM Launch" width="250" height="54" />
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <div align="center">
 
