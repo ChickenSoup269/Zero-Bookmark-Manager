@@ -29,17 +29,19 @@
 </table>
 </div>
 
-<div align="center">
-  <a href="https://unikorn.vn/p/zero-bookmark-manager?ref=embed-zero-bookmark-manager" target="_blank">
+<p align="center">
+ <a href="https://unikorn.vn/p/zero-bookmark-manager?ref=embed-zero-bookmark-manager" target="_blank">
     <img src="https://unikorn.vn/api/widgets/badge/zero-bookmark-manager?theme=light" alt="Zero Bookmark Manager trên Unikorn.vn" width="256" height="64" />
   </a>
+  &nbsp;
   <a href="https://chromewebstore.google.com/detail/zero-bookmark-manager/jhcoclfodfnchlddakkeegkogajdpgce?authuser=0&hl=en">
     <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/use_offline_img/available_chrome_web.png?raw=true" width="200" />
   </a>
-  <a href="https://launch.j2team.dev/products/zero-bookmark-manager-v122?utm_source=badge-launched&utm_medium=badge&utm_campaign=badge-zero-bookmark-manager-v122" target="_blank" rel="noopener noreferrer">
+  &nbsp;
+   <a href="https://launch.j2team.dev/products/zero-bookmark-manager-v122?utm_source=badge-launched&utm_medium=badge&utm_campaign=badge-zero-bookmark-manager-v122" target="_blank" rel="noopener noreferrer">
     <img src="https://launch.j2team.dev/badge/zero-bookmark-manager-v122/light" alt="Zero Bookmark Manager - Launched on J2TEAM Launch" width="250" height="54" />
   </a>
-</div>
+</p>
 
 <div align="center">
 
@@ -148,24 +150,24 @@ Install Bookmark-Manager
 
 ## Usage/Examples
 
-| Parameter           | Description                                                                                |
-| :------------------ | :----------------------------------------------------------------------------------------- |
-| `Search`            | Type keywords in the search box (Fuzzy match enabled).                                     |
-| `Filter folders`    | Select a folder from the sidebar or dropdown.                                              |
-| `Sort`              | Choose sorting: Date, A-Z, Favorites, Most Visited, or Domain.                             |
-| `Manage folders`    | Create, rename, or delete folders. Use Drag & Drop in sidebar to move folders.             |
-| `Manage bookmarks`  | Click "⋮" to add to folder, rename, or delete. View Details to open Web Preview modal.     |
-| `Export/Import`     | Use Settings to export as JSON/HTML/CSV or import with duplicate check.                    |
-| `Customize`         | Adjust themes (Tokyo Night, Monokai, etc.), fonts, or language in Settings.                |
-| `Web Preview`       | Open sites in a modal within the extension (Details button).                               |
-| `Open Side Panel`   | Open bookmark in a side panel for quick viewing.                                           |
-| `Quick Open Action` | Choose default action (Popup, Full Page, Side Panel) for the extension icon.               |
-| `Tags`              | Filter by tags using the sidebar or the Tags Browser Popup.                                |
-| `Pin to top`        | Pin important bookmarks to the top of your list.                                           |
-| `Check Link Health` | Verify bookmark health (Alive, Dead, or Suspicious).                                       |
-| `Visit Count`       | Track and display how many times a bookmark was opened.                                    |
-| `Chatbot`           | Control extension via natural language. Supports major AI providers.                       |
-| `Favicon Provider`  | Choose between Google, DuckDuckGo, or Auto for fetching icons.                             |
+| Parameter           | Description                                                                            |
+| :------------------ | :------------------------------------------------------------------------------------- |
+| `Search`            | Type keywords in the search box (Fuzzy match enabled).                                 |
+| `Filter folders`    | Select a folder from the sidebar or dropdown.                                          |
+| `Sort`              | Choose sorting: Date, A-Z, Favorites, Most Visited, or Domain.                         |
+| `Manage folders`    | Create, rename, or delete folders. Use Drag & Drop in sidebar to move folders.         |
+| `Manage bookmarks`  | Click "⋮" to add to folder, rename, or delete. View Details to open Web Preview modal. |
+| `Export/Import`     | Use Settings to export as JSON/HTML/CSV or import with duplicate check.                |
+| `Customize`         | Adjust themes (Tokyo Night, Monokai, etc.), fonts, or language in Settings.            |
+| `Web Preview`       | Open sites in a modal within the extension (Details button).                           |
+| `Open Side Panel`   | Open bookmark in a side panel for quick viewing.                                       |
+| `Quick Open Action` | Choose default action (Popup, Full Page, Side Panel) for the extension icon.           |
+| `Tags`              | Filter by tags using the sidebar or the Tags Browser Popup.                            |
+| `Pin to top`        | Pin important bookmarks to the top of your list.                                       |
+| `Check Link Health` | Verify bookmark health (Alive, Dead, or Suspicious).                                   |
+| `Visit Count`       | Track and display how many times a bookmark was opened.                                |
+| `Chatbot`           | Control extension via natural language. Supports major AI providers.                   |
+| `Favicon Provider`  | Choose between Google, DuckDuckGo, or Auto for fetching icons.                         |
 
 ## Video & screenshots
 
