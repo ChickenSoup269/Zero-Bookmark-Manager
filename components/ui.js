@@ -1470,6 +1470,7 @@ function renderSidebarFolderTree(folders, elements) {
     // Dragstart event
     li.addEventListener("dragstart", (e) => {
       e.stopPropagation()
+      currentDragId = folder.id
       e.dataTransfer.setData("text/plain", folder.id)
       currentDragType = "folder"
       e.dataTransfer.effectAllowed = "move"
@@ -1803,6 +1804,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 }
 
 let currentDragType = null
+let currentDragId = null
 let selectedFolderForContextMenu = null
 
 function renderDetailView(bookmarksList, elements) {
@@ -1993,6 +1995,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         el.draggable = true
         el.addEventListener("dragstart", (e) => {
           e.stopPropagation()
+          currentDragId = bookmark.id
           e.dataTransfer.setData("text/plain", bookmark.id)
           currentDragType = "bookmark"
           e.dataTransfer.effectAllowed = "move"
@@ -2001,6 +2004,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         el.addEventListener("dragend", () => {
           el.classList.remove("dragging")
           currentDragType = null
+          currentDragId = null
         })
         fragment.appendChild(el)
       }
@@ -2043,19 +2047,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       sortedBookmarks.forEach((bookmark) => {
         if (bookmark.url) {
           const el = createSimpleBookmarkElement(bookmark, language, elements)
-          // Kéo Bookmark
-          el.draggable = true
-          el.addEventListener("dragstart", (e) => {
-            e.stopPropagation()
-            e.dataTransfer.setData("text/plain", bookmark.id)
-            currentDragType = "bookmark"
-            e.dataTransfer.effectAllowed = "move"
-            el.classList.add("dragging")
-          })
-          el.addEventListener("dragend", () => {
-            el.classList.remove("dragging")
-            currentDragType = null
-          })
+          makeBookmarkDraggableAndDroppable(el, bookmark, elements, language)
           fragment.appendChild(el)
         }
       })
@@ -2081,7 +2073,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       const folderCard = document.createElement("div")
       folderCard.className = "folder-card"
       folderCard.dataset.folderId = folder.id
-      folderCard.draggable = false
+      folderCard.draggable = true
 
       folderCard.innerHTML = `
             <div class="folder-content" style="pointer-events: none;">
@@ -2093,6 +2085,22 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
             </div>
             <div class="bookmarks-container"></div>
         `
+
+      // Drag Folder
+      folderCard.addEventListener("dragstart", (e) => {
+        e.stopPropagation()
+        currentDragId = folder.id
+        e.dataTransfer.setData("text/plain", folder.id)
+        currentDragType = "folder"
+        e.dataTransfer.effectAllowed = "move"
+        folderCard.classList.add("dragging")
+      })
+
+      folderCard.addEventListener("dragend", () => {
+        folderCard.classList.remove("dragging")
+        currentDragType = null
+        currentDragId = null
+      })
 
       // Click mở folder
       folderCard.addEventListener("click", (e) => {
@@ -2109,11 +2117,43 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         )
       })
 
-      // Drop Bookmark vào Folder
+      // Drop Bookmark/Folder vào Folder
       folderCard.addEventListener("dragover", (e) => {
         e.preventDefault()
         e.stopPropagation()
-        if (currentDragType !== "bookmark") return
+        if (currentDragType !== "bookmark" && currentDragType !== "folder") return
+
+        // Ngăn kéo folder vào chính nó hoặc con của nó
+        const draggedId = currentDragId
+        if (!draggedId) return
+
+        if (currentDragType === "folder") {
+            if (draggedId === folder.id) {
+                e.dataTransfer.dropEffect = "none"
+                return
+            }
+            const draggedNode = findNodeById(draggedId, uiState.bookmarkTree)
+            if (draggedNode && isAncestorOf(draggedNode, folder.id)) {
+                e.dataTransfer.dropEffect = "none"
+                return
+            }
+
+            // Logic Reorder cho Folder (Swap vị trí)
+            if (uiState.sortType === "default" && !uiState.searchQuery) {
+                const rect = folderCard.getBoundingClientRect()
+                const midX = rect.left + rect.width / 2
+                const midY = rect.top + rect.height / 2
+                
+                folderCard.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+
+                // Trong Card View (Grid), ưu tiên check ngang
+                if (e.clientX < midX) {
+                    folderCard.classList.add("drop-target-left")
+                } else {
+                    folderCard.classList.add("drop-target-right")
+                }
+            }
+        }
 
         e.dataTransfer.dropEffect = "move"
         folderCard.classList.add("drag-over")
@@ -2122,20 +2162,51 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       folderCard.addEventListener("dragleave", (e) => {
         e.stopPropagation()
         if (!folderCard.contains(e.relatedTarget)) {
-          folderCard.classList.remove("drag-over")
+          folderCard.classList.remove("drag-over", "drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
         }
       })
 
-      folderCard.addEventListener("drop", (e) =>
-        handleFolderDrop(
-          e,
-          folder,
-          folderCard,
-          bookmarkTreeNodes,
-          language,
-          elements,
-        ),
-      )
+      folderCard.addEventListener("drop", (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        folderCard.classList.remove("drag-over", "drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+
+        const draggedId = e.dataTransfer.getData("text/plain")
+        const targetId = folder.id
+
+        if (currentDragType === "bookmark") {
+            handleFolderDrop(e, folder, folderCard, bookmarkTreeNodes, language, elements)
+        } else if (currentDragType === "folder") {
+            if (draggedId === targetId) return
+
+            const rect = folderCard.getBoundingClientRect()
+            const midX = rect.left + rect.width / 2
+            
+            const dropPosition = e.clientX < midX ? "before" : "after"
+
+            chrome.bookmarks.get([draggedId, targetId], (results) => {
+                if (!results || results.length < 2) return
+                let draggedNode, targetNode
+                if (results[0].id === draggedId) {
+                    draggedNode = results[0]
+                    targetNode = results[1]
+                } else {
+                    draggedNode = results[1]
+                    targetNode = results[0]
+                }
+
+                let newIndex = targetNode.index
+                if (dropPosition === "after") newIndex++
+                if (draggedNode.parentId === targetNode.parentId && draggedNode.index < targetNode.index) {
+                    newIndex--
+                }
+
+                chrome.bookmarks.move(draggedId, { parentId: targetNode.parentId, index: newIndex }, () => {
+                    chrome.bookmarks.getTree((tree) => renderFilteredBookmarks(tree, elements))
+                })
+            })
+        }
+      })
 
       // Render Preview Bookmarks
       const bookmarksContainer = folderCard.querySelector(
@@ -2145,17 +2216,11 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         if (bookmark.url) {
           const el = createSimpleBookmarkElement(bookmark, language, elements)
           el.draggable = true
-          el.addEventListener("dragstart", (e) => {
-            e.stopPropagation()
-            e.dataTransfer.setData("text/plain", bookmark.id)
-            currentDragType = "bookmark"
-            e.dataTransfer.effectAllowed = "move"
-            el.classList.add("dragging")
-          })
           el.addEventListener("dragend", (e) => {
             e.stopPropagation()
             el.classList.remove("dragging")
             currentDragType = null
+            currentDragId = null
           })
           bookmarksContainer.appendChild(el)
         }
@@ -2231,22 +2296,23 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
 
   el.addEventListener("dragstart", (e) => {
     e.stopPropagation()
+    currentDragId = bookmark.id
     e.dataTransfer.setData("text/plain", bookmark.id)
     currentDragType = "bookmark"
     e.dataTransfer.effectAllowed = "move"
     el.classList.add("dragging")
   })
-
-  el.addEventListener("dragend", (e) => {
-    e.stopPropagation()
-    el.classList.remove("dragging")
-    currentDragType = null
-    document
-      .querySelectorAll(".drop-target-above, .drop-target-below")
-      .forEach((node) => {
-        node.classList.remove("drop-target-above", "drop-target-below")
-      })
-  })
+    el.addEventListener("dragend", (e) => {
+      e.stopPropagation()
+      el.classList.remove("dragging")
+      currentDragType = null
+      currentDragId = null
+      document
+        .querySelectorAll(".drop-target-above, .drop-target-below, .drop-target-left, .drop-target-right")
+        .forEach((node) => {
+          node.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+        })
+    })
 
   el.addEventListener("dragover", (e) => {
     if (currentDragType !== "bookmark") return
@@ -2256,24 +2322,37 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     e.dataTransfer.dropEffect = "move"
 
     const rect = el.getBoundingClientRect()
+    const midX = rect.left + rect.width / 2
     const midY = rect.top + rect.height / 2
-    if (e.clientY < midY) {
-      el.classList.add("drop-target-above")
-      el.classList.remove("drop-target-below")
+    
+    // Clear old classes
+    el.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+
+    if (uiState.viewMode === "card") {
+      // In Card View (Grid), check horizontal position first
+      if (e.clientX < midX) {
+        el.classList.add("drop-target-left")
+      } else {
+        el.classList.add("drop-target-right")
+      }
     } else {
-      el.classList.add("drop-target-below")
-      el.classList.remove("drop-target-above")
+      // In List/Tree view, use vertical position
+      if (e.clientY < midY) {
+        el.classList.add("drop-target-above")
+      } else {
+        el.classList.add("drop-target-below")
+      }
     }
   })
 
   el.addEventListener("dragleave", (e) => {
-    el.classList.remove("drop-target-above", "drop-target-below")
+    el.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
   })
 
   el.addEventListener("drop", (e) => {
     e.preventDefault()
     e.stopPropagation()
-    el.classList.remove("drop-target-above", "drop-target-below")
+    el.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
 
     if (currentDragType !== "bookmark") return
     if (uiState.sortType !== "default" || uiState.searchQuery) {
@@ -2290,8 +2369,15 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     if (draggedId === targetId) return
 
     const rect = el.getBoundingClientRect()
+    const midX = rect.left + rect.width / 2
     const midY = rect.top + rect.height / 2
-    const dropPosition = e.clientY < midY ? "before" : "after"
+    
+    let dropPosition
+    if (uiState.viewMode === "card") {
+      dropPosition = e.clientX < midX ? "before" : "after"
+    } else {
+      dropPosition = e.clientY < midY ? "before" : "after"
+    }
 
     chrome.bookmarks.get([draggedId, targetId], (results) => {
       if (!results || results.length < 2) {
@@ -2586,6 +2672,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
       // Add dragstart event listener for folders
       folderDiv.addEventListener("dragstart", (e) => {
         e.stopPropagation()
+        currentDragId = node.id
         e.dataTransfer.setData("text/plain", node.id)
         currentDragType = "folder"
         e.dataTransfer.effectAllowed = "move"

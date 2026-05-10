@@ -13,6 +13,22 @@ export function updateBookmarksPageText() {
     }
   })
 
+  // Update tooltips (titles)
+  document.querySelectorAll("[data-i18n-title]").forEach((element) => {
+    const key = element.getAttribute("data-i18n-title")
+    if (key) {
+      element.title = t(key)
+    }
+  })
+
+  // Update placeholders
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+    const key = element.getAttribute("data-i18n-placeholder")
+    if (key) {
+      element.placeholder = t(key)
+    }
+  })
+
   // Update sidebar section titles
   const filtersTitle = document.getElementById("filters-title")
   if (filtersTitle) filtersTitle.textContent = t("filtersTitle")

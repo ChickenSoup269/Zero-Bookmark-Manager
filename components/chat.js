@@ -798,15 +798,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json()
       let result
       try {
+        let text = ""
         if (config.model === "gemini") {
-          result = JSON.parse(
-            data.candidates?.[0]?.content?.parts?.[0]?.text || "{}",
-          )
+          text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}"
         } else if (config.model === "gpt") {
-          result = JSON.parse(data.choices?.[0]?.message?.content || "{}")
+          text = data.choices?.[0]?.message?.content || "{}"
         } else {
-          result = JSON.parse(data.text || "{}")
+          text = data.text || "{}"
         }
+        
+        // Clean markdown backticks
+        const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim()
+        result = JSON.parse(cleanedText)
       } catch (parseError) {
         throw new Error(
           `${
@@ -849,15 +852,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json()
       let result
       try {
+        let text = ""
         if (config.model === "gemini") {
-          result = JSON.parse(
-            data.candidates?.[0]?.content?.parts?.[0]?.text || "{}",
-          )
+          text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}"
         } else if (config.model === "gpt") {
-          result = JSON.parse(data.choices?.[0]?.message?.content || "{}")
+          text = data.choices?.[0]?.message?.content || "{}"
         } else {
-          result = JSON.parse(data.text || "{}")
+          text = data.text || "{}"
         }
+        
+        // Clean markdown backticks
+        const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim()
+        result = JSON.parse(cleanedText)
       } catch (parseError) {
         throw new Error(
           `${
@@ -1815,9 +1821,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
           appendBotMessage(htmlContent, textContent)
         }
-      } else if (action === "suggest_website" && params.websites) {
+      } else if (action === "suggest_website") {
         hideTypingIndicator()
-
         const websites = params.websites || []
 
         const htmlContent = websites.length
@@ -1847,64 +1852,36 @@ document.addEventListener("DOMContentLoaded", () => {
         appendBotMessage(htmlContent)
 
         // Add event listeners for bookmark buttons
-
         const lastBotMessageContainer = chatMessages.lastElementChild
-
         if (lastBotMessageContainer) {
-          const bookmarkButtons =
-            lastBotMessageContainer.querySelectorAll(".bookmark-btn")
-
+          const bookmarkButtons = lastBotMessageContainer.querySelectorAll(".bookmark-btn")
           bookmarkButtons.forEach((button) => {
             button.addEventListener("click", async () => {
               const url = button.getAttribute("data-url")
-
               const title = button.getAttribute("data-title")
-
               const folder = button.getAttribute("data-folder")
-
               try {
                 const existingBookmarks = await checkUrlExists(url)
-
                 if (existingBookmarks.length > 0) {
                   showCustomPopup(
-                    `${
-                      t("duplicateUrlError") ||
-                      "A bookmark with this URL already exists"
-                    }: ${url}.`,
-
+                    `${t("duplicateUrlError") || "A bookmark with this URL already exists"}: ${url}.`,
                     "error",
-
-                    true,
+                    true
                   )
-
                   return
                 }
-
                 chrome.bookmarks.create(
                   { parentId: await findFolderId(folder), title, url },
-
                   (bookmark) => {
                     showCustomPopup(
-                      `${
-                        t("addedBookmarkToFolder") || "I've added the bookmark"
-                      } ${title} ${
-                        t("toFolder") || "to the folder"
-                      } '${folder}' (ID: ${bookmark.id}).`,
-
+                      `${t("addedBookmarkToFolder") || "I've added the bookmark"} ${title} ${t("toFolder") || "to the folder"} '${folder}' (ID: ${bookmark.id}).`,
                       "success",
-
-                      true,
+                      true
                     )
-                  },
+                  }
                 )
               } catch (error) {
-                showCustomPopup(
-                  `${t("errorTitle") || "Error"}: ${error.message}`,
-
-                  "error",
-
-                  true,
-                )
+                showCustomPopup(`${t("errorTitle") || "Error"}: ${error.message}`, "error", true)
               }
             })
           })
@@ -2149,6 +2126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (parseError) {
           console.error("Failed to parse AI JSON:", responseText)
           // Fallback: If AI didn't return JSON, treat the whole response as a chat message
+          hideTypingIndicator()
           appendBotMessage(responseText, responseText, true)
           return
         }
@@ -2156,9 +2134,20 @@ document.addEventListener("DOMContentLoaded", () => {
         if (aiResult.action && aiResult.action !== "general") {
           // It's a bookmark action
           console.log("AI executing action:", aiResult.action, aiResult.params)
-          await handleBookmarkCommand(aiResult.action, aiResult.params || {})
+          // If the action is suggest_website but we don't have websites yet, 
+          // it means AI just returned the action. We need to handle this.
+          if (aiResult.action === "suggest_website" && !aiResult.params?.websites) {
+            // Re-call AI specifically for websites or just treat as general
+            const answer = aiResult.answer || "Đang lấy gợi ý website cho bạn..."
+            appendBotMessage(answer, answer, true)
+            const webSuggestions = await suggestWebsites(message)
+            await handleBookmarkCommand("suggest_website", { websites: webSuggestions.websites })
+          } else {
+            await handleBookmarkCommand(aiResult.action, aiResult.params || {})
+          }
         } else {
           // It's a general chat or the AI decided it's general
+          hideTypingIndicator()
           const answer = aiResult.answer || responseText
           appendBotMessage(answer, answer, true)
         }
@@ -2413,7 +2402,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Save current selection to restore if possible
     const currentVal = aiProfileSelect.value
     
-    aiProfileSelect.innerHTML = `<option value="">-- Chọn Profile --</option>`
+    aiProfileSelect.innerHTML = `<option value="">-- ${t("selectFolder") || "Chọn Profile"} --</option>`
 
     profiles.forEach((profile, index) => {
       const option = document.createElement("option")
@@ -2440,7 +2429,7 @@ document.addEventListener("DOMContentLoaded", () => {
         aiApiKeyInput.value = profile.apiKey || ""
         aiModelNameInput.value = profile.modelName || ""
         aiProviderSelect.dispatchEvent(new Event("change"))
-        showCustomPopup(`Đã áp dụng profile: ${profile.name}`, "success", true)
+        showCustomPopup(`${t("aiProfileApplySuccess") || "Đã áp dụng profile:"} ${profile.name}`, "success", true)
       }
     })
   }
@@ -2460,18 +2449,20 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteAiProfileBtn.addEventListener("click", async () => {
       const index = aiProfileSelect.value
       if (index === "") {
-        showCustomPopup("Vui lòng chọn Profile để xóa", "info", true)
+        showCustomPopup(t("aiProfileSelectToDelete") || "Vui lòng chọn Profile để xóa", "info", true)
         return
       }
 
       const profiles = await getAiProfiles()
-      const profileName = profiles[index]?.name || "này"
+      const profileName = profiles[index]?.name || ""
       
-      showCustomConfirm(`Bạn có chắc chắn muốn xóa profile "${profileName}"?`, async () => {
+      const confirmMsg = (t("aiProfileDeleteConfirm") || "Bạn có chắc chắn muốn xóa profile \"{0}\"?").replace("{0}", profileName)
+
+      showCustomConfirm(confirmMsg, async () => {
         profiles.splice(index, 1)
         await saveAiProfiles(profiles)
         await renderAiProfiles()
-        showCustomPopup(`Đã xóa profile: ${profileName}`, "success", true)
+        showCustomPopup(`${t("aiProfileDeleteSuccess") || "Đã xóa profile:"} ${profileName}`, "success", true)
       })
     })
   }
@@ -2497,7 +2488,7 @@ document.addEventListener("DOMContentLoaded", () => {
       aiProfileSelect.value = profiles.length - 1
       
       aiProfileNamePopup.classList.add("hidden")
-      showCustomPopup("Đã lưu Profile thành công!", "success", true)
+      showCustomPopup(t("aiProfileSaveSuccess") || "Đã lưu Profile thành công!", "success", true)
     })
   }
 
