@@ -600,7 +600,7 @@
   background: var(--bg-primary);
   padding: 2px 6px;
   border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-family-monospace, "JetBrainsMonoNerdFont", monospace);
   font-size: 0.8rem;
   overflow: hidden;
   text-overflow: ellipsis;

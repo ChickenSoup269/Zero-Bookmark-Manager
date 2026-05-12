@@ -89,16 +89,16 @@ body.font-proFontWindowsNerdFontPropo {
   font-family: "ProFontWindowsNerdFontPropo", Arial, sans-serif;
 }
 body.font-roboto {
-  font-family: "Roboto", sans-serif;
+  font-family: "Roboto", "JetBrainsMonoNerdFont", sans-serif;
 }
 body.font-openSans {
-  font-family: "Open Sans", sans-serif;
+  font-family: "Open Sans", "JetBrainsMonoNerdFont", sans-serif;
 }
 body.font-inter {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter", "JetBrainsMonoNerdFont", sans-serif;
 }
 body.font-lexend {
-  font-family: "Lexend", sans-serif;
+  font-family: "Lexend", "JetBrainsMonoNerdFont", sans-serif;
 }
 
 /* Ensure inputs and buttons inherit the body font */
@@ -118,6 +118,7 @@ body {
   color: var(--text-primary);
   margin: 0;
   padding: 0;
+  font-family: "Inter", "JetBrainsMonoNerdFont", sans-serif;
   line-height: 1.5;
   transition:
     background-color var(--transition-normal),
@@ -189,14 +190,10 @@ html {
   outline: none;
 }
 
-.select-with-icons {
-  /* Ưu tiên font đang chọn (inherit) cho chữ, dùng Nerd Font cho biểu tượng */
-  font-family: inherit, "JetBrainsMonoNerdFont", sans-serif !important;
-  font-weight: 500 !important; /* Không còn bị Bold béo nữa */
-}
-
+.select-with-icons,
 .select-with-icons option {
-  font-family: inherit, "JetBrainsMonoNerdFont", sans-serif !important;
+  /* Inherit will now include JetBrainsMonoNerdFont from the body classes */
+  font-family: inherit !important;
   font-weight: 500 !important;
 }
 
