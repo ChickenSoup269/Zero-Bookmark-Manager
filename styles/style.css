@@ -76,21 +76,34 @@ textarea.input {
   box-sizing: border-box;
 }
 
-body.font-gohu,
-body.font-gohu * {
-  font-family: "GohuFont", Arial, sans-serif !important;
+body.font-gohu {
+  font-family: "GohuFont", Arial, sans-serif;
 }
-body.font-jetBrainsMonoNerdFont,
-body.font-jetBrainsMonoNerdFont * {
-  font-family: "JetBrainsMonoNerdFont", Arial, sans-serif !important;
+body.font-jetBrainsMonoNerdFont {
+  font-family: "JetBrainsMonoNerdFont", Arial, sans-serif;
 }
-body.font-anonymiceProNerd,
-body.font-anonymiceProNerd * {
-  font-family: "AnonymiceProNerdFont", Arial, sans-serif !important;
+body.font-anonymiceProNerd {
+  font-family: "AnonymiceProNerdFont", Arial, sans-serif;
 }
-body.font-proFontWindowsNerdFontPropo,
-body.font-proFontWindowsNerdFontPropo * {
-  font-family: "ProFontWindowsNerdFontPropo", Arial, sans-serif !important;
+body.font-proFontWindowsNerdFontPropo {
+  font-family: "ProFontWindowsNerdFontPropo", Arial, sans-serif;
+}
+body.font-roboto {
+  font-family: "Roboto", sans-serif;
+}
+body.font-openSans {
+  font-family: "Open Sans", sans-serif;
+}
+body.font-inter {
+  font-family: "Inter", sans-serif;
+}
+body.font-lexend {
+  font-family: "Lexend", sans-serif;
+}
+
+/* Ensure inputs and buttons inherit the body font */
+input, select, textarea, button {
+  font-family: inherit;
 }
 
 body {
@@ -170,10 +183,21 @@ html {
   border-radius: var(--border-radius);
   background-color: var(--bg-secondary);
   color: var(--text-primary);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   outline: none;
+}
+
+.select-with-icons {
+  /* Ưu tiên font đang chọn (inherit) cho chữ, dùng Nerd Font cho biểu tượng */
+  font-family: inherit, "JetBrainsMonoNerdFont", sans-serif !important;
+  font-weight: 500 !important; /* Không còn bị Bold béo nữa */
+}
+
+.select-with-icons option {
+  font-family: inherit, "JetBrainsMonoNerdFont", sans-serif !important;
+  font-weight: 500 !important;
 }
 
 .select:focus {

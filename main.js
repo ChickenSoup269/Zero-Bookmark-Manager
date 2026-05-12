@@ -233,6 +233,32 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add(`font-${savedFont}`)
     elements.fontSwitcher.value = savedFont
 
+    // Check for first run
+    if (!localStorage.getItem("firstRunComplete")) {
+      const firstRunPopup = document.getElementById("first-run-popup")
+      const firstRunFontSelect = document.getElementById("first-run-font-select")
+      const firstRunSaveBtn = document.getElementById("first-run-save")
+
+      if (firstRunPopup && firstRunSaveBtn) {
+        firstRunPopup.classList.remove("hidden")
+        
+        firstRunSaveBtn.addEventListener("click", () => {
+          const selectedFont = firstRunFontSelect.value
+          
+          // Remove all possible font classes
+          const fontClasses = Array.from(document.body.classList).filter(cls => cls.startsWith('font-'));
+          fontClasses.forEach(cls => document.body.classList.remove(cls));
+          
+          document.body.classList.add(`font-${selectedFont}`)
+          localStorage.setItem("appFont", selectedFont)
+          elements.fontSwitcher.value = selectedFont
+          
+          localStorage.setItem("firstRunComplete", "true")
+          firstRunPopup.classList.add("hidden")
+        })
+      }
+    }
+
     const savedView = localStorage.getItem("appView") || "flat"
     elements.viewSwitcher.value = savedView
     uiState.viewMode = savedView

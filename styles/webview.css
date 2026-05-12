@@ -3084,7 +3084,7 @@ textarea.error {
 
 .list-bookmark-item > * {
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .list-bookmark-item:hover {
@@ -3092,6 +3092,8 @@ textarea.error {
   border-color: var(--accent-color);
   transform: translateX(4px);
   box-shadow: var(--shadow-md);
+  z-index: 100;
+  position: relative;
 }
 
 .list-info-main {

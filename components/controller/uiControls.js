@@ -26,13 +26,10 @@ export function setupUIControlListeners(elements) {
   })
 
   elements.fontSwitcher.addEventListener("change", (e) => {
-    document.body.classList.remove(
-      "font-gohu",
-      "font-normal",
-      "font-anonymiceProNerd",
-      "font-proFontWindowsNerdFontPropo", 
-      "font-jetBrainsMonoNerdFont",
-    )
+    // Remove all possible font classes
+    const fontClasses = Array.from(document.body.classList).filter(cls => cls.startsWith('font-'));
+    fontClasses.forEach(cls => document.body.classList.remove(cls));
+    
     document.body.classList.add(`font-${e.target.value}`)
     localStorage.setItem("appFont", e.target.value)
   })

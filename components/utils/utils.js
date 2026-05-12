@@ -433,6 +433,15 @@ export const translations = {
     aiProfileNamePrompt: "Enter a name for this profile:",
     aiProfileSaveSuccess: "Profile saved successfully!",
     aiProfileNoProfiles: "No profiles saved yet",
+    firstRunTitle: "Welcome! Choose Your Font",
+    firstRunSub: "Select a default font style for the extension:",
+    firstRunSave: "Get Started",
+    fontRoboto: "Aa: Roboto (Google Font)",
+    fontOpenSans: "Aa: Open Sans (Google Font)",
+    fontInter: "Aa: Inter (Google Font)",
+    fontLexend: "Aa: Lexend (Google Font)",
+    fontGohu: "Aa: GohuFont (Pixel)",
+    fontJetBrains: "Aa: JetBrains Mono",
   },
   vi: {
     welcomeMessage: "Chào mừng đến với Zero Bookmark Manager Chat!",
@@ -866,8 +875,17 @@ export const translations = {
     aiProfileNamePrompt: "Nhập tên cho Profile này:",
     aiProfileSaveSuccess: "Đã lưu Profile thành công!",
     aiProfileNoProfiles: "Chưa có profile nào được lưu",
-    },
-    }
+    firstRunTitle: "Chào mừng! Hãy chọn Font chữ",
+    firstRunSub: "Chọn kiểu font chữ mặc định cho tiện ích:",
+    firstRunSave: "Bắt đầu sử dụng",
+    fontRoboto: "Aa: Roboto (Google Font)",
+    fontOpenSans: "Aa: Open Sans (Google Font)",
+    fontInter: "Aa: Inter (Google Font)",
+    fontLexend: "Aa: Lexend (Google Font)",
+    fontGohu: "Aa: GohuFont (Pixel)",
+    fontJetBrains: "Aa: JetBrains Mono",
+  },
+};
 
 // ==========================================
 // FUZZY SEARCH FUNCTIONS

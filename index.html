@@ -29,23 +29,27 @@
                         </div>
                     </div>
                     <select id="theme-switcher" class="select select-with-icons">
-                        <option value="system">&#xf108; System</option>
-                        <option value="light">&#9889; Light</option>
-                        <option value="dark">&#9889; Dark</option>
-                        <option value="dracula">&#9889; Dracula</option>
-                        <option value="onedark">&#9889; OneDark</option>
-                        <option value="tokyonight">&#9889; Tokyo Night</option>
-                        <option value="monokai">&#9889; Monokai</option>
-                        <option value="winter-is-coming">&#9889; Winter is Coming</option>
-                        <option value="github-blue">&#9889; GitHub Blue</option>
-                        <option value="github-light">&#9889; GitHub Light</option>
-                        <option value="tet">&#9889; Tet</option>
+                        <option value="system">&#xf0e7; System</option>
+                        <option value="light">&#xf0e7; Light</option>
+                        <option value="dark">&#xf0e7; Dark</option>
+                        <option value="dracula">&#xf0e7; Dracula</option>
+                        <option value="onedark">&#xf0e7; OneDark</option>
+                        <option value="tokyonight">&#xf0e7; Tokyo Night</option>
+                        <option value="monokai">&#xf0e7; Monokai</option>
+                        <option value="winter-is-coming">&#xf0e7; Winter is Coming</option>
+                        <option value="github-blue">&#xf0e7; GitHub Blue</option>
+                        <option value="github-light">&#xf0e7; GitHub Light</option>
+                        <option value="tet">&#xf0e7; Tet</option>
                     </select>
-                    <select id="font-switcher" class="select select-with-icons">
-                        <option value="gohu">Aa: GohuFont</option>
-                        <option value="jetBrainsMonoNerdFont">Aa: jetBrains</option>
+                    <select id="font-switcher" class="select">
+                        <option value="gohu" data-i18n="fontGohu">Aa: GohuFont</option>
+                        <option value="jetBrainsMonoNerdFont" data-i18n="fontJetBrains">Aa: jetBrains</option>
                         <option value="anonymiceProNerd">Aa: AnonymiceProNerd</option>
                         <option value="proFontWindowsNerdFontPropo">Aa: ProFont</option>
+                        <option value="roboto" data-i18n="fontRoboto">Aa: Roboto</option>
+                        <option value="openSans" data-i18n="fontOpenSans">Aa: Open Sans</option>
+                        <option value="inter" data-i18n="fontInter">Aa: Inter</option>
+                        <option value="lexend" data-i18n="fontLexend">Aa: Lexend</option>
                     </select>
                     <select id="view-switcher" class="select select-with-icons">
                         <option value="flat">&#xf03a; Flat List</option>
@@ -375,6 +379,25 @@
         <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
             <i class="fas fa-caret-up"></i>
         </button>
+        <div id="first-run-popup" class="rename-popup hidden" role="dialog" aria-labelledby="first-run-title">
+            <div class="rename-popup-content">
+                <h3 id="first-run-title" data-i18n="firstRunTitle">Welcome! Choose Your Font</h3>
+                <p data-i18n="firstRunSub">Select a default font style for the extension:</p>
+                <div class="rename-input-container">
+                    <select id="first-run-font-select" class="select" style="width: 100%; margin-bottom: 10px;">
+                        <option value="gohu" data-i18n="fontGohu">Aa: GohuFont (Pixel Style)</option>
+                        <option value="jetBrainsMonoNerdFont" data-i18n="fontJetBrains">Aa: JetBrains Mono</option>
+                        <option value="roboto" data-i18n="fontRoboto">Aa: Roboto (Google Font)</option>
+                        <option value="openSans" data-i18n="fontOpenSans">Aa: Open Sans (Google Font)</option>
+                        <option value="inter" data-i18n="fontInter">Aa: Inter (Google Font)</option>
+                        <option value="lexend" data-i18n="fontLexend">Aa: Lexend (Google Font)</option>
+                    </select>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="first-run-save" class="button save" data-i18n="firstRunSave">Get Started</button>
+                </div>
+            </div>
+        </div>
         <!-- footer -->
         <div class="footer">
             <p class="footer-text">
