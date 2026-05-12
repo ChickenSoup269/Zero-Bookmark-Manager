@@ -80,13 +80,13 @@
                     <!-- Sort Options -->
                     <!-- <div class="sidebar-sort-divider"></div> -->
                     <select id="sort-filter" class="sidebar-select hidden" aria-label="Sort bookmarks">
-                        <option value="default">Default</option>
-                        <option value="new">Newest First</option>
-                        <option value="old">Oldest First</option>
-                        <option value="last-opened">Last Opened</option>
-                        <option value="a-z">A → Z</option>
-                        <option value="z-a">Z → A</option>
-                        <option value="domain">By Domain</option>
+                        <option value="default" data-i18n="sortDefault">Default</option>
+                        <option value="new" data-i18n="sortNew">Newest First</option>
+                        <option value="old" data-i18n="sortOld">Oldest First</option>
+                        <option value="last-opened" data-i18n="sortLastOpened">Last Opened</option>
+                        <option value="a-z" data-i18n="sortAZ">A → Z</option>
+                        <option value="z-a" data-i18n="sortZA">Z → A</option>
+                        <option value="domain" data-i18n="sortDomain">By Domain</option>
                     </select>
                     <ul class="sidebar-sort-list" id="sidebar-sort-list">
                         <li class="sidebar-sort-item active" data-sort="default">
@@ -366,11 +366,12 @@
 
                         <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
                         <div class="menu-group">
-                            <label for="favicon-option-select"><i class="fas fa-image"></i> Favicon Mode:</label>
+                            <label for="favicon-option-select"><i class="fas fa-image"></i> <span
+                                    data-i18n="faviconMode">Favicon Mode:</span></label>
                             <select id="favicon-option-select" class="select">
-                                <option value="auto">Auto (Google → Hostname)</option>
-                                <option value="google">Google Only</option>
-                                <option value="hostname">Hostname Only</option>
+                                <option value="auto" data-i18n="faviconAuto">Auto (Google → Hostname)</option>
+                                <option value="google" data-i18n="faviconGoogle">Google Only</option>
+                                <option value="hostname" data-i18n="faviconHostname">Hostname Only</option>
                             </select>
 
                             <label for="header-line-select"><i class="fas fa-window-minimize"></i> <span
@@ -394,7 +395,7 @@
             <div class="back-button-container" id="back-button-container" style="display: none;">
                 <button id="back-button" class="button back-button" aria-label="Go back">
                     <span style="font-size: 18px;">←</span>
-                    <span>Back</span>
+                    <span data-i18n="back">Back</span>
                 </button>
             </div>
 
@@ -594,20 +595,20 @@
                 <p id="update-popup-message">Zero Bookmark Manager updated to <strong id="update-version"></strong></p>
                 <div class="rename-popup-buttons">
                     <a href="https://extension-changelogs.vercel.app/changelog?ext=Zero+Bookmark+Manager"
-                        target="_blank" class="button save">Release Notes</a>
-                    <button id="update-popup-close" class="button cancel">Close</button>
+                        target="_blank" class="button save" data-i18n="releaseNotes">Release Notes</a>
+                    <button id="update-popup-close" class="button cancel" data-i18n="close">Close</button>
                 </div>
             </div>
         </div>
 
         <div class="floating-buttons">
-            <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
+            <button id="scroll-to-top" class="button scroll-to-top" data-i18n-title="scrollToTop" title="Scroll to Top" aria-label="Scroll to Top">
                 <i class="fas fa-caret-up"></i>
             </button>
-            <button id="report-bug" class="button report-bug" title="Report Bug" aria-label="Report Bug">
+            <button id="report-bug" class="button report-bug" data-i18n-title="reportBug" title="Report Bug" aria-label="Report Bug">
                 <i class="fas fa-bug"></i>
             </button>
-            <button id="chat-toggle" class="chat-toggle" title="Open Chat" aria-label="Open Chat">
+            <button id="chat-toggle" class="chat-toggle" data-i18n-title="openChat" title="Open Chat" aria-label="Open Chat">
                 <i class="far fa-comment-alt"></i>
             </button>
         </div>
@@ -673,14 +674,13 @@
             <div class="rename-popup-content">
                 <h3 id="localstorage-settings-title">Local Storage Settings</h3>
                 <div class="localstorage-settings-container">
-                    <label><input type="checkbox" id="save-searchQuery" checked> Save Search Query</label>
-                    <label><input type="checkbox" id="save-selectedFolderId" checked> Save Selected Folder</label>
-                    <label><input type="checkbox" id="save-sortType" checked> Save Sort Type</label>
-                    <label><input type="checkbox" id="save-viewMode" checked> Save View Mode</label>
-                    <label><input type="checkbox" id="save-collapsedFolders" checked> Save Collapsed Folders</label>
-                    <label><input type="checkbox" id="save-checkboxesVisible" checked> Save Checkboxes
-                        Visibility</label>
-                    <label><input type="checkbox" id="save-selectedTag" checked> Save Selected Tags</label>
+                    <label><input type="checkbox" id="save-searchQuery" checked> <span data-i18n="saveSearchQuery">Save Search Query</span></label>
+                    <label><input type="checkbox" id="save-selectedFolderId" checked> <span data-i18n="saveSelectedFolderId">Save Selected Folder</span></label>
+                    <label><input type="checkbox" id="save-sortType" checked> <span data-i18n="saveSortType">Save Sort Type</span></label>
+                    <label><input type="checkbox" id="save-viewMode" checked> <span data-i18n="saveViewMode">Save View Mode</span></label>
+                    <label><input type="checkbox" id="save-collapsedFolders" checked> <span data-i18n="saveCollapsedFolders">Save Collapsed Folders</span></label>
+                    <label><input type="checkbox" id="save-checkboxesVisible" checked> <span data-i18n="saveCheckboxesVisible">Save Checkboxes Visibility</span></label>
+                    <label><input type="checkbox" id="save-selectedTag" checked> <span data-i18n="saveSelectedTag">Save Selected Tags</span></label>
                 </div>
                 <div class="rename-popup-buttons">
                     <button id="localstorage-settings-save" class="button save">Save</button>

@@ -103,14 +103,16 @@
                     <!-- <hr> Third HR after health checks -->
                     <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
 
-                    <label for="favicon-option-select"><i class="fas fa-image"></i> Favicon Mode:</label>
+                    <label for="favicon-option-select"><i class="fas fa-image"></i> <span
+                            data-i18n="faviconMode">Favicon Mode:</span></label>
                     <select id="favicon-option-select" class="select">
-                        <option value="auto">Auto (Google → Hostname)</option>
-                        <option value="google">Google Only</option>
-                        <option value="hostname">Hostname Only</option>
+                        <option value="auto" data-i18n="faviconAuto">Auto (Google → Hostname)</option>
+                        <option value="google" data-i18n="faviconGoogle">Google Only</option>
+                        <option value="hostname" data-i18n="faviconHostname">Hostname Only</option>
                     </select>
 
-                    <label for="header-line-select"><i class="fas fa-window-minimize"></i></label>
+                    <label for="header-line-select"><i class="fas fa-window-minimize"></i> <span
+                            data-i18n="headerLineConfig">Header Line Style:</span></label>
                     <select id="header-line-select" class="select">
                         <option value="pattern" data-i18n="linePattern">Slanted Pattern</option>
                         <option value="simple" data-i18n="lineSimple">Simple Line</option>
@@ -136,49 +138,49 @@
                         <i class="fas fa-eye"></i> View Visit Counts
                     </button> -->
                     <button id="localstorage-settings-option" class="menu-item">
-                        <i class="fas fa-cog"></i> Local Storage Settings
+                        <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage Settings</span>
                     </button>
                 </div>
             </div>
         </div>
         <div class="controls">
             <select id="folder-filter" class="select">
-                <option value="">All Bookmarks</option>
+                <option value="" data-i18n="allBookmarks">All Bookmarks</option>
             </select>
             <select id="sort-filter" class="select">
-                <option value="default">Sort: Default</option>
-                <option value="new">New to Old</option>
-                <option value="old">Old to New</option>
-                <option value="last-opened">By Last Opened</option>
-                <option value="most-visited">Most Visited</option>
-                <option value="a-z">A to Z</option>
-                <option value="z-a">Z to A</option>
-                <option value="domain">By Domain</option>
+                <option value="default" data-i18n="sortDefault">Sort: Default</option>
+                <option value="new" data-i18n="sortNew">New to Old</option>
+                <option value="old" data-i18n="sortOld">Old to New</option>
+                <option value="last-opened" data-i18n="sortLastOpened">By Last Opened</option>
+                <option value="most-visited" data-i18n="sortMostVisited">Most Visited</option>
+                <option value="a-z" data-i18n="sortAZ">A to Z</option>
+                <option value="z-a" data-i18n="sortZA">Z to A</option>
+                <option value="domain" data-i18n="sortDomain">By Domain</option>
             </select>
             <select id="health-sort-filter" class="select" style="display: none;">
-                <option value="all">Sort by Health: All</option>
-                <option value="dead">Dead Links</option>
-                <option value="suspicious">Suspicious Links</option>
-                <option value="safe">Safe Links</option>
+                <option value="all" data-i18n="healthSortAll">Sort by Health: All</option>
+                <option value="dead" data-i18n="healthSortDead">Dead Links</option>
+                <option value="suspicious" data-i18n="healthSortSuspicious">Suspicious Links</option>
+                <option value="safe" data-i18n="healthSortSafe">Safe Links</option>
             </select>
             <div class="control-buttons">
-                <button id="create-folder" class="button create">Create Folder</button>
-                <button id="rename-folder" class="button rename-folder hidden">Rename Folder</button>
-                <button id="add-to-folder" class="button add hidden">Add to Folder</button>
-                <button id="delete-folder" class="button delete-folder hidden">Delete Folder</button>
-                <button id="delete-bookmarks-button" class="button delete-bookmarks hidden">Delete Bookmarks</button>
+                <button id="create-folder" class="button create" data-i18n="createFolder">Create Folder</button>
+                <button id="rename-folder" class="button rename-folder hidden" data-i18n="renameFolder">Rename Folder</button>
+                <button id="add-to-folder" class="button add hidden" data-i18n="moveToFolder">Add to Folder</button>
+                <button id="delete-folder" class="button delete-folder hidden" data-i18n="deleteFolder">Delete Folder</button>
+                <button id="delete-bookmarks-button" class="button delete-bookmarks hidden" data-i18n="deleteSelected">Delete Bookmarks</button>
             </div>
         </div>
-        <div id="bookmark-count" class="count">Total Bookmarks: 0</div>
+        <div id="bookmark-count" class="count"><span data-i18n="totalBookmarks">Total Bookmarks</span>: <span id="bookmark-count-number">0</span></div>
         <div class="bottom-controls">
             <div class="select-all">
                 <input type="checkbox" id="select-all">
-                <label for="select-all">Select All</label>
+                <label for="select-all" data-i18n="selectAll">Select All</label>
             </div>
-            <button id="toggle-checkboxes" class="button toggle small">Show Checkboxes</button>
+            <button id="toggle-checkboxes" class="button toggle small" data-i18n="showCheckboxes">Show Checkboxes</button>
         </div>
         <div class="search-container sticky-search">
-            <input type="text" id="search" placeholder="Search bookmarks..." class="input">
+            <input type="text" id="search" placeholder="Search bookmarks..." class="input" data-i18n-placeholder="searchPlaceholder">
             <button id="clear-search" class="button clear">✖</button>
         </div>
         <div id="folder-list" class="folder-list"></div>
@@ -326,8 +328,8 @@
                 <p id="update-popup-message">Zero Bookmark Manager updated to <strong id="update-version"></strong></p>
                 <div class="rename-popup-buttons">
                     <a href="https://extension-changelogs.vercel.app/changelog?ext=Zero+Bookmark+Manager"
-                        target="_blank" class="button save">Release Notes</a>
-                    <button id="update-popup-close" class="button cancel">Close</button>
+                        target="_blank" class="button save" data-i18n="releaseNotes">Release Notes</a>
+                    <button id="update-popup-close" class="button cancel" data-i18n="close">Close</button>
                 </div>
             </div>
         </div>
@@ -345,15 +347,13 @@
             <div class="rename-popup-content">
                 <h3 id="localstorage-settings-title">Local Storage Settings</h3>
                 <div class="localstorage-settings-container">
-                    <label><input type="checkbox" id="save-searchQuery" checked> Save Search Query</label>
-                    <label><input type="checkbox" id="save-selectedFolderId" checked> Save Selected Folder</label>
-                    <label><input type="checkbox" id="save-sortType" checked> Save Sort Type</label>
-                    <label><input type="checkbox" id="save-viewMode" checked> Save View Mode</label>
-                    <label><input type="checkbox" id="save-collapsedFolders" checked> Save Collapsed Folders</label>
-                    <label><input type="checkbox" id="save-checkboxesVisible" checked> Save Checkboxes
-                        Visibility</label>
-                    <label><input type="checkbox" id="save-selectedTag" checked> Save Selected Tags</label>
-
+                    <label><input type="checkbox" id="save-searchQuery" checked> <span data-i18n="saveSearchQuery">Save Search Query</span></label>
+                    <label><input type="checkbox" id="save-selectedFolderId" checked> <span data-i18n="saveSelectedFolderId">Save Selected Folder</span></label>
+                    <label><input type="checkbox" id="save-sortType" checked> <span data-i18n="saveSortType">Save Sort Type</span></label>
+                    <label><input type="checkbox" id="save-viewMode" checked> <span data-i18n="saveViewMode">Save View Mode</span></label>
+                    <label><input type="checkbox" id="save-collapsedFolders" checked> <span data-i18n="saveCollapsedFolders">Save Collapsed Folders</span></label>
+                    <label><input type="checkbox" id="save-checkboxesVisible" checked> <span data-i18n="saveCheckboxesVisible">Save Checkboxes Visibility</span></label>
+                    <label><input type="checkbox" id="save-selectedTag" checked> <span data-i18n="saveSelectedTag">Save Selected Tags</span></label>
                 </div>
                 <div class="rename-popup-buttons">
                     <button id="localstorage-settings-save" class="button save">Save</button>

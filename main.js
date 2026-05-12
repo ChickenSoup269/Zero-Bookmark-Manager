@@ -180,23 +180,36 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update check logic
     chrome.storage.local.get("showUpdatePopup", (res) => {
       if (res.showUpdatePopup) {
-        const manifest = chrome.runtime.getManifest()
-        const currentVersion = manifest.version
-
         const updatePopup = document.getElementById("update-popup")
+        const updateTitle = document.getElementById("update-popup-title")
+        const updateMessage = document.getElementById("update-popup-message")
         const updateVersion = document.getElementById("update-version")
         const updateClose = document.getElementById("update-popup-close")
+        const currentVersion = chrome.runtime.getManifest().version
+        const language = localStorage.getItem("appLanguage") || "en"
 
         if (updatePopup && updateVersion && updateClose) {
-          updateVersion.textContent = currentVersion
+          if (updateTitle)
+            updateTitle.textContent = translations[language].updateTitle
+          if (updateMessage) {
+            updateMessage.innerHTML = `${translations[language].updateMessage} <strong id="update-version">${currentVersion}</strong>`
+          } else {
+            updateVersion.textContent = currentVersion
+          }
+
           updatePopup.classList.remove("hidden")
-          updateClose.addEventListener(
-            "click",
-            () => {
-              updatePopup.classList.add("hidden")
-            },
-            { once: true },
-          )
+
+          const closeUpdatePopup = () => {
+            updatePopup.classList.add("hidden")
+          }
+
+          updateClose.addEventListener("click", closeUpdatePopup, { once: true })
+
+          updatePopup.addEventListener("click", (e) => {
+            if (e.target === updatePopup) {
+              closeUpdatePopup()
+            }
+          })
         }
 
         // Remove the flag so it doesn't show again until next update
