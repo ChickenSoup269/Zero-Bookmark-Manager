@@ -2239,6 +2239,18 @@ html {
   color: var(--health-icon-dead-color); /* đỏ */
 }
 
+/* Malware — nguy hiểm nghiêm trọng */
+.health-icon.malware {
+  color: #dc2626;
+  animation: malware-pulse 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6));
+}
+
+@keyframes malware-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* Nghi ngờ / nguy hiểm */
 .health-icon.suspicious {
   color: #fd7e14; /* cam */
@@ -2248,6 +2260,7 @@ html {
 .health-icon.safe {
   color: #28a745; /* xanh lá */
 }
+
 
 .add-tag-container {
   display: flex;

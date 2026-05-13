@@ -1,5 +1,10 @@
 // background.js
 
+// ==================== Uninstall Feedback ====================
+chrome.runtime.setUninstallURL(
+  "https://docs.google.com/forms/d/e/1FAIpQLSd2unrzbLeLRI3vNpU-XrHY4rLfP1M0busmjKALAU2nMMXVTg/viewform?usp=dialog",
+)
+
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "update") {
     // When the extension is updated, set a flag to show the update popup next time

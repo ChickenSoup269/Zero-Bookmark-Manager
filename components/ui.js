@@ -177,23 +177,26 @@ function renderHealthIcon(bookmarkId) {
   const status = uiState.healthStatus ? uiState.healthStatus[bookmarkId] : null
   if (!status) return ""
 
-  // Tooltip đa ngôn ngữ
   const language = localStorage.getItem("appLanguage") || "en"
-  const t = translations[language] || translations.en
+
   const checkingTitle =
-    language === "vi"
-      ? "Đang kiểm tra liên kết này..."
-      : "Checking this link..."
+    language === "vi" ? "Đang kiểm tra liên kết này..." : "Checking this link..."
   const deadTitle =
     language === "vi"
       ? "Liên kết có thể đã chết hoặc website không phản hồi."
-      : "Link might be dead or the website is not responding."
+      : "Dead link — site not responding or unreachable."
   const safeTitle =
-    language === "vi" ? "Trang web có vẻ hợp lệ." : "Site looks likely safe."
+    language === "vi"
+      ? "Trang web có vẻ hợp lệ và an toàn."
+      : "Site looks safe and legitimate."
   const suspiciousTitle =
     language === "vi"
-      ? "Trang web trông có vẻ mờ ám (dựa trên một số dấu hiệu phổ biến). Hãy cẩn thận!"
-      : "Site looks suspicious based on common patterns. Proceed with caution!"
+      ? "Trang web có dấu hiệu đáng ngờ. Hãy cẩn thận khi truy cập!"
+      : "Suspicious — site shows risky patterns (phishing/typosquat signals). Be careful!"
+  const malwareTitle =
+    language === "vi"
+      ? "⚠️ Phát hiện trong cơ sở dữ liệu MALWARE (URLhaus). Không nên truy cập!"
+      : "⚠️ MALWARE DETECTED — listed in URLhaus malware database. Do not visit!"
 
   if (status === "checking") {
     return `<span class="health-icon checking" title="${checkingTitle}">
@@ -204,6 +207,12 @@ function renderHealthIcon(bookmarkId) {
   if (status === "dead") {
     return `<span class="health-icon dead" title="${deadTitle}">
     <i class="fas fa-exclamation-triangle"></i>
+  </span>`
+  }
+
+  if (status === "alive_malware") {
+    return `<span class="health-icon malware" title="${malwareTitle}">
+    <i class="fas fa-skull-crossbones"></i>
   </span>`
   }
 
@@ -221,6 +230,7 @@ function renderHealthIcon(bookmarkId) {
 
   return ""
 }
+
 
 // Render visit count badge
 function renderVisitCount(bookmarkId) {
@@ -810,8 +820,8 @@ function reRenderCurrentView(elements) {
     filtered = filtered.filter((bookmark) => {
       const status = uiState.healthStatus[bookmark.id]
       if (uiState.healthFilter === "dead") return status === "dead"
-      if (uiState.healthFilter === "suspicious")
-        return status === "alive_suspicious"
+      if (uiState.healthFilter === "malware") return status === "alive_malware"
+      if (uiState.healthFilter === "suspicious") return status === "alive_suspicious"
       if (uiState.healthFilter === "safe") return status === "alive_safe"
       return false
     })
@@ -1730,8 +1740,8 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         filtered = filtered.filter((bookmark) => {
           const status = uiState.healthStatus[bookmark.id]
           if (uiState.healthFilter === "dead") return status === "dead"
-          if (uiState.healthFilter === "suspicious")
-            return status === "alive_suspicious"
+          if (uiState.healthFilter === "malware") return status === "alive_malware"
+          if (uiState.healthFilter === "suspicious") return status === "alive_suspicious"
           if (uiState.healthFilter === "safe") return status === "alive_safe"
           return false
         })
@@ -2562,6 +2572,7 @@ function createListBookmarkElement(bookmark, language, elements) {
   makeBookmarkDraggableAndDroppable(div, bookmark, elements, language)
   return div
 }
+
 
 function renderBookmarks(bookmarksList, elements) {
   if (!elements || !elements.folderListDiv) return

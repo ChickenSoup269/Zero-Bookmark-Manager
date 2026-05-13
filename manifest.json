@@ -12,6 +12,9 @@
     "system.display",
     "webNavigation"
   ],
+  "host_permissions": [
+    "https://urlhaus-api.abuse.ch/*"
+  ],
   "action": {},
   "side_panel": {
     "default_path": "index.html"
