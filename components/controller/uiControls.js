@@ -300,9 +300,47 @@ export function setupUIControlListeners(elements) {
     saveUIState()
   })
 
+  const closeSettingsButton = document.getElementById("settings-close-button")
+  const openSettingsMenu = () => {
+    elements.settingsMenu.classList.remove("hidden")
+    elements.settingsMenu.setAttribute("aria-hidden", "false")
+    elements.settingsButton.setAttribute("aria-expanded", "true")
+    document.body.classList.add("settings-panel-open")
+  }
+  const closeSettingsMenu = () => {
+    elements.settingsMenu.classList.add("hidden")
+    elements.settingsMenu.setAttribute("aria-hidden", "true")
+    elements.settingsButton.setAttribute("aria-expanded", "false")
+    document.body.classList.remove("settings-panel-open")
+  }
+  const toggleSettingsMenu = () => {
+    if (elements.settingsMenu.classList.contains("hidden")) {
+      openSettingsMenu()
+    } else {
+      closeSettingsMenu()
+    }
+  }
+
+  elements.settingsButton.setAttribute("aria-expanded", "false")
   elements.settingsButton.addEventListener("click", (e) => {
     e.stopPropagation()
-    elements.settingsMenu.classList.toggle("hidden")
+    toggleSettingsMenu()
+  })
+
+  closeSettingsButton?.addEventListener("click", (e) => {
+    e.stopPropagation()
+    closeSettingsMenu()
+  })
+
+  const syncSettingsMenuState = () => {
+    const isClosed = elements.settingsMenu.classList.contains("hidden")
+    elements.settingsMenu.setAttribute("aria-hidden", String(isClosed))
+    elements.settingsButton.setAttribute("aria-expanded", String(!isClosed))
+    document.body.classList.toggle("settings-panel-open", !isClosed)
+  }
+  new MutationObserver(syncSettingsMenuState).observe(elements.settingsMenu, {
+    attributes: true,
+    attributeFilter: ["class"],
   })
 
   // ADD THIS
@@ -401,10 +439,16 @@ export function setupUIControlListeners(elements) {
       !e.target.closest(".dropdown-btn") &&
       !e.target.closest(".dropdown-menu")
     ) {
-      elements.settingsMenu.classList.add("hidden")
+      closeSettingsMenu()
       document.querySelectorAll(".dropdown-menu").forEach((menu) => {
         menu.classList.add("hidden")
       })
+    }
+  })
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !elements.settingsMenu.classList.contains("hidden")) {
+      closeSettingsMenu()
     }
   })
 }

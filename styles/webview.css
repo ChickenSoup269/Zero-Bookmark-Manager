@@ -1763,6 +1763,10 @@ body[data-header-line="hidden"] .header::after {
   z-index: 100;
 }
 
+body.settings-panel-open .settings-container {
+  z-index: 2147483647;
+}
+
 .button.settings {
   background: transparent;
   color: var(--text-primary);
@@ -2072,31 +2076,75 @@ body[data-header-line="hidden"] .header::after {
 /* Dropdown menu - Glassmorphism với blur */
 .dropdown-menu-2 {
   position: fixed;
-  top: 60px;
-  right: 20px;
-  margin-top: 8px;
-  background-color: var(--bg-primary);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, calc(100vw - 32px));
+  background-color: color-mix(in srgb, var(--bg-primary) 96%, transparent);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
-  border-radius: 5px;
-  min-width: 280px;
-  max-width: 400px; /* Increased slightly more */
-  padding: 12px;
-  padding-bottom: 24px; /* Added more bottom padding for better accessibility */
+  border-right: none;
+  border-bottom: none;
+  border-top: none;
+  border-radius: 0;
+  padding: 0 12px 16px;
   box-shadow: var(--shadow-lg);
   opacity: 1;
   pointer-events: auto;
-  z-index: 9999; /* Higher z-index to stay on top of everything */
+  z-index: 2147483647; /* Stay above floating chat/bug/scroll controls */
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  transform: translateY(0);
+  gap: 8px;
+  transform: translateX(0);
   transition:
     opacity 0.2s ease,
-    transform 0.2s ease;
-  max-height: calc(100vh - 100px); /* Precise height to fit viewport */
+    transform 0.24s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.2s ease;
+  max-height: none;
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain; /* Prevent parent scrolling */
+}
+
+.settings-panel-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  margin: 0 -12px 4px;
+  padding: 0 12px;
+  background-color: color-mix(in srgb, var(--bg-primary) 96%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-panel-title {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.settings-panel-close {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.settings-panel-close:hover {
+  background-color: var(--accent-color);
+  color: var(--bg-primary);
+  border-color: var(--accent-color);
 }
 
 /* Ensure each part of the menu doesn't shrink */
@@ -2125,19 +2173,19 @@ body[data-header-line="hidden"] .header::after {
 
 .dropdown-menu-2.hidden {
   opacity: 0;
-  transform: translateY(-8px);
+  transform: translateX(100%);
+  visibility: hidden;
   pointer-events: none;
-  /* Keep display: none from global .hidden for now to avoid collision with JS */
 }
 
 /* Menu Group Container */
 .dropdown-menu-2 .menu-group {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* Increased gap */
+  gap: 8px;
   background-color: var(--bg-secondary);
-  padding: 12px; /* Increased inner padding */
-  border-radius: 5px;
+  padding: 10px;
+  border-radius: 6px;
   margin-bottom: 8px;
   border: 1px solid var(--border-color);
   overflow: hidden;
@@ -2147,7 +2195,7 @@ body[data-header-line="hidden"] .header::after {
     margin 0.3s ease,
     padding 0.3s ease,
     border-width 0.3s ease;
-  max-height: 1200px; /* Increased to ensure all content fits */
+  max-height: 1200px;
   opacity: 1;
 }
 
@@ -2196,6 +2244,7 @@ body[data-header-line="hidden"] .header::after {
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
+  min-height: 34px;
 }
 
 .dropdown-menu-2 .menu-item:hover {
@@ -2530,6 +2579,20 @@ body[data-header-line="hidden"] .header::after {
 /* Tag filter in sidebar - Dropdown glassmorphism */
 .hidden {
   display: none;
+}
+
+#settings-menu.dropdown-menu-2.hidden {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  #settings-menu.dropdown-menu-2 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(360px, 100vw);
+    border-radius: 0;
+  }
 }
 
 #tag-filter-container {
@@ -3192,15 +3255,15 @@ textarea.error {
     grid-template-columns: 30px 1fr auto;
     padding: 8px;
   }
-  
+
   .bookmark-checkbox, .header-col-check {
     display: none !important;
   }
 }
 
-.drop-target-above { 
-  border-top: 2px solid var(--accent-color) !important; 
+.drop-target-above {
+  border-top: 2px solid var(--accent-color) !important;
 }
-.drop-target-below { 
-  border-bottom: 2px solid var(--accent-color) !important; 
-}
+.drop-target-below {
+  border-bottom: 2px solid var(--accent-color) !important;
+}

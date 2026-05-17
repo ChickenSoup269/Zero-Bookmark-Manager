@@ -252,7 +252,14 @@
                     </select>
                     <button id="settings-button" class="button settings" title="Settings"
                         aria-label="Open settings">⋮</button>
-                    <div id="settings-menu" class="dropdown-menu-2 hidden">
+                    <div id="settings-menu" class="dropdown-menu-2 hidden" aria-hidden="true">
+                        <div class="settings-panel-header">
+                            <span class="settings-panel-title" data-i18n="settings">Settings</span>
+                            <button id="settings-close-button" class="settings-panel-close" title="Close settings"
+                                aria-label="Close settings">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
                         <div class="menu-group">
                             <select id="language-switcher" class="select" aria-label="Select language">

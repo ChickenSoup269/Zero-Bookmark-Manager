@@ -12,6 +12,89 @@ import { exportToHTML } from "./html.js"
 import { exportToCSV } from "./csv.js"
 import { exportToNetscape } from "./netscape.js"
 
+const RESTORABLE_LOCAL_STORAGE_KEYS = [
+  "appLanguage",
+  "appTheme",
+  "appFont",
+  "appView",
+  "faviconOption",
+  "headerLineStyle",
+  "duplicateScope",
+  "autoRemoveDup",
+  "settingsSectionCollapsedStates",
+  "firstRunComplete",
+]
+
+const RESTORABLE_CHROME_STORAGE_KEYS = [
+  "uiState",
+  "storageSettings",
+  "quickOpenAction",
+  "showBookmarkIds",
+  "folderListBg",
+  "checkboxesVisible",
+  "exportFormat",
+  "exportIncludeIconData",
+  "exportIncludeCreationDates",
+  "exportIncludeFolderModDates",
+  "exportIncludeFolderPath",
+  "exportOnlySelected",
+]
+
+async function restoreAppSettings(appSettings = {}) {
+  const localSettings = appSettings.localStorage || {}
+  RESTORABLE_LOCAL_STORAGE_KEYS.forEach((key) => {
+    if (localSettings[key] !== undefined && localSettings[key] !== null) {
+      localStorage.setItem(key, String(localSettings[key]))
+    }
+  })
+
+  const chromeSettings = appSettings.chromeStorage || {}
+  const dataToRestore = {}
+  RESTORABLE_CHROME_STORAGE_KEYS.forEach((key) => {
+    if (chromeSettings[key] !== undefined) {
+      dataToRestore[key] = chromeSettings[key]
+    }
+  })
+
+  if (Object.keys(dataToRestore).length > 0) {
+    await chrome.storage.local.set(dataToRestore)
+  }
+
+  const restoredUiState = dataToRestore.uiState || {}
+  uiState.searchQuery = restoredUiState.searchQuery || uiState.searchQuery || ""
+  uiState.selectedFolderId =
+    restoredUiState.selectedFolderId || uiState.selectedFolderId || ""
+  uiState.sortType = restoredUiState.sortType || uiState.sortType || "default"
+  uiState.viewMode =
+    restoredUiState.viewMode || localStorage.getItem("appView") || "flat"
+  uiState.selectedTags = restoredUiState.selectedTags || uiState.selectedTags
+  uiState.collapsedFolders = new Set(
+    restoredUiState.collapsedFolders || Array.from(uiState.collapsedFolders),
+  )
+  uiState.faviconOption =
+    restoredUiState.faviconOption ||
+    localStorage.getItem("faviconOption") ||
+    uiState.faviconOption
+  uiState.duplicateScope =
+    restoredUiState.duplicateScope ||
+    localStorage.getItem("duplicateScope") ||
+    uiState.duplicateScope
+  uiState.autoRemoveDup =
+    restoredUiState.autoRemoveDup ??
+    (localStorage.getItem("autoRemoveDup") === "true" || uiState.autoRemoveDup)
+  uiState.headerLineStyle =
+    restoredUiState.headerLineStyle ||
+    localStorage.getItem("headerLineStyle") ||
+    uiState.headerLineStyle
+  uiState.showBookmarkIds =
+    dataToRestore.showBookmarkIds ?? uiState.showBookmarkIds
+  uiState.folderListBg = dataToRestore.folderListBg ?? uiState.folderListBg
+  uiState.checkboxesVisible =
+    dataToRestore.checkboxesVisible ?? uiState.checkboxesVisible
+
+  document.body.setAttribute("data-header-line", uiState.headerLineStyle)
+}
+
 export function setupExportImportListeners(elements) {
   elements.exportBookmarksOption.addEventListener("click", async () => {
     const language = localStorage.getItem("appLanguage") || "en"
@@ -766,11 +849,17 @@ export function setupExportImportListeners(elements) {
         try {
           const data = JSON.parse(event.target.result)
 
-          // Kiểm tra cấu trúc mới có "theme" hay không
+          // Kiểm tra cấu trúc mới có "theme"/"appSettings" hay không
           const bookmarksToImport = data.bookmarks || data // Hỗ trợ cả file cũ chỉ có array
           const themeData = data.theme || {} // Lấy theme data nếu có
+          const appSettings = data.appSettings || {}
 
-          importNonDuplicateBookmarks(bookmarksToImport, themeData, elements)
+          importNonDuplicateBookmarks(
+            bookmarksToImport,
+            themeData,
+            elements,
+            appSettings,
+          )
         } catch (e) {
           console.error("Failed to parse or import JSON file:", e)
           const language = localStorage.getItem("appLanguage") || "en"
@@ -788,7 +877,12 @@ export function setupExportImportListeners(elements) {
   })
 }
 
-async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
+async function importNonDuplicateBookmarks(
+  nodesToImport,
+  themeData,
+  elements,
+  appSettings = {},
+) {
   const language = localStorage.getItem("appLanguage") || "en"
   const idMapping = {}
 
@@ -959,8 +1053,12 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
     // 4. Save visit counts back to background script
     await chrome.storage.local.set({ visitCounts: currentVisitCounts })
 
-    // 5. Cập nhật uiState và lưu tất cả metadata đã hợp nhất vào Storage
+    // 5. Khôi phục app settings nếu file JSON là full backup
+    await restoreAppSettings(appSettings)
+
+    // 6. Cập nhật uiState và lưu tất cả metadata đã hợp nhất vào Storage
     // Cập nhật uiState để UI phản hồi ngay lập tức
+    uiState.bookmarkTags = bookmarkTags
     uiState.tagColors = tagColors
     uiState.tagTextColors = tagTextColors
 
@@ -972,7 +1070,9 @@ async function importNonDuplicateBookmarks(nodesToImport, themeData, elements) {
       tagTextColors,
     })
 
-    // 6. Cập nhật giao diện
+    await chrome.storage.local.set({ lastRestoreAt: new Date().toISOString() })
+
+    // 7. Cập nhật giao diện
     setTimeout(() => {
       chrome.bookmarks.getTree((newTree) => {
         renderFilteredBookmarks(newTree, elements)

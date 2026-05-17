@@ -1,3 +1,41 @@
+const LOCAL_STORAGE_BACKUP_KEYS = [
+  "appLanguage",
+  "appTheme",
+  "appFont",
+  "appView",
+  "faviconOption",
+  "headerLineStyle",
+  "duplicateScope",
+  "autoRemoveDup",
+  "settingsSectionCollapsedStates",
+  "firstRunComplete",
+]
+
+const CHROME_STORAGE_BACKUP_KEYS = [
+  "uiState",
+  "storageSettings",
+  "quickOpenAction",
+  "showBookmarkIds",
+  "folderListBg",
+  "checkboxesVisible",
+  "exportFormat",
+  "exportIncludeIconData",
+  "exportIncludeCreationDates",
+  "exportIncludeFolderModDates",
+  "exportIncludeFolderPath",
+  "exportOnlySelected",
+]
+
+function getLocalStorageBackup() {
+  return LOCAL_STORAGE_BACKUP_KEYS.reduce((backup, key) => {
+    const value = localStorage.getItem(key)
+    if (value !== null) {
+      backup[key] = value
+    }
+    return backup
+  }, {})
+}
+
 export async function exportToJSON(exportData) {
   try {
     // 1. Get visit counts from background script
@@ -24,19 +62,22 @@ export async function exportToJSON(exportData) {
     }
 
     // Get other data from storage
+    const storageData = await chrome.storage.local.get([
+      "bookmarkTags",
+      "favoriteBookmarks",
+      "pinnedBookmarks",
+      "tagColors",
+      "tagTextColors",
+      ...CHROME_STORAGE_BACKUP_KEYS,
+    ])
+
     const {
       bookmarkTags,
       favoriteBookmarks,
       pinnedBookmarks,
       tagColors,
       tagTextColors,
-    } = await chrome.storage.local.get([
-      "bookmarkTags",
-      "favoriteBookmarks",
-      "pinnedBookmarks",
-      "tagColors",
-      "tagTextColors",
-    ])
+    } = storageData
 
     const allTags = bookmarkTags || {}
     const favorites = favoriteBookmarks || {}
@@ -75,14 +116,41 @@ export async function exportToJSON(exportData) {
 
     enrichNodes(treeCopy.bookmarks)
 
-    // Bổ sung thông tin màu sắc vào gốc của file JSON
+    const chromeStorageBackup = {}
+    CHROME_STORAGE_BACKUP_KEYS.forEach((key) => {
+      if (storageData[key] !== undefined) {
+        chromeStorageBackup[key] = storageData[key]
+      }
+    })
+
+    const exportedAt = new Date().toISOString()
+    const manifest = chrome.runtime.getManifest?.() || {}
+
+    // Bổ sung thông tin màu sắc và app settings vào gốc của file JSON
     const exportPayload = {
       ...treeCopy,
+      backup: {
+        format: "zero-bookmark-full-backup",
+        schemaVersion: 2,
+        exportedAt,
+        extensionVersion: manifest.version || null,
+        includes: {
+          bookmarks: true,
+          metadata: true,
+          appSettings: true,
+        },
+      },
       theme: {
         tagColors: allTagColors,
         tagTextColors: allTagTextColors,
       },
+      appSettings: {
+        localStorage: getLocalStorageBackup(),
+        chromeStorage: chromeStorageBackup,
+      },
     }
+
+    await chrome.storage.local.set({ lastBackupAt: exportedAt })
 
     // 3. Tiến hành xuất file
     const jsonString = JSON.stringify(exportPayload, null, 2)
