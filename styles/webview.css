@@ -2266,8 +2266,8 @@ body.settings-panel-open .settings-container {
 }
 
 .custom-language-popup-content {
-  max-width: 640px;
-  width: min(92vw, 640px);
+  max-width: 520px;
+  width: min(92vw, 520px);
   text-align: left;
 }
 
@@ -2280,23 +2280,24 @@ body.settings-panel-open .settings-container {
 
 .custom-language-json-input {
   width: 100%;
-  min-height: 260px;
+  height: 200px;
   resize: vertical;
   padding: 12px;
-  border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary, rgba(0, 0, 0, 0.2));
   color: var(--text-primary);
-  font:
-    0.82rem/1.45 "Consolas",
-    "Courier New",
-    monospace;
+  font-family: monospace;
+  font-size: 0.85em;
+  margin-top: 12px;
+  margin-bottom: 20px;
   box-sizing: border-box;
 }
 
 .custom-language-json-input:focus {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb, 112, 161, 70), 0.2);
 }
 
 .custom-language-helper-row {
@@ -2304,6 +2305,7 @@ body.settings-panel-open .settings-container {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
+  justify-content: space-between;
 }
 
 .custom-language-helper-row .button {
@@ -2394,6 +2396,7 @@ body.settings-panel-open .settings-container {
 /* Segmented Control for Quick Open Action */
 .quick-open-settings {
   display: flex;
+  flex-direction: row;
   background: color-mix(in srgb, var(--bg-primary) 82%, var(--bg-secondary));
   border-radius: 8px;
   padding: 4px;

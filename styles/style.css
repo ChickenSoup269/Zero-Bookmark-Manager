@@ -2725,8 +2725,8 @@ html {
 }
 
 .custom-language-popup-content {
-  width: 90%;
-  max-width: 600px;
+  width: 92%;
+  max-width: 520px;
 }
 
 /* Quick Open Settings */
@@ -2821,34 +2821,16 @@ html {
   padding: 10px;
   border-radius: 6px;
   font-weight: 500;
-  transition: all 0.2s;
   font-size: 0.9rem;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--text-muted);
+  transition: all 0.2s ease;
 }
-.copy-prompt-btn {
-  background-color: var(--accent-color);
-  color: #fff;
-  border: none;
-}
-.copy-prompt-btn:hover {
-  background-color: var(--accent-dark);
-}
-.chatgpt-btn {
-  background-color: #10a37f;
-  color: white;
-  border: none;
-}
-.chatgpt-btn:hover {
-  background-color: #0b8063;
-  color: white;
-}
-.gemini-btn {
-  background-color: #1a73e8;
-  color: white;
-  border: none;
-}
-.gemini-btn:hover {
-  background-color: #1557b0;
-  color: white;
+.ai-btn:hover {
+  background: var(--text-secondary);
+  color: var(--bg-primary);
+  border-color: var(--text-secondary);
 }
 
 .sidebar-tag-item span:not(.sidebar-tag-count) {
@@ -3181,4 +3163,23 @@ html {
 
 .ai-profile-name-popup .rename-input-container {
   margin-bottom: 20px;
+}
+
+/* Secondary button */
+.button-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--text-muted);
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.button-secondary:hover {
+  background: var(--text-secondary);
+  color: var(--bg-primary);
+  border-color: var(--text-secondary);
 }

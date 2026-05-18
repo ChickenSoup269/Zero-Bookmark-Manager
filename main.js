@@ -197,21 +197,11 @@ function renderCustomLanguageOptions(languageSwitcher) {
 }
 
 function createCustomLanguageTemplate() {
-  const t = getActiveTranslations()
   return JSON.stringify(
     {
       languageCode: "my-language",
-      languageName: t.customLanguageTemplateName || "My Language",
-      translations: {
-        allBookmarks: "All Bookmarks",
-        settings: "Settings",
-        quickOpenTitle: "Quick Open Action",
-        quickOpenPopup: "Default Popup",
-        quickOpenSidePanel: "Default Side Panel",
-        quickOpenWeb: "Default Web Tab",
-        save: "Save",
-        cancel: "Cancel",
-      },
+      languageName: "My Language",
+      translations: translations.en,
     },
     null,
     2,
