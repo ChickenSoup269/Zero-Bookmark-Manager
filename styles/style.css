@@ -102,7 +102,10 @@ body.font-lexend {
 }
 
 /* Ensure inputs and buttons inherit the body font */
-input, select, textarea, button {
+input,
+select,
+textarea,
+button {
   font-family: inherit;
 }
 
@@ -2255,8 +2258,13 @@ html {
 }
 
 @keyframes malware-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Nghi ngờ / nguy hiểm */
@@ -2268,7 +2276,6 @@ html {
 .health-icon.safe {
   color: #28a745; /* xanh lá */
 }
-
 
 .add-tag-container {
   display: flex;
@@ -2717,6 +2724,11 @@ html {
   }
 }
 
+.custom-language-popup-content {
+  width: 90%;
+  max-width: 600px;
+}
+
 /* Quick Open Settings */
 .quick-open-settings {
   display: flex;
@@ -2773,6 +2785,70 @@ html {
   background: var(--bg-side);
   max-width: 95%;
   overflow: hidden;
+}
+
+/* Custom Language Helper Buttons */
+.custom-language-instructions {
+  background: var(--bg-secondary);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  border: 1px dashed var(--border-color);
+}
+.custom-language-instructions p {
+  margin: 4px 0;
+}
+
+.ai-helper-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.ai-links {
+  display: flex;
+  gap: 8px;
+}
+.ai-btn {
+  flex: 1;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+.copy-prompt-btn {
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+}
+.copy-prompt-btn:hover {
+  background-color: var(--accent-dark);
+}
+.chatgpt-btn {
+  background-color: #10a37f;
+  color: white;
+  border: none;
+}
+.chatgpt-btn:hover {
+  background-color: #0b8063;
+  color: white;
+}
+.gemini-btn {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+}
+.gemini-btn:hover {
+  background-color: #1557b0;
+  color: white;
 }
 
 .sidebar-tag-item span:not(.sidebar-tag-count) {

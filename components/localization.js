@@ -3,7 +3,8 @@ import { translations } from "./utils/utils.js"
 
 export function updateBookmarksPageText() {
   const lang = localStorage.getItem("appLanguage") || "en"
-  const t = (key) => translations[lang][key] || key
+  const activeTranslations = translations[lang] || translations.en
+  const t = (key) => activeTranslations[key] || translations.en[key] || key
 
   // Update elements with data-i18n attribute
   document.querySelectorAll("[data-i18n]").forEach((element) => {
@@ -18,6 +19,9 @@ export function updateBookmarksPageText() {
     const key = element.getAttribute("data-i18n-title")
     if (key) {
       element.title = t(key)
+      if (element.hasAttribute("aria-label")) {
+        element.setAttribute("aria-label", t(key))
+      }
     }
   })
 

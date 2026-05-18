@@ -990,6 +990,114 @@
   color: #4caf50;
 }
 
+.custom-language-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+}
+
+.language-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.language-guide-step {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.language-guide-step span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  color: var(--bg-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.language-guide-step strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  margin-bottom: 5px;
+}
+
+.language-guide-step p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.language-ai-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.language-ai-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+  font-size: 0.78rem;
+  transition: all 0.2s ease;
+}
+
+.language-ai-links a:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.08);
+}
+
+.language-prompt-box code {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.45;
+}
+
+.language-prompt-box .command-wrapper {
+  align-items: stretch;
+}
+
+.language-prompt-box .copy-command-btn {
+  flex: 0 0 32px;
+  height: auto;
+  min-height: 32px;
+}
+
+[data-theme="light"] .language-guide-step,
+[data-theme="light"] .language-ai-links a {
+  background: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+@media (max-width: 720px) {
+  .language-guide-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Light Theme Adjustments */
 [data-theme="light"] .command-group, 
 [data-theme="light"] .guide-card {

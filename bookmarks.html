@@ -262,10 +262,18 @@
                         </div>
                         <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
                         <div class="menu-group">
-                            <select id="language-switcher" class="select" aria-label="Select language">
-                                <option value="en">English</option>
-                                <option value="vi">Tiếng Việt</option>
-                            </select>
+                            <div class="language-settings-row">
+                                <select id="language-switcher" class="select" aria-label="Select language">
+                                    <option value="en">English</option>
+                                    <option value="vi">Tiếng Việt</option>
+                                </select>
+                                <button id="add-custom-language-option" class="button btn-action-icon"
+                                    data-i18n-title="addCustomLanguage" title="Add custom language"
+                                    aria-label="Add custom language">
+                                    <i class="fas fa-language"></i>
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
                             <select id="theme-switcher" class="select select-with-icons" aria-label="Select theme">
                                 <option value="system">&#xf0e7; System</option>
                                 <option value="light">&#xf0e7; Light</option>
@@ -329,16 +337,25 @@
                             <div id="quick-open-settings" class="quick-open-settings">
                                 <label class="segmented-control-item">
                                     <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup" />
-                                    <span class="control-label" data-i18n="quickOpenPopup">Popup</span>
+                                    <span class="control-label">
+                                        <i class="fas fa-window-restore" aria-hidden="true"></i>
+                                        <span data-i18n="quickOpenPopup">Popup</span>
+                                    </span>
                                 </label>
                                 <label class="segmented-control-item">
                                     <input type="radio" id="quick-open-sidepanel" name="quickOpenAction"
                                         value="sidepanel" />
-                                    <span class="control-label" data-i18n="quickOpenSidePanel">Side Panel</span>
+                                    <span class="control-label">
+                                        <i class="fas fa-table-columns" aria-hidden="true"></i>
+                                        <span data-i18n="quickOpenSidePanel">Side Panel</span>
+                                    </span>
                                 </label>
                                 <label class="segmented-control-item">
                                     <input type="radio" id="quick-open-web" name="quickOpenAction" value="web" />
-                                    <span class="control-label" data-i18n="quickOpenWeb">Full Page</span>
+                                    <span class="control-label">
+                                        <i class="fas fa-up-right-from-square" aria-hidden="true"></i>
+                                        <span data-i18n="quickOpenWeb">Full Page</span>
+                                    </span>
                                 </label>
                             </div>
                         </div>
@@ -610,13 +627,16 @@
         </div>
 
         <div class="floating-buttons">
-            <button id="scroll-to-top" class="button scroll-to-top" data-i18n-title="scrollToTop" title="Scroll to Top" aria-label="Scroll to Top">
+            <button id="scroll-to-top" class="button scroll-to-top" data-i18n-title="scrollToTop" title="Scroll to Top"
+                aria-label="Scroll to Top">
                 <i class="fas fa-caret-up"></i>
             </button>
-            <button id="report-bug" class="button report-bug" data-i18n-title="reportBug" title="Report Bug" aria-label="Report Bug">
+            <button id="report-bug" class="button report-bug" data-i18n-title="reportBug" title="Report Bug"
+                aria-label="Report Bug">
                 <i class="fas fa-bug"></i>
             </button>
-            <button id="chat-toggle" class="chat-toggle" data-i18n-title="openChat" title="Open Chat" aria-label="Open Chat">
+            <button id="chat-toggle" class="chat-toggle" data-i18n-title="openChat" title="Open Chat"
+                aria-label="Open Chat">
                 <i class="far fa-comment-alt"></i>
             </button>
         </div>
@@ -682,13 +702,20 @@
             <div class="rename-popup-content">
                 <h3 id="localstorage-settings-title">Local Storage Settings</h3>
                 <div class="localstorage-settings-container">
-                    <label><input type="checkbox" id="save-searchQuery" checked> <span data-i18n="saveSearchQuery">Save Search Query</span></label>
-                    <label><input type="checkbox" id="save-selectedFolderId" checked> <span data-i18n="saveSelectedFolderId">Save Selected Folder</span></label>
-                    <label><input type="checkbox" id="save-sortType" checked> <span data-i18n="saveSortType">Save Sort Type</span></label>
-                    <label><input type="checkbox" id="save-viewMode" checked> <span data-i18n="saveViewMode">Save View Mode</span></label>
-                    <label><input type="checkbox" id="save-collapsedFolders" checked> <span data-i18n="saveCollapsedFolders">Save Collapsed Folders</span></label>
-                    <label><input type="checkbox" id="save-checkboxesVisible" checked> <span data-i18n="saveCheckboxesVisible">Save Checkboxes Visibility</span></label>
-                    <label><input type="checkbox" id="save-selectedTag" checked> <span data-i18n="saveSelectedTag">Save Selected Tags</span></label>
+                    <label><input type="checkbox" id="save-searchQuery" checked> <span data-i18n="saveSearchQuery">Save
+                            Search Query</span></label>
+                    <label><input type="checkbox" id="save-selectedFolderId" checked> <span
+                            data-i18n="saveSelectedFolderId">Save Selected Folder</span></label>
+                    <label><input type="checkbox" id="save-sortType" checked> <span data-i18n="saveSortType">Save Sort
+                            Type</span></label>
+                    <label><input type="checkbox" id="save-viewMode" checked> <span data-i18n="saveViewMode">Save View
+                            Mode</span></label>
+                    <label><input type="checkbox" id="save-collapsedFolders" checked> <span
+                            data-i18n="saveCollapsedFolders">Save Collapsed Folders</span></label>
+                    <label><input type="checkbox" id="save-checkboxesVisible" checked> <span
+                            data-i18n="saveCheckboxesVisible">Save Checkboxes Visibility</span></label>
+                    <label><input type="checkbox" id="save-selectedTag" checked> <span data-i18n="saveSelectedTag">Save
+                            Selected Tags</span></label>
                 </div>
                 <div class="rename-popup-buttons">
                     <button id="localstorage-settings-save" class="button save">Save</button>
@@ -710,8 +737,11 @@
                         <option value="local" data-i18n="aiLocalOption">Chrome Built-in AI (Experimental)</option>
                         <option value="none" data-i18n="localOnlyOption">Offline Mode (No AI)</option>
                     </select>
-                    <p id="local-ai-experimental-note" class="experimental-note hidden" data-i18n="localAiExperimentalNote" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; font-style: italic; line-height: 1.3;">
-                        Note: This is an experimental Chrome feature and may not be available in all browsers or regions (like Vietnam).
+                    <p id="local-ai-experimental-note" class="experimental-note hidden"
+                        data-i18n="localAiExperimentalNote"
+                        style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; font-style: italic; line-height: 1.3;">
+                        Note: This is an experimental Chrome feature and may not be available in all browsers or regions
+                        (like Vietnam).
                     </p>
                 </div>
                 <div id="ai-api-group">
@@ -762,10 +792,12 @@
                             <option value="" data-i18n="selectFolder">-- Chọn Profile --</option>
                         </select>
                         <div class="ai-profile-controls">
-                            <button id="save-ai-profile" class="button btn-action-icon" data-i18n-title="aiProfileSaveNew" title="Lưu Profile mới">
+                            <button id="save-ai-profile" class="button btn-action-icon"
+                                data-i18n-title="aiProfileSaveNew" title="Lưu Profile mới">
                                 <i class="fas fa-plus"></i>
                             </button>
-                            <button id="delete-ai-profile" class="button btn-action-icon delete" data-i18n-title="aiProfileDeleteSelected" title="Xóa Profile đang chọn">
+                            <button id="delete-ai-profile" class="button btn-action-icon delete"
+                                data-i18n-title="aiProfileDeleteSelected" title="Xóa Profile đang chọn">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
@@ -786,6 +818,55 @@
                 <div class="rename-popup-buttons">
                     <button id="custom-popup-ok" class="button save">OK</button>
                     <button id="custom-popup-cancel" class="button cancel hidden" data-i18n="cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="custom-language-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="custom-language-title">
+            <div class="rename-popup-content custom-language-popup-content">
+                <h3 id="custom-language-title" data-i18n="customLanguageTitle">Add Custom Language</h3>
+                <div class="custom-language-instructions">
+                    <p data-i18n="customLangInstruction1">1. Copy the prompt and English JSON template by clicking the
+                        button below.</p>
+                    <p data-i18n="customLangInstruction2">2. Paste it into ChatGPT or Gemini AI Studio to translate.</p>
+                    <p data-i18n="customLangInstruction3">3. Copy the returned JSON code and paste it into the textbox
+                        below.</p>
+                </div>
+
+                <div class="ai-helper-buttons">
+                    <button id="copy-ai-prompt-btn" class="button ai-btn copy-prompt-btn">
+                        <i class="fas fa-copy"></i> <span data-i18n="copyPromptAndTemplate">Copy Prompt &
+                            Template</span>
+                    </button>
+                    <div class="ai-links">
+                        <a href="https://chatgpt.com/" target="_blank" class="button ai-btn chatgpt-btn">
+                            <i class="fas fa-robot"></i> ChatGPT
+                        </a>
+                        <a href="https://aistudio.google.com/" target="_blank" class="button ai-btn gemini-btn">
+                            <i class="fas fa-sparkles"></i> Gemini Studio
+                        </a>
+                    </div>
+                </div>
+
+                <textarea id="custom-language-json-input" class="custom-language-json-input" spellcheck="false"
+                    data-i18n-placeholder="customLanguagePlaceholder"
+                    placeholder='{"languageCode":"es","languageName":"Español","translations":{...}}'></textarea>
+                <input id="custom-language-file-input" type="file" accept=".json,application/json" hidden>
+                <div class="custom-language-helper-row">
+                    <button id="custom-language-import-file" class="button button-secondary">
+                        <i class="fas fa-file-import"></i>
+                        <span data-i18n="importJsonFile">Import JSON Backup</span>
+                    </button>
+                    <button id="custom-language-template" class="button button-secondary hidden">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        <span data-i18n="insertLanguageTemplate">Insert Template</span>
+                    </button>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="custom-language-save" class="button save" data-i18n="saveCustomLanguage">Save
+                        Language</button>
+                    <button id="custom-language-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                 </div>
             </div>
         </div>

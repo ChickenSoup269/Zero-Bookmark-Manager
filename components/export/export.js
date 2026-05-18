@@ -22,6 +22,7 @@ const RESTORABLE_LOCAL_STORAGE_KEYS = [
   "duplicateScope",
   "autoRemoveDup",
   "settingsSectionCollapsedStates",
+  "customLanguagePacks",
   "firstRunComplete",
 ]
 

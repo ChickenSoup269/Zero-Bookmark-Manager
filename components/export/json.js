@@ -8,6 +8,7 @@ const LOCAL_STORAGE_BACKUP_KEYS = [
   "duplicateScope",
   "autoRemoveDup",
   "settingsSectionCollapsedStates",
+  "customLanguagePacks",
   "firstRunComplete",
 ]
 

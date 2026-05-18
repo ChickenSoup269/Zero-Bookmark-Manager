@@ -91,16 +91,253 @@ import {
   openOrganizeFoldersModal,
 } from "./components/ui.js"
 import { getBookmarkTree, loadVisitCounts } from "./components/bookmarks.js"
-import { translations, debounce } from "./components/utils/utils.js"
+import {
+  translations,
+  debounce,
+  showCustomPopup,
+} from "./components/utils/utils.js"
 import { setupEventListeners } from "./components/events.js"
 import { uiState } from "./components/state.js"
 import { customLoadUIState } from "./components/option/option.js"
 import { initCopyButtons } from "./components/copy-code.js"
 
 let elements = {}
+const CUSTOM_LANGUAGES_KEY = "customLanguagePacks"
 
 export function getElements() {
   return elements
+}
+
+function getActiveTranslations() {
+  const language = localStorage.getItem("appLanguage") || "en"
+  return translations[language] || translations.en
+}
+
+function readCustomLanguagePacks() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CUSTOM_LANGUAGES_KEY) || "{}")
+    return saved && typeof saved === "object" && !Array.isArray(saved)
+      ? saved
+      : {}
+  } catch (error) {
+    console.warn("Failed to read custom languages:", error)
+    return {}
+  }
+}
+
+function writeCustomLanguagePacks(packs) {
+  localStorage.setItem(CUSTOM_LANGUAGES_KEY, JSON.stringify(packs))
+}
+
+function normalizeCustomLanguagePack(rawPack) {
+  if (!rawPack || typeof rawPack !== "object" || Array.isArray(rawPack)) {
+    throw new Error("Invalid language pack")
+  }
+
+  const translationsObject = rawPack.translations
+  if (
+    !translationsObject ||
+    typeof translationsObject !== "object" ||
+    Array.isArray(translationsObject)
+  ) {
+    throw new Error("Missing translations object")
+  }
+
+  const rawCode = String(
+    rawPack.languageCode || rawPack.code || rawPack.locale || "",
+  )
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, "-")
+
+  if (!rawCode) throw new Error("Missing language code")
+
+  const code = ["en", "vi"].includes(rawCode) ? `custom-${rawCode}` : rawCode
+  const name = String(
+    rawPack.languageName || rawPack.name || rawPack.label || code,
+  ).trim()
+
+  return {
+    languageCode: code,
+    languageName: name,
+    translations: { ...translationsObject },
+  }
+}
+
+function registerCustomLanguagePacks() {
+  const packs = readCustomLanguagePacks()
+  Object.values(packs).forEach((pack) => {
+    try {
+      const normalized = normalizeCustomLanguagePack(pack)
+      translations[normalized.languageCode] = {
+        ...translations.en,
+        ...normalized.translations,
+      }
+    } catch (error) {
+      console.warn("Skipped invalid custom language pack:", error)
+    }
+  })
+  return packs
+}
+
+function renderCustomLanguageOptions(languageSwitcher) {
+  if (!languageSwitcher) return
+
+  languageSwitcher
+    .querySelectorAll("option[data-custom-language]")
+    .forEach((option) => option.remove())
+
+  Object.values(readCustomLanguagePacks()).forEach((pack) => {
+    const option = document.createElement("option")
+    option.value = pack.languageCode
+    option.textContent = pack.languageName
+    option.dataset.customLanguage = "true"
+    languageSwitcher.appendChild(option)
+  })
+}
+
+function createCustomLanguageTemplate() {
+  const t = getActiveTranslations()
+  return JSON.stringify(
+    {
+      languageCode: "my-language",
+      languageName: t.customLanguageTemplateName || "My Language",
+      translations: {
+        allBookmarks: "All Bookmarks",
+        settings: "Settings",
+        quickOpenTitle: "Quick Open Action",
+        quickOpenPopup: "Default Popup",
+        quickOpenSidePanel: "Default Side Panel",
+        quickOpenWeb: "Default Web Tab",
+        save: "Save",
+        cancel: "Cancel",
+      },
+    },
+    null,
+    2,
+  )
+}
+
+function setupCustomLanguageControls(elements) {
+  const openButton = document.getElementById("add-custom-language-option")
+  const popup = document.getElementById("custom-language-popup")
+  const textarea = document.getElementById("custom-language-json-input")
+  const fileInput = document.getElementById("custom-language-file-input")
+  const importButton = document.getElementById("custom-language-import-file")
+  const templateButton = document.getElementById("custom-language-template")
+  const saveButton = document.getElementById("custom-language-save")
+  const cancelButton = document.getElementById("custom-language-cancel")
+  const copyPromptBtn = document.getElementById("copy-ai-prompt-btn")
+
+  if (
+    !openButton ||
+    !popup ||
+    !textarea ||
+    !fileInput ||
+    !importButton ||
+    !templateButton ||
+    !saveButton ||
+    !cancelButton
+  ) {
+    return
+  }
+
+  const closePopup = () => {
+    popup.classList.add("hidden")
+    textarea.value = ""
+  }
+
+  openButton.addEventListener("click", () => {
+    textarea.value = ""
+    popup.classList.remove("hidden")
+    textarea.focus()
+  })
+
+  cancelButton.addEventListener("click", closePopup)
+  popup.addEventListener("click", (event) => {
+    if (event.target === popup) closePopup()
+  })
+
+  importButton.addEventListener("click", () => fileInput.click())
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      textarea.value = String(reader.result || "")
+      fileInput.value = ""
+    }
+    reader.readAsText(file)
+  })
+
+  templateButton.addEventListener("click", () => {
+    textarea.value = createCustomLanguageTemplate()
+    textarea.focus()
+  })
+
+  // Add functionality for Copy Prompt & Template logic
+  if (copyPromptBtn) {
+    copyPromptBtn.addEventListener("click", () => {
+      const template = createCustomLanguageTemplate()
+      const prompt = `Translate the following JSON language file into {YOUR_LANGUAGE_HERE}. Keep the JSON keys and structure identical. Output ONLY the raw JSON format so I can copy it directly.\n\n${template}`
+
+      navigator.clipboard
+        .writeText(prompt)
+        .then(() => {
+          const originalText = copyPromptBtn.innerHTML
+          copyPromptBtn.innerHTML = `<i class="fas fa-check"></i> Copied to Clipboard!`
+          setTimeout(() => {
+            copyPromptBtn.innerHTML = originalText
+          }, 2000)
+        })
+        .catch((err) => {
+          console.error("Could not copy text: ", err)
+        })
+    })
+  }
+
+  saveButton.addEventListener("click", () => {
+    const t = getActiveTranslations()
+
+    try {
+      const normalized = normalizeCustomLanguagePack(JSON.parse(textarea.value))
+      const packs = readCustomLanguagePacks()
+      packs[normalized.languageCode] = normalized
+      writeCustomLanguagePacks(packs)
+
+      translations[normalized.languageCode] = {
+        ...translations.en,
+        ...normalized.translations,
+      }
+
+      renderCustomLanguageOptions(elements.languageSwitcher)
+      elements.languageSwitcher.value = normalized.languageCode
+      updateUILanguage(elements, normalized.languageCode)
+      window.dispatchEvent(new CustomEvent("languageChanged"))
+
+      getBookmarkTree((bookmarkTreeNodes) => {
+        if (bookmarkTreeNodes) {
+          renderFilteredBookmarks(bookmarkTreeNodes, elements)
+        }
+      })
+
+      closePopup()
+      showCustomPopup(
+        t.customLanguageSaved || "Custom language saved!",
+        "success",
+        true,
+      )
+    } catch (error) {
+      console.warn("Invalid custom language JSON:", error)
+      showCustomPopup(
+        t.customLanguageInvalid ||
+          "Invalid language JSON. Use languageCode, languageName, and translations.",
+        "error",
+        true,
+      )
+    }
+  })
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -177,6 +414,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const init = () => {
+    initCopyButtons()
+    registerCustomLanguagePacks()
+    renderCustomLanguageOptions(elements.languageSwitcher)
+    setupCustomLanguageControls(elements)
+
     // Update check logic
     chrome.storage.local.get("showUpdatePopup", (res) => {
       if (res.showUpdatePopup) {
@@ -203,7 +445,9 @@ document.addEventListener("DOMContentLoaded", () => {
             updatePopup.classList.add("hidden")
           }
 
-          updateClose.addEventListener("click", closeUpdatePopup, { once: true })
+          updateClose.addEventListener("click", closeUpdatePopup, {
+            once: true,
+          })
 
           updatePopup.addEventListener("click", (e) => {
             if (e.target === updatePopup) {
@@ -230,10 +474,10 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.importBookmarksOption = importBookmarksOption
     }
 
-    initCopyButtons()
-
     // Khởi tạo ngôn ngữ
-    const savedLanguage = localStorage.getItem("appLanguage") || "en"
+    const storedLanguage = localStorage.getItem("appLanguage")
+    const savedLanguage =
+      storedLanguage && translations[storedLanguage] ? storedLanguage : "en"
     elements.languageSwitcher.value = savedLanguage
     updateUILanguage(elements, savedLanguage)
 
@@ -249,23 +493,27 @@ document.addEventListener("DOMContentLoaded", () => {
     // Check for first run
     if (!localStorage.getItem("firstRunComplete")) {
       const firstRunPopup = document.getElementById("first-run-popup")
-      const firstRunFontSelect = document.getElementById("first-run-font-select")
+      const firstRunFontSelect = document.getElementById(
+        "first-run-font-select",
+      )
       const firstRunSaveBtn = document.getElementById("first-run-save")
 
       if (firstRunPopup && firstRunSaveBtn) {
         firstRunPopup.classList.remove("hidden")
-        
+
         firstRunSaveBtn.addEventListener("click", () => {
           const selectedFont = firstRunFontSelect.value
-          
+
           // Remove all possible font classes
-          const fontClasses = Array.from(document.body.classList).filter(cls => cls.startsWith('font-'));
-          fontClasses.forEach(cls => document.body.classList.remove(cls));
-          
+          const fontClasses = Array.from(document.body.classList).filter(
+            (cls) => cls.startsWith("font-"),
+          )
+          fontClasses.forEach((cls) => document.body.classList.remove(cls))
+
           document.body.classList.add(`font-${selectedFont}`)
           localStorage.setItem("appFont", selectedFont)
           elements.fontSwitcher.value = selectedFont
-          
+
           localStorage.setItem("firstRunComplete", "true")
           firstRunPopup.classList.add("hidden")
         })
