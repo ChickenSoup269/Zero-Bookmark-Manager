@@ -2184,8 +2184,8 @@ body.settings-panel-open .settings-container {
   flex-direction: column;
   gap: 8px;
   background-color: var(--bg-secondary);
-  padding: 10px;
-  border-radius: 6px;
+  padding: 6px;
+  border-radius: 10px;
   margin-bottom: 8px;
   border: 1px solid var(--border-color);
   overflow: hidden;
@@ -2213,10 +2213,10 @@ body.settings-panel-open .settings-container {
 /* Select in dropdown - Hover effect */
 .dropdown-menu-2 .select {
   width: 100%;
-  padding: 0.5rem 0.7rem;
+  padding: 0.6rem 0.8rem;
   font-size: 0.85rem;
   border: 1px solid var(--border-color);
-  border-radius: 5px;
+  border-radius: 8px;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
@@ -2318,10 +2318,10 @@ body.settings-panel-open .settings-container {
 .dropdown-menu-2 .menu-item {
   width: 100%;
   text-align: left;
-  padding: 0.5rem 0.7rem;
+  padding: 0.6rem 0.8rem;
   font-size: 0.85rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   background: transparent;
   color: var(--text-primary);
   cursor: pointer;
@@ -2351,11 +2351,11 @@ body.settings-panel-open .settings-container {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0.4rem 0.7rem;
+  padding: 0.6rem 0.8rem;
   font-size: 0.85rem;
   color: var(--text-primary);
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 8px;
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
@@ -2460,11 +2460,11 @@ body.settings-panel-open .settings-container {
 }
 
 .segmented-control-item input:checked + .control-label {
-  background-color: var(--accent-color);
-  color: var(--bg-primary);
+  background-color: color-mix(in srgb, var(--bg-primary) 80%, transparent);
+  color: var(--text-primary);
   font-weight: 600;
-  border-color: color-mix(in srgb, var(--accent-color) 80%, white);
-  box-shadow: 0 6px 14px rgba(var(--accent-color-rgb, 112, 161, 70), 0.22);
+  border-color: var(--border-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .dropdown-menu-2 .toggle-row span:first-child {
@@ -3376,3 +3376,4 @@ textarea.error {
 .drop-target-below {
   border-bottom: 2px solid var(--accent-color) !important;
 }
+
