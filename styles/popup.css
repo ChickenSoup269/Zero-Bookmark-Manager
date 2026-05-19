@@ -764,7 +764,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: 2300;
   cursor: zoom-out;
 }
 
@@ -787,7 +787,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1500;
+  z-index: 2200;
 }
 
 .bookmark-modal {
@@ -887,7 +887,7 @@
   border-radius: 0;
   width: min(82vw, 300px);
   height: 100vh;
-  padding: 52px var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
   box-shadow: -12px 0 30px rgba(0, 0, 0, 0.18);
   opacity: 1;
   pointer-events: auto;
@@ -902,6 +902,22 @@
   max-height: none;
   overflow-y: auto;
   box-sizing: border-box;
+}
+
+.settings-panel-header {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 4px 44px 10px 4px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 4px;
+}
+
+.settings-panel-title {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 #settings-menu.hidden {
@@ -994,7 +1010,7 @@ body.settings-panel-open .button.settings {
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-lg);
   padding: var(--spacing-xs);
-  z-index: 2000; /* Ensure it's on top of other elements */
+  z-index: 2300; /* Keep floating menus above the settings panel */
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
@@ -1067,7 +1083,23 @@ body.settings-panel-open .button.settings {
 }
 
 #custom-popup {
-  z-index: 2001 !important;
+  z-index: 2400 !important;
+}
+
+.rename-popup,
+.custom-popup {
+  z-index: 2400 !important;
+}
+
+#localstorage-settings-popup,
+#bookmark-detail-popup,
+#manage-tags-popup,
+#organize-folders-popup,
+#ai-config-popup,
+#ai-profile-name-popup,
+#first-run-popup,
+#custom-language-popup {
+  z-index: 2450 !important;
 }
 
 /* ===== MOBILE RESPONSIVE FOR CARD & DETAIL VIEW ===== */

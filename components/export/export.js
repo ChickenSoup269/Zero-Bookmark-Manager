@@ -503,7 +503,7 @@ export function setupExportImportListeners(elements) {
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      z-index: 2600;
       animation: fadeIn 0.3s ease-out;
     }
     
