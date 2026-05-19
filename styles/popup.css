@@ -81,6 +81,60 @@
     box-shadow var(--transition-normal);
 }
 
+.folder-list.bookmark-view-animate {
+  animation: popupBookmarkViewSurfaceIn 240ms ease-out both;
+}
+
+.folder-list.bookmark-view-animate .bookmark-item,
+.folder-list.bookmark-view-animate .folder-card,
+.folder-list.bookmark-view-animate .folder-item,
+.folder-list.bookmark-view-animate .list-bookmark-item,
+.folder-list.bookmark-view-animate .list-view-header,
+.folder-list.bookmark-view-animate .select-all-container,
+.folder-list.bookmark-view-animate .back-button {
+  animation: popupBookmarkViewItemIn 380ms cubic-bezier(0.2, 0.8, 0.2, 1)
+    both;
+  animation-delay: var(--view-stagger, 0ms);
+  will-change: opacity, transform;
+}
+
+@keyframes popupBookmarkViewSurfaceIn {
+  from {
+    opacity: 0.85;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popupBookmarkViewItemIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folder-list.bookmark-view-animate,
+  .folder-list.bookmark-view-animate .bookmark-item,
+  .folder-list.bookmark-view-animate .folder-card,
+  .folder-list.bookmark-view-animate .folder-item,
+  .folder-list.bookmark-view-animate .list-bookmark-item,
+  .folder-list.bookmark-view-animate .list-view-header,
+  .folder-list.bookmark-view-animate .select-all-container,
+  .folder-list.bookmark-view-animate .back-button {
+    animation: none;
+  }
+}
+
 .folder-list.no-bg {
   background-color: transparent;
   border-color: transparent;

@@ -1803,6 +1803,59 @@ body.settings-panel-open .settings-container {
   gap: var(--spacing-md);
 }
 
+.folder-list.bookmark-view-animate {
+  animation: bookmarkViewSurfaceIn 260ms ease-out both;
+}
+
+.folder-list.bookmark-view-animate .bookmark-item,
+.folder-list.bookmark-view-animate .folder-card,
+.folder-list.bookmark-view-animate .folder-item,
+.folder-list.bookmark-view-animate .list-bookmark-item,
+.folder-list.bookmark-view-animate .list-view-header,
+.folder-list.bookmark-view-animate .select-all-container,
+.folder-list.bookmark-view-animate .back-button {
+  animation: bookmarkViewItemIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--view-stagger, 0ms);
+  will-change: opacity, transform;
+}
+
+@keyframes bookmarkViewSurfaceIn {
+  from {
+    opacity: 0.82;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bookmarkViewItemIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folder-list.bookmark-view-animate,
+  .folder-list.bookmark-view-animate .bookmark-item,
+  .folder-list.bookmark-view-animate .folder-card,
+  .folder-list.bookmark-view-animate .folder-item,
+  .folder-list.bookmark-view-animate .list-bookmark-item,
+  .folder-list.bookmark-view-animate .list-view-header,
+  .folder-list.bookmark-view-animate .select-all-container,
+  .folder-list.bookmark-view-animate .back-button {
+    animation: none;
+  }
+}
+
 .folder-list.no-bg,
 .folder-list.no-bg.tree-view {
   background: transparent !important;
@@ -3376,4 +3429,34 @@ textarea.error {
 .drop-target-below {
   border-bottom: 2px solid var(--accent-color) !important;
 }
+.drop-target-left {
+  border-left: 2px solid var(--accent-color) !important;
+}
+.drop-target-right {
+  border-right: 2px solid var(--accent-color) !important;
+}
 
+.folder-card {
+  position: relative;
+}
+
+.folder-drop-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.folder-drop-zone-before {
+  left: 0;
+}
+
+.folder-drop-zone-after {
+  right: 0;
+}
+
+.folder-list.is-folder-dragging .folder-drop-zone {
+  pointer-events: auto;
+}

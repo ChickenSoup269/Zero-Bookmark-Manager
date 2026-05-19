@@ -1684,6 +1684,51 @@ function updateSidebarActiveState() {
   if (sortItem) sortItem.classList.add("active")
 }
 
+function prepareBookmarkViewTransition(elements) {
+  const list = elements?.folderListDiv
+  if (!list) return
+
+  const nextView = uiState.viewMode || "flat"
+  const currentView = list.dataset.currentView || ""
+  list.dataset.pendingViewAnimation =
+    currentView && currentView !== nextView ? "true" : "false"
+  list.dataset.currentView = nextView
+}
+
+function runBookmarkViewTransition(elements) {
+  const list = elements?.folderListDiv
+  if (!list || list.dataset.pendingViewAnimation !== "true") return
+
+  list.dataset.pendingViewAnimation = "false"
+  list.classList.remove("bookmark-view-animate")
+
+  const animatedItems = list.querySelectorAll(
+    [
+      ".bookmark-item",
+      ".folder-card",
+      ".folder-item",
+      ".list-bookmark-item",
+      ".list-view-header",
+      ".select-all-container",
+      ".back-button",
+    ].join(","),
+  )
+
+  animatedItems.forEach((item, index) => {
+    item.style.setProperty("--view-stagger", `${Math.min(index, 18) * 18}ms`)
+  })
+
+  window.requestAnimationFrame(() => {
+    list.classList.add("bookmark-view-animate")
+  })
+
+  window.clearTimeout(list._bookmarkViewAnimationTimer)
+  list._bookmarkViewAnimationTimer = window.setTimeout(() => {
+    list.classList.remove("bookmark-view-animate")
+    animatedItems.forEach((item) => item.style.removeProperty("--view-stagger"))
+  }, 720)
+}
+
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
   chrome.storage.local.get(
     [
@@ -1728,6 +1773,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       populateFolderFilter(bookmarkTreeNodes, elements)
       setupTagFilterListener(elements)
       updateBookmarkCount(bookmarks, elements)
+      prepareBookmarkViewTransition(elements)
 
       // Update sidebar (Raindrop style)
       renderSidebarFolderTree(folders, elements)
@@ -1816,6 +1862,81 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 let currentDragType = null
 let currentDragId = null
 let selectedFolderForContextMenu = null
+
+function getDragId(e) {
+  return e.dataTransfer?.getData("text/plain") || currentDragId
+}
+
+function getCardDropPosition(e, cardElement) {
+  const rect = cardElement.getBoundingClientRect()
+  const midX = rect.left + rect.width / 2
+  return e.clientX < midX ? "before" : "after"
+}
+
+function calculateMoveIndex(draggedNode, targetNode, dropPosition) {
+  let newIndex = targetNode.index + (dropPosition === "after" ? 1 : 0)
+
+  if (
+    draggedNode.parentId === targetNode.parentId &&
+    draggedNode.index < targetNode.index
+  ) {
+    newIndex -= 1
+  }
+
+  return Math.max(0, newIndex)
+}
+
+function clearCardFolderDropState(folderCard) {
+  folderCard.classList.remove(
+    "drag-over",
+    "drop-target-above",
+    "drop-target-below",
+    "drop-target-left",
+    "drop-target-right",
+  )
+}
+
+function moveFolderByCardDrop(draggedId, targetId, dropPosition, elements, language) {
+  if (!draggedId || !targetId || draggedId === targetId) return
+
+  if (uiState.sortType !== "default" || uiState.searchQuery) {
+    showCustomPopup(
+      translations[language].errorUnexpected ||
+        "Cannot reorder while sorting or searching",
+      "error",
+      true,
+    )
+    return
+  }
+
+  chrome.bookmarks.get([draggedId, targetId], (results) => {
+    if (!results || results.length < 2) return
+
+    let draggedNode
+    let targetNode
+    if (results[0].id === draggedId) {
+      draggedNode = results[0]
+      targetNode = results[1]
+    } else {
+      draggedNode = results[1]
+      targetNode = results[0]
+    }
+
+    const newIndex = calculateMoveIndex(draggedNode, targetNode, dropPosition)
+
+    chrome.bookmarks.move(
+      draggedId,
+      { parentId: targetNode.parentId, index: newIndex },
+      () => {
+        if (chrome.runtime.lastError) {
+          showCustomPopup(chrome.runtime.lastError.message, "error", true)
+          return
+        }
+        chrome.bookmarks.getTree((tree) => renderFilteredBookmarks(tree, elements))
+      },
+    )
+  })
+}
 
 function renderDetailView(bookmarksList, elements) {
   const fragment = document.createDocumentFragment()
@@ -2086,6 +2207,8 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       folderCard.draggable = true
 
       folderCard.innerHTML = `
+            <div class="folder-drop-zone folder-drop-zone-before" data-drop-position="before" aria-hidden="true"></div>
+            <div class="folder-drop-zone folder-drop-zone-after" data-drop-position="after" aria-hidden="true"></div>
             <div class="folder-content" style="pointer-events: none;">
                 <span class="folder-icon">📂</span>
                 <span class="folder-title">${
@@ -2104,10 +2227,12 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         currentDragType = "folder"
         e.dataTransfer.effectAllowed = "move"
         folderCard.classList.add("dragging")
+        elements.folderListDiv?.classList.add("is-folder-dragging")
       })
 
       folderCard.addEventListener("dragend", () => {
         folderCard.classList.remove("dragging")
+        elements.folderListDiv?.classList.remove("is-folder-dragging")
         currentDragType = null
         currentDragId = null
       })
@@ -2125,6 +2250,58 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         chrome.bookmarks.getTree((tree) =>
           renderFilteredBookmarks(tree, elements),
         )
+      })
+
+      folderCard.querySelectorAll(".folder-drop-zone").forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          if (currentDragType !== "folder") return
+          e.preventDefault()
+          e.stopPropagation()
+
+          const draggedId = getDragId(e)
+          if (!draggedId || draggedId === folder.id) {
+            e.dataTransfer.dropEffect = "none"
+            return
+          }
+
+          const draggedNode = findNodeById(draggedId, uiState.bookmarkTree)
+          if (draggedNode && isAncestorOf(draggedNode, folder.id)) {
+            e.dataTransfer.dropEffect = "none"
+            return
+          }
+
+          clearCardFolderDropState(folderCard)
+          const dropPosition = zone.dataset.dropPosition || "before"
+          folderCard.classList.add(
+            dropPosition === "before"
+              ? "drop-target-left"
+              : "drop-target-right",
+          )
+          e.dataTransfer.dropEffect = "move"
+        })
+
+        zone.addEventListener("dragleave", (e) => {
+          e.stopPropagation()
+          if (!folderCard.contains(e.relatedTarget)) {
+            clearCardFolderDropState(folderCard)
+          }
+        })
+
+        zone.addEventListener("drop", (e) => {
+          if (currentDragType !== "folder") return
+          e.preventDefault()
+          e.stopPropagation()
+
+          clearCardFolderDropState(folderCard)
+          elements.folderListDiv?.classList.remove("is-folder-dragging")
+          moveFolderByCardDrop(
+            getDragId(e),
+            folder.id,
+            zone.dataset.dropPosition || "before",
+            elements,
+            language,
+          )
+        })
       })
 
       // Drop Bookmark/Folder vào Folder
@@ -2150,14 +2327,10 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
 
             // Logic Reorder cho Folder (Swap vị trí)
             if (uiState.sortType === "default" && !uiState.searchQuery) {
-                const rect = folderCard.getBoundingClientRect()
-                const midX = rect.left + rect.width / 2
-                const midY = rect.top + rect.height / 2
-                
                 folderCard.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
 
                 // Trong Card View (Grid), ưu tiên check ngang
-                if (e.clientX < midX) {
+                if (getCardDropPosition(e, folderCard) === "before") {
                     folderCard.classList.add("drop-target-left")
                 } else {
                     folderCard.classList.add("drop-target-right")
@@ -2181,40 +2354,21 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         e.stopPropagation()
         folderCard.classList.remove("drag-over", "drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
 
-        const draggedId = e.dataTransfer.getData("text/plain")
+        const draggedId = getDragId(e)
         const targetId = folder.id
 
         if (currentDragType === "bookmark") {
             handleFolderDrop(e, folder, folderCard, bookmarkTreeNodes, language, elements)
         } else if (currentDragType === "folder") {
+            if (!draggedId) return
             if (draggedId === targetId) return
-
-            const rect = folderCard.getBoundingClientRect()
-            const midX = rect.left + rect.width / 2
-            
-            const dropPosition = e.clientX < midX ? "before" : "after"
-
-            chrome.bookmarks.get([draggedId, targetId], (results) => {
-                if (!results || results.length < 2) return
-                let draggedNode, targetNode
-                if (results[0].id === draggedId) {
-                    draggedNode = results[0]
-                    targetNode = results[1]
-                } else {
-                    draggedNode = results[1]
-                    targetNode = results[0]
-                }
-
-                let newIndex = targetNode.index
-                if (dropPosition === "after") newIndex++
-                if (draggedNode.parentId === targetNode.parentId && draggedNode.index < targetNode.index) {
-                    newIndex--
-                }
-
-                chrome.bookmarks.move(draggedId, { parentId: targetNode.parentId, index: newIndex }, () => {
-                    chrome.bookmarks.getTree((tree) => renderFilteredBookmarks(tree, elements))
-                })
-            })
+            moveFolderByCardDrop(
+              draggedId,
+              targetId,
+              getCardDropPosition(e, folderCard),
+              elements,
+              language,
+            )
         }
       })
 
@@ -2256,7 +2410,7 @@ function handleFolderDrop(
 
   folderCard.classList.remove("drag-over")
 
-  const draggedId = e.dataTransfer.getData("text/plain")
+  const draggedId = getDragId(e)
   const targetFolderId = folderCard.dataset.folderId
 
   // Chỉ xử lý nếu đang kéo Bookmark
@@ -2374,7 +2528,7 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
       )
       return
     }
-    const draggedId = e.dataTransfer.getData("text/plain")
+    const draggedId = getDragId(e)
     const targetId = bookmark.id
     if (draggedId === targetId) return
 
@@ -3020,12 +3174,15 @@ function commonPostRenderOps(elements) {
   attachSelectAllListener(elements)
   attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
+  runBookmarkViewTransition(elements)
 
   // --- MANUAL EVENT HANDLERS (Since some are dynamic) ---
 
   // 1. PIN Buttons
   const pinButtons = elements.folderListDiv.querySelectorAll(".pin-btn")
   pinButtons.forEach((btn) => {
+    if (btn.dataset.boundPinAction === "true") return
+    btn.dataset.boundPinAction = "true"
     btn.addEventListener("click", (e) => {
       e.stopPropagation()
       const bookmarkId = btn.getAttribute("data-id")
@@ -3040,6 +3197,8 @@ function commonPostRenderOps(elements) {
     ".menu-item.view-detail-btn",
   )
   detailButtons.forEach((btn) => {
+    if (btn.dataset.boundDetailAction === "true") return
+    btn.dataset.boundDetailAction = "true"
     btn.addEventListener("click", (e) => {
       e.stopPropagation()
       const id = btn.dataset.id
@@ -3057,6 +3216,8 @@ function commonPostRenderOps(elements) {
   // 3. QR Code Buttons
   const qrCodeButtons = elements.folderListDiv.querySelectorAll(".qr-code-btn")
   qrCodeButtons.forEach((btn) => {
+    if (btn.dataset.boundQrAction === "true") return
+    btn.dataset.boundQrAction = "true"
     btn.addEventListener("click", (e) => {
       e.stopPropagation()
       const bookmarkId = btn.getAttribute("data-id")
@@ -3075,6 +3236,8 @@ function commonPostRenderOps(elements) {
     ".open-side-panel-btn",
   )
   openSidePanelButtons.forEach((btn) => {
+    if (btn.dataset.boundSidePanelAction === "true") return
+    btn.dataset.boundSidePanelAction = "true"
     btn.addEventListener("click", (e) => {
       e.stopPropagation()
       const bookmarkId = btn.getAttribute("data-id")
@@ -3231,7 +3394,7 @@ export function attachTreeListeners(elements, targetContainer = null) {
           // Nếu chưa có nội dung thì render mới
           if (childrenContainer.innerHTML === "") {
             const node = findNodeById(folderId, uiState.bookmarkTree)
-            if (node && node.children)
+            if (node && node.children) {
               childrenContainer.appendChild(
                 renderTreeView(
                   node.children,
@@ -3239,6 +3402,8 @@ export function attachTreeListeners(elements, targetContainer = null) {
                   parseInt(childrenContainer.getAttribute("data-depth")) || 1,
                 ),
               )
+              commonPostRenderOps(elements)
+            }
           }
         }
       } else {

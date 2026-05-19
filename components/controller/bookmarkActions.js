@@ -31,8 +31,13 @@ const handleError = (logMsg, uiMsgKey, isError = true) => {
 
 const attachListener = (element, event, handler) => {
   if (element) {
-    element.removeEventListener(event, handler)
+    element.__bookmarkActionHandlers = element.__bookmarkActionHandlers || {}
+    const previousHandler = element.__bookmarkActionHandlers[event]
+    if (previousHandler) {
+      element.removeEventListener(event, previousHandler)
+    }
     element.addEventListener(event, handler)
+    element.__bookmarkActionHandlers[event] = handler
   }
 }
 
@@ -92,7 +97,9 @@ export function setupBookmarkActionListeners(elements) {
 
 function handleMenuItemClick(e, elements) {
   e.stopPropagation()
-  const target = e.target
+  const target = e.target.closest(".menu-item")
+  if (!target) return
+
   const bookmarkId = target.dataset.id
 
   // Ignored options
