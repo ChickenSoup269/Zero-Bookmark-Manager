@@ -40,6 +40,10 @@
                 <button id="clear-search" class="sidebar-search-clear hidden" aria-label="Clear search">
                     <i class="fas fa-times"></i>
                 </button>
+                <button id="command-palette-button" class="sidebar-command-palette-btn" title="Command Palette"
+                    aria-label="Open command palette">
+                    <i class="fas fa-bolt"></i>
+                </button>
             </div>
 
 
@@ -163,6 +167,10 @@
                         <button id="organize-folders-button" class="sidebar-admin-btn" title="Organize Folders">
                             <i class="fas fa-sitemap"></i>
                             <span>Organize</span>
+                        </button>
+                        <button id="smart-cleanup-button" class="sidebar-admin-btn" title="Smart Cleanup">
+                            <i class="fas fa-broom"></i>
+                            <span>Cleanup</span>
                         </button>
                         <button id="toggle-checkboxes" class="sidebar-admin-btn" title="Toggle Selection">
                             <i class="fas fa-check-square"></i>
@@ -491,6 +499,31 @@
             </div>
         </div>
 
+        <div id="smart-cleanup-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="smart-cleanup-title">
+            <div class="rename-popup-content smart-cleanup-popup-content">
+                <div class="smart-cleanup-header">
+                    <div>
+                        <h3 id="smart-cleanup-title">Smart Cleanup</h3>
+                        <p id="smart-cleanup-subtitle">Review bookmark cleanup opportunities before changing anything.</p>
+                    </div>
+                    <button id="smart-cleanup-close-x" class="modal-close" title="Close">✕</button>
+                </div>
+                <div id="smart-cleanup-summary" class="smart-cleanup-summary"></div>
+                <div class="smart-cleanup-body">
+                    <div class="smart-cleanup-main">
+                        <div id="smart-cleanup-grid" class="smart-cleanup-grid"></div>
+                        <div id="smart-cleanup-details" class="smart-cleanup-details"></div>
+                    </div>
+                    <aside id="smart-cleanup-next" class="smart-cleanup-next"></aside>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="smart-cleanup-refresh" class="button save">Refresh</button>
+                    <button id="smart-cleanup-close" class="button cancel">Close</button>
+                </div>
+            </div>
+        </div>
+
         <div id="rename-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="rename-title">
             <div class="rename-popup-content">
                 <h3 id="rename-title">Rename</h3>
@@ -570,6 +603,25 @@
                     <p><strong>URL:</strong> <span id="detail-url"></span></p>
                     <p><strong>Date Added:</strong> <span id="detail-date-added"></span></p>
                     <p><strong>Tags:</strong> <span id="detail-tags"></span></p>
+                    <div class="detail-productivity">
+                        <div class="detail-notes-block">
+                            <label for="detail-notes"><strong>Notes:</strong></label>
+                            <textarea id="detail-notes" class="input" rows="4"
+                                placeholder="Add private notes for this bookmark..."></textarea>
+                        </div>
+                        <div class="detail-action-row">
+                            <button id="detail-reading-toggle" class="button cancel" type="button">
+                                <i class="fas fa-book-open"></i>
+                                Read Later
+                            </button>
+                            <button id="detail-auto-tag" class="button cancel" type="button">
+                                <i class="fas fa-wand-magic-sparkles"></i>
+                                Suggest Tags
+                            </button>
+                            <button id="detail-save-meta" class="button save" type="button">Save Notes</button>
+                        </div>
+                        <div id="detail-tag-suggestions" class="detail-tag-suggestions"></div>
+                    </div>
                     <div class="rename-popup-buttons" style="margin-top: 16px;">
                         <button class="close-modal button cancel">Close</button>
                     </div>
@@ -639,6 +691,23 @@
                 aria-label="Open Chat">
                 <i class="far fa-comment-alt"></i>
             </button>
+        </div>
+
+        <div id="command-palette" class="command-palette hidden" role="dialog" aria-modal="true"
+            aria-labelledby="command-palette-title">
+            <div class="command-palette-panel">
+                <div class="command-palette-search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input id="command-palette-input" type="search" autocomplete="off" spellcheck="false"
+                        placeholder="Search bookmarks or run command..." aria-label="Command palette search">
+                    <kbd>Ctrl K</kbd>
+                </div>
+                <div class="command-palette-heading">
+                    <h3 id="command-palette-title">Command Palette</h3>
+                    <span id="command-palette-count">0</span>
+                </div>
+                <div id="command-palette-results" class="command-palette-results" role="listbox"></div>
+            </div>
         </div>
 
         <div id="chatbox" class="chatbox hidden">

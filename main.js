@@ -100,6 +100,8 @@ import { setupEventListeners } from "./components/events.js"
 import { uiState } from "./components/state.js"
 import { customLoadUIState } from "./components/option/option.js"
 import { initCopyButtons } from "./components/copy-code.js"
+import { initCommandPalette } from "./components/commandPalette.js"
+import { initCleanupDashboard } from "./components/cleanupDashboard.js"
 
 let elements = {}
 const CUSTOM_LANGUAGES_KEY = "customLanguagePacks"
@@ -599,6 +601,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Thiết lập event listeners
     setupEventListeners(elements)
+    initCommandPalette(elements)
+    initCleanupDashboard(elements)
 
     // Event listener for Organize Folders button
     if (elements.organizeFoldersButton) {

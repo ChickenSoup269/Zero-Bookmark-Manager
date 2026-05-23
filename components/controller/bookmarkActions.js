@@ -10,6 +10,11 @@ import { renderFilteredBookmarks } from "../ui.js"
 import { uiState, setCurrentBookmarkId } from "../state.js"
 import { openAddToFolderPopup } from "./addToFolder.js"
 import { updateTag } from "../tag.js"
+import {
+  registerUndo,
+  restoreDeletedBookmarks,
+  snapshotBookmarks,
+} from "../undo.js"
 
 // --- HELPER FUNCTIONS ---
 
@@ -39,6 +44,60 @@ const attachListener = (element, event, handler) => {
     element.addEventListener(event, handler)
     element.__bookmarkActionHandlers[event] = handler
   }
+}
+
+function buildTagSuggestions(bookmark) {
+  const suggestions = new Set()
+  const text = `${bookmark.title || ""} ${bookmark.url || ""}`.toLowerCase()
+  const rules = [
+    ["github", "dev"],
+    ["stackoverflow", "dev"],
+    ["developer", "dev"],
+    ["docs", "docs"],
+    ["documentation", "docs"],
+    ["youtube", "video"],
+    ["course", "learning"],
+    ["tutorial", "learning"],
+    ["design", "design"],
+    ["figma", "design"],
+    ["ai", "ai"],
+    ["chatgpt", "ai"],
+    ["gemini", "ai"],
+    ["news", "news"],
+    ["blog", "article"],
+    ["medium", "article"],
+    ["shop", "shopping"],
+  ]
+
+  rules.forEach(([needle, tag]) => {
+    if (text.includes(needle)) suggestions.add(tag)
+  })
+
+  try {
+    const hostname = new URL(bookmark.url).hostname
+      .replace(/^www\./, "")
+      .split(".")[0]
+    if (hostname && hostname.length > 2) suggestions.add(hostname)
+  } catch {}
+
+  return [...suggestions].slice(0, 6)
+}
+
+function addTagsToBookmark(bookmarkId, tags) {
+  const nextTags = new Set(uiState.bookmarkTags[bookmarkId] || [])
+  tags.forEach((tag) => nextTags.add(tag))
+  uiState.bookmarkTags[bookmarkId] = [...nextTags].slice(0, 10)
+
+  tags.forEach((tag) => {
+    if (!uiState.tagColors[tag]) uiState.tagColors[tag] = "#4CAF50"
+    if (!uiState.tagTextColors[tag]) uiState.tagTextColors[tag] = "#ffffff"
+  })
+
+  chrome.storage.local.set({
+    bookmarkTags: uiState.bookmarkTags,
+    tagColors: uiState.tagColors,
+    tagTextColors: uiState.tagTextColors,
+  })
 }
 
 // --- MAIN SETUP ---
@@ -151,6 +210,11 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     url: document.getElementById("detail-url"),
     date: document.getElementById("detail-date-added"),
     tags: document.getElementById("detail-tags"),
+    notes: document.getElementById("detail-notes"),
+    saveMeta: document.getElementById("detail-save-meta"),
+    readingToggle: document.getElementById("detail-reading-toggle"),
+    autoTag: document.getElementById("detail-auto-tag"),
+    tagSuggestions: document.getElementById("detail-tag-suggestions"),
     close: popup.querySelector(".close-modal"),
     thumb: popup.querySelector("#detail-thumbnail"),
     modalFooter: popup.querySelector(".modal-footer .button"), // Nút đóng ở dưới
@@ -237,6 +301,95 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
         "No tags",
       )}</span>`
     }
+
+    chrome.storage.local.get(["bookmarkNotes", "readingQueue"], (data) => {
+      const bookmarkNotes = data.bookmarkNotes || {}
+      const readingQueue = data.readingQueue || {}
+
+      if (els.notes) {
+        els.notes.value = bookmarkNotes[bookmarkId] || ""
+        els.notes.placeholder = getTranslation(
+          "bookmarkNotesPlaceholder",
+          "Add private notes for this bookmark...",
+        )
+      }
+
+      const syncReadingButton = () => {
+        if (!els.readingToggle) return
+        const queued = !!readingQueue[bookmarkId]
+        els.readingToggle.classList.toggle("active", queued)
+        els.readingToggle.innerHTML = queued
+          ? `<i class="fas fa-check"></i> ${getTranslation("readingQueued", "In Reading Queue")}`
+          : `<i class="fas fa-book-open"></i> ${getTranslation("readLater", "Read Later")}`
+      }
+
+      syncReadingButton()
+
+      attachListener(els.saveMeta, "click", () => {
+        bookmarkNotes[bookmarkId] = els.notes?.value.trim() || ""
+        if (!bookmarkNotes[bookmarkId]) delete bookmarkNotes[bookmarkId]
+        chrome.storage.local.set({ bookmarkNotes }, () => {
+          showCustomPopup(getTranslation("bookmarkNotesSaved", "Notes saved."), "success", true)
+        })
+      })
+
+      attachListener(els.readingToggle, "click", () => {
+        if (readingQueue[bookmarkId]) {
+          delete readingQueue[bookmarkId]
+        } else {
+          readingQueue[bookmarkId] = {
+            status: "unread",
+            addedAt: Date.now(),
+          }
+        }
+        chrome.storage.local.set({ readingQueue }, () => {
+          uiState.readingQueue = readingQueue
+          syncReadingButton()
+          getBookmarkTree((nodes) => renderFilteredBookmarks(nodes, elements))
+        })
+      })
+
+      attachListener(els.autoTag, "click", () => {
+        const suggestions = buildTagSuggestions(b).filter(
+          (tag) => !(uiState.bookmarkTags[bookmarkId] || []).includes(tag),
+        )
+        if (!els.tagSuggestions) return
+        if (!suggestions.length) {
+          els.tagSuggestions.innerHTML = `<div class="auto-tag-empty">${getTranslation("noTagSuggestions", "No new tag suggestions.")}</div>`
+          return
+        }
+        els.tagSuggestions.innerHTML = `
+          <div class="auto-tag-suggestion-panel">
+            <strong>${getTranslation("autoTagSuggestionsTitle", "Suggested tags")}</strong>
+            <div class="auto-tag-chip-row">
+              ${suggestions
+                .map(
+                  (tag) =>
+                    `<button type="button" class="tag-suggestion-chip" data-tag="${tag}"><i class="fas fa-plus"></i>${tag}</button>`,
+                )
+                .join("")}
+            </div>
+          </div>
+        `
+        els.tagSuggestions.querySelectorAll("[data-tag]").forEach((chip) => {
+          chip.addEventListener("click", () => {
+            const tag = chip.dataset.tag
+            addTagsToBookmark(bookmarkId, [tag])
+            chip.remove()
+            getBookmarkTree((nodes) => renderFilteredBookmarks(nodes, elements))
+            showCustomPopup(getTranslation("tagAddedSuccess", "Tag added."), "success", true)
+          })
+        })
+      })
+
+      if (els.tagSuggestions) els.tagSuggestions.innerHTML = ""
+      if (els.autoTag) {
+        els.autoTag.innerHTML = `<i class="fas fa-wand-magic-sparkles"></i> ${getTranslation("suggestTags", "Suggest Tags")}`
+      }
+      if (els.saveMeta) {
+        els.saveMeta.textContent = getTranslation("saveNotes", "Save Notes")
+      }
+    })
 
     // Setup Magnify (Phóng to ảnh)
     setupThumbnailInteraction(els.thumb)
@@ -682,6 +835,8 @@ function handleRenameSave(e, elements) {
         return elements.renameInput.focus()
       }
 
+      const previousTitle = res[0].title || ""
+
       safeChromeBookmarksCall(
         "update",
         [uiState.currentBookmarkId, { title: newTitle }],
@@ -691,6 +846,25 @@ function handleRenameSave(e, elements) {
           getBookmarkTree((nodes) => {
             renderFilteredBookmarks(nodes, elements)
             showCustomPopup(getTranslation("renameSuccess"), "success")
+            registerUndo({
+              message: getTranslation("undoRenameMessage", "Bookmark renamed."),
+              actionLabel: getTranslation("undoAction", "Undo"),
+              elements,
+              undo: () =>
+                new Promise((resolve, reject) => {
+                  chrome.bookmarks.update(
+                    updated.id,
+                    { title: previousTitle },
+                    () => {
+                      if (chrome.runtime.lastError) {
+                        reject(new Error(chrome.runtime.lastError.message))
+                        return
+                      }
+                      resolve()
+                    },
+                  )
+                }),
+            })
             handleRenameCancel(e, elements)
           })
         },
@@ -734,7 +908,8 @@ function handleDeleteBookmark(e, elements) {
   const id = e.target.dataset.id
   if (!id) return handleError("No ID", "errorUnexpected")
 
-  showCustomConfirm(getTranslation("deleteConfirm"), () => {
+  showCustomConfirm(getTranslation("deleteConfirm"), async () => {
+    const snapshots = await snapshotBookmarks([id])
     if (uiState.bookmarkTags[id]) {
       delete uiState.bookmarkTags[id]
       chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
@@ -744,6 +919,14 @@ function handleDeleteBookmark(e, elements) {
       getBookmarkTree((nodes) => {
         renderFilteredBookmarks(nodes, elements)
         showCustomPopup(getTranslation("deleteBookmarkSuccess"), "success")
+        if (snapshots.length) {
+          registerUndo({
+            message: getTranslation("undoDeleteMessage", "Bookmark deleted."),
+            actionLabel: getTranslation("undoAction", "Undo"),
+            elements,
+            undo: () => restoreDeletedBookmarks(snapshots),
+          })
+        }
       })
     })
   })
@@ -811,7 +994,9 @@ export function handleDeleteSelectedBookmarks(elements) {
   if (uiState.selectedBookmarks.size === 0)
     return handleError("No selection", "errorNoBookmarkSelected", false)
 
-  showCustomConfirm(getTranslation("deleteBookmarksConfirm"), () => {
+  showCustomConfirm(getTranslation("deleteBookmarksConfirm"), async () => {
+    const ids = Array.from(uiState.selectedBookmarks)
+    const snapshots = await snapshotBookmarks(ids)
     // Cleanup tags
     uiState.selectedBookmarks.forEach((id) => delete uiState.bookmarkTags[id])
     chrome.storage.local.set({ bookmarkTags: uiState.bookmarkTags })
@@ -835,6 +1020,14 @@ export function handleDeleteSelectedBookmarks(elements) {
       getBookmarkTree((nodes) => {
         renderFilteredBookmarks(nodes, elements)
         showCustomPopup(getTranslation("deleteBookmarksSuccess"), "success")
+        if (snapshots.length) {
+          registerUndo({
+            message: getTranslation("undoBulkDeleteMessage", "Bookmarks deleted."),
+            actionLabel: getTranslation("undoAction", "Undo"),
+            elements,
+            undo: () => restoreDeletedBookmarks(snapshots),
+          })
+        }
       })
     })
   })

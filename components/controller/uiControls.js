@@ -219,6 +219,7 @@ export function setupUIControlListeners(elements) {
     "input",
     debounce((e) => {
       uiState.searchQuery = e.target.value.toLowerCase()
+      uiState.readingQueueOnly = false
       uiState.selectedFolderId = elements.folderFilter.value
       uiState.sortType = elements.sortFilter.value || "default"
       let filtered = uiState.bookmarks
@@ -242,6 +243,7 @@ export function setupUIControlListeners(elements) {
   elements.clearSearchButton.addEventListener("click", () => {
     elements.searchInput.value = ""
     uiState.searchQuery = ""
+    uiState.readingQueueOnly = false
     let filtered = uiState.bookmarks
     if (uiState.selectedFolderId) {
       filtered = filtered.filter((bookmark) =>

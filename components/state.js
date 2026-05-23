@@ -20,6 +20,9 @@ export const uiState = {
   healthFilter: "all", // "all", "dead", "suspicious", "safe"
   healthStatus: {},
   visitCounts: {}, // { bookmarkId: count }
+  readingQueueOnly: false,
+  readingQueue: {},
+  bookmarkNotes: {},
   faviconOption: "auto", // "auto" | "google" | "hostname"
   duplicateScope: "folder", // "folder" | "all"
   autoRemoveDup: false, // auto-delete background functionality

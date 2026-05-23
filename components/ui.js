@@ -1736,12 +1736,16 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       "bookmarkAccessCounts",
       "pinnedBookmarks",
       "bookmarkTags",
+      "readingQueue",
+      "bookmarkNotes",
     ], // THÊM "bookmarkTags" VÀO ĐÂY
     (data) => {
       const favoriteBookmarks = data.favoriteBookmarks || {}
       const bookmarkAccessCounts = data.bookmarkAccessCounts || {}
       const pinnedBookmarks = data.pinnedBookmarks || {}
       const bookmarkTagsFromStorage = data.bookmarkTags || {} // Lấy tag trực tiếp từ storage
+      const readingQueue = data.readingQueue || {}
+      const bookmarkNotes = data.bookmarkNotes || {}
 
       const addStatus = (nodes) => {
         for (const node of nodes) {
@@ -1751,6 +1755,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 
             // SỬA TẠI ĐÂY: Ưu tiên lấy từ storage vừa lấy được
             node.tags = bookmarkTagsFromStorage[node.id] || []
+            node.readingStatus = readingQueue[node.id] || null
 
             node.accessCount = bookmarkAccessCounts[node.id] || 0
           }
@@ -1762,6 +1767,8 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
 
       // Cập nhật lại uiState để đồng bộ với RAM
       uiState.bookmarkTags = bookmarkTagsFromStorage
+      uiState.readingQueue = readingQueue
+      uiState.bookmarkNotes = bookmarkNotes
 
       const bookmarks = flattenBookmarks(bookmarkTreeNodes)
       const folders = getFolders(bookmarkTreeNodes)
@@ -1797,6 +1804,9 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         filtered = filtered.filter((bookmark) =>
           uiState.selectedTags.some((tag) => bookmark.tags.includes(tag)),
         )
+      }
+      if (uiState.readingQueueOnly) {
+        filtered = filtered.filter((bookmark) => readingQueue[bookmark.id])
       }
       if (uiState.sortType === "favorites") {
         if (uiState.selectedFolderId) {
