@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const aiLocalWarning = document.getElementById("ai-local-warning")
   const localAiGuideBtn = document.getElementById("local-ai-guide-btn")
   const settingsMenu = document.getElementById("settings-menu")
+  const aiStatusIndicator = document.getElementById("ai-status-indicator")
 
   const chatHelp = document.getElementById("chat-help")
   const chatHistoryBtn = document.getElementById("chat-history")
@@ -668,6 +669,36 @@ document.addEventListener("DOMContentLoaded", () => {
       return false
     }
   }
+
+  const updateAiStatusIndicator = async (configOverride) => {
+    if (!aiStatusIndicator) return
+
+    const config = configOverride || (await getAiConfig())
+    const provider = config.model || "gemini"
+    let state = "is-warning"
+    let text = t("aiStatusSetup") || "Setup AI"
+
+    if (provider === "none") {
+      state = "is-offline"
+      text = t("aiStatusBasic") || "Basic"
+    } else if (provider === "local") {
+      const isLocalAvailable = await checkLocalAiAvailability()
+      state = isLocalAvailable ? "is-ready" : "is-warning"
+      text = t("aiStatusLocal") || "Local AI"
+    } else if (config.apiKey) {
+      state = "is-ready"
+      text = t("aiStatusReady") || "AI Ready"
+    }
+
+    aiStatusIndicator.className = `ai-status-indicator ${state}`
+    aiStatusIndicator.innerHTML = `
+      <i class="fas fa-circle" aria-hidden="true"></i>
+      <span>${text}</span>
+    `
+    aiStatusIndicator.title = text
+  }
+
+  updateAiStatusIndicator()
 
   // Validate URL
   const isValidUrl = (url) => {
@@ -2563,6 +2594,13 @@ document.addEventListener("DOMContentLoaded", () => {
         aiModelNameInput.value,
         aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none",
       )
+      await updateAiStatusIndicator({
+        model: aiProviderSelect.value,
+        apiKey: aiApiKeyInput.value,
+        modelName: aiModelNameInput.value,
+        apiVisible:
+          aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none",
+      })
       aiConfigPopup.classList.add("hidden")
       showCustomPopup(
         t("aiConfigSaveSuccess") || "AI settings saved!",

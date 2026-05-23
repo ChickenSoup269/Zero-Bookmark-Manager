@@ -510,28 +510,119 @@ export function showCustomGuide() {
 
     messageEl.innerHTML = translations[language].helpGuide
 
+    popup.querySelector(".guide-toolbar")?.remove()
+    popup.querySelector(".guide-no-results")?.remove()
+
+    const closePopup = () => {
+      popup.classList.add("hidden")
+      popup.style.display = ""
+      popup.style.opacity = ""
+      popup.style.pointerEvents = ""
+      document.removeEventListener("keydown", handleKeydown)
+    }
+
+    const toolbar = document.createElement("div")
+    toolbar.className = "guide-toolbar"
+    toolbar.innerHTML = `
+      <label class="guide-search">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <input type="search" placeholder="${translations[language].helpGuideSearchPlaceholder || "Search commands or features..."}" aria-label="${translations[language].helpGuideSearchAria || "Search help guide"}">
+      </label>
+      <button type="button" class="guide-clear-search" title="${translations[language].helpGuideClearSearch || "Clear search"}">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    `
+
+    const noResults = document.createElement("div")
+    noResults.className = "guide-no-results hidden"
+    noResults.textContent =
+      translations[language].helpGuideNoResults ||
+      "No matching commands or features found."
+
+    messageEl.parentNode.insertBefore(toolbar, messageEl)
+    messageEl.parentNode.insertBefore(noResults, messageEl)
+
+    const searchInput = toolbar.querySelector("input")
+    const clearSearchButton = toolbar.querySelector(".guide-clear-search")
+
+    const filterGuide = () => {
+      const query = searchInput.value.trim().toLowerCase()
+      const items = Array.from(
+        messageEl.querySelectorAll(
+          ".cmd-row, .guide-card-v2, .language-guide-step, .language-ai-links a, .experimental-badge",
+        ),
+      )
+
+      let visibleCount = 0
+      items.forEach((item) => {
+        const matches = !query || item.textContent.toLowerCase().includes(query)
+        item.classList.toggle("guide-filter-hidden", !matches)
+        if (matches) visibleCount += 1
+      })
+
+      messageEl.querySelectorAll(".command-section").forEach((section) => {
+        const rows = Array.from(section.querySelectorAll(".cmd-row"))
+        if (!rows.length) return
+        const hasVisibleRow = rows.some(
+          (row) => !row.classList.contains("guide-filter-hidden"),
+        )
+        section.classList.toggle("guide-filter-hidden", query && !hasVisibleRow)
+      })
+
+      noResults.classList.toggle("hidden", !query || visibleCount > 0)
+    }
+
+    searchInput.addEventListener("input", filterGuide)
+    clearSearchButton.addEventListener("click", () => {
+      searchInput.value = ""
+      filterGuide()
+      searchInput.focus()
+    })
+
+    const fillChatCommand = (command) => {
+      const chatInput = document.getElementById("chat-input")
+      if (!chatInput) return
+      chatInput.value = command.replace(/\s+/g, " ").trim()
+      chatInput.dispatchEvent(new Event("input", { bubbles: true }))
+      chatInput.focus()
+    }
+
     // Add copy buttons to all code elements
-    const codeElements = messageEl.querySelectorAll('code')
+    const codeElements = messageEl.querySelectorAll("code")
     codeElements.forEach((code) => {
       const text = code.textContent
-      const wrapper = document.createElement('div')
-      wrapper.className = 'command-wrapper'
+      const isChatCommand =
+        code.closest(".cmd-row, .chat-help-list") && !text.includes("\n")
+      const wrapper = document.createElement("div")
+      wrapper.className = "command-wrapper"
       code.parentNode.insertBefore(wrapper, code)
       wrapper.appendChild(code)
 
-      const copyBtn = document.createElement('button')
-      copyBtn.className = 'copy-command-btn'
+      if (isChatCommand) {
+        code.classList.add("guide-command-code")
+        code.title =
+          translations[language].helpGuideUseCommand ||
+          "Click to send this command to chat"
+        code.addEventListener("click", (e) => {
+          e.stopPropagation()
+          fillChatCommand(text)
+          closePopup()
+        })
+      }
+
+      const copyBtn = document.createElement("button")
+      copyBtn.className = "copy-command-btn"
       copyBtn.innerHTML = '<i class="fas fa-copy"></i>'
-      copyBtn.title = language === 'vi' ? 'Sao chép lệnh' : 'Copy command'
+      copyBtn.title = translations[language].copyCommand || "Copy command"
 
       copyBtn.onclick = (e) => {
         e.stopPropagation()
         navigator.clipboard.writeText(text).then(() => {
           copyBtn.innerHTML = '<i class="fas fa-check"></i>'
-          copyBtn.classList.add('copied')
+          copyBtn.classList.add("copied")
           setTimeout(() => {
             copyBtn.innerHTML = '<i class="fas fa-copy"></i>'
-            copyBtn.classList.remove('copied')
+            copyBtn.classList.remove("copied")
           }, 2000)
         })
       }
@@ -543,14 +634,6 @@ export function showCustomGuide() {
     const isDarkMode = document.body.classList.contains("dark-theme")
     popup.classList.toggle("light-theme", !isDarkMode)
     popup.classList.toggle("dark-theme", isDarkMode)
-
-    const closePopup = () => {
-      popup.classList.add("hidden")
-      popup.style.display = ""
-      popup.style.opacity = ""
-      popup.style.pointerEvents = ""
-      document.removeEventListener("keydown", handleKeydown)
-    }
 
     okButton.onclick = (e) => {
       e.stopPropagation()
@@ -564,7 +647,10 @@ export function showCustomGuide() {
     }
 
     const handleKeydown = (e) => {
-      if (e.key === "Enter" || e.key === "Escape") {
+      const isTyping =
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      if (e.key === "Escape" || (e.key === "Enter" && !isTyping)) {
         closePopup()
       }
     }

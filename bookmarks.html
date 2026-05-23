@@ -644,7 +644,13 @@
         <div id="chatbox" class="chatbox hidden">
             <div class="chatbox-content">
                 <h3>
-                    ChatBot
+                    <span class="chatbox-title">
+                        ChatBot
+                        <span id="ai-status-indicator" class="ai-status-indicator is-warning" aria-live="polite">
+                            <i class="fas fa-circle" aria-hidden="true"></i>
+                            <span>Setup AI</span>
+                        </span>
+                    </span>
                     <div class="chatbox-header-controlers">
                         <button id="chat-help" class="chatbox-header-button" title="Help Guide"
                             aria-label="Open help guide">

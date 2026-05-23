@@ -2916,16 +2916,81 @@ html {
 #custom-guide .rename-popup-content {
   max-width: 600px;
   width: 90%;
+  max-height: 88vh;
   text-align: left;
   display: flex;
   flex-direction: column;
 }
 
 #custom-guide-message {
-  max-height: 50vh;
+  max-height: clamp(420px, 68vh, 720px);
   overflow-y: auto;
   margin: 15px 0;
   padding-right: 10px;
+}
+
+.guide-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.guide-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+
+.guide-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.guide-search input::placeholder {
+  color: var(--text-muted);
+}
+
+.guide-clear-search {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.guide-clear-search:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+}
+
+.guide-filter-hidden {
+  display: none !important;
+}
+
+.guide-no-results {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: center;
 }
 
 /* Custom Scrollbar for Help Guide */
@@ -2985,6 +3050,16 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.guide-command-code {
+  cursor: pointer;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.guide-command-code:hover {
+  border-color: var(--accent-color) !important;
+  transform: translateY(-1px);
 }
 
 .guide-list code {
