@@ -1,6 +1,6 @@
 import { renderFilteredBookmarks } from "./ui.js"
 import { saveUIState, uiState } from "./state.js"
-import { showCustomPopup, translations } from "./utils/utils.js"
+import { showCustomConfirm, showCustomPopup, translations } from "./utils/utils.js"
 
 const WORKSPACE_KEY = "pinnedWorkspaces"
 
@@ -68,6 +68,16 @@ async function saveWorkspace(workspaceId, elements, render) {
   showCustomPopup(t("workspaceSaved", "Workspace saved."), "success", true)
 }
 
+async function deleteWorkspace(workspaceId, render) {
+  const workspaces = await loadWorkspaces()
+  if (!workspaces[workspaceId]) return
+
+  delete workspaces[workspaceId]
+  await chrome.storage.local.set({ [WORKSPACE_KEY]: workspaces })
+  render(workspaces)
+  showCustomPopup(t("workspaceDeleted", "Workspace deleted."), "success", true)
+}
+
 function getStateSummary(snapshot) {
   if (!snapshot) return t("workspaceEmpty", "No saved view")
 
@@ -98,6 +108,10 @@ export function initWorkspaces(elements) {
             title="${t("workspaceSaveCurrent", "Save current view")}">
             <i class="fas fa-bookmark" aria-hidden="true"></i>
           </button>
+          <button type="button" class="workspace-delete" data-workspace-delete="${workspace.id}"
+            title="${t("workspaceDeleteSaved", "Delete saved view")}" ${snapshot ? "" : "disabled"}>
+            <i class="fas fa-trash-can" aria-hidden="true"></i>
+          </button>
         </div>
       `
     }).join("")
@@ -109,6 +123,17 @@ export function initWorkspaces(elements) {
     const saveButton = event.target.closest("[data-workspace-save]")
     if (saveButton) {
       await saveWorkspace(saveButton.dataset.workspaceSave, elements, render)
+      return
+    }
+
+    const deleteButton = event.target.closest("[data-workspace-delete]")
+    if (deleteButton && !deleteButton.disabled) {
+      showCustomConfirm(
+        t("confirmDeleteWorkspace", "Delete this saved workspace?"),
+        () => {
+          deleteWorkspace(deleteButton.dataset.workspaceDelete, render)
+        },
+      )
       return
     }
 

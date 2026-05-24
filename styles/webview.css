@@ -409,8 +409,13 @@ body {
   align-items: stretch;
 }
 
+.workspace-row.saved {
+  grid-template-columns: minmax(0, 1fr) 32px 32px;
+}
+
 .workspace-apply,
-.workspace-save {
+.workspace-save,
+.workspace-delete {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.03);
@@ -452,7 +457,8 @@ body {
   font-size: 0.66rem;
 }
 
-.workspace-save {
+.workspace-save,
+.workspace-delete {
   width: 32px;
   min-height: 32px;
   display: inline-flex;
@@ -465,11 +471,31 @@ body {
   color: var(--accent-color);
 }
 
+.workspace-delete {
+  display: none;
+}
+
+.workspace-row.saved .workspace-delete {
+  display: inline-flex;
+}
+
 .workspace-apply:hover,
 .workspace-save:hover {
   border-color: var(--accent-color);
   background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
   transform: translateY(-1px);
+}
+
+.workspace-delete:hover {
+  border-color: var(--danger-color);
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger-color);
+  transform: translateY(-1px);
+}
+
+.workspace-delete:disabled {
+  opacity: 0;
+  cursor: default;
 }
 
 .command-palette {

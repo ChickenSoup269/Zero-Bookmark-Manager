@@ -46,6 +46,14 @@ const attachListener = (element, event, handler) => {
   }
 }
 
+const escapeHtml = (value = "") =>
+  String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+
 function buildTagSuggestions(bookmark) {
   const suggestions = new Set()
   const text = `${bookmark.title || ""} ${bookmark.url || ""}`.toLowerCase()
@@ -561,19 +569,59 @@ async function openManageTagsPopup(bookmarkId) {
   if (!countDisplay) {
     countDisplay = document.createElement("div")
     countDisplay.className = "tag-count"
-    countDisplay.style.cssText =
-      "font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px;"
     els.title.after(countDisplay)
+  }
+
+  let existingTagChips = popup.querySelector(".existing-tags-chip-list")
+  if (!existingTagChips && tagSelect) {
+    existingTagChips = document.createElement("div")
+    existingTagChips.className = "existing-tags-chip-list"
+    existingTagChips.setAttribute("aria-label", "Available tags")
+    tagSelect.after(existingTagChips)
+  }
+
+  const renderExistingTagChips = (tags) => {
+    if (!existingTagChips) return
+
+    const currentTags = new Set(uiState.bookmarkTags[bookmarkId] || [])
+    const availableTags = tags.filter((tag) => !currentTags.has(tag))
+
+    if (!availableTags.length) {
+      existingTagChips.innerHTML = `
+        <span class="existing-tags-empty">${escapeHtml(
+          getTranslation("noAvailableTags", "No available tags"),
+        )}</span>`
+      return
+    }
+
+    existingTagChips.innerHTML = availableTags
+      .map((tag) => {
+        const bg = uiState.tagColors?.[tag] || "#ffffff"
+        const textColor =
+          uiState.tagTextColors?.[tag] || getContrastColor(bg)
+        const safeTag = escapeHtml(tag)
+
+        return `
+          <button type="button" class="existing-tag-chip" data-existing-tag="${safeTag}"
+            title="${escapeHtml(getTranslation("addTag", "Add Tag"))}: ${safeTag}"
+            style="--tag-chip-bg: ${bg}; --tag-chip-text: ${textColor};">
+            <span>${safeTag}</span>
+            <i class="fas fa-plus" aria-hidden="true"></i>
+          </button>`
+      })
+      .join("")
   }
 
   // --- Logic ---
   const updateDropdown = async () => {
     const tags = await getAllTags()
+    const currentTags = new Set(uiState.bookmarkTags[bookmarkId] || [])
+    const availableTags = tags.filter((tag) => !currentTags.has(tag))
     tagSelect.innerHTML = `<option value="">${getTranslation(
       "selectTag",
       "Select Tag",
     )}</option>`
-    tags.forEach((t) => {
+    availableTags.forEach((t) => {
       const opt = document.createElement("option")
       opt.value = t
       opt.textContent = t
@@ -583,11 +631,21 @@ async function openManageTagsPopup(bookmarkId) {
         getContrastColor(uiState.tagColors[t] || "#ccc")
       tagSelect.appendChild(opt)
     })
+    renderExistingTagChips(tags)
   }
 
   const renderTags = () => {
     const currentTags = uiState.bookmarkTags[bookmarkId] || []
     countDisplay.textContent = `${currentTags.length}/${MAX_TAGS} tags`
+    if (!currentTags.length) {
+      els.existingTags.innerHTML = `
+        <div class="manage-tags-empty">
+          <i class="fas fa-tags" aria-hidden="true"></i>
+          <span>${escapeHtml(getTranslation("noTagsFound", "No tags yet"))}</span>
+        </div>`
+      return
+    }
+
     els.existingTags.innerHTML = currentTags
       .map((tag) => {
         const hasBgColor = uiState.tagColors && uiState.tagColors[tag]
@@ -597,12 +655,17 @@ async function openManageTagsPopup(bookmarkId) {
             getContrastColor(bg)
           : "#000000"
         const borderStyle = !hasBgColor ? "border: 1px solid #ccc;" : ""
+        const safeTag = escapeHtml(tag)
 
         return `
             <div class="tag-item">
-              <span class="bookmark-tag" style="background-color: ${bg}; color: ${textColor}; ${borderStyle}">${tag}</span>
-              <button class="edit-tag-btn" data-tag="${tag}">✎</button>
-              <button class="remove-tag-btn" data-tag="${tag}">✕</button>
+              <span class="bookmark-tag" title="${safeTag}" style="background-color: ${bg}; color: ${textColor}; ${borderStyle}">${safeTag}</span>
+              <button type="button" class="edit-tag-btn" data-tag="${safeTag}" title="${escapeHtml(getTranslation("edit", "Edit"))}: ${safeTag}" aria-label="${escapeHtml(getTranslation("edit", "Edit"))} ${safeTag}">
+                <i class="fas fa-pen" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="remove-tag-btn" data-tag="${safeTag}" title="${escapeHtml(getTranslation("delete", "Delete"))}: ${safeTag}" aria-label="${escapeHtml(getTranslation("delete", "Delete"))} ${safeTag}">
+                <i class="fas fa-xmark" aria-hidden="true"></i>
+              </button>
             </div>`
       })
       .join("")
@@ -649,6 +712,12 @@ async function openManageTagsPopup(bookmarkId) {
     tagSelect.value = ""
   })
 
+  attachListener(existingTagChips, "click", (event) => {
+    const chip = event.target.closest("[data-existing-tag]")
+    if (!chip || !existingTagChips.contains(chip)) return
+    handleAddTag(chip.dataset.existingTag)
+  })
+
   els.addBtn.onclick = () => {
     handleAddTag(els.input.value.trim(), els.color.value, textColorInput.value)
     els.input.value = ""
@@ -659,8 +728,11 @@ async function openManageTagsPopup(bookmarkId) {
 
   // Edit/Remove Delegation
   els.existingTags.onclick = (e) => {
-    const tag = e.target.dataset.tag
-    if (e.target.classList.contains("remove-tag-btn")) {
+    const actionButton = e.target.closest(".remove-tag-btn, .edit-tag-btn")
+    if (!actionButton || !els.existingTags.contains(actionButton)) return
+
+    const tag = actionButton.dataset.tag
+    if (actionButton.classList.contains("remove-tag-btn")) {
       showCustomConfirm(
         getTranslation(
           "confirmDeleteTag",
@@ -679,10 +751,10 @@ async function openManageTagsPopup(bookmarkId) {
           })
         },
       )
-    } else if (e.target.classList.contains("edit-tag-btn")) {
+    } else if (actionButton.classList.contains("edit-tag-btn")) {
       // Edit logic (simplified for brevity, similar structure to original but cleaner DOM calls)
       handleEditTagUI(
-        e.target.closest(".tag-item"),
+        actionButton.closest(".tag-item"),
         tag,
         bookmarkId,
         saveTagData,
@@ -738,14 +810,16 @@ function handleEditTagUI(
   setTimeout(() => input.select(), 0)
 
   const saveBtn = document.createElement("button")
+  saveBtn.type = "button"
   saveBtn.innerHTML = "✓"
   saveBtn.title = "Save"
-  saveBtn.className = "edit-tag-actions edit-tag-save"
+  saveBtn.className = "edit-tag-action-btn edit-tag-save"
 
   const cancelBtn = document.createElement("button")
+  cancelBtn.type = "button"
   cancelBtn.innerHTML = "✕"
   cancelBtn.title = "Cancel"
-  cancelBtn.className = "edit-tag-actions edit-tag-cancel"
+  cancelBtn.className = "edit-tag-action-btn edit-tag-cancel"
 
   const actionsDiv = document.createElement("div")
   actionsDiv.className = "edit-tag-actions"
