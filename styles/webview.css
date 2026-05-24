@@ -397,6 +397,81 @@ body {
   background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.12);
 }
 
+.workspace-list {
+  display: grid;
+  gap: 6px;
+}
+
+.workspace-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 32px;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.workspace-apply,
+.workspace-save {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.workspace-apply {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 2px 8px;
+  align-items: center;
+  padding: 8px 9px;
+  text-align: left;
+}
+
+.workspace-apply i {
+  grid-row: span 2;
+  color: var(--accent-color);
+}
+
+.workspace-apply span,
+.workspace-apply small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-apply span {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.workspace-apply small {
+  color: var(--text-secondary);
+  font-size: 0.66rem;
+}
+
+.workspace-save {
+  width: 32px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.workspace-row.saved .workspace-save {
+  color: var(--accent-color);
+}
+
+.workspace-apply:hover,
+.workspace-save:hover {
+  border-color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
+  transform: translateY(-1px);
+}
+
 .command-palette {
   position: fixed;
   inset: 0;
@@ -911,6 +986,203 @@ body {
   margin-top: 12px;
 }
 
+.duplicate-merge-content {
+  width: min(980px, 96vw);
+  max-width: 980px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 22px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 82%, var(--accent-color));
+  border-radius: 10px;
+  text-align: left;
+}
+
+.duplicate-merge-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.duplicate-merge-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.duplicate-merge-header p {
+  margin: 5px 0 0;
+  max-width: 680px;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+#duplicate-merge-close-x {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#duplicate-merge-close-x:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
+}
+
+.duplicate-merge-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.duplicate-merge-summary div {
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg-primary) 74%, transparent);
+}
+
+.duplicate-merge-summary strong,
+.duplicate-merge-summary span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duplicate-merge-summary strong {
+  color: var(--accent-color);
+  font-size: 1rem;
+}
+
+.duplicate-merge-summary span {
+  margin-top: 3px;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+}
+
+.duplicate-merge-list {
+  min-height: 260px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-color) transparent;
+}
+
+.duplicate-merge-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.duplicate-merge-list::-webkit-scrollbar-thumb {
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.45);
+  border-radius: 999px;
+}
+
+.duplicate-merge-group {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg-primary) 72%, transparent);
+}
+
+.duplicate-merge-group + .duplicate-merge-group {
+  margin-top: 10px;
+}
+
+.duplicate-merge-group-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.duplicate-merge-group-header strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+
+.duplicate-merge-group-header span {
+  flex: 0 0 auto;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.duplicate-merge-options {
+  display: grid;
+  gap: 8px;
+}
+
+.duplicate-merge-option {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+}
+
+.duplicate-merge-option:hover,
+.duplicate-merge-option.selected {
+  border-color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
+}
+
+.duplicate-merge-option span {
+  min-width: 0;
+}
+
+.duplicate-merge-option strong,
+.duplicate-merge-option small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duplicate-merge-option strong {
+  color: var(--text-primary);
+  font-size: 0.86rem;
+}
+
+.duplicate-merge-option small {
+  margin-top: 3px;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+}
+
+.duplicate-merge-empty {
+  padding: 28px 14px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.duplicate-merge-footer {
+  justify-content: flex-end;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+}
+
 .smart-cleanup-next {
   min-width: 0;
   max-height: min(58vh, 620px);
@@ -966,25 +1238,38 @@ body {
 }
 
 .detail-productivity {
-  margin-top: 12px;
+  grid-column: 1 / -1;
+  margin-top: 2px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   padding: 12px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
+  background: color-mix(in srgb, var(--bg-primary) 72%, transparent);
 }
 
+.detail-tags-block,
 .detail-notes-block {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
+.detail-tags-block #detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 30px;
+  padding: 8px;
+  border: 1px dashed rgba(var(--accent-color-rgb, 112, 161, 70), 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
 #detail-notes {
   resize: vertical;
-  min-height: 90px;
+  min-height: 120px;
 }
 
 .detail-action-row {
@@ -1138,8 +1423,18 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .duplicate-merge-summary {
+    grid-template-columns: 1fr;
+  }
+
   .detail-action-row {
     grid-template-columns: 1fr;
+  }
+
+  #bookmark-detail-popup .bookmark-detail-content {
+    grid-template-columns: 1fr;
+    max-height: 88vh;
+    overflow-y: auto;
   }
 
   .smart-cleanup-next {
@@ -1153,6 +1448,10 @@ body {
 
   .smart-cleanup-list li {
     grid-template-columns: 1fr;
+  }
+
+  .duplicate-merge-group-header {
+    flex-direction: column;
   }
 }
 
@@ -2753,28 +3052,45 @@ body.settings-panel-open .settings-container {
   padding: 6px 8px;
   border-radius: var(--border-radius-md);
   border: 1px solid var(--border-color);
-  transition: all var(--transition-fast);
-  background-color: var(--bg-primary);
+  background-color: color-mix(in srgb, var(--bg-primary) 86%, transparent);
   box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease !important;
+  backdrop-filter: blur(8px);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease !important;
   overflow: visible;
 }
 
 .folder-list.tree-view .bookmark-item:hover {
-  z-index: 2;
-  transform: none;
-  transition: all 0.4s ease !important;
+  z-index: 4;
+  transform: translateY(-1px);
+  border-color: rgba(var(--accent-color-rgb, 112, 161, 70), 0.42);
   background-color: var(--bg-tertiary);
-  backdrop-filter: blur(10px) !important;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px) !important;
 }
 
 /* Prevent hover lift from overlapping siblings in tree view */
 .folder-list.tree-view .folder-item:hover {
-  transform: none;
+  transform: translateY(-1px);
+  border-color: rgba(var(--accent-color-rgb, 112, 161, 70), 0.34);
+  background: var(--folder-hover-bg);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
 }
 
 .webview-mode .folder-list.tree-view .bookmark-item {
-  border: none;
+  border: 1px solid transparent;
+}
+
+.webview-mode .folder-list.tree-view .bookmark-item:hover {
+  border-color: rgba(var(--accent-color-rgb, 112, 161, 70), 0.36);
 }
 
 /* Existing bookmark item styles for flat view - Card style */
@@ -2898,6 +3214,8 @@ body.settings-panel-open .settings-container {
   min-width: 240px;
   padding: var(--spacing-sm);
   box-shadow: var(--shadow-lg);
+  background-color: color-mix(in srgb, var(--bg-primary) 82%, transparent);
+  backdrop-filter: blur(14px);
   opacity: 1;
   pointer-events: auto;
   z-index: 1001;
@@ -2910,10 +3228,88 @@ body.settings-panel-open .settings-container {
     transform 0.2s ease;
 }
 
+.dropdown-menu .menu-item {
+  width: 100%;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 7px 9px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
 .dropdown-menu .menu-item:hover {
   background-color: var(--text-primary);
   color: var(--bg-primary);
+  border-color: var(--text-primary);
   transform: translateY(-1px);
+}
+
+body[data-bookmark-menu-bg="glass"] .dropdown-menu {
+  background-color: color-mix(in srgb, var(--bg-primary) 82%, transparent) !important;
+  backdrop-filter: blur(14px) !important;
+  border-color: var(--border-color) !important;
+}
+
+body[data-bookmark-menu-bg="glass"] .dropdown-menu .menu-item {
+  background: color-mix(in srgb, var(--bg-primary) 34%, transparent) !important;
+}
+
+body[data-bookmark-menu-bg="glass"] .dropdown-menu .menu-item:hover {
+  background: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+  border-color: var(--text-primary) !important;
+}
+
+body[data-bookmark-menu-bg="glass"] .dropdown-menu hr {
+  border-top-color: color-mix(in srgb, var(--border-color) 58%, transparent) !important;
+}
+
+body[data-bookmark-menu-bg="normal"] .dropdown-menu {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary)),
+      var(--bg-secondary)
+    ) !important;
+  backdrop-filter: none !important;
+  border-color: color-mix(in srgb, var(--border-color) 82%, var(--accent-color)) !important;
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  gap: 6px !important;
+  padding: 7px !important;
+}
+
+body[data-bookmark-menu-bg="normal"] .dropdown-menu .menu-item {
+  background: color-mix(in srgb, var(--bg-primary) 88%, var(--bg-secondary)) !important;
+  border-color: color-mix(in srgb, var(--border-color) 72%, transparent) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+body[data-bookmark-menu-bg="normal"] .dropdown-menu .menu-item:hover {
+  background: color-mix(in srgb, var(--accent-color) 18%, var(--bg-primary)) !important;
+  color: var(--text-primary) !important;
+  border-color: color-mix(in srgb, var(--accent-color) 62%, var(--border-color)) !important;
+  transform: translateX(2px);
+}
+
+body[data-bookmark-menu-bg="normal"] .dropdown-menu .menu-item:hover i {
+  color: var(--accent-color) !important;
+}
+
+body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
+  border-top-color: color-mix(in srgb, var(--border-color) 78%, transparent) !important;
+  margin: 2px 4px !important;
 }
 
 /* Dropdown menu - Glassmorphism với blur */
@@ -2923,8 +3319,8 @@ body.settings-panel-open .settings-container {
   right: 0;
   bottom: 0;
   width: min(440px, calc(100vw - 16px));
-  background-color: color-mix(in srgb, var(--bg-primary) 96%, transparent);
-  backdrop-filter: blur(12px);
+  background-color: color-mix(in srgb, var(--bg-primary) 88%, transparent);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
   border-right: none;
   border-bottom: none;
@@ -2959,8 +3355,8 @@ body.settings-panel-open .settings-container {
   min-height: 52px;
   margin: 0 -14px 6px;
   padding: 0 14px;
-  background-color: color-mix(in srgb, var(--bg-primary) 96%, transparent);
-  backdrop-filter: blur(12px);
+  background-color: color-mix(in srgb, var(--bg-primary) 88%, transparent);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -3026,7 +3422,7 @@ body.settings-panel-open .settings-container {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background-color: var(--bg-secondary);
+  background-color: color-mix(in srgb, var(--bg-secondary) 78%, transparent);
   padding: 6px;
   border-radius: 10px;
   margin-bottom: 8px;
@@ -3060,7 +3456,7 @@ body.settings-panel-open .settings-container {
   font-size: 0.85rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background-color: var(--bg-primary);
+  background-color: color-mix(in srgb, var(--bg-primary) 78%, transparent);
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3165,7 +3561,8 @@ body.settings-panel-open .settings-container {
   font-size: 0.85rem;
   border: none;
   border-radius: 8px;
-  background: transparent;
+  background: color-mix(in srgb, var(--bg-primary) 32%, transparent);
+  border: 1px solid transparent;
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3177,6 +3574,7 @@ body.settings-panel-open .settings-container {
 .dropdown-menu-2 .menu-item:hover {
   background-color: var(--accent-color);
   color: var(--bg-primary);
+  border-color: var(--accent-color);
 }
 
 .dropdown-menu-2 .menu-item i {
@@ -3199,6 +3597,8 @@ body.settings-panel-open .settings-container {
   color: var(--text-primary);
   cursor: pointer;
   border-radius: 8px;
+  border: 1px solid transparent;
+  background: color-mix(in srgb, var(--bg-primary) 28%, transparent);
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
@@ -3206,6 +3606,7 @@ body.settings-panel-open .settings-container {
 .dropdown-menu-2 .toggle-row:hover {
   background-color: var(--accent-color);
   color: var(--bg-primary);
+  border-color: var(--accent-color);
 }
 
 .dropdown-menu-2 .toggle-row:hover [data-i18n="autoRemoveDupTitle"] {
@@ -4018,27 +4419,35 @@ textarea.error {
 }
 
 /* detail thumbnail view detial button */
-#bookmark-detail-popup .rename-popup-content {
-  display: flex;
-  gap: 20px;
+#bookmark-detail-popup .bookmark-detail-content {
+  width: min(860px, 94vw);
+  max-width: 860px;
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 16px;
   align-items: flex-start;
 }
 
 #bookmark-detail-popup .bookmark-thumbnail {
-  flex: 0 0 120px;
+  width: 100%;
+  min-width: 0;
   border-radius: var(--border-radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  background: color-mix(in srgb, var(--bg-primary) 78%, transparent);
 }
 
 #bookmark-detail-popup #detail-thumbnail {
   width: 100%;
+  aspect-ratio: 16 / 10;
   height: auto;
   display: block;
+  object-fit: cover;
 }
 
 #bookmark-detail-popup .bookmark-info {
-  flex: 1;
+  min-width: 0;
 }
 
 #bookmark-detail-popup .bookmark-info p {
@@ -4048,6 +4457,16 @@ textarea.error {
 
 #bookmark-detail-popup .bookmark-info strong {
   color: var(--text-primary);
+}
+
+#bookmark-detail-popup .bookmark-info span {
+  overflow-wrap: anywhere;
+}
+
+#bookmark-detail-popup .detail-popup-buttons {
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  margin-top: 0;
 }
 
 /* List View Styles */

@@ -27,6 +27,7 @@ export const uiState = {
   duplicateScope: "folder", // "folder" | "all"
   autoRemoveDup: false, // auto-delete background functionality
   headerLineStyle: "pattern", // "pattern" | "simple" | "hidden"
+  bookmarkMenuBg: "glass", // "glass" | "normal"
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -76,6 +77,7 @@ export function saveUIState() {
       duplicateScope: uiState.duplicateScope,
       autoRemoveDup: uiState.autoRemoveDup,
       headerLineStyle: uiState.headerLineStyle,
+      bookmarkMenuBg: uiState.bookmarkMenuBg,
     },
     checkboxesVisible: uiState.checkboxesVisible,
     bookmarkTags: uiState.bookmarkTags,
@@ -117,7 +119,9 @@ export function loadUIState(callback) {
         uiState.duplicateScope = result.uiState.duplicateScope || "folder"
         uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
         uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
+        uiState.bookmarkMenuBg = result.uiState.bookmarkMenuBg || "glass"
         document.body.setAttribute("data-header-line", uiState.headerLineStyle)
+        document.body.setAttribute("data-bookmark-menu-bg", uiState.bookmarkMenuBg)
       }
       uiState.checkboxesVisible = result.checkboxesVisible || false
       uiState.bookmarkTags = result.bookmarkTags || {}

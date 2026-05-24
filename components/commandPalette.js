@@ -34,6 +34,22 @@ function getDomain(url = "") {
   }
 }
 
+function getNoteSnippet(note = "", query = "") {
+  const cleanNote = String(note).replace(/\s+/g, " ").trim()
+  if (!cleanNote) return ""
+
+  const normalizedQuery = query.trim().toLowerCase()
+  const matchIndex = normalizedQuery
+    ? cleanNote.toLowerCase().indexOf(normalizedQuery)
+    : -1
+  const start = Math.max(matchIndex - 36, 0)
+  const snippet =
+    matchIndex >= 0
+      ? cleanNote.slice(start, start + 112)
+      : cleanNote.slice(0, 112)
+  return `${start > 0 ? "... " : ""}${snippet}${cleanNote.length > start + snippet.length ? " ..." : ""}`
+}
+
 function isTypingTarget(target) {
   return (
     target instanceof HTMLInputElement ||
@@ -223,9 +239,13 @@ function buildBookmarkResults(query, elements) {
             (score, tag) => Math.max(score, calculateMatchScore(tag, normalized)),
             0,
           )
+          const noteScore = calculateMatchScore(
+            uiState.bookmarkNotes?.[bookmark.id] || "",
+            normalized,
+          )
           return {
             bookmark,
-            score: Math.max(titleScore, urlScore, tagScore),
+            score: Math.max(titleScore, urlScore, tagScore, noteScore),
           }
         })
         .filter(({ bookmark, score }) => bookmark.url && score >= 0.35)
@@ -240,7 +260,7 @@ function buildBookmarkResults(query, elements) {
     icon: "fa-bookmark",
     title: bookmark.title || bookmark.url,
     meta: getDomain(bookmark.url),
-    keywords: `${bookmark.title || ""} ${bookmark.url || ""} ${(bookmark.tags || []).join(" ")}`,
+    keywords: `${bookmark.title || ""} ${bookmark.url || ""} ${(bookmark.tags || []).join(" ")} ${uiState.bookmarkNotes?.[bookmark.id] || ""}`,
     run: () => chrome.tabs.create({ url: bookmark.url }),
     actions: [
       {
@@ -256,6 +276,43 @@ function buildBookmarkResults(query, elements) {
       },
     ],
   }))
+}
+
+function buildNoteResults(query, elements) {
+  const normalized = query.trim()
+  if (!normalized) return []
+
+  return (uiState.bookmarks || [])
+    .filter((bookmark) => bookmark.url && uiState.bookmarkNotes?.[bookmark.id])
+    .map((bookmark) => ({
+      bookmark,
+      score: calculateMatchScore(uiState.bookmarkNotes[bookmark.id], normalized),
+    }))
+    .filter(({ score }) => score >= 0.35)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map(({ bookmark }) => ({
+      type: "note",
+      icon: "fa-note-sticky",
+      title: bookmark.title || bookmark.url,
+      meta: getNoteSnippet(uiState.bookmarkNotes[bookmark.id], normalized),
+      keywords: `${bookmark.title || ""} ${bookmark.url || ""} ${uiState.bookmarkNotes[bookmark.id]}`,
+      run: () => {
+        import("./controller/bookmarkActions.js").then(({ openBookmarkDetailPopup }) => {
+          openBookmarkDetailPopup(bookmark.id, elements)
+        })
+      },
+      actions: [
+        {
+          label: t("commandPaletteFilter", "Filter"),
+          run: () => setSearchQuery(normalized, elements),
+        },
+        {
+          label: t("commandPaletteOpenUrl", "Open URL"),
+          run: () => chrome.tabs.create({ url: bookmark.url }),
+        },
+      ],
+    }))
 }
 
 function buildFolderResults(query, elements) {
@@ -345,10 +402,11 @@ export function initCommandPalette(elements) {
   const renderResults = () => {
     const query = input.value.trim()
     const commands = rankCommands(buildStaticCommands(elements), query)
+    const notes = buildNoteResults(query, elements)
     const bookmarks = buildBookmarkResults(query, elements)
     const folders = buildFolderResults(query, elements)
 
-    currentResults = [...commands, ...folders, ...bookmarks].slice(0, MAX_RESULTS)
+    currentResults = [...commands, ...folders, ...notes, ...bookmarks].slice(0, MAX_RESULTS)
     activeIndex = Math.min(activeIndex, Math.max(currentResults.length - 1, 0))
 
     if (countEl) countEl.textContent = String(currentResults.length)

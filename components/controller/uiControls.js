@@ -232,7 +232,8 @@ export function setupUIControlListeners(elements) {
         filtered = filtered.filter(
           (bookmark) =>
             bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
-            bookmark.url?.toLowerCase().includes(uiState.searchQuery),
+            bookmark.url?.toLowerCase().includes(uiState.searchQuery) ||
+            uiState.bookmarkNotes?.[bookmark.id]?.toLowerCase().includes(uiState.searchQuery),
         )
       }
       renderFilteredBookmarks(uiState.bookmarkTree, elements)
@@ -268,7 +269,8 @@ export function setupUIControlListeners(elements) {
       filtered = filtered.filter(
         (bookmark) =>
           bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
-          bookmark.url?.toLowerCase().includes(uiState.searchQuery),
+          bookmark.url?.toLowerCase().includes(uiState.searchQuery) ||
+          uiState.bookmarkNotes?.[bookmark.id]?.toLowerCase().includes(uiState.searchQuery),
       )
     }
     renderFilteredBookmarks(uiState.bookmarkTree, elements)
@@ -289,7 +291,8 @@ export function setupUIControlListeners(elements) {
       filtered = filtered.filter(
         (bookmark) =>
           bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
-          bookmark.url?.toLowerCase().includes(uiState.searchQuery),
+          bookmark.url?.toLowerCase().includes(uiState.searchQuery) ||
+          uiState.bookmarkNotes?.[bookmark.id]?.toLowerCase().includes(uiState.searchQuery),
       )
     }
     renderFilteredBookmarks(uiState.bookmarkTree, elements)

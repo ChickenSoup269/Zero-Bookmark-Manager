@@ -19,6 +19,7 @@ const RESTORABLE_LOCAL_STORAGE_KEYS = [
   "appView",
   "faviconOption",
   "headerLineStyle",
+  "bookmarkMenuBg",
   "duplicateScope",
   "autoRemoveDup",
   "settingsSectionCollapsedStates",
@@ -87,6 +88,10 @@ async function restoreAppSettings(appSettings = {}) {
     restoredUiState.headerLineStyle ||
     localStorage.getItem("headerLineStyle") ||
     uiState.headerLineStyle
+  uiState.bookmarkMenuBg =
+    restoredUiState.bookmarkMenuBg ||
+    localStorage.getItem("bookmarkMenuBg") ||
+    uiState.bookmarkMenuBg
   uiState.showBookmarkIds =
     dataToRestore.showBookmarkIds ?? uiState.showBookmarkIds
   uiState.folderListBg = dataToRestore.folderListBg ?? uiState.folderListBg
@@ -94,6 +99,7 @@ async function restoreAppSettings(appSettings = {}) {
     dataToRestore.checkboxesVisible ?? uiState.checkboxesVisible
 
   document.body.setAttribute("data-header-line", uiState.headerLineStyle)
+  document.body.setAttribute("data-bookmark-menu-bg", uiState.bookmarkMenuBg)
 }
 
 export function setupExportImportListeners(elements) {
@@ -205,6 +211,50 @@ export function setupExportImportListeners(elements) {
         </div>
       </div>
       
+      <div class="form-section export-presets-section">
+        <label class="form-label">${
+          translations[language].exportPresets || "Export Presets"
+        }</label>
+        <div class="export-presets">
+          <button type="button" class="export-preset-card" data-preset="backup">
+            <i class="fas fa-shield-halved" aria-hidden="true"></i>
+            <span>${
+              translations[language].exportPresetBackup || "Full Backup"
+            }</span>
+            <small>${
+              translations[language].exportPresetBackupText || "JSON restore file"
+            }</small>
+          </button>
+          <button type="button" class="export-preset-card" data-preset="web">
+            <i class="fas fa-window-maximize" aria-hidden="true"></i>
+            <span>${
+              translations[language].exportPresetWeb || "Web Archive"
+            }</span>
+            <small>${
+              translations[language].exportPresetWebText || "Interactive HTML"
+            }</small>
+          </button>
+          <button type="button" class="export-preset-card" data-preset="selected">
+            <i class="fas fa-share-nodes" aria-hidden="true"></i>
+            <span>${
+              translations[language].exportPresetSelected || "Share Selected"
+            }</span>
+            <small>${
+              translations[language].exportPresetSelectedText || "CSV selected items"
+            }</small>
+          </button>
+          <button type="button" class="export-preset-card" data-preset="browser">
+            <i class="fas fa-link" aria-hidden="true"></i>
+            <span>${
+              translations[language].exportPresetBrowser || "Browser Import"
+            }</span>
+            <small>${
+              translations[language].exportPresetBrowserText || "Netscape HTML"
+            }</small>
+          </button>
+        </div>
+      </div>
+
       <div class="form-section advanced-section">
         <button type="button" class="advanced-toggle" id="advancedToggle">
           <span class="advanced-title">${
@@ -334,17 +384,20 @@ export function setupExportImportListeners(elements) {
     // Format selection handling
     const formatCards = popup.querySelectorAll(".format-card")
     let selectedFormat = storedExportFormat || "json"
+    const selectFormat = (format) => {
+      selectedFormat = format
+      formatCards.forEach((card) => {
+        card.classList.toggle("active", card.dataset.format === selectedFormat)
+      })
+    }
 
     // Apply saved format card state
     formatCards.forEach((card) => {
-      const isActive = card.dataset.format === selectedFormat
-      card.classList.toggle("active", isActive)
       card.addEventListener("click", () => {
-        formatCards.forEach((c) => c.classList.remove("active"))
-        card.classList.add("active")
-        selectedFormat = card.dataset.format
+        selectFormat(card.dataset.format)
       })
     })
+    selectFormat(selectedFormat)
 
     // Apply saved checkbox states
     const includeIconInput = document.getElementById("includeIconData")
@@ -365,6 +418,60 @@ export function setupExportImportListeners(elements) {
       includeFolderPathInput.checked = exportIncludeFolderPath
     if (exportOnlySelectedInput)
       exportOnlySelectedInput.checked = exportOnlySelected
+
+    const applyPreset = (preset) => {
+      const presets = {
+        backup: {
+          format: "json",
+          iconData: false,
+          creationDates: true,
+          folderModDates: true,
+          folderPath: true,
+          onlySelected: false,
+        },
+        web: {
+          format: "html",
+          iconData: true,
+          creationDates: true,
+          folderModDates: true,
+          folderPath: false,
+          onlySelected: false,
+        },
+        selected: {
+          format: "csv",
+          iconData: false,
+          creationDates: true,
+          folderModDates: false,
+          folderPath: true,
+          onlySelected: true,
+        },
+        browser: {
+          format: "netscape",
+          iconData: false,
+          creationDates: false,
+          folderModDates: false,
+          folderPath: false,
+          onlySelected: false,
+        },
+      }
+      const next = presets[preset]
+      if (!next) return
+
+      selectFormat(next.format)
+      if (includeIconInput) includeIconInput.checked = next.iconData
+      if (includeCreationInput) includeCreationInput.checked = next.creationDates
+      if (includeFolderModInput) includeFolderModInput.checked = next.folderModDates
+      if (includeFolderPathInput) includeFolderPathInput.checked = next.folderPath
+      if (exportOnlySelectedInput) exportOnlySelectedInput.checked = next.onlySelected
+
+      popup.querySelectorAll(".export-preset-card").forEach((button) => {
+        button.classList.toggle("active", button.dataset.preset === preset)
+      })
+    }
+
+    popup.querySelectorAll(".export-preset-card").forEach((button) => {
+      button.addEventListener("click", () => applyPreset(button.dataset.preset))
+    })
 
     // Advanced settings collapse/expand
     const advancedToggle = document.getElementById("advancedToggle")
@@ -650,6 +757,63 @@ export function setupExportImportListeners(elements) {
       font-size: 0.85rem;
       font-weight: 600;
     }
+
+    .export-presets-section {
+      padding-top: 0.25rem;
+    }
+
+    .export-presets {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+
+    .export-preset-card {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr);
+      gap: 0.15rem 0.45rem;
+      align-items: center;
+      padding: 0.65rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.4rem;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .export-preset-card:hover,
+    .export-preset-card.active {
+      border-color: var(--accent-color);
+      background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
+      transform: translateY(-1px);
+    }
+
+    .export-preset-card i {
+      grid-row: span 2;
+      color: var(--accent-color);
+      font-size: 0.95rem;
+    }
+
+    .export-preset-card span,
+    .export-preset-card small {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .export-preset-card span {
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .export-preset-card small {
+      color: var(--text-secondary);
+      font-size: 0.6rem;
+    }
     
     .settings-grid {
       display: grid;
@@ -807,6 +971,10 @@ export function setupExportImportListeners(elements) {
       
       .format-options {
         grid-template-columns: 1fr;
+      }
+
+      .export-presets {
+        grid-template-columns: 1fr 1fr;
       }
       
       .popup-footer {

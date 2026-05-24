@@ -1,5 +1,5 @@
-import { removeDuplicateBookmarks } from "./bookmarks.js"
-import { handleCheckHealth, renderFilteredBookmarks } from "./ui.js"
+import { openDuplicateMergeModal } from "./duplicateMerge.js"
+import { handleCheckHealth } from "./ui.js"
 import { uiState } from "./state.js"
 import { translations } from "./utils/utils.js"
 
@@ -147,19 +147,19 @@ export function initCleanupDashboard(elements) {
     if (!next) return
     const nextItems = [
       {
-        icon: "fa-code-merge",
-        title: t("smartCleanupNextMerge", "Duplicate merge"),
-        text: t("smartCleanupNextMergeText", "Merge metadata instead of only deleting duplicates."),
+        icon: "fa-clock-rotate-left",
+        title: t("smartCleanupNextHistory", "Cleanup history"),
+        text: t("smartCleanupNextHistoryText", "Review recent cleanup actions and restore safer checkpoints."),
       },
       {
-        icon: "fa-layer-group",
-        title: t("smartCleanupNextWorkspaces", "Pinned workspaces"),
-        text: t("smartCleanupNextWorkspacesText", "Save views for Work, Learning, Design, and Personal."),
+        icon: "fa-sliders",
+        title: t("smartCleanupNextRules", "Cleanup rules"),
+        text: t("smartCleanupNextRulesText", "Choose stale thresholds, protected folders, and duplicate rules."),
       },
       {
-        icon: "fa-file-export",
-        title: t("smartCleanupNextPresets", "Export presets"),
-        text: t("smartCleanupNextPresetsText", "One-click Backup, Share Selected, CSV, and Netscape exports."),
+        icon: "fa-bell",
+        title: t("smartCleanupNextReminders", "Review reminders"),
+        text: t("smartCleanupNextRemindersText", "Surface old read-later items and stale bookmarks on a schedule."),
       },
     ]
 
@@ -234,7 +234,7 @@ export function initCleanupDashboard(elements) {
         icon: "fa-clone",
         label: t("smartCleanupDuplicates", "Duplicates"),
         count: duplicateCount,
-        action: t("smartCleanupRemoveDuplicates", "Review remove"),
+        action: t("duplicateMergeTitle", "Duplicate Merge"),
       },
       {
         key: "dead",
@@ -371,7 +371,7 @@ export function initCleanupDashboard(elements) {
       <div class="smart-cleanup-detail-actions">
         ${
           selectedDetail.action === "duplicates"
-            ? `<button type="button" class="button save" data-cleanup-action="duplicates">${escapeHtml(t("smartCleanupRemoveDuplicates", "Review remove"))}</button>`
+            ? `<button type="button" class="button save" data-cleanup-action="duplicates">${escapeHtml(t("duplicateMergeTitle", "Duplicate Merge"))}</button>`
             : ""
         }
         ${
@@ -383,9 +383,11 @@ export function initCleanupDashboard(elements) {
     `
 
     details.querySelector("[data-cleanup-action='duplicates']")?.addEventListener("click", () => {
-      removeDuplicateBookmarks(() =>
-        renderFilteredBookmarks(uiState.bookmarkTree, elements),
-      )
+      openDuplicateMergeModal({
+        groups: duplicateGroups,
+        elements,
+        onComplete: () => render("duplicates"),
+      })
     })
     details.querySelector("[data-cleanup-action='dead']")?.addEventListener("click", () => {
       handleCheckHealth(elements)

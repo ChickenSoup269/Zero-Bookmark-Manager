@@ -35,8 +35,8 @@
             <!-- Search -->
             <div class="sidebar-search">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search" placeholder="Search..." class="sidebar-search-input"
-                    aria-label="Search bookmarks">
+                <input type="text" id="search" placeholder="Search bookmarks, tags, notes..." class="sidebar-search-input"
+                    aria-label="Search bookmarks" data-i18n-placeholder="searchPlaceholder">
                 <button id="clear-search" class="sidebar-search-clear hidden" aria-label="Clear search">
                     <i class="fas fa-times"></i>
                 </button>
@@ -44,6 +44,21 @@
                     aria-label="Open command palette">
                     <i class="fas fa-bolt"></i>
                 </button>
+            </div>
+
+
+            <!-- Workspaces Section -->
+            <div class="sidebar-section workspace-section">
+                <div class="sidebar-section-header" data-toggle="workspaces">
+                    <div class="sidebar-section-title">
+                        <i class="fas fa-layer-group"></i>
+                        <span data-i18n="sidebarWorkspaces">Workspaces</span>
+                    </div>
+                    <i class="fas fa-chevron-down sidebar-section-toggle"></i>
+                </div>
+                <div class="sidebar-section-content" id="workspaces-content">
+                    <div id="workspace-list" class="workspace-list"></div>
+                </div>
             </div>
 
 
@@ -415,6 +430,13 @@
                                 <option value="hidden" data-i18n="lineHidden">Hidden</option>
                             </select>
 
+                            <label for="bookmark-menu-bg-select"><i class="fas fa-ellipsis-vertical"></i> <span
+                                    data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
+                            <select id="bookmark-menu-bg-select" class="select">
+                                <option value="glass" data-i18n="bookmarkMenuBgGlass">Glass like Tree View</option>
+                                <option value="normal" data-i18n="bookmarkMenuBgNormal">Normal solid</option>
+                            </select>
+
                             <button id="localstorage-settings-option" class="menu-item">
                                 <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage
                                     Settings</span>
@@ -593,38 +615,41 @@
 
         <div id="bookmark-detail-popup" class="rename-popup hidden popup-animate" role="dialog"
             aria-labelledby="detail-title">
-            <div class="rename-popup-content" style="display: flex; gap: 16px; align-items: flex-start;">
-                <div class="bookmark-thumbnail" style="flex: 0 0 250px;">
+            <div class="rename-popup-content bookmark-detail-content">
+                <div class="bookmark-thumbnail">
                     <img id="detail-thumbnail" src="" alt="Website thumbnail" />
                 </div>
-                <div class="bookmark-info" style="flex: 1;">
+                <div class="bookmark-info">
                     <h3 id="detail-title-label">Bookmark Detail</h3>
                     <p><strong>Title:</strong> <span id="detail-title"></span></p>
                     <p><strong>URL:</strong> <span id="detail-url"></span></p>
                     <p><strong>Date Added:</strong> <span id="detail-date-added"></span></p>
-                    <p><strong>Tags:</strong> <span id="detail-tags"></span></p>
-                    <div class="detail-productivity">
-                        <div class="detail-notes-block">
-                            <label for="detail-notes"><strong>Notes:</strong></label>
-                            <textarea id="detail-notes" class="input" rows="4"
-                                placeholder="Add private notes for this bookmark..."></textarea>
-                        </div>
-                        <div class="detail-action-row">
-                            <button id="detail-reading-toggle" class="button cancel" type="button">
-                                <i class="fas fa-book-open"></i>
-                                Read Later
-                            </button>
-                            <button id="detail-auto-tag" class="button cancel" type="button">
-                                <i class="fas fa-wand-magic-sparkles"></i>
-                                Suggest Tags
-                            </button>
-                            <button id="detail-save-meta" class="button save" type="button">Save Notes</button>
-                        </div>
-                        <div id="detail-tag-suggestions" class="detail-tag-suggestions"></div>
+                </div>
+                <div class="detail-productivity">
+                    <div class="detail-tags-block">
+                        <label><strong>Tags:</strong></label>
+                        <div id="detail-tags"></div>
                     </div>
-                    <div class="rename-popup-buttons" style="margin-top: 16px;">
-                        <button class="close-modal button cancel">Close</button>
+                    <div class="detail-notes-block">
+                        <label for="detail-notes"><strong>Notes:</strong></label>
+                        <textarea id="detail-notes" class="input" rows="4"
+                            placeholder="Add private notes for this bookmark..."></textarea>
                     </div>
+                    <div class="detail-action-row">
+                        <button id="detail-reading-toggle" class="button cancel" type="button">
+                            <i class="fas fa-book-open"></i>
+                            Read Later
+                        </button>
+                        <button id="detail-auto-tag" class="button cancel" type="button">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                            Suggest Tags
+                        </button>
+                        <button id="detail-save-meta" class="button save" type="button">Save Notes</button>
+                    </div>
+                    <div id="detail-tag-suggestions" class="detail-tag-suggestions"></div>
+                </div>
+                <div class="rename-popup-buttons detail-popup-buttons">
+                    <button class="close-modal button cancel">Close</button>
                 </div>
             </div>
         </div>
@@ -699,7 +724,8 @@
                 <div class="command-palette-search">
                     <i class="fas fa-search" aria-hidden="true"></i>
                     <input id="command-palette-input" type="search" autocomplete="off" spellcheck="false"
-                        placeholder="Search bookmarks or run command..." aria-label="Command palette search">
+                        placeholder="Search bookmarks, notes, or run command..." aria-label="Command palette search"
+                        data-i18n-placeholder="commandPalettePlaceholder">
                     <kbd>Ctrl K</kbd>
                 </div>
                 <div class="command-palette-heading">

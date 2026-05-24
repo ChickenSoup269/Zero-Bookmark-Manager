@@ -5,6 +5,7 @@ const LOCAL_STORAGE_BACKUP_KEYS = [
   "appView",
   "faviconOption",
   "headerLineStyle",
+  "bookmarkMenuBg",
   "duplicateScope",
   "autoRemoveDup",
   "settingsSectionCollapsedStates",

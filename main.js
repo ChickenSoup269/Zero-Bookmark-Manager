@@ -47,6 +47,9 @@ if (headerLineSelect) {
   })
 }
 
+// Cài đặt nền dropdown menu của từng bookmark
+setupBookmarkMenuBgControl()
+
 // Sự kiện cho Duplicate Scope
 const duplicateScopeSelect = document.getElementById("duplicate-scope-select")
 if (duplicateScopeSelect) {
@@ -102,6 +105,7 @@ import { customLoadUIState } from "./components/option/option.js"
 import { initCopyButtons } from "./components/copy-code.js"
 import { initCommandPalette } from "./components/commandPalette.js"
 import { initCleanupDashboard } from "./components/cleanupDashboard.js"
+import { initWorkspaces } from "./components/workspaces.js"
 
 let elements = {}
 const CUSTOM_LANGUAGES_KEY = "customLanguagePacks"
@@ -129,6 +133,34 @@ function readCustomLanguagePacks() {
 
 function writeCustomLanguagePacks(packs) {
   localStorage.setItem(CUSTOM_LANGUAGES_KEY, JSON.stringify(packs))
+}
+
+function setupBookmarkMenuBgControl() {
+  const select = document.getElementById("bookmark-menu-bg-select")
+  const saved =
+    localStorage.getItem("bookmarkMenuBg") ||
+    uiState.bookmarkMenuBg ||
+    "glass"
+
+  uiState.bookmarkMenuBg = saved
+  document.body.setAttribute("data-bookmark-menu-bg", saved)
+  if (!select) return
+
+  select.value = saved
+  if (select.dataset.bound === "true") return
+  select.dataset.bound = "true"
+
+  select.addEventListener("change", (e) => {
+    const val = e.target.value
+    uiState.bookmarkMenuBg = val
+    localStorage.setItem("bookmarkMenuBg", val)
+    document.body.setAttribute("data-bookmark-menu-bg", val)
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.bookmarkMenuBg = val
+      chrome.storage.local.set({ uiState: newUiState })
+    })
+  })
 }
 
 function normalizeCustomLanguagePack(rawPack) {
@@ -406,6 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const init = () => {
+    setupBookmarkMenuBgControl()
     initCopyButtons()
     registerCustomLanguagePacks()
     renderCustomLanguageOptions(elements.languageSwitcher)
@@ -590,6 +623,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Load visit counts from background script
         loadVisitCounts(() => {
           customLoadUIState(() => {
+            setupBookmarkMenuBgControl()
             renderFilteredBookmarks(bookmarkTreeNodes, elements)
             setupBookmarkChangeListeners(elements)
           })
@@ -603,6 +637,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupEventListeners(elements)
     initCommandPalette(elements)
     initCleanupDashboard(elements)
+    initWorkspaces(elements)
 
     // Event listener for Organize Folders button
     if (elements.organizeFoldersButton) {

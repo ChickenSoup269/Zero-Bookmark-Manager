@@ -976,6 +976,68 @@ body.settings-panel-open .button.settings {
   transform: translateY(-1px);
 }
 
+body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu {
+  background-color: color-mix(in srgb, var(--bg-primary) 82%, transparent) !important;
+  backdrop-filter: blur(14px) !important;
+  border-color: var(--border-color) !important;
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu .menu-item {
+  background: color-mix(in srgb, var(--bg-primary) 34%, transparent) !important;
+  border: 1px solid transparent;
+}
+
+body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu .menu-item:hover {
+  background: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+  border-color: var(--text-primary) !important;
+}
+
+body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu hr {
+  border-top-color: color-mix(in srgb, var(--border-color) 58%, transparent) !important;
+}
+
+body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary)),
+      var(--bg-secondary)
+    ) !important;
+  backdrop-filter: none !important;
+  border-color: color-mix(in srgb, var(--border-color) 82%, var(--accent-color)) !important;
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  gap: 6px !important;
+  padding: 7px !important;
+}
+
+body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu .menu-item {
+  background: color-mix(in srgb, var(--bg-primary) 88%, var(--bg-secondary)) !important;
+  border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu .menu-item:hover {
+  background: color-mix(in srgb, var(--accent-color) 18%, var(--bg-primary)) !important;
+  color: var(--text-primary) !important;
+  border-color: color-mix(in srgb, var(--accent-color) 62%, var(--border-color)) !important;
+  transform: translateX(2px);
+}
+
+body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu .menu-item:hover i {
+  color: var(--accent-color) !important;
+}
+
+body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
+  border-top-color: color-mix(in srgb, var(--border-color) 78%, transparent) !important;
+  margin: 2px 4px !important;
+}
+
 /* Toggle switch row in dropdown */
 .toggle-row {
   display: flex;

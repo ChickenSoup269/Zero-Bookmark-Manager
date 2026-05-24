@@ -123,6 +123,10 @@ function matchesSearchQuery(bookmark) {
   const urlScore = calculateMatchScore(bookmark.url || "", query)
   if (urlScore >= 0.4) return true
 
+  // Check private note match
+  const noteScore = calculateMatchScore(uiState.bookmarkNotes?.[bookmark.id] || "", query)
+  if (noteScore >= 0.35) return true
+
   // Check tags match
   if (bookmark.tags && bookmark.tags.length > 0) {
     for (const tag of bookmark.tags) {
@@ -276,9 +280,11 @@ function createDropdownHTML(bookmark, language) {
             : '<i class="fas fa-ellipsis-v"></i>'
         }
       </button>
-      <div class="dropdown-menu hidden" style="
+      <div class="dropdown-menu bookmark-dropdown-menu hidden" style="
         position: absolute; right: 0; top: 100%; margin-top: 4px;
-        background: var(--bg-secondary, #2d2d2d); border: 1px solid var(--border-color, #404040);
+        background: color-mix(in srgb, var(--bg-secondary, #2d2d2d) 82%, transparent);
+        backdrop-filter: blur(14px);
+        border: 1px solid var(--border-color, #404040);
         border-radius: 8px; min-width: 180px; padding: 4px;
         box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
       ">
@@ -1834,6 +1840,7 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
           .map((bookmark) => {
             const titleScore = calculateMatchScore(bookmark.title || "", query)
             const urlScore = calculateMatchScore(bookmark.url || "", query)
+            const noteScore = calculateMatchScore(bookmarkNotes[bookmark.id] || "", query)
             // Also check tags
             let tagScore = 0
             if (bookmark.tags && bookmark.tags.length > 0) {
@@ -1841,10 +1848,10 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
                 tagScore = Math.max(tagScore, calculateMatchScore(tag, query))
               }
             }
-            const maxScore = Math.max(titleScore, urlScore, tagScore)
+            const maxScore = Math.max(titleScore, urlScore, tagScore, noteScore)
             return { bookmark, score: maxScore }
           })
-          .filter(({ score }) => score >= 0.4) // Lower threshold for better recall
+          .filter(({ score }) => score >= 0.35) // Lower threshold so note searches are discoverable
           .sort((a, b) => b.score - a.score) // Sort by relevance
           .map(({ bookmark }) => bookmark)
       }
