@@ -3290,23 +3290,6 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu {
   padding: 7px !important;
 }
 
-body[data-bookmark-menu-bg="normal"] .dropdown-menu .menu-item {
-  background: color-mix(in srgb, var(--bg-primary) 88%, var(--bg-secondary)) !important;
-  border-color: color-mix(in srgb, var(--border-color) 72%, transparent) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
-}
-
-body[data-bookmark-menu-bg="normal"] .dropdown-menu .menu-item:hover {
-  background: color-mix(in srgb, var(--accent-color) 18%, var(--bg-primary)) !important;
-  color: var(--text-primary) !important;
-  border-color: color-mix(in srgb, var(--accent-color) 62%, var(--border-color)) !important;
-  transform: translateX(2px);
-}
-
-body[data-bookmark-menu-bg="normal"] .dropdown-menu .menu-item:hover i {
-  color: var(--accent-color) !important;
-}
-
 body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   border-top-color: color-mix(in srgb, var(--border-color) 78%, transparent) !important;
   margin: 2px 4px !important;

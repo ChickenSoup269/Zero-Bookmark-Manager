@@ -628,8 +628,8 @@ export function setupExportImportListeners(elements) {
       background: var(--bg-secondary);
       border-radius: 0.75rem;
       box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.25);
-      width: 100%;
-      max-width: 400px;
+      width: min(620px, calc(100vw - 28px));
+      max-width: 620px;
       max-height: 90vh;
       overflow-y: auto;
       animation: slideUp 0.3s ease-out;
@@ -764,8 +764,8 @@ export function setupExportImportListeners(elements) {
 
     .export-presets {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.6rem;
     }
 
     .export-preset-card {
@@ -773,8 +773,9 @@ export function setupExportImportListeners(elements) {
       display: grid;
       grid-template-columns: 22px minmax(0, 1fr);
       gap: 0.15rem 0.45rem;
-      align-items: center;
-      padding: 0.65rem;
+      align-items: start;
+      min-height: 64px;
+      padding: 0.7rem;
       border: 1px solid var(--border-color);
       border-radius: 0.4rem;
       background: var(--bg-primary);
@@ -795,14 +796,14 @@ export function setupExportImportListeners(elements) {
       grid-row: span 2;
       color: var(--accent-color);
       font-size: 0.95rem;
+      margin-top: 2px;
     }
 
     .export-preset-card span,
     .export-preset-card small {
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow-wrap: anywhere;
+      white-space: normal;
     }
 
     .export-preset-card span {
@@ -813,6 +814,8 @@ export function setupExportImportListeners(elements) {
     .export-preset-card small {
       color: var(--text-secondary);
       font-size: 0.6rem;
+      line-height: 1.25;
+      margin-top: 2px;
     }
     
     .settings-grid {
@@ -974,7 +977,7 @@ export function setupExportImportListeners(elements) {
       }
 
       .export-presets {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
       }
       
       .popup-footer {
