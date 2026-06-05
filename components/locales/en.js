@@ -383,6 +383,8 @@ export const en = {
   "customLanguageTitle": "Add Custom Language",
   "customLanguageHint": "Paste JSON from ChatGPT or Gemini AI Studio, or import a .json language file.",
   "customLanguagePlaceholder": "{\"languageCode\":\"es\",\"languageName\":\"Español\",\"translations\":{\"settings\":\"Ajustes\"}}",
+  "customLanguagePresetTitle": "Start with a language",
+  "customLanguagePresetHint": "These presets only fill the JSON name/code. Paste the template into AI to translate the values.",
   "saveCustomLanguage": "Save Language",
   "customLanguageSaved": "Custom language saved!",
   "customLanguageInvalid": "Invalid language JSON. Use languageCode, languageName, and translations.",

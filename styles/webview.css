@@ -144,15 +144,27 @@ body {
 }
 
 .sidebar.collapsed .sidebar-search {
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   padding: 8px 4px;
   margin: 6px 4px;
   border-radius: 6px;
+  gap: 6px;
 }
 
 .sidebar.collapsed .sidebar-search i {
   margin: 0;
   font-size: 1rem;
+}
+
+.sidebar.collapsed .sidebar-command-palette-btn {
+  width: 28px;
+  height: 24px;
+}
+
+.sidebar.collapsed .sidebar-search-clear {
+  display: none !important;
 }
 
 .sidebar.collapsed .sidebar-footer {
@@ -329,6 +341,7 @@ body {
 .sidebar-search {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 8px 12px;
   margin: 8px 12px;
@@ -529,6 +542,7 @@ body {
 .command-palette-search {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--border-color);
@@ -561,6 +575,14 @@ body {
   font-size: 0.7rem;
   font-family: inherit;
   white-space: nowrap;
+}
+
+@media (max-width: 460px) {
+  .command-palette-search kbd {
+    flex-basis: 100%;
+    width: fit-content;
+    margin-left: 24px;
+  }
 }
 
 .command-palette-heading {
@@ -1743,33 +1765,19 @@ body {
 
 /* Tree lines */
 .sidebar-folder-item .tree-line {
-  position: relative;
-  width: 16px;
-  height: 20px;
+  display: none;
+  width: 0;
+  height: 0;
   flex-shrink: 0;
-  margin-right: 2px;
+  margin-right: 0;
 }
 
 .sidebar-folder-item .tree-line::before {
-  content: "";
-  position: absolute;
-  left: 8px;
-  top: -10px;
-  width: 1px;
-  height: 30px;
-  background: var(--border-color);
-  opacity: 0.5;
+  content: none;
 }
 
 .sidebar-folder-item .tree-line::after {
-  content: "";
-  position: absolute;
-  left: 8px;
-  top: 10px;
-  width: 8px;
-  height: 1px;
-  background: var(--border-color);
-  opacity: 0.5;
+  content: none;
 }
 
 .sidebar-folder-item.is-last .tree-line::before {
@@ -1915,7 +1923,7 @@ body {
 .folder-children {
   list-style: none;
   padding: 0;
-  margin: 0 0 0 6px;
+  margin: 0 0 0 4px;
   overflow: hidden;
   transition:
     max-height 0.3s ease,
@@ -1926,14 +1934,7 @@ body {
 }
 
 .folder-children::before {
-  content: "";
-  position: absolute;
-  left: 8px;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: var(--border-color);
-  opacity: 0.3;
+  content: none;
 }
 
 .folder-children.collapsed {
@@ -3072,7 +3073,7 @@ body.settings-panel-open .settings-container {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
-  padding-left: var(--spacing-md);
+  padding-left: 0;
   position: relative;
   margin-top: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
@@ -3086,8 +3087,8 @@ body.settings-panel-open .settings-container {
 }
 
 .webview-mode .folder-children {
-  padding-left: var(--spacing-sm);
-  margin-left: var(--spacing-sm);
+  padding-left: 0;
+  margin-left: 4px;
 }
 
 /* Bookmark item in tree view - Row layout */
@@ -3537,6 +3538,9 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   max-width: 520px;
   width: min(92vw, 520px);
   text-align: left;
+  max-height: min(86vh, 720px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .custom-language-hint {
@@ -3580,6 +3584,56 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.custom-language-presets {
+  margin: 12px 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.custom-language-presets-title {
+  margin-bottom: 6px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.custom-language-preset-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 92px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+  scrollbar-width: thin;
+}
+
+.custom-language-preset {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.custom-language-preset:hover {
+  border-color: var(--accent-color);
+  background: var(--bg-tertiary);
+}
+
+.custom-language-presets-hint {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
 }
 
 /* Menu item - Button style */
@@ -4179,12 +4233,12 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   }
 
   .folder-list.tree-view .folder-children {
-    margin-left: 16px;
-    padding-left: var(--spacing-sm);
+    margin-left: 4px;
+    padding-left: 0;
   }
 
   :root {
-    --tree-indent: 16px;
+    --tree-indent: 8px;
   }
 }
 

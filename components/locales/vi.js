@@ -383,6 +383,8 @@ export const vi = {
   "customLanguageTitle": "Thêm ngôn ngữ tùy chỉnh",
   "customLanguageHint": "Dán JSON từ ChatGPT hoặc Gemini AI Studio, hoặc import file ngôn ngữ .json.",
   "customLanguagePlaceholder": "{\"languageCode\":\"ja\",\"languageName\":\"日本語\",\"translations\":{\"settings\":\"設定\"}}",
+  "customLanguagePresetTitle": "Bắt đầu từ một ngôn ngữ",
+  "customLanguagePresetHint": "Các preset này chỉ điền tên/mã JSON. Hãy dán template vào AI để dịch phần nội dung.",
   "saveCustomLanguage": "Lưu ngôn ngữ",
   "customLanguageSaved": "Đã lưu ngôn ngữ tùy chỉnh!",
   "customLanguageInvalid": "JSON ngôn ngữ không hợp lệ. Cần có languageCode, languageName và translations.",

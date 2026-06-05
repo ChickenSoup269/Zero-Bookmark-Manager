@@ -230,11 +230,11 @@ function renderCustomLanguageOptions(languageSwitcher) {
   })
 }
 
-function createCustomLanguageTemplate() {
+function createCustomLanguageTemplate(preset = {}) {
   return JSON.stringify(
     {
-      languageCode: "my-language",
-      languageName: "My Language",
+      languageCode: preset.languageCode || "my-language",
+      languageName: preset.languageName || "My Language",
       translations: translations.en,
     },
     null,
@@ -252,6 +252,7 @@ function setupCustomLanguageControls(elements) {
   const saveButton = document.getElementById("custom-language-save")
   const cancelButton = document.getElementById("custom-language-cancel")
   const copyPromptBtn = document.getElementById("copy-ai-prompt-btn")
+  const presetButtons = document.querySelectorAll("[data-custom-language-preset]")
 
   if (
     !openButton ||
@@ -298,6 +299,16 @@ function setupCustomLanguageControls(elements) {
   templateButton.addEventListener("click", () => {
     textarea.value = createCustomLanguageTemplate()
     textarea.focus()
+  })
+
+  presetButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      textarea.value = createCustomLanguageTemplate({
+        languageCode: button.dataset.languageCode,
+        languageName: button.dataset.languageName,
+      })
+      textarea.focus()
+    })
   })
 
   // Add functionality for Copy Prompt & Template logic
