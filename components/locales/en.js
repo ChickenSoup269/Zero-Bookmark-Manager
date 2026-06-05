@@ -241,7 +241,7 @@ export const en = {
   "closeChat": "Close Chat",
   "chatToggle": "Open Chat",
   "reportBug": "Report Bug",
-  "reportBugUrl": "https://docs.google.com/forms/d/e/1FAIpQLSfnnh8zLc76qvb_eSzA73a3DYBSv72OCQ34qLZLFZogSMd8fA/viewform?usp=dialog",
+  "reportBugUrl": "https://docs.google.com/forms/d/e/1FAIpQLScK_33RwIOSBcyqiLc28kRl-kDxrb5R-XBn3J1i_ckXSUgzfQ/viewform?usp=dialog",
   "reportBugConfirm": "You are about to be redirected to the bug report form. Please include the following information in your report to help us fix the issue faster:",
   "browserInfo": "Browser Info",
   "extensionVersion": "Extension Version",

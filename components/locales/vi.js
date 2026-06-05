@@ -241,7 +241,7 @@ export const vi = {
   "closeChat": "Đóng Chat",
   "chatToggle": "Mở Chat",
   "reportBug": "Báo lỗi",
-  "reportBugUrl": "https://docs.google.com/forms/d/e/1FAIpQLSeQnSKZycijyQds73GWCo4FT4tV78Hk4-fhkfcsHoI4LAqTww/viewform?usp=dialog",
+  "reportBugUrl": "https://docs.google.com/forms/d/e/1FAIpQLScK_33RwIOSBcyqiLc28kRl-kDxrb5R-XBn3J1i_ckXSUgzfQ/viewform?usp=dialog",
   "reportBugConfirm": "Bạn sẽ được chuyển hướng đến biểu mẫu báo lỗi. Vui lòng kèm theo các thông tin sau trong báo cáo của bạn để giúp chúng tôi khắc phục sự cố nhanh hơn:",
   "browserInfo": "Thông tin trình duyệt",
   "extensionVersion": "Phiên bản tiện ích",

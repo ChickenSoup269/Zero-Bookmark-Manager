@@ -503,6 +503,11 @@ function applyLanguageText(language) {
   const activeTranslations = translations[language] || translations.en
   const translate = (key) => activeTranslations[key] || translations.en[key] || key
 
+  localStorage.setItem("appLanguage", language)
+  if (typeof chrome !== "undefined" && chrome.storage?.local) {
+    chrome.storage.local.set({ appLanguage: language })
+  }
+
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const key = element.getAttribute("data-i18n")
     if (key) element.textContent = translate(key)

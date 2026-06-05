@@ -1,9 +1,36 @@
 // background.js
 
 // ==================== Uninstall Feedback ====================
-chrome.runtime.setUninstallURL(
-  "https://docs.google.com/forms/d/e/1FAIpQLSd2unrzbLeLRI3vNpU-XrHY4rLfP1M0busmjKALAU2nMMXVTg/viewform?usp=dialog",
-)
+const UNINSTALL_FEEDBACK_URLS = {
+  en: "https://docs.google.com/forms/d/e/1FAIpQLSdJf6_VbrPef1e97eTbFNEzS8F3QbBqq07VC-Gk4_9VLKBxLw/viewform?usp=dialog",
+  vi: "https://docs.google.com/forms/d/e/1FAIpQLScxicNHe25RVbavtllnIkTK18UuP8jhJGzN0pWMniv-9DeGNw/viewform?usp=dialog",
+}
+
+function getUninstallFeedbackUrl(language) {
+  return language === "vi"
+    ? UNINSTALL_FEEDBACK_URLS.vi
+    : UNINSTALL_FEEDBACK_URLS.en
+}
+
+function updateUninstallFeedbackUrl(language) {
+  chrome.runtime.setUninstallURL(getUninstallFeedbackUrl(language))
+}
+
+chrome.storage.local.get(["appLanguage"], (data) => {
+  const fallbackLanguage = chrome.i18n
+    ?.getUILanguage()
+    ?.toLowerCase()
+    .startsWith("vi")
+    ? "vi"
+    : "en"
+  updateUninstallFeedbackUrl(data.appLanguage || fallbackLanguage)
+})
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === "local" && changes.appLanguage) {
+    updateUninstallFeedbackUrl(changes.appLanguage.newValue)
+  }
+})
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install") {

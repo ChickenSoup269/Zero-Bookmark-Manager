@@ -744,6 +744,9 @@ export function updateUILanguage(elements, language) {
   }
 
   localStorage.setItem("appLanguage", language)
+  if (typeof chrome !== "undefined" && chrome.storage?.local) {
+    chrome.storage.local.set({ appLanguage: language })
+  }
 }
 
 export function handleCheckHealth(elements) {
