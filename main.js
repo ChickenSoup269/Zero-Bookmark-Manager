@@ -675,6 +675,24 @@ function startFirstRunTour() {
   renderStep()
 }
 
+function setupRestartGuideControl() {
+  const button = document.getElementById("restart-guide-option")
+  if (!button || button.dataset.bound === "true") return
+
+  button.dataset.bound = "true"
+  button.addEventListener("click", (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const isWebviewPage = window.location.pathname.endsWith("/bookmarks.html")
+    localStorage.removeItem(
+      isWebviewPage ? "firstRunWebviewTourComplete" : "firstRunTourComplete",
+    )
+    setSettingsMenuOpen(false)
+    requestAnimationFrame(() => startFirstRunTour())
+  })
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   elements = {
     searchInput: document.getElementById("search"),
@@ -754,6 +772,7 @@ document.addEventListener("DOMContentLoaded", () => {
     registerCustomLanguagePacks()
     renderCustomLanguageOptions(elements.languageSwitcher)
     setupCustomLanguageControls(elements)
+    setupRestartGuideControl()
 
     // Update check logic
     chrome.storage.local.get("showUpdatePopup", (res) => {

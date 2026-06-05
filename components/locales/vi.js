@@ -305,6 +305,8 @@ export const vi = {
   "showFolderListBg": "Hiện nền danh sách",
   "hideFolderListBg": "Ẩn nền danh sách",
   "localStorageSettingsTitle": "Cài đặt Bộ nhớ tại web",
+  "restartGuideTitle": "Mở lại hướng dẫn",
+  "restartGuideStarted": "Đã mở lại hướng dẫn.",
   "saveSearchQuery": "Lưu Truy vấn Tìm kiếm",
   "saveSelectedFolderId": "Lưu Thư mục Đã chọn",
   "saveSortType": "Lưu Kiểu Sắp xếp",

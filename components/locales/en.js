@@ -305,6 +305,8 @@ export const en = {
   "showFolderListBg": "Show List Background",
   "hideFolderListBg": "Hide List Background",
   "localStorageSettingsTitle": "Local Storage Settings",
+  "restartGuideTitle": "Show Guide Again",
+  "restartGuideStarted": "Guide restarted.",
   "saveSearchQuery": "Save Search Query",
   "saveSelectedFolderId": "Save Selected Folder",
   "saveSortType": "Save Sort Type",
