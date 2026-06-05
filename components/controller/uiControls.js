@@ -428,6 +428,7 @@ export function setupUIControlListeners(elements) {
     const customPopup = document.getElementById("custom-popup")
 
     if (
+      e.target.closest("#first-run-tour") ||
       (renamePopup &&
         !renamePopup.classList.contains("hidden") &&
         !e.target.closest("#rename-save")) ||

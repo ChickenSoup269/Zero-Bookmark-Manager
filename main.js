@@ -364,6 +364,317 @@ function setupCustomLanguageControls(elements) {
   })
 }
 
+function getFirstRunTourSteps(isWebviewPage = false) {
+  const language = localStorage.getItem("appLanguage") || "en"
+  const t = translations[language] || translations.en
+
+  if (isWebviewPage) {
+    return [
+      {
+        selector: "#toggle-sidebar",
+        title: t.firstRunWebTourSidebarTitle,
+        message: t.firstRunWebTourSidebarMsg,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#command-palette-button",
+        title: t.firstRunWebTourCommandTitle,
+        message: t.firstRunWebTourCommandMsg,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#workspaces-content",
+        title: t.firstRunWebTourWorkspacesTitle,
+        message: t.firstRunWebTourWorkspacesMsg,
+        ensureSidebarOpen: true,
+        openSection: "workspaces",
+      },
+      {
+        selector: "#folders-content",
+        title: t.firstRunWebTourFoldersTitle,
+        message: t.firstRunWebTourFoldersMsg,
+        ensureSidebarOpen: true,
+        openSection: "folders",
+      },
+      {
+        selector: "#options-content",
+        title: t.firstRunWebTourSortTitle,
+        message: t.firstRunWebTourSortMsg,
+        ensureSidebarOpen: true,
+        openSection: "options",
+      },
+      {
+        selector: "#tags-content",
+        title: t.firstRunWebTourTagsTitle,
+        message: t.firstRunWebTourTagsMsg,
+        ensureSidebarOpen: true,
+        openSection: "tags",
+      },
+      {
+        selector: "#admin-content",
+        title: t.firstRunWebTourManageTitle,
+        message: t.firstRunWebTourManageMsg,
+        ensureSidebarOpen: true,
+        openSection: "admin",
+      },
+      {
+        selector: ".bookmark-item .dropdown-btn",
+        title: t.firstRunTourBookmarkMenuTitle,
+        message: t.firstRunTourBookmarkMenuMsg,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#settings-button",
+        title: t.firstRunTourSettingsTitle,
+        message: t.firstRunWebTourSettingsMsg,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#settings-menu",
+        title: t.firstRunTourPanelTitle,
+        message: t.firstRunWebTourPanelMsg,
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+    ]
+  }
+
+  return [
+    {
+      selector: "#settings-button",
+      title: t.firstRunTourSettingsTitle,
+      message: t.firstRunTourSettingsMsg,
+      openSettings: false,
+    },
+    {
+      selector: "#settings-menu",
+      title: t.firstRunTourPanelTitle,
+      message: t.firstRunTourPanelMsg,
+      openSettings: true,
+    },
+    {
+      selector: "#edit-in-new-tab-option",
+      title: t.firstRunTourWebTitle,
+      message: t.firstRunTourWebMsg,
+      openSettings: true,
+    },
+    {
+      selector: "#open-side-panel-option",
+      title: t.firstRunTourSidePanelTitle,
+      message: t.firstRunTourSidePanelMsg,
+      openSettings: true,
+    },
+    {
+      selector: "#search",
+      title: t.firstRunTourSearchTitle,
+      message: t.firstRunTourSearchMsg,
+      openSettings: false,
+    },
+    {
+      selector: ".bookmark-item .dropdown-btn",
+      title: t.firstRunTourBookmarkMenuTitle,
+      message: t.firstRunTourBookmarkMenuMsg,
+      openSettings: false,
+    },
+  ]
+}
+
+function setSettingsMenuOpen(isOpen) {
+  const settingsMenu = document.getElementById("settings-menu")
+  if (!settingsMenu) return
+
+  settingsMenu.classList.toggle("hidden", !isOpen)
+  settingsMenu.setAttribute("aria-hidden", String(!isOpen))
+  document.body.classList.toggle("settings-panel-open", isOpen)
+}
+
+function applyLanguageText(language) {
+  const activeTranslations = translations[language] || translations.en
+  const translate = (key) => activeTranslations[key] || translations.en[key] || key
+
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    const key = element.getAttribute("data-i18n")
+    if (key) element.textContent = translate(key)
+  })
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+    const key = element.getAttribute("data-i18n-placeholder")
+    if (key) element.placeholder = translate(key)
+  })
+
+  document.querySelectorAll("[data-i18n-title]").forEach((element) => {
+    const key = element.getAttribute("data-i18n-title")
+    if (!key) return
+    element.title = translate(key)
+    if (element.hasAttribute("aria-label")) {
+      element.setAttribute("aria-label", translate(key))
+    }
+  })
+}
+
+function ensureWebviewSidebarOpen() {
+  const sidebar = document.getElementById("sidebar")
+  const container = document.querySelector(".container")
+  if (!sidebar) return
+
+  sidebar.classList.remove("collapsed")
+  container?.classList.remove("collapsed")
+  if (window.innerWidth <= 768) {
+    sidebar.classList.add("mobile-open")
+  }
+}
+
+function setSidebarSectionOpen(sectionId) {
+  if (!sectionId) return
+
+  document.documentElement.classList.remove("sidebar-workspaces-precollapsed")
+  const content = document.getElementById(`${sectionId}-content`)
+  const header = document.querySelector(`[data-toggle="${sectionId}"]`)
+  if (!content) return
+
+  content.classList.remove("collapsed")
+  header?.setAttribute("data-collapsed", "false")
+}
+
+function positionFirstRunTourCard(card, targetRect) {
+  const gap = 12
+  const viewportPadding = 14
+  const cardRect = card.getBoundingClientRect()
+
+  let left = targetRect.left
+  let top = targetRect.bottom + gap
+
+  if (top + cardRect.height > window.innerHeight - viewportPadding) {
+    top = targetRect.top - cardRect.height - gap
+  }
+
+  if (top < viewportPadding) {
+    top = viewportPadding
+  }
+
+  if (left + cardRect.width > window.innerWidth - viewportPadding) {
+    left = window.innerWidth - cardRect.width - viewportPadding
+  }
+
+  if (left < viewportPadding) {
+    left = viewportPadding
+  }
+
+  card.style.left = `${left}px`
+  card.style.top = `${top}px`
+}
+
+function startFirstRunTour() {
+  const tour = document.getElementById("first-run-tour")
+  const highlight = document.getElementById("first-run-tour-highlight")
+  const card = document.getElementById("first-run-tour-card")
+  const count = document.getElementById("first-run-tour-count")
+  const title = document.getElementById("first-run-tour-title")
+  const message = document.getElementById("first-run-tour-message")
+  const nextButton = document.getElementById("first-run-tour-next")
+  const skipButton = document.getElementById("first-run-tour-skip")
+
+  const isWebviewPage = window.location.pathname.endsWith("/bookmarks.html")
+  const tourStorageKey = isWebviewPage
+    ? "firstRunWebviewTourComplete"
+    : "firstRunTourComplete"
+
+  if (
+    !tour ||
+    !highlight ||
+    !card ||
+    !count ||
+    !title ||
+    !message ||
+    !nextButton ||
+    !skipButton ||
+    localStorage.getItem(tourStorageKey)
+  ) {
+    return
+  }
+
+  let stepIndex = 0
+  const language = localStorage.getItem("appLanguage") || "en"
+  const t = translations[language] || translations.en
+  const steps = getFirstRunTourSteps(isWebviewPage).filter((step) =>
+    document.querySelector(step.selector),
+  )
+
+  if (!steps.length) return
+
+  const finish = () => {
+    tour.classList.add("hidden")
+    setSettingsMenuOpen(false)
+    localStorage.setItem(tourStorageKey, "true")
+    window.removeEventListener("resize", renderStep)
+    document.removeEventListener("keydown", handleKeydown)
+  }
+
+  function renderStep() {
+    const step = steps[stepIndex]
+    if (step.ensureSidebarOpen) ensureWebviewSidebarOpen()
+    if (step.openSection) setSidebarSectionOpen(step.openSection)
+    setSettingsMenuOpen(step.openSettings)
+
+    requestAnimationFrame(() => {
+      const target = document.querySelector(step.selector)
+      if (!target) return
+
+      target.scrollIntoView?.({
+        block: "nearest",
+        inline: "nearest",
+        behavior: "auto",
+      })
+
+      const rect = target.getBoundingClientRect()
+      const pad = 6
+      highlight.style.left = `${Math.max(rect.left - pad, 8)}px`
+      highlight.style.top = `${Math.max(rect.top - pad, 8)}px`
+      highlight.style.width = `${rect.width + pad * 2}px`
+      highlight.style.height = `${rect.height + pad * 2}px`
+
+      count.textContent = `${stepIndex + 1}/${steps.length}`
+      title.textContent = step.title
+      message.textContent = step.message
+      skipButton.textContent = t.firstRunTourSkip || "Skip"
+      nextButton.textContent =
+        stepIndex === steps.length - 1
+          ? t.firstRunTourDone || "Done"
+          : t.firstRunTourNext || "Next"
+
+      tour.classList.remove("hidden")
+      positionFirstRunTourCard(card, rect)
+    })
+  }
+
+  const handleKeydown = (event) => {
+    if (event.key === "Escape") finish()
+  }
+
+  tour.addEventListener("click", (event) => {
+    event.stopPropagation()
+  })
+
+  nextButton.onclick = (event) => {
+    event.stopPropagation()
+    if (stepIndex >= steps.length - 1) {
+      finish()
+      return
+    }
+
+    stepIndex += 1
+    renderStep()
+  }
+
+  skipButton.onclick = (event) => {
+    event.stopPropagation()
+    finish()
+  }
+  window.addEventListener("resize", renderStep)
+  document.addEventListener("keydown", handleKeydown)
+  renderStep()
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   elements = {
     searchInput: document.getElementById("search"),
@@ -504,7 +815,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedLanguage =
       storedLanguage && translations[storedLanguage] ? storedLanguage : "en"
     elements.languageSwitcher.value = savedLanguage
-    updateUILanguage(elements, savedLanguage)
+    try {
+      updateUILanguage(elements, savedLanguage)
+    } catch (error) {
+      console.warn("Full language update failed; applying text only:", error)
+      applyLanguageText(savedLanguage)
+      localStorage.setItem("appLanguage", savedLanguage)
+    }
 
     // Khởi tạo theme, font, view
     const savedTheme = localStorage.getItem("appTheme") || "system"
@@ -515,8 +832,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add(`font-${savedFont}`)
     elements.fontSwitcher.value = savedFont
 
-    // Check for first run
-    if (!localStorage.getItem("firstRunComplete")) {
+    const showFirstRunPopup = (onDone) => {
       const firstRunPopup = document.getElementById("first-run-popup")
       const firstRunFontSelect = document.getElementById(
         "first-run-font-select",
@@ -526,7 +842,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (firstRunPopup && firstRunSaveBtn) {
         firstRunPopup.classList.remove("hidden")
 
-        firstRunSaveBtn.addEventListener("click", () => {
+        firstRunSaveBtn.onclick = () => {
           const selectedFont = firstRunFontSelect.value
 
           // Remove all possible font classes
@@ -541,9 +857,70 @@ document.addEventListener("DOMContentLoaded", () => {
 
           localStorage.setItem("firstRunComplete", "true")
           firstRunPopup.classList.add("hidden")
-        })
+          chrome.storage.local.remove("showFirstRunPopup")
+          if (typeof onDone === "function") onDone()
+        }
       }
     }
+
+    const showFirstRunLanguagePopup = (onDone) => {
+      const languagePopup = document.getElementById("first-run-language-popup")
+      const title = document.getElementById("first-run-language-title")
+      const subtitle = document.getElementById("first-run-language-sub")
+
+      if (!languagePopup) {
+        if (typeof onDone === "function") onDone()
+        return
+      }
+
+      const browserLanguage = navigator.language?.toLowerCase().startsWith("vi")
+        ? "vi"
+        : "en"
+      const selectedLanguage =
+        localStorage.getItem("appLanguage") || browserLanguage
+      const t = translations[selectedLanguage] || translations.en
+
+      if (title) title.textContent = t.firstRunLanguageTitle
+      if (subtitle) subtitle.textContent = t.firstRunLanguageSub
+
+      languagePopup.classList.remove("hidden")
+      languagePopup
+        .querySelectorAll("[data-first-run-language]")
+        .forEach((button) => {
+          button.onclick = () => {
+            const language = button.dataset.firstRunLanguage || "en"
+            localStorage.setItem("appLanguage", language)
+            localStorage.setItem("firstRunLanguageComplete", "true")
+            elements.languageSwitcher.value = language
+            applyLanguageText(language)
+            window.dispatchEvent(new CustomEvent("languageChanged"))
+            languagePopup.classList.add("hidden")
+            if (typeof onDone === "function") onDone()
+          }
+        })
+    }
+
+    // Check for first run
+    chrome.storage.local.get(["showFirstRunPopup"], (data) => {
+      if (data.showFirstRunPopup || !localStorage.getItem("firstRunComplete")) {
+        const runWelcomeAndTour = () => {
+          showFirstRunPopup(() => {
+            startFirstRunTour()
+          })
+        }
+
+        if (!localStorage.getItem("firstRunLanguageComplete")) {
+          showFirstRunLanguagePopup(runWelcomeAndTour)
+        } else {
+          runWelcomeAndTour()
+        }
+      } else if (
+        window.location.pathname.endsWith("/bookmarks.html") &&
+        !localStorage.getItem("firstRunWebviewTourComplete")
+      ) {
+        startFirstRunTour()
+      }
+    })
 
     const savedView = localStorage.getItem("appView") || "flat"
     elements.viewSwitcher.value = savedView

@@ -560,7 +560,6 @@
 .folder-children {
   margin-left: 4px;
   gap: var(--spacing-sm);
-  border-left: 2px solid var(--tree-line-color);
   padding-left: var(--spacing-md);
   position: relative;
   margin-top: var(--spacing-sm);
@@ -883,7 +882,7 @@
   top: 0;
   right: 0;
   background: var(--bg-primary);
-  border-left: 1px solid var(--border-color);
+  border: none;
   border-radius: 0;
   width: min(82vw, 300px);
   height: 100vh;
@@ -974,6 +973,50 @@ body.settings-panel-open .button.settings {
   background-color: var(--text-primary);
   color: var(--bg-primary);
   transform: translateY(-1px);
+}
+
+.app-settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  box-shadow: none;
+}
+
+.app-setting-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.app-setting-field label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.app-setting-field label i {
+  width: 16px;
+  text-align: center;
+  color: var(--accent-color);
+}
+
+.app-setting-toggle {
+  margin-top: 2px;
+  background: color-mix(in srgb, var(--bg-primary) 60%, transparent);
+  border: 1px solid var(--border-color);
+}
+
+.app-setting-action {
+  justify-content: flex-start;
+  margin-top: 2px;
 }
 
 body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu {
@@ -1142,9 +1185,206 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 #organize-folders-popup,
 #ai-config-popup,
 #ai-profile-name-popup,
+#first-run-language-popup,
 #first-run-popup,
 #custom-language-popup {
   z-index: 2450 !important;
+}
+
+.first-run-content {
+  position: relative;
+  width: min(92vw, 380px);
+  text-align: left;
+  overflow: hidden;
+}
+
+.first-run-language-content {
+  width: min(92vw, 360px);
+  text-align: center;
+}
+
+.first-run-language-content p {
+  margin-top: 0;
+  color: var(--text-secondary);
+}
+
+.first-run-language-options {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.first-run-language-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.first-run-language-option:hover {
+  border-color: var(--accent-color);
+  background: var(--bg-tertiary);
+}
+
+.first-run-language-option span {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.first-run-language-option small {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.first-run-star {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-color);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+  font-size: 1.2rem;
+}
+
+.first-run-content h3,
+.first-run-content p {
+  text-align: center;
+}
+
+.first-run-content p {
+  margin-top: 0;
+  color: var(--text-secondary);
+}
+
+.first-run-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0 16px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: color-mix(in srgb, var(--bg-secondary) 74%, transparent);
+}
+
+.first-run-guide-step {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  color: var(--text-primary);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.first-run-step-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-color);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+}
+
+.first-run-tour {
+  position: fixed;
+  inset: 0;
+  z-index: 22000;
+  pointer-events: none;
+}
+
+.first-run-tour::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  pointer-events: auto;
+}
+
+.first-run-tour.hidden {
+  display: none;
+}
+
+.first-run-tour-highlight {
+  position: fixed;
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 9999px rgba(0, 0, 0, 0.28),
+    0 0 0 4px color-mix(in srgb, var(--accent-color) 16%, transparent);
+  transition:
+    left 0.2s ease,
+    top 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease;
+  pointer-events: none;
+  z-index: 22001;
+}
+
+.first-run-tour-card {
+  position: fixed;
+  width: min(320px, calc(100vw - 28px));
+  padding: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+  z-index: 22002;
+}
+
+.first-run-tour-count {
+  display: inline-flex;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-color) 18%, transparent);
+  color: var(--accent-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.first-run-tour-card h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+.first-run-tour-card p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.first-run-tour-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.first-run-tour-actions .button {
+  min-width: 80px;
 }
 
 /* ===== MOBILE RESPONSIVE FOR CARD & DETAIL VIEW ===== */

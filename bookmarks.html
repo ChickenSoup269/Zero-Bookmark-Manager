@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zero Bookmark Manager 1.5.0</title>
+    <script src="./components/sidebar-preload.js"></script>
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="./styles/chat.css">
     <link rel="stylesheet" href="./styles/webview.css">
@@ -416,31 +417,37 @@
                         </div>
 
                         <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
-                        <div class="menu-group">
-                            <label for="favicon-option-select"><i class="fas fa-image"></i> <span
-                                    data-i18n="faviconMode">Favicon Mode:</span></label>
-                            <select id="favicon-option-select" class="select">
-                                <option value="auto" data-i18n="faviconAuto">Auto (Google → Hostname)</option>
-                                <option value="google" data-i18n="faviconGoogle">Google Only</option>
-                                <option value="hostname" data-i18n="faviconHostname">Hostname Only</option>
-                            </select>
+                        <div class="menu-group app-settings-panel">
+                            <div class="app-setting-field">
+                                <label for="favicon-option-select"><i class="fas fa-image"></i> <span
+                                        data-i18n="faviconMode">Favicon Mode:</span></label>
+                                <select id="favicon-option-select" class="select">
+                                    <option value="auto" data-i18n="faviconAuto">Auto (Google → Hostname)</option>
+                                    <option value="google" data-i18n="faviconGoogle">Google Only</option>
+                                    <option value="hostname" data-i18n="faviconHostname">Hostname Only</option>
+                                </select>
+                            </div>
 
-                            <label for="header-line-select"><i class="fas fa-window-minimize"></i> <span
-                                    data-i18n="headerLineConfig">Header Line Style:</span></label>
-                            <select id="header-line-select" class="select">
-                                <option value="pattern" data-i18n="linePattern">Slanted Pattern</option>
-                                <option value="simple" data-i18n="lineSimple">Simple Line</option>
-                                <option value="hidden" data-i18n="lineHidden">Hidden</option>
-                            </select>
+                            <div class="app-setting-field">
+                                <label for="header-line-select"><i class="fas fa-window-minimize"></i> <span
+                                        data-i18n="headerLineConfig">Header Line Style:</span></label>
+                                <select id="header-line-select" class="select">
+                                    <option value="pattern" data-i18n="linePattern">Slanted Pattern</option>
+                                    <option value="simple" data-i18n="lineSimple">Simple Line</option>
+                                    <option value="hidden" data-i18n="lineHidden">Hidden</option>
+                                </select>
+                            </div>
 
-                            <label for="bookmark-menu-bg-select"><i class="fas fa-ellipsis-vertical"></i> <span
-                                    data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
-                            <select id="bookmark-menu-bg-select" class="select">
-                                <option value="glass" data-i18n="bookmarkMenuBgGlass">Glass like Tree View</option>
-                                <option value="normal" data-i18n="bookmarkMenuBgNormal">Normal solid</option>
-                            </select>
+                            <div class="app-setting-field">
+                                <label for="bookmark-menu-bg-select"><i class="fas fa-ellipsis-vertical"></i> <span
+                                        data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
+                                <select id="bookmark-menu-bg-select" class="select">
+                                    <option value="glass" data-i18n="bookmarkMenuBgGlass">Glass like Tree View</option>
+                                    <option value="normal" data-i18n="bookmarkMenuBgNormal">Normal solid</option>
+                                </select>
+                            </div>
 
-                            <button id="localstorage-settings-option" class="menu-item">
+                            <button id="localstorage-settings-option" class="menu-item app-setting-action">
                                 <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage
                                     Settings</span>
                             </button>
@@ -1002,10 +1009,52 @@
             </div>
         </div>
 
+        <div id="first-run-language-popup" class="rename-popup hidden" role="dialog"
+            aria-labelledby="first-run-language-title">
+            <div class="rename-popup-content first-run-language-content">
+                <div class="first-run-star" aria-hidden="true">
+                    <i class="fas fa-language"></i>
+                </div>
+                <h3 id="first-run-language-title">Choose your language</h3>
+                <p id="first-run-language-sub">Select the language you want to use first.</p>
+                <div class="first-run-language-options">
+                    <button type="button" class="first-run-language-option" data-first-run-language="vi">
+                        <span>Tiếng Việt</span>
+                        <small>Giao diện tiếng Việt</small>
+                    </button>
+                    <button type="button" class="first-run-language-option" data-first-run-language="en">
+                        <span>English</span>
+                        <small>English interface</small>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="first-run-popup" class="rename-popup hidden" role="dialog" aria-labelledby="first-run-title">
-            <div class="rename-popup-content">
+            <div class="rename-popup-content first-run-content">
+                <div class="first-run-star" aria-hidden="true">
+                    <i class="fas fa-star"></i>
+                </div>
                 <h3 id="first-run-title" data-i18n="firstRunTitle">Welcome! Choose Your Font</h3>
                 <p data-i18n="firstRunSub">Select a default font style for the extension:</p>
+                <div class="first-run-guide">
+                    <div class="first-run-guide-step">
+                        <span class="first-run-step-icon"><i class="far fa-star"></i></span>
+                        <span data-i18n="firstRunGuideStep1">Open any website and click the Chrome star in the address bar.</span>
+                    </div>
+                    <div class="first-run-guide-step">
+                        <span class="first-run-step-icon"><i class="fas fa-keyboard"></i></span>
+                        <span data-i18n="firstRunGuideStepShortcut">Use Ctrl + D on Windows/Linux or Command + D on macOS to bookmark the current page faster.</span>
+                    </div>
+                    <div class="first-run-guide-step">
+                        <span class="first-run-step-icon"><i class="fas fa-folder-plus"></i></span>
+                        <span data-i18n="firstRunGuideStep2">Choose a folder, then press Done to save the bookmark.</span>
+                    </div>
+                    <div class="first-run-guide-step">
+                        <span class="first-run-step-icon"><i class="fas fa-bookmark"></i></span>
+                        <span data-i18n="firstRunGuideStep3">Open Zero Bookmark to manage, search, and organize it.</span>
+                    </div>
+                </div>
                 <div class="rename-input-container">
                     <select id="first-run-font-select" class="select" style="width: 100%; margin-bottom: 10px;">
                         <option value="gohu" data-i18n="fontGohu">Aa: GohuFont (Pixel Style)</option>
@@ -1018,6 +1067,20 @@
                 </div>
                 <div class="rename-popup-buttons">
                     <button id="first-run-save" class="button save" data-i18n="firstRunSave">Get Started</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="first-run-tour" class="first-run-tour hidden" aria-live="polite">
+            <div id="first-run-tour-highlight" class="first-run-tour-highlight"></div>
+            <div id="first-run-tour-card" class="first-run-tour-card" role="dialog"
+                aria-labelledby="first-run-tour-title">
+                <span id="first-run-tour-count" class="first-run-tour-count"></span>
+                <h3 id="first-run-tour-title"></h3>
+                <p id="first-run-tour-message"></p>
+                <div class="first-run-tour-actions">
+                    <button id="first-run-tour-skip" class="button cancel" type="button"></button>
+                    <button id="first-run-tour-next" class="button save" type="button"></button>
                 </div>
             </div>
         </div>

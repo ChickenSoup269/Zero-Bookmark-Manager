@@ -100,6 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   })
+  document.documentElement.classList.remove("sidebar-workspaces-precollapsed")
 
   // Sort list items (Raindrop style)
   const sortItems = document.querySelectorAll(".sidebar-sort-item")

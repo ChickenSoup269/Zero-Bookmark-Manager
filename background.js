@@ -6,6 +6,10 @@ chrome.runtime.setUninstallURL(
 )
 
 chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.storage.local.set({ showFirstRunPopup: true })
+  }
+
   if (details.reason === "update") {
     // When the extension is updated, set a flag to show the update popup next time
     chrome.storage.local.set({ showUpdatePopup: true })
