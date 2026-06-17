@@ -3706,3 +3706,14 @@ html {
   color: var(--bg-primary);
   border-color: var(--text-secondary);
 }
+
+/* Bookmark Item Dropdown base styles */
+.bookmark-dropdown-menu {
+  position: absolute; right: 0; top: 100%; margin-top: 4px;
+  background: color-mix(in srgb, var(--bg-secondary, #2d2d2d) 82%, transparent);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color, #404040);
+  border-radius: 8px; min-width: 180px; padding: 4px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
+}
+

@@ -1206,6 +1206,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 500)
     chrome.storage.onChanged.addListener(handleStorageChange)
 
+    const floatingToggle = document.getElementById("floating-toggle");
+    if (floatingToggle) {
+      const container = floatingToggle.closest(".floating-container");
+      if (container && localStorage.getItem("floatingButtonsCollapsed") === "true") {
+        container.classList.add("collapsed");
+      }
+      floatingToggle.addEventListener("click", () => {
+        if (container) {
+          const isCollapsed = container.classList.toggle("collapsed");
+          localStorage.setItem("floatingButtonsCollapsed", isCollapsed);
+        }
+      });
+    }
+
     window.addEventListener("unload", () => {
       chrome.bookmarks.onCreated.removeListener(refreshBookmarks)
       chrome.bookmarks.onRemoved.removeListener(refreshBookmarks)

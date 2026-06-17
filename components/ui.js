@@ -280,14 +280,7 @@ function createDropdownHTML(bookmark, language) {
             : '<i class="fas fa-ellipsis-v"></i>'
         }
       </button>
-      <div class="dropdown-menu bookmark-dropdown-menu hidden" style="
-        position: absolute; right: 0; top: 100%; margin-top: 4px;
-        background: color-mix(in srgb, var(--bg-secondary, #2d2d2d) 82%, transparent);
-        backdrop-filter: blur(14px);
-        border: 1px solid var(--border-color, #404040);
-        border-radius: 8px; min-width: 180px; padding: 4px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
-      ">
+      <div class="dropdown-menu bookmark-dropdown-menu hidden">
         <button class="menu-item pin-btn" data-id="${bookmark.id}">
             <i class="fas fa-thumbtack" style="${iconStyle}"></i>
             ${
@@ -1578,9 +1571,7 @@ function renderSidebarFolderTree(folders, elements) {
       e.stopPropagation()
 
       // Remove existing context menu if any
-      const existingMenu = document.querySelector(
-        ".sidebar-folder-context-menu",
-      )
+      const existingMenu = document.querySelector(".sidebar-folder-context-menu")
       if (existingMenu) {
         existingMenu.remove()
       }
@@ -1592,11 +1583,19 @@ function renderSidebarFolderTree(folders, elements) {
       const language = localStorage.getItem("appLanguage") || "en"
       const t = translations[language] || translations.en
 
+      const isDefaultFolder = folder.id === "1" || folder.id === "2" || folder.id === "3"
+
       contextMenu.innerHTML = `
         <div class="context-menu-item" data-action="move-to-folder">
           <i class="fas fa-folder-open"></i>
           <span>${t.moveToFolder || "Move to Folder"}</span>
         </div>
+        ${!isDefaultFolder ? `
+        <div class="context-menu-item delete" data-action="delete-folder" style="color: var(--danger-color);">
+          <i class="fas fa-trash"></i>
+          <span>${t.deleteFolder || "Delete Folder"}</span>
+        </div>
+        ` : ''}
       `
 
       // Position context menu
@@ -1610,24 +1609,20 @@ function renderSidebarFolderTree(folders, elements) {
       // Handle context menu click
       contextMenu.addEventListener("click", (menuEvent) => {
         menuEvent.stopPropagation()
-        const action =
-          menuEvent.target.closest(".context-menu-item")?.dataset.action
+        const action = menuEvent.target.closest(".context-menu-item")?.dataset.action
 
         if (action === "move-to-folder") {
-          // Call existing move folder popup
           const popupElements = {
             addToFolderPopup: document.getElementById("add-to-folder-popup"),
             addToFolderSelect: document.getElementById("add-to-folder-select"),
-            addToFolderSaveButton:
-              document.getElementById("add-to-folder-save"),
-            addToFolderCancelButton: document.getElementById(
-              "add-to-folder-cancel",
-            ),
+            addToFolderSaveButton: document.getElementById("add-to-folder-save"),
+            addToFolderCancelButton: document.getElementById("add-to-folder-cancel"),
           }
-
           if (popupElements.addToFolderPopup) {
             showMoveFolderToFolderPopup(popupElements, folder.id)
           }
+        } else if (action === "delete-folder") {
+          handleDeleteFolder(folder.id, elements)
         }
 
         contextMenu.remove()

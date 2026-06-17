@@ -572,19 +572,65 @@
   transform: translateY(-2px);
 }
 
-/* === Other elements === */
-.floating-buttons {
+.floating-container {
   position: fixed;
   bottom: 16px;
   right: 16px;
   display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1000;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floating-container.collapsed {
+  transform: translateX(calc(100% - 24px));
+}
+
+.floating-buttons {
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  z-index: 1000;
   width: 40px;
+  transition: opacity 0.3s ease;
 }
 
+.floating-container.collapsed .floating-buttons {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.floating-toggle {
+  width: 24px;
+  height: 48px;
+  border-radius: 12px 0 0 12px;
+  background-color: var(--bg-tertiary, #333);
+  color: var(--text-primary, #fff);
+  border: 1px solid var(--border-color, #444);
+  border-right: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  transition: background-color 0.2s ease;
+}
+
+.floating-toggle:hover {
+  background-color: var(--accent-color);
+  color: var(--bg-primary);
+}
+
+.floating-toggle i {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floating-container.collapsed .floating-toggle i {
+  transform: rotate(180deg);
+}
+
+/* === Other elements === */
 .report-bug {
   width: 32px;
   height: 32px;

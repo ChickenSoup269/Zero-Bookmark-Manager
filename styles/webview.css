@@ -434,7 +434,10 @@ body {
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-primary);
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .workspace-apply {
@@ -755,7 +758,8 @@ body {
   display: flex;
   flex-direction: column;
   padding: 22px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 82%, var(--accent-color));
+  border: 1px solid
+    color-mix(in srgb, var(--border-color) 82%, var(--accent-color));
   border-radius: 10px;
   text-align: left;
 }
@@ -1042,7 +1046,8 @@ body {
   flex-direction: column;
   overflow: hidden;
   padding: 22px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 82%, var(--accent-color));
+  border: 1px solid
+    color-mix(in srgb, var(--border-color) 82%, var(--accent-color));
   border-radius: 10px;
   text-align: left;
 }
@@ -1549,7 +1554,11 @@ body {
 .sidebar-menu-item.active {
   background: var(--bg-tertiary);
   color: var(--text-secondary);
-  border-color: color-mix(in srgb, var(--accent-color) 42%, var(--border-color));
+  border-color: color-mix(
+    in srgb,
+    var(--accent-color) 42%,
+    var(--border-color)
+  );
   font-weight: 500;
 }
 
@@ -1738,7 +1747,9 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
-  min-height: 5px; /* Safe placeholder for loading folders */
+  min-height: 10px; /* Safe placeholder for loading folders */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .sidebar-folder-tree::-webkit-scrollbar {
@@ -1923,7 +1934,7 @@ body {
 .folder-children {
   list-style: none;
   padding: 0;
-  margin: 0 0 0 4px;
+  margin: 0 0 0 16px;
   overflow: hidden;
   transition:
     max-height 0.3s ease,
@@ -2559,7 +2570,7 @@ body {
 .container {
   margin-left: var(--sidebar-width);
   padding: var(--spacing-md);
-  max-width: calc(1380px - var(--sidebar-width));
+  max-width: none;
   transition:
     margin-left 0.25s ease,
     background-color 0.3s ease;
@@ -2567,7 +2578,7 @@ body {
 
 .container.collapsed {
   margin-left: var(--sidebar-collapsed-width);
-  max-width: calc(1380px - var(--sidebar-collapsed-width));
+  max-width: none;
 }
 
 /* Mobile responsive */
@@ -3088,7 +3099,8 @@ body.settings-panel-open .settings-container {
 
 .webview-mode .folder-children {
   padding-left: 0;
-  margin-left: 4px;
+  margin-left: 16px;
+  border-left: 1px dashed var(--border-color);
 }
 
 /* Bookmark item in tree view - Row layout */
@@ -3305,13 +3317,17 @@ body.settings-panel-open .settings-container {
 }
 
 body[data-bookmark-menu-bg="glass"] .dropdown-menu {
-  background-color: color-mix(in srgb, var(--bg-primary) 82%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--bg-primary) 40%,
+    transparent
+  ) !important;
   backdrop-filter: blur(14px) !important;
   border-color: var(--border-color) !important;
 }
 
 body[data-bookmark-menu-bg="glass"] .dropdown-menu .menu-item {
-  background: color-mix(in srgb, var(--bg-primary) 34%, transparent) !important;
+  background: color-mix(in srgb, var(--bg-primary) 20%, transparent) !important;
 }
 
 body[data-bookmark-menu-bg="glass"] .dropdown-menu .menu-item:hover {
@@ -3321,18 +3337,25 @@ body[data-bookmark-menu-bg="glass"] .dropdown-menu .menu-item:hover {
 }
 
 body[data-bookmark-menu-bg="glass"] .dropdown-menu hr {
-  border-top-color: color-mix(in srgb, var(--border-color) 58%, transparent) !important;
+  border-top-color: color-mix(
+    in srgb,
+    var(--border-color) 58%,
+    transparent
+  ) !important;
 }
 
 body[data-bookmark-menu-bg="normal"] .dropdown-menu {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary)),
-      var(--bg-secondary)
-    ) !important;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary)),
+    var(--bg-secondary)
+  ) !important;
   backdrop-filter: none !important;
-  border-color: color-mix(in srgb, var(--border-color) 82%, var(--accent-color)) !important;
+  border-color: color-mix(
+    in srgb,
+    var(--border-color) 82%,
+    var(--accent-color)
+  ) !important;
   box-shadow:
     0 14px 34px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
@@ -3340,8 +3363,16 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu {
   padding: 7px !important;
 }
 
+body[data-bookmark-menu-bg="normal"] .dropdown-menu .menu-item:not(:hover) {
+  background: transparent !important;
+}
+
 body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
-  border-top-color: color-mix(in srgb, var(--border-color) 78%, transparent) !important;
+  border-top-color: color-mix(
+    in srgb,
+    var(--border-color) 78%,
+    transparent
+  ) !important;
   margin: 2px 4px !important;
 }
 
@@ -4081,16 +4112,22 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .health-action-row #check-health-btn {
-  background: color-mix(in srgb, var(--warning-color, #f59e0b) 20%, var(--bg-primary));
+  background: color-mix(
+    in srgb,
+    var(--warning-color, #f59e0b) 20%,
+    var(--bg-primary)
+  );
   color: var(--text-primary);
-  border: 1px solid color-mix(in srgb, var(--warning-color, #f59e0b) 55%, var(--border-color));
+  border: 1px solid
+    color-mix(in srgb, var(--warning-color, #f59e0b) 55%, var(--border-color));
   box-shadow: none;
 }
 
 .health-action-row #check-duplicates-btn {
   background: color-mix(in srgb, var(--accent-color) 18%, var(--bg-primary));
   color: var(--text-primary);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 55%, var(--border-color));
+  border: 1px solid
+    color-mix(in srgb, var(--accent-color) 55%, var(--border-color));
   box-shadow: none;
 }
 
@@ -5049,3 +5086,5 @@ textarea.error {
 .folder-list.is-folder-dragging .folder-drop-zone {
   pointer-events: auto;
 }
+
+

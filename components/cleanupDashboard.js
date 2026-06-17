@@ -326,6 +326,7 @@ export function initCleanupDashboard(elements) {
           (bookmark) => bookmark.url,
           t("smartCleanupStaleIntro", "Older than one year with no tracked visits."),
         ),
+        action: "stale",
       }),
       untagged: () => ({
         html: renderList(
@@ -341,6 +342,7 @@ export function initCleanupDashboard(elements) {
           emptyFolders,
           (folder) => `ID: ${folder.id}`,
         ),
+        action: "empty",
       }),
       reading: () => ({
         html: renderList(
@@ -376,7 +378,20 @@ export function initCleanupDashboard(elements) {
         }
         ${
           selectedDetail.action === "dead"
-            ? `<button type="button" class="button save" data-cleanup-action="dead">${escapeHtml(t("smartCleanupScanLinks", "Scan links"))}</button>`
+            ? `
+               <button type="button" class="button save" data-cleanup-action="dead">${escapeHtml(t("smartCleanupScanLinks", "Scan links"))}</button>
+               ${deadBookmarks.length > 0 ? `<button type="button" class="button delete" data-cleanup-action="dead-delete" style="margin-left: 8px;">${escapeHtml(t("smartCleanupDeleteDead", "Delete Dead Links"))}</button>` : ""}
+              `
+            : ""
+        }
+        ${
+          selectedDetail.action === "stale" && staleBookmarks.length > 0
+            ? `<button type="button" class="button delete" data-cleanup-action="stale">${escapeHtml(t("smartCleanupDeleteStale", "Delete Old Unused"))}</button>`
+            : ""
+        }
+        ${
+          selectedDetail.action === "empty" && emptyFolders.length > 0
+            ? `<button type="button" class="button delete" data-cleanup-action="empty">${escapeHtml(t("smartCleanupDeleteEmpty", "Delete Empty Folders"))}</button>`
             : ""
         }
       </div>
@@ -392,6 +407,24 @@ export function initCleanupDashboard(elements) {
     details.querySelector("[data-cleanup-action='dead']")?.addEventListener("click", () => {
       handleCheckHealth(elements)
       close()
+    })
+    details.querySelector("[data-cleanup-action='dead-delete']")?.addEventListener("click", () => {
+      if (confirm(t("smartCleanupConfirmDelete", "Are you sure you want to delete these items? This cannot be undone."))) {
+        Promise.all(deadBookmarks.map(b => new Promise(res => chrome.bookmarks.remove(b.id, res))))
+          .then(() => setTimeout(() => render("dead"), 500))
+      }
+    })
+    details.querySelector("[data-cleanup-action='stale']")?.addEventListener("click", () => {
+      if (confirm(t("smartCleanupConfirmDelete", "Are you sure you want to delete these items? This cannot be undone."))) {
+        Promise.all(staleBookmarks.map(b => new Promise(res => chrome.bookmarks.remove(b.id, res))))
+          .then(() => setTimeout(() => render("stale"), 500))
+      }
+    })
+    details.querySelector("[data-cleanup-action='empty']")?.addEventListener("click", () => {
+      if (confirm(t("smartCleanupConfirmDelete", "Are you sure you want to delete these items? This cannot be undone."))) {
+        Promise.all(emptyFolders.map(f => new Promise(res => chrome.bookmarks.remove(f.id, res))))
+          .then(() => setTimeout(() => render("empty"), 500))
+      }
     })
 
     grid.querySelectorAll("[data-cleanup]").forEach((card) => {

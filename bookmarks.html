@@ -729,19 +729,24 @@
             </div>
         </div>
 
-        <div class="floating-buttons">
-            <button id="scroll-to-top" class="button scroll-to-top" data-i18n-title="scrollToTop" title="Scroll to Top"
-                aria-label="Scroll to Top">
-                <i class="fas fa-caret-up"></i>
+        <div class="floating-container">
+            <button id="floating-toggle" class="floating-toggle" title="Toggle buttons" aria-label="Toggle buttons">
+                <i class="fas fa-chevron-right"></i>
             </button>
-            <button id="report-bug" class="button report-bug" data-i18n-title="reportBug" title="Report Bug"
-                aria-label="Report Bug">
-                <i class="fas fa-bug"></i>
-            </button>
-            <button id="chat-toggle" class="chat-toggle" data-i18n-title="openChat" title="Open Chat"
-                aria-label="Open Chat">
-                <i class="far fa-comment-alt"></i>
-            </button>
+            <div class="floating-buttons" id="floating-buttons-group">
+                <button id="scroll-to-top" class="button scroll-to-top" data-i18n-title="scrollToTop" title="Scroll to Top"
+                    aria-label="Scroll to Top">
+                    <i class="fas fa-caret-up"></i>
+                </button>
+                <button id="report-bug" class="button report-bug" data-i18n-title="reportBug" title="Report Bug"
+                    aria-label="Report Bug">
+                    <i class="fas fa-bug"></i>
+                </button>
+                <button id="chat-toggle" class="chat-toggle" data-i18n-title="openChat" title="Open Chat"
+                    aria-label="Open Chat">
+                    <i class="far fa-comment-alt"></i>
+                </button>
+            </div>
         </div>
 
         <div id="command-palette" class="command-palette hidden" role="dialog" aria-modal="true"

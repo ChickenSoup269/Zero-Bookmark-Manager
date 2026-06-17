@@ -1059,6 +1059,10 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu {
   padding: 7px !important;
 }
 
+body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu .menu-item:not(:hover) {
+  background: transparent !important;
+}
+
 body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   border-top-color: color-mix(in srgb, var(--border-color) 78%, transparent) !important;
   margin: 2px 4px !important;

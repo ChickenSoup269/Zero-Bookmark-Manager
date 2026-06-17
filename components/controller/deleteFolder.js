@@ -1,4 +1,3 @@
-// ./components/controller/deleteFolder.js
 import {
   translations,
   safeChromeBookmarksCall,
@@ -7,6 +6,7 @@ import {
 import { getBookmarkTree, flattenBookmarks } from "../bookmarks.js"
 import { renderFilteredBookmarks } from "../ui.js"
 import { uiState } from "../state.js"
+import { registerUndo } from "../undo.js"
 
 export function setupDeleteFolderListeners(elements) {
   // Listener cho nút xóa folder từ giao diện chính
@@ -25,6 +25,47 @@ export function setupDeleteFolderListeners(elements) {
   })
 }
 
+async function restoreTree(node, parentId, storageData) {
+  return new Promise((resolve) => {
+    chrome.bookmarks.create({
+      parentId: parentId,
+      index: node.index,
+      title: node.title,
+      url: node.url
+    }, async (created) => {
+      if (node.url) {
+        let changed = false;
+        if (storageData.bookmarkTags[node.id]) {
+          storageData.bookmarkTags[created.id] = storageData.bookmarkTags[node.id];
+          changed = true;
+        }
+        if (storageData.favoriteBookmarks[node.id]) {
+          storageData.favoriteBookmarks[created.id] = true;
+          changed = true;
+        }
+        if (storageData.pinnedBookmarks[node.id]) {
+          storageData.pinnedBookmarks[created.id] = true;
+          changed = true;
+        }
+        if (changed) {
+          await chrome.storage.local.set({
+            bookmarkTags: storageData.bookmarkTags,
+            favoriteBookmarks: storageData.favoriteBookmarks,
+            pinnedBookmarks: storageData.pinnedBookmarks
+          });
+        }
+      }
+
+      if (node.children && node.children.length > 0) {
+        for (const child of node.children) {
+          await restoreTree(child, created.id, storageData);
+        }
+      }
+      resolve(created);
+    });
+  });
+}
+
 export function handleDeleteFolder(folderId, elements) {
   if (!folderId || folderId === "1" || folderId === "2") {
     console.error("Invalid or protected folder ID:", folderId)
@@ -38,61 +79,43 @@ export function handleDeleteFolder(folderId, elements) {
   }
 
   const language = localStorage.getItem("appLanguage") || "en"
-  showCustomConfirm(translations[language].deleteFolderConfirm, () => {
-    safeChromeBookmarksCall("getSubTree", [folderId], (subTree) => {
-      if (!subTree) {
+  showCustomConfirm(translations[language].deleteFolderConfirm || "Are you sure you want to delete this folder and all its contents?", () => {
+    safeChromeBookmarksCall("getSubTree", [folderId], async (subTree) => {
+      if (!subTree || !subTree[0]) {
         console.error("Failed to retrieve folder subtree for ID:", folderId)
         return
       }
       const folderNode = subTree[0]
-      const bookmarksToCheck = folderNode.children
-        ? folderNode.children.filter((node) => node.url)
-        : []
+      
+      const storageData = await chrome.storage.local.get([
+        "bookmarkTags",
+        "favoriteBookmarks",
+        "pinnedBookmarks",
+      ])
+      storageData.bookmarkTags = storageData.bookmarkTags || {};
+      storageData.favoriteBookmarks = storageData.favoriteBookmarks || {};
+      storageData.pinnedBookmarks = storageData.pinnedBookmarks || {};
 
-      safeChromeBookmarksCall("getTree", [], (bookmarkTreeNodes) => {
-        if (!bookmarkTreeNodes) {
-          console.error("Failed to retrieve bookmark tree")
-          return
+      safeChromeBookmarksCall("removeTree", [folderId], () => {
+        if (uiState.selectedFolderId === folderId) {
+          uiState.selectedFolderId = ""
+          if (elements.folderFilter) elements.folderFilter.value = ""
         }
-        const allBookmarks = flattenBookmarks(bookmarkTreeNodes)
-        const bookmarksToDelete = []
-        bookmarksToCheck.forEach((bookmark) => {
-          const duplicates = allBookmarks.filter(
-            (b) =>
-              b.url === bookmark.url &&
-              b.id !== bookmark.id &&
-              b.parentId !== folderId
-          )
-          if (duplicates.length === 0) {
-            bookmarksToDelete.push(bookmark.id)
-          }
-        })
-
-        let deletePromises = bookmarksToDelete.map((bookmarkId) => {
-          return new Promise((resolve) => {
-            safeChromeBookmarksCall("remove", [bookmarkId], resolve)
-          })
-        })
-
-        Promise.all(deletePromises).then(() => {
-          safeChromeBookmarksCall("remove", [folderId], () => {
-            if (uiState.selectedFolderId === folderId) {
-              uiState.selectedFolderId = ""
-              if (elements.folderFilter) elements.folderFilter.value = ""
-            }
-            getBookmarkTree((bookmarkTreeNodes) => {
-              if (bookmarkTreeNodes) {
-                renderFilteredBookmarks(bookmarkTreeNodes, elements)
-                const language = localStorage.getItem("appLanguage") || "en"
-                showCustomConfirm(
-                  translations[language].deleteFolderSuccess ||
-                    "Folder deleted successfully!",
-                  () => {},
-                  "success"
-                )
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+            
+            const t = translations[language] || translations.en;
+            
+            registerUndo({
+              message: t.undoDeleteMessage || "Folder deleted.",
+              actionLabel: t.undoAction || "Undo",
+              elements: elements,
+              undo: async () => {
+                await restoreTree(folderNode, folderNode.parentId, storageData);
               }
-            })
-          })
+            });
+          }
         })
       })
     })
@@ -114,5 +137,6 @@ function handleDeleteFolderFromDropdown(e, elements) {
     return
   }
   handleDeleteFolder(folderId, elements)
-  e.target.closest(".dropdown-menu").classList.add("hidden")
+  const menu = e.target.closest(".dropdown-menu")
+  if (menu) menu.classList.add("hidden")
 }
