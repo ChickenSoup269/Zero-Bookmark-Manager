@@ -180,6 +180,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Sync inputs between modern and classic sidebars
   syncSidebarInputs()
+
+  // Sidebar Resizer
+  const resizer = document.getElementById("sidebar-resizer")
+  if (resizer) {
+    let isResizing = false
+
+    // Load saved width
+    const savedWidth = localStorage.getItem("sidebarWidth")
+    if (savedWidth) {
+      document.documentElement.style.setProperty(
+        "--sidebar-width",
+        savedWidth + "px"
+      )
+    }
+
+    resizer.addEventListener("mousedown", (e) => {
+      isResizing = true
+      resizer.classList.add("is-resizing")
+      document.body.style.cursor = "col-resize"
+      e.preventDefault() // Prevent text selection
+    })
+
+    // Double click to toggle width quickly
+    resizer.addEventListener("dblclick", () => {
+      const currentWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width')) || 260
+      const newWidth = currentWidth > 350 ? 260 : 400
+      document.documentElement.style.setProperty("--sidebar-width", newWidth + "px")
+      localStorage.setItem("sidebarWidth", newWidth)
+    })
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isResizing) return
+      let newWidth = e.clientX
+      // Define min and max width constraints
+      if (newWidth < 200) newWidth = 200
+      if (newWidth > 800) newWidth = 800
+
+      document.documentElement.style.setProperty(
+        "--sidebar-width",
+        newWidth + "px"
+      )
+    })
+
+    document.addEventListener("mouseup", () => {
+      if (isResizing) {
+        isResizing = false
+        resizer.classList.remove("is-resizing")
+        document.body.style.cursor = ""
+
+        // Save the width
+        const currentWidth = document.documentElement.style.getPropertyValue(
+          "--sidebar-width"
+        )
+        if (currentWidth) {
+          localStorage.setItem("sidebarWidth", parseInt(currentWidth, 10))
+        }
+      }
+    })
+  }
 })
 
 // Initialize sidebar style
