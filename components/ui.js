@@ -2,7 +2,9 @@ import {
   translations,
   showCustomPopup,
   calculateMatchScore,
+  showCustomConfirm,
 } from "./utils/utils.js"
+import { appendBookmarksLazily } from "./utils/lazyRender.js"
 import {
   flattenBookmarks,
   getFolders,
@@ -1970,22 +1972,20 @@ function renderDetailView(bookmarksList, elements) {
     fragment.prepend(selectAllDiv)
   }
 
-  sortedBookmarks.forEach((bookmark) => {
-    if (bookmark.url) {
-      fragment.appendChild(
-        createDetailBookmarkElement(bookmark, language, elements),
-      )
-    }
-  })
-
   if (!elements || !elements.folderListDiv) return
 
   elements.folderListDiv.innerHTML = ""
   elements.folderListDiv.classList.remove("tree-view", "card-view", "list-view")
   elements.folderListDiv.classList.add("detail-view")
-  elements.folderListDiv.appendChild(fragment)
 
-  commonPostRenderOps(elements)
+  appendBookmarksLazily(
+    elements.folderListDiv,
+    fragment,
+    sortedBookmarks,
+    (bookmark) => createDetailBookmarkElement(bookmark, language, elements),
+    commonPostRenderOps,
+    elements
+  )
 }
 
 function renderListView(bookmarksList, elements) {
@@ -2062,16 +2062,15 @@ function renderListView(bookmarksList, elements) {
 
   // Render Bookmarks
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
-  sortedBookmarks.forEach((bookmark) => {
-    if (bookmark.url) {
-      fragment.appendChild(
-        createListBookmarkElement(bookmark, language, elements),
-      )
-    }
-  })
-
-  elements.folderListDiv.appendChild(fragment)
-  commonPostRenderOps(elements)
+  
+  appendBookmarksLazily(
+    elements.folderListDiv,
+    fragment,
+    sortedBookmarks,
+    (bookmark) => createListBookmarkElement(bookmark, language, elements),
+    commonPostRenderOps,
+    elements
+  )
 }
 
 function createListFolderElement(folder, elements) {
@@ -2756,13 +2755,14 @@ function renderBookmarks(bookmarksList, elements) {
     "list-view",
   )
 
-  sortedBookmarks.forEach((bookmark) => {
-    if (bookmark.url)
-      fragment.appendChild(createBookmarkElement(bookmark, 0, elements))
-  })
-
-  elements.folderListDiv.appendChild(fragment)
-  commonPostRenderOps(elements)
+  appendBookmarksLazily(
+    elements.folderListDiv,
+    fragment,
+    sortedBookmarks,
+    (bookmark) => createBookmarkElement(bookmark, 0, elements),
+    commonPostRenderOps,
+    elements
+  )
 }
 
 function renderTreeView(nodes, elements, depth = 0, targetElement = null) {

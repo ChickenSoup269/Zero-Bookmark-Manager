@@ -7,6 +7,7 @@ import { setupExportImportListeners } from "./export/export.js"
 import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
 import { setupUIControlListeners } from "./controller/uiControls.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
+import { setupHotkeys } from "./controller/hotkeys.js"
 
 export function setupEventListeners(elements) {
   setupCreateFolderListeners(elements)
@@ -17,4 +18,5 @@ export function setupEventListeners(elements) {
   setupBookmarkActionListeners(elements)
   setupUIControlListeners(elements)
   attachDropdownListeners(elements)
+  setupHotkeys(elements)
 }
