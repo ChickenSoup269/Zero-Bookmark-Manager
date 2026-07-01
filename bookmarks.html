@@ -323,6 +323,8 @@
                                 <option value="lexend" data-i18n="fontLexend">Aa: Lexend</option>
                             </select>
                             <select id="view-switcher" class="select select-with-icons" aria-label="Select view mode">
+                                <option value="bento">&#xf009; Bento Box</option>
+                                <option value="kanban">&#xf0db; Kanban Board</option>
                                 <option value="flat">&#xf03a; Flat List</option>
                                 <option value="tree">&#xf0e8; Tree View</option>
                                 <option value="detail">&#xf05a; Detail View</option>
@@ -347,10 +349,16 @@
                                 <i class="fas fa-columns"></i> Open Side Panel
                             </button>
                             <button id="export-bookmarks-option" class="menu-item">
-                                <i class="fas fa-file-download"></i> Export Bookmarks
+                                <i class="fas fa-file-export" aria-hidden="true"></i>
+                                <span data-i18n="exportBookmarks">Export Bookmarks</span>
                             </button>
                             <button id="import-bookmarks-option" class="menu-item">
-                                <i class="fas fa-file-import"></i> Import Bookmarks
+                                <i class="fas fa-file-import" aria-hidden="true"></i>
+                                <span data-i18n="importBookmarks">Import Bookmarks</span>
+                            </button>
+                            <button id="google-drive-sync-btn" class="menu-item">
+                                <i class="fab fa-google-drive" aria-hidden="true"></i>
+                                <span>Cloud Sync</span>
                             </button>
                             <button id="show-bookmark-ids-option" class="menu-item">
                                 <i class="fas fa-download"></i>Show Bookmark IDs
@@ -1133,9 +1141,30 @@
         </div>
     </div>
 
+    <!-- Cloud Sync Modal -->
+    <div id="cloud-sync-popup" class="custom-popup-overlay hidden">
+        <div class="custom-popup">
+            <h3 style="margin-top:0; color: var(--primary-color)"><i class="fab fa-google-drive"></i> Google Drive Sync</h3>
+            <p style="margin-bottom: 20px; font-size: 14px; color: var(--text-color);">Backup or restore your bookmarks using Google Drive.</p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button id="btn-backup-drive" class="button save" style="width: 100%; justify-content: center;">
+                    <i class="fas fa-cloud-upload-alt"></i> Backup to Drive
+                </button>
+                <button id="btn-restore-drive" class="button" style="width: 100%; justify-content: center; background: var(--bg-tertiary);">
+                    <i class="fas fa-cloud-download-alt"></i> Restore from Drive
+                </button>
+            </div>
+            <p id="sync-status-message" style="margin-top: 15px; font-size: 13px; text-align: center; font-weight: bold;"></p>
+            <div style="text-align: right; margin-top: 15px;">
+                <button id="cloud-sync-close" class="button cancel">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script src="./components/lib/marked.min.js"></script>
     <script src="./components/lib/qrcode.min.js"></script>
     <script src="./components/option/option.js" type="module"></script>
+    <script src="./components/sync.js"></script>
     <script src="./components/tag.js" type="module"></script>
     <script src="./components/chat.js" type="module"></script>
     <script src="./components/year.js" type="module"></script>

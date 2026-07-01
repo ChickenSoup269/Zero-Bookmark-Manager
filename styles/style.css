@@ -3716,4 +3716,10 @@ html {
   border-radius: 8px; min-width: 180px; padding: 4px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
 }
+}
 
+/* Override default grid layout for Kanban and Bento views */
+.folder-list.kanban-view,
+.folder-list.bento-view {
+  display: block !important;
+}

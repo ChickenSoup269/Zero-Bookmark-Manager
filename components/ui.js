@@ -367,6 +367,16 @@ function attachDropdownToggle(element) {
       if (isHidden) menu.classList.remove("hidden")
     })
 
+    element.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const isHidden = menu.classList.contains("hidden");
+      document
+        .querySelectorAll(".dropdown-menu")
+        .forEach((m) => m.classList.add("hidden"));
+      if (isHidden) menu.classList.remove("hidden");
+    });
+
     element.addEventListener("mouseenter", () => {
       if (
         element.classList.contains("detail-bookmark-item") ||
@@ -871,12 +881,18 @@ function reRenderCurrentView(elements) {
       .map(({ bookmark }) => bookmark)
   }
 
+  elements.folderListDiv.style.display = ""
+
   if (uiState.viewMode === "tree") {
     // Tree view dùng bookmarkTreeNodes
     const rootChildren = bookmarkTreeNodes[0]?.children || []
     renderTreeView(rootChildren, elements)
   } else if (uiState.viewMode === "detail") {
     renderDetailView(filtered, elements)
+  } else if (uiState.viewMode === "bento") {
+    renderBentoView(bookmarkTreeNodes, filtered, elements)
+  } else if (uiState.viewMode === "split" || uiState.viewMode === "kanban") {
+    renderKanbanView(bookmarkTreeNodes, filtered, elements)
   } else if (uiState.viewMode === "card") {
     renderCardView(bookmarkTreeNodes, filtered, elements)
   } else if (uiState.viewMode === "list") {
@@ -1857,9 +1873,14 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       }
 
       // Render Views
+      elements.folderListDiv.style.display = ""
       if (uiState.viewMode === "tree") {
         const rootChildren = bookmarkTreeNodes[0]?.children || []
         renderTreeView(rootChildren, elements)
+      } else if (uiState.viewMode === "bento") {
+        renderBentoView(bookmarkTreeNodes, filtered, elements)
+      } else if (uiState.viewMode === "split" || uiState.viewMode === "kanban") {
+        renderKanbanView(bookmarkTreeNodes, filtered, elements)
       } else if (uiState.viewMode === "detail") {
         renderDetailView(filtered, elements)
       } else if (uiState.viewMode === "card") {
@@ -2102,6 +2123,368 @@ function createListFolderElement(folder, elements) {
   }
 
   return div
+}
+
+function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
+  if (!elements || !elements.folderListDiv) return;
+  elements.folderListDiv.innerHTML = "";
+  elements.folderListDiv.className = "folder-list bento-view";
+  elements.folderListDiv.style.display = "block";
+  
+  const container = document.createElement("div");
+  container.style.display = "grid";
+  container.style.gridTemplateColumns = "repeat(auto-fit, minmax(320px, 1fr))";
+  container.style.gridAutoFlow = "dense";
+  container.style.gap = "24px";
+  container.style.padding = "24px";
+  
+  const folders = getFolders(bookmarkTreeNodes);
+  const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6", "#FF3B30", "#34C759", "#AF52DE"];
+  
+  folders.forEach((folder, index) => {
+    const folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
+    if (folderBookmarks.length === 0) return;
+    
+    const color = colors[index % colors.length];
+    
+    const widget = document.createElement("div");
+    widget.style.position = "relative";
+    widget.style.background = "var(--bg-secondary)";
+    widget.style.borderRadius = "24px";
+    widget.style.padding = "20px";
+    widget.style.display = "flex";
+    widget.style.flexDirection = "column";
+    widget.style.gap = "12px";
+    widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
+    widget.style.border = "1px solid var(--border-color)";
+    widget.style.overflow = "hidden";
+    widget.style.height = "100%";
+    widget.style.minHeight = "280px";
+    widget.style.maxHeight = "400px";
+    widget.style.transition = "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease";
+    
+    // Feature widget logic
+    if (folderBookmarks.length >= 6 && index % 3 === 0) {
+      widget.style.gridColumn = "span 2";
+      widget.style.gridRow = "span 2";
+    }
+
+    widget.onmouseover = () => {
+      widget.style.transform = "translateY(-4px)";
+      widget.style.boxShadow = `0 14px 40px rgba(0,0,0,0.12), 0 0 0 1px ${color}40, inset 0 1px 0 rgba(255,255,255,0.2)`;
+    };
+    widget.onmouseout = () => {
+      widget.style.transform = "translateY(0)";
+      widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
+    };
+    
+    // Background glowing orb
+    const orb = document.createElement("div");
+    orb.style.position = "absolute";
+    orb.style.top = "-50px";
+    orb.style.right = "-50px";
+    orb.style.width = "150px";
+    orb.style.height = "150px";
+    orb.style.background = `radial-gradient(circle, ${color}20 0%, transparent 70%)`;
+    orb.style.borderRadius = "50%";
+    orb.style.zIndex = "0";
+    orb.style.pointerEvents = "none";
+    widget.appendChild(orb);
+    
+    const header = document.createElement("div");
+    header.style.display = "flex";
+    header.style.alignItems = "center";
+    header.style.justifyContent = "space-between";
+    header.style.zIndex = "1";
+    
+    const title = document.createElement("h3");
+    title.style.margin = "0";
+    title.style.fontSize = "1.3rem";
+    title.style.fontWeight = "700";
+    title.style.color = "var(--text-color)";
+    title.style.display = "flex";
+    title.style.alignItems = "center";
+    title.style.gap = "8px";
+    title.style.whiteSpace = "nowrap";
+    title.style.overflow = "hidden";
+    title.style.textOverflow = "ellipsis";
+    title.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:10px;background:${color}15;color:${color}"><i class="fas fa-folder"></i></div> ${folder.title}`;
+    
+    const countBadge = document.createElement("span");
+    countBadge.style.background = "var(--bg-tertiary)";
+    countBadge.style.color = "var(--text-secondary)";
+    countBadge.style.padding = "4px 10px";
+    countBadge.style.borderRadius = "20px";
+    countBadge.style.fontSize = "0.75rem";
+    countBadge.style.fontWeight = "600";
+    countBadge.textContent = `${folderBookmarks.length} items`;
+    
+    header.appendChild(title);
+    header.appendChild(countBadge);
+    widget.appendChild(header);
+    
+    const listContainer = document.createElement("div");
+    listContainer.style.overflowY = "auto";
+    listContainer.style.display = "flex";
+    listContainer.style.flexDirection = "column";
+    listContainer.style.gap = "8px";
+    listContainer.style.paddingRight = "4px";
+    listContainer.style.marginTop = "8px";
+    listContainer.style.zIndex = "1";
+    listContainer.style.flexGrow = "1";
+    
+    // Custom scrollbar for listContainer
+    listContainer.classList.add("custom-scrollbar");
+    
+    const language = localStorage.getItem("appLanguage") || "en";
+    
+    folderBookmarks.forEach(b => {
+      const item = document.createElement("div");
+      item.style.cursor = "pointer";
+      item.onclick = (e) => {
+        if (!e.target.closest('.dropdown-btn-group')) window.open(b.url, '_blank');
+      };
+      item.style.display = "flex";
+      item.style.alignItems = "center";
+      item.style.gap = "12px";
+      item.style.textDecoration = "none";
+      item.style.color = "var(--text-color)";
+      item.style.padding = "10px 12px";
+      item.style.borderRadius = "14px";
+      item.style.background = "var(--bg-primary)";
+      item.style.border = "1px solid var(--border-color)";
+      item.style.transition = "all 0.25s ease";
+      
+      item.onmouseover = () => {
+        item.style.background = `${color}10`;
+        item.style.borderColor = `${color}40`;
+        item.style.transform = "translateX(4px)";
+      };
+      item.onmouseout = () => {
+        item.style.background = "var(--bg-primary)";
+        item.style.borderColor = "var(--border-color)";
+        item.style.transform = "translateX(0)";
+      };
+      
+      const icon = document.createElement("img");
+      icon.src = getFaviconUrl(b.url);
+      icon.style.width = "22px";
+      icon.style.height = "22px";
+      icon.style.borderRadius = "6px";
+      icon.style.flexShrink = "0";
+      icon.style.background = "#fff";
+      icon.style.padding = "2px";
+      
+      const textWrap = document.createElement("div");
+      textWrap.style.display = "flex";
+      textWrap.style.flexDirection = "column";
+      textWrap.style.overflow = "hidden";
+      
+      const text = document.createElement("span");
+      text.textContent = b.title;
+      text.style.fontWeight = "500";
+      text.style.fontSize = "0.95rem";
+      text.style.whiteSpace = "nowrap";
+      text.style.overflow = "hidden";
+      text.style.textOverflow = "ellipsis";
+      
+      const urlText = document.createElement("span");
+      urlText.textContent = b.url;
+      urlText.style.fontSize = "0.7rem";
+      urlText.style.color = "var(--text-secondary)";
+      urlText.style.whiteSpace = "nowrap";
+      urlText.style.overflow = "hidden";
+      urlText.style.textOverflow = "ellipsis";
+      
+      textWrap.appendChild(text);
+      textWrap.appendChild(urlText);
+      
+      item.appendChild(icon);
+      item.appendChild(textWrap);
+      
+      const dropdownWrap = document.createElement("div");
+      dropdownWrap.style.marginLeft = "auto";
+      dropdownWrap.innerHTML = createDropdownHTML(b, language);
+      item.appendChild(dropdownWrap);
+      
+      attachDropdownToggle(item);
+      listContainer.appendChild(item);
+    });
+    
+    widget.appendChild(listContainer);
+    container.appendChild(widget);
+  });
+  
+  elements.folderListDiv.appendChild(container);
+  if (typeof commonPostRenderOps === "function") commonPostRenderOps(elements);
+}
+
+function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
+  if (!elements || !elements.folderListDiv) return;
+  elements.folderListDiv.innerHTML = "";
+  elements.folderListDiv.className = "folder-list kanban-view";
+  elements.folderListDiv.style.display = "block";
+  
+  const container = document.createElement("div");
+  container.style.display = "flex";
+  container.style.gap = "20px";
+  container.style.padding = "16px";
+  container.style.overflowX = "auto";
+  container.style.overflowY = "hidden";
+  container.style.height = "100%";
+  container.style.minHeight = "60vh";
+  container.style.alignItems = "stretch";
+  container.classList.add("custom-scrollbar");
+  
+  const folders = getFolders(bookmarkTreeNodes);
+  
+  folders.forEach((folder) => {
+    const folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
+    if (folderBookmarks.length === 0) return;
+    
+    const column = document.createElement("div");
+    column.style.background = "var(--bg-secondary)";
+    column.style.border = "1px solid var(--border-color)";
+    column.style.borderRadius = "var(--border-radius-lg, 8px)";
+    column.style.minWidth = "280px";
+    column.style.maxWidth = "320px";
+    column.style.flex = "0 0 auto";
+    column.style.display = "flex";
+    column.style.flexDirection = "column";
+    column.style.padding = "12px";
+    column.style.boxShadow = "var(--shadow-sm)";
+    
+    const header = document.createElement("div");
+    header.style.padding = "4px 4px 12px 4px";
+    header.style.display = "flex";
+    header.style.alignItems = "center";
+    header.style.justifyContent = "space-between";
+    header.style.borderBottom = "1px solid var(--border-color)";
+    header.style.marginBottom = "12px";
+    
+    const titleWrap = document.createElement("div");
+    titleWrap.style.display = "flex";
+    titleWrap.style.alignItems = "center";
+    titleWrap.style.gap = "8px";
+    titleWrap.style.overflow = "hidden";
+    
+    const iconSpan = document.createElement("div");
+    iconSpan.style.color = "var(--text-option, var(--text-primary))";
+    iconSpan.innerHTML = `<i class="fas fa-folder"></i>`;
+    
+    const titleText = document.createElement("span");
+    titleText.textContent = folder.title;
+    titleText.style.fontWeight = "600";
+    titleText.style.fontSize = "1rem";
+    titleText.style.color = "var(--folder-title-color, var(--text-primary))";
+    titleText.style.whiteSpace = "nowrap";
+    titleText.style.overflow = "hidden";
+    titleText.style.textOverflow = "ellipsis";
+    
+    titleWrap.appendChild(iconSpan);
+    titleWrap.appendChild(titleText);
+    
+    const badge = document.createElement("span");
+    badge.textContent = folderBookmarks.length;
+    badge.style.background = "var(--bg-tertiary)";
+    badge.style.color = "var(--text-secondary)";
+    badge.style.fontSize = "0.75rem";
+    badge.style.fontWeight = "600";
+    badge.style.padding = "2px 8px";
+    badge.style.borderRadius = "12px";
+    
+    header.appendChild(titleWrap);
+    header.appendChild(badge);
+    
+    const list = document.createElement("div");
+    list.style.overflowY = "auto";
+    list.style.display = "flex";
+    list.style.flexDirection = "column";
+    list.style.gap = "8px";
+    list.style.paddingRight = "4px";
+    list.style.flexGrow = "1";
+    list.classList.add("custom-scrollbar");
+    
+    const language = localStorage.getItem("appLanguage") || "en";
+    
+    folderBookmarks.forEach(b => {
+      const card = document.createElement("div");
+      card.style.cursor = "pointer";
+      card.onclick = (e) => {
+        if (!e.target.closest('.dropdown-btn-group')) window.open(b.url, '_blank');
+      };
+      card.style.background = "var(--bookmark-bg, var(--bg-primary))";
+      card.style.border = "1px solid var(--border-color)";
+      card.style.padding = "10px";
+      card.style.borderRadius = "6px";
+      card.style.display = "flex";
+      card.style.alignItems = "center";
+      card.style.gap = "12px";
+      card.style.textDecoration = "none";
+      card.style.color = "var(--text-primary)";
+      card.style.transition = "background-color 0.2s, border-color 0.2s";
+      
+      card.onmouseover = () => {
+        card.style.background = "var(--bookmark-hover-bg, var(--hover-bg))";
+        card.style.borderColor = "var(--accent-color, var(--border-color))";
+      };
+      card.onmouseout = () => {
+        card.style.background = "var(--bookmark-bg, var(--bg-primary))";
+        card.style.borderColor = "var(--border-color)";
+      };
+      
+      const icon = document.createElement("img");
+      icon.src = getFaviconUrl(b.url);
+      icon.style.width = "20px";
+      icon.style.height = "20px";
+      icon.style.borderRadius = "4px";
+      icon.style.flexShrink = "0";
+      
+      const titleWrapper = document.createElement("div");
+      titleWrapper.style.overflow = "hidden";
+      titleWrapper.style.display = "flex";
+      titleWrapper.style.flexDirection = "column";
+      titleWrapper.style.gap = "2px";
+      
+      const title = document.createElement("div");
+      title.textContent = b.title;
+      title.style.fontWeight = "500";
+      title.style.fontSize = "0.9rem";
+      title.style.whiteSpace = "nowrap";
+      title.style.overflow = "hidden";
+      title.style.textOverflow = "ellipsis";
+      title.style.color = "var(--text-primary)";
+      
+      const url = document.createElement("div");
+      url.textContent = b.url;
+      url.style.fontSize = "0.75rem";
+      url.style.color = "var(--text-muted)";
+      url.style.whiteSpace = "nowrap";
+      url.style.overflow = "hidden";
+      url.style.textOverflow = "ellipsis";
+      
+      titleWrapper.appendChild(title);
+      titleWrapper.appendChild(url);
+      
+      card.appendChild(icon);
+      card.appendChild(titleWrapper);
+      
+      const dropdownWrap = document.createElement("div");
+      dropdownWrap.style.marginLeft = "auto";
+      dropdownWrap.innerHTML = createDropdownHTML(b, language);
+      card.appendChild(dropdownWrap);
+      
+      attachDropdownToggle(card);
+      list.appendChild(card);
+    });
+    
+    column.appendChild(header);
+    column.appendChild(list);
+    container.appendChild(column);
+  });
+  
+  elements.folderListDiv.appendChild(container);
+  if (typeof commonPostRenderOps === "function") commonPostRenderOps(elements);
 }
 
 function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
