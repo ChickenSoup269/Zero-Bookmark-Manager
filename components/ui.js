@@ -2131,12 +2131,14 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
   elements.folderListDiv.className = "folder-list bento-view";
   elements.folderListDiv.style.display = "block";
   
+  const isPopup = window.innerWidth < 600;
+  
   const container = document.createElement("div");
   container.style.display = "grid";
-  container.style.gridTemplateColumns = "repeat(auto-fit, minmax(320px, 1fr))";
+  container.style.gridTemplateColumns = isPopup ? "1fr" : "repeat(auto-fit, minmax(320px, 1fr))";
   container.style.gridAutoFlow = "dense";
-  container.style.gap = "24px";
-  container.style.padding = "24px";
+  container.style.gap = isPopup ? "16px" : "24px";
+  container.style.padding = isPopup ? "0" : "24px"; // Fixed padding in popup
   
   const folders = getFolders(bookmarkTreeNodes);
   const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6", "#FF3B30", "#34C759", "#AF52DE"];
@@ -2157,14 +2159,14 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     widget.style.gap = "12px";
     widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
     widget.style.border = "1px solid var(--border-color)";
-    widget.style.overflow = "hidden";
+    // Removed overflow: hidden so dropdown menu isn't cut off
     widget.style.height = "100%";
     widget.style.minHeight = "280px";
     widget.style.maxHeight = "400px";
     widget.style.transition = "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease";
     
-    // Feature widget logic
-    if (folderBookmarks.length >= 6 && index % 3 === 0) {
+    // Feature widget logic (disable spanning in popup mode to prevent horizontal overflow)
+    if (!isPopup && folderBookmarks.length >= 6 && index % 3 === 0) {
       widget.style.gridColumn = "span 2";
       widget.style.gridRow = "span 2";
     }
@@ -2179,6 +2181,17 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     };
     
     // Background glowing orb
+    const orbWrapper = document.createElement("div");
+    orbWrapper.style.position = "absolute";
+    orbWrapper.style.top = "0";
+    orbWrapper.style.left = "0";
+    orbWrapper.style.width = "100%";
+    orbWrapper.style.height = "100%";
+    orbWrapper.style.overflow = "hidden";
+    orbWrapper.style.borderRadius = "24px";
+    orbWrapper.style.pointerEvents = "none";
+    orbWrapper.style.zIndex = "0";
+    
     const orb = document.createElement("div");
     orb.style.position = "absolute";
     orb.style.top = "-50px";
@@ -2187,9 +2200,8 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     orb.style.height = "150px";
     orb.style.background = `radial-gradient(circle, ${color}20 0%, transparent 70%)`;
     orb.style.borderRadius = "50%";
-    orb.style.zIndex = "0";
-    orb.style.pointerEvents = "none";
-    widget.appendChild(orb);
+    orbWrapper.appendChild(orb);
+    widget.appendChild(orbWrapper);
     
     const header = document.createElement("div");
     header.style.display = "flex";
@@ -2199,7 +2211,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     
     const title = document.createElement("h3");
     title.style.margin = "0";
-    title.style.fontSize = "1.3rem";
+    title.style.fontSize = "1rem"; // Reduced from 1.3rem
     title.style.fontWeight = "700";
     title.style.color = "var(--text-color)";
     title.style.display = "flex";
@@ -2208,7 +2220,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     title.style.whiteSpace = "nowrap";
     title.style.overflow = "hidden";
     title.style.textOverflow = "ellipsis";
-    title.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:10px;background:${color}15;color:${color}"><i class="fas fa-folder"></i></div> ${folder.title}`;
+    title.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:${color}15;color:${color}"><i class="fas fa-folder"></i></div> ${folder.title}`;
     
     const countBadge = document.createElement("span");
     countBadge.style.background = "var(--bg-tertiary)";
@@ -2325,34 +2337,58 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   elements.folderListDiv.className = "folder-list kanban-view";
   elements.folderListDiv.style.display = "block";
   
+  const isPopup = window.innerWidth < 600;
+  
   const container = document.createElement("div");
   container.style.display = "flex";
-  container.style.gap = "20px";
-  container.style.padding = "16px";
-  container.style.overflowX = "auto";
+  container.style.gap = isPopup ? "16px" : "20px";
+  container.style.padding = isPopup ? "0" : "16px"; // Fixed padding in popup
+  container.style.overflowX = isPopup ? "auto" : "visible"; // Allow wrapping in webview
   container.style.overflowY = "hidden";
   container.style.height = "100%";
-  container.style.minHeight = "60vh";
+  container.style.minHeight = isPopup ? "400px" : "60vh";
   container.style.alignItems = "stretch";
+  container.style.flexWrap = isPopup ? "nowrap" : "wrap"; // Wrap in webview
+  container.style.scrollSnapType = isPopup ? "x mandatory" : "none";
   container.classList.add("custom-scrollbar");
   
   const folders = getFolders(bookmarkTreeNodes);
+  const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6"];
   
-  folders.forEach((folder) => {
+  folders.forEach((folder, index) => {
     const folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
     if (folderBookmarks.length === 0) return;
+    
+    const accent = colors[index % colors.length];
     
     const column = document.createElement("div");
     column.style.background = "var(--bg-secondary)";
     column.style.border = "1px solid var(--border-color)";
     column.style.borderRadius = "var(--border-radius-lg, 8px)";
-    column.style.minWidth = "280px";
-    column.style.maxWidth = "320px";
-    column.style.flex = "0 0 auto";
+    column.style.minWidth = isPopup ? "100%" : "280px"; // 100% in popup for perfect fit
+    column.style.maxWidth = isPopup ? "100%" : "320px";
+    column.style.flex = isPopup ? "0 0 auto" : "1 1 280px"; // Grow and wrap in webview
     column.style.display = "flex";
     column.style.flexDirection = "column";
+    column.style.maxHeight = isPopup ? "450px" : "65vh"; // Limit height for scroll
+    column.style.height = "100%";
     column.style.padding = "12px";
     column.style.boxShadow = "var(--shadow-sm)";
+    column.style.scrollSnapAlign = "start"; // Snap column to start
+    column.style.position = "relative";
+    // Removed overflow: hidden so dropdown menu isn't cut off
+    
+    // Top accent line
+    const accentLine = document.createElement("div");
+    accentLine.style.position = "absolute";
+    accentLine.style.top = "0";
+    accentLine.style.left = "0";
+    accentLine.style.width = "100%";
+    accentLine.style.height = "4px";
+    accentLine.style.background = `linear-gradient(90deg, ${accent}, transparent)`;
+    accentLine.style.borderTopLeftRadius = "var(--border-radius-lg, 8px)";
+    accentLine.style.borderTopRightRadius = "var(--border-radius-lg, 8px)";
+    column.appendChild(accentLine);
     
     const header = document.createElement("div");
     header.style.padding = "4px 4px 12px 4px";
@@ -2423,6 +2459,8 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       card.style.textDecoration = "none";
       card.style.color = "var(--text-primary)";
       card.style.transition = "background-color 0.2s, border-color 0.2s";
+      card.style.position = "relative";
+      // Removed overflow: hidden so dropdown isn't cut off
       
       card.onmouseover = () => {
         card.style.background = "var(--bookmark-hover-bg, var(--hover-bg))";
