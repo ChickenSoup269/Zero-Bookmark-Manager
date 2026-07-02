@@ -2340,16 +2340,19 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const isPopup = window.innerWidth < 600;
   
   const container = document.createElement("div");
-  container.style.display = "flex";
+  container.style.display = isPopup ? "flex" : "grid";
+  container.style.gridTemplateColumns = isPopup ? "none" : "repeat(auto-fill, minmax(280px, 1fr))";
+  container.style.gridAutoRows = isPopup ? "auto" : "1fr"; // Force all rows to be equal height if we want full uniformity, or omit to let rows adjust independently. We will let rows adjust independently but stretch within row.
   container.style.gap = isPopup ? "16px" : "20px";
-  container.style.padding = isPopup ? "0" : "16px"; // Fixed padding in popup
-  container.style.overflowX = isPopup ? "auto" : "visible"; // Allow wrapping in webview
+  container.style.padding = isPopup ? "0" : "16px";
+  container.style.overflowX = isPopup ? "auto" : "visible";
   container.style.overflowY = "hidden";
-  container.style.height = "100%";
   container.style.minHeight = isPopup ? "400px" : "60vh";
   container.style.alignItems = "stretch";
-  container.style.flexWrap = isPopup ? "nowrap" : "wrap"; // Wrap in webview
-  container.style.scrollSnapType = isPopup ? "x mandatory" : "none";
+  if (isPopup) {
+    container.style.flexWrap = "nowrap";
+    container.style.scrollSnapType = "x mandatory";
+  }
   container.classList.add("custom-scrollbar");
   
   const folders = getFolders(bookmarkTreeNodes);
@@ -2363,56 +2366,63 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
     
     const column = document.createElement("div");
     column.style.background = "var(--bg-secondary)";
+    column.style.backdropFilter = "blur(12px)";
+    column.style.webkitBackdropFilter = "blur(12px)";
     column.style.border = "1px solid var(--border-color)";
-    column.style.borderRadius = "var(--border-radius-lg, 8px)";
-    column.style.minWidth = isPopup ? "100%" : "280px"; // 100% in popup for perfect fit
+    column.style.borderRadius = "20px"; // Bento style rounded corners
+    column.style.minWidth = isPopup ? "100%" : "280px"; 
     column.style.maxWidth = isPopup ? "100%" : "320px";
-    column.style.flex = isPopup ? "0 0 auto" : "1 1 280px"; // Grow and wrap in webview
+    column.style.flex = isPopup ? "0 0 auto" : "1 1 280px"; 
     column.style.display = "flex";
     column.style.flexDirection = "column";
-    column.style.maxHeight = isPopup ? "450px" : "65vh"; // Limit height for scroll
-    column.style.height = "100%";
-    column.style.padding = "12px";
-    column.style.boxShadow = "var(--shadow-sm)";
-    column.style.scrollSnapAlign = "start"; // Snap column to start
+    column.style.maxHeight = isPopup ? "450px" : "65vh"; 
+    // Removed height: 100% to allow flex/grid stretch to work naturally
+    column.style.padding = "16px";
+    column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
+    column.style.scrollSnapAlign = "start"; 
     column.style.position = "relative";
-    // Removed overflow: hidden so dropdown menu isn't cut off
+    column.style.transition = "transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)";
     
-    // Top accent line
-    const accentLine = document.createElement("div");
-    accentLine.style.position = "absolute";
-    accentLine.style.top = "0";
-    accentLine.style.left = "0";
-    accentLine.style.width = "100%";
-    accentLine.style.height = "4px";
-    accentLine.style.background = `linear-gradient(90deg, ${accent}, transparent)`;
-    accentLine.style.borderTopLeftRadius = "var(--border-radius-lg, 8px)";
-    accentLine.style.borderTopRightRadius = "var(--border-radius-lg, 8px)";
-    column.appendChild(accentLine);
+    // Smooth hover effect
+    column.onmouseover = () => {
+      column.style.transform = "translateY(-4px)";
+      column.style.boxShadow = "0 14px 28px rgba(0, 0, 0, 0.1)";
+    };
+    column.onmouseout = () => {
+      column.style.transform = "translateY(0)";
+      column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
+    };
     
     const header = document.createElement("div");
-    header.style.padding = "4px 4px 12px 4px";
+    header.style.padding = "0 0 16px 0";
     header.style.display = "flex";
     header.style.alignItems = "center";
     header.style.justifyContent = "space-between";
-    header.style.borderBottom = "1px solid var(--border-color)";
-    header.style.marginBottom = "12px";
+    header.style.marginBottom = "8px";
     
     const titleWrap = document.createElement("div");
     titleWrap.style.display = "flex";
     titleWrap.style.alignItems = "center";
-    titleWrap.style.gap = "8px";
+    titleWrap.style.gap = "12px";
     titleWrap.style.overflow = "hidden";
     
     const iconSpan = document.createElement("div");
-    iconSpan.style.color = "var(--text-option, var(--text-primary))";
-    iconSpan.innerHTML = `<i class="fas fa-folder"></i>`;
+    iconSpan.style.background = `${accent}20`; // 20 hex opacity
+    iconSpan.style.color = accent;
+    iconSpan.style.display = "flex";
+    iconSpan.style.alignItems = "center";
+    iconSpan.style.justifyContent = "center";
+    iconSpan.style.width = "36px";
+    iconSpan.style.height = "36px";
+    iconSpan.style.borderRadius = "10px";
+    iconSpan.style.boxShadow = `0 4px 10px ${accent}30`;
+    iconSpan.innerHTML = `<i class="fas fa-folder" style="font-size: 1.1rem;"></i>`;
     
     const titleText = document.createElement("span");
     titleText.textContent = folder.title;
-    titleText.style.fontWeight = "600";
-    titleText.style.fontSize = "1rem";
-    titleText.style.color = "var(--folder-title-color, var(--text-primary))";
+    titleText.style.fontWeight = "700";
+    titleText.style.fontSize = "1.05rem";
+    titleText.style.color = "var(--text-primary)";
     titleText.style.whiteSpace = "nowrap";
     titleText.style.overflow = "hidden";
     titleText.style.textOverflow = "ellipsis";
@@ -2422,12 +2432,12 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
     
     const badge = document.createElement("span");
     badge.textContent = folderBookmarks.length;
-    badge.style.background = "var(--bg-tertiary)";
-    badge.style.color = "var(--text-secondary)";
+    badge.style.background = `${accent}15`;
+    badge.style.color = accent;
     badge.style.fontSize = "0.75rem";
-    badge.style.fontWeight = "600";
-    badge.style.padding = "2px 8px";
-    badge.style.borderRadius = "12px";
+    badge.style.fontWeight = "700";
+    badge.style.padding = "4px 10px";
+    badge.style.borderRadius = "20px";
     
     header.appendChild(titleWrap);
     header.appendChild(badge);
@@ -2445,30 +2455,35 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
     
     folderBookmarks.forEach(b => {
       const card = document.createElement("div");
+      card.className = "kanban-bookmark-card"; // Added class for z-index management
       card.style.cursor = "pointer";
       card.onclick = (e) => {
         if (!e.target.closest('.dropdown-btn-group')) window.open(b.url, '_blank');
       };
-      card.style.background = "var(--bookmark-bg, var(--bg-primary))";
-      card.style.border = "1px solid var(--border-color)";
-      card.style.padding = "10px";
-      card.style.borderRadius = "6px";
+      card.style.background = "var(--bg-primary)";
+      card.style.border = "1px solid transparent"; // Invisible border to prevent shift on hover
+      card.style.padding = "10px 12px";
+      card.style.borderRadius = "12px";
       card.style.display = "flex";
       card.style.alignItems = "center";
       card.style.gap = "12px";
       card.style.textDecoration = "none";
       card.style.color = "var(--text-primary)";
-      card.style.transition = "background-color 0.2s, border-color 0.2s";
+      card.style.transition = "all 0.2s ease";
       card.style.position = "relative";
-      // Removed overflow: hidden so dropdown isn't cut off
+      card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)";
       
       card.onmouseover = () => {
-        card.style.background = "var(--bookmark-hover-bg, var(--hover-bg))";
-        card.style.borderColor = "var(--accent-color, var(--border-color))";
+        card.style.background = "var(--hover-bg, var(--bg-tertiary))";
+        card.style.borderColor = "var(--border-color)";
+        card.style.transform = "translateY(-2px)";
+        card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.06)";
       };
       card.onmouseout = () => {
-        card.style.background = "var(--bookmark-bg, var(--bg-primary))";
-        card.style.borderColor = "var(--border-color)";
+        card.style.background = "var(--bg-primary)";
+        card.style.borderColor = "transparent";
+        card.style.transform = "translateY(0)";
+        card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)";
       };
       
       const icon = document.createElement("img");

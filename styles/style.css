@@ -3723,3 +3723,11 @@ html {
 .folder-list.bento-view {
   display: block !important;
 }
+
+/* Kanban card z-index fix to ensure open dropdowns are not covered by other cards */
+.kanban-bookmark-card {
+  z-index: 1;
+}
+.kanban-bookmark-card:has(.dropdown-menu:not(.hidden)) {
+  z-index: 100;
+}
