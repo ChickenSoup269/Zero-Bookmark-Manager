@@ -54,13 +54,17 @@ export function attachDropdownListeners() {
           dropdownMenu.style.right = "auto";
           
           const rect = button.getBoundingClientRect();
-          let x = rect.left;
-          let y = rect.bottom;
-          
           const menuRect = dropdownMenu.getBoundingClientRect();
+          
+          // Align right edge of menu with right edge of button
+          let x = rect.right - menuRect.width;
+          let y = rect.bottom + 4; // 4px gap
+          
+          if (x < 0) x = 5;
           if (x + menuRect.width > window.innerWidth) x = window.innerWidth - menuRect.width - 5;
+          
           if (y + menuRect.height > window.innerHeight) {
-            y = rect.top - menuRect.height;
+            y = rect.top - menuRect.height - 4;
             if (y < 0) y = 5;
           }
           

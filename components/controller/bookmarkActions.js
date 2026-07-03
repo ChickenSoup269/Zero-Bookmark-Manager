@@ -501,10 +501,7 @@ async function openManageTagsPopup(bookmarkId) {
     }
   }
 
-  const tagSelect = document.querySelector(".existing-tags-select")
-
   if (!textColorInput) console.error("new-tag-text-color input not found!")
-  if (!tagSelect) console.error("existing-tags-select dropdown not found!")
 
   let userHasManuallySetTextColor = false
   if (textColorInput) {
@@ -573,12 +570,6 @@ async function openManageTagsPopup(bookmarkId) {
   }
 
   let existingTagChips = popup.querySelector(".existing-tags-chip-list")
-  if (!existingTagChips && tagSelect) {
-    existingTagChips = document.createElement("div")
-    existingTagChips.className = "existing-tags-chip-list"
-    existingTagChips.setAttribute("aria-label", "Available tags")
-    tagSelect.after(existingTagChips)
-  }
 
   const renderExistingTagChips = (tags) => {
     if (!existingTagChips) return
@@ -615,22 +606,6 @@ async function openManageTagsPopup(bookmarkId) {
   // --- Logic ---
   const updateDropdown = async () => {
     const tags = await getAllTags()
-    const currentTags = new Set(uiState.bookmarkTags[bookmarkId] || [])
-    const availableTags = tags.filter((tag) => !currentTags.has(tag))
-    tagSelect.innerHTML = `<option value="">${getTranslation(
-      "selectTag",
-      "Select Tag",
-    )}</option>`
-    availableTags.forEach((t) => {
-      const opt = document.createElement("option")
-      opt.value = t
-      opt.textContent = t
-      opt.style.backgroundColor = uiState.tagColors[t] || "#ccc"
-      opt.style.color =
-        uiState.tagTextColors?.[t] ||
-        getContrastColor(uiState.tagColors[t] || "#ccc")
-      tagSelect.appendChild(opt)
-    })
     renderExistingTagChips(tags)
   }
 
@@ -707,10 +682,6 @@ async function openManageTagsPopup(bookmarkId) {
   }
 
   // Events
-  attachListener(tagSelect, "change", () => {
-    handleAddTag(tagSelect.value)
-    tagSelect.value = ""
-  })
 
   attachListener(existingTagChips, "click", (event) => {
     const chip = event.target.closest("[data-existing-tag]")

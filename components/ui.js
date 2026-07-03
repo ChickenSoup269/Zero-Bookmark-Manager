@@ -2438,7 +2438,7 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   container.style.gridTemplateColumns = isPopup ? "none" : "repeat(auto-fill, minmax(280px, 1fr))";
   container.style.gridAutoRows = isPopup ? "auto" : "1fr"; 
   container.style.gap = isPopup ? "16px" : "20px";
-  container.style.padding = isPopup ? "0" : "16px";
+  container.style.padding = isPopup ? "0" : "16px 8px";
   container.style.overflowX = "hidden";
   container.style.overflowY = isPopup ? "visible" : "hidden";
   container.style.alignItems = "stretch";
@@ -2471,7 +2471,7 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
     column.style.flexDirection = "column";
     column.style.maxHeight = isPopup ? "400px" : "65vh"; 
     // Removed height: 100% to allow flex/grid stretch to work naturally
-    column.style.padding = "16px";
+    column.style.padding = "12px 10px";
     column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
     column.style.scrollSnapAlign = "start"; 
     column.style.position = "relative";
@@ -2556,7 +2556,7 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       };
       card.style.background = "var(--bg-primary)";
       card.style.border = "1px solid transparent"; // Invisible border to prevent shift on hover
-      card.style.padding = "10px 12px";
+      card.style.padding = "8px 10px";
       card.style.borderRadius = "12px";
       card.style.display = "flex";
       card.style.alignItems = "center";
