@@ -55,14 +55,14 @@
                         <option value="lexend" data-i18n="fontLexend">Aa: Lexend</option>
                     </select>
                     <select id="view-switcher" class="select select-with-icons">
-                        <option value="bento">&#xf009; Bento Box</option>
-                        <option value="kanban">&#xf0db; Kanban Board</option>
-                        <option value="mockup">&#xf03e; Gallery View</option>
                         <option value="flat">&#xf03a; Flat List</option>
                         <option value="tree">&#xf0e8; Tree View</option>
                         <option value="detail">&#xf05a; Detail View</option>
                         <option value="card">&#xf009; Card View</option>
                         <option value="list">&#xf03c; List View</option>
+                        <option value="bento">&#xf009; Bento Box</option>
+                        <option value="kanban">&#xf0db; Kanban Board</option>
+                        <option value="mockup">&#xf03e; Gallery View</option>
                     </select>
                     <label class="toggle-row" for="folder-list-bg-toggle">
                         <span data-i18n="sidebarListBg">List Background</span>
@@ -78,7 +78,7 @@
                     <button id="export-bookmarks-option" class="menu-item">Export Bookmarks</button>
                     <button id="import-bookmarks-option" class="menu-item">Import Bookmarks</button>
                     <button id="google-drive-sync-btn" class="menu-item">
-                        <i class="fab fa-google-drive" aria-hidden="true" style="margin-right: 8px;"></i> Cloud Sync
+                        <i class="fab fa-google-drive" aria-hidden="true" style="margin-right: 8px;"></i> <span data-i18n="cloudSync">Cloud Sync</span>
                     </button>
                     <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
                     <button id="organize-folders-button" class="menu-item">
@@ -333,26 +333,46 @@
                         <input type="hidden" id="new-tag-text-color" value="#000000">
                     </div>
                     <div class="color-palette-container">
-                        <button type="button" class="color-swatch" data-color="#EF4444" style="background-color:#EF4444;"></button>
-                        <button type="button" class="color-swatch" data-color="#F97316" style="background-color:#F97316;"></button>
-                        <button type="button" class="color-swatch" data-color="#F59E0B" style="background-color:#F59E0B;"></button>
-                        <button type="button" class="color-swatch" data-color="#EAB308" style="background-color:#EAB308;"></button>
-                        <button type="button" class="color-swatch" data-color="#84CC16" style="background-color:#84CC16;"></button>
-                        <button type="button" class="color-swatch" data-color="#22C55E" style="background-color:#22C55E;"></button>
-                        <button type="button" class="color-swatch" data-color="#14B8A6" style="background-color:#14B8A6;"></button>
-                        <button type="button" class="color-swatch" data-color="#06B6D4" style="background-color:#06B6D4;"></button>
-                        <button type="button" class="color-swatch" data-color="#0EA5E9" style="background-color:#0EA5E9;"></button>
-                        <button type="button" class="color-swatch" data-color="#3B82F6" style="background-color:#3B82F6;"></button>
-                        <button type="button" class="color-swatch" data-color="#6366F1" style="background-color:#6366F1;"></button>
-                        <button type="button" class="color-swatch" data-color="#8B5CF6" style="background-color:#8B5CF6;"></button>
-                        <button type="button" class="color-swatch" data-color="#A855F7" style="background-color:#A855F7;"></button>
-                        <button type="button" class="color-swatch" data-color="#D946EF" style="background-color:#D946EF;"></button>
-                        <button type="button" class="color-swatch" data-color="#EC4899" style="background-color:#EC4899;"></button>
-                        <button type="button" class="color-swatch" data-color="#F43F5E" style="background-color:#F43F5E;"></button>
-                        <button type="button" class="color-swatch" data-color="#78716C" style="background-color:#78716C;"></button>
-                        <button type="button" class="color-swatch" data-color="#64748B" style="background-color:#64748B;"></button>
-                        <button type="button" class="color-swatch" data-color="#111827" style="background-color:#111827;"></button>
-                        <button type="button" class="color-swatch" data-color="#FFFFFF" style="background-color:#FFFFFF;"></button>
+                        <button type="button" class="color-swatch" data-color="#EF4444"
+                            style="background-color:#EF4444;"></button>
+                        <button type="button" class="color-swatch" data-color="#F97316"
+                            style="background-color:#F97316;"></button>
+                        <button type="button" class="color-swatch" data-color="#F59E0B"
+                            style="background-color:#F59E0B;"></button>
+                        <button type="button" class="color-swatch" data-color="#EAB308"
+                            style="background-color:#EAB308;"></button>
+                        <button type="button" class="color-swatch" data-color="#84CC16"
+                            style="background-color:#84CC16;"></button>
+                        <button type="button" class="color-swatch" data-color="#22C55E"
+                            style="background-color:#22C55E;"></button>
+                        <button type="button" class="color-swatch" data-color="#14B8A6"
+                            style="background-color:#14B8A6;"></button>
+                        <button type="button" class="color-swatch" data-color="#06B6D4"
+                            style="background-color:#06B6D4;"></button>
+                        <button type="button" class="color-swatch" data-color="#0EA5E9"
+                            style="background-color:#0EA5E9;"></button>
+                        <button type="button" class="color-swatch" data-color="#3B82F6"
+                            style="background-color:#3B82F6;"></button>
+                        <button type="button" class="color-swatch" data-color="#6366F1"
+                            style="background-color:#6366F1;"></button>
+                        <button type="button" class="color-swatch" data-color="#8B5CF6"
+                            style="background-color:#8B5CF6;"></button>
+                        <button type="button" class="color-swatch" data-color="#A855F7"
+                            style="background-color:#A855F7;"></button>
+                        <button type="button" class="color-swatch" data-color="#D946EF"
+                            style="background-color:#D946EF;"></button>
+                        <button type="button" class="color-swatch" data-color="#EC4899"
+                            style="background-color:#EC4899;"></button>
+                        <button type="button" class="color-swatch" data-color="#F43F5E"
+                            style="background-color:#F43F5E;"></button>
+                        <button type="button" class="color-swatch" data-color="#78716C"
+                            style="background-color:#78716C;"></button>
+                        <button type="button" class="color-swatch" data-color="#64748B"
+                            style="background-color:#64748B;"></button>
+                        <button type="button" class="color-swatch" data-color="#111827"
+                            style="background-color:#111827;"></button>
+                        <button type="button" class="color-swatch" data-color="#FFFFFF"
+                            style="background-color:#FFFFFF;"></button>
                     </div>
                 </div>
 
@@ -464,19 +484,23 @@
                 <div class="first-run-guide">
                     <div class="first-run-guide-step">
                         <span class="first-run-step-icon"><i class="far fa-star"></i></span>
-                        <span data-i18n="firstRunGuideStep1">Open any website and click the Chrome star in the address bar.</span>
+                        <span data-i18n="firstRunGuideStep1">Open any website and click the Chrome star in the address
+                            bar.</span>
                     </div>
                     <div class="first-run-guide-step">
                         <span class="first-run-step-icon"><i class="fas fa-keyboard"></i></span>
-                        <span data-i18n="firstRunGuideStepShortcut">Use Ctrl + D on Windows/Linux or Command + D on macOS to bookmark the current page faster.</span>
+                        <span data-i18n="firstRunGuideStepShortcut">Use Ctrl + D on Windows/Linux or Command + D on
+                            macOS to bookmark the current page faster.</span>
                     </div>
                     <div class="first-run-guide-step">
                         <span class="first-run-step-icon"><i class="fas fa-folder-plus"></i></span>
-                        <span data-i18n="firstRunGuideStep2">Choose a folder, then press Done to save the bookmark.</span>
+                        <span data-i18n="firstRunGuideStep2">Choose a folder, then press Done to save the
+                            bookmark.</span>
                     </div>
                     <div class="first-run-guide-step">
                         <span class="first-run-step-icon"><i class="fas fa-bookmark"></i></span>
-                        <span data-i18n="firstRunGuideStep3">Open Zero Bookmark to manage, search, and organize it.</span>
+                        <span data-i18n="firstRunGuideStep3">Open Zero Bookmark to manage, search, and organize
+                            it.</span>
                     </div>
                 </div>
                 <div class="rename-input-container">
@@ -519,17 +543,21 @@
     <!-- Cloud Sync Modal -->
     <div id="cloud-sync-popup" class="custom-popup-overlay hidden">
         <div class="custom-popup">
-            <h3 style="margin-top:0; color: var(--primary-color)"><i class="fab fa-google-drive"></i> Google Drive Sync</h3>
-            <p style="margin-bottom: 20px; font-size: 14px; color: var(--text-color);">Backup or restore your bookmarks using Google Drive.</p>
+            <h3 style="margin-top:0; color: var(--primary-color)"><i class="fab fa-google-drive"></i> Google Drive Sync
+            </h3>
+            <p style="margin-bottom: 20px; font-size: 14px; color: var(--text-color);">Backup or restore your bookmarks
+                using Google Drive.</p>
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <button id="btn-backup-drive" class="button save" style="width: 100%; justify-content: center;">
                     <i class="fas fa-cloud-upload-alt"></i> Backup to Drive
                 </button>
-                <button id="btn-restore-drive" class="button" style="width: 100%; justify-content: center; background: var(--bg-tertiary);">
+                <button id="btn-restore-drive" class="button"
+                    style="width: 100%; justify-content: center; background: var(--bg-tertiary);">
                     <i class="fas fa-cloud-download-alt"></i> Restore from Drive
                 </button>
             </div>
-            <p id="sync-status-message" style="margin-top: 15px; font-size: 13px; text-align: center; font-weight: bold;"></p>
+            <p id="sync-status-message"
+                style="margin-top: 15px; font-size: 13px; text-align: center; font-weight: bold;"></p>
             <div style="text-align: right; margin-top: 15px;">
                 <button id="cloud-sync-close" class="button cancel">Close</button>
             </div>

@@ -3716,7 +3716,8 @@ html {
   border-radius: 8px; min-width: 180px; padding: 4px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
 }
-}
+
+}
 
 /* Override default grid layout for Kanban and Bento views */
 .folder-list.kanban-view,
@@ -3925,15 +3926,15 @@ html {
   }
   
   /* --- List View Mobile --- */
-  .list-view-header {
+  body.popup .list-view-header {
     display: none !important; /* Hide header on mobile */
   }
-  .list-bookmark-item {
-    grid-template-columns: 24px 30px minmax(0, 1fr) auto !important; /* Hide tags column */
+  body.popup .list-bookmark-item {
+    grid-template-columns: max-content 30px minmax(0, 1fr) auto !important; /* Hide tags column */
     gap: 8px !important;
     padding: 12px 10px !important;
   }
-  .list-tags {
+  body.popup .list-tags {
     display: none !important;
   }
 }

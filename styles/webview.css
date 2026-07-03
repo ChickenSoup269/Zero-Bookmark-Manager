@@ -4907,7 +4907,7 @@ textarea.error {
 
 .list-view-header {
   display: grid;
-  grid-template-columns: 30px 40px minmax(0, 1fr) auto auto;
+  grid-template-columns: max-content 40px minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 15px;
   padding: 10px 16px;
@@ -4922,7 +4922,7 @@ textarea.error {
 
 .list-bookmark-item {
   display: grid;
-  grid-template-columns: 30px 40px minmax(0, 1fr) auto auto;
+  grid-template-columns: max-content 40px minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 15px;
   padding: 12px 16px;
@@ -5029,7 +5029,7 @@ textarea.error {
 @media (max-width: 900px) {
   .list-bookmark-item,
   .list-view-header {
-    grid-template-columns: 30px 40px 1fr auto auto;
+    grid-template-columns: max-content 40px 1fr auto auto;
     gap: 10px;
   }
 }
@@ -5037,7 +5037,7 @@ textarea.error {
 @media (max-width: 768px) {
   .list-bookmark-item,
   .list-view-header {
-    grid-template-columns: 30px 40px 1fr auto;
+    grid-template-columns: max-content 40px 1fr auto;
     gap: 8px;
   }
 
@@ -5050,7 +5050,7 @@ textarea.error {
 @media (max-width: 480px) {
   .list-bookmark-item,
   .list-view-header {
-    grid-template-columns: 30px 1fr auto;
+    grid-template-columns: max-content 1fr auto;
     padding: 8px;
   }
 

@@ -2031,7 +2031,7 @@ function renderListView(bookmarksList, elements) {
   const header = document.createElement("div")
   header.className = "list-view-header"
   header.innerHTML = `
-    <div class="header-col-check"></div>
+    <div class="header-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden; display: flex; align-items: center;"></div>
     <div class="header-col-icon"></div>
     <div class="header-col-info">Name & URL</div>
     <div class="header-col-tags" style="text-align: right;">Tags</div>
@@ -2045,6 +2045,7 @@ function renderListView(bookmarksList, elements) {
     backRow.className = "list-bookmark-item back-row"
     backRow.style.cursor = "pointer"
     backRow.innerHTML = `
+      <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden;"></div>
       <div style="width: 40px;"></div>
       <div class="list-info-main" style="display: flex; align-items: center; gap: 5px; width: 100%; min-width: 300px;">
         <span style="font-size: 1.2rem; margin-right: 10px;">↩</span>
@@ -2147,7 +2148,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const folders = getFolders(bookmarkTreeNodes);
   const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6", "#FF3B30", "#34C759", "#AF52DE"];
   
-  folders.forEach((folder, index) => {
+  sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
     const folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
     if (folderBookmarks.length === 0) return;
     
@@ -2368,7 +2369,7 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const folders = getFolders(bookmarkTreeNodes);
   const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6"];
   
-  folders.forEach((folder, index) => {
+  sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
     const folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
     if (folderBookmarks.length === 0) return;
     
@@ -2650,8 +2651,10 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       if (elements.folderFilter) elements.folderFilter.value = ""
     }
   } else {
-    folders.forEach((folder) => {
+    sortFoldersArray(folders, uiState.sortType).forEach((folder) => {
+
       if (folder.id === "0") return
+
 
       const folderBookmarks = filteredBookmarks.filter(
         (bookmark) =>
@@ -3164,7 +3167,9 @@ function createListBookmarkElement(bookmark, language, elements) {
   } catch (e) {}
 
   div.innerHTML = `
-    <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(0.9);">
+    <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+      <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(0.9);">
+    </div>
     <div class="bookmark-favicon" style="width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; border-radius: 4px;">
       <img src="${favicon}" style="width: 14px; height: 14px;" onerror="window.handleFaviconError(this, '${hostname}')">
     </div>
@@ -4285,16 +4290,8 @@ function toggleFolderButtons(elements) {
 }
 
 function sortBookmarks(list, type) {
-  // Map visit counts from background script to accessCount for sorting
-  const bookmarksWithCounts = list.map((bookmark) => ({
-    ...bookmark,
-    accessCount: uiState.visitCounts
-      ? uiState.visitCounts[bookmark.id] || 0
-      : 0,
-  }))
-
-  const pinned = bookmarksWithCounts.filter((b) => b.isPinned)
-  const unpinned = bookmarksWithCounts.filter((b) => !b.isPinned)
+  const pinned = list.filter((b) => b.isPinned)
+  const unpinned = list.filter((b) => !b.isPinned)
 
   const sortFn = (a, b) => {
     switch (type) {
@@ -4307,11 +4304,13 @@ function sortBookmarks(list, type) {
       case "old":
         return (a.dateAdded || 0) - (b.dateAdded || 0)
       case "a-z":
-        return (a.title || a.url).localeCompare(b.title || b.url)
+        return (a.title || a.url || "").localeCompare(b.title || b.url || "")
       case "z-a":
-        return (b.title || b.url).localeCompare(a.title || a.url)
+        return (b.title || b.url || "").localeCompare(a.title || a.url || "")
       case "most-visited":
         return (b.accessCount || 0) - (a.accessCount || 0)
+      case "last-opened":
+        return (b.lastOpened || b.dateAdded || 0) - (a.lastOpened || a.dateAdded || 0)
       case "domain":
         return extractDomain(a.url).localeCompare(extractDomain(b.url))
       default:
@@ -4319,9 +4318,7 @@ function sortBookmarks(list, type) {
     }
   }
 
-  pinned.sort(sortFn)
-  unpinned.sort(sortFn)
-  return [...pinned, ...unpinned]
+  return [...pinned.sort(sortFn), ...unpinned.sort(sortFn)]
 }
 
 function countFolderItems(node) {
@@ -4606,3 +4603,17 @@ document.addEventListener("mouseout", (e) => {
 document.addEventListener("scroll", () => {
   globalTooltip.classList.remove("show");
 }, true);
+
+function sortFoldersArray(foldersArr, type) {
+  const sorted = [...foldersArr]
+  if (type === "a-z") {
+    sorted.sort((a, b) => (a.title || "").localeCompare(b.title || ""))
+  } else if (type === "z-a") {
+    sorted.sort((a, b) => (b.title || "").localeCompare(a.title || ""))
+  } else if (type === "new") {
+    sorted.sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0))
+  } else if (type === "old") {
+    sorted.sort((a, b) => (a.dateAdded || 0) - (b.dateAdded || 0))
+  }
+  return sorted
+}
