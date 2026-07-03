@@ -99,6 +99,10 @@ function renderList(title, items, getMeta, intro = "") {
     `
   }
 
+  const limit = 18;
+  const initialItems = items.slice(0, limit);
+  const hiddenItems = items.slice(limit);
+
   return `
     <div class="smart-cleanup-detail-title">
       <h4>${escapeHtml(title)}</h4>
@@ -106,8 +110,7 @@ function renderList(title, items, getMeta, intro = "") {
     </div>
     ${intro ? `<p class="smart-cleanup-detail-intro">${escapeHtml(intro)}</p>` : ""}
     <ul class="smart-cleanup-list">
-      ${items
-        .slice(0, 18)
+      ${initialItems
         .map(
           (item) => `
             <li>
@@ -117,10 +120,24 @@ function renderList(title, items, getMeta, intro = "") {
           `,
         )
         .join("")}
+      ${hiddenItems.length ? `
+          <div class="smart-cleanup-hidden-items" style="display: none;">
+            ${hiddenItems
+              .map(
+                (item) => `
+                  <li>
+                    <strong>${escapeHtml(item.title || item.url || item.id)}</strong>
+                    <span>${escapeHtml(getMeta(item))}</span>
+                  </li>
+                `,
+              )
+              .join("")}
+          </div>
+      ` : ""}
     </ul>
     ${
-      items.length > 18
-        ? `<p class="smart-cleanup-more">+${items.length - 18} ${escapeHtml(t("smartCleanupMore", "more"))}</p>`
+      hiddenItems.length
+        ? `<button type="button" class="button smart-cleanup-more-btn" style="width: 100%; margin-top: 8px; background: transparent; color: var(--text-primary); border: 1px solid var(--border-color);">+${hiddenItems.length} ${escapeHtml(t("smartCleanupMore", "more"))}</button>`
         : ""
     }
   `
@@ -335,6 +352,7 @@ export function initCleanupDashboard(elements) {
           (bookmark) => bookmark.url,
           t("smartCleanupUntaggedIntro", "Good candidates for the new tag suggestions in Bookmark Detail."),
         ),
+        action: "untagged"
       }),
       empty: () => ({
         html: renderList(
@@ -394,8 +412,24 @@ export function initCleanupDashboard(elements) {
             ? `<button type="button" class="button delete" data-cleanup-action="empty">${escapeHtml(t("smartCleanupDeleteEmpty", "Delete Empty Folders"))}</button>`
             : ""
         }
+        ${
+          selectedDetail.action === "untagged" && untaggedBookmarks.length > 0
+            ? `<button type="button" class="button save" data-cleanup-action="untagged">${escapeHtml(t("smartCleanupFilterUntagged", "Filter Untagged"))}</button>`
+            : ""
+        }
       </div>
     `
+
+    const moreBtn = details.querySelector(".smart-cleanup-more-btn")
+    if (moreBtn) {
+      moreBtn.addEventListener("click", () => {
+        const hiddenDiv = details.querySelector(".smart-cleanup-hidden-items")
+        if (hiddenDiv) {
+          hiddenDiv.style.display = "block"
+          moreBtn.style.display = "none"
+        }
+      })
+    }
 
     details.querySelector("[data-cleanup-action='duplicates']")?.addEventListener("click", () => {
       openDuplicateMergeModal({
@@ -425,6 +459,13 @@ export function initCleanupDashboard(elements) {
         Promise.all(emptyFolders.map(f => new Promise(res => chrome.bookmarks.remove(f.id, res))))
           .then(() => setTimeout(() => render("empty"), 500))
       }
+    })
+    details.querySelector("[data-cleanup-action='untagged']")?.addEventListener("click", () => {
+      // Add logic for untagged action: for instance filtering
+      close()
+      // Open tags browser popup, or apply a specific filter. 
+      // Right now we can just show the tags browser or simply close and let the user filter manually.
+      document.getElementById("tag-expand-btn")?.click()
     })
 
     grid.querySelectorAll("[data-cleanup]").forEach((card) => {

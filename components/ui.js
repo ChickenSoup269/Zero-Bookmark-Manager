@@ -354,29 +354,64 @@ function handleBookmarkLinkClick(bookmarkId, elements) {
 }
 
 function attachDropdownToggle(element) {
-  const btn = element.querySelector(".dropdown-btn")
-  const menu = element.querySelector(".dropdown-menu")
+  // We no longer attach click listener here for .dropdown-btn since controller/dropdown.js handles it globally.
+  // But we DO need to handle contextmenu on the element itself.
 
-  if (btn && menu) {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation()
-      const isHidden = menu.classList.contains("hidden")
-      document
-        .querySelectorAll(".dropdown-menu")
-        .forEach((m) => m.classList.add("hidden"))
-      if (isHidden) menu.classList.remove("hidden")
-    })
+  element.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-    element.addEventListener("contextmenu", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    // Find the button to get the data-id, or just look for the dropdown-menu in this element.
+    const btn = element.querySelector(".dropdown-btn");
+    let menu = element.querySelector(".dropdown-menu");
+    const bookmarkId = btn ? btn.getAttribute("data-id") : null;
+
+    if (!menu && bookmarkId) {
+      // It might have been moved to document.body by click handler or previous contextmenu
+      const bodyMenus = document.body.querySelectorAll(".bookmark-dropdown-menu");
+      bodyMenus.forEach(m => {
+        if (m.querySelector(`[data-id="${bookmarkId}"]`)) {
+          menu = m;
+        }
+      });
+    }
+
+    if (menu) {
       const isHidden = menu.classList.contains("hidden");
+      
       document
         .querySelectorAll(".dropdown-menu")
         .forEach((m) => m.classList.add("hidden"));
-      if (isHidden) menu.classList.remove("hidden");
-    });
 
+      if (isHidden) {
+        if (menu.parentNode !== document.body) {
+          document.body.appendChild(menu);
+        }
+
+        menu.classList.remove("hidden");
+        menu.style.position = "fixed";
+        menu.style.zIndex = "10000";
+        menu.style.right = "auto";
+        let x = e.clientX;
+        let y = e.clientY;
+        const menuRect = menu.getBoundingClientRect();
+        if (x + menuRect.width > window.innerWidth) x = window.innerWidth - menuRect.width - 5;
+        if (y + menuRect.height > window.innerHeight) {
+          y = window.innerHeight - menuRect.height - 5;
+          if (y < 0) y = 5;
+        }
+        menu.style.left = `${x}px`;
+        menu.style.top = `${y}px`;
+      } else {
+        menu.classList.add("hidden");
+      }
+    }
+  });
+
+  const btn = element.querySelector(".dropdown-btn")
+  const menu = element.querySelector(".dropdown-menu")
+  
+  if (btn && menu) {
     element.addEventListener("mouseenter", () => {
       if (
         element.classList.contains("detail-bookmark-item") ||
@@ -386,10 +421,22 @@ function attachDropdownToggle(element) {
       }
     })
     element.addEventListener("mouseleave", () => {
+      // Find the menu wherever it is
+      const bookmarkId = btn.getAttribute("data-id");
+      let currentMenu = menu;
+      if (currentMenu.parentNode === null || currentMenu.parentNode === document.body) {
+        const bodyMenus = document.body.querySelectorAll(".bookmark-dropdown-menu");
+        bodyMenus.forEach(m => {
+          if (m.querySelector(`[data-id="${bookmarkId}"]`)) {
+            currentMenu = m;
+          }
+        });
+      }
+
       if (
         (element.classList.contains("detail-bookmark-item") ||
           element.classList.contains("bookmark-item")) &&
-        menu.classList.contains("hidden")
+        currentMenu && currentMenu.classList.contains("hidden")
       ) {
         btn.style.opacity = "0"
       }
