@@ -897,6 +897,8 @@ function reRenderCurrentView(elements) {
     renderCardView(bookmarkTreeNodes, filtered, elements)
   } else if (uiState.viewMode === "list") {
     renderListView(filtered, elements)
+  } else if (uiState.viewMode === "mockup") {
+    renderMockupView(bookmarkTreeNodes, filtered, elements)
   } else {
     renderBookmarks(filtered, elements)
   }
@@ -1887,6 +1889,8 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         renderCardView(bookmarkTreeNodes, filtered, elements)
       } else if (uiState.viewMode === "list") {
         renderListView(filtered, elements)
+      } else if (uiState.viewMode === "mockup") {
+        renderMockupView(bookmarkTreeNodes, filtered, elements)
       } else {
         renderBookmarks(filtered, elements)
       }
@@ -2128,7 +2132,7 @@ function createListFolderElement(folder, elements) {
 function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
   if (!elements || !elements.folderListDiv) return;
   elements.folderListDiv.innerHTML = "";
-  elements.folderListDiv.className = "folder-list bento-view";
+  elements.folderListDiv.className = `folder-list bento-view ${!uiState.folderListBg ? 'no-bg' : ''}`;
   elements.folderListDiv.style.display = "block";
   
   const isPopup = window.innerWidth < 600;
@@ -2288,9 +2292,11 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
       icon.style.padding = "2px";
       
       const textWrap = document.createElement("div");
+      textWrap.dataset.tooltip = b.title || b.url;
       textWrap.style.display = "flex";
       textWrap.style.flexDirection = "column";
-      textWrap.style.overflow = "hidden";
+      textWrap.style.minWidth = "0";
+      textWrap.style.flex = "1";
       
       const text = document.createElement("span");
       text.textContent = b.title;
@@ -2334,7 +2340,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
 function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   if (!elements || !elements.folderListDiv) return;
   elements.folderListDiv.innerHTML = "";
-  elements.folderListDiv.className = "folder-list kanban-view";
+  elements.folderListDiv.className = `folder-list kanban-view ${!uiState.folderListBg ? 'no-bg' : ''}`;
   elements.folderListDiv.style.display = "block";
   
   const isPopup = window.innerWidth < 600;
@@ -2494,10 +2500,12 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       icon.style.flexShrink = "0";
       
       const titleWrapper = document.createElement("div");
-      titleWrapper.style.overflow = "hidden";
+      titleWrapper.dataset.tooltip = b.title || b.url;
       titleWrapper.style.display = "flex";
       titleWrapper.style.flexDirection = "column";
       titleWrapper.style.gap = "2px";
+      titleWrapper.style.minWidth = "0";
+      titleWrapper.style.flex = "1";
       
       const title = document.createElement("div");
       title.textContent = b.title;
@@ -3058,9 +3066,11 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
     }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
     <div class="bookmark-content">
       <div class="bookmark-favicon"><img src="${favicon}" alt="icon" onerror="window.handleFaviconError(this, '${hostname}')"></div>
-      <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">${
+      <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; display: flex;">
+        <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">${
         bookmark.title || bookmark.url
       }</a>
+      </div>
    ${healthIcon} 
    ${visitCountBadge}
     ${createDropdownHTML(bookmark, language)}
@@ -3100,11 +3110,13 @@ function createDetailBookmarkElement(bookmark, language, elements) {
           onerror="window.handleFaviconError(this, '${hostname}')"
         >
       </div>
-      <a href="${
-        bookmark.url
-      }" target="_blank" style="flex:1;color:var(--text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none; max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-        ${bookmark.title || bookmark.url}
-      </a>
+      <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; display: flex;">
+        <a href="${
+          bookmark.url
+        }" target="_blank" style="flex:1;color:var(--text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none; max-width:160px;">
+          ${bookmark.title || bookmark.url}
+        </a>
+      </div>
        ${healthIcon} 
        ${visitCountBadge}
       ${createDropdownHTML(bookmark, language)}
@@ -4484,3 +4496,108 @@ export function toggleFavorite(bookmarkId, buttonElement) {
     })
   })
 }
+
+function createMockupBookmarkElement(bookmark, language, elements) {
+  const favicon = getFaviconUrl(bookmark.url)
+  const screenshot = `https://image.thum.io/get/width/400/crop/600/${bookmark.url}`;
+  const div = document.createElement("div")
+  div.className = `bookmark-item mockup-bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`;
+  div.dataset.id = bookmark.id
+  const healthIcon = renderHealthIcon(bookmark.id)
+  
+  let hostname = ""
+  try { hostname = new URL(bookmark.url).hostname } catch (e) {}
+
+  div.innerHTML = `
+    <div class="mockup-image-container">
+      <img class="mockup-image" src="${screenshot}" loading="lazy" onerror="this.style.opacity=0">
+      <div class="mockup-overlay"></div>
+    </div>
+    <div class="mockup-content">
+      <div class="mockup-meta">
+        <img class="mockup-favicon" src="${favicon}" onerror="window.handleFaviconError(this, '${hostname}')">
+        <div data-tooltip="${hostname}" style="min-width: 0; flex: 1;">
+          <span class="mockup-hostname" style="display: block;">${hostname}</span>
+        </div>
+      </div>
+      <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; width: 100%;">
+        <a href="${bookmark.url}" target="_blank" class="card-bookmark-title mockup-title">${bookmark.title || bookmark.url}</a>
+      </div>
+      <div class="mockup-footer">
+        ${healthIcon}
+        ${createDropdownHTML(bookmark, language)}
+      </div>
+    </div>
+  `;
+
+  const titleEl = div.querySelector(".card-bookmark-title");
+  if (titleEl) {
+    titleEl.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleBookmarkLinkClick(bookmark.id, elements);
+    });
+  }
+  
+  // Entire card click opens bookmark
+  div.addEventListener("click", (e) => {
+    if (!e.target.closest('button') && !e.target.closest('a') && !e.target.closest('.dropdown-menu-2')) {
+      handleBookmarkLinkClick(bookmark.id, elements);
+    }
+  });
+
+  attachDropdownToggle(div)
+  makeBookmarkDraggableAndDroppable(div, bookmark, elements, language)
+  return div
+}
+
+function renderMockupView(bookmarkTreeNodes, filteredBookmarks, elements) {
+  if (!elements || !elements.folderListDiv) return
+  const fragment = document.createDocumentFragment()
+  const language = localStorage.getItem("appLanguage") || "en"
+  
+  elements.folderListDiv.innerHTML = ""
+  elements.folderListDiv.className = `folder-list mockup-view ${!uiState.folderListBg ? 'no-bg' : ''}`;
+  elements.folderListDiv.style.display = "grid"
+  elements.folderListDiv.style.gridTemplateColumns = "repeat(auto-fill, minmax(240px, 1fr))"
+  elements.folderListDiv.style.gap = "24px"
+  elements.folderListDiv.style.padding = "20px"
+
+  const sortedBookmarks = sortBookmarks(filteredBookmarks, uiState.sortType)
+  sortedBookmarks.forEach((bookmark) => {
+    if (bookmark.url) {
+      const el = createMockupBookmarkElement(bookmark, language, elements)
+      fragment.appendChild(el)
+    }
+  })
+  
+  elements.folderListDiv.appendChild(fragment)
+  if (typeof commonPostRenderOps === "function") commonPostRenderOps(elements);
+}
+
+// --- Global CSS Toast Logic ---
+const globalTooltip = document.createElement("div");
+globalTooltip.className = "global-css-toast";
+document.body.appendChild(globalTooltip);
+
+document.addEventListener("mouseover", (e) => {
+  const target = e.target.closest("[data-tooltip]");
+  if (target && target.dataset.tooltip) {
+    globalTooltip.textContent = target.dataset.tooltip;
+    const rect = target.getBoundingClientRect();
+    globalTooltip.style.left = (rect.left + rect.width / 2) + "px";
+    globalTooltip.style.top = (rect.top - 8) + "px";
+    globalTooltip.classList.add("show");
+  }
+});
+
+document.addEventListener("mouseout", (e) => {
+  if (e.target.closest("[data-tooltip]")) {
+    globalTooltip.classList.remove("show");
+  }
+});
+
+// Hide tooltip on scroll to prevent detached tooltips floating around
+document.addEventListener("scroll", () => {
+  globalTooltip.classList.remove("show");
+}, true);

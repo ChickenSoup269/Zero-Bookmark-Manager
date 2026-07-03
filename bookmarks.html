@@ -33,19 +33,7 @@
                 <span data-i18n="totalBookmarks">Total Bookmarks</span>: <span id="bookmark-count-number">0</span>
             </div>
 
-            <!-- Search -->
-            <div class="sidebar-search">
-                <i class="fas fa-search"></i>
-                <input type="text" id="search" placeholder="Search bookmarks, tags, notes..." class="sidebar-search-input"
-                    aria-label="Search bookmarks" data-i18n-placeholder="searchPlaceholder">
-                <button id="clear-search" class="sidebar-search-clear hidden" aria-label="Clear search">
-                    <i class="fas fa-times"></i>
-                </button>
-                <button id="command-palette-button" class="sidebar-command-palette-btn" title="Command Palette"
-                    aria-label="Open command palette">
-                    <i class="fas fa-bolt"></i>
-                </button>
-            </div>
+
 
 
             <!-- Workspaces Section -->
@@ -330,6 +318,7 @@
                                 <option value="detail">&#xf05a; Detail View</option>
                                 <option value="card">&#xf009; Card View</option>
                                 <option value="list">&#xf03c; List View</option>
+                                <option value="mockup">&#xf03e; Gallery View</option>
                             </select>
                             <label class="toggle-row" for="folder-list-bg-toggle">
                                 <span data-i18n="sidebarListBg">List Background</span>
@@ -467,6 +456,22 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- Search moved to Webview -->
+            <div class="webview-search-wrapper" style="position: sticky; top: 16px; z-index: 100; padding: 0 24px; margin-bottom: 16px; pointer-events: none;">
+                <div class="sidebar-search" style="margin: 0; width: 100%; pointer-events: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(10px);">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search" placeholder="Search bookmarks, tags, notes..." class="sidebar-search-input"
+                        aria-label="Search bookmarks" data-i18n-placeholder="searchPlaceholder">
+                    <button id="clear-search" class="sidebar-search-clear hidden" aria-label="Clear search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button id="command-palette-button" class="sidebar-command-palette-btn" title="Command Palette"
+                        aria-label="Open command palette">
+                        <i class="fas fa-bolt"></i>
+                    </button>
                 </div>
             </div>
 
