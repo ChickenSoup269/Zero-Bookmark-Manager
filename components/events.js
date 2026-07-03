@@ -8,6 +8,7 @@ import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
 import { setupUIControlListeners } from "./controller/uiControls.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
 import { setupHotkeys } from "./controller/hotkeys.js"
+import { setupGlobalDragScroll } from "./ui.js"
 
 export function setupEventListeners(elements) {
   setupCreateFolderListeners(elements)
@@ -19,4 +20,5 @@ export function setupEventListeners(elements) {
   setupUIControlListeners(elements)
   attachDropdownListeners(elements)
   setupHotkeys(elements)
+  setupGlobalDragScroll(elements)
 }

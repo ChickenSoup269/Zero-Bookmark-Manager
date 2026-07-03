@@ -5382,3 +5382,30 @@ textarea.error {
 }
 
 
+
+/* Compact Tree View for Organize Folders */
+.tree-view.compact-tree {
+  gap: 4px;
+}
+.tree-view.compact-tree .folder-item {
+  padding: 6px 10px !important;
+  border-radius: 6px !important;
+  margin: 2px 0 !important;
+}
+.tree-view.compact-tree .folder-toggle {
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 14px !important;
+  margin-right: 8px;
+}
+.tree-view.compact-tree .folder-icon {
+  font-size: 16px !important;
+  margin-right: 8px;
+}
+.tree-view.compact-tree .folder-title {
+  font-size: 14px !important;
+}
+.tree-view.compact-tree .folder-item:hover {
+  transform: translateX(4px) scale(1) !important;
+}
+

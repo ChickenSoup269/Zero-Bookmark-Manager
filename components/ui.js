@@ -75,13 +75,16 @@ function getFaviconUrl(url) {
 
 // Global variable to keep track of autoscroll interval
 let autoscrollInterval = null
+let currentMouseY = 0
 
 function startAutoscroll(container, event) {
-  stopAutoscroll() // Clear any existing interval
+  currentMouseY = event.clientY;
+
+  if (autoscrollInterval) return; // Already running
 
   const rect = container.getBoundingClientRect()
   const scrollThreshold = 50 // Pixels from edge to start scrolling
-  const scrollSpeed = 10 // Pixels per interval
+  const scrollSpeed = 15 // Pixels per interval
 
   const checkScroll = () => {
     if (!container) {
@@ -89,20 +92,17 @@ function startAutoscroll(container, event) {
       return
     }
 
-    // Determine current mouse position relative to container
-    const mouseY = event.clientY
-
     // Check for vertical scrolling
-    if (mouseY < rect.top + scrollThreshold) {
+    if (currentMouseY < rect.top + scrollThreshold) {
       // Scroll up
       container.scrollTop -= scrollSpeed
-    } else if (mouseY > rect.bottom - scrollThreshold) {
+    } else if (currentMouseY > rect.bottom - scrollThreshold) {
       // Scroll down
       container.scrollTop += scrollSpeed
     }
   }
 
-  autoscrollInterval = setInterval(checkScroll, 50) // Check every 50ms
+  autoscrollInterval = setInterval(checkScroll, 20) // Check every 20ms for smooth scrolling
 }
 
 function stopAutoscroll() {
@@ -110,6 +110,41 @@ function stopAutoscroll() {
     clearInterval(autoscrollInterval)
     autoscrollInterval = null
   }
+}
+
+export function setupGlobalDragScroll(elements) {
+  const containers = [
+    elements.folderListDiv,
+    elements.sidebarList,
+    document.getElementById("organize-folders-tree-view")
+  ];
+
+  containers.forEach(container => {
+    if (!container) return;
+    
+    container.addEventListener("dragover", (e) => {
+      // Only autoscroll if dragging a bookmark or folder
+      if (typeof currentDragType !== 'undefined' && currentDragType) {
+        startAutoscroll(container, e);
+      }
+    });
+
+    container.addEventListener("dragleave", (e) => {
+      // If we leave the container bounds
+      if (!container.contains(e.relatedTarget)) {
+        stopAutoscroll();
+      }
+    });
+
+    container.addEventListener("drop", () => {
+      stopAutoscroll();
+    });
+
+    // Also handle dragend on window/document just in case
+    document.addEventListener("dragend", () => {
+      stopAutoscroll();
+    });
+  });
 }
 
 // Helper function for fuzzy search matching
@@ -3270,7 +3305,7 @@ function renderBookmarks(bookmarksList, elements) {
   )
 }
 
-function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
+function renderTreeView(nodes, elements, depth = 0, targetElement = null, options = {}) {
   const fragment = document.createDocumentFragment()
   const language = localStorage.getItem("appLanguage") || "en"
 
@@ -3286,6 +3321,9 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
       "list-view",
     )
     actualTargetElement.classList.add("tree-view")
+    if (options.onlyFolders) {
+      actualTargetElement.classList.add("compact-tree")
+    }
     if (uiState.checkboxesVisible) {
       const selectAllDiv = document.createElement("div")
       selectAllDiv.className = "select-all"
@@ -3311,7 +3349,8 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
   const folders = nodesToRender
     .filter((node) => node.children)
     .sort((a, b) => (a.title || "").localeCompare(b.title || ""))
-  const bookmarks = nodesToRender.filter((node) => node.url)
+  
+  const bookmarks = options.onlyFolders ? [] : nodesToRender.filter((node) => node.url)
   const sortedBookmarks = sortBookmarks(bookmarks, uiState.sortType)
 
   // --- LOOP QUA TỪNG NODE ---
@@ -3528,7 +3567,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null) {
       // Tự gọi lại chính nó nếu folder mở
       if (!isCollapsed)
         childrenContainer.appendChild(
-          renderTreeView(node.children, elements, depth + 1),
+          renderTreeView(node.children, elements, depth + 1, actualTargetElement, options),
         )
       fragment.appendChild(childrenContainer)
     }
@@ -4260,7 +4299,7 @@ function renderOrganizeFoldersTree(elements, container) {
   chrome.bookmarks.getTree((tree) => {
     // uiState.bookmarkTree needs to be updated with the latest tree for findNodeById and isAncestorOf
     uiState.bookmarkTree = tree
-    renderTreeView(tree[0].children, elements, 0, container)
+    renderTreeView(tree[0].children, elements, 0, container, { onlyFolders: true })
   })
 }
 
@@ -4276,7 +4315,7 @@ function refreshOrganizeFoldersPopup(elements) {
     chrome.bookmarks.getTree((tree) => {
       uiState.bookmarkTree = tree
       treeViewContainer.innerHTML = ""
-      renderTreeView(tree[0].children, elements, 0, treeViewContainer)
+      renderTreeView(tree[0].children, elements, 0, treeViewContainer, { onlyFolders: true })
     })
   }
 }
@@ -4454,11 +4493,42 @@ export function openOrganizeFoldersModal(elements) {
   // Clear previous content
   treeViewContainer.innerHTML = ""
 
+  let toolbar = popup.querySelector('.organize-folders-toolbar');
+  if (!toolbar) {
+      toolbar = document.createElement('div');
+      toolbar.className = 'organize-folders-toolbar';
+      toolbar.style.cssText = 'display: flex; gap: 8px; margin-bottom: 12px;';
+      toolbar.innerHTML = `
+        <button id="organize-folders-expand" class="button">${t.expandAll || "Expand All"}</button>
+        <button id="organize-folders-collapse" class="button cancel">${t.collapseAll || "Collapse All"}</button>
+      `;
+      treeViewContainer.parentNode.insertBefore(toolbar, treeViewContainer);
+
+      toolbar.querySelector('#organize-folders-expand').onclick = () => {
+          uiState.collapsedFolders.clear();
+          refreshOrganizeFoldersPopup(elements);
+      };
+      toolbar.querySelector('#organize-folders-collapse').onclick = () => {
+          const collapseAll = (nodes) => {
+              nodes.forEach(n => {
+                  if (n.children) {
+                      uiState.collapsedFolders.add(n.id);
+                      collapseAll(n.children);
+                  }
+              });
+          };
+          chrome.bookmarks.getTree(tree => {
+              collapseAll(tree[0].children);
+              refreshOrganizeFoldersPopup(elements);
+          });
+      };
+  }
+
   // Update bookmark tree state before rendering
   chrome.bookmarks.getTree((tree) => {
     uiState.bookmarkTree = tree
     // Render the draggable tree view inside the popup
-    renderTreeView(tree[0].children, elements, 0, treeViewContainer)
+    renderTreeView(tree[0].children, elements, 0, treeViewContainer, { onlyFolders: true })
   })
 
   popup.classList.remove("hidden")
