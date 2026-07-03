@@ -4699,9 +4699,9 @@ function renderMockupView(bookmarkTreeNodes, filteredBookmarks, elements) {
 // --- Global CSS Toast Logic ---
 const globalTooltip = document.createElement("div");
 globalTooltip.style.position = "fixed";
-globalTooltip.style.background = "#333";
-globalTooltip.style.color = "#fff";
-globalTooltip.style.border = "1px solid #444";
+globalTooltip.style.background = "var(--bg-tertiary, #333)";
+globalTooltip.style.color = "var(--text-primary, #fff)";
+globalTooltip.style.border = "1px solid var(--border-color, #444)";
 globalTooltip.style.padding = "6px 12px";
 globalTooltip.style.borderRadius = "8px";
 globalTooltip.style.fontSize = "13px";
