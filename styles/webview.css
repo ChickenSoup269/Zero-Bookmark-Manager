@@ -5140,6 +5140,8 @@ textarea.error {
   grid-template-columns: repeat(3, 1fr); /* Mặc định 3 cột */
   gap: 20px;
   padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .mockup-bookmark-item {
@@ -5153,6 +5155,8 @@ textarea.error {
   cursor: pointer;
   position: relative;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden; /* Chặn tuyệt đối ảnh hoặc nội dung tràn viền */
+  max-width: 100%; /* Đảm bảo không bao giờ phình to hơn lưới */
 }
 
 .mockup-bookmark-item:hover {
@@ -5206,6 +5210,7 @@ textarea.error {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .mockup-favicon {
@@ -5281,6 +5286,59 @@ textarea.error {
   
   .mockup-title {
     font-size: 0.8rem; /* Tiêu đề nhỏ hơn nữa ở popup */
+  }
+@media (max-width: 800px) {
+  .folder-list.mockup-view {
+    grid-template-columns: 1fr !important;
+    padding: 8px !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .folder-list.card-view {
+    grid-template-columns: 1fr !important;
+    padding: 8px !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .mockup-bookmark-item {
+    height: 90px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+  .mockup-image-container {
+    width: 90px !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
+    flex-shrink: 0 !important;
+  }
+  .mockup-content {
+    padding: 8px 10px !important;
+    width: calc(100% - 90px) !important;
+    max-width: calc(100% - 90px) !important;
+    box-sizing: border-box !important;
+  }
+  .mockup-footer {
+    padding-top: 4px;
+  }
+  .mockup-title {
+    -webkit-line-clamp: 2; /* Vẫn giữ 2 dòng nhưng co lại */
+    line-height: 1.25;
+  }
+  
+  /* --- List View Mobile --- */
+  .list-view-header {
+    display: none !important; /* Hide header on mobile */
+  }
+  .list-bookmark-item {
+    grid-template-columns: 24px 30px minmax(0, 1fr) auto !important; /* Hide tags column */
+    gap: 8px !important;
+    padding: 12px 10px !important;
+  }
+  .list-tags {
+    display: none !important;
   }
 }
 

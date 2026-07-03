@@ -2135,7 +2135,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
   elements.folderListDiv.className = `folder-list bento-view ${!uiState.folderListBg ? 'no-bg' : ''}`;
   elements.folderListDiv.style.display = "block";
   
-  const isPopup = window.innerWidth < 600;
+  const isPopup = window.innerWidth <= 800;
   
   const container = document.createElement("div");
   container.style.display = "grid";
@@ -2160,13 +2160,14 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     widget.style.padding = "20px";
     widget.style.display = "flex";
     widget.style.flexDirection = "column";
+    widget.style.minWidth = "0";
+    widget.style.boxSizing = "border-box";
     widget.style.gap = "12px";
     widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
     widget.style.border = "1px solid var(--border-color)";
-    // Removed overflow: hidden so dropdown menu isn't cut off
     widget.style.height = "100%";
-    widget.style.minHeight = "280px";
-    widget.style.maxHeight = "400px";
+    widget.style.minHeight = isPopup ? "220px" : "280px";
+    widget.style.maxHeight = isPopup ? "320px" : "400px";
     widget.style.transition = "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease";
     
     // Feature widget logic (disable spanning in popup mode to prevent horizontal overflow)
@@ -2212,6 +2213,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     header.style.alignItems = "center";
     header.style.justifyContent = "space-between";
     header.style.zIndex = "1";
+    header.style.minWidth = "0";
     
     const title = document.createElement("h3");
     title.style.margin = "0";
@@ -2224,7 +2226,9 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     title.style.whiteSpace = "nowrap";
     title.style.overflow = "hidden";
     title.style.textOverflow = "ellipsis";
-    title.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:${color}15;color:${color}"><i class="fas fa-folder"></i></div> ${folder.title}`;
+    title.style.minWidth = "0";
+    title.style.flex = "1";
+    title.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;border-radius:8px;background:${color}15;color:${color}"><i class="fas fa-folder"></i></div> <span style="overflow:hidden;text-overflow:ellipsis;min-width:0;">${folder.title}</span>`;
     
     const countBadge = document.createElement("span");
     countBadge.style.background = "var(--bg-tertiary)";
@@ -2233,6 +2237,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     countBadge.style.borderRadius = "20px";
     countBadge.style.fontSize = "0.75rem";
     countBadge.style.fontWeight = "600";
+    countBadge.style.flexShrink = "0";
     countBadge.textContent = `${folderBookmarks.length} items`;
     
     header.appendChild(title);
@@ -2343,21 +2348,20 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   elements.folderListDiv.className = `folder-list kanban-view ${!uiState.folderListBg ? 'no-bg' : ''}`;
   elements.folderListDiv.style.display = "block";
   
-  const isPopup = window.innerWidth < 600;
+  const isPopup = window.innerWidth <= 800;
   
   const container = document.createElement("div");
   container.style.display = isPopup ? "flex" : "grid";
   container.style.gridTemplateColumns = isPopup ? "none" : "repeat(auto-fill, minmax(280px, 1fr))";
-  container.style.gridAutoRows = isPopup ? "auto" : "1fr"; // Force all rows to be equal height if we want full uniformity, or omit to let rows adjust independently. We will let rows adjust independently but stretch within row.
+  container.style.gridAutoRows = isPopup ? "auto" : "1fr"; 
   container.style.gap = isPopup ? "16px" : "20px";
   container.style.padding = isPopup ? "0" : "16px";
-  container.style.overflowX = isPopup ? "auto" : "visible";
-  container.style.overflowY = "hidden";
-  container.style.minHeight = isPopup ? "400px" : "60vh";
+  container.style.overflowX = "hidden";
+  container.style.overflowY = isPopup ? "visible" : "hidden";
   container.style.alignItems = "stretch";
   if (isPopup) {
+    container.style.flexDirection = "column"; // Bắt buộc hàng dọc
     container.style.flexWrap = "nowrap";
-    container.style.scrollSnapType = "x mandatory";
   }
   container.classList.add("custom-scrollbar");
   
@@ -2375,13 +2379,14 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
     column.style.backdropFilter = "blur(12px)";
     column.style.webkitBackdropFilter = "blur(12px)";
     column.style.border = "1px solid var(--border-color)";
-    column.style.borderRadius = "20px"; // Bento style rounded corners
+    column.style.borderRadius = "20px";
+    // For popup, use 100% width so it stacks vertically perfectly
     column.style.minWidth = isPopup ? "100%" : "280px"; 
     column.style.maxWidth = isPopup ? "100%" : "320px";
-    column.style.flex = isPopup ? "0 0 auto" : "1 1 280px"; 
+    column.style.flex = isPopup ? "0 0 auto" : "1 1 280px";  
     column.style.display = "flex";
     column.style.flexDirection = "column";
-    column.style.maxHeight = isPopup ? "450px" : "65vh"; 
+    column.style.maxHeight = isPopup ? "400px" : "65vh"; 
     // Removed height: 100% to allow flex/grid stretch to work naturally
     column.style.padding = "16px";
     column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
@@ -3163,7 +3168,7 @@ function createListBookmarkElement(bookmark, language, elements) {
     <div class="bookmark-favicon" style="width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; border-radius: 4px;">
       <img src="${favicon}" style="width: 14px; height: 14px;" onerror="window.handleFaviconError(this, '${hostname}')">
     </div>
-    <div class="list-info-main" style="display: flex; flex-direction: column; gap: 2px; width: 600px; min-width: 0;">
+    <div class="list-info-main" style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
       <a href="${bookmark.url}" target="_blank" class="link list-bookmark-title-link" style="white-space: normal !important; word-break: break-word !important; min-width: 0; display: block;">
         ${bookmark.title || bookmark.url}
       </a>
@@ -4558,10 +4563,10 @@ function renderMockupView(bookmarkTreeNodes, filteredBookmarks, elements) {
   
   elements.folderListDiv.innerHTML = ""
   elements.folderListDiv.className = `folder-list mockup-view ${!uiState.folderListBg ? 'no-bg' : ''}`;
-  elements.folderListDiv.style.display = "grid"
-  elements.folderListDiv.style.gridTemplateColumns = "repeat(auto-fill, minmax(240px, 1fr))"
-  elements.folderListDiv.style.gap = "24px"
-  elements.folderListDiv.style.padding = "20px"
+  elements.folderListDiv.style.display = ""; // Reset inline display
+  elements.folderListDiv.style.gridTemplateColumns = ""; 
+  elements.folderListDiv.style.gap = "";
+  elements.folderListDiv.style.padding = "";
 
   const sortedBookmarks = sortBookmarks(filteredBookmarks, uiState.sortType)
   sortedBookmarks.forEach((bookmark) => {

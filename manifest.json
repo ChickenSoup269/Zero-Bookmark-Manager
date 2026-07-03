@@ -41,9 +41,7 @@
     }
   ],
   "oauth2": {
-    "client_id": "YOUR_GOOGLE_DRIVE_CLIENT_ID_HERE.apps.googleusercontent.com",
-    "scopes": [
-      "https://www.googleapis.com/auth/drive.file"
-    ]
+    "client_id": ".apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/drive.file"]
   }
 }
