@@ -1957,24 +1957,26 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       }
 
       // Render Views
-      elements.folderListDiv.style.display = ""
-      if (uiState.viewMode === "tree") {
-        const rootChildren = bookmarkTreeNodes[0]?.children || []
-        renderTreeView(rootChildren, elements)
-      } else if (uiState.viewMode === "bento") {
-        renderBentoView(bookmarkTreeNodes, filtered, elements)
-      } else if (uiState.viewMode === "split" || uiState.viewMode === "kanban") {
-        renderKanbanView(bookmarkTreeNodes, filtered, elements)
-      } else if (uiState.viewMode === "detail") {
-        renderDetailView(filtered, elements)
-      } else if (uiState.viewMode === "card") {
-        renderCardView(bookmarkTreeNodes, filtered, elements)
-      } else if (uiState.viewMode === "list") {
-        renderListView(filtered, elements)
-      } else if (uiState.viewMode === "mockup") {
-        renderMockupView(bookmarkTreeNodes, filtered, elements)
-      } else {
-        renderBookmarks(filtered, elements)
+      if (elements && elements.folderListDiv) {
+        elements.folderListDiv.style.display = ""
+        if (uiState.viewMode === "tree") {
+          const rootChildren = bookmarkTreeNodes[0]?.children || []
+          renderTreeView(rootChildren, elements)
+        } else if (uiState.viewMode === "bento") {
+          renderBentoView(bookmarkTreeNodes, filtered, elements)
+        } else if (uiState.viewMode === "split" || uiState.viewMode === "kanban") {
+          renderKanbanView(bookmarkTreeNodes, filtered, elements)
+        } else if (uiState.viewMode === "detail") {
+          renderDetailView(filtered, elements)
+        } else if (uiState.viewMode === "card") {
+          renderCardView(bookmarkTreeNodes, filtered, elements)
+        } else if (uiState.viewMode === "list") {
+          renderListView(filtered, elements)
+        } else if (uiState.viewMode === "mockup") {
+          renderMockupView(bookmarkTreeNodes, filtered, elements)
+        } else {
+          renderBookmarks(filtered, elements)
+        }
       }
 
       toggleFolderButtons(elements)
@@ -4696,7 +4698,23 @@ function renderMockupView(bookmarkTreeNodes, filteredBookmarks, elements) {
 
 // --- Global CSS Toast Logic ---
 const globalTooltip = document.createElement("div");
-globalTooltip.className = "global-css-toast";
+globalTooltip.style.position = "fixed";
+globalTooltip.style.background = "#333";
+globalTooltip.style.color = "#fff";
+globalTooltip.style.border = "1px solid #444";
+globalTooltip.style.padding = "6px 12px";
+globalTooltip.style.borderRadius = "8px";
+globalTooltip.style.fontSize = "13px";
+globalTooltip.style.fontWeight = "500";
+globalTooltip.style.whiteSpace = "normal";
+globalTooltip.style.maxWidth = "300px";
+globalTooltip.style.width = "max-content";
+globalTooltip.style.textAlign = "center";
+globalTooltip.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+globalTooltip.style.zIndex = "2147483647"; // Max z-index
+globalTooltip.style.pointerEvents = "none";
+globalTooltip.style.transform = "translateX(-50%) translateY(-100%)";
+globalTooltip.style.display = "none"; // Hide initially
 document.body.appendChild(globalTooltip);
 
 document.addEventListener("mouseover", (e) => {
@@ -4704,14 +4722,27 @@ document.addEventListener("mouseover", (e) => {
   if (target && target.dataset.tooltip) {
     globalTooltip.textContent = target.dataset.tooltip;
     const rect = target.getBoundingClientRect();
-    globalTooltip.style.left = (rect.left + rect.width / 2) + "px";
+    globalTooltip.style.left = e.clientX + "px";
     globalTooltip.style.top = (rect.top - 8) + "px";
-    globalTooltip.classList.add("show");
+    globalTooltip.style.display = "block"; // Show inline
   }
 });
 
 document.addEventListener("mouseout", (e) => {
-  if (e.target.closest("[data-tooltip]")) {
+  const target = e.target.closest("[data-tooltip]");
+  if (target) {
+    const related = e.relatedTarget;
+    if (related && target.contains(related)) return;
+    globalTooltip.style.display = "none";
+  }
+});
+
+/*
+document.addEventListener("mouseout", (e) => {
+  const target = e.target.closest("[data-tooltip]");
+  if (target) {
+    const related = e.relatedTarget;
+    if (related && target.contains(related)) return; // Ignore moving between children
     globalTooltip.classList.remove("show");
   }
 });
@@ -4720,6 +4751,7 @@ document.addEventListener("mouseout", (e) => {
 document.addEventListener("scroll", () => {
   globalTooltip.classList.remove("show");
 }, true);
+*/
 
 function sortFoldersArray(foldersArr, type) {
   const sorted = [...foldersArr]
