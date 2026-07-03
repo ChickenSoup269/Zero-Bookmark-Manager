@@ -4714,17 +4714,55 @@ globalTooltip.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
 globalTooltip.style.zIndex = "2147483647"; // Max z-index
 globalTooltip.style.pointerEvents = "none";
 globalTooltip.style.transform = "translateX(-50%) translateY(-100%)";
-globalTooltip.style.display = "none"; // Hide initially
+// Animation styles
+globalTooltip.style.visibility = "hidden";
+globalTooltip.style.opacity = "0";
+globalTooltip.style.transition = "opacity 0.25s ease, visibility 0.25s ease";
 document.body.appendChild(globalTooltip);
+
+function checkIsTruncated(el) {
+  if (el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight) {
+    return true;
+  }
+  // Fallback for -webkit-line-clamp
+  const style = window.getComputedStyle(el);
+  if (style.webkitLineClamp && style.webkitLineClamp !== 'none') {
+    const clone = el.cloneNode(true);
+    clone.style.webkitLineClamp = 'none';
+    clone.style.position = 'absolute';
+    clone.style.visibility = 'hidden';
+    clone.style.width = el.clientWidth + 'px';
+    document.body.appendChild(clone);
+    const isTrunc = clone.scrollHeight > el.clientHeight;
+    document.body.removeChild(clone);
+    return isTrunc;
+  }
+  return false;
+}
 
 document.addEventListener("mouseover", (e) => {
   const target = e.target.closest("[data-tooltip]");
   if (target && target.dataset.tooltip) {
-    globalTooltip.textContent = target.dataset.tooltip;
-    const rect = target.getBoundingClientRect();
-    globalTooltip.style.left = e.clientX + "px";
-    globalTooltip.style.top = (rect.top - 8) + "px";
-    globalTooltip.style.display = "block"; // Show inline
+    // Check truncation on target or any of its children
+    let isTruncated = checkIsTruncated(target);
+    if (!isTruncated) {
+      const children = target.querySelectorAll("*");
+      for (let i = 0; i < children.length; i++) {
+        if (checkIsTruncated(children[i])) {
+          isTruncated = true;
+          break;
+        }
+      }
+    }
+
+    if (isTruncated) {
+      globalTooltip.textContent = target.dataset.tooltip;
+      const rect = target.getBoundingClientRect();
+      globalTooltip.style.left = e.clientX + "px";
+      globalTooltip.style.top = (rect.top - 8) + "px";
+      globalTooltip.style.visibility = "visible";
+      globalTooltip.style.opacity = "1";
+    }
   }
 });
 
@@ -4733,25 +4771,17 @@ document.addEventListener("mouseout", (e) => {
   if (target) {
     const related = e.relatedTarget;
     if (related && target.contains(related)) return;
-    globalTooltip.style.display = "none";
-  }
-});
-
-/*
-document.addEventListener("mouseout", (e) => {
-  const target = e.target.closest("[data-tooltip]");
-  if (target) {
-    const related = e.relatedTarget;
-    if (related && target.contains(related)) return; // Ignore moving between children
-    globalTooltip.classList.remove("show");
+    globalTooltip.style.visibility = "hidden";
+    globalTooltip.style.opacity = "0";
   }
 });
 
 // Hide tooltip on scroll to prevent detached tooltips floating around
 document.addEventListener("scroll", () => {
-  globalTooltip.classList.remove("show");
+  globalTooltip.style.visibility = "hidden";
+  globalTooltip.style.opacity = "0";
 }, true);
-*/
+
 
 function sortFoldersArray(foldersArr, type) {
   const sorted = [...foldersArr]
