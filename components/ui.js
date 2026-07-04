@@ -535,8 +535,8 @@ function openWebPreviewModal(bookmark) {
         
         <!-- Fallback Message (Behind Iframe) -->
         <div class="iframe-fallback" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; width: 80%; color: #555; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-            <img src="${favicon}" style="width: 64px; height: 64px; object-fit: contain; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white; padding: 8px;" alt="Logo">
-            <p><strong>Preview unavailable?</strong></p>
+            <img src="${chrome.runtime.getURL('icons/icon.png')}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white; padding: 10px;" alt="Zero Bookmark Manager Logo">
+            <p><strong>Loading or Preview unavailable?</strong></p>
             <p style="font-size:12px;">Many websites block being displayed inside extensions.</p>
             <a href="${
               bookmark.url
