@@ -466,6 +466,74 @@ export function showCustomConfirm(message, onConfirm, onCancel) {
   }
 }
 
+export function showCustomPrompt(message, defaultValue = "") {
+  return new Promise((resolve) => {
+    const popup = document.getElementById("custom-prompt-popup")
+    const title = document.getElementById("custom-prompt-title")
+    const input = document.getElementById("custom-prompt-input")
+    const okBtn = document.getElementById("custom-prompt-ok")
+    const cancelBtn = document.getElementById("custom-prompt-cancel")
+    const language = localStorage.getItem("appLanguage") || "en"
+
+    if (!popup || !title || !input || !okBtn || !cancelBtn) {
+      console.warn("custom prompt elements not found, falling back to window.prompt")
+      resolve(window.prompt(message, defaultValue))
+      return
+    }
+
+    title.textContent = message
+    input.value = defaultValue
+    popup.classList.remove("hidden")
+    popup.style.display = "flex"
+    popup.style.opacity = "1"
+    popup.style.pointerEvents = "auto"
+
+    const isDarkMode = document.body.classList.contains("dark-theme")
+    popup.classList.toggle("light-theme", !isDarkMode)
+    popup.classList.toggle("dark-theme", isDarkMode)
+
+    input.focus()
+    input.select()
+
+    const closePopup = () => {
+      popup.classList.add("hidden")
+      popup.style.display = ""
+      popup.style.opacity = ""
+      popup.style.pointerEvents = ""
+      document.removeEventListener("keydown", handleKeydown)
+    }
+
+    const handleKeydown = (e) => {
+      if (e.key === "Enter") {
+        resolve(input.value)
+        closePopup()
+      } else if (e.key === "Escape") {
+        resolve(null)
+        closePopup()
+      }
+    }
+
+    document.addEventListener("keydown", handleKeydown)
+
+    okBtn.onclick = () => {
+      resolve(input.value)
+      closePopup()
+    }
+
+    cancelBtn.onclick = () => {
+      resolve(null)
+      closePopup()
+    }
+
+    popup.onclick = (e) => {
+      if (e.target === popup) {
+        resolve(null)
+        closePopup()
+      }
+    }
+  });
+}
+
 export function showCustomGuide() {
   // Ensure DOM is loaded
   if (!document.getElementById("custom-guide")) {

@@ -1,7 +1,7 @@
 import { openDuplicateMergeModal } from "./duplicateMerge.js"
 import { handleCheckHealth } from "./ui.js"
 import { uiState } from "./state.js"
-import { translations } from "./utils/utils.js"
+import { translations, showCustomPopup, showCustomPrompt, showCustomConfirm } from "./utils/utils.js"
 
 function getLanguage() {
   return localStorage.getItem("appLanguage") || "en"
@@ -141,6 +141,129 @@ function renderList(title, items, getMeta, intro = "") {
         : ""
     }
   `
+}
+
+export async function groupBookmarksByDomain() {
+  const folderName = await showCustomPrompt(t("smartCleanupGroupName", "Enter folder name for grouped domains:"), "Organized by Domain");
+  if (!folderName) return;
+
+  const domainsMap = new Map();
+  (uiState.bookmarks || []).forEach(bm => {
+    if (!bm.url) return;
+    try {
+      const host = new URL(bm.url).hostname.replace(/^www\./, "");
+      if (!domainsMap.has(host)) domainsMap.set(host, []);
+      domainsMap.get(host).push(bm);
+    } catch {}
+  });
+
+  const toGroup = [...domainsMap.entries()].filter(([_, arr]) => arr.length > 1);
+  if (toGroup.length === 0) {
+    showCustomPopup(t("smartCleanupNoDomains", "No domains with multiple bookmarks found."), "info", true);
+    return;
+  }
+
+  const undoData = [];
+  try {
+    const rootFolder = await new Promise(res => chrome.bookmarks.create({ title: folderName }, res));
+    let count = 0;
+    for (const [domain, bms] of toGroup) {
+      const subFolder = await new Promise(res => chrome.bookmarks.create({ parentId: rootFolder.id, title: domain }, res));
+      for (const bm of bms) {
+        undoData.push({ id: bm.id, parentId: bm.parentId, index: bm.index });
+        await new Promise(res => chrome.bookmarks.move(bm.id, { parentId: subFolder.id }, res));
+        count++;
+      }
+    }
+    
+    // Attempt to refresh UI without full reload
+    import("./ui.js").then(({ renderFilteredBookmarks }) => {
+       chrome.bookmarks.getTree(tree => {
+          renderFilteredBookmarks(tree[0].children, null); 
+       });
+    }).catch(() => window.location.reload());
+
+    import("./undo.js").then(({ registerUndo }) => {
+      registerUndo({
+        message: t("smartCleanupGroupSuccess", "Successfully grouped {count} bookmarks into {folder}").replace("{count}", count).replace("{folder}", folderName),
+        actionLabel: t("undoAction", "Undo"),
+        undo: async () => {
+          for (const item of undoData) {
+            await new Promise(res => chrome.bookmarks.move(item.id, { parentId: item.parentId, index: item.index }, res));
+          }
+          if (rootFolder) {
+            await new Promise(res => chrome.bookmarks.removeTree(rootFolder.id, res));
+          }
+        }
+      });
+    });
+
+    showCustomPopup(t("smartCleanupGroupSuccess", "Successfully grouped {count} bookmarks into {folder}").replace("{count}", count).replace("{folder}", folderName), "success", true);
+  } catch (e) {
+    console.error(e);
+    showCustomPopup(t("smartCleanupGroupError", "Error organizing bookmarks."), "error", true);
+  }
+}
+
+export function autoTagByDomain() {
+  showCustomConfirm(t("smartCleanupTagConfirm", "Auto-tag all bookmarks based on their domains?"), () => {
+    const originalTagsBackup = JSON.parse(JSON.stringify(uiState.bookmarkTags || {}));
+  const originalTagColorsBackup = JSON.parse(JSON.stringify(uiState.tagColors || {}));
+  const originalTagTextColorsBackup = JSON.parse(JSON.stringify(uiState.tagTextColors || {}));
+
+  let count = 0;
+  (uiState.bookmarks || []).forEach(bm => {
+    if (!bm.url) return;
+    try {
+      const host = new URL(bm.url).hostname.replace(/^www\./, "");
+      let domainTag = host.split(".")[0];
+      if (domainTag.length < 3) domainTag = host;
+      
+      if (!uiState.bookmarkTags) uiState.bookmarkTags = {};
+      if (!uiState.bookmarkTags[bm.id]) uiState.bookmarkTags[bm.id] = [];
+      
+      const currentTags = uiState.bookmarkTags[bm.id];
+      if (currentTags.length < 10 && !currentTags.includes(domainTag)) {
+        currentTags.push(domainTag);
+        
+        if (!uiState.tagColors) uiState.tagColors = {};
+        if (!uiState.tagColors[domainTag]) uiState.tagColors[domainTag] = "#4a90e2";
+        
+        if (!uiState.tagTextColors) uiState.tagTextColors = {};
+        if (!uiState.tagTextColors[domainTag]) uiState.tagTextColors[domainTag] = "#ffffff";
+        
+        count++;
+      }
+    } catch {}
+  });
+
+  if (count > 0) {
+    const originalTags = JSON.parse(JSON.stringify(originalTagsBackup));
+    const originalTagColors = JSON.parse(JSON.stringify(originalTagColorsBackup));
+    const originalTagTextColors = JSON.parse(JSON.stringify(originalTagTextColorsBackup));
+
+    import("./tag.js").then(({ saveTags }) => {
+      saveTags(uiState.bookmarkTags, uiState.tagColors, uiState.tagTextColors);
+      
+      import("./undo.js").then(({ registerUndo }) => {
+        registerUndo({
+          message: t("smartCleanupTagSuccess", "Added {count} new domain tags!").replace("{count}", count),
+          actionLabel: t("undoAction", "Undo"),
+          undo: async () => {
+            uiState.bookmarkTags = originalTags;
+            uiState.tagColors = originalTagColors;
+            uiState.tagTextColors = originalTagTextColors;
+            saveTags(originalTags, originalTagColors, originalTagTextColors);
+          }
+        });
+      });
+
+      showCustomPopup(t("smartCleanupTagSuccess", "Added {count} new domain tags!").replace("{count}", count), "success", true);
+    }).catch(err => console.error(err));
+  } else {
+    showCustomPopup(t("smartCleanupTagNone", "No new tags needed (or tag limits reached)."), "info", true);
+  }
+  });
 }
 
 export function initCleanupDashboard(elements) {
@@ -381,7 +504,9 @@ export function initCleanupDashboard(elements) {
           t("smartCleanupDomains", "Top domains"),
           topDomains,
           (domain) => `${domain.count} ${t("bookmarks", "bookmarks")}`,
+          t("smartCleanupDomainsIntro", "Group bookmarks by domain or auto-tag them based on URLs.")
         ),
+        action: "domains",
       }),
     }
 
@@ -415,6 +540,27 @@ export function initCleanupDashboard(elements) {
         ${
           selectedDetail.action === "untagged" && untaggedBookmarks.length > 0
             ? `<button type="button" class="button save" data-cleanup-action="untagged">${escapeHtml(t("smartCleanupFilterUntagged", "Filter Untagged"))}</button>`
+            : ""
+        }
+        ${
+          selectedDetail.action === "domains" && topDomains.length > 0
+            ? `
+               <div class="smart-cleanup-guide" style="margin-top: 12px; padding: 16px; background: var(--bg-tertiary); border-radius: 8px; font-size: 0.9em; line-height: 1.4;">
+                 <strong style="color: var(--accent-color);"><i class="fas fa-lightbulb"></i> ${escapeHtml(t("guideTitle", "How to use:"))}</strong>
+                 <ul style="margin: 12px 0 20px 24px; padding: 0;">
+                   <li style="margin-bottom: 8px;"><strong>${escapeHtml(t("smartCleanupGroupDomain", "Group by Domain"))}:</strong> ${escapeHtml(t("guideGroupDomain", "Creates folders for domains with multiple bookmarks and moves them inside."))}</li>
+                   <li><strong>${escapeHtml(t("smartCleanupAutoTag", "Auto-Tag Domains"))}:</strong> ${escapeHtml(t("guideAutoTag", "Extracts the domain name and adds it as a tag to each bookmark."))}</li>
+                 </ul>
+                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                   <button type="button" class="button button-primary" data-cleanup-action="domains-group" style="flex: 1; min-width: 150px; justify-content: center; padding: 10px 16px;">
+                     <i class="fas fa-folder-plus"></i> ${escapeHtml(t("smartCleanupGroupDomain", "Group by Domain"))}
+                   </button>
+                   <button type="button" class="button button-secondary" data-cleanup-action="domains-tag" style="flex: 1; min-width: 150px; justify-content: center; padding: 10px 16px;">
+                     <i class="fas fa-tags"></i> ${escapeHtml(t("smartCleanupAutoTag", "Auto-Tag Domains"))}
+                   </button>
+                 </div>
+               </div>
+              `
             : ""
         }
       </div>
@@ -467,6 +613,9 @@ export function initCleanupDashboard(elements) {
       // Right now we can just show the tags browser or simply close and let the user filter manually.
       document.getElementById("tag-expand-btn")?.click()
     })
+
+    details.querySelector("[data-cleanup-action='domains-group']")?.addEventListener("click", groupBookmarksByDomain)
+    details.querySelector("[data-cleanup-action='domains-tag']")?.addEventListener("click", autoTagByDomain)
 
     grid.querySelectorAll("[data-cleanup]").forEach((card) => {
       card.addEventListener("click", () => {

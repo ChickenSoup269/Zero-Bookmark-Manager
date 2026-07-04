@@ -11,6 +11,7 @@ import {
   renderFilteredBookmarks,
   handleCheckHealth,
 } from "./ui.js"
+import { groupBookmarksByDomain, autoTagByDomain } from "./cleanupDashboard.js"
 
 document.addEventListener("DOMContentLoaded", () => {
   const chatToggle = document.getElementById("chat-toggle")
@@ -402,6 +403,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (/^(\/help|help|tro giup|giup|huong dan)$/i.test(text)) {
       return { action: "help" }
+    }
+
+    if (/^\/(group\s+domain|group_domain)/i.test(raw)) {
+      return { action: "group_domain" };
+    }
+    
+    if (/^\/(autotag|auto_tag)/i.test(raw)) {
+      return { action: "autotag_domain" };
+    }
+
+    if (/^\/autoorganize/i.test(raw)) {
+      return { action: "autoorganize" };
     }
 
     if (/(goi y|suggest).*(website|web|site)/i.test(text)) {
@@ -1995,6 +2008,17 @@ document.addEventListener("DOMContentLoaded", () => {
           t("checkingLinks") ||
           "Started checking for broken links. Results will appear in the UI."
         appendBotMessage(content, content)
+      } else if (action === "group_domain") {
+        hideTypingIndicator()
+        groupBookmarksByDomain()
+        appendBotMessage("Grouping bookmarks by domain...", "Grouping bookmarks by domain...")
+      } else if (action === "autotag_domain") {
+        hideTypingIndicator()
+        autoTagByDomain()
+        appendBotMessage("Auto-tagging bookmarks by domain...", "Auto-tagging bookmarks by domain...")
+      } else if (action === "autoorganize") {
+        hideTypingIndicator()
+        appendBotMessage("Please specify how you'd like to organize (by meaning, by folder structure) so I can assist you with AI organization.", "Please specify how you'd like to organize.")
       } else {
         throw new Error(
           t("notSupported") ||

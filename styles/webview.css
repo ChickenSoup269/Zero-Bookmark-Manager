@@ -2519,9 +2519,10 @@ body {
 
 /* Scroll to Top Button - Matching main scroll-to-top style */
 .sidebar-scroll-top-btn {
-  position: fixed;
+  position: sticky;
   bottom: 24px;
-  left: calc(var(--sidebar-width) - 48px);
+  align-self: flex-end;
+  margin-right: 16px;
   width: 32px;
   height: 32px;
   min-width: 32px;
@@ -2571,8 +2572,7 @@ body {
   width: 28px;
   height: 28px;
   font-size: 0.9rem;
-  left: calc(var(--sidebar-collapsed-width) - 38px);
-  bottom: 24px;
+  margin-right: 16px;
 }
 
 .sidebar.collapsed .sidebar-scroll-top-btn:hover {
