@@ -69,6 +69,8 @@ export function getFolders(nodes) {
             ? node.title
             : `Folder ${node.id}`,
         parentId: node.parentId || null,
+        dateAdded: node.dateAdded || 0,
+        index: node.index || 0,
       })
       folderList = folderList.concat(getFolders(node.children))
     }

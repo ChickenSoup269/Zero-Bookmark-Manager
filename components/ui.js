@@ -4506,6 +4506,10 @@ function toggleFolderButtons(elements) {
 }
 
 function sortBookmarks(list, type) {
+  if (type === "default" && uiState.searchQuery) {
+    return list
+  }
+
   const pinned = list.filter((b) => b.isPinned)
   const unpinned = list.filter((b) => !b.isPinned)
 
@@ -4514,6 +4518,9 @@ function sortBookmarks(list, type) {
       case "favorites":
         return (b.dateAdded || 0) - (a.dateAdded || 0)
       case "default":
+        if (a.parentId !== b.parentId) {
+          return (a.parentId || "").localeCompare(b.parentId || "")
+        }
         return (a.index || 0) - (b.index || 0)
       case "newest":
       case "new":
@@ -4525,8 +4532,11 @@ function sortBookmarks(list, type) {
         return (a.title || a.url || "").localeCompare(b.title || b.url || "")
       case "z-a":
         return (b.title || b.url || "").localeCompare(a.title || a.url || "")
-      case "most-visited":
-        return (b.accessCount || 0) - (a.accessCount || 0)
+      case "most-visited": {
+        const countA = uiState.visitCounts?.[a.id] || a.accessCount || 0
+        const countB = uiState.visitCounts?.[b.id] || b.accessCount || 0
+        return countB - countA
+      }
       case "last-opened":
         return (b.lastOpened || b.dateAdded || 0) - (a.lastOpened || a.dateAdded || 0)
       case "domain":
@@ -4920,10 +4930,12 @@ function sortFoldersArray(foldersArr, type) {
     sorted.sort((a, b) => (a.title || "").localeCompare(b.title || ""))
   } else if (type === "z-a") {
     sorted.sort((a, b) => (b.title || "").localeCompare(a.title || ""))
-  } else if (type === "new") {
+  } else if (type === "new" || type === "newest") {
     sorted.sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0))
-  } else if (type === "old") {
+  } else if (type === "old" || type === "oldest") {
     sorted.sort((a, b) => (a.dateAdded || 0) - (b.dateAdded || 0))
+  } else {
+    sorted.sort((a, b) => (a.index || 0) - (b.index || 0))
   }
   return sorted
 }
