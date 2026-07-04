@@ -468,6 +468,7 @@ export const en = {
   "firstRunWebTourPanelMsg": "This right sidebar contains extension options, bookmark actions, quick-open behavior, health tools, and application settings.",
   "firstRunTourSkip": "Skip",
   "firstRunTourNext": "Next",
+  "firstRunTourBack": "Back",
   "firstRunTourDone": "Done",
   "fontRoboto": "Aa: Roboto (Google Font)",
   "fontOpenSans": "Aa: Open Sans (Google Font)",

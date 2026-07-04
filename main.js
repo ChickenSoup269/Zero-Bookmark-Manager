@@ -442,6 +442,21 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         openCleanup: true,
       },
       {
+        selector: "#smart-cleanup-details",
+        title: language === "vi" ? "Tự động gắn thẻ & Nhóm tên miền" : "Auto Tag & Domain Group",
+        message: language === "vi" ? "Chọn Top Domains (ở cột trái) để tự động gắn thẻ hoặc gom nhóm theo tên miền." : "Select Top Domains (on the left) to auto-tag or group bookmarks.",
+        openCleanup: true,
+        dynamic: true,
+        action: () => {
+          setTimeout(() => {
+            const cards = document.querySelectorAll(".smart-cleanup-card");
+            cards.forEach(c => {
+              if (c.querySelector(".fa-globe")) c.click();
+            });
+          }, 150);
+        }
+      },
+      {
         selector: "#google-drive-sync-btn",
         title: t.firstRunWebTourCloudSyncTitle,
         message: t.firstRunWebTourCloudSyncMsg,
@@ -464,6 +479,20 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         selector: "#settings-menu",
         title: t.firstRunTourPanelTitle,
         message: t.firstRunWebTourPanelMsg,
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: ".language-settings-row",
+        title: language === "vi" ? "Ngôn ngữ" : "Language",
+        message: language === "vi" ? "Thay đổi ngôn ngữ hiển thị của extension." : "Change the extension's display language.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#view-switcher",
+        title: language === "vi" ? "Chế độ xem" : "View Modes",
+        message: language === "vi" ? "Chuyển đổi giữa chế độ Cây, Thẻ (Card), hoặc Bảng Kanban." : "Toggle between Tree, Card, or Kanban board views.",
         openSettings: true,
         ensureSidebarOpen: true,
       },
@@ -609,6 +638,7 @@ function startFirstRunTour() {
   const message = document.getElementById("first-run-tour-message")
   const nextButton = document.getElementById("first-run-tour-next")
   const skipButton = document.getElementById("first-run-tour-skip")
+  const prevButton = document.getElementById("first-run-tour-prev")
 
   const isWebviewPage = window.location.pathname.endsWith("/bookmarks.html")
   const tourStorageKey = isWebviewPage
@@ -633,7 +663,7 @@ function startFirstRunTour() {
   const language = localStorage.getItem("appLanguage") || "en"
   const t = translations[language] || translations.en
   const steps = getFirstRunTourSteps(isWebviewPage).filter((step) =>
-    document.querySelector(step.selector),
+    step.dynamic || document.querySelector(step.selector),
   )
 
   if (!steps.length) return
@@ -659,6 +689,10 @@ function startFirstRunTour() {
       if (popup && !popup.classList.contains("hidden")) {
         popup.classList.add("hidden")
       }
+    }
+
+    if (typeof step.action === "function") {
+      step.action()
     }
 
     requestAnimationFrame(() => {
@@ -688,6 +722,15 @@ function startFirstRunTour() {
           : t.firstRunTourNext || "Next"
           
       nextButton.innerHTML = nextText + `<kbd>&rarr;</kbd>`
+      
+      if (prevButton) {
+        if (stepIndex === 0) {
+          prevButton.style.display = "none"
+        } else {
+          prevButton.style.display = ""
+          prevButton.innerHTML = `<kbd>&larr;</kbd> ` + (t.firstRunTourBack || "Back")
+        }
+      }
 
       tour.classList.remove("hidden")
       positionFirstRunTourCard(card, rect)
@@ -701,12 +744,27 @@ function startFirstRunTour() {
     } else if (event.key === "ArrowRight" || event.key === "Enter") {
       event.preventDefault()
       nextButton.click()
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault()
+      if (prevButton && prevButton.style.display !== "none") {
+        prevButton.click()
+      }
     }
   }
 
   tour.addEventListener("click", (event) => {
     event.stopPropagation()
   })
+
+  if (prevButton) {
+    prevButton.onclick = (event) => {
+      event.stopPropagation()
+      if (stepIndex > 0) {
+        stepIndex -= 1
+        renderStep()
+      }
+    }
+  }
 
   nextButton.onclick = (event) => {
     event.stopPropagation()
