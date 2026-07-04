@@ -20,7 +20,6 @@
   z-index: 101;
   padding: var(--spacing-sm) var(--spacing-md);
   margin: 0 calc(var(--spacing-md) * -1);
-  padding-right: 45px; /* Leave space for the fixed settings icon */
   transition: all var(--transition-normal);
 }
 
@@ -29,6 +28,7 @@ body.is-scrolled .sticky-search {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding-right: 45px; /* Leave space for the fixed settings icon */
 }
 
 .control-buttons {
