@@ -457,6 +457,13 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         }
       },
       {
+        selector: "#auto-tag-btn",
+        title: language === "vi" ? "Gắn thẻ hàng loạt" : "Auto Tag All",
+        message: language === "vi" ? "Tính năng này sẽ tự động gắn thẻ (tag) cho bookmark của bạn dựa trên tên miền." : "This feature will automatically tag all your bookmarks based on their domain names.",
+        openCleanup: true,
+        dynamic: true,
+      },
+      {
         selector: ".bookmark-item .dropdown-btn",
         title: t.firstRunTourBookmarkMenuTitle,
         message: t.firstRunTourBookmarkMenuMsg,
@@ -500,6 +507,41 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         selector: "#import-bookmarks-option",
         title: language === "vi" ? "Nhập dữ liệu" : "Import Bookmarks",
         message: language === "vi" ? "Phục hồi hoặc thêm mới bookmark từ file HTML." : "Restore or add bookmarks from an HTML file.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#check-health-btn",
+        title: language === "vi" ? "Kiểm tra tình trạng" : "Health Check",
+        message: language === "vi" ? "Quét và phát hiện các đường dẫn bị hỏng (link chết) trong bộ sưu tập." : "Scan and detect broken or dead links in your collection.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#check-duplicates-btn",
+        title: language === "vi" ? "Kiểm tra trùng lặp" : "Check Duplicates",
+        message: language === "vi" ? "Tìm và dọn dẹp các bookmark trùng lặp." : "Find duplicate bookmarks and clean them up.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#favicon-option-select",
+        title: language === "vi" ? "Nguồn Favicon" : "Favicon Source",
+        message: language === "vi" ? "Điều chỉnh cách extension lấy biểu tượng (favicon) của trang web." : "Adjust how the extension fetches website icons (favicons).",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#localstorage-settings-option",
+        title: language === "vi" ? "Cài đặt Local Store" : "Local Store Settings",
+        message: language === "vi" ? "Quản lý dữ liệu lưu trong bộ nhớ tạm của trình duyệt." : "Manage the data saved in your browser's local storage.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#restart-guide-option",
+        title: language === "vi" ? "Mở lại hướng dẫn" : "Restart Guide",
+        message: language === "vi" ? "Bạn có thể bấm vào đây để xem lại vòng hướng dẫn này bất cứ lúc nào." : "You can click here to replay this guide at any time.",
         openSettings: true,
         ensureSidebarOpen: true,
       },
@@ -620,23 +662,37 @@ function positionFirstRunTourCard(card, targetRect) {
   const viewportPadding = 14
   const cardRect = card.getBoundingClientRect()
 
-  let left = targetRect.left
-  let top = targetRect.bottom + gap
+  // Try placing it to the left first (good for settings menu on the right)
+  let left = targetRect.left - cardRect.width - gap
+  let top = targetRect.top
 
-  if (top + cardRect.height > window.innerHeight - viewportPadding) {
-    top = targetRect.top - cardRect.height - gap
+  // If no space on the left, try the right (good for sidebar on the left)
+  if (left < viewportPadding) {
+    left = targetRect.right + gap
+
+    // If no space on the right either, fallback to bottom
+    if (left + cardRect.width > window.innerWidth - viewportPadding) {
+      left = Math.max(viewportPadding, targetRect.left)
+      top = targetRect.bottom + gap
+
+      // If no space on bottom, try top
+      if (top + cardRect.height > window.innerHeight - viewportPadding) {
+        top = targetRect.top - cardRect.height - gap
+      }
+    }
   }
 
+  // Ensure it doesn't overflow vertically
+  if (top + cardRect.height > window.innerHeight - viewportPadding) {
+    top = window.innerHeight - cardRect.height - viewportPadding
+  }
   if (top < viewportPadding) {
     top = viewportPadding
   }
 
+  // Ensure it doesn't overflow horizontally
   if (left + cardRect.width > window.innerWidth - viewportPadding) {
     left = window.innerWidth - cardRect.width - viewportPadding
-  }
-
-  if (left < viewportPadding) {
-    left = viewportPadding
   }
 
   card.style.left = `${left}px`
@@ -714,7 +770,7 @@ function startFirstRunTour() {
       if (!target) return
 
       target.scrollIntoView?.({
-        block: "nearest",
+        block: "center",
         inline: "nearest",
         behavior: "auto",
       })
