@@ -860,7 +860,17 @@ function startFirstRunTour() {
 
 // Global scroll listener for glassmorphism headers
 window.addEventListener('scroll', () => {
-  if (window.scrollY > 10) {
+  const stickyPopup = document.querySelector('.sticky-search');
+  const stickyWebview = document.querySelector('.webview-search-wrapper');
+  
+  let isSticky = false;
+  if (stickyPopup && stickyPopup.getBoundingClientRect().top <= 1) {
+    isSticky = true;
+  } else if (stickyWebview && stickyWebview.getBoundingClientRect().top <= 1) {
+    isSticky = true;
+  }
+
+  if (isSticky) {
     document.body.classList.add('is-scrolled');
   } else {
     document.body.classList.remove('is-scrolled');
