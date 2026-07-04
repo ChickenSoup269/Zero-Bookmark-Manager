@@ -1936,12 +1936,6 @@ body {
   list-style: none;
   padding: 0;
   margin: 0 0 0 16px;
-  overflow: hidden;
-  transition:
-    max-height 0.3s ease,
-    opacity 0.2s ease;
-  max-height: 2000px;
-  opacity: 1;
   position: relative;
 }
 
@@ -1950,10 +1944,7 @@ body {
 }
 
 .folder-children.collapsed {
-  max-height: 0;
-  opacity: 0;
-  pointer-events: none;
-  margin: 0 0 4px 0;
+  display: none;
 }
 
 /* Sort Divider */
