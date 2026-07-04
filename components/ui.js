@@ -1202,12 +1202,20 @@ export async function populateTagFilter(elements) {
         ? `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
         : `border-color: ${tagColor}; color: var(--text-primary); background: transparent;`
       pill.innerHTML = `
-        <i class="fas fa-tag" style="font-size:0.65rem; color: ${tagColor}; flex-shrink:0;"></i>
-        <span>${tag}</span>
-        <span class="sidebar-tag-count">${count}</span>
+        <div class="tag-pill-content">
+          <i class="fas fa-tag" style="font-size:0.65rem; color: ${tagColor}; flex-shrink:0;"></i>
+          <span>${tag}</span>
+          <span class="sidebar-tag-count">${count}</span>
+        </div>
+        <div class="tag-pill-actions">
+          <button class="tag-edit-btn" title="Edit Tag" aria-label="Edit Tag"><i class="fas fa-edit"></i></button>
+          <button class="tag-delete-btn" title="Delete Tag" aria-label="Delete Tag"><i class="fas fa-trash"></i></button>
+        </div>
       `
 
-      pill.addEventListener("click", () => {
+      // We need to stop propagation on the action buttons so they don't trigger the filter toggle
+      const contentDiv = pill.querySelector('.tag-pill-content')
+      contentDiv.addEventListener("click", () => {
         const idx = uiState.selectedTags.indexOf(tag)
         if (idx > -1) {
           uiState.selectedTags.splice(idx, 1)
@@ -1225,6 +1233,104 @@ export async function populateTagFilter(elements) {
         chrome.bookmarks.getTree((tree) => {
           import("./ui.js").then(({ renderFilteredBookmarks }) => {
             renderFilteredBookmarks(tree, elements)
+          })
+        })
+      })
+
+      const editBtn = pill.querySelector('.tag-edit-btn')
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation()
+        const newTag = prompt(`Rename tag "${tag}" to:`, tag)
+        if (newTag && newTag.trim() !== "" && newTag !== tag) {
+          const trimmedNewTag = newTag.trim()
+          
+          // Update bookmarkTags
+          Object.keys(uiState.bookmarkTags).forEach(id => {
+            const tagsArray = uiState.bookmarkTags[id]
+            const idx = tagsArray.indexOf(tag)
+            if (idx > -1) {
+              tagsArray[idx] = trimmedNewTag
+              // Remove duplicates if the new tag already existed
+              uiState.bookmarkTags[id] = [...new Set(tagsArray)]
+            }
+          })
+          
+          // Update selectedTags filter
+          const selectedIdx = uiState.selectedTags.indexOf(tag)
+          if (selectedIdx > -1) {
+            uiState.selectedTags[selectedIdx] = trimmedNewTag
+          }
+          
+          // Move colors
+          if (uiState.tagColors[tag]) {
+            uiState.tagColors[trimmedNewTag] = uiState.tagColors[tag]
+            delete uiState.tagColors[tag]
+          }
+          if (uiState.tagTextColors[tag]) {
+            uiState.tagTextColors[trimmedNewTag] = uiState.tagTextColors[tag]
+            delete uiState.tagTextColors[tag]
+          }
+          
+          import("./tag.js").then(({ saveTags }) => {
+            saveTags(uiState.bookmarkTags, uiState.tagColors, uiState.tagTextColors)
+            setTimeout(() => {
+              renderBrowserPills(tagsBrowserSearch?.value || "")
+              renderTagPills(tagSearchInput?.value || "")
+              chrome.bookmarks.getTree((tree) => {
+                import("./ui.js").then(({ renderFilteredBookmarks }) => {
+                  renderFilteredBookmarks(tree, elements)
+                })
+              })
+            }, 100)
+          })
+        }
+      })
+      
+      const deleteBtn = pill.querySelector('.tag-delete-btn')
+      deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation()
+        import("./dialog.js").then(({ showConfirm }) => {
+          showConfirm({
+            title: "Delete Tag",
+            message: `Are you sure you want to permanently delete the tag "${tag}" from all bookmarks?`,
+            confirmText: "Delete",
+            cancelText: "Cancel",
+            onConfirm: () => {
+              // Remove from all bookmarks
+              Object.keys(uiState.bookmarkTags).forEach(id => {
+                const tagsArray = uiState.bookmarkTags[id]
+                const idx = tagsArray.indexOf(tag)
+                if (idx > -1) {
+                  tagsArray.splice(idx, 1)
+                  if (tagsArray.length === 0) {
+                    delete uiState.bookmarkTags[id]
+                  }
+                }
+              })
+              
+              // Remove from selected filters
+              const selectedIdx = uiState.selectedTags.indexOf(tag)
+              if (selectedIdx > -1) {
+                uiState.selectedTags.splice(selectedIdx, 1)
+              }
+              
+              // Remove colors
+              delete uiState.tagColors[tag]
+              delete uiState.tagTextColors[tag]
+              
+              import("./tag.js").then(({ saveTags }) => {
+                saveTags(uiState.bookmarkTags, uiState.tagColors, uiState.tagTextColors)
+                setTimeout(() => {
+                  renderBrowserPills(tagsBrowserSearch?.value || "")
+                  renderTagPills(tagSearchInput?.value || "")
+                  chrome.bookmarks.getTree((tree) => {
+                    import("./ui.js").then(({ renderFilteredBookmarks }) => {
+                      renderFilteredBookmarks(tree, elements)
+                    })
+                  })
+                }, 100)
+              })
+            }
           })
         })
       })
