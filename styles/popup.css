@@ -15,12 +15,15 @@
 
 .sticky-search {
   position: sticky;
-  top: 1px;
-  background-color: transparent;
+  top: 0;
+  background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   z-index: 101;
   padding: var(--spacing-xs) 0;
   transition: background-color var(--transition-normal);
   border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .control-buttons {
@@ -50,6 +53,11 @@
   top: 10px;
   right: 5px;
   z-index: 1200;
+  background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .button.settings {
