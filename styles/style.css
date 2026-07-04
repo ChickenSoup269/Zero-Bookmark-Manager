@@ -3734,7 +3734,7 @@ html {
 }
 .folder-list.mockup-view {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Mặc định 3 cột */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
   padding: 20px;
   width: 100%;
@@ -3860,13 +3860,13 @@ html {
 /* --- Responsive cho Popup hoặc Màn hình nhỏ --- */
 @media (max-width: 1100px) {
   .folder-list.mockup-view {
-    grid-template-columns: repeat(2, 1fr);
+    /* grid-template-columns removed for responsiveness */
   }
 }
 
 @media (max-width: 768px) {
   .folder-list.mockup-view {
-    grid-template-columns: 1fr; /* 1 cột cho popup extension */
+    /* grid-template-columns removed */
     padding: 12px;
     gap: 12px;
   }
@@ -3888,14 +3888,14 @@ html {
   }
 @media (max-width: 800px) {
   .folder-list.mockup-view {
-    grid-template-columns: 1fr !important;
+    /* grid-template-columns removed */
     padding: 8px !important;
     gap: 8px !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
   .folder-list.card-view {
-    grid-template-columns: 1fr !important;
+    /* grid-template-columns removed */
     padding: 8px !important;
     gap: 8px !important;
     width: 100% !important;

@@ -1,7 +1,9 @@
 .container {
   padding: var(--spacing-md);
-  max-width: 360px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .controls {
@@ -177,8 +179,8 @@
 /* Card View & Detail View Improvements */
 #folder-list.card-view,
 #folder-list.detail-view {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--spacing-md);
   padding: var(--spacing-md);
 }
@@ -535,7 +537,7 @@
 @media (max-width: 400px) {
   body {
     width: 100%;
-    max-width: 360px;
+    max-width: 100%;
   }
 
   .controls {

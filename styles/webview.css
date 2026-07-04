@@ -32,6 +32,7 @@ body {
   z-index: 100;
   display: flex;
   flex-direction: column;
+  transform: translateZ(0);
   transition:
     width 0.25s ease,
     transform 0.25s ease,
@@ -5099,45 +5100,33 @@ textarea.error {
   pointer-events: auto;
 }
 
-/* Sidebar Resizer */
 .sidebar-resizer {
-  position: absolute;
+  position: fixed;
   top: 0;
-  right: 0;
+  left: calc(var(--sidebar-width) - 2px);
+  bottom: 0;
   width: 4px;
-  height: 100%;
+  height: 100vh;
   cursor: col-resize;
   background-color: transparent;
-  z-index: 100;
-  transition: background-color 0.2s;
+  z-index: 101;
+  transition: background-color 0.2s, left 0.25s ease;
+}
+
+.sidebar.collapsed + .sidebar-resizer {
+  display: none;
 }
 
 .sidebar-resizer:hover,
 .sidebar-resizer.is-resizing {
   background-color: var(--accent-color);
 }
-/* Sidebar Resizer */
-.sidebar-resizer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 4px;
-  height: 100%;
-  cursor: col-resize;
-  background-color: transparent;
-  z-index: 100;
-  transition: background-color 0.2s;
-}
 
-.sidebar-resizer:hover,
-.sidebar-resizer.is-resizing {
-  background-color: var(--accent-color);
-}
 
 /* --- Mockup (Gallery) View Styles --- */
 .folder-list.mockup-view {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Mặc định 3 cột */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
   padding: 20px;
   width: 100%;
@@ -5263,13 +5252,13 @@ textarea.error {
 /* --- Responsive cho Popup hoặc Màn hình nhỏ --- */
 @media (max-width: 1100px) {
   .folder-list.mockup-view {
-    grid-template-columns: repeat(2, 1fr);
+    /* grid-template-columns removed */
   }
 }
 
 @media (max-width: 768px) {
   .folder-list.mockup-view {
-    grid-template-columns: 1fr; /* 1 cột cho popup extension */
+    /* grid-template-columns removed */
     padding: 12px;
     gap: 12px;
   }
@@ -5291,14 +5280,14 @@ textarea.error {
   }
 @media (max-width: 800px) {
   .folder-list.mockup-view {
-    grid-template-columns: 1fr !important;
+    /* grid-template-columns removed */
     padding: 8px !important;
     gap: 8px !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
   .folder-list.card-view {
-    grid-template-columns: 1fr !important;
+    /* grid-template-columns removed */
     padding: 8px !important;
     gap: 8px !important;
     width: 100% !important;

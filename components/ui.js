@@ -2233,7 +2233,8 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6", "#FF3B30", "#34C759", "#AF52DE"];
   
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
-    const folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
+    let folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
+    folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
     if (folderBookmarks.length === 0) return;
     
     const color = colors[index % colors.length];
@@ -2410,6 +2411,16 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
       item.appendChild(icon);
       item.appendChild(textWrap);
       
+      const badgeStr = renderVisitCount(b.id);
+      if (badgeStr) {
+        const badgeWrap = document.createElement("div");
+        badgeWrap.style.marginRight = "8px";
+        badgeWrap.style.display = "flex";
+        badgeWrap.style.alignItems = "center";
+        badgeWrap.innerHTML = badgeStr;
+        item.appendChild(badgeWrap);
+      }
+      
       const dropdownWrap = document.createElement("div");
       dropdownWrap.style.marginLeft = "auto";
       dropdownWrap.innerHTML = createDropdownHTML(b, language);
@@ -2454,7 +2465,8 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6"];
   
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
-    const folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
+    let folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
+    folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
     if (folderBookmarks.length === 0) return;
     
     const accent = colors[index % colors.length];
@@ -2619,6 +2631,16 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       
       card.appendChild(icon);
       card.appendChild(titleWrapper);
+      
+      const badgeStr = renderVisitCount(b.id);
+      if (badgeStr) {
+        const badgeWrap = document.createElement("div");
+        badgeWrap.style.marginRight = "8px";
+        badgeWrap.style.display = "flex";
+        badgeWrap.style.alignItems = "center";
+        badgeWrap.innerHTML = badgeStr;
+        card.appendChild(badgeWrap);
+      }
       
       const dropdownWrap = document.createElement("div");
       dropdownWrap.style.marginLeft = "auto";
@@ -4387,8 +4409,10 @@ function sortBookmarks(list, type) {
         return (b.dateAdded || 0) - (a.dateAdded || 0)
       case "default":
         return (a.index || 0) - (b.index || 0)
+      case "newest":
       case "new":
         return (b.dateAdded || 0) - (a.dateAdded || 0)
+      case "oldest":
       case "old":
         return (a.dateAdded || 0) - (b.dateAdded || 0)
       case "a-z":
@@ -4646,6 +4670,7 @@ function createMockupBookmarkElement(bookmark, language, elements) {
       </div>
       <div class="mockup-footer">
         ${healthIcon}
+        ${renderVisitCount(bookmark.id)}
         ${createDropdownHTML(bookmark, language)}
       </div>
     </div>
