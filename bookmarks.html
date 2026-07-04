@@ -255,7 +255,27 @@
                 </button>
                 <img src="images/logo.png" alt="Zero Bookmark Manager Logo" class="logo" width="200" height="60">
 
-                <div class="settings-container">
+                
+            </div>
+
+            <!-- Search moved to Webview -->
+            <div class="webview-search-wrapper"
+                style="position: sticky; top: 16px; z-index: 100; padding: 0 24px; margin-bottom: 16px; pointer-events: none; display: flex; gap: 12px; align-items: center;">
+                <div class="sidebar-search"
+                    style="margin: 0; width: 100%; pointer-events: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(10px);">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search" placeholder="Search bookmarks, tags, notes..."
+                        class="sidebar-search-input" aria-label="Search bookmarks"
+                        data-i18n-placeholder="searchPlaceholder">
+                    <button id="clear-search" class="sidebar-search-clear hidden" aria-label="Clear search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button id="command-palette-button" class="sidebar-command-palette-btn" title="Command Palette"
+                        aria-label="Open command palette">
+                        <i class="fas fa-bolt"></i>
+                    </button>
+                </div>
+                <div class="settings-container" style="pointer-events: auto; margin-left: auto;">
                     <select id="health-sort-filter" class="select" style="display: none;" aria-label="Sort by health">
                         <option value="all" data-i18n="healthSortAll">Sort by Health: All</option>
                         <option value="dead" data-i18n="healthSortDead">Dead Links</option>
@@ -457,25 +477,6 @@
                         </div>
                     </div>
 
-                </div>
-            </div>
-
-            <!-- Search moved to Webview -->
-            <div class="webview-search-wrapper"
-                style="position: sticky; top: 16px; z-index: 100; padding: 0 24px; margin-bottom: 16px; pointer-events: none;">
-                <div class="sidebar-search"
-                    style="margin: 0; width: 100%; pointer-events: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(10px);">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="search" placeholder="Search bookmarks, tags, notes..."
-                        class="sidebar-search-input" aria-label="Search bookmarks"
-                        data-i18n-placeholder="searchPlaceholder">
-                    <button id="clear-search" class="sidebar-search-clear hidden" aria-label="Clear search">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <button id="command-palette-button" class="sidebar-command-palette-btn" title="Command Palette"
-                        aria-label="Open command palette">
-                        <i class="fas fa-bolt"></i>
-                    </button>
                 </div>
             </div>
 
