@@ -431,9 +431,15 @@ function getFirstRunTourSteps(isWebviewPage = false) {
       {
         selector: "#smart-cleanup-button",
         title: t.firstRunWebTourSmartCleanupTitle,
-        message: t.firstRunWebTourSmartCleanupMsg,
+        message: language === "vi" ? "Nhấn vào đây để mở bảng Dọn dẹp." : "Click here to open the Cleanup dashboard.",
         ensureSidebarOpen: true,
         openSection: "admin",
+      },
+      {
+        selector: "#smart-cleanup-popup .smart-cleanup-popup-content",
+        title: t.firstRunWebTourSmartCleanupTitle,
+        message: t.firstRunWebTourSmartCleanupMsg,
+        openCleanup: true,
       },
       {
         selector: "#google-drive-sync-btn",
@@ -645,6 +651,15 @@ function startFirstRunTour() {
     if (step.ensureSidebarOpen) ensureWebviewSidebarOpen()
     if (step.openSection) setSidebarSectionOpen(step.openSection)
     setSettingsMenuOpen(step.openSettings)
+    
+    if (step.openCleanup) {
+      document.getElementById("smart-cleanup-button")?.click()
+    } else {
+      const popup = document.getElementById("smart-cleanup-popup")
+      if (popup && !popup.classList.contains("hidden")) {
+        popup.classList.add("hidden")
+      }
+    }
 
     requestAnimationFrame(() => {
       const target = document.querySelector(step.selector)
