@@ -5482,3 +5482,15 @@ textarea.error {
   transform: translateX(4px) scale(1) !important;
 }
 
+
+/* Sticky settings container when scrolled */
+body.is-scrolled .settings-container {
+  position: fixed;
+  top: 21px; /* 16px (search wrapper top) + 5px (to center 32px buttons in 42px search bar) */
+  right: 36px; /* 24px (wrapper padding) + 12px (search bar padding) */
+  z-index: 105;
+}
+
+body.is-scrolled .sidebar-search {
+  padding-right: 130px;
+}

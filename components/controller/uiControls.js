@@ -213,6 +213,7 @@ export function setupUIControlListeners(elements) {
 
   window.addEventListener("scroll", () => {
     elements.scrollToTopButton.classList.toggle("hidden", window.scrollY <= 0)
+    document.body.classList.toggle("is-scrolled", window.scrollY > 60)
   })
 
   elements.searchInput.addEventListener(
