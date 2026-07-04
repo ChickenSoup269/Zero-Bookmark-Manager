@@ -2869,6 +2869,7 @@ body.sidebar-style-modern .sidebar-modern {
   align-items: center;
   padding: var(--spacing-md);
   position: relative;
+  z-index: 105;
   min-height: 92px; /* Stable height for logo (60px) + padding (32px) */
 }
 
