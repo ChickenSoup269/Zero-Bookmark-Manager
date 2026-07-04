@@ -1,3 +1,23 @@
+import {
+  updateTheme,
+  renderFilteredBookmarks,
+  updateUILanguage,
+  openOrganizeFoldersModal,
+} from "./components/ui.js"
+import { getBookmarkTree, loadVisitCounts } from "./components/bookmarks.js"
+import {
+  translations,
+  debounce,
+  showCustomPopup,
+} from "./components/utils/utils.js"
+import { setupEventListeners } from "./components/events.js"
+import { uiState } from "./components/state.js"
+import { customLoadUIState } from "./components/option/option.js"
+import { initCopyButtons } from "./components/copy-code.js"
+import { initCommandPalette } from "./components/commandPalette.js"
+import { initCleanupDashboard } from "./components/cleanupDashboard.js"
+import { initWorkspaces } from "./components/workspaces.js"
+
 // Sự kiện cho favicon option
 const faviconOptionSelect = document.getElementById("favicon-option-select")
 if (faviconOptionSelect) {
@@ -87,25 +107,7 @@ if (autoRemoveDupToggle) {
     })
   })
 }
-import {
-  updateTheme,
-  renderFilteredBookmarks,
-  updateUILanguage,
-  openOrganizeFoldersModal,
-} from "./components/ui.js"
-import { getBookmarkTree, loadVisitCounts } from "./components/bookmarks.js"
-import {
-  translations,
-  debounce,
-  showCustomPopup,
-} from "./components/utils/utils.js"
-import { setupEventListeners } from "./components/events.js"
-import { uiState } from "./components/state.js"
-import { customLoadUIState } from "./components/option/option.js"
-import { initCopyButtons } from "./components/copy-code.js"
-import { initCommandPalette } from "./components/commandPalette.js"
-import { initCleanupDashboard } from "./components/cleanupDashboard.js"
-import { initWorkspaces } from "./components/workspaces.js"
+
 
 let elements = {}
 const CUSTOM_LANGUAGES_KEY = "customLanguagePacks"
