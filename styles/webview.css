@@ -639,8 +639,8 @@ body {
 
 .command-palette-result:hover,
 .command-palette-result.active {
-  border-color: rgba(var(--accent-color-rgb, 112, 161, 70), 0.38);
-  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
+  border-color: var(--border-color);
+  background: var(--hover-bg);
 }
 
 .command-palette-result-icon {
