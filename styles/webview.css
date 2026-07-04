@@ -2301,8 +2301,22 @@ body {
   transform: translateX(10px);
   transition: all 0.2s ease;
   position: absolute;
-  right: 10px;
+  right: 0;
+  height: 100%;
+  padding: 0 10px 0 5px;
   background: inherit;
+}
+
+.tag-pill-actions::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 0;
+  width: 15px;
+  height: 100%;
+  background: inherit;
+  -webkit-mask-image: linear-gradient(to right, transparent, black);
+  mask-image: linear-gradient(to right, transparent, black);
 }
 
 .sidebar-tag-item:hover .tag-pill-actions {

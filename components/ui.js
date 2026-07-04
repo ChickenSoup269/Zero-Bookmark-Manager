@@ -1200,7 +1200,7 @@ export async function populateTagFilter(elements) {
       pill.title = `${tag} (${count})`
       pill.style.cssText = isActive
         ? `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
-        : `border-color: ${tagColor}; color: var(--text-primary); background: transparent;`
+        : `border-color: ${tagColor}; color: var(--text-primary);`
       pill.innerHTML = `
         <div class="tag-pill-content">
           <i class="fas fa-tag" style="font-size:0.65rem; color: ${tagColor}; flex-shrink:0;"></i>
@@ -1220,7 +1220,7 @@ export async function populateTagFilter(elements) {
         if (idx > -1) {
           uiState.selectedTags.splice(idx, 1)
           pill.classList.remove("active")
-          pill.style.cssText = `border-color: ${tagColor}; color: var(--text-primary); background: transparent;`
+          pill.style.cssText = `border-color: ${tagColor}; color: var(--text-primary);`
         } else {
           uiState.selectedTags.push(tag)
           pill.classList.add("active")
