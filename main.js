@@ -429,6 +429,20 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         openSection: "admin",
       },
       {
+        selector: "#smart-cleanup-button",
+        title: t.firstRunWebTourSmartCleanupTitle,
+        message: t.firstRunWebTourSmartCleanupMsg,
+        ensureSidebarOpen: true,
+        openSection: "admin",
+      },
+      {
+        selector: "#google-drive-sync-btn",
+        title: t.firstRunWebTourCloudSyncTitle,
+        message: t.firstRunWebTourCloudSyncMsg,
+        ensureSidebarOpen: true,
+        openSection: "admin",
+      },
+      {
         selector: ".bookmark-item .dropdown-btn",
         title: t.firstRunTourBookmarkMenuTitle,
         message: t.firstRunTourBookmarkMenuMsg,
