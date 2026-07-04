@@ -666,11 +666,13 @@ function startFirstRunTour() {
       count.textContent = `${stepIndex + 1}/${steps.length}`
       title.textContent = step.title
       message.textContent = step.message
-      skipButton.textContent = t.firstRunTourSkip || "Skip"
-      nextButton.textContent =
-        stepIndex === steps.length - 1
+      skipButton.innerHTML = (t.firstRunTourSkip || "Skip") + `<kbd>Esc</kbd>`
+      
+      const nextText = stepIndex === steps.length - 1
           ? t.firstRunTourDone || "Done"
           : t.firstRunTourNext || "Next"
+          
+      nextButton.innerHTML = nextText + `<kbd>&rarr;</kbd>`
 
       tour.classList.remove("hidden")
       positionFirstRunTourCard(card, rect)
@@ -678,7 +680,13 @@ function startFirstRunTour() {
   }
 
   const handleKeydown = (event) => {
-    if (event.key === "Escape") finish()
+    if (event.key === "Escape") {
+      event.preventDefault()
+      finish()
+    } else if (event.key === "ArrowRight" || event.key === "Enter") {
+      event.preventDefault()
+      nextButton.click()
+    }
   }
 
   tour.addEventListener("click", (event) => {

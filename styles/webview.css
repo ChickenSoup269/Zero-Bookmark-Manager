@@ -3917,6 +3917,25 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 
 .first-run-tour-actions .button {
   min-width: 80px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.first-run-tour-actions .button kbd {
+  font-family: inherit;
+  font-size: 0.8em;
+  opacity: 0.7;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-light .first-run-tour-actions .button kbd {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 .dropdown-menu-2 .menu-item i {
