@@ -457,13 +457,6 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         }
       },
       {
-        selector: "#google-drive-sync-btn",
-        title: t.firstRunWebTourCloudSyncTitle,
-        message: t.firstRunWebTourCloudSyncMsg,
-        ensureSidebarOpen: true,
-        openSection: "admin",
-      },
-      {
         selector: ".bookmark-item .dropdown-btn",
         title: t.firstRunTourBookmarkMenuTitle,
         message: t.firstRunTourBookmarkMenuMsg,
@@ -493,6 +486,27 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         selector: "#view-switcher",
         title: language === "vi" ? "Chế độ xem" : "View Modes",
         message: language === "vi" ? "Chuyển đổi giữa chế độ Cây, Thẻ (Card), hoặc Bảng Kanban." : "Toggle between Tree, Card, or Kanban board views.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#export-bookmarks-option",
+        title: language === "vi" ? "Xuất dữ liệu" : "Export Bookmarks",
+        message: language === "vi" ? "Sao lưu bookmark của bạn ra file HTML an toàn." : "Backup your bookmarks to a secure HTML file.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#import-bookmarks-option",
+        title: language === "vi" ? "Nhập dữ liệu" : "Import Bookmarks",
+        message: language === "vi" ? "Phục hồi hoặc thêm mới bookmark từ file HTML." : "Restore or add bookmarks from an HTML file.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#google-drive-sync-btn",
+        title: t.firstRunWebTourCloudSyncTitle,
+        message: t.firstRunWebTourCloudSyncMsg,
         openSettings: true,
         ensureSidebarOpen: true,
       },
