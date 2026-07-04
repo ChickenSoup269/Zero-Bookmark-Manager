@@ -858,6 +858,15 @@ function startFirstRunTour() {
   renderStep()
 }
 
+// Global scroll listener for glassmorphism headers
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 10) {
+    document.body.classList.add('is-scrolled');
+  } else {
+    document.body.classList.remove('is-scrolled');
+  }
+}, { passive: true });
+
 function setupRestartGuideControl() {
   const button = document.getElementById("restart-guide-option")
   if (!button || button.dataset.bound === "true") return

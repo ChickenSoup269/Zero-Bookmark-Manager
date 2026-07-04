@@ -16,14 +16,18 @@
 .sticky-search {
   position: sticky;
   top: 0;
-  background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: transparent;
   z-index: 101;
   padding: var(--spacing-sm) var(--spacing-md);
   margin: 0 calc(var(--spacing-md) * -1);
   padding-right: 45px; /* Leave space for the fixed settings icon */
-  transition: background-color var(--transition-normal);
+  transition: all var(--transition-normal);
+}
+
+body.is-scrolled .sticky-search {
+  background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 

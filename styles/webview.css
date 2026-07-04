@@ -5481,4 +5481,23 @@ textarea.error {
 .tree-view.compact-tree .folder-item:hover {
   transform: translateX(4px) scale(1) !important;
 }
+}
 
+.sticky-top-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: transparent;
+  padding-bottom: 8px;
+  margin: 0 -24px 16px -24px;
+  padding: 0 24px;
+  transition: all 0.3s ease;
+}
+
+body.is-scrolled .sticky-top-container {
+  background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border-bottom: 1px solid var(--border-color);
+}
