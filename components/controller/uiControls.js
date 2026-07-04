@@ -211,9 +211,35 @@ export function setupUIControlListeners(elements) {
     })
   }
 
+  const header = document.querySelector('.header.flex-header')
+  const searchWrapper = document.querySelector('.webview-search-wrapper')
+  const settingsContainer = document.querySelector('.settings-container')
+
   window.addEventListener("scroll", () => {
     elements.scrollToTopButton.classList.toggle("hidden", window.scrollY <= 0)
-    document.body.classList.toggle("is-scrolled", window.scrollY > 60)
+    
+    // Dynamic settings container positioning
+    if (header && searchWrapper && settingsContainer) {
+      if (window.scrollY > 40) {
+        if (settingsContainer.parentElement !== searchWrapper) {
+          searchWrapper.style.display = 'flex'
+          searchWrapper.style.gap = '12px'
+          searchWrapper.style.alignItems = 'center'
+          searchWrapper.style.justifyContent = 'space-between'
+          settingsContainer.style.pointerEvents = 'auto'
+          // Make sidebar-search take remaining space
+          const sidebarSearch = searchWrapper.querySelector('.sidebar-search')
+          if (sidebarSearch) sidebarSearch.style.flex = '1'
+          
+          searchWrapper.appendChild(settingsContainer)
+        }
+      } else {
+        if (settingsContainer.parentElement !== header) {
+          settingsContainer.style.pointerEvents = ''
+          header.appendChild(settingsContainer)
+        }
+      }
+    }
   })
 
   elements.searchInput.addEventListener(
