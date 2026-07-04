@@ -570,12 +570,18 @@ async function openManageTagsPopup(bookmarkId) {
   }
 
   let existingTagChips = popup.querySelector(".existing-tags-chip-list")
+  let existingTagsSearchInput = popup.querySelector(".existing-tags-search-input")
 
-  const renderExistingTagChips = (tags) => {
+  const renderExistingTagChips = (tags, filter = "") => {
     if (!existingTagChips) return
 
     const currentTags = new Set(uiState.bookmarkTags[bookmarkId] || [])
-    const availableTags = tags.filter((tag) => !currentTags.has(tag))
+    let availableTags = tags.filter((tag) => !currentTags.has(tag))
+    
+    if (filter) {
+      const lowerFilter = filter.toLowerCase()
+      availableTags = availableTags.filter((tag) => tag.toLowerCase().includes(lowerFilter))
+    }
 
     if (!availableTags.length) {
       existingTagChips.innerHTML = `
@@ -601,12 +607,43 @@ async function openManageTagsPopup(bookmarkId) {
           </button>`
       })
       .join("")
+      
+    existingTagChips.querySelectorAll(".existing-tag-chip").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tagToAdd = btn.dataset.existingTag
+        if (!tagToAdd) return
+
+        if (!uiState.bookmarkTags[bookmarkId]) {
+          uiState.bookmarkTags[bookmarkId] = []
+        }
+        if (!uiState.bookmarkTags[bookmarkId].includes(tagToAdd)) {
+          uiState.bookmarkTags[bookmarkId].push(tagToAdd)
+          saveTagData(() => {
+            renderTags()
+            renderExistingTagChips(tags, existingTagsSearchInput?.value)
+          })
+        }
+      })
+    })
+  }
+  
+  if (existingTagsSearchInput) {
+    existingTagsSearchInput.value = "" // Reset on open
+    
+    // Remove previous listener to avoid duplicates if called multiple times
+    const newSearchInput = existingTagsSearchInput.cloneNode(true)
+    existingTagsSearchInput.parentNode.replaceChild(newSearchInput, existingTagsSearchInput)
+    existingTagsSearchInput = newSearchInput
+    
+    existingTagsSearchInput.addEventListener("input", (e) => {
+        getAllTags().then(tags => renderExistingTagChips(tags, e.target.value))
+    })
   }
 
   // --- Logic ---
   const updateDropdown = async () => {
     const tags = await getAllTags()
-    renderExistingTagChips(tags)
+    renderExistingTagChips(tags, existingTagsSearchInput?.value)
   }
 
   const renderTags = () => {
