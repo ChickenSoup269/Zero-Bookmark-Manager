@@ -24,6 +24,18 @@ import { handleDeleteFolder } from "./controller/deleteFolder.js"
 // ==========================================
 
 // Centralized Favicon Error Handling
+window.addEventListener('error', function(e) {
+  const t = e.target;
+  if (t && t.tagName === 'IMG') {
+    if (t.dataset.hostname) window.handleFaviconError(t, t.dataset.hostname);
+    else if (t.dataset.hideOnError) t.style.opacity = 0;
+    else if (!t.dataset.errorHandled) { t.dataset.errorHandled = 'true'; t.src = './images/default-favicon.png'; }
+  }
+}, true);
+window.addEventListener('load', function(e) {
+  const t = e.target;
+  if (t && t.tagName === 'IMG' && t.dataset.bgOnLoad) t.style.background = t.dataset.bgOnLoad;
+}, true);
 window.handleFaviconError = function (img, hostname) {
   if (!img || img.dataset.fallback === "final") return
 
@@ -501,7 +513,7 @@ function openWebPreviewModal(bookmark) {
       <div class="modal-header">
         <div style="display:flex;align-items:center;gap:10px;">
           <img src="${favicon}" class="modal-favicon" alt="icon" 
-            onerror="window.handleFaviconError(this, '${hostname}')"
+            data-hostname="${hostname}"
           >
           <h3 class="modal-title" title="${bookmark.title}">${
             bookmark.title || bookmark.url
@@ -537,7 +549,7 @@ function openWebPreviewModal(bookmark) {
         <iframe src="${bookmark.url}" 
                 style="width:100%; height:100%; border:none; position:relative; z-index:2; background:transparent;" 
                 sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                onload="this.style.background='white'">
+                data-bg-on-load="white">
         </iframe>
       </div>
     </div>`
@@ -3285,7 +3297,7 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
     <div class="bookmark-content">
-      <div class="bookmark-favicon"><img src="${favicon}" alt="icon" onerror="window.handleFaviconError(this, '${hostname}')"></div>
+      <div class="bookmark-favicon"><img src="${favicon}" alt="icon" data-hostname="${hostname}"></div>
       <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; display: flex;">
         <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">${
         bookmark.title || bookmark.url
@@ -3327,7 +3339,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
     <div style="display:flex;align-items:center;gap:12px;">
       <div class="bookmark-favicon" style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:white; display:flex;justify-content:center;align-items:center;">
         <img src="${favicon}" style="width:20px;height:20px;object-fit:contain;" 
-          onerror="window.handleFaviconError(this, '${hostname}')"
+          data-hostname="${hostname}"
         >
       </div>
       <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; display: flex;">
@@ -3383,7 +3395,7 @@ function createListBookmarkElement(bookmark, language, elements) {
       <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(0.9);">
     </div>
     <div class="bookmark-favicon" style="width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; border-radius: 4px;">
-      <img src="${favicon}" style="width: 14px; height: 14px;" onerror="window.handleFaviconError(this, '${hostname}')">
+      <img src="${favicon}" style="width: 14px; height: 14px;" data-hostname="${hostname}">
     </div>
     <div class="list-info-main" style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
       <a href="${bookmark.url}" target="_blank" class="link list-bookmark-title-link" style="white-space: normal !important; word-break: break-word !important; min-width: 0; display: block;">
@@ -3762,7 +3774,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
     }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
     <div class="bookmark-favicon" style="width: 22px; height: 22px; border-radius: 4px; overflow: hidden; background: white; display: flex; justify-content: center; align-items: center;">
       <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" 
-        onerror="window.handleFaviconError(this, '${hostname}')"
+        data-hostname="${hostname}"
       >
     </div>
     <a href="${
@@ -3817,7 +3829,7 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}">
     <img src="${favicon}" alt="fav" class="favicon" 
-      onerror="window.handleFaviconError(this, '${hostname}')"
+      data-hostname="${hostname}"
     >
     <a href="${bookmark.url}" target="_blank" class="link">${
       bookmark.title || bookmark.url
@@ -4771,12 +4783,12 @@ function createMockupBookmarkElement(bookmark, language, elements) {
 
   div.innerHTML = `
     <div class="mockup-image-container">
-      <img class="mockup-image" src="${screenshot}" loading="lazy" onerror="this.style.opacity=0">
+      <img class="mockup-image" src="${screenshot}" loading="lazy" data-hide-on-error="true">
       <div class="mockup-overlay"></div>
     </div>
     <div class="mockup-content">
       <div class="mockup-meta">
-        <img class="mockup-favicon" src="${favicon}" onerror="window.handleFaviconError(this, '${hostname}')">
+        <img class="mockup-favicon" src="${favicon}" data-hostname="${hostname}">
         <div data-tooltip="${hostname}" style="min-width: 0; flex: 1;">
           <span class="mockup-hostname" style="display: block;">${hostname}</span>
         </div>
@@ -4938,4 +4950,21 @@ function sortFoldersArray(foldersArr, type) {
     sorted.sort((a, b) => (a.index || 0) - (b.index || 0))
   }
   return sorted
+}
+
+
+export function openBookmarkPropertiesModal(bookmark) {
+  import('./utils/utils.js').then(({ showCustomPopup }) => {
+    const title = 'Bookmark Properties';
+    const dateAdded = new Date(bookmark.dateAdded).toLocaleString();
+    const content = `
+      <div style="text-align: left;">
+        <div><strong>Title:</strong> ${bookmark.title}</div>
+        <div style="word-break: break-all; margin-top: 8px;"><strong>URL:</strong> <a href="${bookmark.url}" target="_blank">${bookmark.url}</a></div>
+        <div style="margin-top: 8px;"><strong>Added:</strong> ${dateAdded}</div>
+        <div style="margin-top: 8px;"><strong>ID:</strong> ${bookmark.id}</div>
+      </div>
+    `;
+    showCustomPopup(title, content);
+  });
 }

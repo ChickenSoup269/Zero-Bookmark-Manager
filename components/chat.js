@@ -1108,7 +1108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   const bHostname = new URL(b.url).hostname
                   return `<span class="bookmark-item">${
                     index + 1
-                  }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, '${bHostname}')}else{this.src='./images/default-favicon.png'}"> <a href="${
+                  }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" data-hostname="${bHostname}"> <a href="${
                     b.url
                   }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
                 })
@@ -1192,7 +1192,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       const bHostname = new URL(b.url).hostname
                       return `<span class="bookmark-item">${
                         index + 1
-                      }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, '${bHostname}')}else{this.src='./images/default-favicon.png'}"> <a href="${
+                      }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" data-hostname="${bHostname}"> <a href="${
                         b.url
                       }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
                     },
@@ -1780,7 +1780,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   const bHostname = new URL(b.url).hostname
                   return `<span class="bookmark-item">${
                     index + 1
-                  }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, '${bHostname}')}else{this.src='./images/default-favicon.png'}"> <a href="${
+                  }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" data-hostname="${bHostname}"> <a href="${
                     b.url
                   }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
                 })
@@ -1877,7 +1877,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const sHostname = new URL(site.url).hostname
                 return `<span class="bookmark-item">${
                   index + 1
-                }. <img src="https://www.google.com/s2/favicons?domain=${sHostname}" class="favicon" alt="Favicon" onerror="if(window.handleFaviconError){window.handleFaviconError(this, '${sHostname}')}else{this.src='./images/default-favicon.png'}"> <a href="${
+                }. <img src="https://www.google.com/s2/favicons?domain=${sHostname}" class="favicon" alt="Favicon" data-hostname="${sHostname}"> <a href="${
                   site.url
                 }" target="_blank">${site.title}</a> - ${
                   site.description

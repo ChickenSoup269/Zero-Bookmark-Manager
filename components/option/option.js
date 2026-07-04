@@ -310,7 +310,7 @@ export async function customLoadUIState(callback) {
         ? "block"
         : "none"
     } else {
-      console.warn("Select All container (.select-all) not found")
+      // suppressed
     }
 
     const tagFilterDropdown = document.getElementById("tag-filter-dropdown")
@@ -322,7 +322,7 @@ export async function customLoadUIState(callback) {
         checkbox.checked = uiState.selectedTags.includes(checkbox.value)
       })
     } else {
-      console.warn("tag-filter-dropdown not found")
+      // suppressed
     }
 
     // Làm mới giao diện sau khi tải trạng thái

@@ -67,7 +67,7 @@ export function setupUIControlListeners(elements) {
           selectAllContainer.classList.remove("hidden")
         }, 10)
       } else {
-        console.warn("Select All container (.select-all) not found")
+        // suppressed
       }
     } else {
       // Hide checkboxes and select-all
@@ -83,7 +83,7 @@ export function setupUIControlListeners(elements) {
           selectAllContainer.style.display = "none"
         }, 150)
       } else {
-        console.warn("Select All container (.select-all) not found")
+        // suppressed
       }
       // Reset selection state
       uiState.selectedBookmarks.clear()
