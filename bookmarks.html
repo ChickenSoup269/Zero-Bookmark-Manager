@@ -249,12 +249,18 @@
         <!-- ==================== MAIN CONTENT AREA ==================== -->
         <div class="main-content">
             <div class="header flex-header">
-                <button id="toggle-sidebar" class="button toggle-sidebar" title="Toggle Sidebar"
-                    aria-label="Toggle Sidebar">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <img src="images/logo.png" alt="Zero Bookmark Manager Logo" class="logo" width="200" height="60">
+                <div style="flex: 1; display: flex; align-items: center; justify-content: flex-start;">
+                    <button id="toggle-sidebar" class="button toggle-sidebar" title="Toggle Sidebar"
+                        aria-label="Toggle Sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                
+                <div style="display: flex; justify-content: center;">
+                    <img src="images/logo.png" alt="Zero Bookmark Manager Logo" class="logo" width="200" height="60">
+                </div>
 
+                <div style="flex: 1; display: flex; align-items: center; justify-content: flex-end;">
                     <select id="health-sort-filter" class="select" style="display: none;" aria-label="Sort by health">
                         <option value="all" data-i18n="healthSortAll">Sort by Health: All</option>
                         <option value="dead" data-i18n="healthSortDead">Dead Links</option>
@@ -263,8 +269,6 @@
                         <option value="safe" data-i18n="healthSortSafe">Safe Links</option>
                     </select>
                 </div>
-                <!-- Spacer to keep logo centered -->
-                <div style="width: 40px;"></div>
             </div>
 
             <!-- Search moved to Webview -->
