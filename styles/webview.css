@@ -5686,3 +5686,8 @@ body.is-scrolled .webview-search-wrapper {
   box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
   border-bottom: 1px solid var(--border-color) !important;
 }
+
+.organize-folders-popup-content {
+  width: 90% !important;
+  max-width: 1000px !important;
+}

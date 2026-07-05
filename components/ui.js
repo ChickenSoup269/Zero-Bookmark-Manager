@@ -4454,10 +4454,12 @@ function refreshOrganizeFoldersPopup(elements) {
 
   if (popup && !popup.classList.contains("hidden") && treeViewContainer) {
     // Refresh the tree view in the popup
+    const language = localStorage.getItem("appLanguage") || "en";
+    const t = translations[language] || translations.en;
     chrome.bookmarks.getTree((tree) => {
       uiState.bookmarkTree = tree
-      treeViewContainer.innerHTML = ""
-      renderTreeView(tree[0].children, elements, 0, treeViewContainer, { onlyFolders: true })
+      // Use the current navigated folder, default to "0"
+      renderOrganizeExplorer(typeof currentOrganizeFolderId !== "undefined" ? currentOrganizeFolderId : "0", elements, treeViewContainer, t)
     })
   }
 }
@@ -4648,41 +4650,15 @@ export function openOrganizeFoldersModal(elements) {
   treeViewContainer.innerHTML = ""
 
   let toolbar = popup.querySelector('.organize-folders-toolbar');
-  if (!toolbar) {
-      toolbar = document.createElement('div');
-      toolbar.className = 'organize-folders-toolbar';
-      toolbar.style.cssText = 'display: flex; gap: 8px; margin-bottom: 12px;';
-      toolbar.innerHTML = `
-        <button id="organize-folders-expand" class="button">${t.expandAll || "Expand All"}</button>
-        <button id="organize-folders-collapse" class="button cancel">${t.collapseAll || "Collapse All"}</button>
-      `;
-      treeViewContainer.parentNode.insertBefore(toolbar, treeViewContainer);
-
-      toolbar.querySelector('#organize-folders-expand').onclick = () => {
-          uiState.collapsedFolders.clear();
-          refreshOrganizeFoldersPopup(elements);
-      };
-      toolbar.querySelector('#organize-folders-collapse').onclick = () => {
-          const collapseAll = (nodes) => {
-              nodes.forEach(n => {
-                  if (n.children) {
-                      uiState.collapsedFolders.add(n.id);
-                      collapseAll(n.children);
-                  }
-              });
-          };
-          chrome.bookmarks.getTree(tree => {
-              collapseAll(tree[0].children);
-              refreshOrganizeFoldersPopup(elements);
-          });
-      };
+  if (toolbar) {
+      toolbar.remove();
   }
 
   // Update bookmark tree state before rendering
   chrome.bookmarks.getTree((tree) => {
     uiState.bookmarkTree = tree
-    // Render the draggable tree view inside the popup
-    renderTreeView(tree[0].children, elements, 0, treeViewContainer, { onlyFolders: true })
+    // Render the new explorer layout inside the popup, start at root
+    renderOrganizeExplorer("0", elements, treeViewContainer, t)
   })
 
   popup.classList.remove("hidden")
@@ -4966,5 +4942,371 @@ export function openBookmarkPropertiesModal(bookmark) {
       </div>
     `;
     showCustomPopup(title, content);
+  });
+}
+
+
+// Helper function for Organize Folders Explorer view
+let currentOrganizeFolderId = "0"; // Root by default
+
+function renderOrganizeExplorer(folderId, elements, container, t) {
+  currentOrganizeFolderId = folderId;
+  
+  // Helper to get breadcrumb trail
+  function getBreadcrumbs(id, callback, trail = []) {
+      if (!id || id === "0") {
+          callback(trail.reverse());
+          return;
+      }
+      chrome.bookmarks.get(id, (results) => {
+          if (!results || !results.length) {
+              callback(trail.reverse());
+              return;
+          }
+          trail.push(results[0]);
+          getBreadcrumbs(results[0].parentId, callback, trail);
+      });
+  }
+
+  getBreadcrumbs(folderId, (trail) => {
+      chrome.bookmarks.getSubTree(folderId, (results) => {
+        if (!results || !results.length) return;
+        const folder = results[0];
+        const children = folder.children || [];
+        
+        container.innerHTML = "";
+        
+        // Header for navigation (Breadcrumb)
+        const navHeader = document.createElement("div");
+        navHeader.style.display = "flex";
+        navHeader.style.alignItems = "center";
+        navHeader.style.gap = "8px";
+        navHeader.style.marginBottom = "16px";
+        navHeader.style.padding = "0 8px";
+        navHeader.style.flexWrap = "wrap";
+        
+        // Render Breadcrumb
+        const rootCrumb = document.createElement("button");
+        rootCrumb.className = "dropdown-btn"; rootCrumb.title = "Root";
+        rootCrumb.style.padding = "4px 8px";
+        rootCrumb.style.display = "flex";
+        rootCrumb.style.alignItems = "center";
+        rootCrumb.innerHTML = `<i class="fas fa-home"></i>`;
+        rootCrumb.onclick = () => renderOrganizeExplorer("0", elements, container, t);
+        
+        // Drag over breadcrumb to move items
+        rootCrumb.ondragover = (e) => { e.preventDefault(); rootCrumb.style.background = "var(--primary-color-transparent, rgba(0,0,0,0.1))"; };
+        rootCrumb.ondragleave = (e) => { rootCrumb.style.background = "transparent"; };
+        rootCrumb.ondrop = (e) => {
+             e.preventDefault();
+             rootCrumb.style.background = "transparent";
+             const draggedId = e.dataTransfer.getData("text/plain");
+             if (draggedId && draggedId !== "0") {
+                 chrome.bookmarks.move(draggedId, { parentId: "0" }, () => {
+                     renderOrganizeExplorer(folderId, elements, container, t);
+                     if(typeof refreshFolders === 'function' && elements.folderFilter) refreshFolders(elements);
+                 });
+             }
+        };
+        navHeader.appendChild(rootCrumb);
+
+        trail.forEach((crumb, index) => {
+            const separator = document.createElement("span");
+            separator.innerHTML = `<i class="fas fa-chevron-right" style="font-size: 0.8rem; color: var(--text-secondary);"></i>`;
+            navHeader.appendChild(separator);
+            
+            const crumbBtn = document.createElement("button");
+            crumbBtn.className = "button";
+            crumbBtn.style.padding = "4px 8px";
+            crumbBtn.style.background = "transparent";
+            crumbBtn.style.border = "none";
+            crumbBtn.style.color = index === trail.length - 1 ? "var(--text-primary)" : "var(--text-secondary)";
+            crumbBtn.style.fontWeight = index === trail.length - 1 ? "600" : "normal";
+            crumbBtn.textContent = crumb.title || "Root";
+            crumbBtn.onclick = () => renderOrganizeExplorer(crumb.id, elements, container, t);
+            
+            // Allow drag dropping into breadcrumbs
+            crumbBtn.ondragover = (e) => { e.preventDefault(); crumbBtn.style.background = "var(--primary-color-transparent, rgba(0,0,0,0.1))"; crumbBtn.style.borderRadius = "4px"; };
+            crumbBtn.ondragleave = (e) => { crumbBtn.style.background = "transparent"; };
+            crumbBtn.ondrop = (e) => {
+                 e.preventDefault();
+                 crumbBtn.style.background = "transparent";
+                 const draggedId = e.dataTransfer.getData("text/plain");
+                 if (draggedId && draggedId !== crumb.id) {
+                     chrome.bookmarks.move(draggedId, { parentId: crumb.id }, () => {
+                         renderOrganizeExplorer(folderId, elements, container, t);
+                         if(typeof refreshFolders === 'function' && elements.folderFilter) refreshFolders(elements);
+                     });
+                 }
+            };
+            navHeader.appendChild(crumbBtn);
+        });
+        
+        container.appendChild(navHeader);
+        
+        // List container
+        const listContainer = document.createElement("div");
+        listContainer.className = "folder-list list-view";
+        listContainer.style.display = "flex";
+        listContainer.style.flexDirection = "column";
+        listContainer.style.gap = "8px";
+        listContainer.style.padding = "8px";
+        listContainer.style.maxHeight = "65vh";
+        listContainer.style.overflowY = "auto";
+        
+        // Sort: Folders first, then bookmarks
+        const sortedChildren = children.slice().sort((a, b) => {
+           const aIsFolder = !a.url;
+           const bIsFolder = !b.url;
+           if (aIsFolder && !bIsFolder) return -1;
+           if (!aIsFolder && bIsFolder) return 1;
+           return 0;
+        });
+        
+        if (sortedChildren.length === 0) {
+           const emptyMsg = document.createElement("div");
+           emptyMsg.style.textAlign = "center";
+           emptyMsg.style.padding = "32px";
+           emptyMsg.style.color = "var(--text-secondary)";
+           emptyMsg.textContent = "Empty folder";
+           listContainer.appendChild(emptyMsg);
+        }
+        
+        sortedChildren.forEach(item => {
+          const isFolder = !item.url;
+          const isRootFolder = item.id === "1" || item.id === "2" || item.id === "3";
+          
+          const itemRow = document.createElement("div");
+          itemRow.className = `list-bookmark-item ${isFolder ? "list-folder-item" : ""}`;
+          itemRow.style.cursor = isFolder ? "pointer" : "default";
+          itemRow.style.padding = "8px 12px";
+          itemRow.style.display = "flex";
+          itemRow.style.alignItems = "center";
+          itemRow.style.gap = "12px";
+          itemRow.style.border = "1px solid var(--border-color)";
+          itemRow.style.borderRadius = "8px";
+          itemRow.style.background = "var(--bg-secondary)";
+          itemRow.style.transition = "background 0.2s, border-color 0.2s, transform 0.2s";
+          itemRow.draggable = true;
+          
+          // Hover effect manual fallback
+          itemRow.onmouseenter = () => { itemRow.style.background = "var(--bg-tertiary)"; };
+          itemRow.onmouseleave = () => { itemRow.style.background = "var(--bg-secondary)"; };
+          
+          // Drag events
+          itemRow.ondragstart = (e) => {
+             e.dataTransfer.setData("text/plain", item.id);
+             itemRow.style.opacity = "0.5";
+             itemRow.style.transform = "scale(0.98)";
+          };
+          itemRow.ondragend = (e) => {
+             itemRow.style.opacity = "1";
+             itemRow.style.transform = "none";
+          };
+          
+          // Drop events for folders
+          if (isFolder) {
+             itemRow.ondragover = (e) => {
+                e.preventDefault(); 
+                itemRow.style.borderColor = "var(--primary-color)";
+                itemRow.style.background = "var(--bg-tertiary)";
+             };
+             itemRow.ondragleave = (e) => {
+                itemRow.style.borderColor = "var(--border-color)";
+                itemRow.style.background = "var(--bg-secondary)";
+             };
+             itemRow.ondrop = (e) => {
+                e.preventDefault();
+                itemRow.style.borderColor = "var(--border-color)";
+                itemRow.style.background = "var(--bg-secondary)";
+                const draggedId = e.dataTransfer.getData("text/plain");
+                
+                if (draggedId && draggedId !== item.id) {
+                    chrome.bookmarks.move(draggedId, { parentId: item.id }, () => {
+                        renderOrganizeExplorer(folderId, elements, container, t);
+                        if(typeof refreshFolders === 'function' && elements.folderFilter) refreshFolders(elements);
+                    });
+                }
+             };
+          }
+          
+          if (isFolder) {
+              itemRow.onclick = (e) => {
+                 if(e.target.closest("button")) return;
+                 renderOrganizeExplorer(item.id, elements, container, t);
+              };
+          }
+          
+          // Icon
+          const iconDiv = document.createElement("div");
+          iconDiv.className = "bookmark-favicon";
+          iconDiv.style.width = "28px";
+          iconDiv.style.height = "28px";
+          iconDiv.style.display = "flex";
+          iconDiv.style.alignItems = "center";
+          iconDiv.style.justifyContent = "center";
+          iconDiv.style.flexShrink = "0";
+          
+          if (isFolder) {
+              iconDiv.innerHTML = `<span style="font-size: 1.2rem;">📂</span>`;
+          } else {
+              const urlObj = new URL(item.url || "https://example.com");
+              iconDiv.innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32" alt="icon" style="width:20px;height:20px;border-radius:4px;">`;
+          }
+          
+          // Info
+          const infoDiv = document.createElement("div");
+          infoDiv.className = "list-info-main";
+          infoDiv.style.display = "flex";
+          infoDiv.style.flexDirection = "column";
+          infoDiv.style.gap = "4px";
+          infoDiv.style.flex = "1";
+          infoDiv.style.minWidth = "0";
+          
+          const titleLink = document.createElement("span");
+          titleLink.className = "list-bookmark-title-link";
+          titleLink.style.fontWeight = "600";
+          titleLink.style.fontSize = "1rem";
+          titleLink.style.color = "var(--text-primary)";
+          titleLink.style.whiteSpace = "nowrap";
+          titleLink.style.overflow = "hidden";
+          titleLink.style.textOverflow = "ellipsis";
+          titleLink.textContent = item.title || (isFolder ? "Folder" : "Bookmark");
+          
+          const subText = document.createElement("div");
+          subText.className = "list-bookmark-url-display";
+          subText.style.fontSize = "0.85rem";
+          subText.style.color = "var(--text-secondary)";
+          subText.style.whiteSpace = "nowrap";
+          subText.style.overflow = "hidden";
+          subText.style.textOverflow = "ellipsis";
+          
+          if (isFolder) {
+             const childCount = item.children ? item.children.length : 0;
+             subText.textContent = `${childCount} items`;
+          } else {
+             subText.textContent = item.url;
+          }
+          
+          infoDiv.appendChild(titleLink);
+          infoDiv.appendChild(subText);
+          
+          // Actions
+          const actionsDiv = document.createElement("div");
+          actionsDiv.className = "list-actions";
+          actionsDiv.style.display = "flex";
+          actionsDiv.style.gap = "4px";
+          actionsDiv.style.flexShrink = "0";
+          
+          const renameBtn = document.createElement("button");
+          // Use dropdown-btn class so it looks exactly like the extension's icon buttons
+          renameBtn.className = "dropdown-btn"; renameBtn.title = t.rename || "Rename";
+          renameBtn.style.padding = "6px";
+          renameBtn.style.width = "32px";
+          renameBtn.style.height = "32px";
+          renameBtn.style.display = "flex";
+          renameBtn.style.alignItems = "center";
+          renameBtn.style.justifyContent = "center";
+          renameBtn.innerHTML = `<i class="fas fa-edit" style="font-size: 0.9rem;"></i>`;
+          if(isRootFolder) renameBtn.disabled = true;
+          renameBtn.onclick = (e) => {
+             e.stopPropagation();
+             const popup = document.getElementById("custom-prompt-popup");
+             if (!popup) {
+                const newName = prompt(t.renamePrompt || "Enter new name:", item.title);
+                if (newName && newName !== item.title) {
+                    chrome.bookmarks.update(item.id, { title: newName }, () => {
+                        renderOrganizeExplorer(folderId, elements, container, t);
+                        if (elements && elements.folderFilter && typeof refreshFolders === "function") refreshFolders(elements);
+                    });
+                }
+                return;
+             }
+             
+             const titleEl = document.getElementById("custom-prompt-title");
+             const inputEl = document.getElementById("custom-prompt-input");
+             const saveBtn = document.getElementById("custom-prompt-save");
+             const cancelBtn = document.getElementById("custom-prompt-cancel");
+             
+             if(titleEl) titleEl.textContent = t.rename || "Rename";
+             if(inputEl) {
+                 inputEl.value = item.title;
+                 inputEl.style.width = "100%";
+                 inputEl.style.boxSizing = "border-box";
+             }
+             
+             const cleanup = () => {
+                popup.classList.add("hidden");
+                saveBtn.onclick = null;
+                cancelBtn.onclick = null;
+             };
+             
+             if(saveBtn) saveBtn.onclick = () => {
+                const newName = inputEl ? inputEl.value : "";
+                cleanup();
+                if (newName && newName !== item.title) {
+                    chrome.bookmarks.update(item.id, { title: newName }, () => {
+                        renderOrganizeExplorer(folderId, elements, container, t);
+                        if (elements && elements.folderFilter && typeof refreshFolders === "function") refreshFolders(elements);
+                    });
+                }
+             };
+             if(cancelBtn) cancelBtn.onclick = cleanup;
+             
+             popup.classList.remove("hidden");
+             if(inputEl) inputEl.focus();
+          };
+          
+          const deleteBtn = document.createElement("button");
+          // Use dropdown-btn class
+          deleteBtn.className = "dropdown-btn"; deleteBtn.title = t.delete || "Delete";
+          deleteBtn.style.padding = "6px";
+          deleteBtn.style.width = "32px";
+          deleteBtn.style.height = "32px";
+          deleteBtn.style.display = "flex";
+          deleteBtn.style.alignItems = "center";
+          deleteBtn.style.justifyContent = "center";
+          deleteBtn.style.color = "var(--error-color, #ef4444)"; // Override color for delete
+          deleteBtn.innerHTML = `<i class="fas fa-trash" style="font-size: 0.9rem;"></i>`;
+          if(isRootFolder) deleteBtn.disabled = true;
+          deleteBtn.onclick = (e) => {
+             e.stopPropagation();
+             
+             import('./utils/utils.js').then(({ showCustomPopup }) => {
+                if (showCustomPopup) {
+                    showCustomPopup(
+                        `Are you sure you want to delete '${item.title}'${isFolder ? ' and all its contents' : ''}?`,
+                        "warning",
+                        false,
+                        () => {
+                             if (isFolder) {
+                                chrome.bookmarks.removeTree(item.id, () => {
+                                    renderOrganizeExplorer(folderId, elements, container, t);
+                                    if (elements && elements.folderFilter && typeof refreshFolders === "function") refreshFolders(elements);
+                                });
+                             } else {
+                                chrome.bookmarks.remove(item.id, () => {
+                                    renderOrganizeExplorer(folderId, elements, container, t);
+                                });
+                             }
+                        },
+                        true
+                    );
+                }
+             });
+          };
+          
+          actionsDiv.appendChild(renameBtn);
+          actionsDiv.appendChild(deleteBtn);
+          
+          itemRow.appendChild(iconDiv);
+          itemRow.appendChild(infoDiv);
+          itemRow.appendChild(actionsDiv);
+          
+          listContainer.appendChild(itemRow);
+        });
+        
+        container.appendChild(listContainer);
+      });
   });
 }
