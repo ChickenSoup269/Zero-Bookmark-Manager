@@ -1720,8 +1720,8 @@ function renderSidebarFolderTree(folders, elements) {
       e.preventDefault()
       e.stopPropagation()
 
-      // Only accept folders
-      if (currentDragType !== "folder") return
+      // Only accept folders and bookmarks
+      if (currentDragType !== "folder" && currentDragType !== "bookmark") return
 
       const draggedId = e.dataTransfer.getData("text/plain")
 
