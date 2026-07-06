@@ -4930,19 +4930,66 @@ function sortFoldersArray(foldersArr, type) {
 
 
 export function openBookmarkPropertiesModal(bookmark) {
-  import('./utils/utils.js').then(({ showCustomPopup }) => {
-    const title = 'Bookmark Properties';
-    const dateAdded = new Date(bookmark.dateAdded).toLocaleString();
-    const content = `
-      <div style="text-align: left;">
-        <div><strong>Title:</strong> ${bookmark.title}</div>
-        <div style="word-break: break-all; margin-top: 8px;"><strong>URL:</strong> <a href="${bookmark.url}" target="_blank">${bookmark.url}</a></div>
-        <div style="margin-top: 8px;"><strong>Added:</strong> ${dateAdded}</div>
-        <div style="margin-top: 8px;"><strong>ID:</strong> ${bookmark.id}</div>
-      </div>
-    `;
-    showCustomPopup(title, content);
-  });
+  const popup = document.getElementById("bookmark-detail-popup");
+  if (!popup) return;
+
+  const titleEl = document.getElementById("detail-title");
+  const urlEl = document.getElementById("detail-url");
+  const dateEl = document.getElementById("detail-date-added");
+  const tagsEl = document.getElementById("detail-tags");
+  const thumbnailEl = document.getElementById("detail-thumbnail");
+
+  if (titleEl) titleEl.textContent = bookmark.title || '';
+  if (urlEl) {
+    urlEl.innerHTML = '';
+    const link = document.createElement('a');
+    link.href = bookmark.url || '#';
+    link.textContent = bookmark.url || '';
+    link.target = '_blank';
+    urlEl.appendChild(link);
+  }
+  if (dateEl) {
+    dateEl.textContent = bookmark.dateAdded ? new Date(bookmark.dateAdded).toLocaleString() : '';
+  }
+  
+  if (tagsEl) {
+    if (bookmark.tags && bookmark.tags.length > 0) {
+      tagsEl.textContent = bookmark.tags.join(", ");
+    } else {
+      tagsEl.textContent = "No tags";
+    }
+  }
+
+  if (thumbnailEl) {
+    if (bookmark.url) {
+      try {
+        const domain = new URL(bookmark.url).hostname;
+        thumbnailEl.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+      } catch (e) {
+        thumbnailEl.src = '';
+      }
+    } else {
+      thumbnailEl.src = '';
+    }
+  }
+
+  const closePopup = () => {
+    popup.classList.add("hidden");
+  };
+
+  const closeBtn = popup.querySelector(".close-modal");
+  if (closeBtn) {
+    closeBtn.onclick = closePopup;
+  }
+
+  // Close when clicking outside the content
+  popup.onclick = (e) => {
+    if (e.target === popup) {
+      closePopup();
+    }
+  };
+
+  popup.classList.remove("hidden");
 }
 
 
