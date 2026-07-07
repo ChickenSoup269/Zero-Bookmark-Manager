@@ -104,6 +104,10 @@ Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bo
 - **Chatbot (AI Assistant):** Manage bookmarks using natural language. Supports major AI providers.
 - **Duplicate Management:** Automatically removes duplicate bookmarks upon creation. Includes a manual scan option.
 - **Configurable Settings:** Customize Favicon provider, click actions, and more.
+- **Cloud Backup & Sync:** Securely backup and restore your bookmarks in JSON format directly to your Google Drive.
+- **Performance Optimization:** Implemented Lazy Rendering (Infinite Scrolling) to smoothly handle thousands of bookmarks without lag.
+- **Custom Language Packs:** Easily translate the UI to any language using AI, save as JSON, and apply instantly.
+- **Workspaces:** Save current views and folders as Work, Learning, Design, or Personal workspaces for quick context switching.
 
 ## Running Tests
 

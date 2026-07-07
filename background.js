@@ -396,7 +396,7 @@ function findExistingPopup(callback) {
 chrome.action.onClicked.addListener((tab) => {
   chrome.storage.local.get(["quickOpenAction"], (result) => {
     // console.log("Quick Open Action retrieved:", result.quickOpenAction)
-    const action = result.quickOpenAction || "popup" // Default to 'popup'
+    const action = result.quickOpenAction || "web" // Default to 'web'
 
     if (action === "web") {
       const bookmarksUrl = chrome.runtime.getURL("bookmarks.html")

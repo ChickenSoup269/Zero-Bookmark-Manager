@@ -67,6 +67,10 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 - **Chatbot (AI Assistant):** Quản lý bookmark bằng ngôn ngữ tự nhiên. Hỗ trợ các nhà cung cấp AI phổ biến.
 - **Quản lý Bookmark Trùng lặp:** Tự động xóa bookmark trùng lặp khi tạo hoặc quét thủ công.
 - **Cấu hình linh hoạt:** Tùy chỉnh nguồn Favicon (Google, DuckDuckGo, Auto), hành động khi nhấp icon, v.v.
+- **Đồng bộ Đám mây (Google Drive):** Sao lưu và khôi phục bookmark an toàn dưới định dạng JSON trực tiếp qua Google Drive.
+- **Tối ưu Hiệu suất:** Áp dụng Lazy Rendering (Cuộn vô hạn) để xử lý mượt mà hàng ngàn bookmark mà không gây giật lag.
+- **Gói Ngôn ngữ Tùy chỉnh:** Dịch giao diện sang bất kỳ ngôn ngữ nào bằng AI, lưu thành file JSON và áp dụng ngay lập tức.
+- **Không gian làm việc (Workspaces):** Lưu trạng thái giao diện hiện tại thành các không gian Work, Learning, Design, hoặc Personal để chuyển đổi nhanh chóng.
 
 ## Running Tests
 
