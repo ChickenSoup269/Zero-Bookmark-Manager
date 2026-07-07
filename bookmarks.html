@@ -1205,25 +1205,32 @@
     </div>
 
     <!-- Cloud Sync Modal -->
-    <div id="cloud-sync-popup" class="custom-popup-overlay hidden">
-        <div class="custom-popup">
-            <h3 style="margin-top:0; color: var(--primary-color)"><i class="fab fa-google-drive"></i> Google Drive Sync
+    <div id="cloud-sync-popup" class="rename-popup hidden" role="dialog" aria-labelledby="cloud-sync-title">
+        <div class="rename-popup-content" style="max-width: 400px; text-align: center;">
+            <div style="font-size: 40px; color: var(--primary-color); margin-bottom: 15px;">
+                <i class="fab fa-google-drive"></i>
+            </div>
+            <h3 id="cloud-sync-title" style="margin-top:0; font-size: 20px; font-weight: 600; color: var(--text-color);">
+                Google Drive Sync
             </h3>
-            <p style="margin-bottom: 20px; font-size: 14px; color: var(--text-color);">Backup or restore your bookmarks
-                using Google Drive.</p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button id="btn-backup-drive" class="button save" style="width: 100%; justify-content: center;">
-                    <i class="fas fa-cloud-upload-alt"></i> Backup to Drive
+            <p style="margin-bottom: 25px; font-size: 14px; color: var(--text-muted);">
+                Backup or restore your bookmarks in JSON format securely with Google Drive.
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                <button id="btn-backup-drive" class="button save" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;">
+                    <i class="fas fa-cloud-upload-alt" style="margin-right: 8px;"></i> Backup to Drive (JSON)
                 </button>
                 <button id="btn-restore-drive" class="button"
-                    style="width: 100%; justify-content: center; background: var(--bg-tertiary);">
-                    <i class="fas fa-cloud-download-alt"></i> Restore from Drive
+                    style="width: 100%; justify-content: center; padding: 12px; font-size: 15px; background: var(--bg-secondary); color: var(--text-color); border: 1px solid var(--border-color);">
+                    <i class="fas fa-cloud-download-alt" style="margin-right: 8px;"></i> Restore from Drive (JSON)
                 </button>
             </div>
-            <p id="sync-status-message"
-                style="margin-top: 15px; font-size: 13px; text-align: center; font-weight: bold;"></p>
-            <div style="text-align: right; margin-top: 15px;">
-                <button id="cloud-sync-close" class="button cancel">Close</button>
+            
+            <p id="sync-status-message" style="margin-top: 15px; font-size: 13px; font-weight: 500; min-height: 20px;"></p>
+            
+            <div class="rename-popup-buttons" style="margin-top: 20px;">
+                <button id="cloud-sync-close" class="button cancel" style="width: 100%; justify-content: center;">Close</button>
             </div>
         </div>
     </div>

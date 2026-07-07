@@ -41,7 +41,7 @@
     }
   ],
   "oauth2": {
-    "client_id": ".apps.googleusercontent.com",
+    "client_id": "222670807769-729f0ok5ad2136o78oarq8rn88rgg7ln.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/drive.file"]
   }
 }
