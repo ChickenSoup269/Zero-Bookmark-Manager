@@ -4780,17 +4780,11 @@ function createMockupBookmarkElement(bookmark, language, elements) {
     </div>
   `;
 
-  const titleEl = div.querySelector(".card-bookmark-title");
-  if (titleEl) {
-    titleEl.addEventListener("click", () => {
-      handleBookmarkLinkClick(bookmark.id, elements);
-    });
-  }
-  
-  // Entire card click opens bookmark
+  // Entire card click opens bookmark (excluding buttons, dropdowns, and the title <a> which handles itself)
   div.addEventListener("click", (e) => {
     if (!e.target.closest('button') && !e.target.closest('a') && !e.target.closest('.dropdown-menu-2')) {
       handleBookmarkLinkClick(bookmark.id, elements);
+      window.open(bookmark.url, "_blank");
     }
   });
 
