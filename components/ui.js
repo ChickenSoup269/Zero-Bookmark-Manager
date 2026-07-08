@@ -4782,9 +4782,7 @@ function createMockupBookmarkElement(bookmark, language, elements) {
 
   const titleEl = div.querySelector(".card-bookmark-title");
   if (titleEl) {
-    titleEl.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    titleEl.addEventListener("click", () => {
       handleBookmarkLinkClick(bookmark.id, elements);
     });
   }
