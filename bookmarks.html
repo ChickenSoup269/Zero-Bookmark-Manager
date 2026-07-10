@@ -1217,12 +1217,16 @@
                 Backup or restore your bookmarks in JSON format securely with Google Drive.
             </p>
             
+            <div style="margin-bottom: 15px; text-align: left;">
+                <label for="sync-filename-input" style="display: block; font-size: 13px; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">File Name:</label>
+                <input type="text" id="sync-filename-input" value="zero_bookmark_manager_backup.json" class="input-field" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box;" placeholder="Enter JSON file name">
+            </div>
+
             <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
-                <button id="btn-backup-drive" class="button save" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;">
+                <button id="btn-backup-drive" class="button" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px; background-color: var(--bg-tertiary); color: var(--focus-outline); border: 1px solid var(--focus-outline); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
                     <i class="fas fa-cloud-upload-alt" style="margin-right: 8px;"></i> Backup to Drive (JSON)
                 </button>
-                <button id="btn-restore-drive" class="button"
-                    style="width: 100%; justify-content: center; padding: 12px; font-size: 15px; background: var(--bg-secondary); color: var(--text-color); border: 1px solid var(--border-color);">
+                <button id="btn-restore-drive" class="button" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px; background-color: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--text-secondary); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
                     <i class="fas fa-cloud-download-alt" style="margin-right: 8px;"></i> Restore from Drive (JSON)
                 </button>
             </div>

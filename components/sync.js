@@ -1,8 +1,19 @@
 // Google Drive Sync Component
 // Handles Backup and Restore of Bookmarks to Google Drive
 
-const SYNC_FILE_NAME = 'zero_bookmark_manager_backup.json';
+const DEFAULT_SYNC_FILE_NAME = 'zero_bookmark_manager_backup.json';
 
+function getSyncFileName() {
+    const input = document.getElementById('sync-filename-input');
+    if (input && input.value.trim() !== '') {
+        let name = input.value.trim();
+        if (!name.endsWith('.json')) {
+            name += '.json';
+        }
+        return name;
+    }
+    return DEFAULT_SYNC_FILE_NAME;
+}
 document.addEventListener('DOMContentLoaded', () => {
     const syncBtn = document.getElementById('google-drive-sync-btn');
     const syncPopup = document.getElementById('cloud-sync-popup');
@@ -54,7 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function findSyncFile(token) {
-        const query = `name='${SYNC_FILE_NAME}' and trashed=false`;
+        const fileName = getSyncFileName();
+        const query = `name='${fileName}' and trashed=false`;
         const response = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&spaces=drive`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -77,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const tree = await chrome.bookmarks.getTree();
             const bookmarksData = JSON.stringify(tree);
             const metadata = {
-                name: SYNC_FILE_NAME,
+                name: getSyncFileName(),
                 mimeType: 'application/json'
             };
 
