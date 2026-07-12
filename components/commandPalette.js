@@ -111,6 +111,13 @@ function buildStaticCommands(elements) {
     ["tokyonight", "fa-star", "Tokyo Night"],
     ["nord", "fa-snowflake", "Nord"],
     ["synthwave", "fa-rocket", "SynthWave 84"],
+    ["gruvbox", "fa-mug-hot", "Gruvbox"],
+    ["catppuccin", "fa-paw", "Catppuccin"],
+    ["nightowl", "fa-moon", "Night Owl"],
+    ["nord-light", "fa-sun", "Nord Light"],
+    ["gruvbox-light", "fa-sun", "Gruvbox Light"],
+    ["catppuccin-light", "fa-sun", "Catppuccin Light"],
+    ["nightowl-light", "fa-sun", "Night Owl Light"],
   ].map(([theme, icon, label]) => ({
     type: "command",
     icon,

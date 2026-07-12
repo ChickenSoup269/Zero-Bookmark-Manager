@@ -437,12 +437,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (
-      /(doi giao dien|theme|chu de|mau|change theme).*(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|nord|synthwave|system)/i.test(
+      /(doi giao dien|theme|chu de|mau|change theme).*(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|nord|synthwave|gruvbox|catppuccin|nightowl|nord-light|gruvbox-light|catppuccin-light|nightowl-light|system)/i.test(
         text,
-      ) || /(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|nord|synthwave|system).*(theme|giao dien|mau)/i.test(text)
+      ) || /(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|nord|synthwave|gruvbox|catppuccin|nightowl|nord-light|gruvbox-light|catppuccin-light|nightowl-light|system).*(theme|giao dien|mau)/i.test(text)
     ) {
       const themeMatch = text.match(
-        /(light|dark|dracula|onedark|tokyonight|monokai|winter-is-coming|github-blue|github-light|tet|nord|synthwave|system)/i,
+        /(light|dark|dracula|onedark|tokyonight|monokai|winter-is-coming|github-blue|github-light|tet|nord|synthwave|gruvbox|catppuccin|nightowl|nord-light|gruvbox-light|catppuccin-light|nightowl-light|system)/i,
       )
       return {
         action: "change_theme",
