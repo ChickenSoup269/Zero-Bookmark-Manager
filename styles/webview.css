@@ -23,6 +23,7 @@ body {
   left: 0;
   width: var(--sidebar-width);
   height: 100%;
+  background-color: var(--bg-tertiary, var(--bg-secondary));
   background-attachment: local;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -3767,6 +3768,89 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   color: var(--bg-primary);
   border-color: var(--accent-color);
 }
+
+/* Theme Grid & Swatches in Webview */
+.dropdown-menu-2 .theme-selection-card {
+  background: color-mix(in srgb, var(--bg-secondary) 78%, transparent);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.dropdown-menu-2 .settings-card-header {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 6px;
+}
+
+.dropdown-menu-2 .theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  gap: 10px;
+  padding: 10px 0 0 0;
+}
+
+.dropdown-menu-2 .theme-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: relative;
+  padding: 0;
+  background-clip: padding-box;
+}
+
+.dropdown-menu-2 .theme-swatch.active {
+  border-color: var(--accent-color, #007bff);
+  transform: scale(1.15);
+  box-shadow: 0 0 10px var(--accent-color, #007bff);
+}
+
+.dropdown-menu-2 .theme-swatch:hover {
+  transform: scale(1.1);
+}
+
+.dropdown-menu-2 .theme-swatch[data-hint]::before {
+  content: attr(data-hint);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: var(--bg-secondary, #333);
+  color: var(--text-primary, #fff);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100000;
+  pointer-events: none;
+  border: 1px solid var(--border-color, rgba(255,255,255,0.1));
+}
+
+.dropdown-menu-2 .theme-swatch[data-hint]:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
 
 .app-settings-panel {
   box-shadow: none;

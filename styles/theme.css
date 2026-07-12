@@ -365,3 +365,105 @@ body.winter-is-coming-theme {
   --hover-bg: #34294f;
   --bg-tags-select: rgba(38, 35, 53, 0.9);
 }
+
+/* Gruvbox Theme */
+[data-theme="gruvbox"], body.gruvbox-theme {
+  --bg-primary: #282828;
+  --bg-secondary: #3c3836;
+  --text-primary: #ebdbb2;
+  --text-secondary: #d5c4a1;
+  --accent-color: #fabd2f;
+  --border-color: #504945;
+  --danger-color: #fb4934;
+  --success-color: #b8bb26;
+  --hover-bg: #504945;
+  --bg-tags-select: rgba(40, 40, 40, 0.9);
+}
+
+/* Catppuccin Theme */
+[data-theme="catppuccin"], body.catppuccin-theme {
+  --bg-primary: #1e1e2e;
+  --bg-secondary: #181825;
+  --text-primary: #cdd6f4;
+  --text-secondary: #bac2de;
+  --accent-color: #cba6f7;
+  --border-color: #313244;
+  --danger-color: #f38ba8;
+  --success-color: #a6e3a1;
+  --hover-bg: #313244;
+  --bg-tags-select: rgba(30, 30, 46, 0.9);
+}
+
+/* Night Owl Theme */
+[data-theme="nightowl"], body.nightowl-theme {
+  --bg-primary: #011627;
+  --bg-secondary: #0b2942;
+  --text-primary: #d6deeb;
+  --text-secondary: #82aaff;
+  --accent-color: #c792ea;
+  --border-color: #1d3b53;
+  --danger-color: #ef5350;
+  --success-color: #22da6e;
+  --hover-bg: #1d3b53;
+  --bg-tags-select: rgba(1, 22, 39, 0.9);
+}
+
+/* Nord Light Theme */
+[data-theme="nord-light"], body.nord-light-theme {
+  --bg-primary: #eceff4;
+  --bg-secondary: #e5e9f0;
+  --bg-tertiary: #d8dee9;
+  --text-primary: #2e3440;
+  --text-secondary: #4c566a;
+  --accent-color: #5e81ac;
+  --border-color: #d8dee9;
+  --danger-color: #bf616a;
+  --success-color: #a3be8c;
+  --hover-bg: #d8dee9;
+  --bg-tags-select: rgba(236, 239, 244, 0.9);
+}
+
+/* Gruvbox Light Theme */
+[data-theme="gruvbox-light"], body.gruvbox-light-theme {
+  --bg-primary: #fbf1c7;
+  --bg-secondary: #ebdbb2;
+  --bg-tertiary: #d5c4a1;
+  --text-primary: #3c3836;
+  --text-secondary: #504945;
+  --accent-color: #b57614;
+  --border-color: #d5c4a1;
+  --danger-color: #cc241d;
+  --success-color: #98971a;
+  --hover-bg: #d5c4a1;
+  --bg-tags-select: rgba(251, 241, 199, 0.9);
+}
+
+/* Catppuccin Light Theme */
+[data-theme="catppuccin-light"], body.catppuccin-light-theme {
+  --bg-primary: #eff1f5;
+  --bg-secondary: #e6e9ef;
+  --bg-tertiary: #dce0e8;
+  --text-primary: #4c4f69;
+  --text-secondary: #5c5f77;
+  --accent-color: #8839ef;
+  --border-color: #ccd0da;
+  --danger-color: #d20f39;
+  --success-color: #40a02b;
+  --hover-bg: #ccd0da;
+  --bg-tags-select: rgba(239, 241, 245, 0.9);
+}
+
+/* Night Owl Light Theme */
+[data-theme="nightowl-light"], body.nightowl-light-theme {
+  --bg-primary: #fbfbfb;
+  --bg-secondary: #f0f0f0;
+  --bg-tertiary: #e6e6e6;
+  --text-primary: #403f53;
+  --text-secondary: #90a4ae;
+  --accent-color: #2f86d2;
+  --border-color: #d9d9d9;
+  --danger-color: #de3d3b;
+  --success-color: #08916a;
+  --hover-bg: #e0e0e0;
+  --bg-tags-select: rgba(251, 251, 251, 0.9);
+}
