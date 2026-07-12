@@ -7,10 +7,10 @@
     <title>Zero Bookmark Manager 1.6.0</title>
     <script src="./components/bookmarkCache.js"></script>
     <script src="./components/sidebar-preload.js"></script>
-    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/style.css?v=2">
     <link rel="stylesheet" href="./styles/chat.css">
     <link rel="stylesheet" href="./styles/webview.css?v=2">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body>
@@ -318,21 +318,36 @@
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
-                    <select id="theme-switcher" class="select select-with-icons" aria-label="Select theme">
-                        <option value="system">&#xf0e7; System</option>
-                        <option value="light">&#xf0e7; Light</option>
-                        <option value="dark">&#xf0e7; Dark</option>
-                        <option value="dracula">&#xf0e7; Dracula</option>
-                        <option value="onedark">&#xf0e7; OneDark</option>
-                        <option value="tokyonight">&#xf0e7; Tokyo Night</option>
-                        <option value="nord">&#xf2dc; Nord</option>
-                        <option value="synthwave">&#xf135; SynthWave 84</option>
-                        <option value="monokai">&#xf0e7; Monokai</option>
-                        <option value="winter-is-coming">&#xf0e7; Winter is Coming</option>
-                        <option value="github-blue">&#xf0e7; GitHub Blue</option>
-                        <option value="github-light">&#xf0e7; GitHub Light</option>
-                        <option value="tet">&#xf0e7; Tet</option>
-                    </select>
+                </div>
+                
+<div class="settings-card theme-selection-card">
+    <div class="settings-card-header">
+        <i class="fas fa-paint-roller"></i> <span data-i18n="themeSelectionTitle">Themes</span>
+    </div>
+    <div id="theme-switcher" class="theme-grid" aria-label="Select theme">
+    <button class="theme-swatch" data-value="system" data-hint="System Default" style="background: linear-gradient(135deg, #e0e0e0 50%, #2b2b2b 50%); color: inherit;"><i class="fas fa-desktop"></i></button>
+    <button class="theme-swatch" data-value="light" data-hint="Light" style="background: #ffffff; color: #000000;"><i class="fas fa-sun"></i></button>
+    <button class="theme-swatch" data-value="dark" data-hint="Dark" style="background: #2b2b2b; color: #ffffff;"><i class="fas fa-moon"></i></button>
+    <button class="theme-swatch" data-value="dracula" data-hint="Dracula" style="background: #282a36; color: #f8f8f2;"><i class="fas fa-ghost"></i></button>
+    <button class="theme-swatch" data-value="onedark" data-hint="OneDark" style="background: #282c34; color: #abb2bf;"><i class="fas fa-circle"></i></button>
+    <button class="theme-swatch" data-value="tokyonight" data-hint="Tokyo Night" style="background: #1a1b26; color: #a9b1d6;"><i class="fas fa-moon"></i></button>
+    <button class="theme-swatch" data-value="monokai" data-hint="Monokai" style="background: #272822; color: #f8f8f2;"><i class="fas fa-circle"></i></button>
+    <button class="theme-swatch" data-value="winter-is-coming" data-hint="Winter is Coming" style="background: #011627; color: #d6deeb;"><i class="fas fa-snowflake"></i></button>
+    <button class="theme-swatch" data-value="github-blue" data-hint="GitHub Blue" style="background: #0d1117; color: #c9d1d9;"><i class="fab fa-github"></i></button>
+    <button class="theme-swatch" data-value="github-light" data-hint="GitHub Light" style="background: #ffffff; color: #24292f;"><i class="fab fa-github"></i></button>
+    <button class="theme-swatch" data-value="tet" data-hint="Tet" style="background: #8b1a1a; color: #ffd700;"><i class="fas fa-fan"></i></button>
+    <button class="theme-swatch" data-value="nord" data-hint="Nord Dark" style="background: #2e3440; color: #d8dee9;"><i class="fas fa-snowflake"></i></button>
+    <button class="theme-swatch" data-value="nord-light" data-hint="Nord Light" style="background: #eceff4; color: #2e3440;"><i class="fas fa-sun"></i></button>
+    <button class="theme-swatch" data-value="synthwave" data-hint="SynthWave 84" style="background: #262335; color: #f92aad;"><i class="fas fa-rocket"></i></button>
+    <button class="theme-swatch" data-value="gruvbox" data-hint="Gruvbox Dark" style="background: #282828; color: #ebdbb2;"><i class="fas fa-mug-hot"></i></button>
+    <button class="theme-swatch" data-value="gruvbox-light" data-hint="Gruvbox Light" style="background: #fbf1c7; color: #3c3836;"><i class="fas fa-sun"></i></button>
+    <button class="theme-swatch" data-value="catppuccin" data-hint="Catppuccin Dark" style="background: #1e1e2e; color: #cba6f7;"><i class="fas fa-paw"></i></button>
+    <button class="theme-swatch" data-value="catppuccin-light" data-hint="Catppuccin Light" style="background: #eff1f5; color: #8839ef;"><i class="fas fa-sun"></i></button>
+    <button class="theme-swatch" data-value="nightowl" data-hint="Night Owl Dark" style="background: #011627; color: #c792ea;"><i class="fas fa-moon"></i></button>
+    <button class="theme-swatch" data-value="nightowl-light" data-hint="Night Owl Light" style="background: #fbfbfb; color: #2f86d2;"><i class="fas fa-sun"></i></button>
+</div>
+</div>
+                <div class="menu-group">
                     <select id="font-switcher" class="select" aria-label="Select font">
                         <option value="gohu" data-i18n="fontGohu">Aa: GohuFont</option>
                         <option value="jetBrainsMonoNerdFont" data-i18n="fontJetBrains">Aa: jetBrains</option>
