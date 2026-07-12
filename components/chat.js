@@ -1033,7 +1033,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       if (action === "count") {
-        chrome.bookmarks.getTree((bookmarkTree) => {
+        window.BookmarkCache.getTree((bookmarkTree) => {
           let count = 0
 
           function countBookmarks(nodes) {
@@ -1055,7 +1055,7 @@ document.addEventListener("DOMContentLoaded", () => {
           appendBotMessage(content, content)
         })
       } else if (action === "count_folders") {
-        chrome.bookmarks.getTree((bookmarkTree) => {
+        window.BookmarkCache.getTree((bookmarkTree) => {
           let count = 0
 
           function countFolders(nodes) {
@@ -1081,7 +1081,7 @@ document.addEventListener("DOMContentLoaded", () => {
           appendBotMessage(htmlContent, textContent)
         })
       } else if (action === "list") {
-        chrome.bookmarks.getTree((bookmarkTree) => {
+        window.BookmarkCache.getTree((bookmarkTree) => {
           const bookmarks = []
 
           function collectBookmarks(nodes) {
@@ -1118,7 +1118,7 @@ document.addEventListener("DOMContentLoaded", () => {
           appendBotMessage(htmlContent)
         })
       } else if (action === "list_folders") {
-        chrome.bookmarks.getTree((bookmarkTree) => {
+        window.BookmarkCache.getTree((bookmarkTree) => {
           const folders = []
 
           function collectFolders(nodes) {
@@ -1936,7 +1936,7 @@ document.addEventListener("DOMContentLoaded", () => {
           uiState.viewMode = params.view_mode
           localStorage.setItem("appView", params.view_mode)
           saveUIState()
-          chrome.bookmarks.getTree((tree) => {
+          window.BookmarkCache.getTree((tree) => {
             const elements = getUiElements()
             renderFilteredBookmarks(tree, elements)
           })
@@ -1986,7 +1986,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ]
         if (validSorts.includes(params.sort_by)) {
           uiState.sortType = params.sort_by
-          chrome.bookmarks.getTree((tree) => {
+          window.BookmarkCache.getTree((tree) => {
             const elements = getUiElements()
             renderFilteredBookmarks(tree, elements)
           })

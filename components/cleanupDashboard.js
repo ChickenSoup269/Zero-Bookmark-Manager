@@ -178,7 +178,7 @@ export async function groupBookmarksByDomain() {
     
     // Attempt to refresh UI without full reload
     import("./ui.js").then(({ renderFilteredBookmarks }) => {
-       chrome.bookmarks.getTree(tree => {
+       window.BookmarkCache.getTree(tree => {
           renderFilteredBookmarks(tree[0].children, null); 
        });
     }).catch(() => window.location.reload());

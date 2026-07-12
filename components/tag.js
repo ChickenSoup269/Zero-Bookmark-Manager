@@ -22,7 +22,7 @@ function getUIElements() {
 
 // Helper để trigger render lại giao diện sau khi thay đổi data
 function refreshUI() {
-  chrome.bookmarks.getTree((tree) => {
+  window.BookmarkCache.getTree((tree) => {
     const elements = getUIElements()
     // Gọi hàm render từ ui.js (hoặc view.js tùy cấu trúc của bạn)
     renderFilteredBookmarks(tree, elements)

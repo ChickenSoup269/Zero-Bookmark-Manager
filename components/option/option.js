@@ -326,7 +326,7 @@ export async function customLoadUIState(callback) {
     }
 
     // Làm mới giao diện sau khi tải trạng thái
-    chrome.bookmarks.getTree((bookmarkTreeNodes) => {
+    window.BookmarkCache.getTree((bookmarkTreeNodes) => {
       populateTagFilter(elements)
       renderFilteredBookmarks(bookmarkTreeNodes, elements)
     })
@@ -437,7 +437,7 @@ function initializeEventListeners() {
           !storageSettings.tagColors ||
           !storageSettings.selectedTags
         ) {
-          chrome.bookmarks.getTree((bookmarkTreeNodes) => {
+          window.BookmarkCache.getTree((bookmarkTreeNodes) => {
             populateTagFilter(elements)
             renderFilteredBookmarks(bookmarkTreeNodes, elements)
             attachTreeListeners(elements)
@@ -492,7 +492,7 @@ function initializeEventListeners() {
             !storageSettings.tagColors ||
             !storageSettings.selectedTags
           ) {
-            chrome.bookmarks.getTree((bookmarkTreeNodes) => {
+            window.BookmarkCache.getTree((bookmarkTreeNodes) => {
               populateTagFilter(elements)
               renderFilteredBookmarks(bookmarkTreeNodes, elements)
             })

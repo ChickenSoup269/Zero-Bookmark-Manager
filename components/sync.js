@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const token = await getAuthToken();
 
             statusMsg.textContent = 'Preparing bookmarks data...';
-            const tree = await chrome.bookmarks.getTree();
+            const tree = await window.BookmarkCache.getTreeAsync();
             const bookmarksData = JSON.stringify(tree);
             const metadata = {
                 name: getSyncFileName(),
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function importToRestoredFolder(backupTree) {
         // Find or create a 'Restored from Drive' folder in the "Other Bookmarks" or main root
-        const rootNodes = await chrome.bookmarks.getTree();
+        const rootNodes = await window.BookmarkCache.getTreeAsync();
         const otherBookmarks = rootNodes[0].children.find(c => c.id === '2') || rootNodes[0].children[0];
 
         const restoredFolder = await chrome.bookmarks.create({

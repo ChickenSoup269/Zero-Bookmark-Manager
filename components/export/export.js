@@ -1059,7 +1059,7 @@ async function importNonDuplicateBookmarks(
   const idMapping = {}
 
   // 1. Lấy cây bookmark hiện tại để so sánh
-  const existingTree = await new Promise((r) => chrome.bookmarks.getTree(r))
+  const existingTree = await window.BookmarkCache.getTreeAsync()
   const flatExisting = flattenBookmarks(existingTree)
   const existingUrls = new Set(flatExisting.map((b) => b.url).filter((u) => u))
 
@@ -1246,7 +1246,7 @@ async function importNonDuplicateBookmarks(
 
     // 7. Cập nhật giao diện
     setTimeout(() => {
-      chrome.bookmarks.getTree((newTree) => {
+      window.BookmarkCache.getTree((newTree) => {
         renderFilteredBookmarks(newTree, elements)
         saveUIState()
         showCustomPopup(

@@ -36,7 +36,7 @@ export function exportToNetscape(bookmarkTreeNodes) {
 <H1>Bookmarks</H1>
 <DL><p>\n`
 
-      // The top-level nodes from chrome.bookmarks.getTree() are inside a root folder.
+      // The top-level nodes from window.BookmarkCache.getTree() are inside a root folder.
       // We need to process the children of the "Bookmarks Bar" and "Other Bookmarks".
       if (bookmarkTreeNodes && bookmarkTreeNodes[0] && bookmarkTreeNodes[0].children) {
         content += buildNetscapeBookmarks(bookmarkTreeNodes[0].children)

@@ -61,7 +61,7 @@ export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
   }
 
   // 3. GỌI TRỰC TIẾP API ĐỂ LẤY CÂY MỚI NHẤT
-  chrome.bookmarks.getTree((tree) => {
+  window.BookmarkCache.getTree((tree) => {
     // Xóa loading, thêm option mặc định
     elements.addToFolderSelect.innerHTML = `<option value="">${
       t.selectFolder || "Select Folder"
@@ -150,7 +150,7 @@ export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
       saveUIState()
 
       // QUAN TRỌNG: Cập nhật lại giao diện chính (reload list bookmark)
-      chrome.bookmarks.getTree((tree) => {
+      window.BookmarkCache.getTree((tree) => {
         renderFilteredBookmarks(tree, elements)
       })
 

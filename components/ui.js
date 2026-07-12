@@ -391,7 +391,7 @@ function handleBookmarkLinkClick(bookmarkId, elements) {
       // Reload UI if sorting by most-visited to show updated counts
       if (uiState.sortType === "most-visited") {
         loadVisitCounts(() => {
-          chrome.bookmarks.getTree((tree) =>
+          window.BookmarkCache.getTree((tree) =>
             renderFilteredBookmarks(tree, elements),
           )
         })
@@ -1109,7 +1109,7 @@ export async function populateTagFilter(elements) {
           tagItem.style.cssText = `background: ${tagColor}; border-color: ${tagColor}; color: ${contrastColor};`
         }
         syncTagHeaderControls(elements.tagFilterContainer)
-        chrome.bookmarks.getTree((tree) => {
+        window.BookmarkCache.getTree((tree) => {
           import("./ui.js").then(({ renderFilteredBookmarks }) => {
             renderFilteredBookmarks(tree, elements)
           })
@@ -1156,7 +1156,7 @@ export async function populateTagFilter(elements) {
       uiState.selectedTags = []
       syncTagHeaderControls(elements.tagFilterContainer)
       renderTagPills(tagSearchInput?.value || "")
-      chrome.bookmarks.getTree((tree) => {
+      window.BookmarkCache.getTree((tree) => {
         import("./ui.js").then(({ renderFilteredBookmarks }) => {
           renderFilteredBookmarks(tree, elements)
         })
@@ -1242,7 +1242,7 @@ export async function populateTagFilter(elements) {
         syncBrowserControls()
         // Also sync sidebar pills
         renderTagPills(tagSearchInput?.value || "")
-        chrome.bookmarks.getTree((tree) => {
+        window.BookmarkCache.getTree((tree) => {
           import("./ui.js").then(({ renderFilteredBookmarks }) => {
             renderFilteredBookmarks(tree, elements)
           })
@@ -1288,7 +1288,7 @@ export async function populateTagFilter(elements) {
             setTimeout(() => {
               renderBrowserPills(tagsBrowserSearch?.value || "")
               renderTagPills(tagSearchInput?.value || "")
-              chrome.bookmarks.getTree((tree) => {
+              window.BookmarkCache.getTree((tree) => {
                 import("./ui.js").then(({ renderFilteredBookmarks }) => {
                   renderFilteredBookmarks(tree, elements)
                 })
@@ -1335,7 +1335,7 @@ export async function populateTagFilter(elements) {
                 setTimeout(() => {
                   renderBrowserPills(tagsBrowserSearch?.value || "")
                   renderTagPills(tagSearchInput?.value || "")
-                  chrome.bookmarks.getTree((tree) => {
+                  window.BookmarkCache.getTree((tree) => {
                     import("./ui.js").then(({ renderFilteredBookmarks }) => {
                       renderFilteredBookmarks(tree, elements)
                     })
@@ -1427,7 +1427,7 @@ export async function populateTagFilter(elements) {
       syncBrowserControls()
       renderTagPills(tagSearchInput?.value || "")
       renderBrowserPills(tagsBrowserSearch?.value || "")
-      chrome.bookmarks.getTree((tree) => {
+      window.BookmarkCache.getTree((tree) => {
         import("./ui.js").then(({ renderFilteredBookmarks }) => {
           renderFilteredBookmarks(tree, elements)
         })
@@ -1772,7 +1772,7 @@ function renderSidebarFolderTree(folders, elements) {
         }
 
         // Refresh bookmark tree
-        chrome.bookmarks.getTree((tree) => {
+        window.BookmarkCache.getTree((tree) => {
           renderFilteredBookmarks(tree, elements)
         })
       })
@@ -2176,7 +2176,7 @@ function moveFolderByCardDrop(draggedId, targetId, dropPosition, elements, langu
           showCustomPopup(chrome.runtime.lastError.message, "error", true)
           return
         }
-        chrome.bookmarks.getTree((tree) => renderFilteredBookmarks(tree, elements))
+        window.BookmarkCache.getTree((tree) => renderFilteredBookmarks(tree, elements))
       },
     )
   })
@@ -2265,7 +2265,7 @@ function renderListView(bookmarksList, elements) {
           uiState.selectedFolderId = results[0].parentId || "0"
           if (elements.folderFilter)
             elements.folderFilter.value = uiState.selectedFolderId
-          chrome.bookmarks.getTree((tree) =>
+          window.BookmarkCache.getTree((tree) =>
             renderFilteredBookmarks(tree, elements),
           )
         }
@@ -2326,7 +2326,7 @@ function createListFolderElement(folder, elements) {
     if (e.target.closest(".dropdown-btn")) return
     uiState.selectedFolderId = folder.id
     if (elements.folderFilter) elements.folderFilter.value = folder.id
-    chrome.bookmarks.getTree((tree) => renderFilteredBookmarks(tree, elements))
+    window.BookmarkCache.getTree((tree) => renderFilteredBookmarks(tree, elements))
   }
 
   return div
@@ -2857,7 +2857,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       backButton.addEventListener("click", () => {
         uiState.selectedFolderId = ""
         if (elements.folderFilter) elements.folderFilter.value = ""
-        chrome.bookmarks.getTree((tree) =>
+        window.BookmarkCache.getTree((tree) =>
           renderFilteredBookmarks(tree, elements),
         )
       })
@@ -2937,7 +2937,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
           return
         uiState.selectedFolderId = folder.id
         if (elements.folderFilter) elements.folderFilter.value = folder.id
-        chrome.bookmarks.getTree((tree) =>
+        window.BookmarkCache.getTree((tree) =>
           renderFilteredBookmarks(tree, elements),
         )
       })
@@ -3125,7 +3125,7 @@ function handleFolderDrop(
               true,
             )
           } else {
-            chrome.bookmarks.getTree((tree) =>
+            window.BookmarkCache.getTree((tree) =>
               renderFilteredBookmarks(tree, elements),
             )
           }
@@ -3136,7 +3136,7 @@ function handleFolderDrop(
         if (chrome.runtime.lastError) {
           showCustomPopup(translations[language].errorUnexpected, "error", true)
         } else {
-          chrome.bookmarks.getTree((tree) =>
+          window.BookmarkCache.getTree((tree) =>
             renderFilteredBookmarks(tree, elements),
           )
         }
@@ -3267,7 +3267,7 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
           if (chrome.runtime.lastError) {
             showCustomPopup(chrome.runtime.lastError.message, "error", true)
           } else {
-            chrome.bookmarks.getTree((tree) => {
+            window.BookmarkCache.getTree((tree) => {
               renderFilteredBookmarks(tree, elements)
             })
           }
@@ -3683,14 +3683,14 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null, option
                 true,
               )
             } else {
-              chrome.bookmarks.getTree((tree) =>
+              window.BookmarkCache.getTree((tree) =>
                 renderFilteredBookmarks(tree, elements),
               )
             }
           })
         }
         // Reload tree after any successful move operation (bookmark or folder)
-        chrome.bookmarks.getTree((tree) => {
+        window.BookmarkCache.getTree((tree) => {
           uiState.bookmarkTree = tree
           renderFilteredBookmarks(tree, elements)
           // Refresh organize folders popup if it's open
@@ -4008,7 +4008,7 @@ export function setupTagFilterListener(elements) {
           ? uiState.selectedTags.join(", ")
           : translations[localStorage.getItem("appLanguage") || "en"].allTags
       customSaveUIState()
-      chrome.bookmarks.getTree((tree) =>
+      window.BookmarkCache.getTree((tree) =>
         renderFilteredBookmarks(tree, elements),
       )
     }
@@ -4332,7 +4332,7 @@ export function showMoveFolderToFolderPopup(elements, folderToMoveId) {
   }
 
   // 3. Gọi API lấy cây mới nhất
-  chrome.bookmarks.getTree((tree) => {
+  window.BookmarkCache.getTree((tree) => {
     select.innerHTML = `<option value="">${
       t.selectFolder || "Select Folder"
     }</option>`
@@ -4399,7 +4399,7 @@ export function showMoveFolderToFolderPopup(elements, folderToMoveId) {
         )
 
         // Render lại giao diện chính
-        chrome.bookmarks.getTree(async (tree) => {
+        window.BookmarkCache.getTree(async (tree) => {
           // Giả định hàm renderFilteredBookmarks được import trong ui.js hoặc file này
           // Nếu trong ui.js hàm này gọi lại chính nó thì ok.
           // Nếu không, bạn cần đảm bảo hàm renderFilteredBookmarks khả dụng.
@@ -4438,7 +4438,7 @@ export function showMoveFolderToFolderPopup(elements, folderToMoveId) {
 
 // Helper function to render the tree view specifically for the Organize Folders popup
 function renderOrganizeFoldersTree(elements, container) {
-  chrome.bookmarks.getTree((tree) => {
+  window.BookmarkCache.getTree((tree) => {
     // uiState.bookmarkTree needs to be updated with the latest tree for findNodeById and isAncestorOf
     uiState.bookmarkTree = tree
     renderTreeView(tree[0].children, elements, 0, container, { onlyFolders: true })
@@ -4456,7 +4456,7 @@ function refreshOrganizeFoldersPopup(elements) {
     // Refresh the tree view in the popup
     const language = localStorage.getItem("appLanguage") || "en";
     const t = translations[language] || translations.en;
-    chrome.bookmarks.getTree((tree) => {
+    window.BookmarkCache.getTree((tree) => {
       uiState.bookmarkTree = tree
       // Use the current navigated folder, default to "0"
       renderOrganizeExplorer(typeof currentOrganizeFolderId !== "undefined" ? currentOrganizeFolderId : "0", elements, treeViewContainer, t)
@@ -4655,7 +4655,7 @@ export function openOrganizeFoldersModal(elements) {
   }
 
   // Update bookmark tree state before rendering
-  chrome.bookmarks.getTree((tree) => {
+  window.BookmarkCache.getTree((tree) => {
     uiState.bookmarkTree = tree
     // Render the new explorer layout inside the popup, start at root
     renderOrganizeExplorer("0", elements, treeViewContainer, t)
@@ -4674,7 +4674,7 @@ export function openOrganizeFoldersModal(elements) {
     popup.classList.add("hidden")
     document.removeEventListener("keydown", handleKeydown)
     // Refresh the main view after closing
-    chrome.bookmarks.getTree((tree) => {
+    window.BookmarkCache.getTree((tree) => {
       renderFilteredBookmarks(tree, elements)
     })
   }
@@ -4707,7 +4707,7 @@ export function togglePin(bookmarkId, elements) {
     }
 
     chrome.storage.local.set({ pinnedBookmarks }, () => {
-      chrome.bookmarks.getTree((tree) =>
+      window.BookmarkCache.getTree((tree) =>
         renderFilteredBookmarks(tree, elements),
       )
       const language = localStorage.getItem("appLanguage") || "en"
