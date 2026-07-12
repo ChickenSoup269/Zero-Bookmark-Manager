@@ -1023,7 +1023,7 @@ html {
 #clear-rename-folder {
   position: absolute;
   right: 8px;
-  top: 80%;
+  top: 50%;
   transform: translateY(-50%);
   font-size: 14px;
   background: none;
@@ -1161,7 +1161,7 @@ html {
   top: 100%;
   left: 0;
   right: 0;
-  background-color: var(--bg-tags-select);
+  background-color: var(--bg-secondary);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 4px;
