@@ -109,6 +109,8 @@ function buildStaticCommands(elements) {
     ["dark", "fa-moon", "Dark"],
     ["dracula", "fa-wand-magic-sparkles", "Dracula"],
     ["tokyonight", "fa-star", "Tokyo Night"],
+    ["nord", "fa-snowflake", "Nord"],
+    ["synthwave", "fa-rocket", "SynthWave 84"],
   ].map(([theme, icon, label]) => ({
     type: "command",
     icon,

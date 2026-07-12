@@ -337,3 +337,31 @@ body.winter-is-coming-theme {
   --bg-tags-select: rgba(1, 22, 39, 0.9);
   --hover-light-dazz: rgba(130, 170, 255, 0.4);
 }
+
+/* Nord Theme */
+[data-theme="nord"], body.nord-theme {
+  --bg-primary: #2e3440;
+  --bg-secondary: #3b4252;
+  --text-primary: #d8dee9;
+  --text-secondary: #e5e9f0;
+  --accent-color: #88c0d0;
+  --border-color: #4c566a;
+  --danger-color: #bf616a;
+  --success-color: #a3be8c;
+  --hover-bg: #434c5e;
+  --bg-tags-select: rgba(46, 52, 64, 0.9);
+}
+
+/* SynthWave '84 Theme */
+[data-theme="synthwave"], body.synthwave-theme {
+  --bg-primary: #262335;
+  --bg-secondary: #241b2f;
+  --text-primary: #ffffff;
+  --text-secondary: #f0f6f0;
+  --accent-color: #f92aad;
+  --border-color: #495495;
+  --danger-color: #fe4450;
+  --success-color: #72f1b8;
+  --hover-bg: #34294f;
+  --bg-tags-select: rgba(38, 35, 53, 0.9);
+}
