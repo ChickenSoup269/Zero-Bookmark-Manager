@@ -152,9 +152,9 @@
                 </div>
                 <div class="sidebar-section-content collapsed" id="admin-content">
                     <div class="sidebar-admin-grid">
-                        <button id="rename-folder" class="sidebar-admin-btn hidden" title="Rename Folder">
+                        <button id="rename-folder" class="sidebar-admin-btn hidden" data-i18n-title="renameFolder" title="Rename Folder">
                             <i class="fas fa-edit"></i>
-                            <span>Rename</span>
+                            <span data-i18n="renameTitle">Rename</span>
                         </button>
                         <button id="add-to-folder" class="sidebar-admin-btn hidden" title="Move to Folder">
                             <i class="fas fa-folder-open"></i>
@@ -597,22 +597,22 @@
                 </div>
                 <div class="rename-popup-buttons">
                     <button id="custom-prompt-ok" class="button save">OK</button>
-                    <button id="custom-prompt-cancel" class="button cancel">Cancel</button>
+                    <button id="custom-prompt-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                 </div>
             </div>
         </div>
 
         <div id="rename-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="rename-title">
             <div class="rename-popup-content">
-                <h3 id="rename-title">Rename</h3>
+                <h3 id="rename-title" data-i18n="renameTitle">Rename</h3>
                 <div class="rename-input-container">
                     <textarea id="rename-input" class="input" placeholder="Enter new name..."
-                        aria-label="New bookmark title" maxlength="255" rows="1"></textarea>
+                        data-i18n-placeholder="renamePlaceholder" aria-label="New bookmark title" maxlength="255" rows="1"></textarea>
                     <button id="clear-rename" class="button clear" aria-label="Clear rename input">✖</button>
                 </div>
                 <div class="rename-popup-buttons">
-                    <button id="rename-save" class="button save">Save</button>
-                    <button id="rename-cancel" class="button cancel">Cancel</button>
+                    <button id="rename-save" class="button save" data-i18n="save">Save</button>
+                    <button id="rename-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                 </div>
             </div>
         </div>
@@ -620,19 +620,21 @@
         <div id="rename-folder-popup" class="rename-popup hidden popup-animate" role="dialog"
             aria-labelledby="rename-folder-title">
             <div class="rename-popup-content">
-                <h3 id="rename-folder-title">Rename Folder</h3>
+                <h3 id="rename-folder-title" data-i18n="renameFolder">Rename Folder</h3>
                 <div class="rename-input-container">
                     <select id="rename-folder-select" class="select" aria-label="Select folder to rename">
                         <option value="">Select Folder</option>
                     </select>
-                    <textarea id="rename-folder-input" class="input" placeholder="Enter new folder name..."
-                        aria-label="New folder name" maxlength="255" rows="1"></textarea>
-                    <button id="clear-rename-folder" class="button clear"
-                        aria-label="Clear rename folder input">✖</button>
+                    <div style="position: relative; width: 100%; display: flex; align-items: center;">
+                        <textarea id="rename-folder-input" class="input" placeholder="Enter new folder name..."
+                            data-i18n-placeholder="newFolderPlaceholder" aria-label="New folder name" maxlength="255" rows="1" style="flex: 1; padding-right: 30px;"></textarea>
+                        <button id="clear-rename-folder" class="button clear"
+                            aria-label="Clear rename folder input" style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; color: var(--text-secondary);">✖</button>
+                    </div>
                 </div>
                 <div class="rename-popup-buttons">
-                    <button id="rename-folder-save" class="button save">Save</button>
-                    <button id="rename-folder-cancel" class="button cancel">Cancel</button>
+                    <button id="rename-folder-save" class="button save" data-i18n="save">Save</button>
+                    <button id="rename-folder-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                 </div>
             </div>
         </div>
@@ -640,15 +642,15 @@
         <div id="add-to-folder-popup" class="rename-popup hidden popup-animate" role="dialog"
             aria-labelledby="add-to-folder-title">
             <div class="rename-popup-content">
-                <h3 id="add-to-folder-title">Add to Folder</h3>
+                <h3 id="add-to-folder-title" data-i18n="addToFolderTitle">Add to Folder</h3>
                 <div class="add-to-folder-container">
                     <select id="add-to-folder-select" class="select" aria-label="Select folder">
                         <option value="">Select Folder</option>
                     </select>
                 </div>
                 <div class="rename-popup-buttons">
-                    <button id="add-to-folder-save" class="button save">Save</button>
-                    <button id="add-to-folder-cancel" class="button cancel">Cancel</button>
+                    <button id="add-to-folder-save" class="button save" data-i18n="save">Save</button>
+                    <button id="add-to-folder-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                 </div>
             </div>
         </div>
@@ -663,8 +665,8 @@
                     <button id="clear-create-folder" class="button clear" aria-label="Clear folder name">✖</button>
                 </div>
                 <div class="rename-popup-buttons">
-                    <button id="create-folder-save" class="button save">Save</button>
-                    <button id="create-folder-cancel" class="button cancel">Cancel</button>
+                    <button id="create-folder-save" class="button save" data-i18n="save">Save</button>
+                    <button id="create-folder-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                 </div>
             </div>
         </div>
@@ -676,18 +678,18 @@
                     <img id="detail-thumbnail" src="" alt="Website thumbnail" />
                 </div>
                 <div class="bookmark-info">
-                    <h3 id="detail-title-label">Bookmark Detail</h3>
-                    <p><strong>Title:</strong> <span id="detail-title"></span></p>
-                    <p><strong>URL:</strong> <span id="detail-url"></span></p>
-                    <p><strong>Date Added:</strong> <span id="detail-date-added"></span></p>
+                    <h3 id="detail-title-label" data-i18n="viewDetail">Bookmark Detail</h3>
+                    <p><strong data-i18n="detailTitle">Title</strong>: <span id="detail-title"></span></p>
+                    <p><strong data-i18n="detailUrl">URL</strong>: <span id="detail-url"></span></p>
+                    <p><strong data-i18n="detailDateAdded">Date Added</strong>: <span id="detail-date-added"></span></p>
                 </div>
                 <div class="detail-productivity">
                     <div class="detail-tags-block">
-                        <label><strong>Tags:</strong></label>
+                        <label><strong data-i18n="sidebarTags">Tags</strong>:</label>
                         <div id="detail-tags"></div>
                     </div>
                     <div class="detail-notes-block">
-                        <label for="detail-notes"><strong>Notes:</strong></label>
+                        <label for="detail-notes"><strong data-i18n="detailNotes">Notes</strong>:</label>
                         <textarea id="detail-notes" class="input" rows="4"
                             placeholder="Add private notes for this bookmark..."></textarea>
                     </div>
@@ -705,7 +707,7 @@
                     <div id="detail-tag-suggestions" class="detail-tag-suggestions"></div>
                 </div>
                 <div class="rename-popup-buttons detail-popup-buttons">
-                    <button class="close-modal button cancel">Close</button>
+                    <button class="close-modal button cancel" data-i18n="close">Close</button>
                 </div>
             </div>
         </div>
@@ -828,7 +830,7 @@
                     <kbd>Ctrl K</kbd>
                 </div>
                 <div class="command-palette-heading">
-                    <h3 id="command-palette-title">Command Palette</h3>
+                    <h3 id="command-palette-title" data-i18n="commandPaletteTitle">Command Palette</h3>
                     <span id="command-palette-count">0</span>
                 </div>
                 <div id="command-palette-results" class="command-palette-results" role="listbox"></div>
@@ -918,8 +920,8 @@
                             Selected Tags</span></label>
                 </div>
                 <div class="rename-popup-buttons">
-                    <button id="localstorage-settings-save" class="button save">Save</button>
-                    <button id="localstorage-settings-cancel" class="button cancel">Cancel</button>
+                    <button id="localstorage-settings-save" class="button save" data-i18n="save">Save</button>
+                    <button id="localstorage-settings-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                 </div>
             </div>
         </div>
