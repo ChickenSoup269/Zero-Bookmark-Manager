@@ -489,5 +489,10 @@ export const vi = {
   "updateMessage": "Zero Bookmark Manager đã cập nhật lên phiên bản ",
   "back": "Quay lại",
   "openChat": "Mở Chat",
-  "cloudSync": "Đồng bộ đám mây"
+  "cloudSync": "Đồng bộ đám mây",
+  "detailTitle": "Tiêu đề",
+  "detailUrl": "URL",
+  "detailNotes": "Ghi chú",
+  "commandPaletteTitle": "Bảng lệnh nhanh",
+  "close": "Đóng"
 };

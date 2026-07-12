@@ -492,5 +492,9 @@ export const en = {
   "back": "Back",
   "openChat": "Open Chat",
   "releaseNotes": "Release Notes",
-  "close": "Close"
+  "close": "Close",
+  "detailTitle": "Title",
+  "detailUrl": "URL",
+  "detailNotes": "Notes",
+  "commandPaletteTitle": "Command Palette"
 };
