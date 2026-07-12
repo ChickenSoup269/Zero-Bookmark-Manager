@@ -34,6 +34,17 @@ export function setupUIControlListeners(elements) {
     updateTheme(elements, val);
   })
 
+  // Toggle theme selection card (using event delegation for reliability)
+  document.addEventListener("click", (e) => {
+    const toggleHeader = e.target.closest(".theme-toggle-header");
+    if (toggleHeader) {
+      const card = toggleHeader.closest(".theme-selection-card");
+      if (card) {
+        card.classList.toggle("collapsed");
+      }
+    }
+  });
+
   elements.fontSwitcher.addEventListener("change", (e) => {
     // Remove all possible font classes
     const fontClasses = Array.from(document.body.classList).filter(cls => cls.startsWith('font-'));

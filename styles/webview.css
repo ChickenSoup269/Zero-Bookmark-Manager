@@ -3789,12 +3789,37 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 6px;
 }
+.dropdown-menu-2 .settings-card-header.theme-toggle-header {
+  cursor: pointer;
+  justify-content: space-between;
+}
+.dropdown-menu-2 .settings-card-header.theme-toggle-header > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
 .dropdown-menu-2 .theme-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
   gap: 10px;
   padding: 10px 0 0 0;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  max-height: 500px;
+}
+.dropdown-menu-2 .theme-selection-card.collapsed .theme-grid {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  opacity: 0;
+}
+.dropdown-menu-2 .theme-toggle-header .toggle-icon {
+  transition: transform 0.3s ease;
+}
+.dropdown-menu-2 .theme-selection-card.collapsed .theme-toggle-header .toggle-icon {
+  transform: rotate(180deg);
 }
 
 .dropdown-menu-2 .theme-swatch {

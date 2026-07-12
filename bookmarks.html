@@ -9,7 +9,7 @@
     <script src="./components/sidebar-preload.js"></script>
     <link rel="stylesheet" href="./styles/style.css?v=2">
     <link rel="stylesheet" href="./styles/chat.css">
-    <link rel="stylesheet" href="./styles/webview.css?v=2">
+    <link rel="stylesheet" href="./styles/webview.css?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
@@ -321,8 +321,9 @@
                 </div>
                 
 <div class="settings-card theme-selection-card">
-    <div class="settings-card-header">
-        <i class="fas fa-paint-roller"></i> <span data-i18n="themeSelectionTitle">Themes</span>
+    <div class="settings-card-header theme-toggle-header">
+        <div><i class="fas fa-paint-roller"></i> <span data-i18n="themeSelectionTitle">Themes</span></div>
+        <i class="fas fa-chevron-up toggle-icon"></i>
     </div>
     <div id="theme-switcher" class="theme-grid" aria-label="Select theme">
     <button class="theme-swatch" data-value="system" data-hint="System Default" style="background: linear-gradient(135deg, #e0e0e0 50%, #2b2b2b 50%); color: inherit;"><i class="fas fa-desktop"></i></button>

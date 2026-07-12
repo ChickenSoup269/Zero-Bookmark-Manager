@@ -4061,6 +4061,33 @@ html {
   border-bottom: 1px solid var(--border-color, #e0e0e0);
   padding-bottom: 6px;
 }
+.settings-card-header.theme-toggle-header {
+  cursor: pointer;
+  justify-content: space-between;
+}
+.settings-card-header.theme-toggle-header > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.theme-selection-card .theme-grid {
+  transition: all 0.3s ease;
+  overflow: hidden;
+  max-height: 500px; /* Arbitrary large height to allow CSS transition */
+}
+.theme-selection-card.collapsed .theme-grid {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  opacity: 0;
+}
+.theme-toggle-header .toggle-icon {
+  transition: transform 0.3s ease;
+}
+.theme-selection-card.collapsed .theme-toggle-header .toggle-icon {
+  transform: rotate(180deg);
+}
 
 
 .theme-swatch {
