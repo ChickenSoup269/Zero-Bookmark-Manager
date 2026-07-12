@@ -20,9 +20,18 @@ export function setupUIControlListeners(elements) {
     renderFilteredBookmarks(uiState.bookmarkTree, elements)
   })
 
-  elements.themeSwitcher.addEventListener("change", (e) => {
-    localStorage.setItem("appTheme", e.target.value)
-    updateTheme(elements, e.target.value)
+  elements.themeSwitcher.addEventListener("click", (e) => {
+    const btn = e.target.closest('.theme-swatch');
+    if (!btn) return;
+    const val = btn.dataset.value;
+    
+    // Update active class
+    const swatches = elements.themeSwitcher.querySelectorAll('.theme-swatch');
+    swatches.forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    
+    localStorage.setItem("appTheme", val);
+    updateTheme(elements, val);
   })
 
   elements.fontSwitcher.addEventListener("change", (e) => {

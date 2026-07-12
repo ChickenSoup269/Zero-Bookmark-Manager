@@ -1046,7 +1046,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Khởi tạo theme, font, view
     const savedTheme = localStorage.getItem("appTheme") || "system"
-    elements.themeSwitcher.value = savedTheme
+    // Update active swatch
+    const swatches = elements.themeSwitcher.querySelectorAll('.theme-swatch');
+    swatches.forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.value === savedTheme) btn.classList.add('active');
+    });
     updateTheme(elements, savedTheme)
 
     const savedFont = localStorage.getItem("appFont") || "gohu"
