@@ -306,11 +306,11 @@
                 </div>
                 <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
                 <div class="menu-group">
-                    <div class="language-settings-row">
-                        <select id="language-switcher" class="select" aria-label="Select language">
-                            <option value="en">English</option>
-                            <option value="vi">Tiếng Việt</option>
-                        </select>
+                    <div class="language-settings-row" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
+                        <div class="setting-pill-group" id="language-switcher" style="flex: 1; margin-top: 0;">
+                            <button class="theme-swatch setting-swatch language-swatch" data-value="en"><span>English</span></button>
+                            <button class="theme-swatch setting-swatch language-swatch" data-value="vi"><span>Tiếng Việt</span></button>
+                        </div>
                         <button id="add-custom-language-option" class="button btn-action-icon"
                             data-i18n-title="addCustomLanguage" title="Add custom language"
                             aria-label="Add custom language">
@@ -382,13 +382,6 @@
                             <button class="theme-swatch view-swatch" data-value="mockup"><i class="fas fa-image"></i> <span data-i18n="viewGallery">Gallery View</span></button>
                         </div>
                     </div>
-                    <label class="toggle-row" for="folder-list-bg-toggle">
-                        <span data-i18n="sidebarListBg">List Background</span>
-                        <span class="toggle-switch">
-                            <input type="checkbox" id="folder-list-bg-toggle" checked>
-                            <span class="toggle-knob"></span>
-                        </span>
-                    </label>
                 </div>
 
                 <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
@@ -460,12 +453,13 @@
 
                     <hr>
 
-                    <label for="duplicate-scope-select"><i class="fas fa-clone"></i> <span
-                            data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
-                    <select id="duplicate-scope-select" class="select">
-                        <option value="folder" data-i18n="dupScopeFolder">Only 1 folder</option>
-                        <option value="all" data-i18n="dupScopeAll">Across folders</option>
-                    </select>
+                    <div class="app-setting-field">
+                        <label><i class="fas fa-clone"></i> <span data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
+                        <div class="setting-pill-group" id="duplicate-scope-select">
+                            <button class="theme-swatch setting-swatch" data-value="folder" data-i18n="dupScopeFolder">Only 1 folder</button>
+                            <button class="theme-swatch setting-swatch" data-value="all" data-i18n="dupScopeAll">Across folders</button>
+                        </div>
+                    </div>
 
                     <label class="toggle-row" for="auto-remove-dup-toggle">
                         <span data-i18n="autoRemoveDupTitle"
@@ -478,34 +472,39 @@
                 </div>
 
                 <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
-                <div class="menu-group app-settings-panel">
+                <div class="menu-group">
+                    <label class="toggle-row" for="folder-list-bg-toggle">
+                        <span data-i18n="sidebarListBg">List Background</span>
+                        <span class="toggle-switch">
+                            <input type="checkbox" id="folder-list-bg-toggle" checked>
+                            <span class="toggle-knob"></span>
+                        </span>
+                    </label>
+
                     <div class="app-setting-field">
-                        <label for="favicon-option-select"><i class="fas fa-image"></i> <span
-                                data-i18n="faviconMode">Favicon Mode:</span></label>
-                        <select id="favicon-option-select" class="select">
-                            <option value="auto" data-i18n="faviconAuto">Auto (Google → Hostname)</option>
-                            <option value="google" data-i18n="faviconGoogle">Google Only</option>
-                            <option value="hostname" data-i18n="faviconHostname">Hostname Only</option>
-                        </select>
+                        <label><i class="fas fa-image"></i> <span data-i18n="faviconMode">Favicon Mode:</span></label>
+                        <div class="setting-pill-group" id="favicon-option-select">
+                            <button class="theme-swatch setting-swatch" data-value="auto" data-i18n="faviconAuto">Auto</button>
+                            <button class="theme-swatch setting-swatch" data-value="google" data-i18n="faviconGoogle">Google Only</button>
+                            <button class="theme-swatch setting-swatch" data-value="hostname" data-i18n="faviconHostname">Hostname Only</button>
+                        </div>
                     </div>
 
                     <div class="app-setting-field">
-                        <label for="header-line-select"><i class="fas fa-window-minimize"></i> <span
-                                data-i18n="headerLineConfig">Header Line Style:</span></label>
-                        <select id="header-line-select" class="select">
-                            <option value="pattern" data-i18n="linePattern">Slanted Pattern</option>
-                            <option value="simple" data-i18n="lineSimple">Simple Line</option>
-                            <option value="hidden" data-i18n="lineHidden">Hidden</option>
-                        </select>
+                        <label><i class="fas fa-window-minimize"></i> <span data-i18n="headerLineConfig">Header Line Style:</span></label>
+                        <div class="setting-pill-group" id="header-line-select">
+                            <button class="theme-swatch setting-swatch" data-value="pattern" data-i18n="linePattern">Slanted Pattern</button>
+                            <button class="theme-swatch setting-swatch" data-value="simple" data-i18n="lineSimple">Simple Line</button>
+                            <button class="theme-swatch setting-swatch" data-value="hidden" data-i18n="lineHidden">Hidden</button>
+                        </div>
                     </div>
 
                     <div class="app-setting-field">
-                        <label for="bookmark-menu-bg-select"><i class="fas fa-ellipsis-vertical"></i> <span
-                                data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
-                        <select id="bookmark-menu-bg-select" class="select">
-                            <option value="glass" data-i18n="bookmarkMenuBgGlass">Glass like Tree View</option>
-                            <option value="normal" data-i18n="bookmarkMenuBgNormal">Normal solid</option>
-                        </select>
+                        <label><i class="fas fa-ellipsis-vertical"></i> <span data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
+                        <div class="setting-pill-group" id="bookmark-menu-bg-select">
+                            <button class="theme-swatch setting-swatch" data-value="glass" data-i18n="bookmarkMenuBgGlass">Glass</button>
+                            <button class="theme-swatch setting-swatch" data-value="normal" data-i18n="bookmarkMenuBgNormal">Normal solid</button>
+                        </div>
                     </div>
 
                     <button id="localstorage-settings-option" class="menu-item app-setting-action">

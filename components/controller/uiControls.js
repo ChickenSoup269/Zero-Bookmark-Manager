@@ -15,10 +15,25 @@ import { uiState, saveUIState } from "../state.js"
 import { handleDeleteSelectedBookmarks } from "./bookmarkActions.js"
 
 export function setupUIControlListeners(elements) {
-  elements.languageSwitcher.addEventListener("change", (e) => {
-    updateUILanguage(elements, e.target.value)
+  const handleLanguageChange = (val) => {
+    updateUILanguage(elements, val)
     renderFilteredBookmarks(uiState.bookmarkTree, elements)
-  })
+  }
+  
+  if (elements.languageSwitcher.tagName === 'SELECT') {
+    elements.languageSwitcher.addEventListener("change", (e) => handleLanguageChange(e.target.value))
+  } else {
+    elements.languageSwitcher.addEventListener("click", (e) => {
+      const btn = e.target.closest('.setting-swatch')
+      if (!btn) return
+      
+      const swatches = elements.languageSwitcher.querySelectorAll('.setting-swatch')
+      swatches.forEach(s => s.classList.remove('active'))
+      btn.classList.add('active')
+      
+      handleLanguageChange(btn.dataset.value)
+    })
+  }
 
   elements.themeSwitcher.addEventListener("click", (e) => {
     const btn = e.target.closest('.theme-swatch');

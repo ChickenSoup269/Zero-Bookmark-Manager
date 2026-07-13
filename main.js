@@ -24,10 +24,26 @@ if (faviconOptionSelect) {
   // Ưu tiên lấy từ localStorage nếu có
   const savedFaviconOption =
     localStorage.getItem("faviconOption") || uiState.faviconOption || "auto"
-  faviconOptionSelect.value = savedFaviconOption
-  uiState.faviconOption = savedFaviconOption
-  faviconOptionSelect.addEventListener("change", (e) => {
-    uiState.faviconOption = e.target.value
+  if (faviconOptionSelect.tagName === 'SELECT') {
+    faviconOptionSelect.value = savedFaviconOption
+    faviconOptionSelect.addEventListener("change", (e) => updateFaviconOption(e.target.value))
+  } else {
+    const swatches = faviconOptionSelect.querySelectorAll('.setting-swatch')
+    swatches.forEach(btn => {
+      btn.classList.remove('active')
+      if (btn.dataset.value === savedFaviconOption) btn.classList.add('active')
+    })
+    faviconOptionSelect.addEventListener("click", (e) => {
+      const btn = e.target.closest('.setting-swatch')
+      if (!btn) return
+      swatches.forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      updateFaviconOption(btn.dataset.value)
+    })
+  }
+
+  function updateFaviconOption(val) {
+    uiState.faviconOption = val
     localStorage.setItem("faviconOption", uiState.faviconOption)
     chrome.storage.local.get(["uiState"], (data) => {
       const newUiState = data.uiState || {}
@@ -40,7 +56,7 @@ if (faviconOptionSelect) {
         })
       })
     })
-  })
+  }
 }
 
 // Cài đặt cho Header Line
@@ -50,12 +66,28 @@ if (headerLineSelect) {
     localStorage.getItem("headerLineStyle") ||
     window.uiState?.headerLineStyle ||
     "pattern"
-  headerLineSelect.value = savedHeaderLine
   if (window.uiState) window.uiState.headerLineStyle = savedHeaderLine
   document.body.setAttribute("data-header-line", savedHeaderLine)
 
-  headerLineSelect.addEventListener("change", (e) => {
-    const val = e.target.value
+  if (headerLineSelect.tagName === 'SELECT') {
+    headerLineSelect.value = savedHeaderLine
+    headerLineSelect.addEventListener("change", (e) => updateHeaderLine(e.target.value))
+  } else {
+    const swatches = headerLineSelect.querySelectorAll('.setting-swatch')
+    swatches.forEach(btn => {
+      btn.classList.remove('active')
+      if (btn.dataset.value === savedHeaderLine) btn.classList.add('active')
+    })
+    headerLineSelect.addEventListener("click", (e) => {
+      const btn = e.target.closest('.setting-swatch')
+      if (!btn) return
+      swatches.forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      updateHeaderLine(btn.dataset.value)
+    })
+  }
+
+  function updateHeaderLine(val) {
     if (window.uiState) window.uiState.headerLineStyle = val
     localStorage.setItem("headerLineStyle", val)
     document.body.setAttribute("data-header-line", val)
@@ -64,7 +96,7 @@ if (headerLineSelect) {
       newUiState.headerLineStyle = val
       chrome.storage.local.set({ uiState: newUiState })
     })
-  })
+  }
 }
 
 // Cài đặt nền dropdown menu của từng bookmark
@@ -75,17 +107,33 @@ const duplicateScopeSelect = document.getElementById("duplicate-scope-select")
 if (duplicateScopeSelect) {
   const savedDuplicateScope =
     localStorage.getItem("duplicateScope") || uiState.duplicateScope || "folder"
-  duplicateScopeSelect.value = savedDuplicateScope
-  uiState.duplicateScope = savedDuplicateScope
-  duplicateScopeSelect.addEventListener("change", (e) => {
-    uiState.duplicateScope = e.target.value
+  if (duplicateScopeSelect.tagName === 'SELECT') {
+    duplicateScopeSelect.value = savedDuplicateScope
+    duplicateScopeSelect.addEventListener("change", (e) => updateDuplicateScope(e.target.value))
+  } else {
+    const swatches = duplicateScopeSelect.querySelectorAll('.setting-swatch')
+    swatches.forEach(btn => {
+      btn.classList.remove('active')
+      if (btn.dataset.value === savedDuplicateScope) btn.classList.add('active')
+    })
+    duplicateScopeSelect.addEventListener("click", (e) => {
+      const btn = e.target.closest('.setting-swatch')
+      if (!btn) return
+      swatches.forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      updateDuplicateScope(btn.dataset.value)
+    })
+  }
+
+  function updateDuplicateScope(val) {
+    uiState.duplicateScope = val
     localStorage.setItem("duplicateScope", uiState.duplicateScope)
     chrome.storage.local.get(["uiState"], (data) => {
       const newUiState = data.uiState || {}
       newUiState.duplicateScope = uiState.duplicateScope
       chrome.storage.local.set({ uiState: newUiState })
     })
-  })
+  }
 }
 
 // Sự kiện cho Background Auto Remove Duplicates
@@ -148,12 +196,28 @@ function setupBookmarkMenuBgControl() {
   document.body.setAttribute("data-bookmark-menu-bg", saved)
   if (!select) return
 
-  select.value = saved
   if (select.dataset.bound === "true") return
   select.dataset.bound = "true"
 
-  select.addEventListener("change", (e) => {
-    const val = e.target.value
+  if (select.tagName === 'SELECT') {
+    select.value = saved
+    select.addEventListener("change", (e) => updateBookmarkMenuBg(e.target.value))
+  } else {
+    const swatches = select.querySelectorAll('.setting-swatch')
+    swatches.forEach(btn => {
+      btn.classList.remove('active')
+      if (btn.dataset.value === saved) btn.classList.add('active')
+    })
+    select.addEventListener("click", (e) => {
+      const btn = e.target.closest('.setting-swatch')
+      if (!btn) return
+      swatches.forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      updateBookmarkMenuBg(btn.dataset.value)
+    })
+  }
+
+  function updateBookmarkMenuBg(val) {
     uiState.bookmarkMenuBg = val
     localStorage.setItem("bookmarkMenuBg", val)
     document.body.setAttribute("data-bookmark-menu-bg", val)
@@ -162,7 +226,7 @@ function setupBookmarkMenuBgControl() {
       newUiState.bookmarkMenuBg = val
       chrome.storage.local.set({ uiState: newUiState })
     })
-  })
+  }
 }
 
 function normalizeCustomLanguagePack(rawPack) {
@@ -349,7 +413,15 @@ function setupCustomLanguageControls(elements) {
       }
 
       renderCustomLanguageOptions(elements.languageSwitcher)
-      elements.languageSwitcher.value = normalized.languageCode
+      if (elements.languageSwitcher.tagName === 'SELECT') {
+        elements.languageSwitcher.value = normalized.languageCode
+      } else {
+        const swatches = elements.languageSwitcher.querySelectorAll('.setting-swatch')
+        swatches.forEach(btn => {
+          btn.classList.remove('active')
+          if (btn.dataset.value === normalized.languageCode) btn.classList.add('active')
+        })
+      }
       updateUILanguage(elements, normalized.languageCode)
       window.dispatchEvent(new CustomEvent("languageChanged"))
 
@@ -1035,7 +1107,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const storedLanguage = localStorage.getItem("appLanguage")
     const savedLanguage =
       storedLanguage && translations[storedLanguage] ? storedLanguage : "en"
-    elements.languageSwitcher.value = savedLanguage
+    if (elements.languageSwitcher.tagName === 'SELECT') {
+      elements.languageSwitcher.value = savedLanguage
+    } else {
+      const swatches = elements.languageSwitcher.querySelectorAll('.setting-swatch')
+      swatches.forEach(btn => {
+        btn.classList.remove('active')
+        if (btn.dataset.value === savedLanguage) btn.classList.add('active')
+      })
+    }
     try {
       updateUILanguage(elements, savedLanguage)
     } catch (error) {
@@ -1133,7 +1213,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const language = button.dataset.firstRunLanguage || "en"
             localStorage.setItem("appLanguage", language)
             localStorage.setItem("firstRunLanguageComplete", "true")
-            elements.languageSwitcher.value = language
+            if (elements.languageSwitcher.tagName === 'SELECT') {
+              elements.languageSwitcher.value = language
+            } else {
+              const swatches = elements.languageSwitcher.querySelectorAll('.setting-swatch')
+              swatches.forEach(btn => {
+                btn.classList.remove('active')
+                if (btn.dataset.value === language) btn.classList.add('active')
+              })
+            }
             applyLanguageText(language)
             window.dispatchEvent(new CustomEvent("languageChanged"))
             languagePopup.classList.add("hidden")
@@ -1356,8 +1444,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Sự kiện cho languageSwitcher
-    elements.languageSwitcher.addEventListener("change", (e) => {
-      const newLanguage = e.target.value
+    const handleLangChange = (newLanguage) => {
       localStorage.setItem("appLanguage", newLanguage)
       updateUILanguage(elements, newLanguage)
       window.dispatchEvent(new CustomEvent("languageChanged")) // Dispatch custom event
@@ -1366,7 +1453,20 @@ document.addEventListener("DOMContentLoaded", () => {
           renderFilteredBookmarks(bookmarkTreeNodes, elements)
         }
       })
-    })
+    }
+    
+    if (elements.languageSwitcher.tagName === 'SELECT') {
+      elements.languageSwitcher.addEventListener("change", (e) => handleLangChange(e.target.value))
+    } else {
+      elements.languageSwitcher.addEventListener("click", (e) => {
+        const btn = e.target.closest('.setting-swatch')
+        if (!btn) return
+        const swatches = elements.languageSwitcher.querySelectorAll('.setting-swatch')
+        swatches.forEach(s => s.classList.remove('active'))
+        btn.classList.add('active')
+        handleLangChange(btn.dataset.value)
+      })
+    }
 
     // View Visit Counts option
     if (elements.viewVisitCountsOption) {

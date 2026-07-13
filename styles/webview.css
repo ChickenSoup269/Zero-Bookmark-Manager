@@ -3853,7 +3853,8 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .font-swatch,
-.dropdown-menu-2 .view-swatch {
+.dropdown-menu-2 .view-swatch,
+.dropdown-menu-2 .setting-swatch {
   background: var(--bg-secondary, #f5f5f5);
   color: var(--text-primary, #333);
   width: auto;
@@ -5824,3 +5825,10 @@ body.is-scrolled .webview-search-wrapper {
   width: 90% !important;
   max-width: 1000px !important;
 }
+
+.setting-pill-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.app-setting-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; } .app-setting-field label { font-size: 0.9rem; color: var(--text-secondary); }
+
+.dropdown-menu-2 .font-swatch.active, .dropdown-menu-2 .view-swatch.active, .dropdown-menu-2 .setting-swatch.active { transform: none; background: var(--accent-color, #007bff); color: white; border-color: var(--accent-color, #007bff); box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3); } .dropdown-menu-2 .font-swatch:hover, .dropdown-menu-2 .view-swatch:hover, .dropdown-menu-2 .setting-swatch:hover { transform: translateY(-1px); }
+.dropdown-menu-2 .font-swatch, .dropdown-menu-2 .view-swatch, .dropdown-menu-2 .setting-swatch { border: 1px solid var(--border-color, #ccc); }
+.dropdown-menu-2 .font-swatch, .dropdown-menu-2 .view-swatch, .dropdown-menu-2 .setting-swatch { font-size: 0.85rem; }
