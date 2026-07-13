@@ -5844,7 +5844,6 @@ body.is-scrolled .webview-search-wrapper {
   background: var(--bg-tertiary, #e9ecef);
   padding: 6px 12px;
   border-radius: 6px;
-  border-left: 4px solid var(--accent-color, #007bff);
 }
 .app-setting-field label i {
   color: var(--accent-color, #007bff);
