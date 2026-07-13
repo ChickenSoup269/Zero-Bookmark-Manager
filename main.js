@@ -1056,7 +1056,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const savedFont = localStorage.getItem("appFont") || "gohu"
     document.body.classList.add(`font-${savedFont}`)
-    elements.fontSwitcher.value = savedFont
+    if (elements.fontSwitcher.tagName === 'SELECT') {
+      elements.fontSwitcher.value = savedFont
+    } else {
+      const fSwatches = elements.fontSwitcher.querySelectorAll('.theme-swatch, .font-swatch');
+      fSwatches.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.value === savedFont) btn.classList.add('active');
+      });
+    }
 
     const showFirstRunPopup = (onDone) => {
       const firstRunPopup = document.getElementById("first-run-popup")
@@ -1079,7 +1087,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
           document.body.classList.add(`font-${selectedFont}`)
           localStorage.setItem("appFont", selectedFont)
-          elements.fontSwitcher.value = selectedFont
+          if (elements.fontSwitcher.tagName === 'SELECT') {
+            elements.fontSwitcher.value = selectedFont
+          } else {
+            const fSwatches = elements.fontSwitcher.querySelectorAll('.theme-swatch, .font-swatch');
+            fSwatches.forEach(btn => {
+              btn.classList.remove('active');
+              if (btn.dataset.value === selectedFont) btn.classList.add('active');
+            });
+          }
 
           localStorage.setItem("firstRunComplete", "true")
           firstRunPopup.classList.add("hidden")
@@ -1149,8 +1165,37 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     const savedView = localStorage.getItem("appView") || "flat"
-    elements.viewSwitcher.value = savedView
+    if (elements.viewSwitcher.tagName === 'SELECT') {
+      elements.viewSwitcher.value = savedView
+    } else {
+      const vSwatches = elements.viewSwitcher.querySelectorAll('.theme-swatch, .view-swatch');
+      vSwatches.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.value === savedView) btn.classList.add('active');
+      });
+    }
     uiState.viewMode = savedView
+
+    // Khôi phục trạng thái thu gọn của các thẻ
+    const themeCard = document.querySelector(".theme-selection-card");
+    const fontCard = document.querySelector(".font-selection-card");
+    const viewCard = document.querySelector(".view-selection-card");
+
+    if (themeCard) {
+      const isCollapsed = localStorage.getItem("themeCardCollapsed");
+      if (isCollapsed === "false") themeCard.classList.remove("collapsed");
+      else themeCard.classList.add("collapsed");
+    }
+    if (fontCard) {
+      const isCollapsed = localStorage.getItem("fontCardCollapsed");
+      if (isCollapsed === "false") fontCard.classList.remove("collapsed");
+      else fontCard.classList.add("collapsed");
+    }
+    if (viewCard) {
+      const isCollapsed = localStorage.getItem("viewCardCollapsed");
+      if (isCollapsed === "false") viewCard.classList.remove("collapsed");
+      else viewCard.classList.add("collapsed");
+    }
 
     // Khôi phục trạng thái showBookmarkIds
     chrome.storage.local.get(["showBookmarkIds"], (data) => {

@@ -38,28 +38,69 @@ export function setupUIControlListeners(elements) {
   document.addEventListener("click", (e) => {
     const toggleHeader = e.target.closest(".theme-toggle-header");
     if (toggleHeader) {
-      const card = toggleHeader.closest(".theme-selection-card");
+      const card = toggleHeader.closest(".theme-selection-card, .font-selection-card, .view-selection-card");
       if (card) {
         card.classList.toggle("collapsed");
+        const cardType = card.classList.contains("theme-selection-card") ? "themeCardCollapsed" :
+                         card.classList.contains("font-selection-card") ? "fontCardCollapsed" :
+                         "viewCardCollapsed";
+        localStorage.setItem(cardType, card.classList.contains("collapsed"));
       }
     }
   });
 
-  elements.fontSwitcher.addEventListener("change", (e) => {
+  const handleFontChange = (val) => {
     // Remove all possible font classes
     const fontClasses = Array.from(document.body.classList).filter(cls => cls.startsWith('font-'));
     fontClasses.forEach(cls => document.body.classList.remove(cls));
     
-    document.body.classList.add(`font-${e.target.value}`)
-    localStorage.setItem("appFont", e.target.value)
-  })
+    document.body.classList.add(`font-${val}`)
+    localStorage.setItem("appFont", val)
 
-  elements.viewSwitcher.addEventListener("change", (e) => {
-    uiState.viewMode = e.target.value
-    localStorage.setItem("appView", e.target.value)
-    renderFilteredBookmarks(uiState.bookmarkTree, elements)
-    saveUIState()
-  })
+    // Update active class if it's a grid
+    const swatches = elements.fontSwitcher.querySelectorAll('.theme-swatch, .font-swatch');
+    if (swatches.length > 0) {
+      swatches.forEach(s => s.classList.remove('active'));
+      const activeBtn = elements.fontSwitcher.querySelector(`[data-value="${val}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+  };
+
+  if (elements.fontSwitcher.tagName === 'SELECT') {
+    elements.fontSwitcher.addEventListener("change", (e) => handleFontChange(e.target.value))
+  } else {
+    elements.fontSwitcher.addEventListener("click", (e) => {
+      const btn = e.target.closest('.theme-swatch, .font-swatch');
+      if (!btn) return;
+      handleFontChange(btn.dataset.value);
+    });
+  }
+
+  const handleViewChange = (val) => {
+    uiState.viewMode = val;
+    localStorage.setItem("appView", val);
+    renderFilteredBookmarks(uiState.bookmarkTree, elements);
+    saveUIState();
+
+    if (elements.viewSwitcher.tagName !== 'SELECT') {
+      const swatches = elements.viewSwitcher.querySelectorAll('.theme-swatch, .view-swatch');
+      if (swatches.length > 0) {
+        swatches.forEach(s => s.classList.remove('active'));
+        const activeBtn = elements.viewSwitcher.querySelector(`[data-value="${val}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+      }
+    }
+  };
+
+  if (elements.viewSwitcher.tagName === 'SELECT') {
+    elements.viewSwitcher.addEventListener("change", (e) => handleViewChange(e.target.value));
+  } else {
+    elements.viewSwitcher.addEventListener("click", (e) => {
+      const btn = e.target.closest('.theme-swatch, .view-swatch');
+      if (!btn) return;
+      handleViewChange(btn.dataset.value);
+    });
+  }
 
   elements.toggleCheckboxesButton.addEventListener("click", () => {
     uiState.checkboxesVisible = !uiState.checkboxesVisible

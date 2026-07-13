@@ -349,26 +349,39 @@
 </div>
 </div>
                 <div class="menu-group">
-                    <select id="font-switcher" class="select" aria-label="Select font">
-                        <option value="gohu" data-i18n="fontGohu">Aa: GohuFont</option>
-                        <option value="jetBrainsMonoNerdFont" data-i18n="fontJetBrains">Aa: jetBrains</option>
-                        <option value="anonymiceProNerd">Aa: AnonymiceProNerd</option>
-                        <option value="proFontWindowsNerdFontPropo">Aa: ProFont</option>
-                        <option value="roboto" data-i18n="fontRoboto">Aa: Roboto</option>
-                        <option value="openSans" data-i18n="fontOpenSans">Aa: Open Sans</option>
-                        <option value="inter" data-i18n="fontInter">Aa: Inter</option>
-                        <option value="lexend" data-i18n="fontLexend">Aa: Lexend</option>
-                    </select>
-                    <select id="view-switcher" class="select select-with-icons" aria-label="Select view mode">
-                        <option value="flat">&#xf03a; Flat List</option>
-                        <option value="tree">&#xf0e8; Tree View</option>
-                        <option value="detail">&#xf05a; Detail View</option>
-                        <option value="card">&#xf009; Card View</option>
-                        <option value="list">&#xf03c; List View</option>
-                        <option value="bento">&#xf009; Bento Box</option>
-                        <option value="kanban">&#xf0db; Kanban Board</option>
-                        <option value="mockup">&#xf03e; Gallery View</option>
-                    </select>
+                    <div class="settings-card font-selection-card collapsed">
+                        <div class="settings-card-header theme-toggle-header">
+                            <div><i class="fas fa-font"></i> <span data-i18n="fontStyleTitle">Font Style</span></div>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="theme-grid" id="font-switcher">
+                            <button class="theme-swatch font-swatch font-gohu" data-value="gohu" style="font-family: 'GohuFont';">Ag <span>Gohu</span></button>
+                            <button class="theme-swatch font-swatch font-jetBrainsMonoNerdFont" data-value="jetBrainsMonoNerdFont" style="font-family: 'JetBrainsMonoNerdFont';">Ag <span>JetBrains</span></button>
+                            <button class="theme-swatch font-swatch font-roboto" data-value="roboto" style="font-family: 'Roboto', sans-serif;">Ag <span>Roboto</span></button>
+                            <button class="theme-swatch font-swatch font-openSans" data-value="openSans" style="font-family: 'Open Sans', sans-serif;">Ag <span>Open Sans</span></button>
+                            <button class="theme-swatch font-swatch font-inter" data-value="inter" style="font-family: 'Inter', sans-serif;">Ag <span>Inter</span></button>
+                            <button class="theme-swatch font-swatch font-lexend" data-value="lexend" style="font-family: 'Lexend', sans-serif;">Ag <span>Lexend</span></button>
+                            <button class="theme-swatch font-swatch font-firaCode" data-value="firaCode" style="font-family: 'Fira Code', monospace;">Ag <span>Fira Code</span></button>
+                            <button class="theme-swatch font-swatch font-poppins" data-value="poppins" style="font-family: 'Poppins', sans-serif;">Ag <span>Poppins</span></button>
+                            <button class="theme-swatch font-swatch font-montserrat" data-value="montserrat" style="font-family: 'Montserrat', sans-serif;">Ag <span>Montserrat</span></button>
+                        </div>
+                    </div>
+                    <div class="settings-card view-selection-card collapsed">
+                        <div class="settings-card-header theme-toggle-header">
+                            <div><i class="fas fa-border-all"></i> <span data-i18n="viewModeTitle">View Mode</span></div>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="theme-grid" id="view-switcher">
+                            <button class="theme-swatch view-swatch" data-value="flat"><i class="fas fa-list"></i> <span data-i18n="viewFlat">Flat List</span></button>
+                            <button class="theme-swatch view-swatch" data-value="tree"><i class="fas fa-sitemap"></i> <span data-i18n="viewTree">Tree View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="detail"><i class="fas fa-info-circle"></i> <span data-i18n="viewDetail">Detail View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="card"><i class="fas fa-th-large"></i> <span data-i18n="viewCard">Card View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="list"><i class="fas fa-list-ul"></i> <span data-i18n="viewList">List View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="bento"><i class="fas fa-th"></i> <span data-i18n="viewBento">Bento Box</span></button>
+                            <button class="theme-swatch view-swatch" data-value="kanban"><i class="fas fa-columns"></i> <span data-i18n="viewKanban">Kanban Board</span></button>
+                            <button class="theme-swatch view-swatch" data-value="mockup"><i class="fas fa-image"></i> <span data-i18n="viewGallery">Gallery View</span></button>
+                        </div>
+                    </div>
                     <label class="toggle-row" for="folder-list-bg-toggle">
                         <span data-i18n="sidebarListBg">List Background</span>
                         <span class="toggle-switch">
