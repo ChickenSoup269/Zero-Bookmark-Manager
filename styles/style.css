@@ -563,21 +563,25 @@ html {
 }
 
 .menu-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
-  padding: var(--spacing-sm);
+  padding: 8px 12px;
+  background: transparent !important;
+  border: none !important;
   text-align: left;
-  background: none;
-  border: none;
+  font-size: 0.85rem;
   color: var(--text-primary);
   cursor: pointer;
-  font-size: 10px;
-  border-radius: var(--border-radius);
-  transition: all var(--transition-fast);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
 }
 
 .menu-item:hover {
-  background-color: var(--bg-tertiary);
+  background: var(--bg-tertiary) !important;
+  color: var(--accent-color);
   transform: translateX(2px);
 }
 
@@ -2018,19 +2022,26 @@ html {
 }
 
 .menu-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
   padding: 8px 12px;
-  background: none;
-  border: none;
+  background: transparent !important;
+  border: none !important;
   text-align: left;
-  font-size: 14px;
+  font-size: 0.85rem;
   color: var(--text-primary);
   cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
 }
 
 .menu-item:hover {
-  background: var(--hover-bg, #f5f5f5);
+  background: var(--bg-tertiary) !important;
+  color: var(--accent-color);
+  transform: translateX(2px);
 }
 
 .dropdown-menu hr {
