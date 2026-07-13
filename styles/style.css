@@ -4163,10 +4163,14 @@ html {
   font-size: 0.95rem; 
   font-weight: 600;
   color: var(--text-primary); 
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  background: var(--bg-tertiary, #e9ecef);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border-left: 4px solid var(--accent-color, #007bff);
 }
 .app-setting-field label i {
   color: var(--accent-color, #007bff);
