@@ -3339,8 +3339,10 @@ body.settings-panel-open .settings-container {
 }
 
 .bookmark-action-btn:hover {
-  background-color: var(--hover-bg);
-  transform: translateY(-1px);
+  background-color: var(--accent-color);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 /* này cho dropdown menu cài đặt cho từng bookmark đại diện */
@@ -3388,9 +3390,8 @@ body.settings-panel-open .settings-container {
 }
 
 .dropdown-menu .menu-item:hover {
-  background-color: var(--text-primary);
-  color: var(--bg-primary);
-  border-color: var(--text-primary);
+  background-color: var(--hover-bg);
+  border-color: var(--border-color);
   transform: translateY(-1px);
 }
 
@@ -3409,9 +3410,8 @@ body[data-bookmark-menu-bg="glass"] .dropdown-menu .menu-item {
 }
 
 body[data-bookmark-menu-bg="glass"] .dropdown-menu .menu-item:hover {
-  background: var(--text-primary) !important;
-  color: var(--bg-primary) !important;
-  border-color: var(--text-primary) !important;
+  background: var(--hover-bg) !important;
+  border-color: var(--border-color) !important;
 }
 
 body[data-bookmark-menu-bg="glass"] .dropdown-menu hr {
@@ -3764,8 +3764,8 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .menu-item:hover {
-  background-color: var(--bg-tertiary) !important;
-  color: var(--accent-color);
+  background-color: var(--hover-bg) !important;
+  border-color: var(--border-color) !important;
 }
 
 /* Theme Grid & Swatches in Webview */

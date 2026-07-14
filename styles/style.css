@@ -569,7 +569,7 @@ html {
   width: 100%;
   padding: 8px 12px;
   background: transparent !important;
-  border: none !important;
+  border: 1px solid transparent !important;
   text-align: left;
   font-size: 0.85rem;
   color: var(--text-primary);
@@ -580,8 +580,8 @@ html {
 }
 
 .menu-item:hover {
-  background: var(--bg-tertiary) !important;
-  color: var(--accent-color);
+  background: var(--hover-bg) !important;
+  border-color: var(--border-color) !important;
   transform: translateX(2px);
 }
 
@@ -2028,7 +2028,7 @@ html {
   width: 100%;
   padding: 8px 12px;
   background: transparent !important;
-  border: none !important;
+  border: 1px solid transparent !important;
   text-align: left;
   font-size: 0.85rem;
   color: var(--text-primary);
@@ -2039,8 +2039,8 @@ html {
 }
 
 .menu-item:hover {
-  background: var(--bg-tertiary) !important;
-  color: var(--accent-color);
+  background: var(--hover-bg) !important;
+  border-color: var(--border-color) !important;
   transform: translateX(2px);
 }
 
