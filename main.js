@@ -284,15 +284,20 @@ function renderCustomLanguageOptions(languageSwitcher) {
   if (!languageSwitcher) return
 
   languageSwitcher
-    .querySelectorAll("option[data-custom-language]")
-    .forEach((option) => option.remove())
+    .querySelectorAll("button[data-custom-language]")
+    .forEach((button) => button.remove())
 
   Object.values(readCustomLanguagePacks()).forEach((pack) => {
-    const option = document.createElement("option")
-    option.value = pack.languageCode
-    option.textContent = pack.languageName
-    option.dataset.customLanguage = "true"
-    languageSwitcher.appendChild(option)
+    const button = document.createElement("button")
+    button.className = "theme-swatch setting-swatch language-swatch"
+    button.dataset.value = pack.languageCode
+    button.dataset.customLanguage = "true"
+    
+    const span = document.createElement("span")
+    span.textContent = pack.languageName
+    button.appendChild(span)
+    
+    languageSwitcher.appendChild(button)
   })
 }
 
