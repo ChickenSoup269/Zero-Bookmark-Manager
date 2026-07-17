@@ -373,7 +373,7 @@ function saveQuickOpenSetting() {
 
 function loadQuickOpenSetting() {
   chrome.storage.local.get(["quickOpenAction"], (result) => {
-    const quickOpenAction = result.quickOpenAction || "web" // Default to 'web'
+    const quickOpenAction = result.quickOpenAction || "popup" // Default to 'popup'
     const radio = document.getElementById(`quick-open-${quickOpenAction}`)
     if (radio) {
       radio.checked = true

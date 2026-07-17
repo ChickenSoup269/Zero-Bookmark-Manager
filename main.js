@@ -190,7 +190,7 @@ function setupBookmarkMenuBgControl() {
   const saved =
     localStorage.getItem("bookmarkMenuBg") ||
     uiState.bookmarkMenuBg ||
-    "glass"
+    "normal"
 
   uiState.bookmarkMenuBg = saved
   document.body.setAttribute("data-bookmark-menu-bg", saved)

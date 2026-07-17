@@ -894,7 +894,7 @@ body.is-scrolled .sticky-search {
   background: var(--bg-primary);
   border: none;
   border-radius: 0;
-  width: min(82vw, 300px);
+  width: 100%;
   height: 100vh;
   padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
   box-shadow: -12px 0 30px rgba(0, 0, 0, 0.18);
