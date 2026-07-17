@@ -507,5 +507,6 @@ export const en = {
   "detailTitle": "Title",
   "detailUrl": "URL",
   "detailNotes": "Notes",
-  "commandPaletteTitle": "Command Palette"
+  "commandPaletteTitle": "Command Palette",
+  "cloudSyncTestWarning": "Note: This is currently in testing. If your login is denied and you want to try it, please send an email via this <a href=\"https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog\" target=\"_blank\" style=\"color: var(--primary-color); text-decoration: underline;\">form link</a>."
 };

@@ -14,6 +14,14 @@ export function updateBookmarksPageText() {
     }
   })
 
+  // Update elements with data-i18n-html attribute
+  document.querySelectorAll("[data-i18n-html]").forEach((element) => {
+    const key = element.getAttribute("data-i18n-html")
+    if (key) {
+      element.innerHTML = t(key)
+    }
+  })
+
   // Update tooltips (titles)
   document.querySelectorAll("[data-i18n-title]").forEach((element) => {
     const key = element.getAttribute("data-i18n-title")
