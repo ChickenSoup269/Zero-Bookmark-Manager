@@ -4151,7 +4151,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .menu-item:hover i {
-  color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .dropdown-menu-2 .toggle-row {
@@ -4226,7 +4226,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .quick-open-settings .segmented-control-item:has(input[type="radio"]:checked) {
-  background: #ffffff !important;
+  background: var(--accent-color) !important;
 }
 
 .segmented-control-item input {
@@ -4272,21 +4272,21 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .segmented-control-item:hover .control-label {
-  background: #ffffff !important;
-  color: #000000 !important;
+  background: var(--hover-bg) !important;
+  color: var(--text-primary) !important;
 }
 
 .segmented-control-item:hover .control-label i,
 .segmented-control-item:hover .control-label span {
-  color: #000000 !important;
+  color: var(--text-primary) !important;
 }
 
 .quick-open-settings
   .segmented-control-item
   input[type="radio"]:checked
   + .control-label {
-  background: #ffffff !important;
-  color: #000000 !important;
+  background: var(--accent-color) !important;
+  color: var(--bg-primary) !important;
   font-weight: 800;
 }
 
@@ -4300,7 +4300,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   input[type="radio"]:checked
   + .control-label
   span {
-  color: #000000 !important;
+  color: var(--bg-primary) !important;
   opacity: 1;
 }
 
