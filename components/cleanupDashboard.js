@@ -176,12 +176,8 @@ export async function groupBookmarksByDomain() {
       }
     }
     
-    // Attempt to refresh UI without full reload
-    import("./ui.js").then(({ renderFilteredBookmarks }) => {
-       window.BookmarkCache.getTree(tree => {
-          renderFilteredBookmarks(tree[0].children, null); 
-       });
-    }).catch(() => window.location.reload());
+    // Refresh UI after a short delay to allow the popup to be read
+    setTimeout(() => window.location.reload(), 1500);
 
     import("./undo.js").then(({ registerUndo }) => {
       registerUndo({
@@ -259,6 +255,7 @@ export function autoTagByDomain() {
       });
 
       showCustomPopup(t("smartCleanupTagSuccess", "Added {count} new domain tags!").replace("{count}", count), "success", true);
+      setTimeout(() => window.location.reload(), 1500);
     }).catch(err => console.error(err));
   } else {
     showCustomPopup(t("smartCleanupTagNone", "No new tags needed (or tag limits reached)."), "info", true);
