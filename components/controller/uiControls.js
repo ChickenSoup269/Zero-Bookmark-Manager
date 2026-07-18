@@ -409,6 +409,11 @@ export function setupUIControlListeners(elements) {
   elements.settingsButton.setAttribute("aria-expanded", "false")
   elements.settingsButton.addEventListener("click", (e) => {
     e.stopPropagation()
+    document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+      if (menu.id !== "settings-menu") {
+        menu.classList.add("hidden")
+      }
+    })
     toggleSettingsMenu()
   })
 
