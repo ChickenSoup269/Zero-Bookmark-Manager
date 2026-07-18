@@ -3406,7 +3406,7 @@ body[data-bookmark-menu-bg="glass"] .dropdown-menu {
 }
 
 body[data-bookmark-menu-bg="glass"] .dropdown-menu .menu-item {
-  background: color-mix(in srgb, var(--bg-primary) 20%, transparent) !important;
+  background: transparent !important;
 }
 
 body[data-bookmark-menu-bg="glass"] .dropdown-menu .menu-item:hover {

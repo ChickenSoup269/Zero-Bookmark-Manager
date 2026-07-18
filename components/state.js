@@ -27,7 +27,7 @@ export const uiState = {
   duplicateScope: "folder", // "folder" | "all"
   autoRemoveDup: false, // auto-delete background functionality
   headerLineStyle: "pattern", // "pattern" | "simple" | "hidden"
-  bookmarkMenuBg: "glass", // "glass" | "normal"
+  bookmarkMenuBg: "normal", // "glass" | "normal"
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
