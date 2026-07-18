@@ -644,6 +644,11 @@ async function openManageTagsPopup(bookmarkId) {
   const updateDropdown = async () => {
     const tags = await getAllTags()
     renderExistingTagChips(tags, existingTagsSearchInput?.value)
+    
+    const datalists = document.querySelectorAll("#tag-suggestions-list")
+    datalists.forEach(datalist => {
+      datalist.innerHTML = tags.map(tag => `<option value="${escapeHtml(tag)}">`).join("")
+    })
   }
 
   const renderTags = () => {

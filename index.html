@@ -359,7 +359,8 @@
                     <label for="new-tag-input" data-i18n="addNewTagLabel">Add New Tag:</label>
                     <div class="add-tag-form">
                         <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name..."
-                            data-i18n-placeholder="newTagPlaceholder">
+                            data-i18n-placeholder="newTagPlaceholder" list="tag-suggestions-list">
+                        <datalist id="tag-suggestions-list"></datalist>
                         <input type="hidden" id="new-tag-color" value="#FFFFFF">
                         <input type="hidden" id="new-tag-text-color" value="#000000">
                     </div>
