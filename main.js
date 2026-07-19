@@ -156,6 +156,26 @@ if (autoRemoveDupToggle) {
   })
 }
 
+// Event listener for Background Auto AI Categorize
+const autoAiCategorizeToggle = document.getElementById("auto-ai-categorize-toggle")
+if (autoAiCategorizeToggle) {
+  const savedAutoAiCategorize =
+    localStorage.getItem("autoAiCategorize") === "true" ||
+    uiState.autoAiCategorize ||
+    false
+  autoAiCategorizeToggle.checked = savedAutoAiCategorize
+  uiState.autoAiCategorize = savedAutoAiCategorize
+  autoAiCategorizeToggle.addEventListener("change", (e) => {
+    uiState.autoAiCategorize = e.target.checked
+    localStorage.setItem("autoAiCategorize", uiState.autoAiCategorize)
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.autoAiCategorize = uiState.autoAiCategorize
+      chrome.storage.local.set({ uiState: newUiState })
+    })
+  })
+}
+
 
 let elements = {}
 const CUSTOM_LANGUAGES_KEY = "customLanguagePacks"

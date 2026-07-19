@@ -399,6 +399,7 @@ export const en = {
   "themeSelectionTitle": "Themes",
   "bookmarkHealthTitle": "Bookmark Health & Duplicates",
   "bookmarkHealthSmallTitle": "Check Bookmarks",
+  "autoAiCategorizeTitle": "Auto Categorize with AI (Background)",
   "quickOpenTitle": "Quick Open Action",
   "quickOpenPopup": "Default Popup",
   "quickOpenSidePanel": "Default Side Panel",

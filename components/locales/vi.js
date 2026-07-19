@@ -436,6 +436,7 @@ export const vi = {
   themeSelectionTitle: "Giao diện",
   bookmarkHealthTitle: "Kiểm tra Bookmark",
   bookmarkHealthSmallTitle: "Kiểm tra Bookmark",
+  autoAiCategorizeTitle: "Tự động phân loại bằng AI (chạy ngầm)",
   quickOpenTitle: "Hành động Mở Nhanh",
   quickOpenPopup: "Popup mặc định",
   quickOpenSidePanel: "Mở panel mặc định",
