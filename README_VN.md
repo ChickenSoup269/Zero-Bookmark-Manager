@@ -61,9 +61,13 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 - **Phông chữ:** Tùy chỉnh giao diện với các kiểu phông chữ khác nhau (hỗ trợ Nerd Fonts).
 - **Đa ngôn ngữ:** Hỗ trợ tiếng Anh và tiếng Việt.
 - **Kiểm tra tình trạng liên kết:** Xác minh tính khả dụng và an toàn của các liên kết.
+- **Tự động phân loại bằng AI:** Tự động tạo thẻ (tags) cho bookmark mới thêm vào dựa trên tiêu đề và URL thông qua API Gemini, AI tích hợp của Chrome, hoặc tự động lấy tên miền.
 - **Tạo mã QR cho Bookmark:** Tạo mã QR để dễ dàng chia sẻ và truy cập trên các thiết bị khác.
 - **Theo dõi lượt truy cập:** Theo dõi số lần mở của mỗi bookmark trong extension và khi duyệt bình thường.
 - **Quản lý Thẻ (Tags):** Quản lý thẻ với bảng màu và một **Popup trình duyệt Thẻ** riêng biệt.
+- **Bảng điều khiển lệnh (Command Palette):** Nhấn `Ctrl + K` hoặc `Cmd + K` để mở menu tìm kiếm nhanh, chạy lệnh, tìm bookmark và ghi chú siêu tốc mà không cần dùng chuột.
+- **Ghi chú & Đánh dấu (Notes):** Thêm ghi chú cá nhân bằng Markdown cho từng bookmark và dễ dàng tìm kiếm lại nội dung.
+- **Danh sách đọc (Reading Queue):** Đánh dấu các bookmark để đọc sau và lọc danh sách bài viết chưa đọc nhanh chóng.
 - **Chatbot (AI Assistant):** Quản lý bookmark bằng ngôn ngữ tự nhiên. Hỗ trợ các nhà cung cấp AI phổ biến.
 - **Quản lý Bookmark Trùng lặp:** Tự động xóa bookmark trùng lặp khi tạo hoặc quét thủ công.
 - **Cấu hình linh hoạt:** Tùy chỉnh nguồn Favicon (Google, DuckDuckGo, Auto), hành động khi nhấp icon, v.v.
@@ -139,6 +143,8 @@ Cài đặt Bookmark-Manager
 | `Lượt truy cập`            | Theo dõi và hiển thị số lần mở bookmark.                                                 |
 | `Chatbot`                  | Điều khiển qua ngôn ngữ tự nhiên. Hỗ trợ các nhà cung cấp AI phổ biến.                   |
 | `Nguồn Favicon`            | Chọn giữa Google, DuckDuckGo hoặc Auto để lấy biểu tượng.                                |
+| `Bảng lệnh (Command)`      | Nhấn `Ctrl + K` để mở Command Palette tìm kiếm và chạy lệnh siêu tốc.                    |
+| `Ghi chú`                  | Thêm ghi chú cá nhân (Markdown) vào từng bookmark thông qua nút Chi tiết.                |
 
 ## Video & screenshots
 

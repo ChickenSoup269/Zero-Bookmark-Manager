@@ -98,9 +98,13 @@ Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bo
 - **Fonts:** Customize interface with various font styles, including improved Nerd Fonts support.
 - **Multilingual:** Supports English and Vietnamese for a localized experience.
 - **Check Link Health:** Verify the availability and safety of your bookmarked links.
+- **Auto-Categorize with AI:** Automatically generate tags for new bookmarks based on their URL and title using Gemini API, Chrome Built-in AI, or a domain-name fallback.
 - **Generate QR Code:** Create QR codes for your bookmarks for easy sharing and access on other devices.
 - **Visit Count Tracking:** Track how many times each bookmark is opened inside the extension and in normal browsing.
 - **Tag Management:** Manage tags with a color palette and a dedicated **Tags Browser Popup**.
+- **Command Palette:** Press `Ctrl + K` or `Cmd + K` to open a spotlight-like quick menu to navigate, search, and run commands instantly without a mouse.
+- **Notes & Annotations:** Add personal markdown notes to your bookmarks and search through them easily.
+- **Reading Queue:** Save and filter bookmarks specifically for reading later to keep your main collection uncluttered.
 - **Chatbot (AI Assistant):** Manage bookmarks using natural language. Supports major AI providers.
 - **Duplicate Management:** Automatically removes duplicate bookmarks upon creation. Includes a manual scan option.
 - **Configurable Settings:** Customize Favicon provider, click actions, and more.
@@ -179,6 +183,8 @@ Install Bookmark-Manager
 | `Visit Count`       | Track and display how many times a bookmark was opened.                                |
 | `Chatbot`           | Control extension via natural language. Supports major AI providers.                   |
 | `Favicon Provider`  | Choose between Google, DuckDuckGo, or Auto for fetching icons.                         |
+| `Command Palette`   | Press `Ctrl + K` to search and run commands quickly.                                   |
+| `Notes`             | Add personal notes to bookmarks from the Detail view.                                  |
 
 ## Video & screenshots
 
