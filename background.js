@@ -349,6 +349,89 @@ const handleDuplicateBookmarks = (id, newBookmark) => {
 }
 chrome.bookmarks.onCreated.addListener(handleDuplicateBookmarks)
 
+const handleAutoCategorizeBookmark = (id, newBookmark) => {
+  chrome.storage.local.get(["uiState", "aiConfig", "bookmarkTags", "tagColors", "tagTextColors"], async (data) => {
+    const state = data.uiState || {}
+    if (!state.autoAiCategorize || !newBookmark.url) return;
+    
+    let suggestedTag = "";
+    
+    // Attempt AI extraction
+    try {
+      const config = data.aiConfig || { model: "gemini", apiKey: "" };
+      if (config.apiKey && config.model === "gemini") {
+        const modelName = config.modelName || "gemini-1.5-flash";
+        let apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${config.apiKey}`;
+        const prompt = `Classify this bookmark into ONE single short category tag (max 2 words): Title: "${newBookmark.title}", URL: "${newBookmark.url}". Return ONLY the tag name, nothing else.`;
+        
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.1 }
+          })
+        });
+        
+        if (response.ok) {
+          const resData = await response.json();
+          if (resData.candidates && resData.candidates[0].content.parts[0].text) {
+            suggestedTag = resData.candidates[0].content.parts[0].text.trim().replace(/['"]/g, '').substring(0, 20);
+          }
+        }
+      } else if (config.model === "local" && typeof self.ai !== "undefined" && self.ai.languageModel) {
+          // Chrome built in AI
+          const session = await self.ai.languageModel.create({
+              systemPrompt: "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark."
+          });
+          const result = await session.prompt(`Title: "${newBookmark.title}", URL: "${newBookmark.url}"`);
+          if (result) {
+              suggestedTag = result.trim().replace(/['"]/g, '').substring(0, 20);
+          }
+      }
+    } catch (e) {
+      console.error("AI Categorize failed", e);
+    }
+    
+    // Fallback to domain if AI failed
+    if (!suggestedTag) {
+      try {
+        const urlObj = new URL(newBookmark.url);
+        let hostname = urlObj.hostname.replace("www.", "");
+        suggestedTag = hostname.split(".")[0];
+      } catch(e) {}
+    }
+    
+    if (suggestedTag) {
+        // Capitalize tag
+        suggestedTag = suggestedTag.charAt(0).toUpperCase() + suggestedTag.slice(1).toLowerCase();
+        
+        // Save tag
+        let tags = data.bookmarkTags || {};
+        let colors = data.tagColors || {};
+        let textColors = data.tagTextColors || {};
+        
+        if (!tags[id]) tags[id] = [];
+        if (!tags[id].includes(suggestedTag)) {
+            tags[id].push(suggestedTag);
+        }
+        
+        if (!colors[suggestedTag]) {
+            colors[suggestedTag] = "#3B82F6"; // default blue
+            textColors[suggestedTag] = "#FFFFFF";
+        }
+        
+        chrome.storage.local.set({
+            bookmarkTags: tags,
+            tagColors: colors,
+            tagTextColors: textColors
+        });
+    }
+  });
+}
+chrome.bookmarks.onCreated.addListener(handleAutoCategorizeBookmark)
+
+
 let popupWindowId = null
 
 function createPopupWindow() {
