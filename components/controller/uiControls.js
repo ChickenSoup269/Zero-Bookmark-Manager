@@ -426,6 +426,7 @@ export function setupUIControlListeners(elements) {
     const isClosed = elements.settingsMenu.classList.contains("hidden")
     elements.settingsMenu.setAttribute("aria-hidden", String(isClosed))
     elements.settingsButton.setAttribute("aria-expanded", String(!isClosed))
+    elements.settingsButton.innerHTML = isClosed ? "⋮" : "✖"
     document.body.classList.toggle("settings-panel-open", !isClosed)
   }
   new MutationObserver(syncSettingsMenuState).observe(elements.settingsMenu, {
