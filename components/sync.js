@@ -3,17 +3,6 @@
 
 const DEFAULT_SYNC_FILE_NAME = 'zero_bookmark_manager_backup.json';
 
-function getSyncFileName() {
-    const input = document.getElementById('sync-filename-input');
-    if (input && input.value.trim() !== '') {
-        let name = input.value.trim();
-        if (!name.endsWith('.json')) {
-            name += '.json';
-        }
-        return name;
-    }
-    return DEFAULT_SYNC_FILE_NAME;
-}
 document.addEventListener('DOMContentLoaded', () => {
     const syncBtn = document.getElementById('google-drive-sync-btn');
     const syncPopup = document.getElementById('cloud-sync-popup');
@@ -21,12 +10,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const backupBtn = document.getElementById('btn-backup-drive');
     const restoreBtn = document.getElementById('btn-restore-drive');
     const statusMsg = document.getElementById('sync-status-message');
+    const fileSelect = document.getElementById('sync-file-select');
+    const fileNameInput = document.getElementById('sync-filename-input');
+    
+    let currentToken = null;
+    let driveFiles = [];
+
+    if (fileSelect && fileNameInput) {
+        fileSelect.addEventListener('change', () => {
+            if (fileSelect.value === 'new') {
+                fileNameInput.style.display = 'block';
+            } else {
+                fileNameInput.style.display = 'none';
+            }
+        });
+    }
 
     if (syncBtn && syncPopup) {
-        syncBtn.addEventListener('click', () => {
-            syncPopup.classList.remove('hidden');
-            statusMsg.textContent = '';
-            statusMsg.style.color = 'var(--text-color)';
+        syncBtn.addEventListener('click', async () => {
+            // Do not show popup immediately. Try login first.
+            try {
+                // Change cursor to indicate loading
+                document.body.style.cursor = 'wait';
+                const token = await getAuthToken();
+                currentToken = token;
+                await loadFilesList(token);
+                
+                document.body.style.cursor = 'default';
+                syncPopup.classList.remove('hidden');
+                statusMsg.textContent = '';
+                statusMsg.style.color = 'var(--text-color)';
+            } catch (error) {
+                document.body.style.cursor = 'default';
+                console.error('Authentication error:', error);
+                alert(`Authentication failed: ${error.message}\nMake sure to check the instructions for Google Drive Sync.`);
+            }
         });
 
         closeSyncPopupBtn.addEventListener('click', () => {
@@ -64,46 +82,76 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    async function findSyncFile(token) {
-        const fileName = getSyncFileName();
-        const query = `name='${fileName}' and trashed=false`;
-        const response = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&spaces=drive`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
+    async function loadFilesList(token) {
+        if (!fileSelect) return;
+        
+        fileSelect.innerHTML = '<option value="new">-- Create New File --</option>';
+        driveFiles = [];
+        
+        try {
+            const query = `name contains '.json' and trashed=false`;
+            const response = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&spaces=drive`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            if (data.files && data.files.length > 0) {
+                driveFiles = data.files;
+                data.files.forEach(f => {
+                    const option = document.createElement('option');
+                    option.value = f.id;
+                    option.textContent = f.name;
+                    fileSelect.appendChild(option);
+                });
             }
-        });
-        const data = await response.json();
-        if (data.files && data.files.length > 0) {
-            return data.files[0];
+        } catch (error) {
+            console.error('Error loading files list:', error);
         }
-        return null;
+        
+        // Trigger change event to set input visibility
+        fileSelect.dispatchEvent(new Event('change'));
+    }
+
+    function getSyncFileName() {
+        if (fileNameInput && fileNameInput.value.trim() !== '') {
+            let name = fileNameInput.value.trim();
+            if (!name.endsWith('.json')) {
+                name += '.json';
+            }
+            return name;
+        }
+        return DEFAULT_SYNC_FILE_NAME;
     }
 
     async function handleBackup() {
         try {
-            statusMsg.textContent = 'Authenticating...';
-            statusMsg.style.color = 'var(--text-color)';
-            const token = await getAuthToken();
+            if (!currentToken) currentToken = await getAuthToken();
 
             statusMsg.textContent = 'Preparing bookmarks data...';
+            statusMsg.style.color = 'var(--text-color)';
+            
             const tree = await window.BookmarkCache.getTreeAsync();
             const bookmarksData = JSON.stringify(tree);
-            const metadata = {
-                name: getSyncFileName(),
+            
+            let url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+            let method = 'POST';
+            let metadata = {
                 mimeType: 'application/json'
             };
 
-            const existingFile = await findSyncFile(token);
-
-            statusMsg.textContent = 'Uploading to Google Drive...';
-            let url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-            let method = 'POST';
-
-            if (existingFile) {
-                url = `https://www.googleapis.com/upload/drive/v3/files/${existingFile.id}?uploadType=multipart`;
+            const selectedOption = fileSelect.value;
+            if (selectedOption === 'new') {
+                metadata.name = getSyncFileName();
+            } else {
+                url = `https://www.googleapis.com/upload/drive/v3/files/${selectedOption}?uploadType=multipart`;
                 method = 'PATCH';
+                const fileObj = driveFiles.find(f => f.id === selectedOption);
+                if (fileObj) metadata.name = fileObj.name;
             }
 
+            statusMsg.textContent = 'Uploading to Google Drive...';
+            
             const boundary = '-------314159265358979323846';
             const delimiter = "\r\n--" + boundary + "\r\n";
             const close_delim = "\r\n--" + boundary + "--";
@@ -120,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(url, {
                 method: method,
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${currentToken}`,
                     'Content-Type': `multipart/related; boundary="${boundary}"`
                 },
                 body: multipartRequestBody
@@ -129,6 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 statusMsg.textContent = 'Backup to Google Drive successful!';
                 statusMsg.style.color = 'var(--primary-color)';
+                // Reload files list
+                await loadFilesList(currentToken);
             } else {
                 const err = await response.json();
                 throw new Error(err.error.message || 'Upload failed');
@@ -143,21 +193,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function handleRestore() {
         try {
-            statusMsg.textContent = 'Authenticating...';
-            statusMsg.style.color = 'var(--text-color)';
-            const token = await getAuthToken();
-
-            statusMsg.textContent = 'Searching for backup file...';
-            const existingFile = await findSyncFile(token);
-
-            if (!existingFile) {
-                throw new Error('No backup file found on Google Drive.');
+            const selectedOption = fileSelect.value;
+            if (selectedOption === 'new') {
+                throw new Error('Please select an existing backup file to restore.');
             }
 
+            if (!currentToken) currentToken = await getAuthToken();
+
             statusMsg.textContent = 'Downloading bookmarks data...';
-            const response = await fetch(`https://www.googleapis.com/drive/v3/files/${existingFile.id}?alt=media`, {
+            statusMsg.style.color = 'var(--text-color)';
+            
+            const response = await fetch(`https://www.googleapis.com/drive/v3/files/${selectedOption}?alt=media`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${currentToken}`
                 }
             });
 
@@ -167,11 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const backupData = await response.json();
             
-            statusMsg.textContent = 'Please wait, checking data... (Restore logic needs careful merging to avoid duplicates)';
-            
-            // NOTE: A complete replace of bookmarks requires deleting existing ones or merging.
-            // For safety in this prototype, we'll stop here to prevent deleting user's current bookmarks,
-            // or we can implement a logic to import them into a new "Restored from Drive" folder.
+            statusMsg.textContent = 'Please wait, checking data...';
             
             await importToRestoredFolder(backupData);
 

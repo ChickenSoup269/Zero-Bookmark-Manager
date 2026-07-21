@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extName__",
+  "version": "1.6.0",
+  "description": "__MSG_extDesc__",
+  "default_locale": "en",
+  "permissions": [
+    "bookmarks",
+    "storage",
+    "tabs",
+    "system.display",
+    "webNavigation",
+    "identity"
+  ],
+  "optional_host_permissions": ["https://urlhaus-api.abuse.ch/*"],
+  "action": {},
+  "sidebar_action": {
+    "default_panel": "index.html"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "icons": {
+    "128": "icons/icon.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "fonts/*.ttf",
+        "fonts/*.woff2",
+        "images/*.png",
+        "images/*.jpg",
+        "bookmarks.html",
+        "components/sidepanel/sidepanel.html"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "oauth2": {
+    "client_id": "222670807769-mbl3s23cjqmmuvuhvjt22r3hesiri16p.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/drive.file"]
+  }
+}
