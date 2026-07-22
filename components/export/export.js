@@ -1049,7 +1049,7 @@ export function setupExportImportListeners(elements) {
   })
 }
 
-async function importNonDuplicateBookmarks(
+export async function importNonDuplicateBookmarks(
   nodesToImport,
   themeData,
   elements,

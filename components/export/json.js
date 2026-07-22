@@ -38,122 +38,118 @@ function getLocalStorageBackup() {
   }, {})
 }
 
-export async function exportToJSON(exportData) {
+export async function generateJSONPayload(exportData) {
+  // 1. Get visit counts from background script
+  let visitCounts = {}
   try {
-    // 1. Get visit counts from background script
-    let visitCounts = {}
-    try {
-      visitCounts = await new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
-          if (chrome.runtime.lastError) {
-            console.warn(
-              "Error getting visit counts:",
-              chrome.runtime.lastError,
-            )
-            resolve({})
-          } else {
-            resolve(response?.visitCounts || {})
-          }
-        })
-        // Timeout fallback
-        setTimeout(() => resolve({}), 2000)
-      })
-    } catch (err) {
-      console.warn("Failed to get visit counts, using empty object:", err)
-      visitCounts = {}
-    }
-
-    // Get other data from storage
-    const storageData = await chrome.storage.local.get([
-      "bookmarkTags",
-      "favoriteBookmarks",
-      "pinnedBookmarks",
-      "tagColors",
-      "tagTextColors",
-      ...CHROME_STORAGE_BACKUP_KEYS,
-    ])
-
-    const {
-      bookmarkTags,
-      favoriteBookmarks,
-      pinnedBookmarks,
-      tagColors,
-      tagTextColors,
-    } = storageData
-
-    const allTags = bookmarkTags || {}
-    const favorites = favoriteBookmarks || {}
-    const pins = pinnedBookmarks || {}
-    const allTagColors = tagColors || {}
-    const allTagTextColors = tagTextColors || {}
-
-    // Deep copy để không làm ảnh hưởng đến dữ liệu gốc trong app
-    const treeCopy = JSON.parse(JSON.stringify(exportData))
-
-    if (!treeCopy.bookmarks || !Array.isArray(treeCopy.bookmarks)) {
-      throw new Error("Invalid bookmark data")
-    }
-
-    // 2. Hàm làm giàu dữ liệu (Enrich Nodes)
-    function enrichNodes(nodes) {
-      if (!Array.isArray(nodes)) return
-      nodes.forEach((node) => {
-        if (node.url) {
-          const tagsForBookmark = allTags[node.id] || []
-          // Chuyển đổi tags từ string[] thành object[] với đầy đủ thông tin màu sắc
-          node.tags = tagsForBookmark.map((tagName) => ({
-            name: tagName,
-            bgColor: allTagColors[tagName] || "#FFFFFF", // Default màu nền
-            textColor: allTagTextColors[tagName] || "#000000", // Default màu chữ
-          }))
-          node.accessCount = visitCounts[node.id] || 0
-          node.isFavorite = !!favorites[node.id] // Chuyển thành boolean true/false
-          node.isPinned = !!pins[node.id]
-        }
-        if (node.children) {
-          enrichNodes(node.children)
+    visitCounts = await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn("Error getting visit counts:", chrome.runtime.lastError)
+          resolve({})
+        } else {
+          resolve(response?.visitCounts || {})
         }
       })
-    }
+      setTimeout(() => resolve({}), 2000)
+    })
+  } catch (err) {
+    console.warn("Failed to get visit counts, using empty object:", err)
+    visitCounts = {}
+  }
 
-    enrichNodes(treeCopy.bookmarks)
+  // Get other data from storage
+  const storageData = await chrome.storage.local.get([
+    "bookmarkTags",
+    "favoriteBookmarks",
+    "pinnedBookmarks",
+    "tagColors",
+    "tagTextColors",
+    ...CHROME_STORAGE_BACKUP_KEYS,
+  ])
 
-    const chromeStorageBackup = {}
-    CHROME_STORAGE_BACKUP_KEYS.forEach((key) => {
-      if (storageData[key] !== undefined) {
-        chromeStorageBackup[key] = storageData[key]
+  const {
+    bookmarkTags,
+    favoriteBookmarks,
+    pinnedBookmarks,
+    tagColors,
+    tagTextColors,
+  } = storageData
+
+  const allTags = bookmarkTags || {}
+  const favorites = favoriteBookmarks || {}
+  const pins = pinnedBookmarks || {}
+  const allTagColors = tagColors || {}
+  const allTagTextColors = tagTextColors || {}
+
+  const treeCopy = JSON.parse(JSON.stringify(exportData))
+
+  if (!treeCopy.bookmarks || !Array.isArray(treeCopy.bookmarks)) {
+    throw new Error("Invalid bookmark data")
+  }
+
+  function enrichNodes(nodes) {
+    if (!Array.isArray(nodes)) return
+    nodes.forEach((node) => {
+      if (node.url) {
+        const tagsForBookmark = allTags[node.id] || []
+        node.tags = tagsForBookmark.map((tagName) => ({
+          name: tagName,
+          bgColor: allTagColors[tagName] || "#FFFFFF",
+          textColor: allTagTextColors[tagName] || "#000000",
+        }))
+        node.accessCount = visitCounts[node.id] || 0
+        node.isFavorite = !!favorites[node.id]
+        node.isPinned = !!pins[node.id]
+      }
+      if (node.children) {
+        enrichNodes(node.children)
       }
     })
+  }
 
-    const exportedAt = new Date().toISOString()
-    const manifest = chrome.runtime.getManifest?.() || {}
+  enrichNodes(treeCopy.bookmarks)
 
-    // Bổ sung thông tin màu sắc và app settings vào gốc của file JSON
-    const exportPayload = {
-      ...treeCopy,
-      backup: {
-        format: "zero-bookmark-full-backup",
-        schemaVersion: 2,
-        exportedAt,
-        extensionVersion: manifest.version || null,
-        includes: {
-          bookmarks: true,
-          metadata: true,
-          appSettings: true,
-        },
-      },
-      theme: {
-        tagColors: allTagColors,
-        tagTextColors: allTagTextColors,
-      },
-      appSettings: {
-        localStorage: getLocalStorageBackup(),
-        chromeStorage: chromeStorageBackup,
-      },
+  const chromeStorageBackup = {}
+  CHROME_STORAGE_BACKUP_KEYS.forEach((key) => {
+    if (storageData[key] !== undefined) {
+      chromeStorageBackup[key] = storageData[key]
     }
+  })
 
-    await chrome.storage.local.set({ lastBackupAt: exportedAt })
+  const exportedAt = new Date().toISOString()
+  const manifest = chrome.runtime.getManifest?.() || {}
 
+  const exportPayload = {
+    ...treeCopy,
+    backup: {
+      format: "zero-bookmark-full-backup",
+      schemaVersion: 2,
+      exportedAt,
+      extensionVersion: manifest.version || null,
+      includes: {
+        bookmarks: true,
+        metadata: true,
+        appSettings: true,
+      },
+    },
+    theme: {
+      tagColors: allTagColors,
+      tagTextColors: allTagTextColors,
+    },
+    appSettings: {
+      localStorage: getLocalStorageBackup(),
+      chromeStorage: chromeStorageBackup,
+    },
+  }
+
+  await chrome.storage.local.set({ lastBackupAt: exportedAt })
+  return exportPayload
+}
+
+export async function exportToJSON(exportData) {
+  try {
+    const exportPayload = await generateJSONPayload(exportData)
     // 3. Tiến hành xuất file
     const jsonString = JSON.stringify(exportPayload, null, 2)
     const blob = new Blob([jsonString], { type: "application/json" })

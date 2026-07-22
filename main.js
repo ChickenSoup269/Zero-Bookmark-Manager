@@ -17,6 +17,7 @@ import { initCopyButtons } from "./components/copy-code.js"
 import { initCommandPalette } from "./components/commandPalette.js"
 import { initCleanupDashboard } from "./components/cleanupDashboard.js"
 import { initWorkspaces } from "./components/workspaces.js"
+import { initSync } from "./components/sync.js"
 
 // Sự kiện cho favicon option
 const faviconOptionSelect = document.getElementById("favicon-option-select")
@@ -1399,6 +1400,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initCommandPalette(elements)
     initCleanupDashboard(elements)
     initWorkspaces(elements)
+    initSync(elements)
 
     // Event listener for Organize Folders button
     if (elements.organizeFoldersButton) {

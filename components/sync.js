@@ -3,7 +3,10 @@
 
 const DEFAULT_SYNC_FILE_NAME = 'zero_bookmark_manager_backup.json';
 
-document.addEventListener('DOMContentLoaded', () => {
+import { generateJSONPayload } from './export/json.js';
+import { importNonDuplicateBookmarks } from './export/export.js';
+
+export function initSync(elements) {
     const syncBtn = document.getElementById('google-drive-sync-btn');
     const syncPopup = document.getElementById('cloud-sync-popup');
     const closeSyncPopupBtn = document.getElementById('cloud-sync-close');
@@ -132,7 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMsg.style.color = 'var(--text-color)';
             
             const tree = await window.BookmarkCache.getTreeAsync();
-            const bookmarksData = JSON.stringify(tree);
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                bookmarks: tree,
+            };
+            const payload = await generateJSONPayload(exportData);
+            const bookmarksData = JSON.stringify(payload);
             
             let url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
             let method = 'POST';
@@ -217,9 +225,19 @@ document.addEventListener('DOMContentLoaded', () => {
             
             statusMsg.textContent = 'Please wait, checking data...';
             
-            await importToRestoredFolder(backupData);
+            // Dùng logic import của JSON export để làm giàu dữ liệu và merge thông minh
+            const bookmarksToImport = backupData.bookmarks || backupData;
+            const themeData = backupData.theme || {};
+            const appSettings = backupData.appSettings || {};
 
-            statusMsg.textContent = 'Restore successful! Check the "Restored from Drive" folder.';
+            await importNonDuplicateBookmarks(
+                bookmarksToImport,
+                themeData,
+                elements,
+                appSettings
+            );
+
+            statusMsg.textContent = 'Restore successful!';
             statusMsg.style.color = 'var(--primary-color)';
         } catch (error) {
             console.error('Restore error:', error);
@@ -227,40 +245,4 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMsg.style.color = '#ef4444';
         }
     }
-
-    async function importToRestoredFolder(backupTree) {
-        // Find or create a 'Restored from Drive' folder in the "Other Bookmarks" or main root
-        const rootNodes = await window.BookmarkCache.getTreeAsync();
-        const otherBookmarks = rootNodes[0].children.find(c => c.id === '2') || rootNodes[0].children[0];
-
-        const restoredFolder = await chrome.bookmarks.create({
-            parentId: otherBookmarks.id,
-            title: `Restored from Drive (${new Date().toLocaleString()})`
-        });
-
-        // The backup tree usually has root -> [Bookmarks Bar, Other Bookmarks]
-        // We traverse the backup and import everything into `restoredFolder`
-        if (backupTree && backupTree.length > 0) {
-            const root = backupTree[0];
-            if (root.children) {
-                for (const child of root.children) {
-                    await traverseAndCreate(child, restoredFolder.id);
-                }
-            }
-        }
-    }
-
-    async function traverseAndCreate(node, parentId) {
-        const newNode = await chrome.bookmarks.create({
-            parentId: parentId,
-            title: node.title,
-            url: node.url
-        });
-
-        if (node.children) {
-            for (const child of node.children) {
-                await traverseAndCreate(child, newNode.id);
-            }
-        }
-    }
-});
+}
