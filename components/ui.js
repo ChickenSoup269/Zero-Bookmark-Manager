@@ -1758,7 +1758,11 @@ function renderSidebarFolderTree(folders, elements) {
         return
       }
 
-      e.dataTransfer.dropEffect = "move"
+      if (currentDragType === "bookmark" && draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+        e.dataTransfer.dropEffect = "copy"
+      } else {
+        e.dataTransfer.dropEffect = "move"
+      }
       li.classList.add("drag-over")
     })
 
@@ -2392,6 +2396,38 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     widget.style.maxHeight = isPopup ? "320px" : "400px";
     widget.style.transition = "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease";
     
+    // Setup drag and drop for widget
+    widget.dataset.folderId = folder.id;
+    widget.addEventListener("dragover", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
+      const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
+      if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+        e.dataTransfer.dropEffect = "copy";
+      } else {
+        e.dataTransfer.dropEffect = "move";
+      }
+      widget.classList.add("drag-over");
+      widget.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 14px 40px rgba(0,0,0,0.12)`;
+      widget.style.background = `var(--hover-bg, rgba(0, 123, 255, 0.05))`;
+    });
+    widget.addEventListener("dragleave", (e) => {
+      e.stopPropagation();
+      if (!widget.contains(e.relatedTarget)) {
+        widget.classList.remove("drag-over");
+        widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
+        widget.style.background = "var(--bg-secondary)";
+      }
+    });
+    widget.addEventListener("drop", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      widget.classList.remove("drag-over");
+      widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
+      widget.style.background = "var(--bg-secondary)";
+      if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
+      handleFolderDrop(e, folder, widget, bookmarkTreeNodes, language, elements);
+    });
+
     // Feature widget logic (disable spanning in popup mode to prevent horizontal overflow)
     if (!isPopup && folderBookmarks.length >= 6 && index % 3 === 0) {
       widget.style.gridColumn = "span 2";
@@ -2497,6 +2533,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
       item.style.background = "var(--bg-primary)";
       item.style.border = "1px solid var(--border-color)";
       item.style.transition = "all 0.25s ease";
+      makeBookmarkDraggableAndDroppable(item, b, elements, language);
       
       item.onmouseover = () => {
         item.style.background = `${color}10`;
@@ -2627,6 +2664,38 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
     column.style.position = "relative";
     column.style.transition = "transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)";
     
+    // Setup drag and drop for column
+    column.dataset.folderId = folder.id;
+    column.addEventListener("dragover", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
+      const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
+      if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+        e.dataTransfer.dropEffect = "copy";
+      } else {
+        e.dataTransfer.dropEffect = "move";
+      }
+      column.classList.add("drag-over");
+      column.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 14px 28px rgba(0, 0, 0, 0.1)`;
+      column.style.background = `var(--hover-bg, rgba(0, 123, 255, 0.05))`;
+    });
+    column.addEventListener("dragleave", (e) => {
+      e.stopPropagation();
+      if (!column.contains(e.relatedTarget)) {
+        column.classList.remove("drag-over");
+        column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
+        column.style.background = "var(--bg-secondary)";
+      }
+    });
+    column.addEventListener("drop", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      column.classList.remove("drag-over");
+      column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
+      column.style.background = "var(--bg-secondary)";
+      if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
+      handleFolderDrop(e, folder, column, bookmarkTreeNodes, language, elements);
+    });
+
     // Smooth hover effect
     column.onmouseover = () => {
       column.style.transform = "translateY(-4px)";
@@ -2716,6 +2785,7 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       card.style.transition = "all 0.2s ease";
       card.style.position = "relative";
       card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)";
+      makeBookmarkDraggableAndDroppable(card, b, elements, language);
       
       card.onmouseover = () => {
         card.style.background = "var(--hover-bg, var(--bg-tertiary))";
@@ -3046,7 +3116,16 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
             }
         }
 
-        e.dataTransfer.dropEffect = "move"
+        if (currentDragType === "bookmark") {
+            const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
+            if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+                e.dataTransfer.dropEffect = "copy";
+            } else {
+                e.dataTransfer.dropEffect = "move";
+            }
+        } else {
+            e.dataTransfer.dropEffect = "move";
+        }
         folderCard.classList.add("drag-over")
       })
 
@@ -3191,7 +3270,12 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     if (uiState.sortType !== "default" || uiState.searchQuery) return
     e.preventDefault()
     e.stopPropagation()
-    e.dataTransfer.dropEffect = "move"
+    const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
+    if (draggedNode && draggedNode.parentId !== bookmark.parentId && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+      e.dataTransfer.dropEffect = "copy";
+    } else {
+      e.dataTransfer.dropEffect = "move";
+    }
 
     const rect = el.getBoundingClientRect()
     const midX = rect.left + rect.width / 2
