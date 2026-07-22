@@ -1723,7 +1723,7 @@ function renderSidebarFolderTree(folders, elements) {
       currentDragId = folder.id
       e.dataTransfer.setData("text/plain", folder.id)
       currentDragType = "folder"
-      e.dataTransfer.effectAllowed = "move"
+      e.dataTransfer.effectAllowed = "copyMove"
       li.classList.add("dragging")
     })
 
@@ -1758,7 +1758,7 @@ function renderSidebarFolderTree(folders, elements) {
         return
       }
 
-      if (currentDragType === "bookmark" && draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+      if (currentDragType === "bookmark" && draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
         e.dataTransfer.dropEffect = "copy"
       } else {
         e.dataTransfer.dropEffect = "move"
@@ -1976,6 +1976,7 @@ function runBookmarkViewTransition(elements) {
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
+  uiState.bookmarkTree = bookmarkTreeNodes;
   chrome.storage.local.get(
     [
       "favoriteBookmarks",
@@ -2402,7 +2403,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
       e.preventDefault(); e.stopPropagation();
       if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
       const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
-      if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+      if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
         e.dataTransfer.dropEffect = "copy";
       } else {
         e.dataTransfer.dropEffect = "move";
@@ -2670,7 +2671,7 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       e.preventDefault(); e.stopPropagation();
       if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
       const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
-      if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+      if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
         e.dataTransfer.dropEffect = "copy";
       } else {
         e.dataTransfer.dropEffect = "move";
@@ -2905,7 +2906,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
           currentDragId = bookmark.id
           e.dataTransfer.setData("text/plain", bookmark.id)
           currentDragType = "bookmark"
-          e.dataTransfer.effectAllowed = "move"
+          e.dataTransfer.effectAllowed = "copyMove"
           el.classList.add("dragging")
         })
         el.addEventListener("dragend", () => {
@@ -3003,7 +3004,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         currentDragId = folder.id
         e.dataTransfer.setData("text/plain", folder.id)
         currentDragType = "folder"
-        e.dataTransfer.effectAllowed = "move"
+        e.dataTransfer.effectAllowed = "copyMove"
         folderCard.classList.add("dragging")
         elements.folderListDiv?.classList.add("is-folder-dragging")
       })
@@ -3118,7 +3119,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
 
         if (currentDragType === "bookmark") {
             const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
-            if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+            if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
                 e.dataTransfer.dropEffect = "copy";
             } else {
                 e.dataTransfer.dropEffect = "move";
@@ -3250,7 +3251,7 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     currentDragId = bookmark.id
     e.dataTransfer.setData("text/plain", bookmark.id)
     currentDragType = "bookmark"
-    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.effectAllowed = "copyMove"
     el.classList.add("dragging")
   })
     el.addEventListener("dragend", (e) => {
@@ -3271,7 +3272,7 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     e.preventDefault()
     e.stopPropagation()
     const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
-    if (draggedNode && draggedNode.parentId !== bookmark.parentId && !uiState.autoRemoveDup && uiState.duplicateScope === "folder") {
+    if (draggedNode && draggedNode.parentId !== bookmark.parentId && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
       e.dataTransfer.dropEffect = "copy";
     } else {
       e.dataTransfer.dropEffect = "move";
@@ -3643,7 +3644,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null, option
         currentDragId = node.id
         e.dataTransfer.setData("text/plain", node.id)
         currentDragType = "folder"
-        e.dataTransfer.effectAllowed = "move"
+        e.dataTransfer.effectAllowed = "copyMove"
         folderDiv.classList.add("dragging")
       })
 
