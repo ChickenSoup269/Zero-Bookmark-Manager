@@ -410,32 +410,32 @@ body.winter-is-coming-theme {
 
 /* Nord Light Theme */
 [data-theme="nord-light"], body.nord-light-theme {
-  --bg-primary: #f0f4f8;
+  --bg-primary: #e5e9f0;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #e1e6ed;
+  --bg-tertiary: #d8dee9;
   --text-primary: #2e3440;
-  --text-secondary: #5e81ac;
-  --accent-color: #81a1c1;
+  --text-secondary: #434c5e;
+  --accent-color: #5e81ac;
   --border-color: #d8dee9;
   --danger-color: #bf616a;
-  --success-color: #a3be8c;
-  --hover-bg: #e5e9f0;
+  --success-color: #8fbcbb;
+  --hover-bg: #eceff4;
   --bg-tags-select: rgba(255, 255, 255, 0.95);
 }
 
 /* Gruvbox Light Theme */
 [data-theme="gruvbox-light"], body.gruvbox-light-theme {
-  --bg-primary: #fbf1c7;
-  --bg-secondary: #ebdbb2;
-  --bg-tertiary: #d5c4a1;
-  --text-primary: #3c3836;
+  --bg-primary: #f2e5bc;
+  --bg-secondary: #fbf1c7;
+  --bg-tertiary: #ebdbb2;
+  --text-primary: #282828;
   --text-secondary: #504945;
-  --accent-color: #b57614;
+  --accent-color: #d65d0e;
   --border-color: #d5c4a1;
   --danger-color: #cc241d;
-  --success-color: #98971a;
-  --hover-bg: #d5c4a1;
-  --bg-tags-select: rgba(251, 241, 199, 0.9);
+  --success-color: #79740e;
+  --hover-bg: #ebdbb2;
+  --bg-tags-select: rgba(251, 241, 199, 0.95);
 }
 
 /* Catppuccin Light Theme */
@@ -455,15 +455,15 @@ body.winter-is-coming-theme {
 
 /* Night Owl Light Theme */
 [data-theme="nightowl-light"], body.nightowl-light-theme {
-  --bg-primary: #fbfbfb;
-  --bg-secondary: #f0f0f0;
-  --bg-tertiary: #e6e6e6;
+  --bg-primary: #f0f2f5;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e2e6ea;
   --text-primary: #403f53;
-  --text-secondary: #90a4ae;
+  --text-secondary: #5f6c7a;
   --accent-color: #2f86d2;
-  --border-color: #d9d9d9;
+  --border-color: #d2dbe2;
   --danger-color: #de3d3b;
   --success-color: #08916a;
-  --hover-bg: #e0e0e0;
-  --bg-tags-select: rgba(251, 251, 251, 0.9);
+  --hover-bg: #e8ebf0;
+  --bg-tags-select: rgba(255, 255, 255, 0.95);
 }
