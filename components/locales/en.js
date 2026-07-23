@@ -489,6 +489,7 @@ export const en = {
   "fontGohu": "Aa: GohuFont (Pixel)",
   "fontJetBrains": "Aa: JetBrains Mono",
   "faviconMode": "Favicon Mode:",
+  "faviconSize": "Favicon Size:",
   "faviconAuto": "Auto (Google → Hostname)",
   "faviconGoogle": "Google Only",
   "faviconHostname": "Hostname Only",

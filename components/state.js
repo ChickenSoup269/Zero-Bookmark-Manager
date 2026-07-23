@@ -24,6 +24,7 @@ export const uiState = {
   readingQueue: {},
   bookmarkNotes: {},
   faviconOption: "auto", // "auto" | "google" | "hostname"
+  faviconSize: "32", // "16" | "32" | "64" | "128"
   duplicateScope: "folder", // "folder" | "all"
   autoRemoveDup: false, // auto-delete background functionality
   headerLineStyle: "pattern", // "pattern" | "simple" | "hidden"

@@ -549,6 +549,7 @@ export const vi = {
   fontGohu: "Aa: GohuFont (Pixel)",
   fontJetBrains: "Aa: JetBrains Mono",
   faviconMode: "Nguồn Favicon:",
+  faviconSize: "Kích thước ảnh gốc (Google API):",
   faviconAuto: "Tự động (Google → Tên miền)",
   faviconGoogle: "Chỉ Google",
   faviconHostname: "Chỉ Tên miền",

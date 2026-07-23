@@ -60,6 +60,46 @@ if (faviconOptionSelect) {
   }
 }
 
+// Sự kiện cho favicon size
+const faviconSizeSelect = document.getElementById("favicon-size-select")
+if (faviconSizeSelect) {
+  const savedFaviconSize =
+    localStorage.getItem("faviconSize") || uiState.faviconSize || "32"
+  if (faviconSizeSelect.tagName === 'SELECT') {
+    faviconSizeSelect.value = savedFaviconSize
+    faviconSizeSelect.addEventListener("change", (e) => updateFaviconSize(e.target.value))
+  } else {
+    const swatches = faviconSizeSelect.querySelectorAll('.setting-swatch')
+    swatches.forEach(btn => {
+      btn.classList.remove('active')
+      if (btn.dataset.value === savedFaviconSize) btn.classList.add('active')
+    })
+    faviconSizeSelect.addEventListener("click", (e) => {
+      const btn = e.target.closest('.setting-swatch')
+      if (!btn) return
+      swatches.forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      updateFaviconSize(btn.dataset.value)
+    })
+  }
+
+  function updateFaviconSize(val) {
+    uiState.faviconSize = val
+    localStorage.setItem("faviconSize", uiState.faviconSize)
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.faviconSize = uiState.faviconSize
+      chrome.storage.local.set({ uiState: newUiState }, () => {
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          }
+        })
+      })
+    })
+  }
+}
+
 // Cài đặt cho Header Line
 const headerLineSelect = document.getElementById("header-line-select")
 if (headerLineSelect) {

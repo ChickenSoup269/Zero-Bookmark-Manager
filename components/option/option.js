@@ -167,6 +167,7 @@ export function customSaveUIState() {
     const state = {
       uiState: {
         faviconOption: uiState.faviconOption,
+        faviconSize: uiState.faviconSize,
         duplicateScope: uiState.duplicateScope,
         autoRemoveDup: uiState.autoRemoveDup,
         headerLineStyle: uiState.headerLineStyle,
@@ -273,6 +274,7 @@ export async function customLoadUIState(callback) {
       }
       
       uiState.faviconOption = result.uiState.faviconOption || "auto"
+      uiState.faviconSize = result.uiState.faviconSize || "32"
       uiState.duplicateScope = result.uiState.duplicateScope || "folder"
       uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
       uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
