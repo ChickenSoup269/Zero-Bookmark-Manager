@@ -228,6 +228,7 @@ html {
 }
 
 .button.add,
+.button.delete,
 .button.delete-folder,
 .button.delete-bookmarks {
   transition:
@@ -242,6 +243,7 @@ html {
 }
 
 .button.delete-bookmarks,
+.button.delete,
 .button.delete-folder {
   color: white !important;
   background-color: #ff5555 !important;
@@ -249,6 +251,7 @@ html {
 }
 
 .button.add.hidden,
+.button.delete.hidden,
 .button.delete-folder.hidden,
 .button.delete-bookmarks.hidden {
   opacity: 0;
@@ -273,6 +276,7 @@ html {
 }
 
 .button.add:not(.hidden),
+.button.delete:not(.hidden),
 .button.delete-folder:not(.hidden),
 .button.delete-bookmarks:not(.hidden),
 .button.rename-folder:not(.hidden),
@@ -305,12 +309,14 @@ html {
   box-shadow: var(--shadow-sm);
 }
 
+.button.delete,
 .button.delete-folder,
 .delete-bookmarks {
   background-color: var(--danger-color);
   color: white;
 }
 
+.button.delete:hover,
 .button.delete-folder:hover,
 .delete-bookmarks:hover {
   background-color: var(--danger-hover);
