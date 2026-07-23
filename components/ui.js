@@ -76,12 +76,12 @@ function getFaviconUrl(url) {
     (typeof uiState !== "undefined" && uiState.faviconOption) ||
     "auto"
   if (opt === "google") {
-    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
+    return `https://www.google.com/s2/favicons?sz=32&domain=${domain}`
   } else if (opt === "hostname") {
     return `https://icons.duckduckgo.com/ip3/${domain}.ico`
   } else {
     // auto: ưu tiên Google, fallback hostname (xử lý ở onerror khi render <img>)
-    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
+    return `https://www.google.com/s2/favicons?sz=32&domain=${domain}`
   }
 }
 
