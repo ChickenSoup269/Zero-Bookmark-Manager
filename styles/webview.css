@@ -859,7 +859,9 @@ body {
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: 14px;
   overflow-y: auto;
-  padding-right: 4px;
+  overflow-x: hidden;
+  padding: 8px 4px 8px 8px;
+  margin: -8px -4px -8px -8px;
   scrollbar-width: thin;
   scrollbar-color: var(--accent-color) transparent;
 }
