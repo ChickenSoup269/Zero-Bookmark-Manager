@@ -2380,7 +2380,12 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
     let folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
     folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
-    if (folderBookmarks.length === 0) return;
+    if (folderBookmarks.length === 0) {
+      if (uiState.searchQuery) return;
+      if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
+        if (folder.id !== uiState.selectedFolderId && !isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes)) return;
+      }
+    }
     
     const color = colors[index % colors.length];
     
@@ -2645,7 +2650,12 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
     let folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
     folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
-    if (folderBookmarks.length === 0) return;
+    if (folderBookmarks.length === 0) {
+      if (uiState.searchQuery) return;
+      if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
+        if (folder.id !== uiState.selectedFolderId && !isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes)) return;
+      }
+    }
     
     const accent = colors[index % colors.length];
     
