@@ -1072,6 +1072,18 @@ body {
   margin-top: 12px;
 }
 
+.smart-cleanup-detail-actions .button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+}
+
 .duplicate-merge-content {
   width: min(980px, 96vw);
   max-width: 980px;
