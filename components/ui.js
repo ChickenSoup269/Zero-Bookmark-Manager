@@ -2378,13 +2378,13 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6", "#FF3B30", "#34C759", "#AF52DE"];
   
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
+    if (folder.id === "0") return; // Never render the root folder as a category
     let folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
     folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
     if (folderBookmarks.length === 0) {
       if (uiState.searchQuery) return;
-      if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
-        if (folder.id !== uiState.selectedFolderId && !isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes)) return;
-      }
+      const currentScopeId = uiState.selectedFolderId || "0";
+      if (folder.parentId !== currentScopeId) return;
     }
     
     const color = colors[index % colors.length];
@@ -2648,13 +2648,13 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6"];
   
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
+    if (folder.id === "0") return; // Never render the root folder as a column
     let folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
     folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
     if (folderBookmarks.length === 0) {
       if (uiState.searchQuery) return;
-      if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
-        if (folder.id !== uiState.selectedFolderId && !isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes)) return;
-      }
+      const currentScopeId = uiState.selectedFolderId || "0";
+      if (folder.parentId !== currentScopeId) return;
     }
     
     const accent = colors[index % colors.length];
