@@ -4187,10 +4187,10 @@ html {
 
 .font-swatch.active, .view-swatch.active, .setting-swatch.active { 
   transform: none; 
-  background: var(--bg-primary) !important; 
-  color: var(--accent-color, #007bff) !important; 
-  border-color: var(--accent-color, #007bff) !important; 
-  box-shadow: inset 0 0 0 1px var(--accent-color, #007bff); 
+  background: var(--accent-color) !important; 
+  color: var(--bg-primary) !important; 
+  border-color: var(--accent-color) !important; 
+  box-shadow: none; 
 } 
 .font-swatch:hover, .view-swatch:hover, .setting-swatch:hover { 
   transform: translateY(-1px); 
