@@ -2383,8 +2383,9 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
     if (folderBookmarks.length === 0) {
       if (uiState.searchQuery) return;
-      const currentScopeId = uiState.selectedFolderId || "0";
-      if (folder.parentId !== currentScopeId) return;
+      if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
+        if (!isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes)) return;
+      }
     }
     
     const color = colors[index % colors.length];
@@ -2653,8 +2654,9 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
     folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
     if (folderBookmarks.length === 0) {
       if (uiState.searchQuery) return;
-      const currentScopeId = uiState.selectedFolderId || "0";
-      if (folder.parentId !== currentScopeId) return;
+      if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
+        if (!isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes)) return;
+      }
     }
     
     const accent = colors[index % colors.length];
