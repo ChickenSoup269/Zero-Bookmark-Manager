@@ -821,7 +821,7 @@ body {
 
 .smart-cleanup-summary div {
   min-width: 0;
-  padding: 16px;
+  padding: 12px;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
@@ -836,7 +836,7 @@ body {
 .smart-cleanup-summary strong {
   display: block;
   color: var(--accent-color);
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   line-height: 1.1;
   font-weight: 700;
 }
@@ -903,17 +903,17 @@ body {
 
 .smart-cleanup-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 12px;
 }
 
 .smart-cleanup-card {
-  min-height: 125px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
-  padding: 16px;
+  gap: 6px;
+  padding: 12px;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: color-mix(in srgb, var(--bg-primary) 72%, transparent);
@@ -939,13 +939,13 @@ body {
 }
 
 .smart-cleanup-card i {
-  width: 34px;
-  height: 34px;
-  font-size: 1.2rem;
+  width: 28px;
+  height: 28px;
+  font-size: 1.1rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 8px;
   background: color-mix(in srgb, var(--accent-color) 15%, transparent);
   color: var(--accent-color);
   transition: all 0.25s ease;
@@ -958,7 +958,7 @@ body {
 }
 
 .smart-cleanup-card strong {
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   line-height: 1;
   font-weight: 700;
 }
