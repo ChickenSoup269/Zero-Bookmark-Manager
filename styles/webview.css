@@ -1860,8 +1860,8 @@ body {
 }
 
 .sidebar-folder-item.active {
-  background: var(--accent-color-light);
-  color: var(--text-secondary);
+  background: var(--accent-color);
+  color: var(--bg-primary);
 }
 
 /* Sidebar folder drag states */
@@ -3864,9 +3864,8 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .theme-swatch.active {
-  border-color: var(--accent-color, #007bff);
   transform: scale(1.15);
-  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-color, #007bff);
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--text-primary);
 }
 
 .dropdown-menu-2 .theme-swatch:hover {

@@ -1609,6 +1609,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 500)
     chrome.storage.onChanged.addListener(handleStorageChange)
 
+    window.addEventListener("storage", (e) => {
+      if (e.key === "appTheme") {
+        updateTheme(elements, e.newValue || "system")
+      }
+    })
+
     const floatingToggle = document.getElementById("floating-toggle");
     if (floatingToggle) {
       const container = floatingToggle.closest(".floating-container");
