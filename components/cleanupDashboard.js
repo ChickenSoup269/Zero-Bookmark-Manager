@@ -524,24 +524,24 @@ export function initCleanupDashboard(elements) {
         ${
           selectedDetail.action === "dead"
             ? `
-               <button type="button" class="button save" data-cleanup-action="dead">${escapeHtml(t("smartCleanupScanLinks", "Scan links"))}</button>
-               ${deadBookmarks.length > 0 ? `<button type="button" class="button delete" data-cleanup-action="dead-delete" style="margin-left: 8px;">${escapeHtml(t("smartCleanupDeleteDead", "Delete Dead Links"))}</button>` : ""}
+               <button type="button" class="button save" data-cleanup-action="dead"><i class="fas fa-search" aria-hidden="true"></i> ${escapeHtml(t("smartCleanupScanLinks", "Scan links"))}</button>
+               ${deadBookmarks.length > 0 ? `<button type="button" class="button delete" data-cleanup-action="dead-delete" style="margin-left: 8px;"><i class="fas fa-trash" aria-hidden="true"></i> ${escapeHtml(t("smartCleanupDeleteDead", "Delete Dead Links"))}</button>` : ""}
               `
             : ""
         }
         ${
           selectedDetail.action === "stale" && staleBookmarks.length > 0
-            ? `<button type="button" class="button delete" data-cleanup-action="stale">${escapeHtml(t("smartCleanupDeleteStale", "Delete Old Unused"))}</button>`
+            ? `<button type="button" class="button delete" data-cleanup-action="stale"><i class="fas fa-trash" aria-hidden="true"></i> ${escapeHtml(t("smartCleanupDeleteStale", "Delete Old Unused"))}</button>`
             : ""
         }
         ${
           selectedDetail.action === "empty" && emptyFolders.length > 0
-            ? `<button type="button" class="button delete" data-cleanup-action="empty">${escapeHtml(t("smartCleanupDeleteEmpty", "Delete Empty Folders"))}</button>`
+            ? `<button type="button" class="button delete" data-cleanup-action="empty"><i class="fas fa-trash" aria-hidden="true"></i> ${escapeHtml(t("smartCleanupDeleteEmpty", "Delete Empty Folders"))}</button>`
             : ""
         }
         ${
           selectedDetail.action === "untagged" && untaggedBookmarks.length > 0
-            ? `<button type="button" class="button save" data-cleanup-action="untagged">${escapeHtml(t("smartCleanupFilterUntagged", "Filter Untagged"))}</button>`
+            ? `<button type="button" class="button save" data-cleanup-action="untagged"><i class="fas fa-filter" aria-hidden="true"></i> ${escapeHtml(t("smartCleanupFilterUntagged", "Filter Untagged"))}</button>`
             : ""
         }
         ${

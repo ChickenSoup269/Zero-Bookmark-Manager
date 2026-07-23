@@ -817,6 +817,8 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
   margin-bottom: 18px;
+  padding: 4px;
+  margin: -4px -4px 14px -4px;
 }
 
 .smart-cleanup-summary div {
@@ -905,6 +907,8 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 12px;
+  padding: 4px;
+  margin: -4px;
 }
 
 .smart-cleanup-card {
