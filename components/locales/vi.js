@@ -252,15 +252,15 @@ export const vi = {
   smartCleanupNextPresets: "Preset xuất dữ liệu",
   smartCleanupNextPresetsText:
     "Backup, Share Selected, CSV và Netscape chỉ với một lần bấm.",
-  smartCleanupNextHistory: "Lịch sử dọn dẹp",
-  smartCleanupNextHistoryText:
-    "Xem lại các lần dọn dẹp gần đây và khôi phục checkpoint an toàn hơn.",
-  smartCleanupNextRules: "Luật dọn dẹp",
-  smartCleanupNextRulesText:
-    "Chọn ngưỡng bookmark cũ, thư mục được bảo vệ và quy tắc trùng lặp.",
-  smartCleanupNextReminders: "Nhắc xem lại",
-  smartCleanupNextRemindersText:
-    "Nhắc các mục đọc sau quá lâu và bookmark cũ theo lịch.",
+  smartCleanupGuideTitle: "Hướng dẫn sử dụng",
+  smartCleanupGuideStart: "Bắt đầu nhanh",
+  smartCleanupGuideStartText: "Nhấn vào các thẻ bên trái để xem trước các mục cần dọn dẹp và thực hiện thao tác tương ứng.",
+  smartCleanupGuideMerge: "Gộp link trùng lặp",
+  smartCleanupGuideMergeText: "Gộp các liên kết giống nhau một cách an toàn. Các liên kết cập nhật gần nhất sẽ luôn được giữ lại.",
+  smartCleanupGuideDead: "Xóa link hỏng",
+  smartCleanupGuideDeadText: "Quét và phát hiện các bookmark không còn truy cập được (Lỗi 404, không thể kết nối tới máy chủ).",
+  smartCleanupGuideOrganize: "Gom nhóm tên miền",
+  smartCleanupGuideOrganizeText: "Tự động gom các website bạn truy cập nhiều nhất vào thư mục hoặc tự động gắn thẻ (tag) để dễ quản lý.",
   duplicateMergeTitle: "Gộp bookmark trùng",
   duplicateMergeSubtitle:
     "Chọn bookmark muốn giữ trong từng nhóm trùng. Metadata từ các bản bị xóa sẽ được gộp vào bản giữ lại.",

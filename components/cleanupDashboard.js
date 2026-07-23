@@ -284,24 +284,29 @@ export function initCleanupDashboard(elements) {
     if (!next) return
     const nextItems = [
       {
-        icon: "fa-clock-rotate-left",
-        title: t("smartCleanupNextHistory", "Cleanup history"),
-        text: t("smartCleanupNextHistoryText", "Review recent cleanup actions and restore safer checkpoints."),
+        icon: "fa-rocket",
+        title: t("smartCleanupGuideStart", "Quick Start"),
+        text: t("smartCleanupGuideStartText", "Click any card on the left to review items and take targeted cleanup actions."),
       },
       {
-        icon: "fa-sliders",
-        title: t("smartCleanupNextRules", "Cleanup rules"),
-        text: t("smartCleanupNextRulesText", "Choose stale thresholds, protected folders, and duplicate rules."),
+        icon: "fa-clone",
+        title: t("smartCleanupGuideMerge", "Merge Duplicates"),
+        text: t("smartCleanupGuideMergeText", "Combine identical URLs safely. The most recently updated bookmark is always kept."),
       },
       {
-        icon: "fa-bell",
-        title: t("smartCleanupNextReminders", "Review reminders"),
-        text: t("smartCleanupNextRemindersText", "Surface old read-later items and stale bookmarks on a schedule."),
+        icon: "fa-link-slash",
+        title: t("smartCleanupGuideDead", "Dead Links"),
+        text: t("smartCleanupGuideDeadText", "Scan and identify bookmarks that are no longer accessible (404, server errors)."),
+      },
+      {
+        icon: "fa-folder-tree",
+        title: t("smartCleanupGuideOrganize", "Organize Domains"),
+        text: t("smartCleanupGuideOrganizeText", "Group your most visited domains into organized folders or auto-apply tags."),
       },
     ]
 
     next.innerHTML = `
-      <h4>${escapeHtml(t("smartCleanupNextTitle", "Next up"))}</h4>
+      <h4>${escapeHtml(t("smartCleanupGuideTitle", "Usage Guide"))}</h4>
       ${nextItems
         .map(
           (item) => `
