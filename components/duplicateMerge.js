@@ -49,7 +49,7 @@ function ensureModal() {
       <div id="duplicate-merge-summary" class="duplicate-merge-summary"></div>
       <div id="duplicate-merge-list" class="duplicate-merge-list"></div>
       <div class="rename-popup-buttons duplicate-merge-footer">
-        <button id="duplicate-merge-apply" class="button save" type="button"></button>
+        <button id="duplicate-merge-apply" class="button button-primary" type="button"></button>
         <button id="duplicate-merge-cancel" class="button cancel" type="button"></button>
       </div>
     </div>
@@ -195,8 +195,8 @@ export function openDuplicateMergeModal({ groups, elements, onComplete }) {
     "duplicateMergeSubtitle",
     "Choose the bookmark to keep in each duplicate group. Metadata from removed copies will be merged into it.",
   )
-  applyButton.textContent = t("duplicateMergeApply", "Merge selected")
-  cancelButton.textContent = t("cancel", "Cancel")
+  applyButton.innerHTML = `<i class="fas fa-object-group" aria-hidden="true"></i> ${escapeHtml(t("duplicateMergeApply", "Merge selected"))}`
+  cancelButton.innerHTML = escapeHtml(t("cancel", "Cancel"))
 
   summary.innerHTML = `
     <div>
@@ -287,7 +287,7 @@ export function openDuplicateMergeModal({ groups, elements, onComplete }) {
       console.error("Duplicate merge failed:", error)
       showCustomPopup(t("duplicateMergeFailed", "Duplicate merge failed."), "error", true)
       applyButton.disabled = false
-      applyButton.textContent = t("duplicateMergeApply", "Merge selected")
+      applyButton.innerHTML = `<i class="fas fa-object-group" aria-hidden="true"></i> ${escapeHtml(t("duplicateMergeApply", "Merge selected"))}`
     }
   }
 

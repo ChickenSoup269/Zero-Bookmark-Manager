@@ -518,7 +518,7 @@ export function initCleanupDashboard(elements) {
       <div class="smart-cleanup-detail-actions">
         ${
           selectedDetail.action === "duplicates"
-            ? `<button type="button" class="button save" data-cleanup-action="duplicates">${escapeHtml(t("duplicateMergeTitle", "Duplicate Merge"))}</button>`
+            ? `<button type="button" class="button button-primary" data-cleanup-action="duplicates"><i class="fas fa-object-group" aria-hidden="true"></i> ${escapeHtml(t("duplicateMergeTitle", "Duplicate Merge"))}</button>`
             : ""
         }
         ${
