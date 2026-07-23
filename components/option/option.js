@@ -165,7 +165,13 @@ export function customSaveUIState() {
     const existingQuickOpenAction = result.quickOpenAction // Get existing value
 
     const state = {
-      uiState: {},
+      uiState: {
+        faviconOption: uiState.faviconOption,
+        duplicateScope: uiState.duplicateScope,
+        autoRemoveDup: uiState.autoRemoveDup,
+        headerLineStyle: uiState.headerLineStyle,
+        bookmarkMenuBg: uiState.bookmarkMenuBg,
+      },
       checkboxesVisible: storageSettings.checkboxesVisible
         ? uiState.checkboxesVisible
         : undefined,
@@ -265,6 +271,12 @@ export async function customLoadUIState(callback) {
       } else {
         uiState.selectedTags = []
       }
+      
+      uiState.faviconOption = result.uiState.faviconOption || "auto"
+      uiState.duplicateScope = result.uiState.duplicateScope || "folder"
+      uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
+      uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
+      uiState.bookmarkMenuBg = result.uiState.bookmarkMenuBg || "glass"
     }
     if (storageSettings.checkboxesVisible) {
       uiState.checkboxesVisible = result.checkboxesVisible || false

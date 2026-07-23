@@ -354,16 +354,16 @@ body.winter-is-coming-theme {
 
 /* SynthWave '84 Theme */
 [data-theme="synthwave"], body.synthwave-theme {
-  --bg-primary: #262335;
-  --bg-secondary: #241b2f;
-  --text-primary: #ffffff;
-  --text-secondary: #f0f6f0;
+  --bg-primary: #2b213a;
+  --bg-secondary: #1a1625;
+  --text-primary: #fdfdfd;
+  --text-secondary: #b99de0;
   --accent-color: #f92aad;
-  --border-color: #495495;
-  --danger-color: #fe4450;
-  --success-color: #72f1b8;
-  --hover-bg: #34294f;
-  --bg-tags-select: rgba(38, 35, 53, 0.9);
+  --border-color: #513e75;
+  --danger-color: #ff3366;
+  --success-color: #36f9f6;
+  --hover-bg: #41325c;
+  --bg-tags-select: rgba(43, 33, 58, 0.95);
 }
 
 /* Gruvbox Theme */
@@ -410,17 +410,17 @@ body.winter-is-coming-theme {
 
 /* Nord Light Theme */
 [data-theme="nord-light"], body.nord-light-theme {
-  --bg-primary: #eceff4;
-  --bg-secondary: #e5e9f0;
-  --bg-tertiary: #d8dee9;
+  --bg-primary: #f0f4f8;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e1e6ed;
   --text-primary: #2e3440;
-  --text-secondary: #4c566a;
-  --accent-color: #5e81ac;
+  --text-secondary: #5e81ac;
+  --accent-color: #81a1c1;
   --border-color: #d8dee9;
   --danger-color: #bf616a;
   --success-color: #a3be8c;
-  --hover-bg: #d8dee9;
-  --bg-tags-select: rgba(236, 239, 244, 0.9);
+  --hover-bg: #e5e9f0;
+  --bg-tags-select: rgba(255, 255, 255, 0.95);
 }
 
 /* Gruvbox Light Theme */
