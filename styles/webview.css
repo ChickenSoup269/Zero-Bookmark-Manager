@@ -1985,9 +1985,9 @@ body {
 }
 
 .sidebar-sort-item.active {
-  color: var(--text-secondary);
-  background-color: var(--bg-tertiary);
-  font-weight: 500;
+  color: var(--bg-primary) !important;
+  background-color: var(--accent-color) !important;
+  font-weight: 600;
 }
 
 .sidebar-sort-item i {
@@ -3866,7 +3866,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 .dropdown-menu-2 .theme-swatch.active {
   border-color: var(--accent-color, #007bff);
   transform: scale(1.15);
-  box-shadow: 0 0 10px var(--accent-color, #007bff);
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-color, #007bff);
 }
 
 .dropdown-menu-2 .theme-swatch:hover {
@@ -5851,10 +5851,10 @@ body.is-scrolled .webview-search-wrapper {
 
 .dropdown-menu-2 .font-swatch.active, .dropdown-menu-2 .view-swatch.active, .dropdown-menu-2 .setting-swatch.active { 
   transform: none; 
-  background: var(--accent-color-light, rgba(0, 123, 255, 0.1)) !important; 
+  background: var(--bg-primary) !important; 
   color: var(--accent-color, #007bff) !important; 
   border-color: var(--accent-color, #007bff) !important; 
-  box-shadow: 0 4px 10px var(--accent-color-light, rgba(0, 123, 255, 0.2)); 
+  box-shadow: inset 0 0 0 1px var(--accent-color, #007bff); 
 } 
 .dropdown-menu-2 .font-swatch:hover, .dropdown-menu-2 .view-swatch:hover, .dropdown-menu-2 .setting-swatch:hover { 
   transform: translateY(-1px); 
