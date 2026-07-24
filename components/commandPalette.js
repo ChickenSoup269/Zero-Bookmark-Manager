@@ -371,6 +371,18 @@ export function initCommandPalette(elements) {
 
   let activeIndex = 0
   let currentResults = []
+  let activeTab = "all"
+
+  const tabButtons = document.querySelectorAll(".cp-tab")
+  tabButtons.forEach((tab) => {
+    tab.addEventListener("click", (e) => {
+      tabButtons.forEach((t) => t.classList.remove("active"))
+      e.target.classList.add("active")
+      activeTab = e.target.dataset.tab
+      renderResults()
+      input.focus()
+    })
+  })
 
   const syncLabels = () => {
     if (titleEl) titleEl.textContent = t("commandPaletteTitle", "Command Palette")
@@ -383,6 +395,10 @@ export function initCommandPalette(elements) {
       button.title = t("commandPaletteOpen", "Open command palette")
       button.setAttribute("aria-label", t("commandPaletteOpen", "Open command palette"))
     }
+    tabButtons.forEach(tab => {
+      const key = tab.getAttribute("data-i18n")
+      if (key) tab.textContent = t(key, tab.textContent)
+    })
   }
 
   const closePalette = () => {
@@ -410,10 +426,10 @@ export function initCommandPalette(elements) {
 
   const renderResults = () => {
     const query = input.value.trim()
-    const commands = rankCommands(buildStaticCommands(elements), query)
-    const notes = buildNoteResults(query, elements)
-    const bookmarks = buildBookmarkResults(query, elements)
-    const folders = buildFolderResults(query, elements)
+    const commands = activeTab === "all" || activeTab === "commands" ? rankCommands(buildStaticCommands(elements), query) : []
+    const notes = activeTab === "all" || activeTab === "notes" ? buildNoteResults(query, elements) : []
+    const bookmarks = activeTab === "all" || activeTab === "bookmarks" ? buildBookmarkResults(query, elements) : []
+    const folders = activeTab === "all" || activeTab === "folders" ? buildFolderResults(query, elements) : []
 
     currentResults = [...commands, ...folders, ...notes, ...bookmarks].slice(0, MAX_RESULTS)
     activeIndex = Math.min(activeIndex, Math.max(currentResults.length - 1, 0))

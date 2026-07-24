@@ -214,6 +214,24 @@ html {
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
+#folder-filter::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+#folder-filter::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#folder-filter::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, rgba(124, 125, 129, 0.3));
+  border-radius: 4px;
+}
+
+#folder-filter::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, rgba(124, 125, 129, 0.5));
+}
+
 .select.small {
   padding: var(--spacing-xs);
   min-width: 100px;

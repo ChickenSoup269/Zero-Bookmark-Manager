@@ -577,4 +577,9 @@ export const vi = {
   close: "Đóng",
   cloudSyncTestWarning:
     'Lưu ý: Tính năng này đang được thử nghiệm. Nếu bạn bị từ chối đăng nhập và muốn dùng thử, vui lòng gửi email cho bên mình qua <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog" target="_blank" style="color: var(--primary-color); text-decoration: underline;">link form này</a>.',
+  cpTabAll: "Tất cả",
+  cpTabBookmarks: "Dấu trang",
+  cpTabNotes: "Ghi chú",
+  cpTabFolders: "Thư mục",
+  cpTabCommands: "Lệnh"
 }
