@@ -37,8 +37,8 @@ option {
 /* Màu sắc khi hover hoặc được chọn */
 option:checked,
 option:hover {
-  color: var(--text-secondary);
-  background-color: var(--hover-bg-option);
+  color: var(--bg-primary);
+  background-color: var(--accent-color);
 }
 
 input[type="checkbox"] {
@@ -2063,8 +2063,9 @@ html {
 }
 
 .menu-item:hover {
-  background: var(--hover-bg) !important;
-  border-color: var(--border-color) !important;
+  background: var(--accent-color) !important;
+  color: var(--bg-primary) !important;
+  border-color: var(--accent-color) !important;
   transform: translateX(2px);
 }
 
@@ -4221,3 +4222,4 @@ html {
 }
 .font-swatch, .view-swatch, .setting-swatch { border: 1px solid var(--border-color, #ccc); }
 .font-swatch, .view-swatch, .setting-swatch { font-size: 0.85rem; }
+.menu-item:hover i { color: var(--bg-primary) !important; }
