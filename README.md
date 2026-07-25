@@ -87,7 +87,7 @@ Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bo
 
 ## Features
 
-- **View Bookmarks:** Browse bookmarks by flat list, tree view, details view, **Card view**, or **List view**.
+- **View Bookmarks (8 Modes):** Browse your bookmarks via Flat, Tree, Detail, Card, List, Bento, Split/Kanban, and Mockup views.
 - **Search:** Instantly find bookmarks by keyword (title or URL) with **Fuzzy Search** support.
 - **Sort:** Organize bookmarks by date added, last opened, alphabetically (A-Z, Z-A), favourite, most visited, or **by Domain**.
 - **Sidebar & Folder Management:** Raindrop-style sidebar with nested folder tree. Supports **Drag & Drop** for quick organization.
@@ -167,17 +167,21 @@ Install Bookmark-Manager
 
 | Parameter           | Description                                                                            |
 | :------------------ | :------------------------------------------------------------------------------------- |
+| `Display Views`     | Switch seamlessly between Flat, Tree, Detail, Card, List, Bento, Split/Kanban, and Mockup.             |
 | `Search`            | Type keywords in the search box (Fuzzy match enabled).                                 |
 | `Filter folders`    | Select a folder from the sidebar or dropdown.                                          |
 | `Sort`              | Choose sorting: Date, A-Z, Favorites, Most Visited, or Domain.                         |
 | `Manage folders`    | Create, rename, or delete folders. Use Drag & Drop in sidebar to move folders.         |
 | `Manage bookmarks`  | Click "⋮" to add to folder, rename, or delete. View Details to open Web Preview modal. |
 | `Export/Import`     | Use Settings to export as JSON/HTML/CSV or import with duplicate check.                |
-| `Customize`         | Adjust themes (Tokyo Night, Monokai, etc.), fonts, or language in Settings.            |
+| `CleanUp Duplicates`| Manually scan or auto-remove duplicate bookmarks.                                      |
+| `Workspaces`        | Switch context between Work, Learning, Design, or Personal setups.                     |
+| `Reading Queue`     | Save links to read later, keeping main folders clean.                                  |
+| `Customize`         | Adjust themes, custom fonts, or AI language packs in Settings.                         |
 | `Web Preview`       | Open sites in a modal within the extension (Details button).                           |
 | `Open Side Panel`   | Open bookmark in a side panel for quick viewing.                                       |
 | `Quick Open Action` | Choose default action (Popup, Full Page, Side Panel) for the extension icon.           |
-| `Tags`              | Filter by tags using the sidebar or the Tags Browser Popup.                            |
+| `Tags`              | Filter by tags using sidebar or popup. Auto-categorize via AI.                         |
 | `Pin to top`        | Pin important bookmarks to the top of your list.                                       |
 | `Check Link Health` | Verify bookmark health (Alive, Dead, or Suspicious).                                   |
 | `Visit Count`       | Track and display how many times a bookmark was opened.                                |
