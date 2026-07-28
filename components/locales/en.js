@@ -409,9 +409,13 @@ export const en = {
   "bookmarkHealthSmallTitle": "Check Bookmarks",
   "autoAiCategorizeTitle": "Auto Categorize with AI (Background)",
   "quickOpenTitle": "Quick Open Action",
+  "quickOpenQuickSave": "Quick Save",
   "quickOpenPopup": "Default Popup",
   "quickOpenSidePanel": "Default Side Panel",
   "quickOpenWeb": "Default Web Tab",
+  "showNotesPreview": "Show Notes Preview",
+  "showTagsInView": "Show Tags in View",
+
   "addCustomLanguage": "Add custom language",
   "customLanguageTitle": "Add Custom Language",
   "customLanguageHint": "Paste JSON from ChatGPT or Gemini AI Studio, or import a .json language file.",

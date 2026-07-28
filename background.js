@@ -433,6 +433,12 @@ chrome.bookmarks.onCreated.addListener(handleAutoCategorizeBookmark)
 
 
 let popupWindowId = null
+let quickSaveWindowId = null
+
+function getQuickSaveUrl(tab) {
+  const tabIdParam = tab?.id ? `?tabId=${encodeURIComponent(tab.id)}` : ""
+  return `quick-save.html${tabIdParam}`
+}
 
 function createPopupWindow() {
   chrome.system.display.getInfo((displays) => {
@@ -459,14 +465,39 @@ function createPopupWindow() {
   })
 }
 
-function findExistingPopup(callback) {
-  const popupUrl = chrome.runtime.getURL("index.html")
+function createQuickSaveWindow(tab) {
+  chrome.system.display.getInfo((displays) => {
+    const display = displays[0]
+    const screenWidth = display.workArea.width
+
+    const popupWidth = 420
+    const popupHeight = 560
+    const padding = 20
+
+    chrome.windows.create(
+      {
+        url: getQuickSaveUrl(tab),
+        type: "popup",
+        width: popupWidth,
+        height: popupHeight,
+        left: screenWidth - popupWidth - padding,
+        top: display.workArea.height - popupHeight - padding,
+      },
+      (window) => {
+        quickSaveWindowId = window.id
+      },
+    )
+  })
+}
+
+function findExistingExtensionPopup(path, callback) {
+  const popupUrl = chrome.runtime.getURL(path)
 
   chrome.windows.getAll({ populate: true }, (windows) => {
     for (const win of windows) {
       if (win.type !== "popup") continue
 
-      const hasPopupTab = win.tabs?.some((tab) => tab.url === popupUrl)
+      const hasPopupTab = win.tabs?.some((tab) => tab.url?.startsWith(popupUrl))
 
       if (hasPopupTab) {
         return callback(win)
@@ -479,7 +510,7 @@ function findExistingPopup(callback) {
 chrome.action.onClicked.addListener((tab) => {
   chrome.storage.local.get(["quickOpenAction"], (result) => {
     // console.log("Quick Open Action retrieved:", result.quickOpenAction)
-    const action = result.quickOpenAction || "popup" // Default to 'popup'
+    const action = result.quickOpenAction || "quickSave"
 
     if (action === "web") {
       const bookmarksUrl = chrome.runtime.getURL("bookmarks.html")
@@ -495,9 +526,27 @@ chrome.action.onClicked.addListener((tab) => {
       })
     } else if (action === "sidepanel") {
       chrome.sidePanel.open({ windowId: tab.windowId })
+    } else if (action === "quickSave") {
+      findExistingExtensionPopup("quick-save.html", (existingWindow) => {
+        if (existingWindow) {
+          const quickSaveTab = existingWindow.tabs?.find((windowTab) =>
+            windowTab.url?.startsWith(chrome.runtime.getURL("quick-save.html")),
+          )
+          if (quickSaveTab?.id) {
+            chrome.tabs.update(quickSaveTab.id, {
+              active: true,
+              url: getQuickSaveUrl(tab),
+            })
+          }
+          chrome.windows.update(existingWindow.id, { focused: true })
+          quickSaveWindowId = existingWindow.id
+        } else {
+          createQuickSaveWindow(tab)
+        }
+      })
     } else {
       // popup
-      findExistingPopup((existingWindow) => {
+      findExistingExtensionPopup("index.html", (existingWindow) => {
         if (existingWindow) {
           chrome.windows.update(existingWindow.id, { focused: true })
           popupWindowId = existingWindow.id
@@ -513,5 +562,8 @@ chrome.action.onClicked.addListener((tab) => {
 chrome.windows.onRemoved.addListener((windowId) => {
   if (windowId === popupWindowId) {
     popupWindowId = null
+  }
+  if (windowId === quickSaveWindowId) {
+    quickSaveWindowId = null
   }
 })

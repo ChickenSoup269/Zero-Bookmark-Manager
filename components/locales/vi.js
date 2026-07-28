@@ -443,9 +443,13 @@ export const vi = {
   bookmarkHealthSmallTitle: "Kiểm tra Bookmark",
   autoAiCategorizeTitle: "Tự động phân loại bằng AI (chạy ngầm)",
   quickOpenTitle: "Hành động Mở Nhanh",
+  quickOpenQuickSave: "Lưu nhanh",
   quickOpenPopup: "Popup mặc định",
   quickOpenSidePanel: "Mở panel mặc định",
   quickOpenWeb: "Mở web mặc định",
+  showNotesPreview: "Hiển thị xem trước ghi chú",
+  showTagsInView: "Hiển thị tags trong view",
+
   addCustomLanguage: "Thêm ngôn ngữ tùy chỉnh",
   customLanguageTitle: "Thêm ngôn ngữ tùy chỉnh",
   customLanguageHint:

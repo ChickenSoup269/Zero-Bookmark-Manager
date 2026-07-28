@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Save Bookmark</title>
+  <link rel="stylesheet" href="./styles/variables.css">
+  <link rel="stylesheet" href="./styles/theme.css">
+  <link rel="stylesheet" href="./styles/quick-save.css">
+</head>
+
+<body class="dark-theme">
+  <main class="quick-save-shell">
+    <header class="quick-save-header">
+      <div>
+        <h1>Quick Save</h1>
+        <p>Save the current page with tags and notes.</p>
+      </div>
+      <button id="open-dashboard" class="icon-button" type="button" title="Open full dashboard" aria-label="Open full dashboard">↗</button>
+    </header>
+
+    <section id="status" class="status hidden" role="status"></section>
+
+    <form id="quick-save-form" class="quick-save-form">
+      <label>
+        <span>Title</span>
+        <input id="title" type="text" autocomplete="off" required>
+      </label>
+
+      <label>
+        <span>URL</span>
+        <input id="url" type="url" autocomplete="off" required>
+      </label>
+
+      <label>
+        <span>Folder</span>
+        <select id="folder"></select>
+      </label>
+
+      <label>
+        <span>Tags</span>
+        <input id="tags" type="text" autocomplete="off" placeholder="design, reading, work">
+      </label>
+
+      <label>
+        <span>Notes</span>
+        <textarea id="notes" rows="5" placeholder="Why this page matters, what to revisit, or any context you need later."></textarea>
+      </label>
+
+      <div class="actions">
+        <button id="save" class="primary-button" type="submit">Save Bookmark</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="./quick-save.js"></script>
+</body>
+
+</html>
