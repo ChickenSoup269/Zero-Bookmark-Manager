@@ -23,6 +23,46 @@ import { handleDeleteFolder } from "./controller/deleteFolder.js"
 // HELPER FUNCTIONS
 // ==========================================
 
+function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}
+
+function syncNotesPreviewBodyClass() {
+  document.body.classList.toggle(
+    "show-notes-preview",
+    !!uiState.showNotesPreview,
+  )
+}
+
+function syncTagsInViewBodyClass() {
+  document.body.classList.toggle(
+    "show-tags-in-view",
+    !!uiState.showTagsInView,
+  )
+}
+
+function createNotesPreviewHTML(bookmark, extraClass = "") {
+  if (!uiState.showNotesPreview) return ""
+  const note = (
+    bookmark.note ||
+    uiState.bookmarkNotes?.[bookmark.id] ||
+    ""
+  ).trim()
+  if (!note) return ""
+
+  return `
+    <div class="bookmark-note-preview ${extraClass}" data-tooltip="${escapeHtml(note)}">
+      <i class="fas fa-note-sticky" aria-hidden="true"></i>
+      <span>${escapeHtml(note)}</span>
+    </div>
+  `
+}
+
 // Centralized Favicon Error Handling
 window.addEventListener('error', function(e) {
   const t = e.target;
@@ -228,6 +268,15 @@ function createTagsHTML(tags, styleOverride = "") {
   `
     })
     .join("")
+}
+
+// Helper: create tags HTML only when showTagsInView is enabled
+function createTagsInViewHTML(tags, containerClass = "view-tags-wrap") {
+  if (!uiState.showTagsInView) return ""
+  if (!tags || tags.length === 0) return ""
+  const inner = createTagsHTML(tags)
+  if (!inner) return ""
+  return `<div class="${containerClass}">${inner}</div>`
 }
 
 function renderHealthIcon(bookmarkId) {
@@ -2020,6 +2069,8 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       uiState.bookmarkTags = bookmarkTagsFromStorage
       uiState.readingQueue = readingQueue
       uiState.bookmarkNotes = bookmarkNotes
+      syncNotesPreviewBodyClass()
+      syncTagsInViewBodyClass()
 
       const bookmarks = flattenBookmarks(bookmarkTreeNodes)
       const folders = getFolders(bookmarkTreeNodes)
@@ -2260,11 +2311,10 @@ function renderListView(bookmarksList, elements) {
   const header = document.createElement("div")
   header.className = "list-view-header"
   header.innerHTML = `
-    <div class="header-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden; display: flex; align-items: center;"></div>
+    <div class="header-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden;"></div>
     <div class="header-col-icon"></div>
-    <div class="header-col-info">Name & URL</div>
-    <div class="header-col-tags" style="text-align: right;">Tags</div>
-    <div class="header-col-actions">Actions</div>
+    <div class="header-col-info">${t.name || 'Name'} &amp; URL</div>
+    <div class="header-col-actions">${t.actions || 'Actions'}</div>
   `
   fragment.appendChild(header)
 
@@ -2275,15 +2325,11 @@ function renderListView(bookmarksList, elements) {
     backRow.style.cursor = "pointer"
     backRow.innerHTML = `
       <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden;"></div>
-      <div style="width: 40px;"></div>
-      <div class="list-info-main" style="display: flex; align-items: center; gap: 5px; width: 100%; min-width: 300px;">
-        <span style="font-size: 1.2rem; margin-right: 10px;">↩</span>
-        <span class="list-bookmark-title-link">${t.back || "Back"}</span>
+      <div class="list-bookmark-favicon">↩</div>
+      <div class="list-info-main">
+        <span class="list-bookmark-title-link">${t.back || 'Back'}</span>
+        <div class="list-bookmark-url-display">Go up one level</div>
       </div>
-      <div class="list-bookmark-url-display" style="margin-left: 40px; font-size: 12px; color: var(--text-secondary);">
-        Go up one level
-      </div>
-      <div class="list-tags"></div>
       <div class="list-actions"></div>
     `
     backRow.onclick = () => {
@@ -2591,6 +2637,8 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
       
       textWrap.appendChild(text);
       textWrap.appendChild(urlText);
+      textWrap.insertAdjacentHTML("beforeend", createNotesPreviewHTML(b, "compact-note-preview"));
+      textWrap.insertAdjacentHTML("beforeend", createTagsInViewHTML(b.tags, "kanban-view-tags"));
       
       item.appendChild(icon);
       item.appendChild(textWrap);
@@ -2851,6 +2899,8 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       
       titleWrapper.appendChild(title);
       titleWrapper.appendChild(url);
+      titleWrapper.insertAdjacentHTML("beforeend", createNotesPreviewHTML(b, "compact-note-preview"));
+      titleWrapper.insertAdjacentHTML("beforeend", createTagsInViewHTML(b.tags, "bento-view-tags"));
       
       card.appendChild(icon);
       card.appendChild(titleWrapper);
@@ -3415,16 +3465,25 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
     <input type="checkbox" class="bookmark-checkbox" data-id="${
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
-    <div class="bookmark-content">
-      <div class="bookmark-favicon"><img src="${favicon}" alt="icon" data-hostname="${hostname}"></div>
-      <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; display: flex;">
-        <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">${
-        bookmark.title || bookmark.url
-      }</a>
+    <div class="bookmark-content" style="flex-direction: column; align-items: stretch; gap: 6px;">
+      <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+        <div class="bookmark-favicon"><img src="${favicon}" alt="icon" data-hostname="${hostname}"></div>
+        <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; display: flex;">
+          <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">${
+          bookmark.title || bookmark.url
+        }</a>
+        </div>
+        ${healthIcon}
+        ${visitCountBadge}
+        ${
+          uiState.showBookmarkIds
+            ? `<span class="bookmark-id">[ID: ${bookmark.id}]</span>`
+            : ""
+        }
+        ${createDropdownHTML(bookmark, language)}
       </div>
-   ${healthIcon} 
-   ${visitCountBadge}
-    ${createDropdownHTML(bookmark, language)}
+      ${createNotesPreviewHTML(bookmark, "card-note-preview")}
+      ${createTagsInViewHTML(bookmark.tags, "card-view-tags")}
     </div>
   `
 
@@ -3445,7 +3504,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
     bookmark.isFavorite ? "favorited" : ""
   }`
   div.dataset.id = bookmark.id
-  div.style.cssText = `display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--hover-bg); box-shadow: var(--shadow-sm);`
+  div.style.cssText = `display: flex; flex-direction: column; align-items: stretch; gap: 8px; padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--hover-bg); box-shadow: var(--shadow-sm); height: 100%;`
   const healthIcon = renderHealthIcon(bookmark.id) // Lấy icon
   const visitCountBadge = renderVisitCount(bookmark.id)
 
@@ -3464,7 +3523,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
       <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; display: flex;">
         <a href="${
           bookmark.url
-        }" target="_blank" style="flex:1;color:var(--text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none; max-width:160px;">
+        }" target="_blank" style="flex:1;color:var(--text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;">
           ${bookmark.title || bookmark.url}
         </a>
       </div>
@@ -3472,10 +3531,14 @@ function createDetailBookmarkElement(bookmark, language, elements) {
        ${visitCountBadge}
       ${createDropdownHTML(bookmark, language)}
     </div>
-    <div class="bookmark_link" style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px;">
-        <span>${extractDomain(bookmark.url)}</span>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div class="bookmark_link" style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px;">
+          <span>${extractDomain(bookmark.url)}</span>
+      </div>
+      ${createNotesPreviewHTML(bookmark, "detail-note-preview")}
+      ${createTagsInViewHTML(bookmark.tags, "detail-view-tags")}
     </div>
-    <button class="view-detail-btn-action" style="background:var(--text-primary);color:var(--bg-primary);border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:600;margin-top:8px; width:100%;">
+    <button class="view-detail-btn-action" style="background:var(--text-primary);color:var(--bg-primary);border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:600;margin-top:auto; width:100%;">
       ${translations[language].viewDetail || "View Details"}
     </button>
   `
@@ -3500,7 +3563,6 @@ function createListBookmarkElement(bookmark, language, elements) {
 
   const healthIcon = renderHealthIcon(bookmark.id)
   const visitCountBadge = renderVisitCount(bookmark.id)
-  const tagsHtml = createTagsHTML(bookmark.tags)
   const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
   const isChecked = uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
 
@@ -3513,20 +3575,21 @@ function createListBookmarkElement(bookmark, language, elements) {
     <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
       <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(0.9);">
     </div>
-    <div class="bookmark-favicon" style="width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; border-radius: 4px;">
-      <img src="${favicon}" style="width: 14px; height: 14px;" data-hostname="${hostname}">
+    <div class="bookmark-favicon list-bookmark-favicon">
+      <img src="${favicon}" data-hostname="${hostname}">
     </div>
-    <div class="list-info-main" style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
-      <a href="${bookmark.url}" target="_blank" class="link list-bookmark-title-link" style="white-space: normal !important; word-break: break-word !important; min-width: 0; display: block;">
+    <div class="list-info-main">
+      <a href="${bookmark.url}" target="_blank" class="link list-bookmark-title-link">
         ${bookmark.title || bookmark.url}
       </a>
-      <div class="list-bookmark-url-display" style="opacity: 0.6; font-size: 0.7rem;">
+      <div class="list-bookmark-url-display">
         ${bookmark.url}
       </div>
+      ${createNotesPreviewHTML(bookmark, "list-note-preview")}
+      ${createTagsInViewHTML(bookmark.tags, "list-view-tags")}
     </div>
-    <div class="list-tags" style="display: flex; gap: 4px; align-items: center; justify-content: flex-end;">${tagsHtml}</div>
-    <div class="list-actions" style="display: flex !important;">
-       ${healthIcon} 
+    <div class="list-actions">
+       ${healthIcon}
        ${visitCountBadge}
        ${createDropdownHTML(bookmark, language)}
     </div>
@@ -3903,12 +3966,13 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
     }">
       ${bookmark.title || bookmark.url}
     </a>
+       ${createNotesPreviewHTML(bookmark, "tree-note-preview")}
        ${healthIcon} 
        ${visitCountBadge}
     <div class="bookmark-url" style="font-size: 11px; color: var(--text-secondary); opacity: 0.7; max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${extractDomain(
       bookmark.url,
     )}</div>
-    <div class="bookmark-tags" style="display: flex; gap: 4px;">${tagsHtml}</div>
+      ${createTagsInViewHTML(bookmark.tags, "tree-view-tags")}
     ${
       uiState.showBookmarkIds
         ? `<span class="bookmark-id" style="font-size: 11px; color: #888;">[${bookmark.id}]</span>`
@@ -3947,13 +4011,13 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
     <input type="checkbox" class="bookmark-checkbox" data-id="${
       bookmark.id
     }" ${isChecked} style="display: ${checkboxDisplay}">
-    <img src="${favicon}" alt="fav" class="favicon" 
+    <img src="${favicon}" alt="fav" class="favicon"
       data-hostname="${hostname}"
     >
     <a href="${bookmark.url}" target="_blank" class="link">${
       bookmark.title || bookmark.url
     }</a>
-    ${healthIcon} 
+    ${healthIcon}
     ${visitCountBadge}
     ${
       uiState.showBookmarkIds
@@ -3961,6 +4025,8 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
         : ""
     }
     ${createDropdownHTML(bookmark, language)}
+    ${createNotesPreviewHTML(bookmark, "flat-note-preview")}
+    ${createTagsInViewHTML(bookmark.tags, "flat-view-tags")}
   `
 
   div
@@ -4888,9 +4954,11 @@ function createMockupBookmarkElement(bookmark, language, elements) {
           <span class="mockup-hostname" style="display: block;">${hostname}</span>
         </div>
       </div>
-      <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; width: 100%;">
-        <a href="${bookmark.url}" target="_blank" class="card-bookmark-title mockup-title">${bookmark.title || bookmark.url}</a>
+      <div style="min-width: 0; width: 100%;">
+        <a href="${bookmark.url}" target="_blank" data-tooltip="${bookmark.title || bookmark.url}" class="card-bookmark-title mockup-title">${bookmark.title || bookmark.url}</a>
       </div>
+      ${createNotesPreviewHTML(bookmark, "mockup-note-preview")}
+      ${createTagsInViewHTML(bookmark.tags, "mockup-view-tags")}
       <div class="mockup-footer">
         ${healthIcon}
         ${renderVisitCount(bookmark.id)}

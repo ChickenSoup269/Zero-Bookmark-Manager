@@ -16,14 +16,28 @@
             <img src="images/logo.png" alt="logo" class="logo" width="320" height="100">
             <div class="settings-container" id="settings-container">
                 <button id="settings-button" class="button settings" title="Settings">⋮</button>
-                <div id="settings-menu" class="dropdown-menu hidden">
-                    <div class="settings-panel-header">
-                        <span class="settings-panel-title" data-i18n="settings">Settings</span>
-                    </div>
-                    <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
-                    <div class="setting-pill-group" id="language-switcher" style="margin-top: 0;">
-                        <button class="theme-swatch setting-swatch language-swatch" data-value="en"><span>English</span></button>
-                        <button class="theme-swatch setting-swatch language-swatch" data-value="vi"><span>Tiếng Việt</span></button>
+
+            <div id="settings-menu" class="dropdown-menu hidden" aria-hidden="true">
+                <div class="settings-panel-header">
+                    <span class="settings-panel-title" data-i18n="settings">Settings</span>
+                    <button id="settings-close-button" class="settings-panel-close" title="Close settings"
+                        aria-label="Close settings">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
+                <div class="menu-group">
+                    <div class="language-settings-row" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
+                        <div class="setting-pill-group" id="language-switcher" style="flex: 1; margin-top: 0;">
+                            <button class="theme-swatch setting-swatch language-swatch" data-value="en"><span>English</span></button>
+                            <button class="theme-swatch setting-swatch language-swatch" data-value="vi"><span>Tiếng Việt</span></button>
+                        </div>
+                        <button id="add-custom-language-option" class="button btn-action-icon"
+                            data-i18n-title="addCustomLanguage" title="Add custom language"
+                            aria-label="Add custom language">
+                            <i class="fas fa-language"></i>
+                            <i class="fas fa-plus"></i>
+                        </button>
                     </div>
                     <div id="tag-filter-container" class="tag-filter-container">
                         <button id="tag-filter-toggle" class="select">Select Tags</button>
@@ -31,7 +45,8 @@
                             <div id="tag-filter-options"></div>
                         </div>
                     </div>
-                    
+                </div>
+                
 <div class="settings-card theme-selection-card">
     <div class="settings-card-header theme-toggle-header">
         <div><i class="fas fa-paint-roller"></i> <span data-i18n="themeSelectionTitle">Themes</span></div>
@@ -60,6 +75,7 @@
     <button class="theme-swatch" data-value="nightowl-light" data-hint="Night Owl Light" style="background: #fbfbfb; color: #2f86d2;"><i class="fas fa-sun"></i></button>
 </div>
 </div>
+                <div class="menu-group">
                     <div class="settings-card font-selection-card collapsed">
                         <div class="settings-card-header theme-toggle-header">
                             <div><i class="fas fa-font"></i> <span data-i18n="fontStyleTitle">Font Style</span></div>
@@ -93,128 +109,183 @@
                             <button class="theme-swatch view-swatch" data-value="mockup"><i class="fas fa-image"></i> <span data-i18n="viewGallery">Gallery View</span></button>
                         </div>
                     </div>
-                    <!-- <hr> First HR after general settings -->
-                    <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
-                    <button id="edit-in-new-tab-option" class="menu-item">Edit in New Tab</button>
-                    <button id="open-side-panel-option" class="menu-item">Open Side Panel</button>
-                    <button id="export-bookmarks-option" class="menu-item">Export Bookmarks</button>
-                    <button id="import-bookmarks-option" class="menu-item">Import Bookmarks</button>
+                </div>
+
+                <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
+                <div class="menu-group">
+                    <button id="edit-in-new-tab-option" class="menu-item">
+                        <i class="fas fa-external-link-alt"></i> Edit in New Tab
+                    </button>
+                    <button id="open-side-panel-option" class="menu-item">
+                        <i class="fas fa-columns"></i> Open Side Panel
+                    </button>
+                    <button id="export-bookmarks-option" class="menu-item">
+                        <i class="fas fa-file-export" aria-hidden="true"></i>
+                        <span data-i18n="exportBookmarks">Export Bookmarks</span>
+                    </button>
+                    <button id="import-bookmarks-option" class="menu-item">
+                        <i class="fas fa-file-import" aria-hidden="true"></i>
+                        <span data-i18n="importBookmarks">Import Bookmarks</span>
+                    </button>
                     <button id="google-drive-sync-btn" class="menu-item">
-                        <i class="fab fa-google-drive" aria-hidden="true" style="margin-right: 8px;"></i> <span data-i18n="cloudSync">Cloud Sync</span>
+                        <i class="fab fa-google-drive" aria-hidden="true"></i>
+                        <span data-i18n="cloudSync">Cloud Sync</span>
                     </button>
-                    <button id="show-bookmark-ids-option" class="menu-item">Show Bookmark IDs</button>
-                    <button id="organize-folders-button" class="menu-item">
+                    <button id="show-bookmark-ids-option" class="menu-item">
+                        <i class="fas fa-download"></i>Show Bookmark IDs
+                    </button>
+                </div>
 
-                        <i class="fas fa-sitemap" aria-hidden="true"></i>
-                        Organize Folders</button>
-                    <span class="dropdown-section-title" data-i18n="quickOpenTitle">Quick Open Action</span>
+                <span class="dropdown-section-title" data-i18n="quickOpenTitle">Quick Open Action</span>
+                <div class="menu-group">
                     <div id="quick-open-settings" class="quick-open-settings">
-                        <label>
-                            <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup" />
-                            <span data-i18n="quickOpenPopup">Popup</span>
+                        <label class="segmented-control-item">
+                            <input type="radio" id="quick-open-quickSave" name="quickOpenAction"
+                                value="quickSave" checked />
+                            <span class="control-label">
+                                <i class="fas fa-bookmark" aria-hidden="true"></i>
+                                <span data-i18n="quickOpenQuickSave">Quick Save</span>
+                            </span>
                         </label>
-                        <label>
-                            <input type="radio" id="quick-open-sidepanel" name="quickOpenAction" value="sidepanel" />
-                            <span data-i18n="quickOpenSidePanel">Side Panel</span>
+                        <label class="segmented-control-item">
+                            <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup"
+                                />
+                            <span class="control-label">
+                                <i class="fas fa-window-restore" aria-hidden="true"></i>
+                                <span data-i18n="quickOpenPopup">Popup</span>
+                            </span>
                         </label>
-                        <label>
+                        <label class="segmented-control-item">
+                            <input type="radio" id="quick-open-sidepanel" name="quickOpenAction"
+                                value="sidepanel" />
+                            <span class="control-label">
+                                <i class="fas fa-table-columns" aria-hidden="true"></i>
+                                <span data-i18n="quickOpenSidePanel">Side Panel</span>
+                            </span>
+                        </label>
+                        <label class="segmented-control-item">
                             <input type="radio" id="quick-open-web" name="quickOpenAction" value="web" />
-                            <span data-i18n="quickOpenWeb">Full Page</span>
-                        </label>
-                    </div>
-                    <!-- <hr> Second HR after bookmark actions -->
-                    <span class="dropdown-section-title" data-i18n="bookmarkHealthSmallTitle">Bookmark Health &
-                        Duplicates</span>
-                    <button id="check-health-btn" class="button button-warning">
-                        <i class="fas fa-stethoscope"></i> <span data-i18n="checkLinks">Check Links</span>
-                    </button>
-                    <button id="check-duplicates-btn" class="button button-primary">
-                        <i class="fas fa-copy"></i> <span data-i18n="checkDuplicates">Check Duplicates</span>
-                    </button>
-                    <!-- <hr> Third HR after health checks -->
-                    <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
-                    <div class="app-settings-panel">
-                        <label class="toggle-row app-setting-toggle" for="folder-list-bg-toggle">
-                            <span data-i18n="sidebarListBg">List Background</span>
-                            <span class="toggle-switch">
-                                <input type="checkbox" id="folder-list-bg-toggle" checked>
-                                <span class="toggle-knob"></span>
+                            <span class="control-label">
+                                <i class="fas fa-up-right-from-square" aria-hidden="true"></i>
+                                <span data-i18n="quickOpenWeb">Full Page</span>
                             </span>
                         </label>
-
-                        <div class="app-setting-field">
-                            <label><i class="fas fa-image"></i> <span data-i18n="faviconMode">Favicon Mode:</span></label>
-                            <div class="setting-pill-group" id="favicon-option-select">
-                                <button class="theme-swatch setting-swatch" data-value="auto" data-i18n="faviconAuto">Auto</button>
-                                <button class="theme-swatch setting-swatch" data-value="google" data-i18n="faviconGoogle">Google Only</button>
-                                <button class="theme-swatch setting-swatch" data-value="hostname" data-i18n="faviconHostname">Hostname Only</button>
-                            </div>
-                        </div>
-
-                        <div class="app-setting-field">
-                            <label><i class="fas fa-search-plus"></i> <span data-i18n="faviconSize">Favicon Size:</span></label>
-                            <div class="setting-pill-group" id="favicon-size-select">
-                                <button class="theme-swatch setting-swatch" data-value="16">16px</button>
-                                <button class="theme-swatch setting-swatch" data-value="32">32px</button>
-                                <button class="theme-swatch setting-swatch" data-value="64">64px</button>
-                                <button class="theme-swatch setting-swatch" data-value="128">128px</button>
-                            </div>
-                        </div>
-
-                        <div class="app-setting-field">
-                            <label><i class="fas fa-window-minimize"></i> <span data-i18n="headerLineConfig">Header Line Style:</span></label>
-                            <div class="setting-pill-group" id="header-line-select">
-                                <button class="theme-swatch setting-swatch" data-value="pattern" data-i18n="linePattern">Slanted Pattern</button>
-                                <button class="theme-swatch setting-swatch" data-value="simple" data-i18n="lineSimple">Simple Line</button>
-                                <button class="theme-swatch setting-swatch" data-value="hidden" data-i18n="lineHidden">Hidden</button>
-                            </div>
-                        </div>
-
-                        <div class="app-setting-field">
-                            <label><i class="fas fa-ellipsis-vertical"></i> <span data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
-                            <div class="setting-pill-group" id="bookmark-menu-bg-select">
-                                <button class="theme-swatch setting-swatch" data-value="glass" data-i18n="bookmarkMenuBgGlass">Glass</button>
-                                <button class="theme-swatch setting-swatch" data-value="normal" data-i18n="bookmarkMenuBgNormal">Normal solid</button>
-                            </div>
-                        </div>
-
-                        <div class="app-setting-field">
-                            <label><i class="fas fa-clone"></i> <span data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
-                            <div class="setting-pill-group" id="duplicate-scope-select">
-                                <button class="theme-swatch setting-swatch" data-value="folder" data-i18n="dupScopeFolder">Only 1 folder</button>
-                                <button class="theme-swatch setting-swatch" data-value="all" data-i18n="dupScopeAll">Across folders</button>
-                            </div>
-                        </div>
-
-                        <label class="toggle-row app-setting-toggle" for="auto-remove-dup-toggle">
-                            <span data-i18n="autoRemoveDupTitle">Auto Remove Duplicates (Background)</span>
-                            <span class="toggle-switch">
-                                <input type="checkbox" id="auto-remove-dup-toggle">
-                                <span class="toggle-knob"></span>
-                            </span>
-                        </label>
-
-                        <label class="toggle-row app-setting-toggle" for="auto-ai-categorize-toggle">
-                            <span data-i18n="autoAiCategorizeTitle">Auto Categorize with AI (Background)</span>
-                            <span class="toggle-switch">
-                                <input type="checkbox" id="auto-ai-categorize-toggle">
-                                <span class="toggle-knob"></span>
-                            </span>
-                        </label>
-
-                        <!-- <button id="view-visit-counts-option" class="menu-item">
-                            <i class="fas fa-eye"></i> View Visit Counts
-                        </button> -->
-                        <button id="localstorage-settings-option" class="menu-item app-setting-action">
-                            <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage
-                                Settings</span>
-                        </button>
-                        <button id="restart-guide-option" class="menu-item app-setting-action">
-                            <i class="fas fa-circle-question"></i> <span data-i18n="restartGuideTitle">Show Guide
-                                Again</span>
-                        </button>
                     </div>
                 </div>
+
+                <span class="dropdown-section-title" data-i18n="bookmarkHealthTitle">Bookmark Health &
+                    Duplicates</span>
+                <div class="menu-group">
+                    <div class="health-action-row">
+                        <button id="check-health-btn" class="button button-warning">
+                            <i class="fas fa-stethoscope"></i> <span data-i18n="checkLinks">Check Links</span>
+                        </button>
+                        <button id="check-duplicates-btn" class="button button-primary">
+                            <i class="fas fa-copy"></i> <span data-i18n="checkDuplicates">Check
+                                Duplicates</span>
+                        </button>
+                    </div>
+
+                    <hr>
+
+                    <div class="app-setting-field">
+                        <label><i class="fas fa-clone"></i> <span data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
+                        <div class="setting-pill-group" id="duplicate-scope-select">
+                            <button class="theme-swatch setting-swatch" data-value="folder" data-i18n="dupScopeFolder">Only 1 folder</button>
+                            <button class="theme-swatch setting-swatch" data-value="all" data-i18n="dupScopeAll">Across folders</button>
+                        </div>
+                    </div>
+
+                    <label class="toggle-row" for="auto-remove-dup-toggle">
+                        <span data-i18n="autoRemoveDupTitle"
+                            style="color:var(--text-secondary);font-size:0.9rem;">Auto Remove Duplicates</span>
+                        <span class="toggle-switch">
+                            <input type="checkbox" id="auto-remove-dup-toggle">
+                            <span class="toggle-knob"></span>
+                        </span>
+                    </label>
+                    <label class="toggle-row" for="auto-ai-categorize-toggle">
+                        <span data-i18n="autoAiCategorizeTitle"
+                            style="color:var(--text-secondary);font-size:0.9rem;">Auto Categorize with AI</span>
+                        <span class="toggle-switch">
+                            <input type="checkbox" id="auto-ai-categorize-toggle">
+                            <span class="toggle-knob"></span>
+                        </span>
+                    </label>
+                </div>
+
+                <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
+                <div class="menu-group">
+                    <label class="toggle-row" for="folder-list-bg-toggle">
+                        <span data-i18n="sidebarListBg">List Background</span>
+                        <span class="toggle-switch">
+                            <input type="checkbox" id="folder-list-bg-toggle" checked>
+                            <span class="toggle-knob"></span>
+                        </span>
+                    </label>
+
+                    <label class="toggle-row" for="show-notes-preview-toggle">
+                        <span data-i18n="showNotesPreview">Show Notes Preview</span>
+                        <span class="toggle-switch">
+                            <input type="checkbox" id="show-notes-preview-toggle">
+                            <span class="toggle-knob"></span>
+                        </span>
+                    </label>
+
+                    <label class="toggle-row" for="show-tags-in-view-toggle">
+                        <span data-i18n="showTagsInView">Show Tags in View</span>
+                        <span class="toggle-switch">
+                            <input type="checkbox" id="show-tags-in-view-toggle">
+                            <span class="toggle-knob"></span>
+                        </span>
+                    </label>
+
+                    <div class="app-setting-field">
+                        <label><i class="fas fa-image"></i> <span data-i18n="faviconMode">Favicon Mode:</span></label>
+                        <div class="setting-pill-group" id="favicon-option-select">
+                            <button class="theme-swatch setting-swatch" data-value="auto" data-i18n="faviconAuto">Auto</button>
+                            <button class="theme-swatch setting-swatch" data-value="google" data-i18n="faviconGoogle">Google Only</button>
+                            <button class="theme-swatch setting-swatch" data-value="hostname" data-i18n="faviconHostname">Hostname Only</button>
+                        </div>
+                    </div>
+
+                    <div class="app-setting-field">
+                        <label><i class="fas fa-search-plus"></i> <span data-i18n="faviconSize">Favicon Size:</span></label>
+                        <div class="setting-pill-group" id="favicon-size-select">
+                            <button class="theme-swatch setting-swatch" data-value="16">16px</button>
+                            <button class="theme-swatch setting-swatch" data-value="32">32px</button>
+                            <button class="theme-swatch setting-swatch" data-value="64">64px</button>
+                            <button class="theme-swatch setting-swatch" data-value="128">128px</button>
+                        </div>
+                    </div>
+
+                    <div class="app-setting-field">
+                        <label><i class="fas fa-window-minimize"></i> <span data-i18n="headerLineConfig">Header Line Style:</span></label>
+                        <div class="setting-pill-group" id="header-line-select">
+                            <button class="theme-swatch setting-swatch" data-value="pattern" data-i18n="linePattern">Slanted Pattern</button>
+                            <button class="theme-swatch setting-swatch" data-value="simple" data-i18n="lineSimple">Simple Line</button>
+                            <button class="theme-swatch setting-swatch" data-value="hidden" data-i18n="lineHidden">Hidden</button>
+                        </div>
+                    </div>
+
+                    <div class="app-setting-field">
+                        <label><i class="fas fa-ellipsis-vertical"></i> <span data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
+                        <div class="setting-pill-group" id="bookmark-menu-bg-select">
+                            <button class="theme-swatch setting-swatch" data-value="glass" data-i18n="bookmarkMenuBgGlass">Glass</button>
+                            <button class="theme-swatch setting-swatch" data-value="normal" data-i18n="bookmarkMenuBgNormal">Normal solid</button>
+                        </div>
+                    </div>
+
+                    <button id="localstorage-settings-option" class="menu-item app-setting-action">
+                        <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage
+                            Settings</span>
+                    </button>
+                    <button id="restart-guide-option" class="menu-item app-setting-action">
+                        <i class="fas fa-circle-question"></i> <span data-i18n="restartGuideTitle">Show Guide
+                            Again</span>
+                    </button>
+                </div>
+            </div>
             </div>
         </div>
         <div class="controls">
