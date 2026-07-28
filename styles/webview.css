@@ -4254,7 +4254,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .menu-item:hover i {
-  color: var(--text-primary);
+  color: var(--bg-primary) !important;
 }
 
 .dropdown-menu-2 .toggle-row {
@@ -4274,21 +4274,8 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .toggle-row:hover {
-  background-color: var(--accent-color);
-  color: var(--bg-primary);
-  border-color: var(--accent-color);
-}
-
-.dropdown-menu-2 .toggle-row:hover [data-i18n="autoRemoveDupTitle"] {
-  color: var(--bg-primary) !important;
-}
-
-.dropdown-menu-2 .toggle-row:hover .toggle-switch .toggle-knob {
-  background-color: var(--bg-primary);
-}
-
-.dropdown-menu-2 .toggle-row:hover .toggle-switch .toggle-knob::before {
-  background-color: var(--accent-color);
+  background-color: var(--hover-bg);
+  transform: translateX(2px);
 }
 
 .dropdown-menu-2 label {
@@ -5778,7 +5765,8 @@ textarea.error {
   }
   
   .mockup-bookmark-item {
-    height: 110px; /* Thu gọn chiều cao ở popup */
+    min-height: 110px; /* Thu gọn chiều cao ở popup */
+    height: auto;
   }
   
   .mockup-image-container {
@@ -5808,7 +5796,8 @@ textarea.error {
     box-sizing: border-box !important;
   }
   .mockup-bookmark-item {
-    height: 90px !important;
+    min-height: 90px !important;
+    height: auto !important;
     width: 100% !important;
     box-sizing: border-box !important;
     min-width: 0 !important;

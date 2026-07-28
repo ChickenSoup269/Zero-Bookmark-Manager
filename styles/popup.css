@@ -737,6 +737,10 @@ body.is-scrolled .sticky-search {
   margin-top: 2px;
 }
 
+.detail-view-tags {
+  margin-left: -8px;
+}
+
 .bookmark-tag {
   display: inline-flex;
   align-items: center;
@@ -845,15 +849,15 @@ body.is-scrolled .sticky-search {
   min-width: 0;
 }
 
-#folder-list:not(.tree-view):not(.list-view) .bookmark-item .bookmark-note-preview,
-#folder-list:not(.tree-view):not(.list-view) .bookmark-item .flat-view-tags {
+#folder-list .bookmark-item:not([class*="-bookmark-item"]) .bookmark-note-preview,
+#folder-list .bookmark-item:not([class*="-bookmark-item"]) .flat-view-tags {
   margin-left: 48px;
   width: calc(100% - 48px);
   flex: 1 0 auto;
 }
 
-#folder-list:not(.tree-view):not(.list-view) .bookmark-item:has(.bookmark-checkbox[style*="display: none"]) .bookmark-note-preview,
-#folder-list:not(.tree-view):not(.list-view) .bookmark-item:has(.bookmark-checkbox[style*="display: none"]) .flat-view-tags {
+#folder-list .bookmark-item:not([class*="-bookmark-item"]):has(.bookmark-checkbox[style*="display: none"]) .bookmark-note-preview,
+#folder-list .bookmark-item:not([class*="-bookmark-item"]):has(.bookmark-checkbox[style*="display: none"]) .flat-view-tags {
   margin-left: 26px;
   width: calc(100% - 26px);
 }
@@ -901,6 +905,7 @@ body.is-scrolled .sticky-search {
   flex: 0 0 auto;
   padding: 4px 8px;
   margin-top: 2px;
+  margin-left: -6px;
 }
 
 .detail-note-preview span {

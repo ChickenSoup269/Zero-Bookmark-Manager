@@ -315,7 +315,7 @@ body.winter-is-coming-theme {
   --text-primary: #d6deeb;
   --text-secondary: #82aaff;
   --text-muted: #5f7e97;
-  --border-color: #1e3a52;
+  --border-color: #2c5375;
   --accent-color: #d6deeb;
   --accent-color-light: rgba(130, 170, 255, 0.1);
   --danger-color: #ef5350;
@@ -324,7 +324,7 @@ body.winter-is-coming-theme {
   --hover-bg: #0b2942;
   --focus-outline: #80cbc4;
   --box-shadow: 0 6px 15px rgba(130, 170, 255, 0.25);
-  --tree-line-color: rgba(128, 203, 196, 0.5);
+  --tree-line-color: rgba(128, 203, 196, 0.8);
   --folder-title-color: #7fdbca;
   --folder-bg: var(--bg-primary);
   --folder-hover-bg: rgba(127, 219, 202, 0.1);
@@ -336,6 +336,8 @@ body.winter-is-coming-theme {
   --hover-bg-option: #0b2942;
   --bg-tags-select: rgba(1, 22, 39, 0.9);
   --hover-light-dazz: rgba(130, 170, 255, 0.4);
+  --scrollbar-thumb: rgba(130, 170, 255, 0.3);
+  --scrollbar-thumb-hover: rgba(130, 170, 255, 0.6);
 }
 
 /* Nord Theme */
