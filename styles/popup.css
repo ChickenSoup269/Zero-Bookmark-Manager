@@ -579,21 +579,26 @@ body.is-scrolled .sticky-search {
 .detail-view {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm);
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
 }
 
 .detail-bookmark-item {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: var(--spacing-sm);
+  gap: 10px;
+  padding: 12px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   background: var(--bg-primary);
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
+  min-width: 0; /* Fix grid blowout */
+}
+
+.detail-bookmark-item > div {
+  min-width: 0; /* Fix flex row blowout */
 }
 
 .detail-bookmark-item:hover {
@@ -613,13 +618,22 @@ body.is-scrolled .sticky-search {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 180px;
+  max-width: 100%;
 }
 
 .detail-bookmark-item .bookmark_link {
   font-size: 0.75rem;
   color: var(--text-muted);
   opacity: 0.8;
+  max-width: 100%;
+}
+
+.detail-bookmark-item .bookmark_link span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: inline-block;
 }
 
 .detail-bookmark-item .bookmark-url {
@@ -821,6 +835,34 @@ body.is-scrolled .sticky-search {
 #folder-list:not(.tree-view):not(.list-view) .bookmark-item {
   flex-wrap: wrap;
   align-items: flex-start;
+}
+
+#folder-list:not(.tree-view):not(.list-view) .bookmark-item .link {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+#folder-list:not(.tree-view):not(.list-view) .bookmark-item .bookmark-note-preview,
+#folder-list:not(.tree-view):not(.list-view) .bookmark-item .flat-view-tags {
+  margin-left: 48px;
+  width: calc(100% - 48px);
+  flex: 1 0 auto;
+}
+
+#folder-list:not(.tree-view):not(.list-view) .bookmark-item:has(.bookmark-checkbox[style*="display: none"]) .bookmark-note-preview,
+#folder-list:not(.tree-view):not(.list-view) .bookmark-item:has(.bookmark-checkbox[style*="display: none"]) .flat-view-tags {
+  margin-left: 26px;
+  width: calc(100% - 26px);
+}
+
+.flat-view-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
 }
 
 .bookmark-note-preview {
@@ -1079,10 +1121,30 @@ body.is-scrolled .sticky-search {
 .settings-panel-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   min-height: 36px;
-  padding: 4px 44px 10px 4px;
+  padding: 4px 0 10px 4px;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 4px;
+}
+
+.settings-panel-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.settings-panel-close:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 .settings-panel-title {
@@ -2032,12 +2094,18 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 .quick-open-settings {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   background: transparent;
   border-radius: 10px;
   padding: 4px;
   border: none;
   width: 100%;
   gap: 4px;
+}
+
+.quick-open-settings .segmented-control-item {
+  flex: 1 1 auto;
+  min-width: calc(50% - 4px);
 }
 
 .quick-open-settings .segmented-control-item:has(input[type="radio"]:checked) {

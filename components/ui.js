@@ -3504,7 +3504,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
     bookmark.isFavorite ? "favorited" : ""
   }`
   div.dataset.id = bookmark.id
-  div.style.cssText = `display: flex; flex-direction: column; align-items: stretch; gap: 8px; padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--hover-bg); box-shadow: var(--shadow-sm); height: 100%;`
+  div.style.cssText = `display: flex; flex-direction: column; align-items: stretch; height: 100%; min-width: 0;`
   const healthIcon = renderHealthIcon(bookmark.id) // Lấy icon
   const visitCountBadge = renderVisitCount(bookmark.id)
 
@@ -3514,16 +3514,16 @@ function createDetailBookmarkElement(bookmark, language, elements) {
   } catch (e) {}
 
   div.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;">
+    <div style="display:flex;align-items:center;gap:12px; min-width:0;">
       <div class="bookmark-favicon" style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:white; display:flex;justify-content:center;align-items:center;">
         <img src="${favicon}" style="width:20px;height:20px;object-fit:contain;" 
           data-hostname="${hostname}"
         >
       </div>
-      <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; display: flex;">
+      <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; overflow: hidden;">
         <a href="${
           bookmark.url
-        }" target="_blank" style="flex:1;color:var(--text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;">
+        }" target="_blank" class="bookmark-title" style="display: block; width: 100%; color:var(--text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;">
           ${bookmark.title || bookmark.url}
         </a>
       </div>
@@ -3531,9 +3531,9 @@ function createDetailBookmarkElement(bookmark, language, elements) {
        ${visitCountBadge}
       ${createDropdownHTML(bookmark, language)}
     </div>
-    <div style="display: flex; flex-direction: column; gap: 4px;">
-      <div class="bookmark_link" style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px;">
-          <span>${extractDomain(bookmark.url)}</span>
+    <div style="display: flex; flex-direction: column; gap: 4px; padding-left: 44px;">
+      <div class="bookmark_link" style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px; min-width: 0;">
+          <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 100%; display: block;">${extractDomain(bookmark.url)}</span>
       </div>
       ${createNotesPreviewHTML(bookmark, "detail-note-preview")}
       ${createTagsInViewHTML(bookmark.tags, "detail-view-tags")}
