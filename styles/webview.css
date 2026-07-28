@@ -4374,6 +4374,158 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   min-width: 0;
 }
 
+/* ========== NOTES PREVIEW - BASE STYLES ========== */
+.bookmark-note-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex: 1 0 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  color: var(--text-secondary);
+  background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 22%, transparent);
+  border-radius: 6px;
+  padding: 5px 7px;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.bookmark-note-preview i {
+  flex: 0 0 auto;
+  color: var(--accent-color);
+  line-height: 1.35;
+}
+
+.bookmark-note-preview span {
+  min-width: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: break-word;
+}
+
+/* ---- Per-view note adjustments ---- */
+.list-note-preview {
+  margin-top: 3px;
+}
+
+.card-note-preview {
+  margin-top: 6px;
+}
+
+.detail-note-preview {
+  flex: 0 0 auto; /* Ngăn không cho flex-basis: 100% đẩy chiều cao */
+  padding: 4px 8px;
+  margin-top: 2px;
+}
+
+.detail-note-preview span {
+  -webkit-line-clamp: 1; /* Rút gọn thành 1 dòng để giảm diện tích */
+}
+
+.tree-note-preview {
+  flex: 0 1 220px;
+  padding: 3px 6px;
+  font-size: 0.68rem;
+}
+
+.compact-note-preview {
+  flex: 0 1 auto;
+  width: 100%;
+  margin-top: 4px;
+  padding: 4px 6px;
+  font-size: 0.68rem;
+}
+
+.mockup-note-preview {
+  margin-top: 2px;
+  font-size: 0.7rem;
+}
+
+/* ---- Responsive notes at small widths ---- */
+@media (max-width: 600px) {
+  .tree-note-preview {
+    flex: 1 0 100%;
+    font-size: 0.65rem;
+    padding: 3px 5px;
+  }
+  .bookmark-note-preview span {
+    -webkit-line-clamp: 1;
+  }
+  .compact-note-preview {
+    font-size: 0.65rem;
+  }
+}
+
+/* ========== TAGS IN VIEW - CONTROLLED BY showTagsInView TOGGLE ========== */
+/* Base tag container for all views */
+.view-tags-wrap,
+.card-view-tags,
+.detail-view-tags,
+.mockup-view-tags,
+.tree-view-tags,
+.bento-view-tags,
+.kanban-view-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 5px;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Card view tags - below note, inside bookmark-content */
+.card-view-tags {
+  margin-top: 4px;
+  padding: 0 2px;
+}
+
+/* Detail view tags */
+.detail-view-tags {
+  margin-top: 6px;
+}
+
+/* Mockup view tags */
+.mockup-view-tags {
+  margin-top: 4px;
+  margin-bottom: 2px;
+}
+
+/* Tree view tags - compact inline wrap */
+.tree-view-tags {
+  margin-top: 2px;
+  flex: 0 1 auto;
+  max-width: 200px;
+}
+
+/* Bento / kanban compact notes */
+.bento-view-tags,
+.kanban-view-tags {
+  margin-top: 4px;
+  width: 100%;
+}
+
+/* Responsive: collapse tags at small widths */
+@media (max-width: 600px) {
+  .tree-view-tags {
+    max-width: 120px;
+  }
+  .view-tags-wrap .bookmark-tag,
+  .card-view-tags .bookmark-tag,
+  .detail-view-tags .bookmark-tag,
+  .mockup-view-tags .bookmark-tag,
+  .tree-view-tags .bookmark-tag,
+  .bento-view-tags .bookmark-tag,
+  .kanban-view-tags .bookmark-tag {
+    font-size: 9px;
+    padding: 1px 5px;
+  }
+}
+
+
 .segmented-control-item:hover .control-label {
   background: var(--hover-bg) !important;
   color: var(--text-primary) !important;
@@ -4470,13 +4622,42 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
 }
 
-/* Bookmark item grid - Cải thiện layout */
-.bookmark-item {
+/* =============================================
+   FLAT VIEW - Grid layout with notes/tags wrap
+   ============================================= */
+.folder-list:not(.tree-view):not(.card-view):not(.detail-view):not(.list-view):not(.bento-view):not(.kanban-view):not(.mockup-view)
+  .bookmark-item {
   display: grid;
+  /* checkbox | favicon | title | [actions] */
   grid-template-columns: auto auto 1fr auto;
+  grid-template-rows: auto;
   align-items: center;
-  gap: 6px;
+  gap: 4px 6px;
   padding: 6px 8px;
+}
+
+/* Notes span full width below the title row */
+.folder-list:not(.tree-view):not(.card-view):not(.detail-view):not(.list-view):not(.bento-view):not(.kanban-view):not(.mockup-view)
+  .bookmark-item
+  .flat-note-preview,
+.folder-list:not(.tree-view):not(.card-view):not(.detail-view):not(.list-view):not(.bento-view):not(.kanban-view):not(.mockup-view)
+  .bookmark-item
+  .bookmark-note-preview {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 2px;
+}
+
+/* Tags span full width below notes */
+.folder-list:not(.tree-view):not(.card-view):not(.detail-view):not(.list-view):not(.bento-view):not(.kanban-view):not(.mockup-view)
+  .bookmark-item
+  .flat-view-tags {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .bookmark-item:has(.bookmark-checkbox.hidden) {
@@ -5218,6 +5399,9 @@ textarea.error {
 }
 
 /* List View Styles */
+/* =============================================
+   LIST VIEW - Full rewrite for proper layout
+   ============================================= */
 .folder-list.list-view {
   display: flex;
   flex-direction: column;
@@ -5227,10 +5411,11 @@ textarea.error {
 
 .list-view-header {
   display: grid;
-  grid-template-columns: max-content 40px minmax(0, 1fr) auto auto;
+  /* check | icon | info | actions */
+  grid-template-columns: max-content 32px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 15px;
-  padding: 10px 16px;
+  gap: 12px;
+  padding: 8px 14px;
   border-bottom: 2px solid var(--border-color);
   font-weight: bold;
   color: var(--text-secondary);
@@ -5242,47 +5427,28 @@ textarea.error {
 
 .list-bookmark-item {
   display: grid;
-  grid-template-columns: max-content 40px minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 15px;
-  padding: 12px 16px;
+  /* check | icon | info | actions */
+  grid-template-columns: max-content 32px minmax(0, 1fr) auto;
+  align-items: start;   /* top-align so notes don't push things */
+  gap: 12px;
+  padding: 10px 14px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   transition: all 0.2s ease;
 }
 
-.list-view-header > div {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.list-bookmark-item > * {
-  min-width: 0;
-  overflow: visible;
-}
-
 .list-bookmark-item:hover {
   background: var(--hover-bg);
   border-color: var(--accent-color);
-  transform: translateX(4px);
+  transform: translateX(3px);
   box-shadow: var(--shadow-md);
   z-index: 100;
   position: relative;
 }
 
-.list-info-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  overflow: hidden;
-  flex: 1;
-  min-width: 0;
-}
-
-.bookmark-favicon {
+/* Favicon column */
+.list-bookmark-favicon {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
@@ -5291,92 +5457,120 @@ textarea.error {
   justify-content: center;
   background: white;
   border-radius: 4px;
+  margin-top: 2px;  /* slight top-align */
 }
 
-.bookmark-favicon img {
+.list-bookmark-favicon img {
   width: 16px;
   height: 16px;
   display: block;
+  object-fit: contain;
 }
 
-.list-content-wrapper {
+/* Info column - always flex-column */
+.list-info-main {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  flex: 1;
+  gap: 3px;
   min-width: 0;
+  overflow: hidden;
 }
 
 .list-bookmark-title-link {
   font-size: 0.85rem;
-  font-weight: 800 !important;
+  font-weight: 700;
   color: var(--accent-color) !important;
   text-decoration: none;
   word-break: break-word;
+  white-space: normal;
   display: block;
   line-height: 1.4;
   cursor: pointer;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
 .list-bookmark-title-link:hover {
   text-decoration: underline;
-  color: var(--accent-color) !important;
 }
 
 .list-bookmark-url-display {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
-  opacity: 0.7;
+  opacity: 0.75;
   word-break: break-all;
-  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.list-tags {
+/* Notes inside list-info-main - constrain width */
+.list-info-main .list-note-preview {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Tags inside list-info-main */
+.list-view-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  margin-top: 4px;
+  width: 100%;
 }
 
+/* Actions column */
 .list-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   justify-content: flex-end;
+  align-self: start;
+  margin-top: 2px;
 }
 
+/* At medium sizes — no visual change needed, grid is already compact */
 @media (max-width: 900px) {
   .list-bookmark-item,
   .list-view-header {
-    grid-template-columns: max-content 40px 1fr auto auto;
     gap: 10px;
+    padding: 9px 12px;
   }
 }
 
+/* At small tablet: reduce padding, show url on 1 line */
 @media (max-width: 768px) {
   .list-bookmark-item,
   .list-view-header {
-    grid-template-columns: max-content 40px 1fr auto;
     gap: 8px;
+    padding: 8px 10px;
   }
 
-  .list-tags,
-  .header-col-tags {
-    display: none !important;
+  .list-bookmark-url-display {
+    display: none; /* hide URL at small sizes to save space */
   }
 }
 
+/* At mobile: collapse checkbox column, tight layout */
 @media (max-width: 480px) {
   .list-bookmark-item,
   .list-view-header {
-    grid-template-columns: max-content 1fr auto;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
     padding: 8px;
+    gap: 8px;
   }
 
-  .bookmark-checkbox,
+  .list-col-check,
   .header-col-check {
     display: none !important;
+  }
+
+  .list-note-preview {
+    font-size: 0.65rem;
+    -webkit-line-clamp: 1;
+  }
+
+  .list-view-tags .bookmark-tag {
+    font-size: 9px;
+    padding: 1px 4px;
   }
 }
 
@@ -5455,7 +5649,8 @@ textarea.error {
 .mockup-bookmark-item {
   display: flex;
   flex-direction: row; /* Hình bên trái, thông tin bên phải */
-  height: 130px; /* Chiều cao cố định cho card ngang */
+  min-height: 130px; /* Hỗ trợ tự mở rộng khi có notes/tags */
+  height: auto;
   border: 1px solid rgba(128, 128, 128, 0.15);
   border-radius: 12px;
   background: var(--bg-primary);

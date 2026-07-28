@@ -10,6 +10,8 @@ export const uiState = {
   selectedBookmarks: new Set(),
   currentBookmarkId: null,
   showBookmarkIds: false,
+  showNotesPreview: true,
+  showTagsInView: false,
   folderListBg: true,
   checkboxesVisible: false,
   bookmarkTags: {},
@@ -77,6 +79,8 @@ export function saveUIState() {
       faviconOption: uiState.faviconOption,
       duplicateScope: uiState.duplicateScope,
       autoRemoveDup: uiState.autoRemoveDup,
+      showNotesPreview: uiState.showNotesPreview,
+      showTagsInView: uiState.showTagsInView,
       headerLineStyle: uiState.headerLineStyle,
       bookmarkMenuBg: uiState.bookmarkMenuBg,
     },
@@ -119,6 +123,8 @@ export function loadUIState(callback) {
         uiState.faviconOption = result.uiState.faviconOption || "auto"
         uiState.duplicateScope = result.uiState.duplicateScope || "folder"
         uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
+        uiState.showNotesPreview = result.uiState.showNotesPreview ?? true
+        uiState.showTagsInView = result.uiState.showTagsInView ?? false
         uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
         uiState.bookmarkMenuBg = result.uiState.bookmarkMenuBg || "glass"
         document.body.setAttribute("data-header-line", uiState.headerLineStyle)

@@ -217,6 +217,57 @@ if (autoAiCategorizeToggle) {
   })
 }
 
+const showNotesPreviewToggle = document.getElementById("show-notes-preview-toggle")
+if (showNotesPreviewToggle) {
+  chrome.storage.local.get(["uiState"], (data) => {
+    const savedValue = data.uiState?.showNotesPreview ?? true
+    uiState.showNotesPreview = savedValue
+    showNotesPreviewToggle.checked = savedValue
+    document.body.classList.toggle("show-notes-preview", savedValue)
+  })
+
+  showNotesPreviewToggle.addEventListener("change", (e) => {
+    uiState.showNotesPreview = e.target.checked
+    document.body.classList.toggle("show-notes-preview", e.target.checked)
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.showNotesPreview = uiState.showNotesPreview
+      chrome.storage.local.set({ uiState: newUiState }, () => {
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          }
+        })
+      })
+    })
+  })
+}
+
+const showTagsInViewToggle = document.getElementById("show-tags-in-view-toggle")
+if (showTagsInViewToggle) {
+  chrome.storage.local.get(["uiState"], (data) => {
+    const savedValue = data.uiState?.showTagsInView ?? false
+    uiState.showTagsInView = savedValue
+    showTagsInViewToggle.checked = savedValue
+    document.body.classList.toggle("show-tags-in-view", savedValue)
+  })
+
+  showTagsInViewToggle.addEventListener("change", (e) => {
+    uiState.showTagsInView = e.target.checked
+    document.body.classList.toggle("show-tags-in-view", e.target.checked)
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.showTagsInView = uiState.showTagsInView
+      chrome.storage.local.set({ uiState: newUiState }, () => {
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          }
+        })
+      })
+    })
+  })
+}
 
 let elements = {}
 const CUSTOM_LANGUAGES_KEY = "customLanguagePacks"

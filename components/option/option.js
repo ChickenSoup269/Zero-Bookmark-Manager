@@ -170,6 +170,8 @@ export function customSaveUIState() {
         faviconSize: uiState.faviconSize,
         duplicateScope: uiState.duplicateScope,
         autoRemoveDup: uiState.autoRemoveDup,
+        showNotesPreview: uiState.showNotesPreview,
+        showTagsInView: uiState.showTagsInView,
         headerLineStyle: uiState.headerLineStyle,
         bookmarkMenuBg: uiState.bookmarkMenuBg,
       },
@@ -277,6 +279,8 @@ export async function customLoadUIState(callback) {
       uiState.faviconSize = result.uiState.faviconSize || "32"
       uiState.duplicateScope = result.uiState.duplicateScope || "folder"
       uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
+        uiState.showNotesPreview = result.uiState.showNotesPreview ?? true
+        uiState.showTagsInView = result.uiState.showTagsInView ?? false
       uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
       uiState.bookmarkMenuBg = result.uiState.bookmarkMenuBg || "glass"
     }
@@ -309,6 +313,14 @@ export async function customLoadUIState(callback) {
       elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
         ? translations[savedLanguage].hideCheckboxes
         : translations[savedLanguage].showCheckboxes
+    }
+    const showNotesPreviewToggle = document.getElementById("show-notes-preview-toggle")
+    if (showNotesPreviewToggle) {
+      showNotesPreviewToggle.checked = uiState.showNotesPreview
+    }
+    const showTagsInViewToggle = document.getElementById("show-tags-in-view-toggle")
+    if (showTagsInViewToggle) {
+      showTagsInViewToggle.checked = uiState.showTagsInView
     }
 
     document
@@ -387,7 +399,7 @@ function saveQuickOpenSetting() {
 
 function loadQuickOpenSetting() {
   chrome.storage.local.get(["quickOpenAction"], (result) => {
-    const quickOpenAction = result.quickOpenAction || "popup" // Default to 'popup'
+    const quickOpenAction = result.quickOpenAction || "quickSave"
     const radio = document.getElementById(`quick-open-${quickOpenAction}`)
     if (radio) {
       radio.checked = true

@@ -84,6 +84,10 @@ async function restoreAppSettings(appSettings = {}) {
   uiState.autoRemoveDup =
     restoredUiState.autoRemoveDup ??
     (localStorage.getItem("autoRemoveDup") === "true" || uiState.autoRemoveDup)
+  uiState.showNotesPreview =
+    restoredUiState.showNotesPreview ?? uiState.showNotesPreview
+  uiState.showTagsInView =
+    restoredUiState.showTagsInView ?? uiState.showTagsInView
   uiState.headerLineStyle =
     restoredUiState.headerLineStyle ||
     localStorage.getItem("headerLineStyle") ||
