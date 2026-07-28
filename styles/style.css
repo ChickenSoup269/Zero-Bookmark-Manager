@@ -1174,6 +1174,7 @@ html {
 .tag-filter-container {
   position: relative;
   width: 100%;
+  z-index: 999;
 }
 
 #tag-filter-toggle {
@@ -1202,7 +1203,7 @@ html {
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  max-height: 200px;
+  max-height: 320px;
   overflow-y: auto;
   padding: 8px;
 }
@@ -3245,7 +3246,6 @@ html {
   color: var(--bg-primary);
   border-color: var(--accent-color);
   transition: all 0.3s ease;
-  transform: translateY(-2px);
 }
 
 .quick-open-settings input[type="radio"] {
@@ -3258,6 +3258,25 @@ html {
   color: var(--bg-primary);
   border-color: var(--bg-primary);
   font-weight: 600;
+}
+
+.quick-open-settings .control-label,
+.quick-open-settings .segmented-control-item:hover .control-label,
+.quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  color: inherit !important;
+}
+.quick-open-settings .segmented-control-item:hover .control-label i,
+.quick-open-settings .segmented-control-item:hover .control-label span,
+.quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label i,
+.quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label span {
+  color: inherit !important;
 }
 
 /* UI chọn tag */
@@ -3331,8 +3350,7 @@ html {
 }
 
 .sidebar-tag-item:hover {
-  transform: translateY(-2px) translateX(1px);
-  /* background: var(--text-secondary); */
+  background: var(--hover-bg, var(--bg-secondary));
 }
 
 /* HR in dropdown */

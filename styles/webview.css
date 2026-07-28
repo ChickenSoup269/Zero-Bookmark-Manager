@@ -3669,7 +3669,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   border-radius: 10px;
   margin-bottom: 8px;
   border: 1px solid var(--border-color);
-  overflow: hidden;
+  overflow: visible;
   transition:
     max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.3s ease,
@@ -3681,7 +3681,8 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .menu-group.hidden {
-  display: flex !important; /* Override global .hidden { display: none } to allow animation */
+  display: flex !important; /* Override global .hidden */
+  overflow: hidden;
   max-height: 0;
   opacity: 0;
   margin-bottom: 0;
@@ -6149,3 +6150,7 @@ body.is-scrolled .webview-search-wrapper {
 }
 .dropdown-menu-2 .font-swatch, .dropdown-menu-2 .view-swatch, .dropdown-menu-2 .setting-swatch { border: 1px solid var(--border-color, #ccc); }
 .dropdown-menu-2 .font-swatch, .dropdown-menu-2 .view-swatch, .dropdown-menu-2 .setting-swatch { font-size: 0.85rem; }
+
+#sidebar-tags-list {
+  padding-bottom: 30px;
+}

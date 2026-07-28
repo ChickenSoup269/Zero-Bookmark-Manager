@@ -1939,7 +1939,7 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   border-radius: 10px;
   margin-bottom: 8px;
   border: 1px solid var(--border-color);
-  overflow: hidden;
+  overflow: visible;
   transition:
     max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.3s ease,
@@ -1951,7 +1951,9 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 }
 
 .menu-group.hidden {
-  display: flex !important; /* Override global .hidden { display: none }
+  display: flex !important; /* Override global .hidden */
+  overflow: hidden;
+}
 
 .health-action-row {
   display: grid;
