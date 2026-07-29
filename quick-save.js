@@ -243,6 +243,8 @@ function saveBookmark(event) {
   const title = titleInput.value.trim() || urlInput.value.trim()
   const url = urlInput.value.trim()
   const parentId = folderSelect.value || "1"
+  const newFolderInput = document.getElementById("new-folder-input")
+  const newFolderName = newFolderInput && !newFolderInput.classList.contains("hidden") ? newFolderInput.value.trim() : ""
   const tags = parseTags(tagsHiddenInput.value)
   const note = notesInput.value.trim()
 
@@ -272,16 +274,26 @@ function saveBookmark(event) {
     })
   }
 
-  if (existingBookmark) {
-    chrome.bookmarks.update(existingBookmark.id, { title, url }, (updated) => {
-      if (updated.parentId !== parentId) {
-        chrome.bookmarks.move(updated.id, { parentId }, (moved) => finish(moved || updated, true))
-      } else {
-        finish(updated, true)
-      }
+  function proceedSaving(finalParentId) {
+    if (existingBookmark) {
+      chrome.bookmarks.update(existingBookmark.id, { title, url }, (updated) => {
+        if (updated.parentId !== finalParentId) {
+          chrome.bookmarks.move(updated.id, { parentId: finalParentId }, (moved) => finish(moved || updated, true))
+        } else {
+          finish(updated, true)
+        }
+      })
+    } else {
+      chrome.bookmarks.create({ parentId: finalParentId, title, url }, (created) => finish(created, false))
+    }
+  }
+
+  if (newFolderName) {
+    chrome.bookmarks.create({ parentId, title: newFolderName }, (newFolder) => {
+      proceedSaving(newFolder.id)
     })
   } else {
-    chrome.bookmarks.create({ parentId, title, url }, (created) => finish(created, false))
+    proceedSaving(parentId)
   }
 }
 
@@ -471,6 +483,24 @@ fillFolders()
 loadCurrentTab()
 loadTags()
 
+const toggleNewFolderBtn = document.getElementById("toggle-new-folder-btn")
+const newFolderInput = document.getElementById("new-folder-input")
+
+if (toggleNewFolderBtn && newFolderInput) {
+  toggleNewFolderBtn.addEventListener("click", () => {
+    const isHidden = newFolderInput.classList.contains("hidden")
+    if (isHidden) {
+      newFolderInput.classList.remove("hidden")
+      toggleNewFolderBtn.innerHTML = '<i class="fas fa-times"></i>'
+      newFolderInput.focus()
+    } else {
+      newFolderInput.classList.add("hidden")
+      toggleNewFolderBtn.innerHTML = '<i class="fas fa-folder-plus"></i>'
+      newFolderInput.value = ""
+    }
+  })
+}
+
 const suggestTagBtn = document.getElementById("suggest-tag-btn")
 if (suggestTagBtn) {
   suggestTagBtn.addEventListener("click", async () => {
@@ -560,7 +590,8 @@ const qsTranslations = {
     lblNotes: "Notes",
     phNotes: "Why this page matters, what to revisit, or any context you need later.",
     btnSaveBookmark: "Save Bookmark",
-    statusNoSourceTab: "No source tab specified."
+    statusNoSourceTab: "No source tab specified.",
+    phNewFolder: "New folder name..."
   },
   vi: {
     qsTitle: "Lưu Nhanh",
@@ -579,7 +610,8 @@ const qsTranslations = {
     lblNotes: "Ghi chú",
     phNotes: "Tại sao trang này quan trọng, cần xem lại gì, hoặc bất kỳ ngữ cảnh nào cần lưu lại.",
     btnSaveBookmark: "Lưu Bookmark",
-    statusNoSourceTab: "Không tìm thấy tab nguồn."
+    statusNoSourceTab: "Không tìm thấy tab nguồn.",
+    phNewFolder: "Tên thư mục mới..."
   }
 };
 
