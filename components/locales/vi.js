@@ -447,6 +447,7 @@ export const vi = {
   quickOpenPopup: "Popup mặc định",
   quickOpenSidePanel: "Mở panel mặc định",
   quickOpenWeb: "Mở web mặc định",
+  configureShortcuts: "Cài đặt Phím tắt",
   showNotesPreview: "Hiển thị xem trước ghi chú",
   showTagsInView: "Hiển thị tags trong view",
 
@@ -587,3 +588,4 @@ export const vi = {
   cpTabFolders: "Thư mục",
   cpTabCommands: "Lệnh"
 }
+

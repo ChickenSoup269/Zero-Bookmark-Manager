@@ -43,5 +43,15 @@
   "oauth2": {
     "client_id": "222670807769-mbl3s23cjqmmuvuhvjt22r3hesiri16p.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/drive.file"]
+  },
+  "commands": {
+    "open-quick-save": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "MacCtrl+Shift+Y"
+      },
+      "description": "Open Quick Save"
+    }
   }
 }
+

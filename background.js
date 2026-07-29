@@ -567,3 +567,25 @@ chrome.windows.onRemoved.addListener((windowId) => {
     quickSaveWindowId = null
   }
 })
+
+chrome.commands.onCommand.addListener((command, tab) => {
+  if (command === "open-quick-save") {
+    findExistingExtensionPopup("quick-save.html", (existingWindow) => {
+      if (existingWindow) {
+        const quickSaveTab = existingWindow.tabs?.find((windowTab) =>
+          windowTab.url?.startsWith(chrome.runtime.getURL("quick-save.html")),
+        )
+        if (quickSaveTab?.id) {
+          chrome.tabs.update(quickSaveTab.id, {
+            active: true,
+            url: getQuickSaveUrl(tab),
+          })
+        }
+        chrome.windows.update(existingWindow.id, { focused: true })
+        quickSaveWindowId = existingWindow.id
+      } else {
+        createQuickSaveWindow(tab)
+      }
+    })
+  }
+})

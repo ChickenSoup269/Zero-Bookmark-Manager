@@ -743,6 +743,13 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         openSettings: true,
         ensureSidebarOpen: true,
       },
+      {
+        selector: "#quick-open-settings",
+        title: language === "vi" ? "Mở nhanh Quick Save" : "Quick Save Shortcut",
+        message: language === "vi" ? "Sử dụng phím tắt (mặc định Ctrl+Shift+Y / MacCtrl+Shift+Y) để mở nhanh màn hình Quick Save. (Có thể đổi phím tắt trong cài đặt Tiện ích của trình duyệt)" : "Use shortcut (default Ctrl+Shift+Y / MacCtrl+Shift+Y) to open Quick Save. (Can be changed in browser Extension settings)",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
     ]
   }
 
@@ -769,6 +776,12 @@ function getFirstRunTourSteps(isWebviewPage = false) {
       selector: "#open-side-panel-option",
       title: t.firstRunTourSidePanelTitle,
       message: t.firstRunTourSidePanelMsg,
+      openSettings: true,
+    },
+    {
+      selector: "#quick-open-settings",
+      title: language === "vi" ? "Mở nhanh Quick Save" : "Quick Save Shortcut",
+      message: language === "vi" ? "Sử dụng phím tắt (mặc định Ctrl+Shift+Y / MacCtrl+Shift+Y) để mở nhanh màn hình Quick Save. (Có thể đổi phím tắt trong cài đặt Tiện ích của trình duyệt)" : "Use shortcut (default Ctrl+Shift+Y / MacCtrl+Shift+Y) to open Quick Save. (Can be changed in browser Extension settings)",
       openSettings: true,
     },
     {
@@ -1691,3 +1704,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   init()
 })
+
+const configureShortcutsBtns = document.querySelectorAll("#configure-shortcuts-btn, #configure-shortcuts-btn-2");
+configureShortcutsBtns.forEach(btn => {
+  if (btn) {
+    btn.addEventListener("click", () => {
+      chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
+    });
+  }
+});
