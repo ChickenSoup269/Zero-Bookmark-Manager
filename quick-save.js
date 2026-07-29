@@ -2,15 +2,19 @@ const form = document.getElementById("quick-save-form")
 const titleInput = document.getElementById("title")
 const urlInput = document.getElementById("url")
 const folderSelect = document.getElementById("folder")
-const tagsInput = document.getElementById("tags")
+const tagsHiddenInput = document.getElementById("tags")
+const tagsInput = document.getElementById("tags-input")
+const tagsContainer = document.getElementById("tags-container")
 const notesInput = document.getElementById("notes")
 const saveButton = document.getElementById("save")
 const statusBox = document.getElementById("status")
 const openDashboardButton = document.getElementById("open-dashboard")
+const quickOpenActionSelect = document.getElementById("quick-open-action")
 
 let currentTab = null
 let existingBookmark = null
 let preferredFolderId = "1"
+let currentTags = []
 
 const AVAILABLE_THEMES = [
   "light",
@@ -130,7 +134,11 @@ function fillFolders() {
       .forEach((folder) => {
         const option = document.createElement("option")
         option.value = folder.id
-        option.textContent = `${"  ".repeat(Math.max(0, folder.depth - 1))}${folder.title}`
+        
+        const actualDepth = Math.max(0, folder.depth - 1);
+        const prefix = actualDepth > 0 ? "\u00A0\u00A0".repeat(actualDepth) + "└─ " : "";
+        
+        option.textContent = `${prefix}${folder.title}`
         folderSelect.appendChild(option)
       })
 
@@ -141,17 +149,20 @@ function fillFolders() {
 }
 
 function fillExistingMetadata(bookmarkId) {
-  chrome.storage.local.get(["bookmarkTags", "bookmarkNotes"], (data) => {
+  chrome.storage.local.get(["bookmarkTags", "bookmarkNotes", "tagColors", "tagTextColors"], (data) => {
     const tags = data.bookmarkTags?.[bookmarkId] || []
     const note = data.bookmarkNotes?.[bookmarkId] || ""
-    tagsInput.value = tags.join(", ")
+    if (data.tagColors) tagColorsCache = data.tagColors
+    if (data.tagTextColors) tagTextColorsCache = data.tagTextColors
+    currentTags = [...tags]
+    renderTags()
     notesInput.value = note
   })
 }
 
 function populateFromTab(tab) {
   if (chrome.runtime.lastError || !tab?.url) {
-    showStatus("No active page found.", "error")
+    showStatus(tStatus("statusNoPage"), "error")
     saveButton.disabled = true
     return
   }
@@ -161,7 +172,10 @@ function populateFromTab(tab) {
   urlInput.value = tab.url
 
   if (/^(chrome|edge|about|chrome-extension):\/\//i.test(tab.url)) {
-    showStatus("This browser page cannot be saved as a bookmark.", "error")
+    showStatus(
+      tStatus("statusErrorContext"),
+      "error",
+    )
     saveButton.disabled = true
     return
   }
@@ -175,7 +189,10 @@ function populateFromTab(tab) {
         folderSelect.value = preferredFolderId
       }
       fillExistingMetadata(existingBookmark.id)
-      showStatus("This page is already bookmarked. Saving will update its tags and notes.")
+      showStatus(
+        tStatus("statusAlreadySaved"),
+        "success",
+      )
     }
   })
 }
@@ -183,7 +200,7 @@ function populateFromTab(tab) {
 function loadCurrentTab() {
   const tabId = getSourceTabId()
   if (!tabId) {
-    showStatus("No source tab specified.", "error")
+    showStatus(tStatus("statusNoSourceTab"), "error")
     saveButton.disabled = true
     return
   }
@@ -226,25 +243,30 @@ function saveBookmark(event) {
   const title = titleInput.value.trim() || urlInput.value.trim()
   const url = urlInput.value.trim()
   const parentId = folderSelect.value || "1"
-  const tags = parseTags(tagsInput.value)
+  const tags = parseTags(tagsHiddenInput.value)
   const note = notesInput.value.trim()
 
   saveButton.disabled = true
-  showStatus("Saving...")
+  showStatus(tStatus("statusSaving"), "success")
 
-  const finish = (bookmark, actionText) => {
-    if (chrome.runtime.lastError) {
-      showStatus(chrome.runtime.lastError.message || "Could not save bookmark.", "error")
+  function finish(bookmark, isUpdate) {
+    if (!bookmark) {
+      showStatus(tStatus("statusErrorSave"), "error")
       saveButton.disabled = false
       return
     }
 
     saveMetadata(bookmark.id, tags, note, () => {
       if (chrome.runtime.lastError) {
-        showStatus(chrome.runtime.lastError.message || "Bookmark saved, but metadata failed.", "error")
+        showStatus(tStatus("statusErrorMeta"), "error")
       } else {
-        existingBookmark = bookmark
-        showStatus(`${actionText} with ${tags.length} tag${tags.length === 1 ? "" : "s"} and notes.`, "success")
+        const verbKey = isUpdate ? "statusUpdatedSuccess" : "statusSavedSuccess"
+        showStatus(tStatus(verbKey, currentTags.length))
+        
+        // Close window after 2 seconds
+        setTimeout(() => {
+          window.close()
+        }, 2000)
       }
       saveButton.disabled = false
     })
@@ -252,15 +274,14 @@ function saveBookmark(event) {
 
   if (existingBookmark) {
     chrome.bookmarks.update(existingBookmark.id, { title, url }, (updated) => {
-      if (chrome.runtime.lastError) return finish(existingBookmark, "Updated bookmark")
       if (updated.parentId !== parentId) {
-        chrome.bookmarks.move(updated.id, { parentId }, (moved) => finish(moved || updated, "Updated bookmark"))
+        chrome.bookmarks.move(updated.id, { parentId }, (moved) => finish(moved || updated, true))
       } else {
-        finish(updated, "Updated bookmark")
+        finish(updated, true)
       }
     })
   } else {
-    chrome.bookmarks.create({ parentId, title, url }, (created) => finish(created, "Saved bookmark"))
+    chrome.bookmarks.create({ parentId, title, url }, (created) => finish(created, false))
   }
 }
 
@@ -268,7 +289,327 @@ openDashboardButton.addEventListener("click", () => {
   chrome.tabs.create({ url: chrome.runtime.getURL("bookmarks.html") })
 })
 
-form.addEventListener("submit", saveBookmark)
+// Initialize quick open action setting
+chrome.storage.local.get(["quickOpenAction"], (result) => {
+  const action = result.quickOpenAction || "quickSave"
+  const btns = document.querySelectorAll(".quick-action-btn");
+  btns.forEach(btn => {
+    if (btn.dataset.value === action) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+    
+    // Add click event listener to each button
+    btn.addEventListener("click", () => {
+      btns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      chrome.storage.local.set({ quickOpenAction: btn.dataset.value });
+    });
+  });
+})
+
+let tagColorsCache = {}
+let tagTextColorsCache = {}
+let allAvailableTags = []
+let activeSuggestionIndex = -1
+const customTagSuggestions = document.getElementById("custom-tag-suggestions")
+
+function loadTags() {
+  chrome.storage.local.get(["bookmarkTags", "tagColors", "tagTextColors"], (result) => {
+    const bookmarkTags = result.bookmarkTags || {}
+    tagColorsCache = result.tagColors || {}
+    tagTextColorsCache = result.tagTextColors || {}
+    const allTags = new Set()
+    Object.values(bookmarkTags).forEach((tags) => {
+      tags.forEach((tag) => allTags.add(tag))
+    })
+    allAvailableTags = Array.from(allTags).sort()
+  })
+}
+
+function showSuggestions(query) {
+  if (!customTagSuggestions) return;
+  const filtered = allAvailableTags.filter(t => t.toLowerCase().includes(query.toLowerCase()) && !currentTags.includes(t))
+  if (filtered.length === 0) {
+    customTagSuggestions.classList.add("hidden")
+    return
+  }
+  
+  customTagSuggestions.innerHTML = ""
+  filtered.forEach((tag) => {
+    const item = document.createElement("div")
+    item.className = "suggestion-item"
+    
+    const dot = document.createElement("span")
+    dot.className = "suggestion-color-dot"
+    dot.style.backgroundColor = tagColorsCache[tag] || "var(--accent-color)"
+    
+    const text = document.createElement("span")
+    text.textContent = tag
+    
+    item.appendChild(dot)
+    item.appendChild(text)
+    
+    item.addEventListener("mousedown", (e) => {
+      e.preventDefault() // prevent input blur
+      addTag(tag)
+    })
+    
+    customTagSuggestions.appendChild(item)
+  })
+  
+  customTagSuggestions.classList.remove("hidden")
+  activeSuggestionIndex = -1
+}
+
+function addTag(tag) {
+  if (tag && !currentTags.includes(tag)) {
+    currentTags.push(tag)
+    tagsInput.value = ""
+    renderTags()
+    if (customTagSuggestions) customTagSuggestions.classList.add("hidden")
+  }
+}
+
+function renderTags() {
+  tagsContainer.querySelectorAll(".tag-chip").forEach(c => c.remove())
+  currentTags.forEach((tag, index) => {
+    const chip = document.createElement("div")
+    chip.className = "tag-chip"
+    
+    // Apply custom colors if they exist
+    const bgColor = tagColorsCache[tag]
+    const textColor = tagTextColorsCache[tag]
+    if (bgColor) chip.style.backgroundColor = bgColor
+    if (textColor) chip.style.color = textColor
+
+    chip.innerHTML = `<span>${tag}</span><span class="remove" data-index="${index}">&times;</span>`
+    tagsContainer.insertBefore(chip, tagsInput)
+  })
+  tagsHiddenInput.value = currentTags.join(",")
+}
+
+tagsContainer.addEventListener("click", (e) => {
+  if (e.target.classList.contains("remove")) {
+    currentTags.splice(e.target.getAttribute("data-index"), 1)
+    renderTags()
+  } else {
+    tagsInput.focus()
+  }
+})
+
+tagsInput.addEventListener("input", (e) => {
+  showSuggestions(e.target.value.trim().replace(/,/g, ""))
+})
+
+tagsInput.addEventListener("focus", (e) => {
+  showSuggestions(e.target.value.trim().replace(/,/g, ""))
+})
+
+tagsInput.addEventListener("blur", () => {
+  if (customTagSuggestions) customTagSuggestions.classList.add("hidden")
+})
+
+if (customTagSuggestions) {
+  customTagSuggestions.addEventListener("mousedown", (e) => {
+    e.preventDefault() // prevent blur when clicking scrollbar
+  })
+}
+
+tagsInput.addEventListener("keydown", (e) => {
+  const items = customTagSuggestions ? customTagSuggestions.querySelectorAll(".suggestion-item") : []
+  
+  if (e.key === "ArrowDown") {
+    e.preventDefault()
+    if (customTagSuggestions && !customTagSuggestions.classList.contains("hidden") && items.length > 0) {
+      activeSuggestionIndex = (activeSuggestionIndex + 1) % items.length
+      updateActiveSuggestion(items)
+    }
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault()
+    if (customTagSuggestions && !customTagSuggestions.classList.contains("hidden") && items.length > 0) {
+      activeSuggestionIndex = (activeSuggestionIndex - 1 + items.length) % items.length
+      updateActiveSuggestion(items)
+    }
+  } else if (e.key === "Enter" || e.key === ",") {
+    e.preventDefault()
+    if (customTagSuggestions && !customTagSuggestions.classList.contains("hidden") && activeSuggestionIndex >= 0) {
+      addTag(items[activeSuggestionIndex].querySelector("span:last-child").textContent)
+    } else {
+      addTag(tagsInput.value.trim().replace(/,/g, ""))
+    }
+  } else if (e.key === "Backspace" && !tagsInput.value && currentTags.length) {
+    currentTags.pop()
+    renderTags()
+  }
+})
+
+function updateActiveSuggestion(items) {
+  items.forEach((item, index) => {
+    if (index === activeSuggestionIndex) {
+      item.classList.add("active")
+      item.scrollIntoView({ block: "nearest" })
+    } else {
+      item.classList.remove("active")
+    }
+  })
+}
+
+form.addEventListener("submit", (e) => {
+  // If user hasn't pressed enter on a typed tag, add it
+  const pendingTag = tagsInput.value.trim().replace(/,/g, "")
+  if (pendingTag && !currentTags.includes(pendingTag)) {
+    currentTags.push(pendingTag)
+    renderTags()
+  }
+  saveBookmark(e)
+})
+
 initTheme()
 fillFolders()
 loadCurrentTab()
+loadTags()
+
+const suggestTagBtn = document.getElementById("suggest-tag-btn")
+if (suggestTagBtn) {
+  suggestTagBtn.addEventListener("click", async () => {
+    if (!currentTab || !currentTab.url) return;
+    
+    suggestTagBtn.disabled = true;
+    const suggestTagIcon = document.getElementById("suggest-tag-icon");
+    const suggestTagText = document.getElementById("suggest-tag-text");
+    
+    if (suggestTagIcon) suggestTagIcon.className = "fas fa-spinner fa-spin";
+    if (suggestTagText) suggestTagText.textContent = "...";
+    
+    let suggestedTag = "";
+    
+    try {
+      const data = await new Promise(resolve => chrome.storage.local.get(["aiConfig"], resolve));
+      const config = data.aiConfig || { model: "gemini", apiKey: "" };
+      
+      if (config.apiKey && config.model === "gemini") {
+        const modelName = config.modelName || "gemini-1.5-flash";
+        let apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=${config.apiKey}";
+        
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.\nTitle: \"${currentTab.title}\", URL: \"${currentTab.url}\"" }] }]
+          })
+        });
+        
+        if (response.ok) {
+          const resData = await response.json();
+          if (resData.candidates && resData.candidates[0].content.parts[0].text) {
+            suggestedTag = resData.candidates[0].content.parts[0].text.trim().replace(/['"]/g, '').substring(0, 20);
+          }
+        }
+      } else if (config.model === "local" && typeof self.ai !== "undefined" && self.ai.languageModel) {
+          const session = await self.ai.languageModel.create({
+              systemPrompt: "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark."
+          });
+          const result = await session.prompt("Title: \"${currentTab.title}\", URL: \"${currentTab.url}\"");
+          if (result) {
+              suggestedTag = result.trim().replace(/['"]/g, '').substring(0, 20);
+          }
+      }
+    } catch (e) {
+      console.error("AI Categorize failed", e);
+    }
+    
+    if (!suggestedTag) {
+      try {
+        const urlObj = new URL(currentTab.url);
+        let hostname = urlObj.hostname.replace("www.", "");
+        suggestedTag = hostname.split(".")[0];
+      } catch(e) {}
+    }
+    
+    if (suggestedTag) {
+      suggestedTag = suggestedTag.charAt(0).toUpperCase() + suggestedTag.slice(1).toLowerCase();
+      addTag(suggestedTag);
+    }
+    
+    suggestTagBtn.disabled = false;
+    if (suggestTagIcon) suggestTagIcon.className = "fas fa-wand-magic-sparkles";
+    if (suggestTagText) {
+      const lang = localStorage.getItem("appLanguage") || "en";
+      suggestTagText.textContent = qsTranslations[lang]?.btnSuggestText || "Suggest";
+    }
+  });
+}
+
+const qsTranslations = {
+  en: {
+    qsTitle: "Quick Save",
+    qsDesc: "Save the current page with tags and notes.",
+    qsAction: "Click Extension Action",
+    btnQuickSave: "Quick Save",
+    btnPopup: "Popup",
+    btnPanel: "Panel",
+    btnFull: "Full",
+    lblTitle: "Title",
+    lblUrl: "URL",
+    lblFolder: "Folder",
+    lblTags: "Tags",
+    btnSuggestText: "Suggest",
+    phTags: "Type and press Enter...",
+    lblNotes: "Notes",
+    phNotes: "Why this page matters, what to revisit, or any context you need later.",
+    btnSaveBookmark: "Save Bookmark",
+    statusNoSourceTab: "No source tab specified."
+  },
+  vi: {
+    qsTitle: "Lưu Nhanh",
+    qsDesc: "Lưu trang hiện tại kèm theo thẻ và ghi chú.",
+    qsAction: "Hành động mở Extension",
+    btnQuickSave: "Lưu Nhanh",
+    btnPopup: "Cửa sổ Popup",
+    btnPanel: "Bảng bên",
+    btnFull: "Toàn trang",
+    lblTitle: "Tiêu đề",
+    lblUrl: "Đường dẫn",
+    lblFolder: "Thư mục",
+    lblTags: "Thẻ (Tags)",
+    btnSuggestText: "Gợi ý",
+    phTags: "Nhập và nhấn Enter...",
+    lblNotes: "Ghi chú",
+    phNotes: "Tại sao trang này quan trọng, cần xem lại gì, hoặc bất kỳ ngữ cảnh nào cần lưu lại.",
+    btnSaveBookmark: "Lưu Bookmark",
+    statusNoSourceTab: "Không tìm thấy tab nguồn."
+  }
+};
+
+function applyTranslations() {
+  const lang = localStorage.getItem("appLanguage") || "en";
+  const t = qsTranslations[lang] || qsTranslations.en;
+  
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (t[key]) {
+      el.textContent = t[key];
+    }
+  });
+  
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    const key = el.getAttribute("data-i18n-placeholder");
+    if (t[key]) {
+      el.setAttribute("placeholder", t[key]);
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", applyTranslations);
+applyTranslations(); // Run immediately in case DOM is already loaded
+
+function tStatus(key, ...args) {
+  const lang = localStorage.getItem("appLanguage") || "en";
+  const t = qsTranslations[lang] || qsTranslations.en;
+  let text = t[key] || key;
+  args.forEach((arg, index) => {
+    text = text.replace("{" + index + "}", arg);
+  });
+  return text;
+}

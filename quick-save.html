@@ -8,14 +8,15 @@
   <link rel="stylesheet" href="./styles/variables.css">
   <link rel="stylesheet" href="./styles/theme.css">
   <link rel="stylesheet" href="./styles/quick-save.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body class="dark-theme">
   <main class="quick-save-shell">
     <header class="quick-save-header">
       <div>
-        <h1>Quick Save</h1>
-        <p>Save the current page with tags and notes.</p>
+        <h1 data-i18n="qsTitle">Quick Save</h1>
+        <p data-i18n="qsDesc">Save the current page with tags and notes.</p>
       </div>
       <button id="open-dashboard" class="icon-button" type="button" title="Open full dashboard" aria-label="Open full dashboard">↗</button>
     </header>
@@ -24,32 +25,52 @@
 
     <form id="quick-save-form" class="quick-save-form">
       <label>
-        <span>Title</span>
+        <span data-i18n="qsAction">Click Extension Action</span>
+        <div id="quick-open-action-group" class="quick-action-group">
+          <button type="button" class="quick-action-btn active" data-value="quickSave" data-i18n="btnQuickSave">Quick Save</button>
+          <button type="button" class="quick-action-btn" data-value="popup" data-i18n="btnPopup">Popup</button>
+          <button type="button" class="quick-action-btn" data-value="sidepanel" data-i18n="btnPanel">Panel</button>
+          <button type="button" class="quick-action-btn" data-value="web" data-i18n="btnFull">Full</button>
+        </div>
+      </label>
+
+      <label>
+        <span data-i18n="lblTitle">Title</span>
         <input id="title" type="text" autocomplete="off" required>
       </label>
 
       <label>
-        <span>URL</span>
+        <span data-i18n="lblUrl">URL</span>
         <input id="url" type="url" autocomplete="off" required>
       </label>
 
       <label>
-        <span>Folder</span>
+        <span data-i18n="lblFolder">Folder</span>
         <select id="folder"></select>
       </label>
 
-      <label>
-        <span>Tags</span>
-        <input id="tags" type="text" autocomplete="off" placeholder="design, reading, work">
+      <label style="position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <span data-i18n="lblTags">Tags</span>
+          <button type="button" id="suggest-tag-btn" class="icon-button" style="width: auto; height: 24px; padding: 0 8px; font-size: 0.75rem; border-radius: 12px; gap: 4px; display: inline-flex; justify-content: center; align-items: center;">
+            <i class="fas fa-wand-magic-sparkles" id="suggest-tag-icon"></i>
+            <span id="suggest-tag-text" data-i18n="btnSuggestText">Suggest</span>
+          </button>
+        </div>
+        <div id="tags-container" class="tags-container">
+          <input id="tags-input" class="tags-input" type="text" autocomplete="off" placeholder="Type and press Enter..." data-i18n-placeholder="phTags">
+        </div>
+        <div id="custom-tag-suggestions" class="custom-tag-suggestions hidden"></div>
+        <input type="hidden" id="tags" value="">
       </label>
 
       <label>
-        <span>Notes</span>
-        <textarea id="notes" rows="5" placeholder="Why this page matters, what to revisit, or any context you need later."></textarea>
+        <span data-i18n="lblNotes">Notes</span>
+        <textarea id="notes" rows="5" placeholder="Why this page matters, what to revisit, or any context you need later." data-i18n-placeholder="phNotes"></textarea>
       </label>
 
       <div class="actions">
-        <button id="save" class="primary-button" type="submit">Save Bookmark</button>
+        <button id="save" class="primary-button" type="submit" data-i18n="btnSaveBookmark">Save Bookmark</button>
       </div>
     </form>
   </main>
