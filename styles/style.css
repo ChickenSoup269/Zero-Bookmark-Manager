@@ -3238,14 +3238,11 @@ html {
   cursor: pointer;
   background: var(--bg-primary);
   color: var(--text-primary);
-  transition: all 0.4s ease;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .quick-open-settings label:hover {
-  background: var(--text-primary);
-  color: var(--bg-primary);
-  border-color: var(--accent-color);
-  transition: all 0.3s ease;
+  background: var(--hover-bg);
 }
 
 .quick-open-settings input[type="radio"] {
@@ -3271,12 +3268,17 @@ html {
   align-items: center;
   gap: 8px;
   color: inherit !important;
+  font-weight: inherit !important;
 }
 .quick-open-settings .segmented-control-item:hover .control-label i,
 .quick-open-settings .segmented-control-item:hover .control-label span,
 .quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label i,
 .quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label span {
   color: inherit !important;
+}
+
+.quick-open-settings .control-label i {
+  font-weight: 900 !important; /* FontAwesome solid requires 900, if it changes it shifts text */
 }
 
 /* UI chọn tag */

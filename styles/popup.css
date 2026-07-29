@@ -2056,6 +2056,7 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   line-height: 1;
   opacity: 0.85;
   margin-bottom: 2px;
+  font-weight: 900 !important;
 }
 
 .segmented-control-item .control-label span {
@@ -2190,4 +2191,13 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
     darken(var(--accent-color), 10%)
   );
   color: white;
+}
+/* Make controls scale with zoom */
+.controls .select {
+  flex: 1;
+  min-width: 120px;
+}
+.bottom-controls {
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }

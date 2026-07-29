@@ -4356,6 +4356,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   line-height: 1;
   opacity: 0.85;
   margin-bottom: 2px;
+  font-weight: 900 !important;
 }
 
 .segmented-control-item .control-label span {
