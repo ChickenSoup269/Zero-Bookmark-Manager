@@ -383,6 +383,9 @@ function createDropdownHTML(bookmark, language) {
         }
       </button>
       <div class="dropdown-menu bookmark-dropdown-menu hidden">
+        <div class="dropdown-menu-header" style="padding: 6px 12px; font-weight: 600; font-size: 0.85em; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;" title="${escapeHtml(bookmark.title || bookmark.url)}">
+          ${escapeHtml(bookmark.title || bookmark.url)}
+        </div>
         <button class="menu-item pin-btn" data-id="${bookmark.id}">
             <i class="fas fa-thumbtack" style="${iconStyle}"></i>
             ${
