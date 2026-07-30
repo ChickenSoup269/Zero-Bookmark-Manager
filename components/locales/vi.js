@@ -16,6 +16,8 @@ export const vi = {
   addToFolder: "Thêm vào Thư mục",
   deleteFolder: "Xóa Thư mục",
   settings: "Cài đặt",
+  tabDashboard: "Bảng Điều Khiển",
+  tabQuickSave: "Lưu Nhanh",
   exportBookmarks: "Xuất Bookmarks",
   importBookmarks: "Nhập Bookmarks",
   selectAll: "Chọn Tất cả",

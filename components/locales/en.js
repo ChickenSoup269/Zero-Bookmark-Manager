@@ -16,6 +16,8 @@ export const en = {
   "addToFolder": "Add to Folder",
   "deleteFolder": "Delete Folder",
   "settings": "Settings",
+  "tabDashboard": "Dashboard",
+  "tabQuickSave": "Quick Save",
   "exportBookmarks": "Export Bookmarks",
   "importBookmarks": "Import Bookmarks",
   "selectAll": "Select All",

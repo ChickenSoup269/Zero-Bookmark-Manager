@@ -13,6 +13,18 @@ body {
   overflow-x: hidden;
 }
 
+body.embedded {
+  min-width: 100%;
+  min-height: 100%;
+  background-image: none;
+  background-color: transparent;
+}
+
+body.embedded .quick-save-shell {
+  padding: 0 16px 16px 16px;
+  animation: none;
+}
+
 .quick-save-shell {
   display: flex;
   flex-direction: column;
@@ -139,15 +151,15 @@ textarea {
 input:hover,
 select:hover,
 textarea:hover {
-  border-color: var(--focus-outline);
+  border-color: var(--accent-color);
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--focus-outline);
+  border-color: var(--accent-color);
   background-color: var(--bg-primary);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+  box-shadow: 0 0 0 3px var(--accent-color-light);
   transform: none; /* Removed the lift effect to match main style */
 }
 
@@ -194,8 +206,8 @@ option:hover {
 }
 
 .tags-container:focus-within {
-  border-color: var(--focus-outline);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-color-light);
 }
 
 .tag-chip {
@@ -279,14 +291,16 @@ option:hover {
 }
 
 .status {
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  padding: 14px 16px;
+  padding: 12px 16px;
+  border-radius: var(--border-radius, 8px);
   font-size: 0.9rem;
-  line-height: 1.4;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+  margin-top: 25px;
   margin-bottom: 8px;
 }
 
@@ -295,16 +309,20 @@ option:hover {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.status.error {
-  border-color: color-mix(in srgb, var(--danger-color) 40%, transparent);
-  background: color-mix(in srgb, var(--danger-color) 10%, transparent);
-  color: var(--danger-color);
+.status.hidden {
+  display: none !important;
 }
 
 .status.success {
   border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
   background: color-mix(in srgb, var(--accent-color) 10%, transparent);
   color: var(--accent-color);
+}
+
+.status.error {
+  border-color: color-mix(in srgb, var(--danger-color) 40%, transparent);
+  background: color-mix(in srgb, var(--danger-color) 10%, transparent);
+  color: var(--danger-color);
 }
 
 .hidden {
@@ -384,8 +402,8 @@ select#folder {
   outline: none;
 }
 select#folder:focus {
-  border-color: var(--focus-outline, #4a90e2);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-color-light);
 }
 /* Quick Action Buttons */
 .quick-action-group {
@@ -397,11 +415,11 @@ select#folder:focus {
 .quick-action-btn {
   flex: 1;
   padding: 8px 4px;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius, 8px);
-  background-color: var(--bg-secondary);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background-color: transparent;
   color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-fast, 0.2s);
@@ -409,12 +427,12 @@ select#folder:focus {
 }
 
 .quick-action-btn:hover {
-  border-color: var(--focus-outline);
-  background-color: color-mix(in srgb, var(--bg-secondary) 80%, white);
+  color: var(--text-primary);
+  background-color: var(--hover-bg, rgba(0,0,0,0.03));
 }
 
 .quick-action-btn.active {
-  background-color: var(--accent-color);
-  color: var(--bg-primary);
-  border-color: var(--accent-color);
+  color: var(--accent-color, #007bff);
+  background-color: transparent;
+  border-bottom: 2px solid var(--accent-color, #007bff);
 }

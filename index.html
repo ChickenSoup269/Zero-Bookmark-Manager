@@ -291,6 +291,19 @@
             </div>
             </div>
         </div>
+
+        <div class="app-tabs-wrapper">
+            <div class="app-tabs">
+                <button id="tab-dashboard" class="app-tab-btn active" data-i18n="tabDashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+                <button id="tab-quick-save" class="app-tab-btn" data-i18n="tabQuickSave">
+                    <i class="fas fa-bolt"></i> Quick Save
+                </button>
+            </div>
+        </div>
+
+        <div id="dashboard-view" class="tab-content active" style="display: flex; flex-direction: column; flex: 1; overflow-y: auto;">
         <div class="controls">
             <select id="folder-filter" class="select">
                 <option value="" data-i18n="allBookmarks">All Bookmarks</option>
@@ -660,6 +673,12 @@
                 </div>
             </div>
         </div>
+        </div> <!-- end dashboard-view -->
+        
+        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1; overflow-y: auto;">
+            <iframe id="quick-save-frame" src="quick-save.html?embedded=true" style="width: 100%; border: none; border-radius: 8px;" scrolling="no"></iframe>
+        </div>
+
         <!-- footer -->
         <div class="footer">
             <p class="footer-text">
@@ -716,6 +735,7 @@
     <script src="./components/year.js" type="module"></script>
     <script src="./components/option/option.js" type="module"></script>
     <script src="main.js" type="module"></script>
+    <script src="./components/tabs.js" type="module"></script>
     <script src="./components/localization.js" type="module"></script>
 </body>
 

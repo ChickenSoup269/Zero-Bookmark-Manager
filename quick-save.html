@@ -46,13 +46,8 @@
 
       <label>
         <span data-i18n="lblFolder">Folder</span>
-        <div style="display: flex; gap: 8px;">
-          <select id="folder" style="flex: 1;"></select>
-          <button type="button" id="toggle-new-folder-btn" class="icon-button" title="Create new folder" style="width: 36px; flex-shrink: 0;">
-            <i class="fas fa-folder-plus"></i>
-          </button>
-        </div>
-        <input id="new-folder-input" class="hidden" type="text" autocomplete="off" placeholder="New folder name..." data-i18n-placeholder="phNewFolder" style="margin-top: 4px;">
+        <select id="folder" style="width: 100%; margin-bottom: 8px;"></select>
+        <input id="new-folder-input" type="text" autocomplete="off" placeholder="New folder name..." data-i18n-placeholder="phNewFolder">
       </label>
 
       <label style="position: relative;">

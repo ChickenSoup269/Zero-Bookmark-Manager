@@ -11,6 +11,104 @@ const statusBox = document.getElementById("status")
 const openDashboardButton = document.getElementById("open-dashboard")
 const quickOpenActionSelect = document.getElementById("quick-open-action")
 
+// Hide header and adjust padding if embedded in the main dashboard
+const isEmbedded = new URLSearchParams(window.location.search).get("embedded") === "true";
+if (isEmbedded) {
+    document.body.classList.add("embedded");
+    const header = document.querySelector(".quick-save-header");
+    if (header) header.style.display = "none";
+    const actionGroup = document.getElementById("quick-open-action-group");
+    if (actionGroup && actionGroup.parentElement) {
+        actionGroup.parentElement.style.display = "none";
+    }
+
+    // Auto resize iframe height based on content to avoid internal scrollbar and jumping
+    let lastHeight = 0;
+    const updateHeight = () => {
+        if (window.parent) {
+            const frame = window.parent.document.getElementById("quick-save-frame");
+            const shell = document.querySelector(".quick-save-shell");
+            if (frame && shell) {
+                // Get the actual height of the content plus some padding buffer
+                const newHeight = shell.offsetHeight + 24; 
+                if (Math.abs(newHeight - lastHeight) > 2) {
+                    lastHeight = newHeight;
+                    frame.style.height = newHeight + "px";
+                }
+            }
+        }
+    };
+    
+    // Use ResizeObserver on the content container instead of body to prevent layout thrashing
+    const shell = document.querySelector(".quick-save-shell");
+    if (shell) {
+        const resizeObserver = new ResizeObserver(updateHeight);
+        resizeObserver.observe(shell);
+    }
+    
+    window.addEventListener("load", updateHeight);
+    setTimeout(updateHeight, 100);
+}
+
+const qsTranslations = {
+  en: {
+    qsTitle: "Quick Save",
+    qsDesc: "Save the current page with tags and notes.",
+    qsAction: "Click Extension Action",
+    btnQuickSave: "Quick Save",
+    btnPopup: "Popup",
+    btnPanel: "Panel",
+    btnFull: "Full",
+    lblTitle: "Title",
+    lblUrl: "URL",
+    lblFolder: "Folder",
+    lblTags: "Tags",
+    btnSuggestText: "Suggest",
+    phTags: "Type and press Enter...",
+    lblNotes: "Notes",
+    phNotes: "Why this page matters, what to revisit, or any context you need later.",
+    btnSaveBookmark: "Save Bookmark",
+    statusNoSourceTab: "No source tab specified.",
+    phNewFolder: "New folder name...",
+    statusErrorContext: "Cannot save special browser pages.",
+    statusNoPage: "No active page found to save.",
+    statusAlreadySaved: "Bookmark already exists.",
+    statusSaving: "Saving bookmark...",
+    statusErrorSave: "Error saving bookmark.",
+    statusErrorMeta: "Error saving tags/notes.",
+    statusUpdatedSuccess: "Updated successfully! ({0} tags)",
+    statusSavedSuccess: "Saved successfully! ({0} tags)"
+  },
+  vi: {
+    qsTitle: "Lưu Nhanh",
+    qsDesc: "Lưu trang hiện tại kèm theo thẻ và ghi chú.",
+    qsAction: "Hành động mở Extension",
+    btnQuickSave: "Lưu Nhanh",
+    btnPopup: "Cửa sổ Popup",
+    btnPanel: "Bảng bên",
+    btnFull: "Toàn trang",
+    lblTitle: "Tiêu đề",
+    lblUrl: "Đường dẫn",
+    lblFolder: "Thư mục",
+    lblTags: "Thẻ (Tags)",
+    btnSuggestText: "Gợi ý",
+    phTags: "Nhập và nhấn Enter...",
+    lblNotes: "Ghi chú",
+    phNotes: "Tại sao trang này quan trọng, cần xem lại gì, hoặc bất kỳ ngữ cảnh nào cần lưu lại.",
+    btnSaveBookmark: "Lưu Bookmark",
+    statusNoSourceTab: "Không tìm thấy tab nguồn.",
+    phNewFolder: "Tên thư mục mới...",
+    statusErrorContext: "Không thể lưu các trang hệ thống của trình duyệt.",
+    statusNoPage: "Không tìm thấy trang nào để lưu.",
+    statusAlreadySaved: "Trang này đã được lưu từ trước.",
+    statusSaving: "Đang lưu bookmark...",
+    statusErrorSave: "Lỗi khi lưu bookmark.",
+    statusErrorMeta: "Lỗi khi lưu thẻ/ghi chú.",
+    statusUpdatedSuccess: "Đã cập nhật thành công! ({0} thẻ)",
+    statusSavedSuccess: "Đã lưu thành công! ({0} thẻ)"
+  }
+};
+
 let currentTab = null
 let existingBookmark = null
 let preferredFolderId = "1"
@@ -483,23 +581,7 @@ fillFolders()
 loadCurrentTab()
 loadTags()
 
-const toggleNewFolderBtn = document.getElementById("toggle-new-folder-btn")
 const newFolderInput = document.getElementById("new-folder-input")
-
-if (toggleNewFolderBtn && newFolderInput) {
-  toggleNewFolderBtn.addEventListener("click", () => {
-    const isHidden = newFolderInput.classList.contains("hidden")
-    if (isHidden) {
-      newFolderInput.classList.remove("hidden")
-      toggleNewFolderBtn.innerHTML = '<i class="fas fa-times"></i>'
-      newFolderInput.focus()
-    } else {
-      newFolderInput.classList.add("hidden")
-      toggleNewFolderBtn.innerHTML = '<i class="fas fa-folder-plus"></i>'
-      newFolderInput.value = ""
-    }
-  })
-}
 
 const suggestTagBtn = document.getElementById("suggest-tag-btn")
 if (suggestTagBtn) {
@@ -571,49 +653,6 @@ if (suggestTagBtn) {
     }
   });
 }
-
-const qsTranslations = {
-  en: {
-    qsTitle: "Quick Save",
-    qsDesc: "Save the current page with tags and notes.",
-    qsAction: "Click Extension Action",
-    btnQuickSave: "Quick Save",
-    btnPopup: "Popup",
-    btnPanel: "Panel",
-    btnFull: "Full",
-    lblTitle: "Title",
-    lblUrl: "URL",
-    lblFolder: "Folder",
-    lblTags: "Tags",
-    btnSuggestText: "Suggest",
-    phTags: "Type and press Enter...",
-    lblNotes: "Notes",
-    phNotes: "Why this page matters, what to revisit, or any context you need later.",
-    btnSaveBookmark: "Save Bookmark",
-    statusNoSourceTab: "No source tab specified.",
-    phNewFolder: "New folder name..."
-  },
-  vi: {
-    qsTitle: "Lưu Nhanh",
-    qsDesc: "Lưu trang hiện tại kèm theo thẻ và ghi chú.",
-    qsAction: "Hành động mở Extension",
-    btnQuickSave: "Lưu Nhanh",
-    btnPopup: "Cửa sổ Popup",
-    btnPanel: "Bảng bên",
-    btnFull: "Toàn trang",
-    lblTitle: "Tiêu đề",
-    lblUrl: "Đường dẫn",
-    lblFolder: "Thư mục",
-    lblTags: "Thẻ (Tags)",
-    btnSuggestText: "Gợi ý",
-    phTags: "Nhập và nhấn Enter...",
-    lblNotes: "Ghi chú",
-    phNotes: "Tại sao trang này quan trọng, cần xem lại gì, hoặc bất kỳ ngữ cảnh nào cần lưu lại.",
-    btnSaveBookmark: "Lưu Bookmark",
-    statusNoSourceTab: "Không tìm thấy tab nguồn.",
-    phNewFolder: "Tên thư mục mới..."
-  }
-};
 
 function applyTranslations() {
   const lang = localStorage.getItem("appLanguage") || "en";
