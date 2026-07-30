@@ -71,6 +71,7 @@ const qsTranslations = {
     statusNoSourceTab: "No source tab specified.",
     phNewFolder: "New folder name...",
     phSearchFolder: "Search folders...",
+    lblSelectFolder: "Select Folder",
     statusErrorContext: "Cannot save special browser pages.",
     statusNoPage: "No active page found to save.",
     statusAlreadySaved: "Bookmark already exists.",
@@ -100,6 +101,7 @@ const qsTranslations = {
     statusNoSourceTab: "Không tìm thấy tab nguồn.",
     phNewFolder: "Tên thư mục mới...",
     phSearchFolder: "Tìm kiếm thư mục...",
+    lblSelectFolder: "Chọn thư mục",
     statusErrorContext: "Không thể lưu các trang hệ thống của trình duyệt.",
     statusNoPage: "Không tìm thấy trang nào để lưu.",
     statusAlreadySaved: "Trang này đã được lưu từ trước.",
@@ -267,6 +269,10 @@ function fillFolders() {
           document.querySelectorAll(".folder-tree-item").forEach(el => el.classList.remove("active"))
           item.classList.add("active")
           preferredFolderId = folder.id
+          fillFolders()
+          if (typeof toggleFolderView === "function") {
+            toggleFolderView(false)
+          }
         })
         
         folderList.appendChild(item)
@@ -281,8 +287,20 @@ function fillFolders() {
       }
     }
     
-    // Auto scroll to active item
+    // Update the button text to show selected folder
     const activeItem = folderList.querySelector(".active")
+    const selectedDisplayName = document.getElementById("selected-folder-name-display")
+    if (activeItem && selectedDisplayName) {
+      // Find the text node inside the active item (skip prefix span and icon)
+      const textNode = Array.from(activeItem.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0)
+      if (textNode) {
+        selectedDisplayName.textContent = textNode.textContent
+      } else {
+        selectedDisplayName.textContent = activeItem.textContent.trim()
+      }
+    }
+    
+    // Auto scroll to active item
     if (activeItem) {
       setTimeout(() => activeItem.scrollIntoView({ block: "nearest" }), 10)
     }
@@ -625,6 +643,29 @@ loadCurrentTab()
 loadTags()
 
 const newFolderInput = document.getElementById("new-folder-input")
+const openFolderBtn = document.getElementById("open-folder-view-btn")
+const closeFolderBtn = document.getElementById("close-folder-view-btn")
+const folderView = document.getElementById("folder-selection-view")
+
+function toggleFolderView(show) {
+  if (show) {
+    form.classList.add("hidden")
+    folderView.classList.remove("hidden")
+    // Use requestAnimationFrame to let DOM update before scrolling/focusing
+    requestAnimationFrame(() => {
+      fillFolders() // Ensure it is updated and scrolled to active
+      const searchInput = document.getElementById("folder-search-input")
+      if (searchInput) searchInput.focus()
+    })
+  } else {
+    folderView.classList.add("hidden")
+    form.classList.remove("hidden")
+  }
+}
+
+if (openFolderBtn) openFolderBtn.addEventListener("click", () => toggleFolderView(true))
+if (closeFolderBtn) closeFolderBtn.addEventListener("click", () => toggleFolderView(false))
+
 const createFolderBtn = document.getElementById("create-folder-btn")
 
 if (createFolderBtn && newFolderInput) {
@@ -641,6 +682,7 @@ if (createFolderBtn && newFolderInput) {
       preferredFolderId = newFolder.id
       newFolderInput.value = ""
       fillFolders()
+      toggleFolderView(false) // Close the view after creating
     })
   })
 }
