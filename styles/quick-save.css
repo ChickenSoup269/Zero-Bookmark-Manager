@@ -436,3 +436,41 @@ select#folder:focus {
   background-color: transparent;
   border-bottom: 2px solid var(--accent-color, #007bff);
 }
+
+/* Folder Tree View */
+.folder-tree-view {
+  width: 100%;
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius, 8px);
+  background-color: var(--bg-primary);
+  margin-bottom: 8px;
+  padding: 4px 0;
+}
+
+.folder-tree-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.folder-tree-item:hover {
+  background-color: var(--hover-bg, rgba(0,0,0,0.05));
+}
+
+.folder-tree-item.active {
+  background-color: var(--accent-color);
+  color: var(--bg-primary);
+}
+
+.folder-tree-item i {
+  margin-right: 8px;
+  color: inherit;
+  font-size: 0.9em;
+}

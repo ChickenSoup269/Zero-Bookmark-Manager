@@ -1,7 +1,7 @@
 const form = document.getElementById("quick-save-form")
 const titleInput = document.getElementById("title")
 const urlInput = document.getElementById("url")
-const folderSelect = document.getElementById("folder")
+// Removed folderSelect
 const tagsHiddenInput = document.getElementById("tags")
 const tagsInput = document.getElementById("tags-input")
 const tagsContainer = document.getElementById("tags-container")
@@ -70,6 +70,7 @@ const qsTranslations = {
     btnSaveBookmark: "Save Bookmark",
     statusNoSourceTab: "No source tab specified.",
     phNewFolder: "New folder name...",
+    phSearchFolder: "Search folders...",
     statusErrorContext: "Cannot save special browser pages.",
     statusNoPage: "No active page found to save.",
     statusAlreadySaved: "Bookmark already exists.",
@@ -98,6 +99,7 @@ const qsTranslations = {
     btnSaveBookmark: "Lưu Bookmark",
     statusNoSourceTab: "Không tìm thấy tab nguồn.",
     phNewFolder: "Tên thư mục mới...",
+    phSearchFolder: "Tìm kiếm thư mục...",
     statusErrorContext: "Không thể lưu các trang hệ thống của trình duyệt.",
     statusNoPage: "Không tìm thấy trang nào để lưu.",
     statusAlreadySaved: "Trang này đã được lưu từ trước.",
@@ -213,12 +215,20 @@ function parseTags(value) {
     .slice(0, 10)
 }
 
-function flattenFolders(nodes, depth = 0, folders = []) {
-  nodes.forEach((node) => {
-    if (node.children) {
-      folders.push({ id: node.id, title: node.title || "Bookmarks", depth })
-      flattenFolders(node.children, depth + 1, folders)
+function flattenFolders(nodes, prefix = "", folders = []) {
+  const folderNodes = nodes.filter(n => n.children)
+  folderNodes.forEach((node, index) => {
+    const isLast = index === folderNodes.length - 1
+    let currentPrefix = prefix
+    let nextPrefix = prefix
+    
+    if (node.id !== "0") {
+      currentPrefix = prefix + (isLast ? "└─ " : "├─ ")
+      nextPrefix = prefix + (isLast ? "\u00A0\u00A0\u00A0" : "│\u00A0\u00A0")
     }
+    
+    folders.push({ id: node.id, title: node.title || "Bookmarks", prefix: currentPrefix })
+    flattenFolders(node.children, nextPrefix, folders)
   })
   return folders
 }
@@ -226,23 +236,56 @@ function flattenFolders(nodes, depth = 0, folders = []) {
 function fillFolders() {
   chrome.bookmarks.getTree((tree) => {
     const folders = flattenFolders(tree)
-    folderSelect.innerHTML = ""
+    const folderList = document.getElementById("folder-list")
+    folderList.innerHTML = ""
+    
     folders
       .filter((folder) => folder.id !== "0")
       .forEach((folder) => {
-        const option = document.createElement("option")
-        option.value = folder.id
+        const item = document.createElement("div")
+        item.className = "folder-tree-item"
+        if (folder.id === preferredFolderId) {
+          item.classList.add("active")
+        }
         
-        const actualDepth = Math.max(0, folder.depth - 1);
-        const prefix = actualDepth > 0 ? "\u00A0\u00A0".repeat(actualDepth) + "└─ " : "";
+        const icon = document.createElement("i")
+        icon.className = "fas fa-folder"
         
-        option.textContent = `${prefix}${folder.title}`
-        folderSelect.appendChild(option)
+        const text = document.createTextNode(folder.title)
+        
+        if (folder.prefix) {
+          const prefixSpan = document.createElement("span")
+          prefixSpan.style.fontFamily = "monospace"
+          prefixSpan.style.whiteSpace = "pre"
+          prefixSpan.textContent = folder.prefix
+          item.appendChild(prefixSpan)
+        }
+        item.appendChild(icon)
+        item.appendChild(text)
+        
+        item.addEventListener("click", () => {
+          document.querySelectorAll(".folder-tree-item").forEach(el => el.classList.remove("active"))
+          item.classList.add("active")
+          preferredFolderId = folder.id
+        })
+        
+        folderList.appendChild(item)
       })
 
     const bookmarksBar = folders.find((folder) => folder.id === "1")
-    if (bookmarksBar && preferredFolderId === "1") preferredFolderId = bookmarksBar.id
-    if (preferredFolderId) folderSelect.value = preferredFolderId
+    if (bookmarksBar && preferredFolderId === "1") {
+      preferredFolderId = bookmarksBar.id
+      const barItem = Array.from(folderList.children).find(el => el.textContent.includes(bookmarksBar.title))
+      if (barItem && !folderList.querySelector(".active")) {
+        barItem.classList.add("active")
+      }
+    }
+    
+    // Auto scroll to active item
+    const activeItem = folderList.querySelector(".active")
+    if (activeItem) {
+      setTimeout(() => activeItem.scrollIntoView({ block: "nearest" }), 10)
+    }
   })
 }
 
@@ -284,7 +327,7 @@ function populateFromTab(tab) {
       titleInput.value = existingBookmark.title || titleInput.value
       if (existingBookmark.parentId) {
         preferredFolderId = existingBookmark.parentId
-        folderSelect.value = preferredFolderId
+        fillFolders()
       }
       fillExistingMetadata(existingBookmark.id)
       showStatus(
@@ -340,7 +383,7 @@ function saveBookmark(event) {
   event.preventDefault()
   const title = titleInput.value.trim() || urlInput.value.trim()
   const url = urlInput.value.trim()
-  const parentId = folderSelect.value || "1"
+  const parentId = preferredFolderId || "1"
   const newFolderInput = document.getElementById("new-folder-input")
   const newFolderName = newFolderInput && !newFolderInput.classList.contains("hidden") ? newFolderInput.value.trim() : ""
   const tags = parseTags(tagsHiddenInput.value)
@@ -582,7 +625,40 @@ loadCurrentTab()
 loadTags()
 
 const newFolderInput = document.getElementById("new-folder-input")
+const createFolderBtn = document.getElementById("create-folder-btn")
 
+if (createFolderBtn && newFolderInput) {
+  createFolderBtn.addEventListener("click", () => {
+    const parentId = preferredFolderId || "1"
+    const title = newFolderInput.value.trim()
+    if (!title) {
+      newFolderInput.focus()
+      return
+    }
+    
+    // Create folder and update UI
+    chrome.bookmarks.create({ parentId, title }, (newFolder) => {
+      preferredFolderId = newFolder.id
+      newFolderInput.value = ""
+      fillFolders()
+    })
+  })
+}
+
+const folderSearchInput = document.getElementById("folder-search-input")
+if (folderSearchInput) {
+  folderSearchInput.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase()
+    const items = document.querySelectorAll(".folder-tree-item")
+    items.forEach(item => {
+      if (item.textContent.toLowerCase().includes(query)) {
+        item.style.display = "flex"
+      } else {
+        item.style.display = "none"
+      }
+    })
+  })
+}
 const suggestTagBtn = document.getElementById("suggest-tag-btn")
 if (suggestTagBtn) {
   suggestTagBtn.addEventListener("click", async () => {

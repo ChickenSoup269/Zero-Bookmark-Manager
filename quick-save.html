@@ -45,9 +45,17 @@
       </label>
 
       <label>
-        <span data-i18n="lblFolder">Folder</span>
-        <select id="folder" style="width: 100%; margin-bottom: 8px;"></select>
-        <input id="new-folder-input" type="text" autocomplete="off" placeholder="New folder name..." data-i18n-placeholder="phNewFolder">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span data-i18n="lblFolder">Folder</span>
+        </div>
+        <input id="folder-search-input" type="text" autocomplete="off" placeholder="Search folders..." data-i18n-placeholder="phSearchFolder" style="margin-bottom: 8px; padding: 6px 8px; font-size: 0.85rem;">
+        <div id="folder-list" class="folder-tree-view"></div>
+        <div style="display: flex; gap: 8px;">
+          <input id="new-folder-input" type="text" autocomplete="off" placeholder="New folder name..." data-i18n-placeholder="phNewFolder" style="flex: 1; margin: 0;">
+          <button type="button" id="create-folder-btn" class="icon-button" title="Create new folder" style="width: 36px; height: 36px; flex-shrink: 0;">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
       </label>
 
       <label style="position: relative;">
