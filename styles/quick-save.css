@@ -4,7 +4,7 @@
 
 body {
   margin: 0;
-  min-width: 380px;
+  min-width: 480px;
   min-height: 520px;
   background: var(--bg-primary);
   background-image: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent-color) 15%, transparent) 0%, transparent 65%);
