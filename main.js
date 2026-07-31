@@ -688,6 +688,20 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         ensureSidebarOpen: true,
       },
       {
+        selector: "[for='show-notes-preview-toggle']",
+        title: language === "vi" ? "Hiển thị Ghi chú" : "Show Notes Preview",
+        message: language === "vi" ? "Bật tùy chọn này để hiển thị trước ghi chú của bookmark ngay trong danh sách." : "Enable this to preview bookmark notes directly in the list view.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "[for='show-tags-in-view-toggle']",
+        title: language === "vi" ? "Hiển thị Thẻ (Tags)" : "Show Tags in View",
+        message: language === "vi" ? "Bật tùy chọn này để hiển thị các thẻ (tags) của bạn ngay dưới mỗi bookmark." : "Enable this to show your tags directly below each bookmark.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
         selector: "#export-bookmarks-option",
         title: language === "vi" ? "Xuất dữ liệu" : "Export Bookmarks",
         message: language === "vi" ? "Sao lưu bookmark của bạn ra file HTML an toàn." : "Backup your bookmarks to a secure HTML file.",

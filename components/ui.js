@@ -5020,6 +5020,8 @@ globalTooltip.style.fontWeight = "500";
 globalTooltip.style.whiteSpace = "normal";
 globalTooltip.style.maxWidth = "300px";
 globalTooltip.style.width = "max-content";
+globalTooltip.style.wordBreak = "break-word";
+globalTooltip.style.overflowWrap = "anywhere";
 globalTooltip.style.textAlign = "center";
 globalTooltip.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
 globalTooltip.style.zIndex = "2147483647"; // Max z-index
@@ -5032,36 +5034,56 @@ globalTooltip.style.transition = "opacity 0.25s ease, visibility 0.25s ease";
 document.body.appendChild(globalTooltip);
 
 function checkIsTruncated(el) {
-  if (el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight) {
-    return true;
-  }
-  // Fallback for -webkit-line-clamp
   const style = window.getComputedStyle(el);
+  
+  // If element uses webkit-line-clamp, scrollHeight/clientHeight can be unreliable
+  // We clone it and remove the clamp to check its natural height
   if (style.webkitLineClamp && style.webkitLineClamp !== 'none') {
     const clone = el.cloneNode(true);
     clone.style.webkitLineClamp = 'none';
     clone.style.position = 'absolute';
     clone.style.visibility = 'hidden';
+    clone.style.height = 'auto';
+    clone.style.maxHeight = 'none';
     clone.style.width = el.clientWidth + 'px';
-    document.body.appendChild(clone);
-    const isTrunc = clone.scrollHeight > el.clientHeight;
-    document.body.removeChild(clone);
-    return isTrunc;
+    
+    // Append to parent to preserve contextual CSS (font-size, line-height, etc)
+    if (el.parentNode) {
+      el.parentNode.appendChild(clone);
+      const naturalHeight = clone.offsetHeight;
+      el.parentNode.removeChild(clone);
+      // Allow a small 3px variance for subpixel rendering or line-height quirks
+      return naturalHeight > el.offsetHeight + 3;
+    }
   }
-  return false;
+
+  // Normal elements (horizontal overflow or normal vertical overflow)
+  // Also fallback if parentNode doesn't exist
+  return el.scrollWidth > el.clientWidth + 3 || el.scrollHeight > el.clientHeight + 3;
 }
 
 document.addEventListener("mouseover", (e) => {
   const target = e.target.closest("[data-tooltip]");
   if (target && target.dataset.tooltip) {
-    // Check truncation on target or any of its children
-    let isTruncated = checkIsTruncated(target);
-    if (!isTruncated) {
-      const children = target.querySelectorAll("*");
-      for (let i = 0; i < children.length; i++) {
-        if (checkIsTruncated(children[i])) {
-          isTruncated = true;
-          break;
+    let isTruncated = false;
+
+    
+    // Explicitly check if it's a note preview to strictly apply truncation rule
+    if (target.classList.contains("bookmark-note-preview")) {
+      const span = target.querySelector("span");
+      if (span) {
+        isTruncated = checkIsTruncated(span);
+      }
+    } else {
+      // For other tooltips, we might want to check truncation or just show it depending on current logic
+      isTruncated = checkIsTruncated(target);
+      if (!isTruncated) {
+        const children = target.querySelectorAll("*");
+        for (let i = 0; i < children.length; i++) {
+          if (checkIsTruncated(children[i])) {
+            isTruncated = true;
+            break;
+          }
         }
       }
     }
