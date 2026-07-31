@@ -3293,9 +3293,8 @@ body.settings-panel-open .settings-container {
   padding: 6px 8px;
   border-radius: var(--border-radius-md);
   border: 1px solid var(--border-color);
-  background-color: color-mix(in srgb, var(--bg-primary) 86%, transparent);
+  background-color: var(--bg-primary);
   box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(8px);
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
@@ -3312,7 +3311,6 @@ body.settings-panel-open .settings-container {
   box-shadow:
     0 10px 24px rgba(0, 0, 0, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px) !important;
 }
 
 /* Prevent hover lift from overlapping siblings in tree view */
@@ -3323,7 +3321,6 @@ body.settings-panel-open .settings-container {
   box-shadow:
     0 10px 24px rgba(0, 0, 0, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
 }
 
 .webview-mode .folder-list.tree-view .bookmark-item {
