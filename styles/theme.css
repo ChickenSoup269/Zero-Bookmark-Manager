@@ -412,43 +412,43 @@ body.winter-is-coming-theme {
 
 /* Nord Light Theme */
 [data-theme="nord-light"], body.nord-light-theme {
-  --bg-primary: #e5e9f0;
+  --bg-primary: #eceff4;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #d8dee9;
+  --bg-tertiary: #e5e9f0;
   --text-primary: #2e3440;
-  --text-secondary: #434c5e;
+  --text-secondary: #4c566a;
   --accent-color: #5e81ac;
-  --border-color: #c0c8d8;
+  --border-color: #d8dee9;
   --danger-color: #bf616a;
   --success-color: #8fbcbb;
-  --hover-bg: #eceff4;
-  --bg-tags-select: rgba(255, 255, 255, 0.95);
+  --hover-bg: #e5e9f0;
+  --bg-tags-select: rgba(236, 239, 244, 0.95);
 }
 
 /* Gruvbox Light Theme */
 [data-theme="gruvbox-light"], body.gruvbox-light-theme {
-  --bg-primary: #f2e5bc;
+  --bg-primary: #ebdbb2;
   --bg-secondary: #fbf1c7;
-  --bg-tertiary: #ebdbb2;
+  --bg-tertiary: #d5c4a1;
   --text-primary: #282828;
   --text-secondary: #504945;
   --accent-color: #d65d0e;
-  --border-color: #d5c4a1;
+  --border-color: #bdae93;
   --danger-color: #cc241d;
   --success-color: #79740e;
-  --hover-bg: #ebdbb2;
+  --hover-bg: #d5c4a1;
   --bg-tags-select: rgba(251, 241, 199, 0.95);
 }
 
 /* Catppuccin Light Theme */
 [data-theme="catppuccin-light"], body.catppuccin-light-theme {
-  --bg-primary: #eff1f5;
-  --bg-secondary: #e6e9ef;
+  --bg-primary: #e6e9ef;
+  --bg-secondary: #eff1f5;
   --bg-tertiary: #dce0e8;
   --text-primary: #4c4f69;
   --text-secondary: #5c5f77;
   --accent-color: #8839ef;
-  --border-color: #ccd0da;
+  --border-color: #bcc0cc;
   --danger-color: #d20f39;
   --success-color: #40a02b;
   --hover-bg: #ccd0da;
@@ -457,15 +457,15 @@ body.winter-is-coming-theme {
 
 /* Night Owl Light Theme */
 [data-theme="nightowl-light"], body.nightowl-light-theme {
-  --bg-primary: #f0f2f5;
+  --bg-primary: #e8ebf0;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #e2e6ea;
+  --bg-tertiary: #d2dbe2;
   --text-primary: #403f53;
   --text-secondary: #5f6c7a;
   --accent-color: #2f86d2;
-  --border-color: #d2dbe2;
+  --border-color: #c0cdd6;
   --danger-color: #de3d3b;
   --success-color: #08916a;
-  --hover-bg: #e8ebf0;
+  --hover-bg: #d2dbe2;
   --bg-tags-select: rgba(255, 255, 255, 0.95);
 }
