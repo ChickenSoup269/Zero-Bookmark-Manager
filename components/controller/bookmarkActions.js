@@ -230,7 +230,7 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
 
   // Clear dữ liệu cũ trước khi load mới (tránh hiện lại ảnh của bookmark trước)
   els.title.textContent = "Loading..."
-  els.thumb.src = "./images/loading-spinner.gif" // Hoặc ảnh placeholder
+  els.thumb.src = "./images/logo.png" // Dùng logo tạm thời
   els.thumb.style.display = "none"
 
   safeChromeBookmarksCall("get", [bookmarkId], (results) => {
@@ -242,7 +242,7 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
     }
 
     const b = results[0]
-    const defaultThumb = "./images/default-favicon.png" // Đảm bảo đường dẫn này đúng trong project của bạn
+    const defaultThumb = "./images/logo.png" // Sửa lại thành file có thật
 
     // --- XỬ LÝ THUMBNAIL ---
     // Sử dụng thum.io (thường nhanh hơn WordPress mshots)
@@ -269,6 +269,7 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
       
       // Fallback cuối cùng: Về icon mặc định
       els.thumb.onerror = () => {
+        els.thumb.onerror = null // Rất quan trọng: Ngăn chặn vòng lặp vô hạn nếu ảnh mặc định cũng lỗi!
         els.thumb.src = defaultThumb
       }
     }
@@ -477,30 +478,8 @@ async function openManageTagsPopup(bookmarkId) {
   }
 
   // --- Get Elements (They should already exist from bookmarks.html) ---
-  // --- START CHANGE: Replace placeholder with real color picker and add logic ---
+  // Ensure it remains hidden and rely on suggestTextColor logic
   let textColorInput = document.getElementById("new-tag-text-color")
-  if (textColorInput) {
-    // If it's not a proper color input, replace it with one.
-    if (
-      textColorInput.tagName.toLowerCase() !== "input" ||
-      textColorInput.type !== "color"
-    ) {
-      const newPicker = document.createElement("input")
-      newPicker.id = textColorInput.id
-      newPicker.className = textColorInput.className
-      newPicker.type = "color"
-      // Inherit value from placeholder if it exists, otherwise default
-      newPicker.value = textColorInput.value || "#ffffff"
-      newPicker.style.cssText =
-        "width: 28px; height: 28px; border: none; background: var(--bg-primary); padding: 0; border-radius: 50px; vertical-align: middle; cursor: pointer;"
-
-      if (textColorInput.parentNode) {
-        textColorInput.parentNode.replaceChild(newPicker, textColorInput)
-      }
-      textColorInput = newPicker // Update variable to the new element
-    }
-  }
-
   if (!textColorInput) console.error("new-tag-text-color input not found!")
 
   let userHasManuallySetTextColor = false
@@ -518,7 +497,6 @@ async function openManageTagsPopup(bookmarkId) {
     }
   }
 
-  attachListener(els.color, "input", (e) => suggestTextColor(e.target.value))
   // --- END CHANGE ---
 
   const colorPaletteContainer = popup.querySelector(".color-palette-container")
@@ -709,11 +687,19 @@ async function openManageTagsPopup(bookmarkId) {
 
     if (!uiState.bookmarkTags[bookmarkId].includes(tagName)) {
       uiState.bookmarkTags[bookmarkId].push(tagName)
-      if (bgColor) uiState.tagColors[tagName] = bgColor
-      if (txtColor) {
-        if (!uiState.tagTextColors) uiState.tagTextColors = {}
-        uiState.tagTextColors[tagName] = txtColor
+      
+      const isNewGlobalTag = !uiState.tagColors || !uiState.tagColors[tagName]
+      if (isNewGlobalTag) {
+        if (bgColor) {
+          if (!uiState.tagColors) uiState.tagColors = {}
+          uiState.tagColors[tagName] = bgColor
+        }
+        if (txtColor) {
+          if (!uiState.tagTextColors) uiState.tagTextColors = {}
+          uiState.tagTextColors[tagName] = txtColor
+        }
       }
+      
       saveTagData(() => {
         renderTags()
         updateDropdown()
@@ -809,16 +795,106 @@ function handleEditTagUI(
   input.className = "edit-tag-input"
   input.value = oldTag
 
-  const bgColorPicker = document.createElement("input")
-  bgColorPicker.type = "color"
-  bgColorPicker.className = "edit-tag-color-picker"
-  bgColorPicker.value = uiState.tagColors[oldTag] || "#cccccc"
+  const normalizeHex = (hex) => {
+    if (!hex) return "#cccccc";
+    hex = hex.toLowerCase();
+    if (hex.length === 4) return "#" + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
+    return hex.length === 7 ? hex : "#cccccc";
+  }
 
-  const textColorPicker = document.createElement("input")
-  textColorPicker.type = "color"
-  textColorPicker.className = "edit-tag-color-picker"
-  textColorPicker.value =
-    (uiState.tagTextColors && uiState.tagTextColors[oldTag]) || "#000000"
+  const PALETTE = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41', '#FFFF00', '#FFD740', '#FFAB40', '#FF6E40', '#A1887F', '#E0E0E0', '#90A4AE', '#ffffff', '#000000'];
+
+  function createFakeColorPicker(initialColor) {
+    const wrapper = document.createElement("div")
+    wrapper.style.position = "relative"
+    wrapper.style.display = "inline-flex"
+    wrapper.style.alignItems = "center"
+
+    const btn = document.createElement("div")
+    btn.className = "edit-tag-color-picker"
+    btn.style.backgroundColor = initialColor
+    btn.style.cursor = "pointer"
+    btn.style.border = "1px solid var(--border-color)"
+    btn.dataset.value = initialColor
+    
+    const popup = document.createElement("div")
+    popup.style.position = "fixed"
+    popup.style.zIndex = "99999"
+    popup.style.background = "var(--bg-secondary)"
+    popup.style.border = "1px solid var(--border-color)"
+    popup.style.padding = "6px"
+    popup.style.borderRadius = "6px"
+    popup.style.display = "none"
+    popup.style.gridTemplateColumns = "repeat(5, 1fr)"
+    popup.style.gap = "4px"
+    popup.style.width = "130px"
+    popup.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)"
+
+    // Append to body to avoid clipping from overflow containers
+    document.body.appendChild(popup)
+
+    PALETTE.forEach(color => {
+      const swatch = document.createElement("div")
+      swatch.style.width = "18px"
+      swatch.style.height = "18px"
+      swatch.style.backgroundColor = color
+      swatch.style.cursor = "pointer"
+      swatch.style.borderRadius = "4px"
+      swatch.style.border = "1px solid rgba(0,0,0,0.1)"
+      swatch.onclick = (e) => {
+        e.stopPropagation()
+        btn.style.backgroundColor = color
+        btn.dataset.value = color
+        popup.style.display = "none"
+        btn.dispatchEvent(new Event('change'))
+      }
+      popup.appendChild(swatch)
+    })
+
+    btn.onclick = (e) => {
+      e.stopPropagation()
+      if (popup.style.display === "none") {
+        const rect = btn.getBoundingClientRect()
+        popup.style.top = (rect.bottom + 4) + "px"
+        popup.style.left = rect.left + "px"
+        popup.style.display = "grid"
+      } else {
+        popup.style.display = "none"
+      }
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!wrapper.contains(e.target) && !popup.contains(e.target)) {
+        popup.style.display = "none"
+      }
+    })
+
+    // Clean up popup if wrapper is removed
+    const observer = new MutationObserver(() => {
+      if (!document.body.contains(wrapper)) {
+        popup.remove()
+        observer.disconnect()
+      }
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
+
+    wrapper.append(btn)
+    return { wrapper, btn }
+  }
+
+  const bgPicker = createFakeColorPicker(normalizeHex(uiState.tagColors[oldTag]))
+  const txtPicker = createFakeColorPicker(normalizeHex((uiState.tagTextColors && uiState.tagTextColors[oldTag]) || "#000000"))
+
+  // Auto-contrast text color when background changes, if user hasn't explicitly set text color
+  let textManuallyChanged = false;
+  txtPicker.btn.addEventListener('change', () => textManuallyChanged = true);
+  bgPicker.btn.addEventListener('change', () => {
+    if (!textManuallyChanged) {
+      const newContrast = getContrastColor(bgPicker.btn.dataset.value);
+      txtPicker.btn.style.backgroundColor = newContrast;
+      txtPicker.btn.dataset.value = newContrast;
+    }
+  });
 
   setTimeout(() => input.select(), 0)
 
@@ -838,7 +914,7 @@ function handleEditTagUI(
   actionsDiv.className = "edit-tag-actions"
   actionsDiv.append(saveBtn, cancelBtn)
 
-  container.append(input, bgColorPicker, textColorPicker, actionsDiv)
+  container.append(input, bgPicker.wrapper, txtPicker.wrapper, actionsDiv)
 
   // 3. Xử lý nút Cancel
   cancelBtn.onclick = (e) => {
@@ -851,8 +927,8 @@ function handleEditTagUI(
   saveBtn.onclick = async (e) => {
     e.stopPropagation()
     const newTag = input.value.trim()
-    const newBgColor = bgColorPicker.value
-    const newTextColor = textColorPicker.value
+    const newBgColor = bgPicker.btn.dataset.value
+    const newTextColor = txtPicker.btn.dataset.value
 
     // Validate
     if (!newTag)

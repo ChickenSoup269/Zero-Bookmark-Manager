@@ -370,10 +370,10 @@ function createDropdownHTML(bookmark, language) {
       }" 
               data-id="${bookmark.id}" 
               aria-label="Bookmark options"
-              style="width: 24px; height: 24px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
+              style="min-width: 24px; width: auto; height: 24px; padding: 0 4px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
         ${
           isPinned
-            ? '<i class="fas fa-thumbtack" style="font-size: 10px; color: var(--accent-color); margin-right: 2px;"></i>'
+            ? '<i class="fas fa-thumbtack" style="font-size: 10px; color: var(--accent-color); margin-right: 6px;"></i>'
             : ""
         }
         ${
