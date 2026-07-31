@@ -46,13 +46,16 @@
 
       <label>
         <span data-i18n="lblFolder">Folder</span>
-        <button type="button" id="open-folder-view-btn" style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); cursor: pointer; text-align: left; font-size: 0.9rem; transition: border-color 0.2s, box-shadow 0.2s;">
-          <span style="display: flex; align-items: center; gap: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-            <i class="fas fa-folder" style="color: var(--accent-color);"></i> 
-            <span id="selected-folder-name-display">Bookmarks Bar</span>
-          </span>
-          <i class="fas fa-chevron-right" style="color: var(--text-secondary); font-size: 0.8em;"></i>
-        </button>
+        <div style="display: flex; flex-direction: column; gap: 0;">
+          <button type="button" id="open-folder-view-btn" style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); cursor: pointer; text-align: left; font-size: 0.9rem; transition: border-color 0.2s, box-shadow 0.2s;">
+            <span style="display: flex; align-items: center; gap: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+              <i class="fas fa-folder" style="color: var(--accent-color);"></i> 
+              <span id="selected-folder-name-display">Bookmarks Bar</span>
+            </span>
+            <i class="fas fa-chevron-right" style="color: var(--text-secondary); font-size: 0.8em;"></i>
+          </button>
+          <input id="quick-new-folder-input" type="text" autocomplete="off" placeholder="Or type new folder name..." data-i18n-placeholder="phQuickNewFolder" style="font-size: 0.85rem; padding: 8px; margin-top: 8px; border-radius: 8px;">
+        </div>
       </label>
 
       <label style="position: relative;">
@@ -82,9 +85,12 @@
     
     <!-- Folder Selection View (Detailed Popup/Step) -->
     <div id="folder-selection-view" class="hidden" style="display: flex; flex-direction: column; padding-bottom: 12px; height: 100%;">
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-        <button type="button" id="close-folder-view-btn" class="icon-button" style="width: 32px; height: 32px; border: 1px solid var(--border-color); border-radius: 8px;"><i class="fas fa-arrow-left"></i></button>
-        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);" data-i18n="lblSelectFolder">Select Folder</h3>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button type="button" id="close-folder-view-btn" class="icon-button" style="width: 32px; height: 32px; border: 1px solid var(--border-color); border-radius: 8px;"><i class="fas fa-arrow-left"></i></button>
+          <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);" data-i18n="lblSelectFolder">Select Folder</h3>
+        </div>
+        <button type="button" id="done-folder-view-btn" class="button save" style="padding: 6px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; background: var(--accent-color); color: var(--bg-primary);" data-i18n="btnDone">Done</button>
       </div>
       
       <input id="folder-search-input" type="text" autocomplete="off" placeholder="Search folders..." data-i18n-placeholder="phSearchFolder" style="margin-bottom: 12px; padding: 10px; font-size: 0.95rem;">

@@ -79,7 +79,9 @@ const qsTranslations = {
     statusErrorSave: "Error saving bookmark.",
     statusErrorMeta: "Error saving tags/notes.",
     statusUpdatedSuccess: "Updated successfully! ({0} tags)",
-    statusSavedSuccess: "Saved successfully! ({0} tags)"
+    statusSavedSuccess: "Saved successfully! ({0} tags)",
+    btnDone: "Done",
+    phQuickNewFolder: "Or type new folder (Other Bookmarks)..."
   },
   vi: {
     qsTitle: "Lưu Nhanh",
@@ -109,7 +111,9 @@ const qsTranslations = {
     statusErrorSave: "Lỗi khi lưu bookmark.",
     statusErrorMeta: "Lỗi khi lưu thẻ/ghi chú.",
     statusUpdatedSuccess: "Đã cập nhật thành công! ({0} thẻ)",
-    statusSavedSuccess: "Đã lưu thành công! ({0} thẻ)"
+    statusSavedSuccess: "Đã lưu thành công! ({0} thẻ)",
+    btnDone: "Xong",
+    phQuickNewFolder: "Hoặc tạo mới thư mục (vào Other Bookmarks)..."
   }
 };
 
@@ -207,6 +211,9 @@ function showStatus(message, type = "") {
   statusBox.textContent = message
   statusBox.className = `status ${type}`.trim()
   statusBox.classList.remove("hidden")
+  setTimeout(() => {
+    statusBox.scrollIntoView({ behavior: "smooth", block: "nearest" })
+  }, 50)
 }
 
 function parseTags(value) {
@@ -269,7 +276,14 @@ function fillFolders() {
           document.querySelectorAll(".folder-tree-item").forEach(el => el.classList.remove("active"))
           item.classList.add("active")
           preferredFolderId = folder.id
-          fillFolders()
+          
+          const selectedDisplayName = document.getElementById("selected-folder-name-display")
+          if (selectedDisplayName) {
+            selectedDisplayName.textContent = folder.title
+          }
+        })
+        
+        item.addEventListener("dblclick", () => {
           if (typeof toggleFolderView === "function") {
             toggleFolderView(false)
           }
@@ -359,8 +373,21 @@ function populateFromTab(tab) {
 function loadCurrentTab() {
   const tabId = getSourceTabId()
   if (!tabId) {
-    showStatus(tStatus("statusNoSourceTab"), "error")
-    saveButton.disabled = true
+    chrome.windows.getLastFocused({ windowTypes: ['normal'] }, function(win) {
+      if (win && win.id) {
+        chrome.tabs.query({ active: true, windowId: win.id }, (tabs) => {
+          if (tabs && tabs.length > 0) {
+            populateFromTab(tabs[0])
+          } else {
+            showStatus(tStatus("statusNoSourceTab"), "error")
+            saveButton.disabled = true
+          }
+        })
+      } else {
+        showStatus(tStatus("statusNoSourceTab"), "error")
+        saveButton.disabled = true
+      }
+    });
     return
   }
 
@@ -402,11 +429,10 @@ function saveBookmark(event) {
   const title = titleInput.value.trim() || urlInput.value.trim()
   const url = urlInput.value.trim()
   const parentId = preferredFolderId || "1"
-  const newFolderInput = document.getElementById("new-folder-input")
-  const newFolderName = newFolderInput && !newFolderInput.classList.contains("hidden") ? newFolderInput.value.trim() : ""
   const tags = parseTags(tagsHiddenInput.value)
   const note = notesInput.value.trim()
 
+  const originalButtonHtml = saveButton.innerHTML
   saveButton.disabled = true
   showStatus(tStatus("statusSaving"), "success")
 
@@ -414,28 +440,45 @@ function saveBookmark(event) {
     if (!bookmark) {
       showStatus(tStatus("statusErrorSave"), "error")
       saveButton.disabled = false
+      saveButton.innerHTML = originalButtonHtml
       return
     }
 
     saveMetadata(bookmark.id, tags, note, () => {
       if (chrome.runtime.lastError) {
         showStatus(tStatus("statusErrorMeta"), "error")
+        saveButton.disabled = false
+        saveButton.innerHTML = originalButtonHtml
       } else {
         const verbKey = isUpdate ? "statusUpdatedSuccess" : "statusSavedSuccess"
         showStatus(tStatus(verbKey, currentTags.length))
+        saveButton.innerHTML = `<i class="fas fa-check"></i> ${tStatus(verbKey, currentTags.length)}`
         
         // Close window after 2 seconds
         setTimeout(() => {
-          window.close()
+          if (isEmbedded && window.parent && window.parent !== window) {
+            try { window.parent.close() } catch(e) {}
+          } else {
+            window.close()
+          }
+          // Restore button state just in case window doesn't close (e.g. side panel)
+          setTimeout(() => {
+            saveButton.disabled = false
+            saveButton.innerHTML = originalButtonHtml
+          }, 500)
         }, 2000)
       }
-      saveButton.disabled = false
     })
   }
 
   function proceedSaving(finalParentId) {
     if (existingBookmark) {
       chrome.bookmarks.update(existingBookmark.id, { title, url }, (updated) => {
+        if (chrome.runtime.lastError || !updated) {
+          console.error(chrome.runtime.lastError);
+          finish(null, true);
+          return;
+        }
         if (updated.parentId !== finalParentId) {
           chrome.bookmarks.move(updated.id, { parentId: finalParentId }, (moved) => finish(moved || updated, true))
         } else {
@@ -443,12 +486,30 @@ function saveBookmark(event) {
         }
       })
     } else {
-      chrome.bookmarks.create({ parentId: finalParentId, title, url }, (created) => finish(created, false))
+      chrome.bookmarks.create({ parentId: finalParentId, title, url }, (created) => {
+        if (chrome.runtime.lastError || !created) {
+          console.error(chrome.runtime.lastError);
+          finish(null, false);
+          return;
+        }
+        finish(created, false)
+      })
     }
   }
 
-  if (newFolderName) {
-    chrome.bookmarks.create({ parentId, title: newFolderName }, (newFolder) => {
+  const quickNewFolderInput = document.getElementById("quick-new-folder-input")
+  const quickNewFolderName = quickNewFolderInput ? quickNewFolderInput.value.trim() : ""
+
+  if (quickNewFolderName) {
+    // Default to 'Other Bookmarks' (ID "2") as requested
+    chrome.bookmarks.create({ parentId: "2", title: quickNewFolderName }, (newFolder) => {
+      if (chrome.runtime.lastError || !newFolder) {
+        console.error(chrome.runtime.lastError);
+        showStatus("Error creating folder", "error");
+        saveButton.disabled = false;
+        saveButton.innerHTML = originalButtonHtml;
+        return;
+      }
       proceedSaving(newFolder.id)
     })
   } else {
@@ -667,6 +728,9 @@ if (openFolderBtn) openFolderBtn.addEventListener("click", () => toggleFolderVie
 if (closeFolderBtn) closeFolderBtn.addEventListener("click", () => toggleFolderView(false))
 
 const createFolderBtn = document.getElementById("create-folder-btn")
+const doneFolderBtn = document.getElementById("done-folder-view-btn")
+
+if (doneFolderBtn) doneFolderBtn.addEventListener("click", () => toggleFolderView(false))
 
 if (createFolderBtn && newFolderInput) {
   createFolderBtn.addEventListener("click", () => {
@@ -682,7 +746,7 @@ if (createFolderBtn && newFolderInput) {
       preferredFolderId = newFolder.id
       newFolderInput.value = ""
       fillFolders()
-      toggleFolderView(false) // Close the view after creating
+      // We don't close the view automatically anymore so they can see the created folder
     })
   })
 }

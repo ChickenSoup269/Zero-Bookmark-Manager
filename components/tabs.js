@@ -47,10 +47,26 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize quick-save-frame with the active tab ID
     const quickSaveFrame = document.getElementById("quick-save-frame");
     if (quickSaveFrame && chrome && chrome.tabs) {
-        chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-            if (tabs && tabs.length > 0) {
-                quickSaveFrame.src = `quick-save.html?embedded=true&tabId=${tabs[0].id}`;
-            }
-        });
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabId = urlParams.get('tabId');
+        
+        if (tabId) {
+            quickSaveFrame.src = `quick-save.html?embedded=true&tabId=${tabId}`;
+        } else {
+            // fallback for when tabId is not provided in URL
+            chrome.windows.getLastFocused({ windowTypes: ['normal'] }, function(win) {
+                if (win && win.id) {
+                    chrome.tabs.query({ active: true, windowId: win.id }, (tabs) => {
+                        if (tabs && tabs.length > 0) {
+                            quickSaveFrame.src = `quick-save.html?embedded=true&tabId=${tabs[0].id}`;
+                        } else {
+                            quickSaveFrame.src = `quick-save.html?embedded=true`;
+                        }
+                    });
+                } else {
+                    quickSaveFrame.src = `quick-save.html?embedded=true`;
+                }
+            });
+        }
     }
 });

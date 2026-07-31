@@ -440,7 +440,7 @@ function getQuickSaveUrl(tab) {
   return `quick-save.html${tabIdParam}`
 }
 
-function createPopupWindow() {
+function createPopupWindow(tab) {
   chrome.system.display.getInfo((displays) => {
     const display = displays[0]
     const screenWidth = display.workArea.width
@@ -449,9 +449,11 @@ function createPopupWindow() {
     const popupHeight = 680
     const padding = 20
 
+    const tabIdParam = tab?.id ? `?tabId=${encodeURIComponent(tab.id)}` : ""
+
     chrome.windows.create(
       {
-        url: "index.html",
+        url: `index.html${tabIdParam}`,
         type: "popup",
         width: popupWidth,
         height: popupHeight,
@@ -551,7 +553,7 @@ chrome.action.onClicked.addListener((tab) => {
           chrome.windows.update(existingWindow.id, { focused: true })
           popupWindowId = existingWindow.id
         } else {
-          createPopupWindow()
+          createPopupWindow(tab)
         }
       })
     }
