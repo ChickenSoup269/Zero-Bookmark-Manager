@@ -27,8 +27,32 @@ chrome.storage.local.get(["appLanguage"], (data) => {
 })
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName === "local" && changes.appLanguage) {
-    updateUninstallFeedbackUrl(changes.appLanguage.newValue)
+  if (areaName === "local") {
+    if (changes.appLanguage) {
+      updateUninstallFeedbackUrl(changes.appLanguage.newValue)
+    }
+    if (changes.quickOpenAction) {
+      const action = changes.quickOpenAction.newValue;
+      if (action === "nativePopup") {
+        chrome.action.setPopup({ popup: "index.html?mode=native_popup" })
+      } else if (action === "quickSave") {
+        chrome.action.setPopup({ popup: "quick-save.html" })
+      } else {
+        chrome.action.setPopup({ popup: "" }) // Re-enable onClicked listener
+      }
+    }
+  }
+})
+
+// Initialize popup state
+chrome.storage.local.get(["quickOpenAction"], (data) => {
+  const action = data.quickOpenAction || "quickSave"; // default to quickSave
+  if (action === "nativePopup") {
+    chrome.action.setPopup({ popup: "index.html?mode=native_popup" })
+  } else if (action === "quickSave") {
+    chrome.action.setPopup({ popup: "quick-save.html" })
+  } else {
+    chrome.action.setPopup({ popup: "" })
   }
 })
 
@@ -406,25 +430,33 @@ const handleAutoCategorizeBookmark = (id, newBookmark) => {
         // Capitalize tag
         suggestedTag = suggestedTag.charAt(0).toUpperCase() + suggestedTag.slice(1).toLowerCase();
         
-        // Save tag
-        let tags = data.bookmarkTags || {};
-        let colors = data.tagColors || {};
-        let textColors = data.tagTextColors || {};
-        
-        if (!tags[id]) tags[id] = [];
-        if (!tags[id].includes(suggestedTag)) {
-            tags[id].push(suggestedTag);
-        }
-        
-        if (!colors[suggestedTag]) {
-            colors[suggestedTag] = "#3B82F6"; // default blue
-            textColors[suggestedTag] = "#FFFFFF";
-        }
-        
-        chrome.storage.local.set({
-            bookmarkTags: tags,
-            tagColors: colors,
-            tagTextColors: textColors
+        // Re-fetch storage to avoid race conditions with Quick Save
+        chrome.storage.local.get(["bookmarkTags", "tagColors", "tagTextColors"], (latestData) => {
+            let tags = latestData.bookmarkTags || {};
+            let colors = latestData.tagColors || {};
+            let textColors = latestData.tagTextColors || {};
+            
+            // If the user already manually added tags (e.g., via Quick Save) while we were waiting,
+            // we should respect their choice and not auto-categorize it, or at least not overwrite.
+            if (tags[id] && tags[id].length > 0) {
+                return; // Skip auto-categorize if already tagged
+            }
+            
+            if (!tags[id]) tags[id] = [];
+            if (!tags[id].includes(suggestedTag)) {
+                tags[id].push(suggestedTag);
+            }
+            
+            if (!colors[suggestedTag]) {
+                colors[suggestedTag] = "#3B82F6"; // default blue
+                textColors[suggestedTag] = "#FFFFFF";
+            }
+            
+            chrome.storage.local.set({
+                bookmarkTags: tags,
+                tagColors: colors,
+                tagTextColors: textColors
+            });
         });
     }
   });

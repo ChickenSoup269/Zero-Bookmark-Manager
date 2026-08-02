@@ -103,8 +103,7 @@ body.is-scrolled .sticky-search {
 .folder-list.bookmark-view-animate .list-view-header,
 .folder-list.bookmark-view-animate .select-all-container,
 .folder-list.bookmark-view-animate .back-button {
-  animation: popupBookmarkViewItemIn 380ms cubic-bezier(0.2, 0.8, 0.2, 1)
-    both;
+  animation: popupBookmarkViewItemIn 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   animation-delay: var(--view-stagger, 0ms);
   will-change: opacity, transform;
 }
@@ -849,15 +848,25 @@ body.is-scrolled .sticky-search {
   min-width: 0;
 }
 
-#folder-list .bookmark-item:not([class*="-bookmark-item"]) .bookmark-note-preview,
+#folder-list
+  .bookmark-item:not([class*="-bookmark-item"])
+  .bookmark-note-preview,
 #folder-list .bookmark-item:not([class*="-bookmark-item"]) .flat-view-tags {
   margin-left: 48px;
   width: calc(100% - 48px);
   flex: 1 0 auto;
 }
 
-#folder-list .bookmark-item:not([class*="-bookmark-item"]):has(.bookmark-checkbox[style*="display: none"]) .bookmark-note-preview,
-#folder-list .bookmark-item:not([class*="-bookmark-item"]):has(.bookmark-checkbox[style*="display: none"]) .flat-view-tags {
+#folder-list
+  .bookmark-item:not([class*="-bookmark-item"]):has(
+    .bookmark-checkbox[style*="display: none"]
+  )
+  .bookmark-note-preview,
+#folder-list
+  .bookmark-item:not([class*="-bookmark-item"]):has(
+    .bookmark-checkbox[style*="display: none"]
+  )
+  .flat-view-tags {
   margin-left: 26px;
   width: calc(100% - 26px);
 }
@@ -1262,7 +1271,11 @@ body.settings-panel-open .button.settings {
 }
 
 body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu {
-  background-color: color-mix(in srgb, var(--bg-primary) 82%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--bg-primary) 82%,
+    transparent
+  ) !important;
   backdrop-filter: blur(14px) !important;
   border-color: var(--border-color) !important;
   box-shadow:
@@ -1282,18 +1295,25 @@ body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu .menu-item:hover {
 }
 
 body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu hr {
-  border-top-color: color-mix(in srgb, var(--border-color) 58%, transparent) !important;
+  border-top-color: color-mix(
+    in srgb,
+    var(--border-color) 58%,
+    transparent
+  ) !important;
 }
 
 body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary)),
-      var(--bg-secondary)
-    ) !important;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary)),
+    var(--bg-secondary)
+  ) !important;
   backdrop-filter: none !important;
-  border-color: color-mix(in srgb, var(--border-color) 82%, var(--accent-color)) !important;
+  border-color: color-mix(
+    in srgb,
+    var(--border-color) 82%,
+    var(--accent-color)
+  ) !important;
   box-shadow:
     0 14px 34px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
@@ -1301,12 +1321,18 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu {
   padding: 7px !important;
 }
 
-body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu .menu-item:not(:hover) {
+body[data-bookmark-menu-bg="normal"]
+  .bookmark-dropdown-menu
+  .menu-item:not(:hover) {
   background: transparent !important;
 }
 
 body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
-  border-top-color: color-mix(in srgb, var(--border-color) 78%, transparent) !important;
+  border-top-color: color-mix(
+    in srgb,
+    var(--border-color) 78%,
+    transparent
+  ) !important;
   margin: 2px 4px !important;
 }
 
@@ -1763,167 +1789,166 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 }
 /* === AI Profiles Styling === */
 .ai-profiles-section {
-    margin-top: 20px;
-    border-top: 1px solid var(--border-color);
-    padding-top: 15px;
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
 }
 
 .ai-profiles-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .ai-profiles-label {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .btn-save-profile {
-    padding: 6px 12px;
-    font-size: 0.75rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .btn-save-profile:hover {
-    background: var(--hover-bg);
-    border-color: var(--accent-color);
-    color: var(--accent-color);
+  background: var(--hover-bg);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
 }
 
 .ai-profiles-list {
-    max-height: 150px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-right: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
 }
 
 .ai-profile-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg-secondary);
-    padding: 10px;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-secondary);
+  padding: 10px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .ai-profile-item:hover {
-    border-color: var(--accent-color);
-    transform: translateX(4px);
-    background: var(--hover-bg);
+  border-color: var(--accent-color);
+  transform: translateX(4px);
+  background: var(--hover-bg);
 }
 
 .ai-profile-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .ai-profile-name {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .ai-profile-meta {
-    font-size: 0.7rem;
-    color: var(--text-muted);
+  font-size: 0.7rem;
+  color: var(--text-muted);
 }
 
 .btn-delete-profile {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 6px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .btn-delete-profile:hover {
-    color: var(--error-color);
-    background: rgba(255, 68, 68, 0.1);
+  color: var(--error-color);
+  background: rgba(255, 68, 68, 0.1);
 }
 
 .ai-profiles-empty {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    text-align: center;
-    padding: 15px;
-    border: 1px dashed var(--border-color);
-    border-radius: var(--border-radius);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 15px;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--border-radius);
 }
 
 .ai-profile-dropdown-container {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    background: var(--bg-secondary);
-    padding: 10px;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: var(--bg-secondary);
+  padding: 10px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
 }
 
 .ai-profile-controls {
-    display: flex;
-    gap: 5px;
+  display: flex;
+  gap: 5px;
 }
 
 .btn-action-icon {
-    background-color: var(--text-primary) !important;
-    color: var(--bg-primary) !important;
-    width: 38px;
-    height: 38px;
-    border: none !important;
-    border-radius: var(--border-radius-md) !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease !important;
-    box-shadow: var(--shadow-sm) !important;
+  background-color: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+  width: 38px;
+  height: 38px;
+  border: none !important;
+  border-radius: var(--border-radius-md) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .btn-action-icon:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: var(--shadow-md) !important;
-    opacity: 0.9;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-md) !important;
+  opacity: 0.9;
 }
 
 .btn-action-icon:active {
-    transform: translateY(0) scale(0.95) !important;
+  transform: translateY(0) scale(0.95) !important;
 }
 
 .btn-action-icon.delete {
-    background-color: var(--bg-tertiary) !important;
-    color: var(--text-primary) !important;
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
 }
 
 .btn-action-icon.delete:hover {
-    background-color: var(--error-color) !important;
-    color: white !important;
+  background-color: var(--error-color) !important;
+  color: white !important;
 }
 
 .btn-action-icon i {
-    font-size: 0.9rem;
+  font-size: 0.9rem;
 }
-
 
 /* Imported from webview.css for settings menu parity */
 .menu-group {
@@ -2059,89 +2084,7 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   font-weight: 900 !important;
 }
 
-.segmented-control-item .control-label span {
-  min-width: 0;
-}
 
-.segmented-control-item:hover .control-label {
-  background: var(--hover-bg) !important;
-  color: var(--text-primary) !important;
-}
-
-.segmented-control-item:hover .control-label i,
-.segmented-control-item:hover .control-label span {
-  color: var(--text-primary) !important;
-}
-
-.segmented-control-item
-  input[type="radio"]:checked
-  + .control-label {
-  background: var(--accent-color) !important;
-  color: var(--bg-primary) !important;
-  font-weight: 800;
-}
-
-.segmented-control-item
-  input[type="radio"]:checked
-  + .control-label
-  i,
-.quick-open-settings
-  .segmented-control-item
-  input[type="radio"]:checked
-  + .control-label
-  span {
-  color: var(--bg-primary) !important;
-  opacity: 1;
-}
-
-.segmented-control-item input:focus-visible + .control-label {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
-}
-
-.quick-open-settings {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  background: transparent;
-  border-radius: 10px;
-  padding: 4px;
-  border: none;
-  width: 100%;
-  gap: 4px;
-}
-
-.quick-open-settings .segmented-control-item {
-  flex: 1 1 auto;
-  min-width: calc(50% - 4px);
-}
-
-.quick-open-settings .segmented-control-item:has(input[type="radio"]:checked) {
-  background: var(--accent-color) !important;
-}
-
-.quick-open-settings
-  .segmented-control-item
-  input[type="radio"]:checked
-  + .control-label {
-  background: var(--accent-color) !important;
-  color: var(--bg-primary) !important;
-  font-weight: 800;
-}
-
-.quick-open-settings
-  .segmented-control-item
-  input[type="radio"]:checked
-  + .control-label
-  i,
-.quick-open-settings
-  .segmented-control-item
-  input[type="radio"]:checked
-  + .control-label
-  span {
-  color: var(--bg-primary) !important;
-  opacity: 1;
-}
 
 .app-setting-action {
   justify-content: flex-start;
@@ -2160,8 +2103,8 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 }
 
 .back-button {
-    animation: none;
-  }
+  animation: none;
+}
 
 .back-button-container {
   display: flex;
@@ -2200,4 +2143,12 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 .bottom-controls {
   flex-wrap: wrap;
   gap: var(--spacing-sm);
+}
+
+/* Native Popup Mode Styles */
+body.native-popup {
+  width: 350px;
+  height: 600px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }

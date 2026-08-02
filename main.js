@@ -19,6 +19,12 @@ import { initCleanupDashboard } from "./components/cleanupDashboard.js"
 import { initWorkspaces } from "./components/workspaces.js"
 import { initSync } from "./components/sync.js"
 
+// Check if we are running in the native popup
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('mode') === 'native_popup') {
+  document.body.classList.add('native-popup');
+}
+
 // Sự kiện cho favicon option
 const faviconOptionSelect = document.getElementById("favicon-option-select")
 if (faviconOptionSelect) {

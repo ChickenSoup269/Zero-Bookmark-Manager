@@ -414,7 +414,8 @@ export const en = {
   "quickOpenQuickSave": "Quick Save",
   "quickOpenPopup": "Default Popup",
   "quickOpenSidePanel": "Default Side Panel",
-  "quickOpenWeb": "Default Web Tab",
+  "quickOpenWeb": "Full Page",
+  "quickOpenNativePopup": "Browser Popup",
   "showNotesPreview": "Show Notes Preview",
   "showTagsInView": "Show Tags in View",
 
