@@ -404,8 +404,8 @@ function saveMetadata(bookmarkId, tags, note, callback) {
     if (tags.length) {
       bookmarkTags[bookmarkId] = tags
       tags.forEach((tag) => {
-        if (!tagColors[tag]) tagColors[tag] = "#3B82F6"
-        if (!tagTextColors[tag]) tagTextColors[tag] = "#FFFFFF"
+        tagColors[tag] = tagColorsCache[tag] || tagColors[tag] || "#3B82F6"
+        tagTextColors[tag] = tagTextColorsCache[tag] || tagTextColors[tag] || "#FFFFFF"
       })
     } else {
       delete bookmarkTags[bookmarkId]
@@ -562,6 +562,10 @@ function loadTags() {
 
 function showSuggestions(query) {
   if (!customTagSuggestions) return;
+  if (!query) {
+    customTagSuggestions.classList.add("hidden")
+    return
+  }
   const filtered = allAvailableTags.filter(t => t.toLowerCase().includes(query.toLowerCase()) && !currentTags.includes(t))
   if (filtered.length === 0) {
     customTagSuggestions.classList.add("hidden")
@@ -595,13 +599,112 @@ function showSuggestions(query) {
   activeSuggestionIndex = -1
 }
 
+let nextTagColor = "#3B82F6";
+
 function addTag(tag) {
   if (tag && !currentTags.includes(tag)) {
     currentTags.push(tag)
+    
+    // Apply selected color if not already cached
+    if (!tagColorsCache[tag]) {
+      tagColorsCache[tag] = nextTagColor;
+      tagTextColorsCache[tag] = getContrastYIQ(nextTagColor);
+    }
+    
     tagsInput.value = ""
     renderTags()
     if (customTagSuggestions) customTagSuggestions.classList.add("hidden")
   }
+}
+
+const CUSTOM_COLORS = [
+  "#EF4444", "#F97316", "#F59E0B", "#EAB308", "#84CC16", "#22C55E",
+  "#14B8A6", "#06B6D4", "#0EA5E9", "#3B82F6", "#6366F1", "#8B5CF6",
+  "#A855F7", "#D946EF", "#EC4899", "#F43F5E", "#78716C", "#64748B",
+  "#111827", "#FFFFFF"
+];
+
+let globalColorPalette = null;
+let currentEditingTag = null;
+
+function showColorPalette(tag, chipElement) {
+  if (!globalColorPalette) {
+    globalColorPalette = document.createElement("div");
+    globalColorPalette.className = "custom-tag-suggestions";
+    globalColorPalette.style.display = "flex";
+    globalColorPalette.style.flexDirection = "row";
+    globalColorPalette.style.flexWrap = "wrap";
+    globalColorPalette.style.padding = "8px";
+    globalColorPalette.style.gap = "6px";
+    globalColorPalette.style.width = "200px";
+    globalColorPalette.style.zIndex = "1000";
+    
+    CUSTOM_COLORS.forEach(color => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.style.width = "24px";
+      btn.style.height = "24px";
+      btn.style.borderRadius = "50%";
+      btn.style.border = "1px solid var(--border-color)";
+      btn.style.backgroundColor = color;
+      btn.style.cursor = "pointer";
+      
+      btn.addEventListener("mouseover", () => {
+        btn.style.transform = "scale(1.1)";
+      });
+      btn.addEventListener("mouseout", () => {
+        btn.style.transform = "scale(1)";
+      });
+      
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (currentEditingTag && currentEditingTag.tag) {
+          tagColorsCache[currentEditingTag.tag] = color;
+          tagTextColorsCache[currentEditingTag.tag] = getContrastYIQ(color);
+          currentEditingTag.chip.style.backgroundColor = color;
+          currentEditingTag.chip.style.color = tagTextColorsCache[currentEditingTag.tag];
+        } else if (currentEditingTag && !currentEditingTag.tag) {
+          // It's the next-tag-color-btn
+          nextTagColor = color;
+          currentEditingTag.chip.style.backgroundColor = color;
+        }
+        globalColorPalette.classList.add("hidden");
+      });
+      globalColorPalette.appendChild(btn);
+    });
+    
+    document.addEventListener("mousedown", (e) => {
+      if (globalColorPalette && !globalColorPalette.contains(e.target)) {
+        globalColorPalette.classList.add("hidden");
+      }
+    });
+    
+    document.body.appendChild(globalColorPalette);
+  }
+  
+  currentEditingTag = { tag, chip: chipElement };
+  globalColorPalette.classList.remove("hidden");
+  
+  const rect = chipElement.getBoundingClientRect();
+  globalColorPalette.style.position = "absolute";
+  globalColorPalette.style.top = (rect.bottom + window.scrollY + 4) + "px";
+  
+  let leftPos = rect.left + window.scrollX;
+  if (leftPos + 220 > window.innerWidth) { // 220px to leave some margin
+    leftPos = Math.max(10, (rect.right + window.scrollX) - 210);
+  }
+  globalColorPalette.style.left = leftPos + "px";
+}
+
+function getContrastYIQ(hexcolor) {
+    if (!hexcolor) return '#FFFFFF';
+    hexcolor = hexcolor.replace("#", "");
+    if (hexcolor.length === 3) hexcolor = hexcolor.split('').map(c => c + c).join('');
+    const r = parseInt(hexcolor.substr(0, 2), 16);
+    const g = parseInt(hexcolor.substr(2, 2), 16);
+    const b = parseInt(hexcolor.substr(4, 2), 16);
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 128) ? '#000000' : '#FFFFFF';
 }
 
 function renderTags() {
@@ -611,23 +714,53 @@ function renderTags() {
     chip.className = "tag-chip"
     
     // Apply custom colors if they exist
-    const bgColor = tagColorsCache[tag]
-    const textColor = tagTextColorsCache[tag]
-    if (bgColor) chip.style.backgroundColor = bgColor
-    if (textColor) chip.style.color = textColor
+    const bgColor = tagColorsCache[tag] || "#3B82F6"
+    const textColor = tagTextColorsCache[tag] || getContrastYIQ(bgColor)
+    chip.style.backgroundColor = bgColor
+    chip.style.color = textColor
 
-    chip.innerHTML = `<span>${tag}</span><span class="remove" data-index="${index}">&times;</span>`
-    tagsContainer.insertBefore(chip, tagsInput)
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = tag;
+    nameSpan.style.cursor = "pointer";
+    nameSpan.title = "Click to change color";
+    
+    nameSpan.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showColorPalette(tag, chip);
+    });
+
+    const removeSpan = document.createElement("span");
+    removeSpan.className = "remove";
+    removeSpan.setAttribute("data-index", index);
+    removeSpan.innerHTML = "&times;";
+
+    chip.appendChild(nameSpan);
+    chip.appendChild(removeSpan);
+    
+    const inputWrapper = document.getElementById("tags-input-wrapper");
+    tagsContainer.insertBefore(chip, inputWrapper)
   })
   tagsHiddenInput.value = currentTags.join(",")
 }
 
+const nextTagColorBtn = document.getElementById("next-tag-color-btn");
+if (nextTagColorBtn) {
+  nextTagColorBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    showColorPalette(null, nextTagColorBtn);
+  });
+}
+
 tagsContainer.addEventListener("click", (e) => {
-  if (e.target.classList.contains("remove")) {
-    currentTags.splice(e.target.getAttribute("data-index"), 1)
-    renderTags()
-  } else {
-    tagsInput.focus()
+  const removeBtn = e.target.closest(".remove");
+  if (removeBtn) {
+    const index = parseInt(removeBtn.getAttribute("data-index"), 10);
+    if (!isNaN(index)) {
+      currentTags.splice(index, 1);
+      renderTags();
+    }
+  } else if (!e.target.closest(".tag-chip")) {
+    tagsInput.focus();
   }
 })
 

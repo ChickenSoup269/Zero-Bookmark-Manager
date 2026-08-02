@@ -29,6 +29,7 @@
         <div id="quick-open-action-group" class="quick-action-group">
           <button type="button" class="quick-action-btn active" data-value="quickSave" data-i18n="btnQuickSave">Quick Save</button>
           <button type="button" class="quick-action-btn" data-value="popup" data-i18n="btnPopup">Popup</button>
+          <button type="button" class="quick-action-btn" data-value="nativePopup" data-i18n="btnNativePopup">Browser Popup</button>
           <button type="button" class="quick-action-btn" data-value="sidepanel" data-i18n="btnPanel">Panel</button>
           <button type="button" class="quick-action-btn" data-value="web" data-i18n="btnFull">Full</button>
         </div>
@@ -67,7 +68,10 @@
           </button>
         </div>
         <div id="tags-container" class="tags-container">
-          <input id="tags-input" class="tags-input" type="text" autocomplete="off" placeholder="Type and press Enter..." data-i18n-placeholder="phTags">
+          <div id="tags-input-wrapper" style="display: inline-flex; align-items: center; flex: 1; min-width: 150px;">
+            <input id="tags-input" class="tags-input" type="text" autocomplete="off" placeholder="Type and press Enter..." data-i18n-placeholder="phTags" style="flex: 1;">
+            <button type="button" id="next-tag-color-btn" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border-color); background-color: #3B82F6; cursor: pointer; margin-left: 4px; flex-shrink: 0;" title="Choose color for new tag"></button>
+          </div>
         </div>
         <div id="custom-tag-suggestions" class="custom-tag-suggestions hidden"></div>
         <input type="hidden" id="tags" value="">

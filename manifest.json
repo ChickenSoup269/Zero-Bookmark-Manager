@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extName__",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "__MSG_extDesc__",
   "default_locale": "en",
   "permissions": [
@@ -45,13 +45,12 @@
     "scopes": ["https://www.googleapis.com/auth/drive.file"]
   },
   "commands": {
-    "open-quick-save": {
+    "_execute_action": {
       "suggested_key": {
         "default": "Ctrl+Shift+Y",
         "mac": "MacCtrl+Shift+Y"
       },
-      "description": "Open Quick Save"
+      "description": "Open Extension Action"
     }
   }
 }
-
