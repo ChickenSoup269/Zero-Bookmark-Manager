@@ -3222,63 +3222,82 @@ html {
 
 /* Quick Open Settings */
 .quick-open-settings {
-  display: flex;
-  flex-direction: column; /* xuống hàng */
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
   padding: 10px 0;
 }
 
-.quick-open-settings label {
+.quick-open-settings .segmented-control-item {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.quick-open-settings label:hover {
-  background: var(--hover-bg);
+  position: relative;
+  margin: 0;
 }
 
 .quick-open-settings input[type="radio"] {
-  accent-color: var(--bg-primary);
+  position: absolute;
+  opacity: 0;
   cursor: pointer;
+  height: 0;
+  width: 0;
 }
 
-.quick-open-settings label:has(input[type="radio"]:checked) {
-  background: var(--text-primary);
-  color: var(--bg-primary);
-  border-color: var(--bg-primary);
-  font-weight: 600;
-}
-
-.quick-open-settings .control-label,
-.quick-open-settings .segmented-control-item:hover .control-label,
-.quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label {
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
+.quick-open-settings .control-label {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  color: inherit !important;
-  font-weight: inherit !important;
-}
-.quick-open-settings .segmented-control-item:hover .control-label i,
-.quick-open-settings .segmented-control-item:hover .control-label span,
-.quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label i,
-.quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label span {
-  color: inherit !important;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 8px;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
 }
 
 .quick-open-settings .control-label i {
-  font-weight: 900 !important; /* FontAwesome solid requires 900, if it changes it shifts text */
+  font-size: 1.2rem;
+  font-weight: 900 !important;
+  opacity: 0.8;
+  transition: transform 0.2s;
+}
+
+.quick-open-settings .control-label span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.quick-open-settings .segmented-control-item:hover .control-label {
+  background: var(--hover-bg);
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.quick-open-settings .segmented-control-item:hover .control-label i {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.quick-open-settings input[type="radio"]:checked + .control-label {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--bg-primary);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 40%, transparent);
+}
+
+.quick-open-settings input[type="radio"]:checked + .control-label i {
+  opacity: 1;
+  transform: scale(1.1);
+  color: var(--bg-primary);
+}
+
+.quick-open-settings input[type="radio"]:checked + .control-label span {
+  color: var(--bg-primary);
 }
 
 /* UI chọn tag */
