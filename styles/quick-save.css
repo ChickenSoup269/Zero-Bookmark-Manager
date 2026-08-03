@@ -278,44 +278,32 @@ option:hover {
 .primary-button {
   width: 100%;
   border: 0;
-  border-radius: 12px;
-  background: linear-gradient(
-    135deg,
-    var(--accent-color),
-    color-mix(in srgb, var(--accent-color) 70%, black)
-  );
+  border-radius: 8px;
+  background: var(--accent-color);
   color: var(--bg-primary);
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 1rem;
-  padding: 16px 20px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 6px 16px
-    color-mix(in srgb, var(--accent-color) 35%, transparent);
+  padding: 14px 20px;
+  transition: opacity 0.2s ease, transform 0.1s ease;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  letter-spacing: 0.02em;
 }
 
 .primary-button:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 24px
-    color-mix(in srgb, var(--accent-color) 45%, transparent);
-  filter: brightness(1.1);
+  opacity: 0.9;
 }
 
 .primary-button:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent-color) 30%, transparent);
+  transform: scale(0.98);
 }
 
 .primary-button:disabled {
   cursor: wait;
   background: var(--bg-tertiary);
   color: var(--text-muted);
-  box-shadow: none;
 }
 
 .status {

@@ -525,20 +525,23 @@ function createQuickSaveWindow(tab) {
 }
 
 function findExistingExtensionPopup(path, callback) {
-  const popupUrl = chrome.runtime.getURL(path)
+  const popupUrl = chrome.runtime.getURL(path.split('?')[0]);
 
-  chrome.windows.getAll({ populate: true }, (windows) => {
-    for (const win of windows) {
-      if (win.type !== "popup") continue
-
-      const hasPopupTab = win.tabs?.some((tab) => tab.url?.startsWith(popupUrl))
-
-      if (hasPopupTab) {
-        return callback(win)
-      }
+  chrome.tabs.query({ url: popupUrl + "*" }, (tabs) => {
+    if (tabs && tabs.length > 0) {
+      // Find the window for the first matching tab
+      const tab = tabs[0];
+      chrome.windows.get(tab.windowId, { populate: true }, (win) => {
+        if (win && win.type === "popup") {
+          callback(win);
+        } else {
+          callback(null);
+        }
+      });
+    } else {
+      callback(null);
     }
-    callback(null)
-  })
+  });
 }
 
 chrome.action.onClicked.addListener((tab) => {
