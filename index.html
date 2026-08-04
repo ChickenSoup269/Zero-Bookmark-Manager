@@ -124,6 +124,18 @@
                         <i class="fas fa-file-export" aria-hidden="true"></i>
                         <span data-i18n="exportBookmarks">Export Bookmarks</span>
                     </button>
+                    <button id="smart-cleanup-button" class="menu-item">
+                        <i class="fas fa-magic" aria-hidden="true" style="color: var(--accent-color);"></i>
+                        <span data-i18n="smartCleanupTitle">Smart Cleanup</span>
+                    </button>
+                    <button id="analytics-btn" class="menu-item">
+                        <i class="fas fa-chart-pie" aria-hidden="true"></i>
+                        <span data-i18n="analyticsTitle">Analytics Dashboard</span>
+                    </button>
+                    <button id="save-session-btn" class="menu-item">
+                        <i class="fas fa-layer-group" aria-hidden="true"></i>
+                        <span data-i18n="saveSession">Save Current Session (Tabs)</span>
+                    </button>
                     <button id="import-bookmarks-option" class="menu-item">
                         <i class="fas fa-file-import" aria-hidden="true"></i>
                         <span data-i18n="importBookmarks">Import Bookmarks</span>
@@ -586,6 +598,100 @@
             </div>
         </div>
 
+        <div id="snooze-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="snooze-popup-title">
+            <div class="rename-popup-content">
+                <h3 id="snooze-popup-title"><i class="fas fa-clock" style="margin-right: 8px;"></i><span data-i18n="snoozeTitle">Snooze</span></h3>
+                <div class="snooze-options-container" style="display: flex; flex-direction: column; gap: 8px; margin: 15px 0;">
+                    <button class="button save snooze-option" data-time="60" style="width: 100%; text-align: left;">
+                        <i class="fas fa-hourglass-start" style="width: 20px;"></i> <span data-i18n="snooze1Hour">In 1 hour</span>
+                    </button>
+                    <button class="button save snooze-option" data-time="1440" style="width: 100%; text-align: left;">
+                        <i class="fas fa-calendar-day" style="width: 20px;"></i> <span data-i18n="snoozeTomorrow">Tomorrow</span>
+                    </button>
+                    <button class="button save snooze-option" data-time="10080" style="width: 100%; text-align: left;">
+                        <i class="fas fa-calendar-week" style="width: 20px;"></i> <span data-i18n="snoozeNextWeek">Next week</span>
+                    </button>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="snooze-cancel" class="button cancel" data-i18n="cancel" style="width: 100%;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smart Cleanup Modal -->
+        <div id="smart-cleanup-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="smart-cleanup-title">
+            <div class="rename-popup-content smart-cleanup-popup-content">
+                <div class="smart-cleanup-header">
+                    <div>
+                        <h3 id="smart-cleanup-title">Smart Cleanup</h3>
+                        <p id="smart-cleanup-subtitle">Review bookmark cleanup opportunities before changing anything.</p>
+                    </div>
+                    <button id="smart-cleanup-close-x" class="modal-close" title="Close">✕</button>
+                </div>
+                <div id="smart-cleanup-summary" class="smart-cleanup-summary"></div>
+                <div class="smart-cleanup-body">
+                    <div class="smart-cleanup-main">
+                        <div id="smart-cleanup-grid" class="smart-cleanup-grid"></div>
+                        <div id="smart-cleanup-details" class="smart-cleanup-details"></div>
+                    </div>
+                    <aside id="smart-cleanup-next" class="smart-cleanup-next"></aside>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="smart-cleanup-refresh" class="button save">Refresh</button>
+                    <button id="smart-cleanup-close" class="button cancel">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard Modal -->
+        <div id="analytics-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="analytics-title">
+            <div class="rename-popup-content" style="width: min(800px, 94vw); max-width: 800px;">
+                <div class="smart-cleanup-header">
+                    <div>
+                        <h3 id="analytics-title"><i class="fas fa-chart-pie" style="margin-right: 8px;"></i><span data-i18n="analyticsTitle">Analytics Dashboard</span></h3>
+                        <p id="analytics-subtitle" style="margin:0; font-size: 0.85rem; color:var(--text-secondary);" data-i18n="analyticsDesc">Your bookmarking habits at a glance.</p>
+                    </div>
+                    <button id="analytics-close-x" class="modal-close" title="Close">✕</button>
+                </div>
+                
+                <div class="analytics-body" style="display: grid; gap: 16px; margin: 16px 0;">
+                    <!-- Quick Stats -->
+                    <div class="smart-cleanup-summary" style="margin-bottom: 0;">
+                        <div>
+                            <strong id="stat-total-bookmarks">0</strong>
+                            <span data-i18n="analyticsTotalBookmarks">Total Bookmarks</span>
+                        </div>
+                        <div>
+                            <strong id="stat-total-folders">0</strong>
+                            <span data-i18n="analyticsTotalFolders">Total Folders</span>
+                        </div>
+                        <div>
+                            <strong id="stat-recent-bookmarks">0</strong>
+                            <span data-i18n="analyticsAddedThisWeek">Added This Week</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Domains Bar Chart -->
+                    <div style="padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: color-mix(in srgb, var(--bg-primary) 70%, transparent);">
+                        <h4 style="margin: 0 0 16px 0; color: var(--text-primary); font-size: 1rem;"><i class="fas fa-globe" style="margin-right: 6px; color: var(--accent-color);"></i><span data-i18n="analyticsTopDomains">Top Domains</span></h4>
+                        <div id="stat-top-domains" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Bars will be injected here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rename-popup-buttons">
+                    <button id="analytics-close" class="button cancel" style="width: 100px;">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="duplicate-merge-popup-container"></div>
+        <script type="module" src="components/duplicateMerge.js"></script>
+
+        <div id="custom-prompt-popup" class="rename-popup hidden popup-animate" role="dialog">
+
         <div id="organize-folders-popup" class="rename-popup hidden popup-animate" role="dialog"
             aria-labelledby="organize-folders-title">
             <div class="rename-popup-content organize-folders-popup-content">
@@ -683,8 +789,8 @@
         </div>
         </div> <!-- end dashboard-view -->
         
-        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1; overflow-y: auto;">
-            <iframe id="quick-save-frame" src="quick-save.html?embedded=true" style="width: 100%; border: none; border-radius: 8px;" scrolling="no"></iframe>
+        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1; overflow-y: auto; position: relative;">
+            <iframe id="quick-save-frame" src="quick-save.html?embedded=true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;" scrolling="auto"></iframe>
         </div>
 
         <!-- footer -->
