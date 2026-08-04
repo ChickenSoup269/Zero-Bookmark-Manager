@@ -11,7 +11,9 @@
     "tabs",
     "system.display",
     "webNavigation",
-    "identity"
+    "identity",
+    "alarms",
+    "notifications"
   ],
   "optional_host_permissions": ["https://urlhaus-api.abuse.ch/*"],
   "action": {

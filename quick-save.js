@@ -22,32 +22,28 @@ if (isEmbedded) {
         actionGroup.parentElement.style.display = "none";
     }
 
-    // Auto resize iframe height based on content to avoid internal scrollbar and jumping
-    let lastHeight = 0;
-    const updateHeight = () => {
-        if (window.parent) {
-            const frame = window.parent.document.getElementById("quick-save-frame");
-            const shell = document.querySelector(".quick-save-shell");
-            if (frame && shell) {
-                // Get the actual height of the content plus some padding buffer
-                const newHeight = shell.offsetHeight + 24; 
-                if (Math.abs(newHeight - lastHeight) > 2) {
-                    lastHeight = newHeight;
-                    frame.style.height = newHeight + "px";
-                }
-            }
-        }
-    };
-    
-    // Use ResizeObserver on the content container instead of body to prevent layout thrashing
-    const shell = document.querySelector(".quick-save-shell");
-    if (shell) {
-        const resizeObserver = new ResizeObserver(updateHeight);
-        resizeObserver.observe(shell);
-    }
-    
-    window.addEventListener("load", updateHeight);
-    setTimeout(updateHeight, 100);
+    // Auto resize disabled - managed by CSS flex
+    // let lastHeight = 0;
+    // const updateHeight = () => {
+    //     if (window.parent) {
+    //         const frame = window.parent.document.getElementById("quick-save-frame");
+    //         const shell = document.querySelector(".quick-save-shell");
+    //         if (frame && shell) {
+    //             const newHeight = shell.offsetHeight + 24; 
+    //             if (Math.abs(newHeight - lastHeight) > 2) {
+    //                 lastHeight = newHeight;
+    //                 frame.style.height = newHeight + "px";
+    //             }
+    //         }
+    //     }
+    // };
+    // const shell = document.querySelector(".quick-save-shell");
+    // if (shell) {
+    //     const resizeObserver = new ResizeObserver(updateHeight);
+    //     resizeObserver.observe(shell);
+    // }
+    // window.addEventListener("load", updateHeight);
+    // setTimeout(updateHeight, 100);
 }
 
 const qsTranslations = {

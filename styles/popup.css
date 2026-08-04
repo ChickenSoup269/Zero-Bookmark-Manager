@@ -175,10 +175,10 @@ body.is-scrolled .sticky-search {
 
 .bookmark-item:hover,
 .folder-item:hover {
-  z-index: 100; /* Bring hovered item to the front */
+  z-index: 100;
   transform: translateY(-2px);
-  transition: all 0.2s ease !important;
-  box-shadow: var(--shadow-md);
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background: var(--bg-tertiary);
   backdrop-filter: blur(10px) !important;
 }
@@ -210,7 +210,8 @@ body.is-scrolled .sticky-search {
 
 .folder-card:hover {
   border-color: var(--accent-color);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .folder-card.drag-over {
@@ -278,6 +279,8 @@ body.is-scrolled .sticky-search {
 .detail-view .bookmark-item:hover {
   background: var(--bg-tertiary);
   border-color: var(--border-color);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .card-view .bookmark-item.dragging {

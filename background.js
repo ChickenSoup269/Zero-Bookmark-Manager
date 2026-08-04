@@ -616,3 +616,34 @@ chrome.commands.onCommand.addListener((command, tab) => {
     })
   }
 })
+// Snooze Bookmark Logic
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name.startsWith('snooze_')) {
+    const bookmarkId = alarm.name.replace('snooze_', '');
+    chrome.bookmarks.get(bookmarkId, (results) => {
+      if (results && results.length > 0) {
+        const bookmark = results[0];
+        chrome.notifications.create(alarm.name, {
+          type: 'basic',
+          iconUrl: 'icons/icon.png',
+          title: '⏰ Nhắc nhở đọc Bookmark',
+          message: bookmark.title,
+          contextMessage: 'Nhấn vào đây để mở liên kết',
+          requireInteraction: true
+        });
+      }
+    });
+  }
+});
+chrome.notifications.onClicked.addListener((notificationId) => {
+  if (notificationId.startsWith('snooze_')) {
+    const bookmarkId = notificationId.replace('snooze_', '');
+    chrome.bookmarks.get(bookmarkId, (results) => {
+      if (results && results.length > 0) {
+        const bookmark = results[0];
+        chrome.tabs.create({ url: bookmark.url });
+        chrome.notifications.clear(notificationId);
+      }
+    });
+  }
+});

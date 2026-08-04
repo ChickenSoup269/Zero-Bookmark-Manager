@@ -20,18 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
             quickSaveView.style.display = "flex";
             dashboardView.style.display = "none";
             
-            // Force iframe to recalculate height when it becomes visible
-            const frame = document.getElementById("quick-save-frame");
-            if (frame && frame.contentWindow && frame.contentWindow.document) {
-                try {
-                    frame.style.height = "auto";
-                    setTimeout(() => {
-                        if (frame.contentWindow.document.body) {
-                            frame.style.height = frame.contentWindow.document.body.scrollHeight + "px";
-                        }
-                    }, 50);
-                } catch (e) {}
-            }
+            // Height is now managed by CSS (flex: 1, height: 100%)
         }
     }
 

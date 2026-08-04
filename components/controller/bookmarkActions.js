@@ -189,6 +189,11 @@ function handleMenuItemClick(e, elements) {
     "favorite-btn": () => handleFavoriteBookmark(e, elements),
     "view-detail-btn": () => openBookmarkDetailPopup(bookmarkId, elements),
     "manage-tags-btn": () => openManageTagsPopup(bookmarkId, elements),
+    "snooze-btn": () => openSnoozePopup(bookmarkId, elements),
+    "wayback-btn": () => {
+      const url = target.dataset.url;
+      if (url) window.open(`https://web.archive.org/web/*/${url}`, "_blank");
+    },
   }
 
   const actionKey = Object.keys(actions).find((key) =>
@@ -206,6 +211,53 @@ function handleMenuItemClick(e, elements) {
 }
 
 // --- POPUP HANDLERS ---
+
+function openSnoozePopup(bookmarkId, elements) {
+  const popup = document.getElementById("snooze-popup")
+  if (!popup) {
+      if (window.showCustomPopup) window.showCustomPopup("Error: popup element not found!");
+      else alert("Error: popup element not found!");
+      return;
+  }
+  popup.classList.remove("hidden")
+
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "light"
+  const allThemes = ["light", "dark", "dracula", "onedark", "tet"]
+  allThemes.forEach((theme) => popup.classList.remove(`${theme}-theme`))
+  popup.classList.add(`${currentTheme}-theme`)
+
+  const cancelBtn = popup.querySelector("#snooze-cancel")
+  const optionBtns = popup.querySelectorAll(".snooze-option")
+
+  const closePopup = () => {
+    popup.classList.add("hidden")
+  }
+
+  if (cancelBtn) {
+    cancelBtn.onclick = closePopup
+  }
+
+  optionBtns.forEach(btn => {
+    btn.onclick = () => {
+      const minutes = parseInt(btn.dataset.time, 10)
+      if (minutes > 0) {
+        chrome.alarms.create(`snooze_${bookmarkId}`, { delayInMinutes: minutes })
+        const lang = localStorage.getItem("appLanguage") || "en"
+        const t = window.translations ? window.translations[lang] : null
+        const successMsg = t && t.snoozeSuccess 
+            ? t.snoozeSuccess.replace("{0}", minutes)
+            : `Snoozed for ${minutes} minutes!`
+        
+        if (window.showCustomPopup) {
+           window.showCustomPopup(successMsg)
+        } else {
+           alert(successMsg)
+        }
+      }
+      closePopup()
+    }
+  })
+}
 
 // Thay thế hàm này trong components/controller/bookmarkAction.js
 

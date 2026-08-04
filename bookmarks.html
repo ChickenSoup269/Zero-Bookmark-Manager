@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zero Bookmark Manager 1.6.1</title>
+    <title>Zero Bookmark Manager 1.7.0</title>
     <script src="./components/bookmarkCache.js"></script>
     <script src="./components/sidebar-preload.js"></script>
     <link rel="stylesheet" href="./styles/style.css?v=2">
@@ -152,7 +152,8 @@
                 </div>
                 <div class="sidebar-section-content collapsed" id="admin-content">
                     <div class="sidebar-admin-grid">
-                        <button id="rename-folder" class="sidebar-admin-btn hidden" data-i18n-title="renameFolder" title="Rename Folder">
+                        <button id="rename-folder" class="sidebar-admin-btn hidden" data-i18n-title="renameFolder"
+                            title="Rename Folder">
                             <i class="fas fa-edit"></i>
                             <span data-i18n="renameTitle">Rename</span>
                         </button>
@@ -173,9 +174,13 @@
                             <i class="fas fa-sitemap"></i>
                             <span>Organize</span>
                         </button>
-                        <button id="smart-cleanup-button" class="sidebar-admin-btn" title="Smart Cleanup">
+                        <button id="smart-cleanup-button" class="sidebar-admin-btn" title="Smart Cleanup" data-i18n-title="smartCleanupTitle">
                             <i class="fas fa-broom"></i>
-                            <span>Cleanup</span>
+                            <span data-i18n="smartCleanupTitle">Cleanup</span>
+                        </button>
+                        <button id="analytics-btn" class="sidebar-admin-btn" title="Analytics Dashboard" data-i18n-title="analyticsTitle">
+                            <i class="fas fa-chart-pie"></i>
+                            <span data-i18n="analyticsTitle">Analytics</span>
                         </button>
                         <button id="toggle-checkboxes" class="sidebar-admin-btn" title="Toggle Selection">
                             <i class="fas fa-check-square"></i>
@@ -256,7 +261,7 @@
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
-                
+
                 <div style="display: flex; justify-content: center;">
                     <img src="images/logo.png" alt="Zero Bookmark Manager Logo" class="logo" width="200" height="60">
                 </div>
@@ -306,10 +311,13 @@
                 </div>
                 <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
                 <div class="menu-group">
-                    <div class="language-settings-row" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
+                    <div class="language-settings-row"
+                        style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
                         <div class="setting-pill-group" id="language-switcher" style="flex: 1; margin-top: 0;">
-                            <button class="theme-swatch setting-swatch language-swatch" data-value="en"><span>English</span></button>
-                            <button class="theme-swatch setting-swatch language-swatch" data-value="vi"><span>Tiếng Việt</span></button>
+                            <button class="theme-swatch setting-swatch language-swatch"
+                                data-value="en"><span>English</span></button>
+                            <button class="theme-swatch setting-swatch language-swatch" data-value="vi"><span>Tiếng
+                                    Việt</span></button>
                         </div>
                         <button id="add-custom-language-option" class="button btn-action-icon"
                             data-i18n-title="addCustomLanguage" title="Add custom language"
@@ -319,35 +327,57 @@
                         </button>
                     </div>
                 </div>
-                
-<div class="settings-card theme-selection-card">
-    <div class="settings-card-header theme-toggle-header">
-        <div><i class="fas fa-paint-roller"></i> <span data-i18n="themeSelectionTitle">Themes</span></div>
-        <i class="fas fa-chevron-up toggle-icon"></i>
-    </div>
-    <div id="theme-switcher" class="theme-grid" aria-label="Select theme">
-    <button class="theme-swatch" data-value="system" data-hint="System Default" style="background: linear-gradient(135deg, #e0e0e0 50%, #2b2b2b 50%); color: inherit;"><i class="fas fa-desktop"></i></button>
-    <button class="theme-swatch" data-value="light" data-hint="Light" style="background: #ffffff; color: #000000;"><i class="fas fa-sun"></i></button>
-    <button class="theme-swatch" data-value="dark" data-hint="Dark" style="background: #2b2b2b; color: #ffffff;"><i class="fas fa-moon"></i></button>
-    <button class="theme-swatch" data-value="dracula" data-hint="Dracula" style="background: #282a36; color: #f8f8f2;"><i class="fas fa-ghost"></i></button>
-    <button class="theme-swatch" data-value="onedark" data-hint="OneDark" style="background: #282c34; color: #abb2bf;"><i class="fas fa-circle"></i></button>
-    <button class="theme-swatch" data-value="tokyonight" data-hint="Tokyo Night" style="background: #1a1b26; color: #a9b1d6;"><i class="fas fa-moon"></i></button>
-    <button class="theme-swatch" data-value="monokai" data-hint="Monokai" style="background: #272822; color: #f8f8f2;"><i class="fas fa-circle"></i></button>
-    <button class="theme-swatch" data-value="winter-is-coming" data-hint="Winter is Coming" style="background: #011627; color: #d6deeb;"><i class="fas fa-snowflake"></i></button>
-    <button class="theme-swatch" data-value="github-blue" data-hint="GitHub Blue" style="background: #0d1117; color: #c9d1d9;"><i class="fab fa-github"></i></button>
-    <button class="theme-swatch" data-value="github-light" data-hint="GitHub Light" style="background: #ffffff; color: #24292f;"><i class="fab fa-github"></i></button>
-    <button class="theme-swatch" data-value="tet" data-hint="Tet" style="background: #8b1a1a; color: #ffd700;"><i class="fas fa-fan"></i></button>
-    <button class="theme-swatch" data-value="nord" data-hint="Nord Dark" style="background: #2e3440; color: #d8dee9;"><i class="fas fa-snowflake"></i></button>
-    <button class="theme-swatch" data-value="nord-light" data-hint="Nord Light" style="background: #eceff4; color: #2e3440;"><i class="fas fa-sun"></i></button>
-    <button class="theme-swatch" data-value="synthwave" data-hint="SynthWave 84" style="background: #262335; color: #f92aad;"><i class="fas fa-rocket"></i></button>
-    <button class="theme-swatch" data-value="gruvbox" data-hint="Gruvbox Dark" style="background: #282828; color: #ebdbb2;"><i class="fas fa-mug-hot"></i></button>
-    <button class="theme-swatch" data-value="gruvbox-light" data-hint="Gruvbox Light" style="background: #fbf1c7; color: #3c3836;"><i class="fas fa-sun"></i></button>
-    <button class="theme-swatch" data-value="catppuccin" data-hint="Catppuccin Dark" style="background: #1e1e2e; color: #cba6f7;"><i class="fas fa-paw"></i></button>
-    <button class="theme-swatch" data-value="catppuccin-light" data-hint="Catppuccin Light" style="background: #eff1f5; color: #8839ef;"><i class="fas fa-sun"></i></button>
-    <button class="theme-swatch" data-value="nightowl" data-hint="Night Owl Dark" style="background: #011627; color: #c792ea;"><i class="fas fa-moon"></i></button>
-    <button class="theme-swatch" data-value="nightowl-light" data-hint="Night Owl Light" style="background: #fbfbfb; color: #2f86d2;"><i class="fas fa-sun"></i></button>
-</div>
-</div>
+
+                <div class="settings-card theme-selection-card">
+                    <div class="settings-card-header theme-toggle-header">
+                        <div><i class="fas fa-paint-roller"></i> <span data-i18n="themeSelectionTitle">Themes</span>
+                        </div>
+                        <i class="fas fa-chevron-up toggle-icon"></i>
+                    </div>
+                    <div id="theme-switcher" class="theme-grid" aria-label="Select theme">
+                        <button class="theme-swatch" data-value="system" data-hint="System Default"
+                            style="background: linear-gradient(135deg, #e0e0e0 50%, #2b2b2b 50%); color: inherit;"><i
+                                class="fas fa-desktop"></i></button>
+                        <button class="theme-swatch" data-value="light" data-hint="Light"
+                            style="background: #ffffff; color: #000000;"><i class="fas fa-sun"></i></button>
+                        <button class="theme-swatch" data-value="dark" data-hint="Dark"
+                            style="background: #2b2b2b; color: #ffffff;"><i class="fas fa-moon"></i></button>
+                        <button class="theme-swatch" data-value="dracula" data-hint="Dracula"
+                            style="background: #282a36; color: #f8f8f2;"><i class="fas fa-ghost"></i></button>
+                        <button class="theme-swatch" data-value="onedark" data-hint="OneDark"
+                            style="background: #282c34; color: #abb2bf;"><i class="fas fa-circle"></i></button>
+                        <button class="theme-swatch" data-value="tokyonight" data-hint="Tokyo Night"
+                            style="background: #1a1b26; color: #a9b1d6;"><i class="fas fa-moon"></i></button>
+                        <button class="theme-swatch" data-value="monokai" data-hint="Monokai"
+                            style="background: #272822; color: #f8f8f2;"><i class="fas fa-circle"></i></button>
+                        <button class="theme-swatch" data-value="winter-is-coming" data-hint="Winter is Coming"
+                            style="background: #011627; color: #d6deeb;"><i class="fas fa-snowflake"></i></button>
+                        <button class="theme-swatch" data-value="github-blue" data-hint="GitHub Blue"
+                            style="background: #0d1117; color: #c9d1d9;"><i class="fab fa-github"></i></button>
+                        <button class="theme-swatch" data-value="github-light" data-hint="GitHub Light"
+                            style="background: #ffffff; color: #24292f;"><i class="fab fa-github"></i></button>
+                        <button class="theme-swatch" data-value="tet" data-hint="Tet"
+                            style="background: #8b1a1a; color: #ffd700;"><i class="fas fa-fan"></i></button>
+                        <button class="theme-swatch" data-value="nord" data-hint="Nord Dark"
+                            style="background: #2e3440; color: #d8dee9;"><i class="fas fa-snowflake"></i></button>
+                        <button class="theme-swatch" data-value="nord-light" data-hint="Nord Light"
+                            style="background: #eceff4; color: #2e3440;"><i class="fas fa-sun"></i></button>
+                        <button class="theme-swatch" data-value="synthwave" data-hint="SynthWave 84"
+                            style="background: #262335; color: #f92aad;"><i class="fas fa-rocket"></i></button>
+                        <button class="theme-swatch" data-value="gruvbox" data-hint="Gruvbox Dark"
+                            style="background: #282828; color: #ebdbb2;"><i class="fas fa-mug-hot"></i></button>
+                        <button class="theme-swatch" data-value="gruvbox-light" data-hint="Gruvbox Light"
+                            style="background: #fbf1c7; color: #3c3836;"><i class="fas fa-sun"></i></button>
+                        <button class="theme-swatch" data-value="catppuccin" data-hint="Catppuccin Dark"
+                            style="background: #1e1e2e; color: #cba6f7;"><i class="fas fa-paw"></i></button>
+                        <button class="theme-swatch" data-value="catppuccin-light" data-hint="Catppuccin Light"
+                            style="background: #eff1f5; color: #8839ef;"><i class="fas fa-sun"></i></button>
+                        <button class="theme-swatch" data-value="nightowl" data-hint="Night Owl Dark"
+                            style="background: #011627; color: #c792ea;"><i class="fas fa-moon"></i></button>
+                        <button class="theme-swatch" data-value="nightowl-light" data-hint="Night Owl Light"
+                            style="background: #fbfbfb; color: #2f86d2;"><i class="fas fa-sun"></i></button>
+                    </div>
+                </div>
                 <div class="menu-group">
                     <div class="settings-card font-selection-card collapsed">
                         <div class="settings-card-header theme-toggle-header">
@@ -355,31 +385,51 @@
                             <i class="fas fa-chevron-down toggle-icon"></i>
                         </div>
                         <div class="theme-grid" id="font-switcher">
-                            <button class="theme-swatch font-swatch font-gohu" data-value="gohu" style="font-family: 'GohuFont';">Ag <span>Gohu</span></button>
-                            <button class="theme-swatch font-swatch font-jetBrainsMonoNerdFont" data-value="jetBrainsMonoNerdFont" style="font-family: 'JetBrainsMonoNerdFont';">Ag <span>JetBrains</span></button>
-                            <button class="theme-swatch font-swatch font-roboto" data-value="roboto" style="font-family: 'Roboto', sans-serif;">Ag <span>Roboto</span></button>
-                            <button class="theme-swatch font-swatch font-openSans" data-value="openSans" style="font-family: 'Open Sans', sans-serif;">Ag <span>Open Sans</span></button>
-                            <button class="theme-swatch font-swatch font-inter" data-value="inter" style="font-family: 'Inter', sans-serif;">Ag <span>Inter</span></button>
-                            <button class="theme-swatch font-swatch font-lexend" data-value="lexend" style="font-family: 'Lexend', sans-serif;">Ag <span>Lexend</span></button>
-                            <button class="theme-swatch font-swatch font-firaCode" data-value="firaCode" style="font-family: 'Fira Code', monospace;">Ag <span>Fira Code</span></button>
-                            <button class="theme-swatch font-swatch font-poppins" data-value="poppins" style="font-family: 'Poppins', sans-serif;">Ag <span>Poppins</span></button>
-                            <button class="theme-swatch font-swatch font-montserrat" data-value="montserrat" style="font-family: 'Montserrat', sans-serif;">Ag <span>Montserrat</span></button>
+                            <button class="theme-swatch font-swatch font-gohu" data-value="gohu"
+                                style="font-family: 'GohuFont';">Ag <span>Gohu</span></button>
+                            <button class="theme-swatch font-swatch font-jetBrainsMonoNerdFont"
+                                data-value="jetBrainsMonoNerdFont" style="font-family: 'JetBrainsMonoNerdFont';">Ag
+                                <span>JetBrains</span></button>
+                            <button class="theme-swatch font-swatch font-roboto" data-value="roboto"
+                                style="font-family: 'Roboto', sans-serif;">Ag <span>Roboto</span></button>
+                            <button class="theme-swatch font-swatch font-openSans" data-value="openSans"
+                                style="font-family: 'Open Sans', sans-serif;">Ag <span>Open Sans</span></button>
+                            <button class="theme-swatch font-swatch font-inter" data-value="inter"
+                                style="font-family: 'Inter', sans-serif;">Ag <span>Inter</span></button>
+                            <button class="theme-swatch font-swatch font-lexend" data-value="lexend"
+                                style="font-family: 'Lexend', sans-serif;">Ag <span>Lexend</span></button>
+                            <button class="theme-swatch font-swatch font-firaCode" data-value="firaCode"
+                                style="font-family: 'Fira Code', monospace;">Ag <span>Fira Code</span></button>
+                            <button class="theme-swatch font-swatch font-poppins" data-value="poppins"
+                                style="font-family: 'Poppins', sans-serif;">Ag <span>Poppins</span></button>
+                            <button class="theme-swatch font-swatch font-montserrat" data-value="montserrat"
+                                style="font-family: 'Montserrat', sans-serif;">Ag <span>Montserrat</span></button>
                         </div>
                     </div>
                     <div class="settings-card view-selection-card collapsed">
                         <div class="settings-card-header theme-toggle-header">
-                            <div><i class="fas fa-border-all"></i> <span data-i18n="viewModeTitle">View Mode</span></div>
+                            <div><i class="fas fa-border-all"></i> <span data-i18n="viewModeTitle">View Mode</span>
+                            </div>
                             <i class="fas fa-chevron-down toggle-icon"></i>
                         </div>
                         <div class="theme-grid" id="view-switcher">
-                            <button class="theme-swatch view-swatch" data-value="flat"><i class="fas fa-list"></i> <span data-i18n="viewFlat">Flat List</span></button>
-                            <button class="theme-swatch view-swatch" data-value="tree"><i class="fas fa-sitemap"></i> <span data-i18n="viewTree">Tree View</span></button>
-                            <button class="theme-swatch view-swatch" data-value="detail"><i class="fas fa-info-circle"></i> <span data-i18n="viewDetail">Detail View</span></button>
-                            <button class="theme-swatch view-swatch" data-value="card"><i class="fas fa-th-large"></i> <span data-i18n="viewCard">Card View</span></button>
-                            <button class="theme-swatch view-swatch" data-value="list"><i class="fas fa-list-ul"></i> <span data-i18n="viewList">List View</span></button>
-                            <button class="theme-swatch view-swatch" data-value="bento"><i class="fas fa-th"></i> <span data-i18n="viewBento">Bento Box</span></button>
-                            <button class="theme-swatch view-swatch" data-value="kanban"><i class="fas fa-columns"></i> <span data-i18n="viewKanban">Kanban Board</span></button>
-                            <button class="theme-swatch view-swatch" data-value="mockup"><i class="fas fa-image"></i> <span data-i18n="viewGallery">Gallery View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="flat"><i class="fas fa-list"></i> <span
+                                    data-i18n="viewFlat">Flat List</span></button>
+                            <button class="theme-swatch view-swatch" data-value="tree"><i class="fas fa-sitemap"></i>
+                                <span data-i18n="viewTree">Tree View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="detail"><i
+                                    class="fas fa-info-circle"></i> <span data-i18n="viewDetail">Detail
+                                    View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="card"><i class="fas fa-th-large"></i>
+                                <span data-i18n="viewCard">Card View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="list"><i class="fas fa-list-ul"></i>
+                                <span data-i18n="viewList">List View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="bento"><i class="fas fa-th"></i> <span
+                                    data-i18n="viewBento">Bento Box</span></button>
+                            <button class="theme-swatch view-swatch" data-value="kanban"><i class="fas fa-columns"></i>
+                                <span data-i18n="viewKanban">Kanban Board</span></button>
+                            <button class="theme-swatch view-swatch" data-value="mockup"><i class="fas fa-image"></i>
+                                <span data-i18n="viewGallery">Gallery View</span></button>
                         </div>
                     </div>
                 </div>
@@ -391,6 +441,18 @@
                     </button>
                     <button id="open-side-panel-option" class="menu-item">
                         <i class="fas fa-columns"></i> Open Side Panel
+                    </button>
+                    <button id="analytics-btn-menu" class="menu-item">
+                        <i class="fas fa-chart-pie" aria-hidden="true" style="color: var(--accent-color);"></i>
+                        <span data-i18n="analyticsTitle">Analytics</span>
+                    </button>
+                    <button id="smart-cleanup-button-menu" class="menu-item">
+                        <i class="fas fa-magic" aria-hidden="true" style="color: var(--accent-color);"></i>
+                        <span data-i18n="smartCleanupTitle">Smart Cleanup</span>
+                    </button>
+                    <button id="save-session-btn" class="menu-item">
+                        <i class="fas fa-save" aria-hidden="true" style="color: var(--accent-color);"></i>
+                        <span data-i18n="saveSession">Save Current Session (Tabs)</span>
                     </button>
                     <button id="export-bookmarks-option" class="menu-item">
                         <i class="fas fa-file-export" aria-hidden="true"></i>
@@ -413,24 +475,22 @@
                 <div class="menu-group">
                     <div id="quick-open-settings" class="quick-open-settings">
                         <label class="segmented-control-item">
-                            <input type="radio" id="quick-open-quickSave" name="quickOpenAction"
-                                value="quickSave" checked />
+                            <input type="radio" id="quick-open-quickSave" name="quickOpenAction" value="quickSave"
+                                checked />
                             <span class="control-label">
                                 <i class="fas fa-bookmark" aria-hidden="true"></i>
                                 <span data-i18n="quickOpenQuickSave">Quick Save</span>
                             </span>
                         </label>
                         <label class="segmented-control-item">
-                            <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup"
-                                />
+                            <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup" />
                             <span class="control-label">
                                 <i class="fas fa-window-restore" aria-hidden="true"></i>
                                 <span data-i18n="quickOpenPopup">Popup</span>
                             </span>
                         </label>
                         <label class="segmented-control-item">
-                            <input type="radio" id="quick-open-sidepanel" name="quickOpenAction"
-                                value="sidepanel" />
+                            <input type="radio" id="quick-open-sidepanel" name="quickOpenAction" value="sidepanel" />
                             <span class="control-label">
                                 <i class="fas fa-table-columns" aria-hidden="true"></i>
                                 <span data-i18n="quickOpenSidePanel">Side Panel</span>
@@ -444,14 +504,16 @@
                             </span>
                         </label>
                         <label class="segmented-control-item">
-                            <input type="radio" id="quick-open-nativePopup" name="quickOpenAction" value="nativePopup" />
+                            <input type="radio" id="quick-open-nativePopup" name="quickOpenAction"
+                                value="nativePopup" />
                             <span class="control-label">
                                 <i class="fas fa-caret-square-down" aria-hidden="true"></i>
                                 <span data-i18n="quickOpenNativePopup">Browser Popup</span>
                             </span>
                         </label>
                     </div>
-                    <button id="configure-shortcuts-btn-2" class="menu-item app-setting-action" style="margin-top: 8px;">
+                    <button id="configure-shortcuts-btn-2" class="menu-item app-setting-action"
+                        style="margin-top: 8px;">
                         <i class="fas fa-keyboard"></i> <span data-i18n="configureShortcuts">Configure Shortcuts</span>
                     </button>
                 </div>
@@ -472,16 +534,19 @@
                     <hr>
 
                     <div class="app-setting-field">
-                        <label><i class="fas fa-clone"></i> <span data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
+                        <label><i class="fas fa-clone"></i> <span data-i18n="dupScopeTitle">Duplicate
+                                Scope:</span></label>
                         <div class="setting-pill-group" id="duplicate-scope-select">
-                            <button class="theme-swatch setting-swatch" data-value="folder" data-i18n="dupScopeFolder">Only 1 folder</button>
-                            <button class="theme-swatch setting-swatch" data-value="all" data-i18n="dupScopeAll">Across folders</button>
+                            <button class="theme-swatch setting-swatch" data-value="folder"
+                                data-i18n="dupScopeFolder">Only 1 folder</button>
+                            <button class="theme-swatch setting-swatch" data-value="all" data-i18n="dupScopeAll">Across
+                                folders</button>
                         </div>
                     </div>
 
                     <label class="toggle-row" for="auto-remove-dup-toggle">
-                        <span data-i18n="autoRemoveDupTitle"
-                            style="color:var(--text-secondary);font-size:0.9rem;">Auto Remove Duplicates</span>
+                        <span data-i18n="autoRemoveDupTitle" style="color:var(--text-secondary);font-size:0.9rem;">Auto
+                            Remove Duplicates</span>
                         <span class="toggle-switch">
                             <input type="checkbox" id="auto-remove-dup-toggle">
                             <span class="toggle-knob"></span>
@@ -526,14 +591,18 @@
                     <div class="app-setting-field">
                         <label><i class="fas fa-image"></i> <span data-i18n="faviconMode">Favicon Mode:</span></label>
                         <div class="setting-pill-group" id="favicon-option-select">
-                            <button class="theme-swatch setting-swatch" data-value="auto" data-i18n="faviconAuto">Auto</button>
-                            <button class="theme-swatch setting-swatch" data-value="google" data-i18n="faviconGoogle">Google Only</button>
-                            <button class="theme-swatch setting-swatch" data-value="hostname" data-i18n="faviconHostname">Hostname Only</button>
+                            <button class="theme-swatch setting-swatch" data-value="auto"
+                                data-i18n="faviconAuto">Auto</button>
+                            <button class="theme-swatch setting-swatch" data-value="google"
+                                data-i18n="faviconGoogle">Google Only</button>
+                            <button class="theme-swatch setting-swatch" data-value="hostname"
+                                data-i18n="faviconHostname">Hostname Only</button>
                         </div>
                     </div>
 
                     <div class="app-setting-field">
-                        <label><i class="fas fa-search-plus"></i> <span data-i18n="faviconSize">Favicon Size:</span></label>
+                        <label><i class="fas fa-search-plus"></i> <span data-i18n="faviconSize">Favicon
+                                Size:</span></label>
                         <div class="setting-pill-group" id="favicon-size-select">
                             <button class="theme-swatch setting-swatch" data-value="16">16px</button>
                             <button class="theme-swatch setting-swatch" data-value="32">32px</button>
@@ -543,19 +612,26 @@
                     </div>
 
                     <div class="app-setting-field">
-                        <label><i class="fas fa-window-minimize"></i> <span data-i18n="headerLineConfig">Header Line Style:</span></label>
+                        <label><i class="fas fa-window-minimize"></i> <span data-i18n="headerLineConfig">Header Line
+                                Style:</span></label>
                         <div class="setting-pill-group" id="header-line-select">
-                            <button class="theme-swatch setting-swatch" data-value="pattern" data-i18n="linePattern">Slanted Pattern</button>
-                            <button class="theme-swatch setting-swatch" data-value="simple" data-i18n="lineSimple">Simple Line</button>
-                            <button class="theme-swatch setting-swatch" data-value="hidden" data-i18n="lineHidden">Hidden</button>
+                            <button class="theme-swatch setting-swatch" data-value="pattern"
+                                data-i18n="linePattern">Slanted Pattern</button>
+                            <button class="theme-swatch setting-swatch" data-value="simple"
+                                data-i18n="lineSimple">Simple Line</button>
+                            <button class="theme-swatch setting-swatch" data-value="hidden"
+                                data-i18n="lineHidden">Hidden</button>
                         </div>
                     </div>
 
                     <div class="app-setting-field">
-                        <label><i class="fas fa-ellipsis-vertical"></i> <span data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
+                        <label><i class="fas fa-ellipsis-vertical"></i> <span data-i18n="bookmarkMenuBgConfig">Bookmark
+                                Menu BG:</span></label>
                         <div class="setting-pill-group" id="bookmark-menu-bg-select">
-                            <button class="theme-swatch setting-swatch" data-value="glass" data-i18n="bookmarkMenuBgGlass">Glass</button>
-                            <button class="theme-swatch setting-swatch" data-value="normal" data-i18n="bookmarkMenuBgNormal">Normal solid</button>
+                            <button class="theme-swatch setting-swatch" data-value="glass"
+                                data-i18n="bookmarkMenuBgGlass">Glass</button>
+                            <button class="theme-swatch setting-swatch" data-value="normal"
+                                data-i18n="bookmarkMenuBgNormal">Normal solid</button>
                         </div>
                     </div>
 
@@ -670,7 +746,9 @@
             </div>
         </div>
 
-        <div id="custom-prompt-popup" class="rename-popup hidden popup-animate" role="dialog">
+
+
+<div id="custom-prompt-popup" class="rename-popup hidden popup-animate" role="dialog">
             <div class="rename-popup-content">
                 <h3 id="custom-prompt-title">Prompt</h3>
                 <div class="rename-input-container">
@@ -689,7 +767,8 @@
                 <h3 id="rename-title" data-i18n="renameTitle">Rename</h3>
                 <div class="rename-input-container">
                     <textarea id="rename-input" class="input" placeholder="Enter new name..."
-                        data-i18n-placeholder="renamePlaceholder" aria-label="New bookmark title" maxlength="255" rows="1"></textarea>
+                        data-i18n-placeholder="renamePlaceholder" aria-label="New bookmark title" maxlength="255"
+                        rows="1"></textarea>
                     <button id="clear-rename" class="button clear" aria-label="Clear rename input">✖</button>
                 </div>
                 <div class="rename-popup-buttons">
@@ -709,9 +788,10 @@
                     </select>
                     <div style="position: relative; width: 100%; display: flex; align-items: center;">
                         <textarea id="rename-folder-input" class="input" placeholder="Enter new folder name..."
-                            data-i18n-placeholder="newFolderPlaceholder" aria-label="New folder name" maxlength="255" rows="1" style="flex: 1; padding-right: 30px;"></textarea>
-                        <button id="clear-rename-folder" class="button clear"
-                            aria-label="Clear rename folder input" style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; color: var(--text-secondary);">✖</button>
+                            data-i18n-placeholder="newFolderPlaceholder" aria-label="New folder name" maxlength="255"
+                            rows="1" style="flex: 1; padding-right: 30px;"></textarea>
+                        <button id="clear-rename-folder" class="button clear" aria-label="Clear rename folder input"
+                            style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; color: var(--text-secondary);">✖</button>
                     </div>
                 </div>
                 <div class="rename-popup-buttons">
@@ -1016,6 +1096,26 @@
             </div>
         </div>
 
+        <div id="snooze-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="snooze-popup-title">
+            <div class="rename-popup-content">
+                <h3 id="snooze-popup-title"><i class="fas fa-clock" style="margin-right: 8px;"></i><span data-i18n="snoozeTitle">Snooze</span></h3>
+                <div class="snooze-options-container" style="display: flex; flex-direction: column; gap: 8px; margin: 15px 0;">
+                    <button class="button save snooze-option" data-time="60" style="width: 100%; text-align: left;">
+                        <i class="fas fa-hourglass-start" style="width: 20px;"></i> <span data-i18n="snooze1Hour">In 1 hour</span>
+                    </button>
+                    <button class="button save snooze-option" data-time="1440" style="width: 100%; text-align: left;">
+                        <i class="fas fa-calendar-day" style="width: 20px;"></i> <span data-i18n="snoozeTomorrow">Tomorrow</span>
+                    </button>
+                    <button class="button save snooze-option" data-time="10080" style="width: 100%; text-align: left;">
+                        <i class="fas fa-calendar-week" style="width: 20px;"></i> <span data-i18n="snoozeNextWeek">Next week</span>
+                    </button>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="snooze-cancel" class="button cancel" data-i18n="cancel" style="width: 100%;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
         <div id="ai-config-popup" class="rename-popup hidden popup-animate" role="dialog"
             aria-labelledby="ai-config-title">
             <div class="rename-popup-content ai-config-content">
@@ -1106,6 +1206,7 @@
             aria-labelledby="custom-popup-title">
             <div class="rename-popup-content">
                 <h3 id="custom-popup-title" data-i18n="confirmTitle">Notification</h3>
+
                 <div id="custom-popup-message"></div>
                 <div class="rename-popup-buttons">
                     <button id="custom-popup-ok" class="button save">OK</button>
@@ -1297,43 +1398,117 @@
         </div>
     </div>
 
+        <div id="snooze-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="snooze-popup-title">
+            <div class="rename-popup-content">
+                <h3 id="snooze-popup-title"><i class="fas fa-clock" style="margin-right: 8px;"></i><span data-i18n="snoozeTitle">Snooze</span></h3>
+                <div class="snooze-options-container" style="display: flex; flex-direction: column; gap: 8px; margin: 15px 0;">
+                    <button class="button save snooze-option" data-time="60" style="width: 100%; text-align: left;">
+                        <i class="fas fa-hourglass-start" style="width: 20px;"></i> <span data-i18n="snooze1Hour">In 1 hour</span>
+                    </button>
+                    <button class="button save snooze-option" data-time="1440" style="width: 100%; text-align: left;">
+                        <i class="fas fa-calendar-day" style="width: 20px;"></i> <span data-i18n="snoozeTomorrow">Tomorrow</span>
+                    </button>
+                    <button class="button save snooze-option" data-time="10080" style="width: 100%; text-align: left;">
+                        <i class="fas fa-calendar-week" style="width: 20px;"></i> <span data-i18n="snoozeNextWeek">Next week</span>
+                    </button>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="snooze-cancel" class="button cancel" data-i18n="cancel" style="width: 100%;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="analytics-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="analytics-title">
+            <div class="rename-popup-content analytics-popup-content">
+                <div class="analytics-header">
+                    <div>
+                        <h3 id="analytics-title" data-i18n="analyticsTitle">Analytics</h3>
+                        <p id="analytics-subtitle" data-i18n="analyticsDesc">Your bookmarking habits</p>
+                    </div>
+                    <button id="analytics-close-x" class="modal-close" title="Close">✕</button>
+                </div>
+                <div class="analytics-body">
+                    <div class="analytics-stats-grid">
+                        <div class="analytics-stat-card">
+                            <i class="fas fa-bookmark" style="color: var(--accent-color);"></i>
+                            <div class="stat-value" id="stat-total-bookmarks">0</div>
+                            <div class="stat-label" data-i18n="analyticsTotalBookmarks">Total Bookmarks</div>
+                        </div>
+                        <div class="analytics-stat-card">
+                            <i class="fas fa-folder" style="color: var(--accent-color);"></i>
+                            <div class="stat-value" id="stat-total-folders">0</div>
+                            <div class="stat-label" data-i18n="analyticsTotalFolders">Total Folders</div>
+                        </div>
+                        <div class="analytics-stat-card">
+                            <i class="fas fa-calendar-plus" style="color: var(--accent-color);"></i>
+                            <div class="stat-value" id="stat-added-this-week">0</div>
+                            <div class="stat-label" data-i18n="analyticsAddedThisWeek">Added This Week</div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-chart-section">
+                        <h4 data-i18n="analyticsTopDomains">Top Domains</h4>
+                        <div id="analytics-domains-list" class="analytics-domains-list"></div>
+                    </div>
+                </div>
+                <div class="rename-popup-buttons">
+                    <button id="analytics-close" class="button cancel" data-i18n="close">Close</button>
+                </div>
+            </div>
+        </div>
+
     <!-- Cloud Sync Modal -->
     <div id="cloud-sync-popup" class="rename-popup hidden" role="dialog" aria-labelledby="cloud-sync-title">
         <div class="rename-popup-content" style="max-width: 400px; text-align: center;">
             <div style="font-size: 28px; color: var(--primary-color); margin-bottom: 8px;">
                 <i class="fab fa-google-drive"></i>
             </div>
-            <h3 id="cloud-sync-title" style="margin-top:0; font-size: 18px; font-weight: 600; color: var(--text-color);">
+            <h3 id="cloud-sync-title"
+                style="margin-top:0; font-size: 18px; font-weight: 600; color: var(--text-color);">
                 Google Drive Sync
             </h3>
             <p style="margin-bottom: 10px; font-size: 13px; color: var(--text-muted);">
                 Backup or restore your bookmarks securely.
             </p>
-            <p data-i18n-html="cloudSyncTestWarning" style="margin-bottom: 10px; font-size: 12px; color: var(--text-secondary); background-color: var(--bg-secondary); padding: 8px; border-radius: 6px; border: 1px dashed var(--border-color); text-align: left; line-height: 1.3;">
-                Note: This is currently in testing. If your login is denied and you want to try it, please send an email via this <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog" target="_blank" style="color: var(--primary-color);">form link</a>.
+            <p data-i18n-html="cloudSyncTestWarning"
+                style="margin-bottom: 10px; font-size: 12px; color: var(--text-secondary); background-color: var(--bg-secondary); padding: 8px; border-radius: 6px; border: 1px dashed var(--border-color); text-align: left; line-height: 1.3;">
+                Note: This is currently in testing. If your login is denied and you want to try it, please send an email
+                via this <a
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog"
+                    target="_blank" style="color: var(--primary-color);">form link</a>.
             </p>
-            
+
             <div style="margin-bottom: 10px; text-align: left;">
-                <label style="display: block; font-size: 12px; margin-bottom: 4px; color: var(--text-color); font-weight: 500;">Select or Enter File Name:</label>
-                <select id="sync-file-select" class="select" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box; margin-bottom: 8px;">
+                <label
+                    style="display: block; font-size: 12px; margin-bottom: 4px; color: var(--text-color); font-weight: 500;">Select
+                    or Enter File Name:</label>
+                <select id="sync-file-select" class="select"
+                    style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box; margin-bottom: 8px;">
                     <option value="new">-- Create New File --</option>
                 </select>
-                <input type="text" id="sync-filename-input" value="zero_bookmark_manager_backup.json" class="input-field" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box;" placeholder="Enter JSON file name">
+                <input type="text" id="sync-filename-input" value="zero_bookmark_manager_backup.json"
+                    class="input-field"
+                    style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box;"
+                    placeholder="Enter JSON file name">
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
-                <button id="btn-backup-drive" class="button" style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--focus-outline); border: 1px solid var(--focus-outline); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
+                <button id="btn-backup-drive" class="button"
+                    style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--focus-outline); border: 1px solid var(--focus-outline); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
                     <i class="fas fa-cloud-upload-alt" style="margin-right: 8px;"></i> Backup to Drive (JSON)
                 </button>
-                <button id="btn-restore-drive" class="button" style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--text-secondary); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
+                <button id="btn-restore-drive" class="button"
+                    style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--text-secondary); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
                     <i class="fas fa-cloud-download-alt" style="margin-right: 8px;"></i> Restore from Drive (JSON)
                 </button>
             </div>
-            
-            <p id="sync-status-message" style="margin-top: 10px; font-size: 12px; font-weight: 500; min-height: 18px;"></p>
-            
+
+            <p id="sync-status-message" style="margin-top: 10px; font-size: 12px; font-weight: 500; min-height: 18px;">
+            </p>
+
             <div class="rename-popup-buttons" style="margin-top: 10px;">
-                <button id="cloud-sync-close" class="button cancel" style="width: 100%; justify-content: center;">Close</button>
+                <button id="cloud-sync-close" class="button cancel"
+                    style="width: 100%; justify-content: center;">Close</button>
             </div>
         </div>
     </div>

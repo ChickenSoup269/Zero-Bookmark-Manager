@@ -13,5 +13,18 @@
   }
   if (!availableThemes.includes(theme)) theme = 'dark'
   document.documentElement.setAttribute('data-theme', theme)
-  document.body.className = theme + '-theme'
+  
+  var isNativePopup = window.location.search.indexOf('mode=native_popup') !== -1;
+  function applyClasses() {
+    document.body.classList.add(theme + '-theme');
+    if (isNativePopup) {
+      document.body.classList.add('native-popup');
+    }
+  }
+
+  if (document.body) {
+    applyClasses();
+  } else {
+    document.addEventListener('DOMContentLoaded', applyClasses);
+  }
 })()

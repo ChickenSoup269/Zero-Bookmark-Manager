@@ -94,7 +94,7 @@ window.handleFaviconError = function (img, hostname) {
   }
 }
 
-function getFaviconUrl(url) {
+export function getFaviconUrl(url) {
   if (!url) return "./images/default-favicon.png"
   if (url.startsWith("chrome-extension://")) {
     const manifest = chrome.runtime.getManifest()
@@ -424,6 +424,18 @@ function createDropdownHTML(bookmark, language) {
           bookmark.id
         }"><i class="fas fa-qrcode" style="${iconStyle}"></i>${
           t.generateQrCode || "Generate QR"
+        }</button>
+        <button class="menu-item snooze-btn" data-id="${
+          bookmark.id
+        }"><i class="fas fa-clock" style="${iconStyle}"></i>${
+          t.snoozeBookmark || "Snooze"
+        }</button>
+        <button class="menu-item wayback-btn" data-id="${
+          bookmark.id
+        }" data-url="${
+          bookmark.url
+        }"><i class="fas fa-history" style="${iconStyle}"></i>${
+          t.waybackMachine || "Wayback Machine"
         }</button>
         <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;"/>
         <button class="menu-item favorite-btn" data-id="${bookmark.id}">
@@ -1652,12 +1664,24 @@ function renderSidebarFolderTree(folders, elements) {
 
   // Add "All Bookmarks" pseudo folder at the beginning
   const t = translations[language] || translations.en
+  
+  const smartFolders = [
+    { id: "__smart_recent", title: t.sidebarRecent || "Mới lưu (7 ngày)" },
+    { id: "__smart_most_visited", title: t.sidebarMostVisited || "Truy cập nhiều" },
+    { id: "__smart_untagged", title: t.sidebarUntagged || "Chưa gắn thẻ" }
+  ];
+
+  smartFolders.reverse().forEach(sf => {
+    rootFolders.unshift({ ...sf, children: [], isVirtual: true })
+  })
+  
   const allBookmarksFolder = {
     id: "__all_bookmarks",
     title: t.sidebarAllBookmarks || "All Bookmarks",
     children: [],
     isVirtual: true,
   }
+  
   rootFolders.unshift(allBookmarksFolder)
 
   // Sort children alphabetically
@@ -1776,11 +1800,13 @@ function renderSidebarFolderTree(folders, elements) {
     // Dragstart event
     li.addEventListener("dragstart", (e) => {
       e.stopPropagation()
+      currentDragType = "folder"
       currentDragId = folder.id
       e.dataTransfer.setData("text/plain", folder.id)
-      currentDragType = "folder"
-      e.dataTransfer.effectAllowed = "copyMove"
+      e.dataTransfer.effectAllowed = "move"
       li.classList.add("dragging")
+      
+      setCustomDragImage(e, folder.title || `Folder ${folder.id}`, true);
     })
 
     // Dragend event
@@ -2122,6 +2148,20 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       }
       if (
         uiState.selectedFolderId &&
+        uiState.selectedFolderId.startsWith("__smart_")
+      ) {
+        if (uiState.selectedFolderId === "__smart_recent") {
+          const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
+          filtered = filtered.filter((b) => b.dateAdded && b.dateAdded >= oneWeekAgo)
+        } else if (uiState.selectedFolderId === "__smart_most_visited") {
+          filtered = filtered.filter((b) => b.accessCount && b.accessCount > 0)
+                             .sort((a, b) => b.accessCount - a.accessCount)
+                             .slice(0, 50)
+        } else if (uiState.selectedFolderId === "__smart_untagged") {
+          filtered = filtered.filter((b) => !b.tags || b.tags.length === 0)
+        }
+      } else if (
+        uiState.selectedFolderId &&
         uiState.selectedFolderId !== "0" &&
         folders.some((f) => f.id === uiState.selectedFolderId)
       ) {
@@ -2158,20 +2198,28 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       // Render Views
       if (elements && elements.folderListDiv) {
         elements.folderListDiv.style.display = ""
-        if (uiState.viewMode === "tree") {
+        
+        let currentViewMode = uiState.viewMode;
+        if (uiState.selectedFolderId && uiState.selectedFolderId.startsWith("__smart_")) {
+           if (["tree", "bento", "split", "kanban"].includes(currentViewMode)) {
+              currentViewMode = "card";
+           }
+        }
+        
+        if (currentViewMode === "tree") {
           const rootChildren = bookmarkTreeNodes[0]?.children || []
           renderTreeView(rootChildren, elements)
-        } else if (uiState.viewMode === "bento") {
+        } else if (currentViewMode === "bento") {
           renderBentoView(bookmarkTreeNodes, filtered, elements)
-        } else if (uiState.viewMode === "split" || uiState.viewMode === "kanban") {
+        } else if (currentViewMode === "split" || currentViewMode === "kanban") {
           renderKanbanView(bookmarkTreeNodes, filtered, elements)
-        } else if (uiState.viewMode === "detail") {
+        } else if (currentViewMode === "detail") {
           renderDetailView(filtered, elements)
-        } else if (uiState.viewMode === "card") {
+        } else if (currentViewMode === "card") {
           renderCardView(bookmarkTreeNodes, filtered, elements)
-        } else if (uiState.viewMode === "list") {
+        } else if (currentViewMode === "list") {
           renderListView(filtered, elements)
-        } else if (uiState.viewMode === "mockup") {
+        } else if (currentViewMode === "mockup") {
           renderMockupView(bookmarkTreeNodes, filtered, elements)
         } else {
           renderBookmarks(filtered, elements)
@@ -2328,7 +2376,7 @@ function renderListView(bookmarksList, elements) {
     backRow.style.cursor = "pointer"
     backRow.innerHTML = `
       <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden;"></div>
-      <div class="list-bookmark-favicon">↩</div>
+      <div class="list-bookmark-favicon"><i class="fas fa-arrow-left"></i></div>
       <div class="list-info-main">
         <span class="list-bookmark-title-link">${t.back || 'Back'}</span>
         <div class="list-bookmark-url-display">Go up one level</div>
@@ -2386,7 +2434,7 @@ function createListFolderElement(folder, elements) {
   div.innerHTML = `
     <div style="width: 30px;"></div>
     <div class="bookmark-favicon" style="width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: none; border: none;">
-      <span style="font-size: 1rem;">📂</span>
+      <span style="font-size: 1rem;"><i class="fas fa-folder-open" style="color: var(--text-secondary);"></i></span>
     </div>
     <div class="list-info-main" style="display: flex; flex-direction: column; gap: 2px; width: 100%; min-width: 0;">
       <span class="list-bookmark-title-link">${folder.title || "Untitled Folder"}</span>
@@ -2955,14 +3003,18 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     uiState.selectedFolderId !== "0" &&
     folders.some((f) => f.id === uiState.selectedFolderId)
 
+  const isSmartFolder =
+    uiState.selectedFolderId && uiState.selectedFolderId.startsWith("__smart_")
+
   const isSearching = uiState.searchQuery && uiState.searchQuery.trim() !== ""
 
-  if (isSearching) {
-    // --- VIEW 3: Đang tìm kiếm (Search Results) ---
+  if (isSearching || isSmartFolder) {
+    // --- VIEW 3: Đang tìm kiếm (Search Results) hoặc Smart Folder ---
     const searchHeader = document.createElement("h3")
     searchHeader.style.cssText = "margin: 10px; color: var(--text-primary);"
-    searchHeader.textContent =
-      translations[language].searchResults || "Search Results"
+    searchHeader.textContent = isSmartFolder
+      ? (translations[language].smartFolderResults || "Smart Folder")
+      : (translations[language].searchResults || "Search Results")
     fragment.appendChild(searchHeader)
 
     const sortedBookmarks = sortBookmarks(filteredBookmarks, uiState.sortType)
@@ -2977,6 +3029,13 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
           currentDragType = "bookmark"
           e.dataTransfer.effectAllowed = "copyMove"
           el.classList.add("dragging")
+          
+          let iconUrl = "";
+          if (bookmark.url) {
+            const urlObj = new URL(bookmark.url);
+            iconUrl = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32`;
+          }
+          setCustomDragImage(e, bookmark.title, false, iconUrl);
         })
         el.addEventListener("dragend", () => {
           el.classList.remove("dragging")
@@ -3058,7 +3117,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
             <div class="folder-drop-zone folder-drop-zone-before" data-drop-position="before" aria-hidden="true"></div>
             <div class="folder-drop-zone folder-drop-zone-after" data-drop-position="after" aria-hidden="true"></div>
             <div class="folder-content" style="pointer-events: none;">
-                <span class="folder-icon">📂</span>
+                <span class="folder-icon"><i class="fas fa-folder-open" style="color: var(--text-secondary);"></i></span>
                 <span class="folder-title">${
                   folder.title?.trim() || `Folder ${folder.id}`
                 }</span>
@@ -3070,12 +3129,14 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       // Drag Folder
       folderCard.addEventListener("dragstart", (e) => {
         e.stopPropagation()
+        currentDragType = "folder"
         currentDragId = folder.id
         e.dataTransfer.setData("text/plain", folder.id)
-        currentDragType = "folder"
-        e.dataTransfer.effectAllowed = "copyMove"
+        e.dataTransfer.effectAllowed = "move"
         folderCard.classList.add("dragging")
         elements.folderListDiv?.classList.add("is-folder-dragging")
+        
+        setCustomDragImage(e, folder.title || `Folder ${folder.id}`, true);
       })
 
       folderCard.addEventListener("dragend", () => {
@@ -3322,6 +3383,15 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     currentDragType = "bookmark"
     e.dataTransfer.effectAllowed = "copyMove"
     el.classList.add("dragging")
+    
+    let iconUrl = "";
+    if (bookmark.url) {
+      try {
+        const urlObj = new URL(bookmark.url);
+        iconUrl = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32`;
+      } catch(err) {}
+    }
+    setCustomDragImage(e, bookmark.title, false, iconUrl);
   })
     el.addEventListener("dragend", (e) => {
       e.stopPropagation()
@@ -3712,7 +3782,7 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null, option
 
       folderDiv.innerHTML = `
         <div class="folder-toggle">${isCollapsed ? "+" : "−"}</div>
-        <span class="folder-icon">${isCollapsed ? "📁" : "📂"}</span>
+        <span class="folder-icon">${isCollapsed ? '<i class="fas fa-folder" style="color: var(--text-secondary);"></i>' : '<i class="fas fa-folder-open" style="color: var(--text-secondary);"></i>'}</span>
         <span class="folder-title">${node.title || `Folder ${node.id}`}</span>
         <span class="folder-count">${countFolderItems(node)}</span>
         <button class="button delete-folder-tree-btn" data-id="${node.id}" style="background: none; border: none; color: var(--text-muted); cursor: pointer;" title="${translations[language].deleteFolder}">
@@ -4050,7 +4120,8 @@ function commonPostRenderOps(elements) {
   if (!elements) return
   if (elements.searchInput)
     elements.searchInput.value = uiState.searchQuery || ""
-  if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
+  const isValidFolder = uiState.selectedFolderId && (uiState.selectedFolderId.startsWith("__smart_") || uiState.folders.some((f) => f.id === uiState.selectedFolderId))
+  if (isValidFolder) {
     if (elements.folderFilter)
       elements.folderFilter.value = uiState.selectedFolderId
   } else {
@@ -4265,6 +4336,20 @@ export function attachTreeListeners(elements, targetContainer = null) {
       return
     }
 
+    // 8. Wayback Machine Button
+    const waybackBtn = e.target.closest(".wayback-btn")
+    if (waybackBtn) {
+      e.stopPropagation()
+      const url = waybackBtn.dataset.url
+      if (url) {
+        window.open(`https://web.archive.org/web/*/${url}`, "_blank")
+      }
+      document
+        .querySelectorAll(".dropdown-menu")
+        .forEach((m) => m.classList.add("hidden"))
+      return
+    }
+
     // 4. Folder Toggle (Logic đóng mở folder)
     const toggle = e.target.closest(".folder-toggle")
     if (toggle) {
@@ -4277,7 +4362,7 @@ export function attachTreeListeners(elements, targetContainer = null) {
         // Mở folder ra
         uiState.collapsedFolders.delete(folderId)
         toggle.textContent = "−"
-        folderDiv.querySelector(".folder-icon").textContent = "📂"
+        folderDiv.querySelector(".folder-icon").innerHTML = '<i class="fas fa-folder-open" style="color: var(--text-secondary);"></i>'
         if (childrenContainer) {
           childrenContainer.style.display = "block"
           // Nếu chưa có nội dung thì render mới
@@ -4299,7 +4384,7 @@ export function attachTreeListeners(elements, targetContainer = null) {
         // Đóng folder lại
         uiState.collapsedFolders.add(folderId)
         toggle.textContent = "+"
-        folderDiv.querySelector(".folder-icon").textContent = "📁"
+        folderDiv.querySelector(".folder-icon").innerHTML = '<i class="fas fa-folder" style="color: var(--text-secondary);"></i>'
         if (childrenContainer) childrenContainer.style.display = "none"
       }
       customSaveUIState()
@@ -4382,8 +4467,13 @@ export function populateFolderDropdown(
   // Lấy bản dịch
   const t = translations[language] || translations.en
 
-  // Reset select và thêm option mặc định (ví dụ: "Tất cả bookmarks")
-  selectElement.innerHTML = `<option value="">${initialOptionText}</option>`
+  // Reset select và thêm option mặc định
+  selectElement.innerHTML = `
+    <option value="">${initialOptionText}</option>
+    <option value="__smart_recent">${t.sidebarRecent || "Mới lưu (7 ngày)"}</option>
+    <option value="__smart_most_visited">${t.sidebarMostVisited || "Truy cập nhiều"}</option>
+    <option value="__smart_untagged">${t.sidebarUntagged || "Chưa gắn thẻ"}</option>
+  `
 
   // --- HÀM ĐỆ QUY ĐỂ TẠO CÁC OPTION ---
   function buildFolderOptions(nodes, depth = 0) {
@@ -4446,7 +4536,8 @@ export function populateFolderFilter(bookmarkTreeNodes, elements) {
     translations[language].allBookmarks,
   )
 
-  if (uiState.folders.some((f) => f.id === uiState.selectedFolderId)) {
+  const isValidFolder = uiState.selectedFolderId && (uiState.selectedFolderId.startsWith("__smart_") || uiState.folders.some((f) => f.id === uiState.selectedFolderId))
+  if (isValidFolder) {
     folderFilter.value = uiState.selectedFolderId
   } else {
     uiState.selectedFolderId = ""
@@ -5399,7 +5490,7 @@ function renderOrganizeExplorer(folderId, elements, container, t) {
           iconDiv.style.flexShrink = "0";
           
           if (isFolder) {
-              iconDiv.innerHTML = `<span style="font-size: 1.2rem;">📂</span>`;
+              iconDiv.innerHTML = `<span style="font-size: 1.2rem;"><i class="fas fa-folder-open" style="color: var(--text-secondary);"></i></span>`;
           } else {
               const urlObj = new URL(item.url || "https://example.com");
               iconDiv.innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32" alt="icon" style="width:20px;height:20px;border-radius:4px;">`;
