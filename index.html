@@ -706,7 +706,7 @@
                 </div>
             </div>
         </div>
-        <button id="scroll-to-top" class="button scroll-to-top" title="Scroll to Top" aria-label="Scroll to Top">
+        <button id="scroll-to-top" class="button scroll-to-top hidden" title="Scroll to Top" aria-label="Scroll to Top">
             <i class="fas fa-caret-up"></i>
         </button>
         <div id="first-run-language-popup" class="rename-popup hidden" role="dialog"
@@ -789,8 +789,8 @@
         </div>
         </div> <!-- end dashboard-view -->
         
-        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1; overflow-y: auto; position: relative;">
-            <iframe id="quick-save-frame" src="quick-save.html?embedded=true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;" scrolling="auto"></iframe>
+        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1;">
+            <iframe id="quick-save-frame" src="quick-save.html?embedded=true" style="width: 100%; flex: 1; border: none; border-radius: 8px; min-height: 520px; display: block;" scrolling="auto"></iframe>
         </div>
 
         <!-- footer -->
