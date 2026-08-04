@@ -264,7 +264,7 @@ export function autoTagByDomain() {
 }
 
 export function initCleanupDashboard(elements) {
-  const button = document.getElementById("smart-cleanup-button")
+  const buttons = document.querySelectorAll("#smart-cleanup-button, #smart-cleanup-button-menu")
   const popup = document.getElementById("smart-cleanup-popup")
   const grid = document.getElementById("smart-cleanup-grid")
   const details = document.getElementById("smart-cleanup-details")
@@ -276,7 +276,7 @@ export function initCleanupDashboard(elements) {
   const summary = document.getElementById("smart-cleanup-summary")
   const next = document.getElementById("smart-cleanup-next")
 
-  if (!button || !popup || !grid || !details) return
+  if (buttons.length === 0 || !popup || !grid || !details) return
 
   const close = () => popup.classList.add("hidden")
 
@@ -645,9 +645,12 @@ export function initCleanupDashboard(elements) {
     renderNext()
   }
 
-  button.addEventListener("click", () => {
-    render()
-    popup.classList.remove("hidden")
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".dropdown-menu").forEach(m => m.classList.add("hidden"));
+      render()
+      popup.classList.remove("hidden")
+    })
   })
   closeButton.addEventListener("click", close)
   closeX.addEventListener("click", close)
