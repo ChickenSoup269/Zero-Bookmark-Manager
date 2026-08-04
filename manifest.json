@@ -14,7 +14,9 @@
     "identity"
   ],
   "optional_host_permissions": ["https://urlhaus-api.abuse.ch/*"],
-  "action": {},
+  "action": {
+    "default_popup": "quick-save.html"
+  },
   "side_panel": {
     "default_path": "index.html"
   },
@@ -35,7 +37,9 @@
         "images/*.png",
         "images/*.jpg",
         "bookmarks.html",
-        "components/sidepanel/sidepanel.html"
+        "components/sidepanel/sidepanel.html",
+        "vendor/fontawesome/all.min.css",
+        "vendor/fontawesome/webfonts/*.woff2"
       ],
       "matches": ["<all_urls>"]
     }

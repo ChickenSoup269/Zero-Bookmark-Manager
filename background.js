@@ -44,14 +44,18 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   }
 })
 
-// Initialize popup state
+// Initialize popup state on startup
+// Note: quick-save.html is already the default_popup in manifest.json.
+// Only override if user has chosen a different action to avoid async delay.
 chrome.storage.local.get(["quickOpenAction"], (data) => {
-  const action = data.quickOpenAction || "quickSave"; // default to quickSave
+  const action = data.quickOpenAction || "quickSave"
   if (action === "nativePopup") {
     chrome.action.setPopup({ popup: "index.html?mode=native_popup" })
   } else if (action === "quickSave") {
+    // Already the manifest default — only re-set if it might have been cleared
     chrome.action.setPopup({ popup: "quick-save.html" })
   } else {
+    // popup / web / sidepanel — clear the native popup so onClicked fires
     chrome.action.setPopup({ popup: "" })
   }
 })
@@ -74,23 +78,9 @@ let recentlyClickedInExtension = new Set() // Track bookmarks clicked in extensi
 
 chrome.storage.local.get(["visitCounts"], (result) => {
   visitCounts = result.visitCounts || {}
-  // console.log(" Loaded visit counts from storage:", visitCounts)
 
-  // Build bookmark URL map immediately - try multiple times
-  // console.log("Attempting to build bookmark URL map...")
+  // Build bookmark URL map once on startup
   buildBookmarkUrlMap()
-
-  // Also rebuild after a short delay
-  setTimeout(() => {
-    // console.log("Second attempt - rebuilding bookmark URL map...")
-    buildBookmarkUrlMap()
-  }, 1000)
-
-  // And one more time with longer delay
-  setTimeout(() => {
-    // console.log("Third attempt - rebuilding bookmark URL map...")
-    buildBookmarkUrlMap()
-  }, 2000)
 })
 
 // Build a map of bookmark URLs to their IDs for efficient lookup
