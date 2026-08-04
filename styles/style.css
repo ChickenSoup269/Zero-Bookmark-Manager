@@ -874,11 +874,11 @@ html {
 }
 
 .scroll-to-top {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
+  position: fixed !important;
+  bottom: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background-color: var(--accent-color);
   color: var(--bg-primary);
@@ -888,33 +888,30 @@ html {
   font-size: 1rem;
   box-shadow: var(--shadow-md);
   border: none;
-  z-index: 1000;
-
+  z-index: 9999;
+  cursor: pointer;
   transition:
-    opacity 0.2s ease,
-    background-color var(--transition-fast),
-    transform 0.2s ease;
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    background-color var(--transition-fast);
 }
 
 .scroll-to-top.hidden {
   opacity: 0;
   pointer-events: none;
-  transform: translateY(12px) scale(0.8);
+  transform: translateY(12px) scale(0.8) !important;
 }
 
-/* Ensure it behaves correctly when inside floating-buttons */
-.floating-buttons .scroll-to-top {
-  position: relative;
-  bottom: auto;
-  right: auto;
-  z-index: auto;
+.scroll-to-top:not(.hidden) {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
 }
 
 .scroll-to-top:hover {
-  transform: translateY(-4px) scale(1.1);
+  transform: translateY(-4px) scale(1.1) !important;
   background-color: var(--text-secondary);
   box-shadow: var(--shadow-lg);
-  cursor: pointer;
 }
 
 #theme-switcher {
