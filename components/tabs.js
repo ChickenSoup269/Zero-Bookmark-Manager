@@ -20,7 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
             quickSaveView.style.display = "flex";
             dashboardView.style.display = "none";
             
-            // Height is now managed by CSS (flex: 1, height: 100%)
+            // Explicitly size the iframe to fill available space
+            const frame = document.getElementById("quick-save-frame");
+            if (frame) {
+                const tabsWrapper = document.querySelector(".app-tabs-wrapper");
+                const header = document.querySelector(".header");
+                const footer = document.querySelector(".footer");
+                const usedHeight =
+                    (tabsWrapper ? tabsWrapper.offsetHeight : 0) +
+                    (header ? header.offsetHeight : 0) +
+                    (footer ? footer.offsetHeight : 0);
+                const available = window.innerHeight - usedHeight - 40; // 40px padding buffer
+                frame.style.height = Math.max(available, 500) + "px";
+            }
         }
     }
 

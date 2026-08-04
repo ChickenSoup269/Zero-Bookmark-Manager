@@ -88,4 +88,12 @@ export function attachDropdownListeners() {
       })
     }
   })
+  
+  // Close all bookmark dropdowns on any scroll to prevent floating glitches
+  // We use .bookmark-dropdown-menu specifically so we don't accidentally close the settings sidebar
+  window.addEventListener("scroll", () => {
+    document.querySelectorAll(".bookmark-dropdown-menu:not(.hidden)").forEach((menu) => {
+      menu.classList.add("hidden")
+    })
+  }, { capture: true, passive: true })
 }

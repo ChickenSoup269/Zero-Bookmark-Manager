@@ -7,7 +7,7 @@
     <title>Zero Bookmark Manager</title>
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="./styles/popup.css">
-    <link rel="stylesheet" href="./vendor/fontawesome/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="./theme-init.js"></script>
 </head>
 
@@ -789,8 +789,8 @@
         </div>
         </div> <!-- end dashboard-view -->
         
-        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1;">
-            <iframe id="quick-save-frame" src="quick-save.html?embedded=true" style="width: 100%; flex: 1; border: none; border-radius: 8px; min-height: 520px; display: block;" scrolling="auto"></iframe>
+        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1; overflow-y: auto; position: relative; min-height: 550px;">
+            <iframe id="quick-save-frame" src="quick-save.html?embedded=true" style="width: 100%; height: 550px; border: none; border-radius: 8px; display: block;" scrolling="auto"></iframe>
         </div>
 
         <!-- footer -->

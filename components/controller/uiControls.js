@@ -297,15 +297,15 @@ export function setupUIControlListeners(elements) {
   const searchWrapper = document.querySelector('.webview-search-wrapper')
   const settingsContainer = document.querySelector('.settings-container')
 
+  const handleScroll = () => {
+    const scrollY = (dashboardView ? dashboardView.scrollTop : 0) + window.scrollY;
+    elements.scrollToTopButton.classList.toggle("hidden", scrollY <= 0);
+  };
+
   if (dashboardView) {
-    dashboardView.addEventListener("scroll", () => {
-      elements.scrollToTopButton.classList.toggle("hidden", dashboardView.scrollTop <= 0);
-    });
-  } else {
-    window.addEventListener("scroll", () => {
-      elements.scrollToTopButton.classList.toggle("hidden", window.scrollY <= 0);
-    });
+    dashboardView.addEventListener("scroll", handleScroll);
   }
+  window.addEventListener("scroll", handleScroll);
 
   elements.searchInput.addEventListener(
     "input",

@@ -39,9 +39,7 @@
         "images/*.png",
         "images/*.jpg",
         "bookmarks.html",
-        "components/sidepanel/sidepanel.html",
-        "vendor/fontawesome/all.min.css",
-        "vendor/fontawesome/webfonts/*.woff2"
+        "components/sidepanel/sidepanel.html"
       ],
       "matches": ["<all_urls>"]
     }
