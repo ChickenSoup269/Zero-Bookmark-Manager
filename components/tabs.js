@@ -54,21 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     quickSaveFrame.src = src;
                 });
             }
-
-            // Size the iframe to fill available space
-            if (quickSaveFrame) {
-                requestAnimationFrame(() => {
-                    const tabsWrapper = document.querySelector(".app-tabs-wrapper");
-                    const header = document.querySelector(".header");
-                    const footer = document.querySelector(".footer");
-                    const usedHeight =
-                        (tabsWrapper ? tabsWrapper.offsetHeight : 0) +
-                        (header ? header.offsetHeight : 0) +
-                        (footer ? footer.offsetHeight : 0);
-                    const available = window.innerHeight - usedHeight - 40;
-                    quickSaveFrame.style.height = Math.max(available, 500) + "px";
-                });
-            }
         }
     }
 

@@ -323,7 +323,7 @@
             </div>
         </div>
 
-        <div id="dashboard-view" class="tab-content active" style="display: flex; flex-direction: column; flex: 1; overflow-y: auto;">
+        <div id="dashboard-view" class="tab-content active" style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; min-height: 0; padding: var(--spacing-md);">
         <div class="controls">
             <select id="folder-filter" class="select">
                 <option value="" data-i18n="allBookmarks">All Bookmarks</option>
@@ -789,8 +789,8 @@
         </div>
         </div> <!-- end dashboard-view -->
         
-        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1; overflow-y: auto; position: relative; min-height: 550px;">
-            <iframe id="quick-save-frame" src="quick-save.html?embedded=true" style="width: 100%; height: 550px; border: none; border-radius: 8px; display: block;" scrolling="auto"></iframe>
+        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0;">
+            <iframe id="quick-save-frame" style="width: 100%; height: 100%; flex: 1; border: none; display: block;" scrolling="auto"></iframe>
         </div>
 
         <!-- footer -->
