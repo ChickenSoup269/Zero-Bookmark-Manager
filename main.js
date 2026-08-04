@@ -18,6 +18,9 @@ import { initCommandPalette } from "./components/commandPalette.js"
 import { initCleanupDashboard } from "./components/cleanupDashboard.js"
 import { initWorkspaces } from "./components/workspaces.js"
 import { initSync } from "./components/sync.js"
+import { initSessionManager } from "./components/sessionManager.js"
+import { setupHotkeys } from "./components/controller/hotkeys.js"
+import { initAnalyticsDashboard } from "./components/analyticsDashboard.js"
 
 // Check if we are running in the native popup
 const urlParams = new URLSearchParams(window.location.search);
@@ -1081,23 +1084,24 @@ function startFirstRunTour() {
 }
 
 // Global scroll listener for glassmorphism headers
-window.addEventListener('scroll', () => {
-  const stickyPopup = document.querySelector('.sticky-search');
-  const stickyWebview = document.querySelector('.webview-search-wrapper');
-  
-  let isSticky = false;
-  if (stickyPopup && stickyPopup.getBoundingClientRect().top <= 1) {
-    isSticky = true;
-  } else if (stickyWebview && stickyWebview.getBoundingClientRect().top <= 1) {
-    isSticky = true;
-  }
-
-  if (isSticky) {
-    document.body.classList.add('is-scrolled');
-  } else {
-    document.body.classList.remove('is-scrolled');
-  }
-}, { passive: true });
+const dashboardViewScroll = document.getElementById("dashboard-view");
+if (dashboardViewScroll) {
+    dashboardViewScroll.addEventListener('scroll', () => {
+        if (dashboardViewScroll.scrollTop > 10) {
+            document.body.classList.add('is-scrolled');
+        } else {
+            document.body.classList.remove('is-scrolled');
+        }
+    });
+} else {
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) {
+            document.body.classList.add('is-scrolled');
+        } else {
+            document.body.classList.remove('is-scrolled');
+        }
+    }, { passive: true });
+}
 
 function setupRestartGuideControl() {
   const button = document.getElementById("restart-guide-option")
@@ -1197,6 +1201,12 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCustomLanguageOptions(elements.languageSwitcher)
     setupCustomLanguageControls(elements)
     setupRestartGuideControl()
+    
+    // Init hotkeys
+    setupHotkeys(elements)
+    
+    // Init Analytics
+    initAnalyticsDashboard(elements)
 
     // Update check logic
     chrome.storage.local.get("showUpdatePopup", (res) => {
@@ -1525,6 +1535,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initCleanupDashboard(elements)
     initWorkspaces(elements)
     initSync(elements)
+    initSessionManager(elements)
 
     // Event listener for Organize Folders button
     if (elements.organizeFoldersButton) {

@@ -208,8 +208,14 @@ export function setupUIControlListeners(elements) {
     elements.deleteFolderButton.classList.toggle("hidden", !hasSelectedFolder)
   }
 
+  const dashboardView = document.getElementById("dashboard-view");
+
   elements.scrollToTopButton.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    if (dashboardView) {
+      dashboardView.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   })
 
   if (elements.reportBugButton) {
@@ -291,9 +297,15 @@ export function setupUIControlListeners(elements) {
   const searchWrapper = document.querySelector('.webview-search-wrapper')
   const settingsContainer = document.querySelector('.settings-container')
 
-  window.addEventListener("scroll", () => {
-    elements.scrollToTopButton.classList.toggle("hidden", window.scrollY <= 0)
-  })
+  if (dashboardView) {
+    dashboardView.addEventListener("scroll", () => {
+      elements.scrollToTopButton.classList.toggle("hidden", dashboardView.scrollTop <= 0);
+    });
+  } else {
+    window.addEventListener("scroll", () => {
+      elements.scrollToTopButton.classList.toggle("hidden", window.scrollY <= 0);
+    });
+  }
 
   elements.searchInput.addEventListener(
     "input",
