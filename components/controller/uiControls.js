@@ -298,8 +298,8 @@ export function setupUIControlListeners(elements) {
   const settingsContainer = document.querySelector('.settings-container')
 
   const handleScroll = () => {
-    const scrollY = (dashboardView ? dashboardView.scrollTop : 0) + window.scrollY;
-    elements.scrollToTopButton.classList.toggle("hidden", scrollY <= 0);
+    const scrollY = dashboardView ? dashboardView.scrollTop : window.scrollY;
+    elements.scrollToTopButton.classList.toggle("hidden", scrollY < 50);
   };
 
   if (dashboardView) {
