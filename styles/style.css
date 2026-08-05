@@ -4131,11 +4131,25 @@ html {
   white-space: nowrap;
 }
 .theme-swatch.active {
-  transform: scale(1.15);
+  transform: scale(1.1);
   box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--text-primary);
 }
 .theme-swatch:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
+}
+
+.font-swatch.active,
+.view-swatch.active,
+.setting-swatch.active,
+.language-swatch.active {
+  transform: scale(1.03);
+  box-shadow: 0 0 0 1px var(--bg-primary), 0 0 0 2px var(--text-primary);
+}
+.font-swatch:hover,
+.view-swatch:hover,
+.setting-swatch:hover,
+.language-swatch:hover {
+  transform: scale(1.02);
 }
 
 
@@ -4252,7 +4266,7 @@ html {
   border-radius: 6px;
 }
 .app-setting-field label i {
-  color: var(--accent-color, #007bff);
+  color: var(--text-secondary, #666);
   font-size: 1.1rem;
 }
 

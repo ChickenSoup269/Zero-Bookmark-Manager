@@ -1913,7 +1913,7 @@ body {
 .sidebar-folder-item .folder-toggle:hover {
   color: var(--accent-color);
   background: var(--accent-color-light);
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 .sidebar-folder-item .folder-toggle:active {
@@ -3419,6 +3419,15 @@ body.settings-panel-open .settings-container {
   display: flex;
   gap: var(--spacing-xs);
   justify-content: flex-end;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.bookmark-item:hover .bookmark-actions,
+.bookmark-item:focus-within .bookmark-actions {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Action buttons - Small buttons với hover */
@@ -3439,8 +3448,8 @@ body.settings-panel-open .settings-container {
 }
 
 .bookmark-action-btn:hover {
-  background-color: var(--accent-color);
-  color: #ffffff;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
@@ -3968,12 +3977,27 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .theme-swatch.active {
-  transform: scale(1.15);
+  transform: scale(1.1);
   box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--text-primary);
 }
 
 .dropdown-menu-2 .theme-swatch:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
+}
+
+.dropdown-menu-2 .font-swatch.active,
+.dropdown-menu-2 .view-swatch.active,
+.dropdown-menu-2 .setting-swatch.active,
+.dropdown-menu-2 .language-swatch.active {
+  transform: scale(1.03);
+  box-shadow: 0 0 0 1px var(--bg-primary), 0 0 0 2px var(--text-primary);
+}
+
+.dropdown-menu-2 .font-swatch:hover,
+.dropdown-menu-2 .view-swatch:hover,
+.dropdown-menu-2 .setting-swatch:hover,
+.dropdown-menu-2 .language-swatch:hover {
+  transform: scale(1.02);
 }
 
 .dropdown-menu-2 .theme-swatch[data-hint]::before {
@@ -4025,7 +4049,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 .app-setting-field label i {
   width: 16px;
   text-align: center;
-  color: var(--accent-color);
+  color: var(--text-secondary);
 }
 
 .app-setting-action {
@@ -5716,6 +5740,8 @@ textarea.error {
   .mockup-title {
     font-size: 0.8rem; /* Tiêu đề nhỏ hơn nữa ở popup */
   }
+}
+
 @media (max-width: 800px) {
   .folder-list.mockup-view {
     /* grid-template-columns removed */
@@ -5828,8 +5854,7 @@ textarea.error {
   font-size: 14px !important;
   margin-right: 8px;
 }
-  min-width: 0; /* Ngăn text quá dài làm vỡ layout ngang */
-}
+
 
 .mockup-meta {
   display: flex;
@@ -6068,7 +6093,7 @@ body.is-scrolled .webview-search-wrapper {
   border-radius: 6px;
 }
 .app-setting-field label i {
-  color: var(--accent-color, #007bff);
+  color: var(--text-secondary, #666);
   font-size: 1.1rem;
 }
 
