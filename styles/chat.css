@@ -601,6 +601,12 @@
   pointer-events: none;
 }
 
+.floating-container .scroll-to-top {
+  position: static !important;
+  bottom: auto;
+  right: auto;
+}
+
 .floating-toggle {
   width: 24px;
   height: 48px;
