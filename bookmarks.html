@@ -635,6 +635,17 @@
                         </div>
                     </div>
 
+                    <div class="app-setting-field">
+                        <label><i class="fas fa-folder-tree"></i> <span
+                                data-i18n="smartFoldersConfig">Smart Folders:</span></label>
+                        <div class="setting-pill-group" id="smart-folders-select">
+                            <button class="theme-swatch setting-swatch" data-value="show"
+                                data-i18n="smartFoldersShow">Show</button>
+                            <button class="theme-swatch setting-swatch" data-value="hide"
+                                data-i18n="smartFoldersHide">Hide</button>
+                        </div>
+                    </div>
+
                     <button id="localstorage-settings-option" class="menu-item app-setting-action">
                         <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage
                             Settings</span>
@@ -1418,41 +1429,52 @@
             </div>
         </div>
 
-        <div id="analytics-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="analytics-title">
-            <div class="rename-popup-content analytics-popup-content">
-                <div class="analytics-header">
+        <div id="analytics-popup" class="rename-popup hidden popup-animate" role="dialog"
+            aria-labelledby="analytics-title">
+            <div class="rename-popup-content" style="width: min(800px, 94vw); max-width: 800px;">
+                <div class="smart-cleanup-header">
                     <div>
-                        <h3 id="analytics-title" data-i18n="analyticsTitle">Analytics</h3>
-                        <p id="analytics-subtitle" data-i18n="analyticsDesc">Your bookmarking habits</p>
+                        <h3 id="analytics-title"><i class="fas fa-chart-pie" style="margin-right: 8px;"></i><span
+                                data-i18n="analyticsTitle">Analytics Dashboard</span></h3>
+                        <p id="analytics-subtitle"
+                            style="margin:0; font-size: 0.85rem; color:var(--text-secondary);"
+                            data-i18n="analyticsDesc">Your bookmarking habits at a glance.</p>
                     </div>
                     <button id="analytics-close-x" class="modal-close" title="Close">✕</button>
                 </div>
-                <div class="analytics-body">
-                    <div class="analytics-stats-grid">
-                        <div class="analytics-stat-card">
-                            <i class="fas fa-bookmark" style="color: var(--accent-color);"></i>
-                            <div class="stat-value" id="stat-total-bookmarks">0</div>
-                            <div class="stat-label" data-i18n="analyticsTotalBookmarks">Total Bookmarks</div>
+
+                <div class="analytics-body" style="display: grid; gap: 16px; margin: 16px 0;">
+                    <!-- Quick Stats -->
+                    <div class="smart-cleanup-summary" style="margin-bottom: 0;">
+                        <div>
+                            <strong id="stat-total-bookmarks">0</strong>
+                            <span data-i18n="analyticsTotalBookmarks">Total Bookmarks</span>
                         </div>
-                        <div class="analytics-stat-card">
-                            <i class="fas fa-folder" style="color: var(--accent-color);"></i>
-                            <div class="stat-value" id="stat-total-folders">0</div>
-                            <div class="stat-label" data-i18n="analyticsTotalFolders">Total Folders</div>
+                        <div>
+                            <strong id="stat-total-folders">0</strong>
+                            <span data-i18n="analyticsTotalFolders">Total Folders</span>
                         </div>
-                        <div class="analytics-stat-card">
-                            <i class="fas fa-calendar-plus" style="color: var(--accent-color);"></i>
-                            <div class="stat-value" id="stat-added-this-week">0</div>
-                            <div class="stat-label" data-i18n="analyticsAddedThisWeek">Added This Week</div>
+                        <div>
+                            <strong id="stat-recent-bookmarks">0</strong>
+                            <span data-i18n="analyticsAddedThisWeek">Added This Week</span>
                         </div>
                     </div>
-                    
-                    <div class="analytics-chart-section">
-                        <h4 data-i18n="analyticsTopDomains">Top Domains</h4>
-                        <div id="analytics-domains-list" class="analytics-domains-list"></div>
+
+                    <!-- Top Domains Bar Chart -->
+                    <div
+                        style="padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: color-mix(in srgb, var(--bg-primary) 70%, transparent);">
+                        <h4 style="margin: 0 0 16px 0; color: var(--text-primary); font-size: 1rem;"><i
+                                class="fas fa-globe"
+                                style="margin-right: 6px; color: var(--accent-color);"></i><span
+                                data-i18n="analyticsTopDomains">Top Domains</span></h4>
+                        <div id="stat-top-domains" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Bars will be injected here -->
+                        </div>
                     </div>
                 </div>
+
                 <div class="rename-popup-buttons">
-                    <button id="analytics-close" class="button cancel" data-i18n="close">Close</button>
+                    <button id="analytics-close" class="button cancel" style="width: 100px;">Close</button>
                 </div>
             </div>
         </div>

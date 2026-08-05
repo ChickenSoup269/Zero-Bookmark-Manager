@@ -348,8 +348,11 @@ export function initCleanupDashboard(elements) {
       "smartCleanupSubtitle",
       "Review bookmark cleanup opportunities before changing anything.",
     )
-    button.title = t("smartCleanupTitle", "Smart Cleanup")
-    button.querySelector("span").textContent = t("smartCleanupShort", "Cleanup")
+    buttons.forEach(btn => {
+      btn.title = t("smartCleanupTitle", "Smart Cleanup")
+      const span = btn.querySelector("span")
+      if (span) span.textContent = t("smartCleanupShort", "Cleanup")
+    })
     refreshButton.textContent = t("refresh", "Refresh")
     closeButton.textContent = t("close", "Close")
 

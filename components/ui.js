@@ -1665,15 +1665,17 @@ function renderSidebarFolderTree(folders, elements) {
   // Add "All Bookmarks" pseudo folder at the beginning
   const t = translations[language] || translations.en
   
-  const smartFolders = [
-    { id: "__smart_recent", title: t.sidebarRecent || "Mới lưu (7 ngày)" },
-    { id: "__smart_most_visited", title: t.sidebarMostVisited || "Truy cập nhiều" },
-    { id: "__smart_untagged", title: t.sidebarUntagged || "Chưa gắn thẻ" }
-  ];
+  if (uiState.showSmartFolders !== false) {
+    const smartFolders = [
+      { id: "__smart_recent", title: t.sidebarRecent || "Mới lưu (7 ngày)" },
+      { id: "__smart_most_visited", title: t.sidebarMostVisited || "Truy cập nhiều" },
+      { id: "__smart_untagged", title: t.sidebarUntagged || "Chưa gắn thẻ" }
+    ];
 
-  smartFolders.reverse().forEach(sf => {
-    rootFolders.unshift({ ...sf, children: [], isVirtual: true })
-  })
+    smartFolders.reverse().forEach(sf => {
+      rootFolders.unshift({ ...sf, children: [], isVirtual: true })
+    })
+  }
   
   const allBookmarksFolder = {
     id: "__all_bookmarks",

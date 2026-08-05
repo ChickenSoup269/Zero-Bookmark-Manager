@@ -211,11 +211,7 @@ export function setupUIControlListeners(elements) {
   const dashboardView = document.getElementById("dashboard-view");
 
   elements.scrollToTopButton.addEventListener("click", () => {
-    if (dashboardView) {
-      dashboardView.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   })
 
   if (elements.reportBugButton) {
@@ -298,13 +294,10 @@ export function setupUIControlListeners(elements) {
   const settingsContainer = document.querySelector('.settings-container')
 
   const handleScroll = () => {
-    const scrollY = dashboardView ? dashboardView.scrollTop : window.scrollY;
+    const scrollY = window.scrollY;
     elements.scrollToTopButton.classList.toggle("hidden", scrollY < 50);
   };
 
-  if (dashboardView) {
-    dashboardView.addEventListener("scroll", handleScroll);
-  }
   window.addEventListener("scroll", handleScroll);
 
   elements.searchInput.addEventListener(

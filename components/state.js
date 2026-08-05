@@ -31,6 +31,7 @@ export const uiState = {
   autoRemoveDup: false, // auto-delete background functionality
   headerLineStyle: "pattern", // "pattern" | "simple" | "hidden"
   bookmarkMenuBg: "normal", // "glass" | "normal"
+  showSmartFolders: true,
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks

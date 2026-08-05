@@ -18,297 +18,374 @@
             <div class="settings-container" id="settings-container">
                 <button id="settings-button" class="button settings" title="Settings">⋮</button>
 
-            <div id="settings-menu" class="dropdown-menu hidden" aria-hidden="true">
-                <div class="settings-panel-header">
-                    <span class="settings-panel-title" data-i18n="settings">Settings</span>
-                    <button id="settings-close-button" class="settings-panel-close" title="Close settings"
-                        aria-label="Close settings">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
-                <div class="menu-group">
-                    <div class="language-settings-row" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
-                        <div class="setting-pill-group" id="language-switcher" style="flex: 1; margin-top: 0;">
-                            <button class="theme-swatch setting-swatch language-swatch" data-value="en"><span>English</span></button>
-                            <button class="theme-swatch setting-swatch language-swatch" data-value="vi"><span>Tiếng Việt</span></button>
-                        </div>
-                        <button id="add-custom-language-option" class="button btn-action-icon"
-                            data-i18n-title="addCustomLanguage" title="Add custom language"
-                            aria-label="Add custom language">
-                            <i class="fas fa-language"></i>
-                            <i class="fas fa-plus"></i>
+                <div id="settings-menu" class="dropdown-menu hidden" aria-hidden="true">
+                    <div class="settings-panel-header">
+                        <span class="settings-panel-title" data-i18n="settings">Settings</span>
+                        <button id="settings-close-button" class="settings-panel-close" title="Close settings"
+                            aria-label="Close settings">
+                            <i class="fas fa-times"></i>
                         </button>
                     </div>
-                    <div id="tag-filter-container" class="tag-filter-container">
-                        <button id="tag-filter-toggle" class="select">Select Tags</button>
-                        <div id="tag-filter-dropdown" class="dropdown-menu hidden">
-                            <div id="tag-filter-options"></div>
+                    <span class="dropdown-section-title" data-i18n="extensionOptionsTitle">Extension Options</span>
+                    <div class="menu-group">
+                        <div class="language-settings-row"
+                            style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
+                            <div class="setting-pill-group" id="language-switcher" style="flex: 1; margin-top: 0;">
+                                <button class="theme-swatch setting-swatch language-swatch"
+                                    data-value="en"><span>English</span></button>
+                                <button class="theme-swatch setting-swatch language-swatch" data-value="vi"><span>Tiếng
+                                        Việt</span></button>
+                            </div>
+                            <button id="add-custom-language-option" class="button btn-action-icon"
+                                data-i18n-title="addCustomLanguage" title="Add custom language"
+                                aria-label="Add custom language">
+                                <i class="fas fa-language"></i>
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div id="tag-filter-container" class="tag-filter-container">
+                            <button id="tag-filter-toggle" class="select">Select Tags</button>
+                            <div id="tag-filter-dropdown" class="dropdown-menu hidden">
+                                <div id="tag-filter-options"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-<div class="settings-card theme-selection-card">
-    <div class="settings-card-header theme-toggle-header">
-        <div><i class="fas fa-paint-roller"></i> <span data-i18n="themeSelectionTitle">Themes</span></div>
-        <i class="fas fa-chevron-up toggle-icon"></i>
-    </div>
-    <div id="theme-switcher" class="theme-grid" aria-label="Select theme">
-    <button class="theme-swatch" data-value="system" data-hint="System Default" style="background: linear-gradient(135deg, #e0e0e0 50%, #2b2b2b 50%); color: inherit;"><i class="fas fa-desktop"></i></button>
-    <button class="theme-swatch" data-value="light" data-hint="Light" style="background: #ffffff; color: #000000;"><i class="fas fa-sun"></i></button>
-    <button class="theme-swatch" data-value="dark" data-hint="Dark" style="background: #2b2b2b; color: #ffffff;"><i class="fas fa-moon"></i></button>
-    <button class="theme-swatch" data-value="dracula" data-hint="Dracula" style="background: #282a36; color: #f8f8f2;"><i class="fas fa-ghost"></i></button>
-    <button class="theme-swatch" data-value="onedark" data-hint="OneDark" style="background: #282c34; color: #abb2bf;"><i class="fas fa-circle"></i></button>
-    <button class="theme-swatch" data-value="tokyonight" data-hint="Tokyo Night" style="background: #1a1b26; color: #a9b1d6;"><i class="fas fa-moon"></i></button>
-    <button class="theme-swatch" data-value="monokai" data-hint="Monokai" style="background: #272822; color: #f8f8f2;"><i class="fas fa-circle"></i></button>
-    <button class="theme-swatch" data-value="winter-is-coming" data-hint="Winter is Coming" style="background: #011627; color: #d6deeb;"><i class="fas fa-snowflake"></i></button>
-    <button class="theme-swatch" data-value="github-blue" data-hint="GitHub Blue" style="background: #0d1117; color: #c9d1d9;"><i class="fab fa-github"></i></button>
-    <button class="theme-swatch" data-value="github-light" data-hint="GitHub Light" style="background: #ffffff; color: #24292f;"><i class="fab fa-github"></i></button>
-    <button class="theme-swatch" data-value="tet" data-hint="Tet" style="background: #8b1a1a; color: #ffd700;"><i class="fas fa-fan"></i></button>
-    <button class="theme-swatch" data-value="nord" data-hint="Nord Dark" style="background: #2e3440; color: #d8dee9;"><i class="fas fa-snowflake"></i></button>
-    <button class="theme-swatch" data-value="nord-light" data-hint="Nord Light" style="background: #eceff4; color: #2e3440;"><i class="fas fa-sun"></i></button>
-    <button class="theme-swatch" data-value="synthwave" data-hint="SynthWave 84" style="background: #262335; color: #f92aad;"><i class="fas fa-rocket"></i></button>
-    <button class="theme-swatch" data-value="gruvbox" data-hint="Gruvbox Dark" style="background: #282828; color: #ebdbb2;"><i class="fas fa-mug-hot"></i></button>
-    <button class="theme-swatch" data-value="gruvbox-light" data-hint="Gruvbox Light" style="background: #fbf1c7; color: #3c3836;"><i class="fas fa-sun"></i></button>
-    <button class="theme-swatch" data-value="catppuccin" data-hint="Catppuccin Dark" style="background: #1e1e2e; color: #cba6f7;"><i class="fas fa-paw"></i></button>
-    <button class="theme-swatch" data-value="catppuccin-light" data-hint="Catppuccin Light" style="background: #eff1f5; color: #8839ef;"><i class="fas fa-sun"></i></button>
-    <button class="theme-swatch" data-value="nightowl" data-hint="Night Owl Dark" style="background: #011627; color: #c792ea;"><i class="fas fa-moon"></i></button>
-    <button class="theme-swatch" data-value="nightowl-light" data-hint="Night Owl Light" style="background: #fbfbfb; color: #2f86d2;"><i class="fas fa-sun"></i></button>
-</div>
-</div>
-                <div class="menu-group">
-                    <div class="settings-card font-selection-card collapsed">
+
+                    <div class="settings-card theme-selection-card">
                         <div class="settings-card-header theme-toggle-header">
-                            <div><i class="fas fa-font"></i> <span data-i18n="fontStyleTitle">Font Style</span></div>
-                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <div><i class="fas fa-paint-roller"></i> <span data-i18n="themeSelectionTitle">Themes</span>
+                            </div>
+                            <i class="fas fa-chevron-up toggle-icon"></i>
                         </div>
-                        <div class="theme-grid" id="font-switcher">
-                            <button class="theme-swatch font-swatch font-gohu" data-value="gohu" style="font-family: 'GohuFont';">Ag <span>Gohu</span></button>
-                            <button class="theme-swatch font-swatch font-jetBrainsMonoNerdFont" data-value="jetBrainsMonoNerdFont" style="font-family: 'JetBrainsMonoNerdFont';">Ag <span>JetBrains</span></button>
-                            <button class="theme-swatch font-swatch font-roboto" data-value="roboto" style="font-family: 'Roboto', sans-serif;">Ag <span>Roboto</span></button>
-                            <button class="theme-swatch font-swatch font-openSans" data-value="openSans" style="font-family: 'Open Sans', sans-serif;">Ag <span>Open Sans</span></button>
-                            <button class="theme-swatch font-swatch font-inter" data-value="inter" style="font-family: 'Inter', sans-serif;">Ag <span>Inter</span></button>
-                            <button class="theme-swatch font-swatch font-lexend" data-value="lexend" style="font-family: 'Lexend', sans-serif;">Ag <span>Lexend</span></button>
-                            <button class="theme-swatch font-swatch font-firaCode" data-value="firaCode" style="font-family: 'Fira Code', monospace;">Ag <span>Fira Code</span></button>
-                            <button class="theme-swatch font-swatch font-poppins" data-value="poppins" style="font-family: 'Poppins', sans-serif;">Ag <span>Poppins</span></button>
-                            <button class="theme-swatch font-swatch font-montserrat" data-value="montserrat" style="font-family: 'Montserrat', sans-serif;">Ag <span>Montserrat</span></button>
+                        <div id="theme-switcher" class="theme-grid" aria-label="Select theme">
+                            <button class="theme-swatch" data-value="system" data-hint="System Default"
+                                style="background: linear-gradient(135deg, #e0e0e0 50%, #2b2b2b 50%); color: inherit;"><i
+                                    class="fas fa-desktop"></i></button>
+                            <button class="theme-swatch" data-value="light" data-hint="Light"
+                                style="background: #ffffff; color: #000000;"><i class="fas fa-sun"></i></button>
+                            <button class="theme-swatch" data-value="dark" data-hint="Dark"
+                                style="background: #2b2b2b; color: #ffffff;"><i class="fas fa-moon"></i></button>
+                            <button class="theme-swatch" data-value="dracula" data-hint="Dracula"
+                                style="background: #282a36; color: #f8f8f2;"><i class="fas fa-ghost"></i></button>
+                            <button class="theme-swatch" data-value="onedark" data-hint="OneDark"
+                                style="background: #282c34; color: #abb2bf;"><i class="fas fa-circle"></i></button>
+                            <button class="theme-swatch" data-value="tokyonight" data-hint="Tokyo Night"
+                                style="background: #1a1b26; color: #a9b1d6;"><i class="fas fa-moon"></i></button>
+                            <button class="theme-swatch" data-value="monokai" data-hint="Monokai"
+                                style="background: #272822; color: #f8f8f2;"><i class="fas fa-circle"></i></button>
+                            <button class="theme-swatch" data-value="winter-is-coming" data-hint="Winter is Coming"
+                                style="background: #011627; color: #d6deeb;"><i class="fas fa-snowflake"></i></button>
+                            <button class="theme-swatch" data-value="github-blue" data-hint="GitHub Blue"
+                                style="background: #0d1117; color: #c9d1d9;"><i class="fab fa-github"></i></button>
+                            <button class="theme-swatch" data-value="github-light" data-hint="GitHub Light"
+                                style="background: #ffffff; color: #24292f;"><i class="fab fa-github"></i></button>
+                            <button class="theme-swatch" data-value="tet" data-hint="Tet"
+                                style="background: #8b1a1a; color: #ffd700;"><i class="fas fa-fan"></i></button>
+                            <button class="theme-swatch" data-value="nord" data-hint="Nord Dark"
+                                style="background: #2e3440; color: #d8dee9;"><i class="fas fa-snowflake"></i></button>
+                            <button class="theme-swatch" data-value="nord-light" data-hint="Nord Light"
+                                style="background: #eceff4; color: #2e3440;"><i class="fas fa-sun"></i></button>
+                            <button class="theme-swatch" data-value="synthwave" data-hint="SynthWave 84"
+                                style="background: #262335; color: #f92aad;"><i class="fas fa-rocket"></i></button>
+                            <button class="theme-swatch" data-value="gruvbox" data-hint="Gruvbox Dark"
+                                style="background: #282828; color: #ebdbb2;"><i class="fas fa-mug-hot"></i></button>
+                            <button class="theme-swatch" data-value="gruvbox-light" data-hint="Gruvbox Light"
+                                style="background: #fbf1c7; color: #3c3836;"><i class="fas fa-sun"></i></button>
+                            <button class="theme-swatch" data-value="catppuccin" data-hint="Catppuccin Dark"
+                                style="background: #1e1e2e; color: #cba6f7;"><i class="fas fa-paw"></i></button>
+                            <button class="theme-swatch" data-value="catppuccin-light" data-hint="Catppuccin Light"
+                                style="background: #eff1f5; color: #8839ef;"><i class="fas fa-sun"></i></button>
+                            <button class="theme-swatch" data-value="nightowl" data-hint="Night Owl Dark"
+                                style="background: #011627; color: #c792ea;"><i class="fas fa-moon"></i></button>
+                            <button class="theme-swatch" data-value="nightowl-light" data-hint="Night Owl Light"
+                                style="background: #fbfbfb; color: #2f86d2;"><i class="fas fa-sun"></i></button>
                         </div>
                     </div>
-                    <div class="settings-card view-selection-card collapsed">
-                        <div class="settings-card-header theme-toggle-header">
-                            <div><i class="fas fa-border-all"></i> <span data-i18n="viewModeTitle">View Mode</span></div>
-                            <i class="fas fa-chevron-down toggle-icon"></i>
+                    <div class="menu-group">
+                        <div class="settings-card font-selection-card collapsed">
+                            <div class="settings-card-header theme-toggle-header">
+                                <div><i class="fas fa-font"></i> <span data-i18n="fontStyleTitle">Font Style</span>
+                                </div>
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <div class="theme-grid" id="font-switcher">
+                                <button class="theme-swatch font-swatch font-gohu" data-value="gohu"
+                                    style="font-family: 'GohuFont';">Ag <span>Gohu</span></button>
+                                <button class="theme-swatch font-swatch font-jetBrainsMonoNerdFont"
+                                    data-value="jetBrainsMonoNerdFont" style="font-family: 'JetBrainsMonoNerdFont';">Ag
+                                    <span>JetBrains</span></button>
+                                <button class="theme-swatch font-swatch font-roboto" data-value="roboto"
+                                    style="font-family: 'Roboto', sans-serif;">Ag <span>Roboto</span></button>
+                                <button class="theme-swatch font-swatch font-openSans" data-value="openSans"
+                                    style="font-family: 'Open Sans', sans-serif;">Ag <span>Open Sans</span></button>
+                                <button class="theme-swatch font-swatch font-inter" data-value="inter"
+                                    style="font-family: 'Inter', sans-serif;">Ag <span>Inter</span></button>
+                                <button class="theme-swatch font-swatch font-lexend" data-value="lexend"
+                                    style="font-family: 'Lexend', sans-serif;">Ag <span>Lexend</span></button>
+                                <button class="theme-swatch font-swatch font-firaCode" data-value="firaCode"
+                                    style="font-family: 'Fira Code', monospace;">Ag <span>Fira Code</span></button>
+                                <button class="theme-swatch font-swatch font-poppins" data-value="poppins"
+                                    style="font-family: 'Poppins', sans-serif;">Ag <span>Poppins</span></button>
+                                <button class="theme-swatch font-swatch font-montserrat" data-value="montserrat"
+                                    style="font-family: 'Montserrat', sans-serif;">Ag <span>Montserrat</span></button>
+                            </div>
                         </div>
-                        <div class="theme-grid" id="view-switcher">
-                            <button class="theme-swatch view-swatch" data-value="flat"><i class="fas fa-list"></i> <span data-i18n="viewFlat">Flat List</span></button>
-                            <button class="theme-swatch view-swatch" data-value="tree"><i class="fas fa-sitemap"></i> <span data-i18n="viewTree">Tree View</span></button>
-                            <button class="theme-swatch view-swatch" data-value="detail"><i class="fas fa-info-circle"></i> <span data-i18n="viewDetail">Detail View</span></button>
-                            <button class="theme-swatch view-swatch" data-value="card"><i class="fas fa-th-large"></i> <span data-i18n="viewCard">Card View</span></button>
-                            <button class="theme-swatch view-swatch" data-value="list"><i class="fas fa-list-ul"></i> <span data-i18n="viewList">List View</span></button>
-                            <button class="theme-swatch view-swatch" data-value="bento"><i class="fas fa-th"></i> <span data-i18n="viewBento">Bento Box</span></button>
-                            <button class="theme-swatch view-swatch" data-value="kanban"><i class="fas fa-columns"></i> <span data-i18n="viewKanban">Kanban Board</span></button>
-                            <button class="theme-swatch view-swatch" data-value="mockup"><i class="fas fa-image"></i> <span data-i18n="viewGallery">Gallery View</span></button>
+                        <div class="settings-card view-selection-card collapsed">
+                            <div class="settings-card-header theme-toggle-header">
+                                <div><i class="fas fa-border-all"></i> <span data-i18n="viewModeTitle">View Mode</span>
+                                </div>
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <div class="theme-grid" id="view-switcher">
+                                <button class="theme-swatch view-swatch" data-value="flat"><i class="fas fa-list"></i>
+                                    <span data-i18n="viewFlat">Flat List</span></button>
+                                <button class="theme-swatch view-swatch" data-value="tree"><i
+                                        class="fas fa-sitemap"></i> <span data-i18n="viewTree">Tree View</span></button>
+                                <button class="theme-swatch view-swatch" data-value="detail"><i
+                                        class="fas fa-info-circle"></i> <span data-i18n="viewDetail">Detail
+                                        View</span></button>
+                                <button class="theme-swatch view-swatch" data-value="card"><i
+                                        class="fas fa-th-large"></i> <span data-i18n="viewCard">Card
+                                        View</span></button>
+                                <button class="theme-swatch view-swatch" data-value="list"><i
+                                        class="fas fa-list-ul"></i> <span data-i18n="viewList">List View</span></button>
+                                <button class="theme-swatch view-swatch" data-value="bento"><i class="fas fa-th"></i>
+                                    <span data-i18n="viewBento">Bento Box</span></button>
+                                <button class="theme-swatch view-swatch" data-value="kanban"><i
+                                        class="fas fa-columns"></i> <span data-i18n="viewKanban">Kanban
+                                        Board</span></button>
+                                <button class="theme-swatch view-swatch" data-value="mockup"><i
+                                        class="fas fa-image"></i> <span data-i18n="viewGallery">Gallery
+                                        View</span></button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
-                <div class="menu-group">
-                    <button id="edit-in-new-tab-option" class="menu-item">
-                        <i class="fas fa-external-link-alt"></i> Edit in New Tab
-                    </button>
-                    <button id="open-side-panel-option" class="menu-item">
-                        <i class="fas fa-columns"></i> Open Side Panel
-                    </button>
-                    <button id="export-bookmarks-option" class="menu-item">
-                        <i class="fas fa-file-export" aria-hidden="true"></i>
-                        <span data-i18n="exportBookmarks">Export Bookmarks</span>
-                    </button>
-                    <button id="smart-cleanup-button" class="menu-item">
-                        <i class="fas fa-magic" aria-hidden="true" style="color: var(--accent-color);"></i>
-                        <span data-i18n="smartCleanupTitle">Smart Cleanup</span>
-                    </button>
-                    <button id="analytics-btn" class="menu-item">
-                        <i class="fas fa-chart-pie" aria-hidden="true"></i>
-                        <span data-i18n="analyticsTitle">Analytics Dashboard</span>
-                    </button>
-                    <button id="save-session-btn" class="menu-item">
-                        <i class="fas fa-layer-group" aria-hidden="true"></i>
-                        <span data-i18n="saveSession">Save Current Session (Tabs)</span>
-                    </button>
-                    <button id="import-bookmarks-option" class="menu-item">
-                        <i class="fas fa-file-import" aria-hidden="true"></i>
-                        <span data-i18n="importBookmarks">Import Bookmarks</span>
-                    </button>
-                    <button id="google-drive-sync-btn" class="menu-item">
-                        <i class="fab fa-google-drive" aria-hidden="true"></i>
-                        <span data-i18n="cloudSync">Cloud Sync</span>
-                    </button>
-                    <button id="show-bookmark-ids-option" class="menu-item">
-                        <i class="fas fa-download"></i>Show Bookmark IDs
-                    </button>
-                </div>
-
-                <span class="dropdown-section-title" data-i18n="quickOpenTitle">Quick Open Action</span>
-                <div class="menu-group">
-                    <div id="quick-open-settings" class="quick-open-settings">
-                        <label class="segmented-control-item">
-                            <input type="radio" id="quick-open-quickSave" name="quickOpenAction"
-                                value="quickSave" checked />
-                            <span class="control-label">
-                                <i class="fas fa-bookmark" aria-hidden="true"></i>
-                                <span data-i18n="quickOpenQuickSave">Quick Save</span>
-                            </span>
-                        </label>
-                        <label class="segmented-control-item">
-                            <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup"
-                                />
-                            <span class="control-label">
-                                <i class="fas fa-window-restore" aria-hidden="true"></i>
-                                <span data-i18n="quickOpenPopup">Popup</span>
-                            </span>
-                        </label>
-                        <label class="segmented-control-item">
-                            <input type="radio" id="quick-open-sidepanel" name="quickOpenAction"
-                                value="sidepanel" />
-                            <span class="control-label">
-                                <i class="fas fa-table-columns" aria-hidden="true"></i>
-                                <span data-i18n="quickOpenSidePanel">Side Panel</span>
-                            </span>
-                        </label>
-                        <label class="segmented-control-item">
-                            <input type="radio" id="quick-open-web" name="quickOpenAction" value="web" />
-                            <span class="control-label">
-                                <i class="fas fa-up-right-from-square" aria-hidden="true"></i>
-                                <span data-i18n="quickOpenWeb">Full Page</span>
-                            </span>
-                        </label>
-                        <label class="segmented-control-item">
-                            <input type="radio" id="quick-open-nativePopup" name="quickOpenAction" value="nativePopup" />
-                            <span class="control-label">
-                                <i class="fas fa-caret-square-down" aria-hidden="true"></i>
-                                <span data-i18n="quickOpenNativePopup">Browser Popup</span>
-                            </span>
-                        </label>
-                    </div>
-                    <button id="configure-shortcuts-btn" class="menu-item app-setting-action" style="margin-top: 8px;">
-                        <i class="fas fa-keyboard"></i> <span data-i18n="configureShortcuts">Configure Shortcuts</span>
-                    </button>
-                </div>
-
-                <span class="dropdown-section-title" data-i18n="bookmarkHealthTitle">Bookmark Health &
-                    Duplicates</span>
-                <div class="menu-group">
-                    <div class="health-action-row">
-                        <button id="check-health-btn" class="button button-warning">
-                            <i class="fas fa-stethoscope"></i> <span data-i18n="checkLinks">Check Links</span>
+                    <span class="dropdown-section-title" data-i18n="bookmarkActionsTitle">Bookmark Actions</span>
+                    <div class="menu-group">
+                        <button id="edit-in-new-tab-option" class="menu-item">
+                            <i class="fas fa-external-link-alt"></i> Edit in New Tab
                         </button>
-                        <button id="check-duplicates-btn" class="button button-primary">
-                            <i class="fas fa-copy"></i> <span data-i18n="checkDuplicates">Check
-                                Duplicates</span>
+                        <button id="open-side-panel-option" class="menu-item">
+                            <i class="fas fa-columns"></i> Open Side Panel
+                        </button>
+                        <button id="export-bookmarks-option" class="menu-item">
+                            <i class="fas fa-file-export" aria-hidden="true"></i>
+                            <span data-i18n="exportBookmarks">Export Bookmarks</span>
+                        </button>
+                        <button id="smart-cleanup-button" class="menu-item">
+                            <i class="fas fa-magic" aria-hidden="true" style="color: var(--accent-color);"></i>
+                            <span data-i18n="smartCleanupTitle">Smart Cleanup</span>
+                        </button>
+                        <button id="analytics-btn" class="menu-item">
+                            <i class="fas fa-chart-pie" aria-hidden="true"></i>
+                            <span data-i18n="analyticsTitle">Analytics Dashboard</span>
+                        </button>
+                        <button id="save-session-btn" class="menu-item">
+                            <i class="fas fa-layer-group" aria-hidden="true"></i>
+                            <span data-i18n="saveSession">Save Current Session (Tabs)</span>
+                        </button>
+                        <button id="import-bookmarks-option" class="menu-item">
+                            <i class="fas fa-file-import" aria-hidden="true"></i>
+                            <span data-i18n="importBookmarks">Import Bookmarks</span>
+                        </button>
+                        <button id="google-drive-sync-btn" class="menu-item">
+                            <i class="fab fa-google-drive" aria-hidden="true"></i>
+                            <span data-i18n="cloudSync">Cloud Sync</span>
+                        </button>
+                        <button id="show-bookmark-ids-option" class="menu-item">
+                            <i class="fas fa-download"></i>Show Bookmark IDs
                         </button>
                     </div>
 
-                    <hr>
-
-                    <div class="app-setting-field">
-                        <label><i class="fas fa-clone"></i> <span data-i18n="dupScopeTitle">Duplicate Scope:</span></label>
-                        <div class="setting-pill-group" id="duplicate-scope-select">
-                            <button class="theme-swatch setting-swatch" data-value="folder" data-i18n="dupScopeFolder">Only 1 folder</button>
-                            <button class="theme-swatch setting-swatch" data-value="all" data-i18n="dupScopeAll">Across folders</button>
+                    <span class="dropdown-section-title" data-i18n="quickOpenTitle">Quick Open Action</span>
+                    <div class="menu-group">
+                        <div id="quick-open-settings" class="quick-open-settings">
+                            <label class="segmented-control-item">
+                                <input type="radio" id="quick-open-quickSave" name="quickOpenAction" value="quickSave"
+                                    checked />
+                                <span class="control-label">
+                                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                                    <span data-i18n="quickOpenQuickSave">Quick Save</span>
+                                </span>
+                            </label>
+                            <label class="segmented-control-item">
+                                <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup" />
+                                <span class="control-label">
+                                    <i class="fas fa-window-restore" aria-hidden="true"></i>
+                                    <span data-i18n="quickOpenPopup">Popup</span>
+                                </span>
+                            </label>
+                            <label class="segmented-control-item">
+                                <input type="radio" id="quick-open-sidepanel" name="quickOpenAction"
+                                    value="sidepanel" />
+                                <span class="control-label">
+                                    <i class="fas fa-table-columns" aria-hidden="true"></i>
+                                    <span data-i18n="quickOpenSidePanel">Side Panel</span>
+                                </span>
+                            </label>
+                            <label class="segmented-control-item">
+                                <input type="radio" id="quick-open-web" name="quickOpenAction" value="web" />
+                                <span class="control-label">
+                                    <i class="fas fa-up-right-from-square" aria-hidden="true"></i>
+                                    <span data-i18n="quickOpenWeb">Full Page</span>
+                                </span>
+                            </label>
+                            <label class="segmented-control-item">
+                                <input type="radio" id="quick-open-nativePopup" name="quickOpenAction"
+                                    value="nativePopup" />
+                                <span class="control-label">
+                                    <i class="fas fa-caret-square-down" aria-hidden="true"></i>
+                                    <span data-i18n="quickOpenNativePopup">Browser Popup</span>
+                                </span>
+                            </label>
                         </div>
+                        <button id="configure-shortcuts-btn" class="menu-item app-setting-action"
+                            style="margin-top: 8px;">
+                            <i class="fas fa-keyboard"></i> <span data-i18n="configureShortcuts">Configure
+                                Shortcuts</span>
+                        </button>
                     </div>
 
-                    <label class="toggle-row" for="auto-remove-dup-toggle">
-                        <span data-i18n="autoRemoveDupTitle"
-                            style="color:var(--text-secondary);font-size:0.9rem;">Auto Remove Duplicates</span>
-                        <span class="toggle-switch">
-                            <input type="checkbox" id="auto-remove-dup-toggle">
-                            <span class="toggle-knob"></span>
-                        </span>
-                    </label>
-                    <label class="toggle-row" for="auto-ai-categorize-toggle">
-                        <span data-i18n="autoAiCategorizeTitle"
-                            style="color:var(--text-secondary);font-size:0.9rem;">Auto Categorize with AI</span>
-                        <span class="toggle-switch">
-                            <input type="checkbox" id="auto-ai-categorize-toggle">
-                            <span class="toggle-knob"></span>
-                        </span>
-                    </label>
+                    <span class="dropdown-section-title" data-i18n="bookmarkHealthTitle">Bookmark Health &
+                        Duplicates</span>
+                    <div class="menu-group">
+                        <div class="health-action-row">
+                            <button id="check-health-btn" class="button button-warning">
+                                <i class="fas fa-stethoscope"></i> <span data-i18n="checkLinks">Check Links</span>
+                            </button>
+                            <button id="check-duplicates-btn" class="button button-primary">
+                                <i class="fas fa-copy"></i> <span data-i18n="checkDuplicates">Check
+                                    Duplicates</span>
+                            </button>
+                        </div>
+
+                        <hr>
+
+                        <div class="app-setting-field">
+                            <label><i class="fas fa-clone"></i> <span data-i18n="dupScopeTitle">Duplicate
+                                    Scope:</span></label>
+                            <div class="setting-pill-group" id="duplicate-scope-select">
+                                <button class="theme-swatch setting-swatch" data-value="folder"
+                                    data-i18n="dupScopeFolder">Only 1 folder</button>
+                                <button class="theme-swatch setting-swatch" data-value="all"
+                                    data-i18n="dupScopeAll">Across folders</button>
+                            </div>
+                        </div>
+
+                        <label class="toggle-row" for="auto-remove-dup-toggle">
+                            <span data-i18n="autoRemoveDupTitle"
+                                style="color:var(--text-secondary);font-size:0.9rem;">Auto Remove Duplicates</span>
+                            <span class="toggle-switch">
+                                <input type="checkbox" id="auto-remove-dup-toggle">
+                                <span class="toggle-knob"></span>
+                            </span>
+                        </label>
+                        <label class="toggle-row" for="auto-ai-categorize-toggle">
+                            <span data-i18n="autoAiCategorizeTitle"
+                                style="color:var(--text-secondary);font-size:0.9rem;">Auto Categorize with AI</span>
+                            <span class="toggle-switch">
+                                <input type="checkbox" id="auto-ai-categorize-toggle">
+                                <span class="toggle-knob"></span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
+                    <div class="menu-group">
+                        <label class="toggle-row" for="folder-list-bg-toggle">
+                            <span data-i18n="sidebarListBg">List Background</span>
+                            <span class="toggle-switch">
+                                <input type="checkbox" id="folder-list-bg-toggle" checked>
+                                <span class="toggle-knob"></span>
+                            </span>
+                        </label>
+
+                        <label class="toggle-row" for="show-notes-preview-toggle">
+                            <span data-i18n="showNotesPreview">Show Notes Preview</span>
+                            <span class="toggle-switch">
+                                <input type="checkbox" id="show-notes-preview-toggle">
+                                <span class="toggle-knob"></span>
+                            </span>
+                        </label>
+
+                        <label class="toggle-row" for="show-tags-in-view-toggle">
+                            <span data-i18n="showTagsInView">Show Tags in View</span>
+                            <span class="toggle-switch">
+                                <input type="checkbox" id="show-tags-in-view-toggle">
+                                <span class="toggle-knob"></span>
+                            </span>
+                        </label>
+
+                        <div class="app-setting-field">
+                            <label><i class="fas fa-image"></i> <span data-i18n="faviconMode">Favicon
+                                    Mode:</span></label>
+                            <div class="setting-pill-group" id="favicon-option-select">
+                                <button class="theme-swatch setting-swatch" data-value="auto"
+                                    data-i18n="faviconAuto">Auto</button>
+                                <button class="theme-swatch setting-swatch" data-value="google"
+                                    data-i18n="faviconGoogle">Google Only</button>
+                                <button class="theme-swatch setting-swatch" data-value="hostname"
+                                    data-i18n="faviconHostname">Hostname Only</button>
+                            </div>
+                        </div>
+
+                        <div class="app-setting-field">
+                            <label><i class="fas fa-search-plus"></i> <span data-i18n="faviconSize">Favicon
+                                    Size:</span></label>
+                            <div class="setting-pill-group" id="favicon-size-select">
+                                <button class="theme-swatch setting-swatch" data-value="16">16px</button>
+                                <button class="theme-swatch setting-swatch" data-value="32">32px</button>
+                                <button class="theme-swatch setting-swatch" data-value="64">64px</button>
+                                <button class="theme-swatch setting-swatch" data-value="128">128px</button>
+                            </div>
+                        </div>
+
+                        <div class="app-setting-field">
+                            <label><i class="fas fa-window-minimize"></i> <span data-i18n="headerLineConfig">Header Line
+                                    Style:</span></label>
+                            <div class="setting-pill-group" id="header-line-select">
+                                <button class="theme-swatch setting-swatch" data-value="pattern"
+                                    data-i18n="linePattern">Slanted Pattern</button>
+                                <button class="theme-swatch setting-swatch" data-value="simple"
+                                    data-i18n="lineSimple">Simple Line</button>
+                                <button class="theme-swatch setting-swatch" data-value="hidden"
+                                    data-i18n="lineHidden">Hidden</button>
+                            </div>
+                        </div>
+
+                        <div class="app-setting-field">
+                            <label><i class="fas fa-ellipsis-vertical"></i> <span
+                                    data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
+                            <div class="setting-pill-group" id="bookmark-menu-bg-select">
+                                <button class="theme-swatch setting-swatch" data-value="glass"
+                                    data-i18n="bookmarkMenuBgGlass">Glass</button>
+                                <button class="theme-swatch setting-swatch" data-value="normal"
+                                    data-i18n="bookmarkMenuBgNormal">Normal solid</button>
+                            </div>
+                        </div>
+
+                        <div class="app-setting-field">
+                            <label><i class="fas fa-folder-tree"></i> <span
+                                    data-i18n="smartFoldersConfig">Smart Folders:</span></label>
+                            <div class="setting-pill-group" id="smart-folders-select">
+                                <button class="theme-swatch setting-swatch" data-value="show"
+                                    data-i18n="smartFoldersShow">Show</button>
+                                <button class="theme-swatch setting-swatch" data-value="hide"
+                                    data-i18n="smartFoldersHide">Hide</button>
+                            </div>
+                        </div>
+
+                        <button id="localstorage-settings-option" class="menu-item app-setting-action">
+                            <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage
+                                Settings</span>
+                        </button>
+                        <button id="restart-guide-option" class="menu-item app-setting-action">
+                            <i class="fas fa-circle-question"></i> <span data-i18n="restartGuideTitle">Show Guide
+                                Again</span>
+                        </button>
+                    </div>
                 </div>
-
-                <span class="dropdown-section-title" data-i18n="appSettingsTitle">Application Settings</span>
-                <div class="menu-group">
-                    <label class="toggle-row" for="folder-list-bg-toggle">
-                        <span data-i18n="sidebarListBg">List Background</span>
-                        <span class="toggle-switch">
-                            <input type="checkbox" id="folder-list-bg-toggle" checked>
-                            <span class="toggle-knob"></span>
-                        </span>
-                    </label>
-
-                    <label class="toggle-row" for="show-notes-preview-toggle">
-                        <span data-i18n="showNotesPreview">Show Notes Preview</span>
-                        <span class="toggle-switch">
-                            <input type="checkbox" id="show-notes-preview-toggle">
-                            <span class="toggle-knob"></span>
-                        </span>
-                    </label>
-
-                    <label class="toggle-row" for="show-tags-in-view-toggle">
-                        <span data-i18n="showTagsInView">Show Tags in View</span>
-                        <span class="toggle-switch">
-                            <input type="checkbox" id="show-tags-in-view-toggle">
-                            <span class="toggle-knob"></span>
-                        </span>
-                    </label>
-
-                    <div class="app-setting-field">
-                        <label><i class="fas fa-image"></i> <span data-i18n="faviconMode">Favicon Mode:</span></label>
-                        <div class="setting-pill-group" id="favicon-option-select">
-                            <button class="theme-swatch setting-swatch" data-value="auto" data-i18n="faviconAuto">Auto</button>
-                            <button class="theme-swatch setting-swatch" data-value="google" data-i18n="faviconGoogle">Google Only</button>
-                            <button class="theme-swatch setting-swatch" data-value="hostname" data-i18n="faviconHostname">Hostname Only</button>
-                        </div>
-                    </div>
-
-                    <div class="app-setting-field">
-                        <label><i class="fas fa-search-plus"></i> <span data-i18n="faviconSize">Favicon Size:</span></label>
-                        <div class="setting-pill-group" id="favicon-size-select">
-                            <button class="theme-swatch setting-swatch" data-value="16">16px</button>
-                            <button class="theme-swatch setting-swatch" data-value="32">32px</button>
-                            <button class="theme-swatch setting-swatch" data-value="64">64px</button>
-                            <button class="theme-swatch setting-swatch" data-value="128">128px</button>
-                        </div>
-                    </div>
-
-                    <div class="app-setting-field">
-                        <label><i class="fas fa-window-minimize"></i> <span data-i18n="headerLineConfig">Header Line Style:</span></label>
-                        <div class="setting-pill-group" id="header-line-select">
-                            <button class="theme-swatch setting-swatch" data-value="pattern" data-i18n="linePattern">Slanted Pattern</button>
-                            <button class="theme-swatch setting-swatch" data-value="simple" data-i18n="lineSimple">Simple Line</button>
-                            <button class="theme-swatch setting-swatch" data-value="hidden" data-i18n="lineHidden">Hidden</button>
-                        </div>
-                    </div>
-
-                    <div class="app-setting-field">
-                        <label><i class="fas fa-ellipsis-vertical"></i> <span data-i18n="bookmarkMenuBgConfig">Bookmark Menu BG:</span></label>
-                        <div class="setting-pill-group" id="bookmark-menu-bg-select">
-                            <button class="theme-swatch setting-swatch" data-value="glass" data-i18n="bookmarkMenuBgGlass">Glass</button>
-                            <button class="theme-swatch setting-swatch" data-value="normal" data-i18n="bookmarkMenuBgNormal">Normal solid</button>
-                        </div>
-                    </div>
-
-                    <button id="localstorage-settings-option" class="menu-item app-setting-action">
-                        <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage
-                            Settings</span>
-                    </button>
-                    <button id="restart-guide-option" class="menu-item app-setting-action">
-                        <i class="fas fa-circle-question"></i> <span data-i18n="restartGuideTitle">Show Guide
-                            Again</span>
-                    </button>
-                </div>
-            </div>
             </div>
         </div>
 
@@ -323,474 +400,515 @@
             </div>
         </div>
 
-        <div id="dashboard-view" class="tab-content active" style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; min-height: 0; padding: var(--spacing-md);">
-        <div class="controls">
-            <select id="folder-filter" class="select">
-                <option value="" data-i18n="allBookmarks">All Bookmarks</option>
-            </select>
-            <select id="sort-filter" class="select">
-                <option value="default" data-i18n="sortDefault">Sort: Default</option>
-                <option value="new" data-i18n="sortNew">New to Old</option>
-                <option value="old" data-i18n="sortOld">Old to New</option>
-                <option value="last-opened" data-i18n="sortLastOpened">By Last Opened</option>
-                <option value="most-visited" data-i18n="sortMostVisited">Most Visited</option>
-                <option value="a-z" data-i18n="sortAZ">A to Z</option>
-                <option value="z-a" data-i18n="sortZA">Z to A</option>
-                <option value="domain" data-i18n="sortDomain">By Domain</option>
-            </select>
-            <select id="health-sort-filter" class="select" style="display: none;">
-                <option value="all" data-i18n="healthSortAll">Sort by Health: All</option>
-                <option value="dead" data-i18n="healthSortDead">Dead Links</option>
-                <option value="suspicious" data-i18n="healthSortSuspicious">Suspicious Links</option>
-                <option value="safe" data-i18n="healthSortSafe">Safe Links</option>
-            </select>
-            <div class="control-buttons">
-                <button id="create-folder" class="button create" data-i18n="createFolder">Create Folder</button>
-                <button id="rename-folder" class="button rename-folder hidden" data-i18n="renameFolder">Rename
-                    Folder</button>
-                <button id="add-to-folder" class="button add hidden" data-i18n="moveToFolder">Add to Folder</button>
-                <button id="delete-folder" class="button delete-folder hidden" data-i18n="deleteFolder">Delete
-                    Folder</button>
-                <button id="delete-bookmarks-button" class="button delete-bookmarks hidden"
-                    data-i18n="deleteSelected">Delete Bookmarks</button>
-            </div>
-        </div>
-        <div id="bookmark-count" class="count"><span data-i18n="totalBookmarks">Total Bookmarks</span>: <span
-                id="bookmark-count-number">0</span></div>
-        <div class="bottom-controls">
-            <div class="select-all">
-                <input type="checkbox" id="select-all">
-                <label for="select-all" data-i18n="selectAll">Select All</label>
-            </div>
-            <button id="toggle-checkboxes" class="button toggle small" data-i18n="showCheckboxes">Show
-                Checkboxes</button>
-        </div>
-        <div class="search-container sticky-search">
-            <div class="popup-search-inner" style="display: flex; align-items: center; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 12px; gap: 8px; width: 100%; box-sizing: border-box; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                <i class="fas fa-search" style="color: var(--text-secondary);"></i>
-                <input type="text" id="search" placeholder="Search bookmarks..." class="input"
-                    data-i18n-placeholder="searchPlaceholder" style="border: none !important; background: transparent !important; padding: 10px 0; outline: none; flex: 1; box-shadow: none !important; min-width: 0;">
-                <button id="clear-search" class="button clear" style="position: static !important; transform: none !important; margin: 0 !important; background: transparent; border: none; padding: 4px; box-shadow: none; min-width: unset; height: auto;">✖</button>
-            </div>
-        </div>
-        <div id="folder-list" class="folder-list"></div>
-
-        <div id="folder-context-menu" class="context-menu hidden"
-            style="position: fixed; z-index: 2000; min-width: 150px;">
-            <div class="menu-item" id="context-menu-move-folder">
-                <i class="fas fa-folder-open" style="width: 14px; text-align: center; margin-right: 8px;"></i>
-                <span>Move to Folder</span>
-            </div>
-        </div>
-
-        <div id="rename-popup" class="rename-popup hidden" role="dialog" aria-labelledby="rename-title">
-            <div class="rename-popup-content">
-                <h3 id="rename-title">Rename</h3>
-                <div class="rename-input-container">
-                    <textarea id="rename-input" class="input" placeholder="Enter new name..."
-                        aria-label="New bookmark title" maxlength="255" rows="1"></textarea>
-                    <button id="clear-rename" class="button clear" aria-label="Clear rename input">✖</button>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="rename-save" class="button save" data-i18n="save">Save</button>
-                    <button id="rename-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
+        <div id="dashboard-view" class="tab-content active"
+            style="display: flex; flex-direction: column; flex: 1; min-height: 0; padding: var(--spacing-md);">
+            <div class="controls">
+                <select id="folder-filter" class="select">
+                    <option value="" data-i18n="allBookmarks">All Bookmarks</option>
+                </select>
+                <select id="sort-filter" class="select">
+                    <option value="default" data-i18n="sortDefault">Sort: Default</option>
+                    <option value="new" data-i18n="sortNew">New to Old</option>
+                    <option value="old" data-i18n="sortOld">Old to New</option>
+                    <option value="last-opened" data-i18n="sortLastOpened">By Last Opened</option>
+                    <option value="most-visited" data-i18n="sortMostVisited">Most Visited</option>
+                    <option value="a-z" data-i18n="sortAZ">A to Z</option>
+                    <option value="z-a" data-i18n="sortZA">Z to A</option>
+                    <option value="domain" data-i18n="sortDomain">By Domain</option>
+                </select>
+                <select id="health-sort-filter" class="select" style="display: none;">
+                    <option value="all" data-i18n="healthSortAll">Sort by Health: All</option>
+                    <option value="dead" data-i18n="healthSortDead">Dead Links</option>
+                    <option value="suspicious" data-i18n="healthSortSuspicious">Suspicious Links</option>
+                    <option value="safe" data-i18n="healthSortSafe">Safe Links</option>
+                </select>
+                <div class="control-buttons">
+                    <button id="create-folder" class="button create" data-i18n="createFolder">Create Folder</button>
+                    <button id="rename-folder" class="button rename-folder hidden" data-i18n="renameFolder">Rename
+                        Folder</button>
+                    <button id="add-to-folder" class="button add hidden" data-i18n="moveToFolder">Add to Folder</button>
+                    <button id="delete-folder" class="button delete-folder hidden" data-i18n="deleteFolder">Delete
+                        Folder</button>
+                    <button id="delete-bookmarks-button" class="button delete-bookmarks hidden"
+                        data-i18n="deleteSelected">Delete Bookmarks</button>
                 </div>
             </div>
-        </div>
-        <div id="rename-folder-popup" class="rename-popup hidden" role="dialog" aria-labelledby="rename-folder-title">
-            <div class="rename-popup-content">
-                <h3 id="rename-folder-title" data-i18n="renameFolder">Rename Folder</h3>
-                <div class="rename-input-container">
-                    <select id="rename-folder-select" class="select" aria-label="Select folder to rename">
-                        <option value="">Select Folder</option>
-                    </select>
-                    <div style="position: relative; width: 100%; display: flex; align-items: center;">
-                        <textarea id="rename-folder-input" class="input" placeholder="Enter new folder name..."
-                            data-i18n-placeholder="newFolderPlaceholder" aria-label="New folder name" maxlength="255" rows="1" style="flex: 1; padding-right: 30px;"></textarea>
-                        <button id="clear-rename-folder" class="button clear"
-                            aria-label="Clear rename folder input" style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; color: var(--text-secondary);">✖</button>
+            <div id="bookmark-count" class="count"><span data-i18n="totalBookmarks">Total Bookmarks</span>: <span
+                    id="bookmark-count-number">0</span></div>
+            <div class="bottom-controls">
+                <div class="select-all">
+                    <input type="checkbox" id="select-all">
+                    <label for="select-all" data-i18n="selectAll">Select All</label>
+                </div>
+                <button id="toggle-checkboxes" class="button toggle small" data-i18n="showCheckboxes">Show
+                    Checkboxes</button>
+            </div>
+            <div class="search-container sticky-search">
+                <div class="popup-search-inner"
+                    style="display: flex; align-items: center; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 12px; gap: 8px; width: 100%; box-sizing: border-box; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <i class="fas fa-search" style="color: var(--text-secondary);"></i>
+                    <input type="text" id="search" placeholder="Search bookmarks..." class="input"
+                        data-i18n-placeholder="searchPlaceholder"
+                        style="border: none !important; background: transparent !important; padding: 10px 0; outline: none; flex: 1; box-shadow: none !important; min-width: 0;">
+                    <button id="clear-search" class="button clear"
+                        style="position: static !important; transform: none !important; margin: 0 !important; background: transparent; border: none; padding: 4px; box-shadow: none; min-width: unset; height: auto;">✖</button>
+                </div>
+            </div>
+            <div id="folder-list" class="folder-list">
+
+
+            </div>
+
+            <div id="folder-context-menu" class="context-menu hidden"
+                style="position: fixed; z-index: 2000; min-width: 150px;">
+                <div class="menu-item" id="context-menu-move-folder">
+                    <i class="fas fa-folder-open" style="width: 14px; text-align: center; margin-right: 8px;"></i>
+                    <span>Move to Folder</span>
+                </div>
+            </div>
+
+            <div id="rename-popup" class="rename-popup hidden" role="dialog" aria-labelledby="rename-title">
+                <div class="rename-popup-content">
+                    <h3 id="rename-title">Rename</h3>
+                    <div class="rename-input-container">
+                        <textarea id="rename-input" class="input" placeholder="Enter new name..."
+                            aria-label="New bookmark title" maxlength="255" rows="1"></textarea>
+                        <button id="clear-rename" class="button clear" aria-label="Clear rename input">✖</button>
+                    </div>
+                    <div class="rename-popup-buttons">
+                        <button id="rename-save" class="button save" data-i18n="save">Save</button>
+                        <button id="rename-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                     </div>
                 </div>
-                <div class="rename-popup-buttons">
-                    <button id="rename-folder-save" class="button save" data-i18n="save">Save</button>
-                    <button id="rename-folder-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
-                </div>
             </div>
-        </div>
-        <div id="add-to-folder-popup" class="rename-popup hidden" role="dialog" aria-labelledby="add-to-folder-title">
-            <div class="rename-popup-content">
-                <h3 id="add-to-folder-title" data-i18n="addToFolderTitle">Add to Folder</h3>
-                <div class="add-to-folder-container">
-                    <select id="add-to-folder-select" class="select" aria-label="Select folder">
-                        <option value="">Select Folder</option>
-                    </select>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="add-to-folder-save" class="button save" data-i18n="save">Save</button>
-                    <button id="add-to-folder-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
-                </div>
-            </div>
-        </div>
-        <div id="create-folder-popup" class="rename-popup hidden" role="dialog" aria-labelledby="create-folder-title">
-            <div class="rename-popup-content">
-                <h3 id="create-folder-title">Create Folder</h3>
-                <div class="rename-input-container">
-                    <textarea id="create-folder-input" class="input" placeholder="Enter folder name..." maxlength="255"
-                        rows="1"></textarea>
-                    <button id="clear-create-folder" class="button clear">✖</button>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="create-folder-save" class="button save" data-i18n="save">Save</button>
-                    <button id="create-folder-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
-                </div>
-            </div>
-        </div>
-        <div id="bookmark-detail-popup" class="rename-popup hidden" role="dialog" aria-labelledby="detail-title">
-            <div class="rename-popup-content" style="display: flex; gap: 16px; align-items: flex-start;">
-
-                <!-- Cột trái: ảnh thumbnail -->
-                <div class="bookmark-thumbnail" style="flex: 0 0 150px;">
-                    <img id="detail-thumbnail" src="" alt="Website thumbnail" />
-                </div>
-
-                <!-- Cột phải: thông tin -->
-                <div class="bookmark-info" style="flex: 1;">
-                    <h3 id="detail-title-label" data-i18n="viewDetail">Bookmark Detail</h3>
-                    <p><strong data-i18n="detailTitle">Title</strong>: <span id="detail-title"></span></p>
-                    <p><strong data-i18n="detailUrl">URL</strong>: <span id="detail-url"></span></p>
-                    <p><strong data-i18n="detailDateAdded">Date Added</strong>: <span id="detail-date-added"></span></p>
-                    <p><strong>Tags:</strong> <span id="detail-tags"></span></p>
-                    <div class="rename-popup-buttons" style="margin-top: 16px;">
-                        <button class="close-modal button cancel" data-i18n="close">Close</button>
+            <div id="rename-folder-popup" class="rename-popup hidden" role="dialog"
+                aria-labelledby="rename-folder-title">
+                <div class="rename-popup-content">
+                    <h3 id="rename-folder-title" data-i18n="renameFolder">Rename Folder</h3>
+                    <div class="rename-input-container">
+                        <select id="rename-folder-select" class="select" aria-label="Select folder to rename">
+                            <option value="">Select Folder</option>
+                        </select>
+                        <div style="position: relative; width: 100%; display: flex; align-items: center;">
+                            <textarea id="rename-folder-input" class="input" placeholder="Enter new folder name..."
+                                data-i18n-placeholder="newFolderPlaceholder" aria-label="New folder name"
+                                maxlength="255" rows="1" style="flex: 1; padding-right: 30px;"></textarea>
+                            <button id="clear-rename-folder" class="button clear" aria-label="Clear rename folder input"
+                                style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; color: var(--text-secondary);">✖</button>
+                        </div>
+                    </div>
+                    <div class="rename-popup-buttons">
+                        <button id="rename-folder-save" class="button save" data-i18n="save">Save</button>
+                        <button id="rename-folder-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                     </div>
                 </div>
-
             </div>
-        </div>
-        <div id="manage-tags-popup" class="rename-popup hidden" role="dialog" aria-labelledby="manage-tags-title">
-            <div class="rename-popup-content">
-                <h3 id="manage-tags-title" data-i18n="manageTags">Manage Tags</h3>
-
-                <!-- Section for existing tags -->
-                <div class="form-section">
-                    <label data-i18n="currentTagsLabel">Current Tags:</label>
-                    <div id="existing-tags" class="tags-container">
-                        <!-- Tags will be dynamically inserted here -->
+            <div id="add-to-folder-popup" class="rename-popup hidden" role="dialog"
+                aria-labelledby="add-to-folder-title">
+                <div class="rename-popup-content">
+                    <h3 id="add-to-folder-title" data-i18n="addToFolderTitle">Add to Folder</h3>
+                    <div class="add-to-folder-container">
+                        <select id="add-to-folder-select" class="select" aria-label="Select folder">
+                            <option value="">Select Folder</option>
+                        </select>
+                    </div>
+                    <div class="rename-popup-buttons">
+                        <button id="add-to-folder-save" class="button save" data-i18n="save">Save</button>
+                        <button id="add-to-folder-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                     </div>
                 </div>
-
-                <!-- Section for adding a new tag -->
-                <div class="form-section">
-                    <label for="new-tag-input" data-i18n="addNewTagLabel">Add New Tag:</label>
-                    <div class="add-tag-form">
-                        <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name..."
-                            data-i18n-placeholder="newTagPlaceholder" list="tag-suggestions-list">
-                        <datalist id="tag-suggestions-list"></datalist>
-                        <input type="hidden" id="new-tag-color" value="#FFFFFF">
-                        <input type="hidden" id="new-tag-text-color" value="#000000">
+            </div>
+            <div id="create-folder-popup" class="rename-popup hidden" role="dialog"
+                aria-labelledby="create-folder-title">
+                <div class="rename-popup-content">
+                    <h3 id="create-folder-title">Create Folder</h3>
+                    <div class="rename-input-container">
+                        <textarea id="create-folder-input" class="input" placeholder="Enter folder name..."
+                            maxlength="255" rows="1"></textarea>
+                        <button id="clear-create-folder" class="button clear">✖</button>
                     </div>
-                    <div class="color-palette-container">
-                        <button type="button" class="color-swatch" data-color="#EF4444"
-                            style="background-color:#EF4444;"></button>
-                        <button type="button" class="color-swatch" data-color="#F97316"
-                            style="background-color:#F97316;"></button>
-                        <button type="button" class="color-swatch" data-color="#F59E0B"
-                            style="background-color:#F59E0B;"></button>
-                        <button type="button" class="color-swatch" data-color="#EAB308"
-                            style="background-color:#EAB308;"></button>
-                        <button type="button" class="color-swatch" data-color="#84CC16"
-                            style="background-color:#84CC16;"></button>
-                        <button type="button" class="color-swatch" data-color="#22C55E"
-                            style="background-color:#22C55E;"></button>
-                        <button type="button" class="color-swatch" data-color="#14B8A6"
-                            style="background-color:#14B8A6;"></button>
-                        <button type="button" class="color-swatch" data-color="#06B6D4"
-                            style="background-color:#06B6D4;"></button>
-                        <button type="button" class="color-swatch" data-color="#0EA5E9"
-                            style="background-color:#0EA5E9;"></button>
-                        <button type="button" class="color-swatch" data-color="#3B82F6"
-                            style="background-color:#3B82F6;"></button>
-                        <button type="button" class="color-swatch" data-color="#6366F1"
-                            style="background-color:#6366F1;"></button>
-                        <button type="button" class="color-swatch" data-color="#8B5CF6"
-                            style="background-color:#8B5CF6;"></button>
-                        <button type="button" class="color-swatch" data-color="#A855F7"
-                            style="background-color:#A855F7;"></button>
-                        <button type="button" class="color-swatch" data-color="#D946EF"
-                            style="background-color:#D946EF;"></button>
-                        <button type="button" class="color-swatch" data-color="#EC4899"
-                            style="background-color:#EC4899;"></button>
-                        <button type="button" class="color-swatch" data-color="#F43F5E"
-                            style="background-color:#F43F5E;"></button>
-                        <button type="button" class="color-swatch" data-color="#78716C"
-                            style="background-color:#78716C;"></button>
-                        <button type="button" class="color-swatch" data-color="#64748B"
-                            style="background-color:#64748B;"></button>
-                        <button type="button" class="color-swatch" data-color="#111827"
-                            style="background-color:#111827;"></button>
-                        <button type="button" class="color-swatch" data-color="#FFFFFF"
-                            style="background-color:#FFFFFF;"></button>
+                    <div class="rename-popup-buttons">
+                        <button id="create-folder-save" class="button save" data-i18n="save">Save</button>
+                        <button id="create-folder-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
                     </div>
                 </div>
+            </div>
+            <div id="bookmark-detail-popup" class="rename-popup hidden" role="dialog" aria-labelledby="detail-title">
+                <div class="rename-popup-content" style="display: flex; gap: 16px; align-items: flex-start;">
 
-                <!-- Section for adding from existing global tags -->
-                <div class="form-section">
-                    <label data-i18n="addFromExistingLabel">Or add from existing:</label>
-                    <div class="search-existing-tags-wrapper" style="margin-bottom: 8px; position: relative;">
-                        <i class="fas fa-search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 0.8rem;"></i>
-                        <input type="text" class="input existing-tags-search-input" placeholder="Search existing tags..." style="padding-left: 30px; border-radius: 8px;">
+                    <!-- Cột trái: ảnh thumbnail -->
+                    <div class="bookmark-thumbnail" style="flex: 0 0 150px;">
+                        <img id="detail-thumbnail" src="" alt="Website thumbnail" />
                     </div>
-                    <div class="existing-tags-chip-list" aria-label="Available tags"></div>
-                </div>
 
-
-                <!-- Action buttons -->
-                <div class="rename-popup-buttons">
-                    <button id="add-tag-btn" class="button save" data-i18n="addTag">Add Tag</button>
-                    <button class="close-modal button cancel" data-i18n="doneLabel">Done</button>
-                </div>
-            </div>
-        </div>
-        <div id="update-popup" class="rename-popup hidden" role="dialog">
-            <div class="rename-popup-content">
-                <h3 id="update-popup-title">Updated Successfully!</h3>
-                <p id="update-popup-message">Zero Bookmark Manager updated to <strong id="update-version"></strong></p>
-                <div class="rename-popup-buttons">
-                    <a href="https://extension-changelogs.vercel.app/changelog?ext=Zero+Bookmark+Manager"
-                        target="_blank" class="button save" data-i18n="releaseNotes">Release Notes</a>
-                    <button id="update-popup-close" class="button cancel" data-i18n="close">Close</button>
-                </div>
-            </div>
-        </div>
-        <div id="custom-popup" class="rename-popup hidden" role="dialog" aria-labelledby="custom-popup-title">
-            <div class="rename-popup-content">
-                <h3 id="custom-popup-title">Notification</h3>
-                <p id="custom-popup-message"></p>
-                <div class="rename-popup-buttons">
-                    <button id="custom-popup-ok" class="button save">OK</button>
-                </div>
-            </div>
-        </div>
-        <div id="localstorage-settings-popup" class="rename-popup hidden" role="dialog"
-            aria-labelledby="localstorage-settings-title">
-            <div class="rename-popup-content">
-                <h3 id="localstorage-settings-title">Local Storage Settings</h3>
-                <div class="localstorage-settings-container">
-                    <label><input type="checkbox" id="save-searchQuery" checked> <span data-i18n="saveSearchQuery">Save
-                            Search Query</span></label>
-                    <label><input type="checkbox" id="save-selectedFolderId" checked> <span
-                            data-i18n="saveSelectedFolderId">Save Selected Folder</span></label>
-                    <label><input type="checkbox" id="save-sortType" checked> <span data-i18n="saveSortType">Save Sort
-                            Type</span></label>
-                    <label><input type="checkbox" id="save-viewMode" checked> <span data-i18n="saveViewMode">Save View
-                            Mode</span></label>
-                    <label><input type="checkbox" id="save-collapsedFolders" checked> <span
-                            data-i18n="saveCollapsedFolders">Save Collapsed Folders</span></label>
-                    <label><input type="checkbox" id="save-checkboxesVisible" checked> <span
-                            data-i18n="saveCheckboxesVisible">Save Checkboxes Visibility</span></label>
-                    <label><input type="checkbox" id="save-selectedTag" checked> <span data-i18n="saveSelectedTag">Save
-                            Selected Tags</span></label>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="localstorage-settings-save" class="button save" data-i18n="save">Save</button>
-                    <button id="localstorage-settings-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="snooze-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="snooze-popup-title">
-            <div class="rename-popup-content">
-                <h3 id="snooze-popup-title"><i class="fas fa-clock" style="margin-right: 8px;"></i><span data-i18n="snoozeTitle">Snooze</span></h3>
-                <div class="snooze-options-container" style="display: flex; flex-direction: column; gap: 8px; margin: 15px 0;">
-                    <button class="button save snooze-option" data-time="60" style="width: 100%; text-align: left;">
-                        <i class="fas fa-hourglass-start" style="width: 20px;"></i> <span data-i18n="snooze1Hour">In 1 hour</span>
-                    </button>
-                    <button class="button save snooze-option" data-time="1440" style="width: 100%; text-align: left;">
-                        <i class="fas fa-calendar-day" style="width: 20px;"></i> <span data-i18n="snoozeTomorrow">Tomorrow</span>
-                    </button>
-                    <button class="button save snooze-option" data-time="10080" style="width: 100%; text-align: left;">
-                        <i class="fas fa-calendar-week" style="width: 20px;"></i> <span data-i18n="snoozeNextWeek">Next week</span>
-                    </button>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="snooze-cancel" class="button cancel" data-i18n="cancel" style="width: 100%;">Cancel</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Smart Cleanup Modal -->
-        <div id="smart-cleanup-popup" class="rename-popup hidden popup-animate" role="dialog"
-            aria-labelledby="smart-cleanup-title">
-            <div class="rename-popup-content smart-cleanup-popup-content">
-                <div class="smart-cleanup-header">
-                    <div>
-                        <h3 id="smart-cleanup-title">Smart Cleanup</h3>
-                        <p id="smart-cleanup-subtitle">Review bookmark cleanup opportunities before changing anything.</p>
+                    <!-- Cột phải: thông tin -->
+                    <div class="bookmark-info" style="flex: 1;">
+                        <h3 id="detail-title-label" data-i18n="viewDetail">Bookmark Detail</h3>
+                        <p><strong data-i18n="detailTitle">Title</strong>: <span id="detail-title"></span></p>
+                        <p><strong data-i18n="detailUrl">URL</strong>: <span id="detail-url"></span></p>
+                        <p><strong data-i18n="detailDateAdded">Date Added</strong>: <span id="detail-date-added"></span>
+                        </p>
+                        <p><strong>Tags:</strong> <span id="detail-tags"></span></p>
+                        <div class="rename-popup-buttons" style="margin-top: 16px;">
+                            <button class="close-modal button cancel" data-i18n="close">Close</button>
+                        </div>
                     </div>
-                    <button id="smart-cleanup-close-x" class="modal-close" title="Close">✕</button>
-                </div>
-                <div id="smart-cleanup-summary" class="smart-cleanup-summary"></div>
-                <div class="smart-cleanup-body">
-                    <div class="smart-cleanup-main">
-                        <div id="smart-cleanup-grid" class="smart-cleanup-grid"></div>
-                        <div id="smart-cleanup-details" class="smart-cleanup-details"></div>
-                    </div>
-                    <aside id="smart-cleanup-next" class="smart-cleanup-next"></aside>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="smart-cleanup-refresh" class="button save">Refresh</button>
-                    <button id="smart-cleanup-close" class="button cancel">Close</button>
+
                 </div>
             </div>
-        </div>
+            <div id="manage-tags-popup" class="rename-popup hidden" role="dialog" aria-labelledby="manage-tags-title">
+                <div class="rename-popup-content">
+                    <h3 id="manage-tags-title" data-i18n="manageTags">Manage Tags</h3>
 
-        <!-- Analytics Dashboard Modal -->
-        <div id="analytics-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="analytics-title">
-            <div class="rename-popup-content" style="width: min(800px, 94vw); max-width: 800px;">
-                <div class="smart-cleanup-header">
-                    <div>
-                        <h3 id="analytics-title"><i class="fas fa-chart-pie" style="margin-right: 8px;"></i><span data-i18n="analyticsTitle">Analytics Dashboard</span></h3>
-                        <p id="analytics-subtitle" style="margin:0; font-size: 0.85rem; color:var(--text-secondary);" data-i18n="analyticsDesc">Your bookmarking habits at a glance.</p>
+                    <!-- Section for existing tags -->
+                    <div class="form-section">
+                        <label data-i18n="currentTagsLabel">Current Tags:</label>
+                        <div id="existing-tags" class="tags-container">
+                            <!-- Tags will be dynamically inserted here -->
+                        </div>
                     </div>
-                    <button id="analytics-close-x" class="modal-close" title="Close">✕</button>
+
+                    <!-- Section for adding a new tag -->
+                    <div class="form-section">
+                        <label for="new-tag-input" data-i18n="addNewTagLabel">Add New Tag:</label>
+                        <div class="add-tag-form">
+                            <input type="text" id="new-tag-input" class="input" placeholder="Enter tag name..."
+                                data-i18n-placeholder="newTagPlaceholder" list="tag-suggestions-list">
+                            <datalist id="tag-suggestions-list"></datalist>
+                            <input type="hidden" id="new-tag-color" value="#FFFFFF">
+                            <input type="hidden" id="new-tag-text-color" value="#000000">
+                        </div>
+                        <div class="color-palette-container">
+                            <button type="button" class="color-swatch" data-color="#EF4444"
+                                style="background-color:#EF4444;"></button>
+                            <button type="button" class="color-swatch" data-color="#F97316"
+                                style="background-color:#F97316;"></button>
+                            <button type="button" class="color-swatch" data-color="#F59E0B"
+                                style="background-color:#F59E0B;"></button>
+                            <button type="button" class="color-swatch" data-color="#EAB308"
+                                style="background-color:#EAB308;"></button>
+                            <button type="button" class="color-swatch" data-color="#84CC16"
+                                style="background-color:#84CC16;"></button>
+                            <button type="button" class="color-swatch" data-color="#22C55E"
+                                style="background-color:#22C55E;"></button>
+                            <button type="button" class="color-swatch" data-color="#14B8A6"
+                                style="background-color:#14B8A6;"></button>
+                            <button type="button" class="color-swatch" data-color="#06B6D4"
+                                style="background-color:#06B6D4;"></button>
+                            <button type="button" class="color-swatch" data-color="#0EA5E9"
+                                style="background-color:#0EA5E9;"></button>
+                            <button type="button" class="color-swatch" data-color="#3B82F6"
+                                style="background-color:#3B82F6;"></button>
+                            <button type="button" class="color-swatch" data-color="#6366F1"
+                                style="background-color:#6366F1;"></button>
+                            <button type="button" class="color-swatch" data-color="#8B5CF6"
+                                style="background-color:#8B5CF6;"></button>
+                            <button type="button" class="color-swatch" data-color="#A855F7"
+                                style="background-color:#A855F7;"></button>
+                            <button type="button" class="color-swatch" data-color="#D946EF"
+                                style="background-color:#D946EF;"></button>
+                            <button type="button" class="color-swatch" data-color="#EC4899"
+                                style="background-color:#EC4899;"></button>
+                            <button type="button" class="color-swatch" data-color="#F43F5E"
+                                style="background-color:#F43F5E;"></button>
+                            <button type="button" class="color-swatch" data-color="#78716C"
+                                style="background-color:#78716C;"></button>
+                            <button type="button" class="color-swatch" data-color="#64748B"
+                                style="background-color:#64748B;"></button>
+                            <button type="button" class="color-swatch" data-color="#111827"
+                                style="background-color:#111827;"></button>
+                            <button type="button" class="color-swatch" data-color="#FFFFFF"
+                                style="background-color:#FFFFFF;"></button>
+                        </div>
+                    </div>
+
+                    <!-- Section for adding from existing global tags -->
+                    <div class="form-section">
+                        <label data-i18n="addFromExistingLabel">Or add from existing:</label>
+                        <div class="search-existing-tags-wrapper" style="margin-bottom: 8px; position: relative;">
+                            <i class="fas fa-search"
+                                style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 0.8rem;"></i>
+                            <input type="text" class="input existing-tags-search-input"
+                                placeholder="Search existing tags..." style="padding-left: 30px; border-radius: 8px;">
+                        </div>
+                        <div class="existing-tags-chip-list" aria-label="Available tags"></div>
+                    </div>
+
+
+                    <!-- Action buttons -->
+                    <div class="rename-popup-buttons">
+                        <button id="add-tag-btn" class="button save" data-i18n="addTag">Add Tag</button>
+                        <button class="close-modal button cancel" data-i18n="doneLabel">Done</button>
+                    </div>
                 </div>
-                
-                <div class="analytics-body" style="display: grid; gap: 16px; margin: 16px 0;">
-                    <!-- Quick Stats -->
-                    <div class="smart-cleanup-summary" style="margin-bottom: 0;">
+            </div>
+            <div id="update-popup" class="rename-popup hidden" role="dialog">
+                <div class="rename-popup-content">
+                    <h3 id="update-popup-title">Updated Successfully!</h3>
+                    <p id="update-popup-message">Zero Bookmark Manager updated to <strong id="update-version"></strong>
+                    </p>
+                    <div class="rename-popup-buttons">
+                        <a href="https://extension-changelogs.vercel.app/changelog?ext=Zero+Bookmark+Manager"
+                            target="_blank" class="button save" data-i18n="releaseNotes">Release Notes</a>
+                        <button id="update-popup-close" class="button cancel" data-i18n="close">Close</button>
+                    </div>
+                </div>
+            </div>
+            <div id="custom-popup" class="rename-popup hidden" role="dialog" aria-labelledby="custom-popup-title">
+                <div class="rename-popup-content">
+                    <h3 id="custom-popup-title">Notification</h3>
+                    <p id="custom-popup-message"></p>
+                    <div class="rename-popup-buttons">
+                        <button id="custom-popup-ok" class="button save">OK</button>
+                    </div>
+                </div>
+            </div>
+            <div id="localstorage-settings-popup" class="rename-popup hidden" role="dialog"
+                aria-labelledby="localstorage-settings-title">
+                <div class="rename-popup-content">
+                    <h3 id="localstorage-settings-title">Local Storage Settings</h3>
+                    <div class="localstorage-settings-container">
+                        <label><input type="checkbox" id="save-searchQuery" checked> <span
+                                data-i18n="saveSearchQuery">Save
+                                Search Query</span></label>
+                        <label><input type="checkbox" id="save-selectedFolderId" checked> <span
+                                data-i18n="saveSelectedFolderId">Save Selected Folder</span></label>
+                        <label><input type="checkbox" id="save-sortType" checked> <span data-i18n="saveSortType">Save
+                                Sort
+                                Type</span></label>
+                        <label><input type="checkbox" id="save-viewMode" checked> <span data-i18n="saveViewMode">Save
+                                View
+                                Mode</span></label>
+                        <label><input type="checkbox" id="save-collapsedFolders" checked> <span
+                                data-i18n="saveCollapsedFolders">Save Collapsed Folders</span></label>
+                        <label><input type="checkbox" id="save-checkboxesVisible" checked> <span
+                                data-i18n="saveCheckboxesVisible">Save Checkboxes Visibility</span></label>
+                        <label><input type="checkbox" id="save-selectedTag" checked> <span
+                                data-i18n="saveSelectedTag">Save
+                                Selected Tags</span></label>
+                    </div>
+                    <div class="rename-popup-buttons">
+                        <button id="localstorage-settings-save" class="button save" data-i18n="save">Save</button>
+                        <button id="localstorage-settings-cancel" class="button cancel"
+                            data-i18n="cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="snooze-popup" class="rename-popup hidden popup-animate" role="dialog"
+                aria-labelledby="snooze-popup-title">
+                <div class="rename-popup-content">
+                    <h3 id="snooze-popup-title"><i class="fas fa-clock" style="margin-right: 8px;"></i><span
+                            data-i18n="snoozeTitle">Snooze</span></h3>
+                    <div class="snooze-options-container"
+                        style="display: flex; flex-direction: column; gap: 8px; margin: 15px 0;">
+                        <button class="button save snooze-option" data-time="60" style="width: 100%; text-align: left;">
+                            <i class="fas fa-hourglass-start" style="width: 20px;"></i> <span data-i18n="snooze1Hour">In
+                                1 hour</span>
+                        </button>
+                        <button class="button save snooze-option" data-time="1440"
+                            style="width: 100%; text-align: left;">
+                            <i class="fas fa-calendar-day" style="width: 20px;"></i> <span
+                                data-i18n="snoozeTomorrow">Tomorrow</span>
+                        </button>
+                        <button class="button save snooze-option" data-time="10080"
+                            style="width: 100%; text-align: left;">
+                            <i class="fas fa-calendar-week" style="width: 20px;"></i> <span
+                                data-i18n="snoozeNextWeek">Next week</span>
+                        </button>
+                    </div>
+                    <div class="rename-popup-buttons">
+                        <button id="snooze-cancel" class="button cancel" data-i18n="cancel"
+                            style="width: 100%;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Cleanup Modal -->
+            <div id="smart-cleanup-popup" class="rename-popup hidden popup-animate" role="dialog"
+                aria-labelledby="smart-cleanup-title">
+                <div class="rename-popup-content smart-cleanup-popup-content">
+                    <div class="smart-cleanup-header">
                         <div>
-                            <strong id="stat-total-bookmarks">0</strong>
-                            <span data-i18n="analyticsTotalBookmarks">Total Bookmarks</span>
+                            <h3 id="smart-cleanup-title">Smart Cleanup</h3>
+                            <p id="smart-cleanup-subtitle">Review bookmark cleanup opportunities before changing
+                                anything.</p>
                         </div>
+                        <button id="smart-cleanup-close-x" class="modal-close" title="Close">✕</button>
+                    </div>
+                    <div id="smart-cleanup-summary" class="smart-cleanup-summary"></div>
+                    <div class="smart-cleanup-body">
+                        <div class="smart-cleanup-main">
+                            <div id="smart-cleanup-grid" class="smart-cleanup-grid"></div>
+                            <div id="smart-cleanup-details" class="smart-cleanup-details"></div>
+                        </div>
+                        <aside id="smart-cleanup-next" class="smart-cleanup-next"></aside>
+                    </div>
+                    <div class="rename-popup-buttons">
+                        <button id="smart-cleanup-refresh" class="button save">Refresh</button>
+                        <button id="smart-cleanup-close" class="button cancel">Close</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Dashboard Modal -->
+            <div id="analytics-popup" class="rename-popup hidden popup-animate" role="dialog"
+                aria-labelledby="analytics-title">
+                <div class="rename-popup-content" style="width: min(800px, 94vw); max-width: 800px;">
+                    <div class="smart-cleanup-header">
                         <div>
-                            <strong id="stat-total-folders">0</strong>
-                            <span data-i18n="analyticsTotalFolders">Total Folders</span>
+                            <h3 id="analytics-title"><i class="fas fa-chart-pie" style="margin-right: 8px;"></i><span
+                                    data-i18n="analyticsTitle">Analytics Dashboard</span></h3>
+                            <p id="analytics-subtitle"
+                                style="margin:0; font-size: 0.85rem; color:var(--text-secondary);"
+                                data-i18n="analyticsDesc">Your bookmarking habits at a glance.</p>
                         </div>
-                        <div>
-                            <strong id="stat-recent-bookmarks">0</strong>
-                            <span data-i18n="analyticsAddedThisWeek">Added This Week</span>
+                        <button id="analytics-close-x" class="modal-close" title="Close">✕</button>
+                    </div>
+
+                    <div class="analytics-body" style="display: grid; gap: 16px; margin: 16px 0;">
+                        <!-- Quick Stats -->
+                        <div class="smart-cleanup-summary" style="margin-bottom: 0;">
+                            <div>
+                                <strong id="stat-total-bookmarks">0</strong>
+                                <span data-i18n="analyticsTotalBookmarks">Total Bookmarks</span>
+                            </div>
+                            <div>
+                                <strong id="stat-total-folders">0</strong>
+                                <span data-i18n="analyticsTotalFolders">Total Folders</span>
+                            </div>
+                            <div>
+                                <strong id="stat-recent-bookmarks">0</strong>
+                                <span data-i18n="analyticsAddedThisWeek">Added This Week</span>
+                            </div>
+                        </div>
+
+                        <!-- Top Domains Bar Chart -->
+                        <div
+                            style="padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: color-mix(in srgb, var(--bg-primary) 70%, transparent);">
+                            <h4 style="margin: 0 0 16px 0; color: var(--text-primary); font-size: 1rem;"><i
+                                    class="fas fa-globe"
+                                    style="margin-right: 6px; color: var(--accent-color);"></i><span
+                                    data-i18n="analyticsTopDomains">Top Domains</span></h4>
+                            <div id="stat-top-domains" style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Bars will be injected here -->
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Top Domains Bar Chart -->
-                    <div style="padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: color-mix(in srgb, var(--bg-primary) 70%, transparent);">
-                        <h4 style="margin: 0 0 16px 0; color: var(--text-primary); font-size: 1rem;"><i class="fas fa-globe" style="margin-right: 6px; color: var(--accent-color);"></i><span data-i18n="analyticsTopDomains">Top Domains</span></h4>
-                        <div id="stat-top-domains" style="display: flex; flex-direction: column; gap: 12px;">
-                            <!-- Bars will be injected here -->
+
+                    <div class="rename-popup-buttons">
+                        <button id="analytics-close" class="button cancel" style="width: 100px;">Close</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="duplicate-merge-popup-container"></div>
+            <script type="module" src="components/duplicateMerge.js"></script>
+
+            <div id="custom-prompt-popup" class="rename-popup hidden popup-animate" role="dialog"></div>
+
+            <div id="organize-folders-popup" class="rename-popup hidden popup-animate" role="dialog"
+                aria-labelledby="organize-folders-title">
+                <div class="rename-popup-content organize-folders-popup-content">
+
+                    <h3 id="organize-folders-title">Organize Folders</h3>
+                    <div class="organize-folders-tree-container">
+                        <!-- Tree view of folders and bookmarks will be rendered here -->
+                        <div id="organize-folders-tree-view"></div>
+                    </div>
+                    <div class="rename-popup-buttons">
+                        <button id="organize-folders-close" class="button cancel">Close</button>
+                    </div>
+                </div>
+            </div>
+            <button id="scroll-to-top" class="scroll-to-top hidden" title="Scroll to Top" aria-label="Scroll to Top">
+                <i class="fas fa-caret-up"></i>
+            </button>
+            <div id="first-run-language-popup" class="rename-popup hidden" role="dialog"
+                aria-labelledby="first-run-language-title">
+                <div class="rename-popup-content first-run-language-content">
+                    <div class="first-run-star" aria-hidden="true">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3 id="first-run-language-title">Choose your language</h3>
+                    <p id="first-run-language-sub">Select the language you want to use first.</p>
+                    <div class="first-run-language-options">
+                        <button type="button" class="first-run-language-option" data-first-run-language="vi">
+                            <span>Tiếng Việt</span>
+                            <small>Giao diện tiếng Việt</small>
+                        </button>
+                        <button type="button" class="first-run-language-option" data-first-run-language="en">
+                            <span>English</span>
+                            <small>English interface</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="first-run-popup" class="rename-popup hidden" role="dialog" aria-labelledby="first-run-title">
+                <div class="rename-popup-content first-run-content">
+                    <div class="first-run-star" aria-hidden="true">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 id="first-run-title" data-i18n="firstRunTitle">Welcome! Choose Your Font</h3>
+                    <p data-i18n="firstRunSub">Select a default font style for the extension:</p>
+                    <div class="first-run-guide">
+                        <div class="first-run-guide-step">
+                            <span class="first-run-step-icon"><i class="far fa-star"></i></span>
+                            <span data-i18n="firstRunGuideStep1">Open any website and click the Chrome star in the
+                                address
+                                bar.</span>
+                        </div>
+                        <div class="first-run-guide-step">
+                            <span class="first-run-step-icon"><i class="fas fa-keyboard"></i></span>
+                            <span data-i18n="firstRunGuideStepShortcut">Use Ctrl + D on Windows/Linux or Command + D on
+                                macOS to bookmark the current page faster.</span>
+                        </div>
+                        <div class="first-run-guide-step">
+                            <span class="first-run-step-icon"><i class="fas fa-folder-plus"></i></span>
+                            <span data-i18n="firstRunGuideStep2">Choose a folder, then press Done to save the
+                                bookmark.</span>
+                        </div>
+                        <div class="first-run-guide-step">
+                            <span class="first-run-step-icon"><i class="fas fa-bookmark"></i></span>
+                            <span data-i18n="firstRunGuideStep3">Open Zero Bookmark to manage, search, and organize
+                                it.</span>
                         </div>
                     </div>
-                </div>
-                
-                <div class="rename-popup-buttons">
-                    <button id="analytics-close" class="button cancel" style="width: 100px;">Close</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="duplicate-merge-popup-container"></div>
-        <script type="module" src="components/duplicateMerge.js"></script>
-
-        <div id="custom-prompt-popup" class="rename-popup hidden popup-animate" role="dialog"></div>
-
-        <div id="organize-folders-popup" class="rename-popup hidden popup-animate" role="dialog"
-            aria-labelledby="organize-folders-title">
-            <div class="rename-popup-content organize-folders-popup-content">
-
-                <h3 id="organize-folders-title">Organize Folders</h3>
-                <div class="organize-folders-tree-container">
-                    <!-- Tree view of folders and bookmarks will be rendered here -->
-                    <div id="organize-folders-tree-view"></div>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="organize-folders-close" class="button cancel">Close</button>
-                </div>
-            </div>
-        </div>
-        <button id="scroll-to-top" class="scroll-to-top hidden" title="Scroll to Top" aria-label="Scroll to Top">
-            <i class="fas fa-caret-up"></i>
-        </button>
-        <div id="first-run-language-popup" class="rename-popup hidden" role="dialog"
-            aria-labelledby="first-run-language-title">
-            <div class="rename-popup-content first-run-language-content">
-                <div class="first-run-star" aria-hidden="true">
-                    <i class="fas fa-language"></i>
-                </div>
-                <h3 id="first-run-language-title">Choose your language</h3>
-                <p id="first-run-language-sub">Select the language you want to use first.</p>
-                <div class="first-run-language-options">
-                    <button type="button" class="first-run-language-option" data-first-run-language="vi">
-                        <span>Tiếng Việt</span>
-                        <small>Giao diện tiếng Việt</small>
-                    </button>
-                    <button type="button" class="first-run-language-option" data-first-run-language="en">
-                        <span>English</span>
-                        <small>English interface</small>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div id="first-run-popup" class="rename-popup hidden" role="dialog" aria-labelledby="first-run-title">
-            <div class="rename-popup-content first-run-content">
-                <div class="first-run-star" aria-hidden="true">
-                    <i class="fas fa-star"></i>
-                </div>
-                <h3 id="first-run-title" data-i18n="firstRunTitle">Welcome! Choose Your Font</h3>
-                <p data-i18n="firstRunSub">Select a default font style for the extension:</p>
-                <div class="first-run-guide">
-                    <div class="first-run-guide-step">
-                        <span class="first-run-step-icon"><i class="far fa-star"></i></span>
-                        <span data-i18n="firstRunGuideStep1">Open any website and click the Chrome star in the address
-                            bar.</span>
+                    <div class="rename-input-container">
+                        <select id="first-run-font-select" class="select" style="width: 100%; margin-bottom: 10px;">
+                            <option value="gohu" data-i18n="fontGohu">Aa: GohuFont (Pixel Style)</option>
+                            <option value="jetBrainsMonoNerdFont" data-i18n="fontJetBrains">Aa: JetBrains Mono</option>
+                            <option value="roboto" data-i18n="fontRoboto">Aa: Roboto (Google Font)</option>
+                            <option value="openSans" data-i18n="fontOpenSans">Aa: Open Sans (Google Font)</option>
+                            <option value="inter" data-i18n="fontInter">Aa: Inter (Google Font)</option>
+                            <option value="lexend" data-i18n="fontLexend">Aa: Lexend (Google Font)</option>
+                        </select>
                     </div>
-                    <div class="first-run-guide-step">
-                        <span class="first-run-step-icon"><i class="fas fa-keyboard"></i></span>
-                        <span data-i18n="firstRunGuideStepShortcut">Use Ctrl + D on Windows/Linux or Command + D on
-                            macOS to bookmark the current page faster.</span>
-                    </div>
-                    <div class="first-run-guide-step">
-                        <span class="first-run-step-icon"><i class="fas fa-folder-plus"></i></span>
-                        <span data-i18n="firstRunGuideStep2">Choose a folder, then press Done to save the
-                            bookmark.</span>
-                    </div>
-                    <div class="first-run-guide-step">
-                        <span class="first-run-step-icon"><i class="fas fa-bookmark"></i></span>
-                        <span data-i18n="firstRunGuideStep3">Open Zero Bookmark to manage, search, and organize
-                            it.</span>
+                    <div class="rename-popup-buttons">
+                        <button id="first-run-save" class="button save" data-i18n="firstRunSave">Get Started</button>
                     </div>
                 </div>
-                <div class="rename-input-container">
-                    <select id="first-run-font-select" class="select" style="width: 100%; margin-bottom: 10px;">
-                        <option value="gohu" data-i18n="fontGohu">Aa: GohuFont (Pixel Style)</option>
-                        <option value="jetBrainsMonoNerdFont" data-i18n="fontJetBrains">Aa: JetBrains Mono</option>
-                        <option value="roboto" data-i18n="fontRoboto">Aa: Roboto (Google Font)</option>
-                        <option value="openSans" data-i18n="fontOpenSans">Aa: Open Sans (Google Font)</option>
-                        <option value="inter" data-i18n="fontInter">Aa: Inter (Google Font)</option>
-                        <option value="lexend" data-i18n="fontLexend">Aa: Lexend (Google Font)</option>
-                    </select>
-                </div>
-                <div class="rename-popup-buttons">
-                    <button id="first-run-save" class="button save" data-i18n="firstRunSave">Get Started</button>
+            </div>
+            <div id="first-run-tour" class="first-run-tour hidden" aria-live="polite">
+                <div id="first-run-tour-highlight" class="first-run-tour-highlight"></div>
+                <div id="first-run-tour-card" class="first-run-tour-card" role="dialog"
+                    aria-labelledby="first-run-tour-title">
+                    <span id="first-run-tour-count" class="first-run-tour-count"></span>
+                    <h3 id="first-run-tour-title"></h3>
+                    <p id="first-run-tour-message"></p>
+                    <div class="first-run-tour-actions">
+                        <button id="first-run-tour-prev" class="button save" type="button"></button>
+                        <button id="first-run-tour-skip" class="button save" type="button"></button>
+                        <button id="first-run-tour-next" class="button save" type="button"></button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="first-run-tour" class="first-run-tour hidden" aria-live="polite">
-            <div id="first-run-tour-highlight" class="first-run-tour-highlight"></div>
-            <div id="first-run-tour-card" class="first-run-tour-card" role="dialog"
-                aria-labelledby="first-run-tour-title">
-                <span id="first-run-tour-count" class="first-run-tour-count"></span>
-                <h3 id="first-run-tour-title"></h3>
-                <p id="first-run-tour-message"></p>
-                <div class="first-run-tour-actions">
-                    <button id="first-run-tour-prev" class="button save" type="button"></button>
-                    <button id="first-run-tour-skip" class="button save" type="button"></button>
-                    <button id="first-run-tour-next" class="button save" type="button"></button>
-                </div>
-            </div>
-        </div>
         </div> <!-- end dashboard-view -->
-        
-        <div id="quick-save-view" class="tab-content" style="display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0;">
-            <iframe id="quick-save-frame" style="width: 100%; height: 100%; flex: 1; border: none; display: block;" scrolling="auto"></iframe>
+
+        <div id="quick-save-view" class="tab-content"
+            style="display: none; flex-direction: column; flex: 1; overflow: visible; min-height: 0;">
+            <iframe id="quick-save-frame" style="width: 100%; height: 100%; flex: 1; border: none; display: block;"
+                scrolling="no"></iframe>
         </div>
 
         <!-- footer -->
@@ -808,37 +926,52 @@
             <div style="font-size: 28px; color: var(--primary-color); margin-bottom: 8px;">
                 <i class="fab fa-google-drive"></i>
             </div>
-            <h3 id="cloud-sync-title" style="margin-top:0; font-size: 18px; font-weight: 600; color: var(--text-color);">
+            <h3 id="cloud-sync-title"
+                style="margin-top:0; font-size: 18px; font-weight: 600; color: var(--text-color);">
                 Google Drive Sync
             </h3>
             <p style="margin-bottom: 10px; font-size: 13px; color: var(--text-muted);">
                 Backup or restore your bookmarks securely.
             </p>
-            <p data-i18n-html="cloudSyncTestWarning" style="margin-bottom: 10px; font-size: 12px; color: var(--text-secondary); background-color: var(--bg-secondary); padding: 8px; border-radius: 6px; border: 1px dashed var(--border-color); text-align: left; line-height: 1.3;">
-                Note: This is currently in testing. If your login is denied and you want to try it, please send an email via this <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog" target="_blank" style="color: var(--primary-color);">form link</a>.
+            <p data-i18n-html="cloudSyncTestWarning"
+                style="margin-bottom: 10px; font-size: 12px; color: var(--text-secondary); background-color: var(--bg-secondary); padding: 8px; border-radius: 6px; border: 1px dashed var(--border-color); text-align: left; line-height: 1.3;">
+                Note: This is currently in testing. If your login is denied and you want to try it, please send an email
+                via this <a
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog"
+                    target="_blank" style="color: var(--primary-color);">form link</a>.
             </p>
-            
+
             <div style="margin-bottom: 10px; text-align: left;">
-                <label style="display: block; font-size: 12px; margin-bottom: 4px; color: var(--text-color); font-weight: 500;">Select or Enter File Name:</label>
-                <select id="sync-file-select" class="select" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box; margin-bottom: 8px;">
+                <label
+                    style="display: block; font-size: 12px; margin-bottom: 4px; color: var(--text-color); font-weight: 500;">Select
+                    or Enter File Name:</label>
+                <select id="sync-file-select" class="select"
+                    style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box; margin-bottom: 8px;">
                     <option value="new">-- Create New File --</option>
                 </select>
-                <input type="text" id="sync-filename-input" value="zero_bookmark_manager_backup.json" class="input-field" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box;" placeholder="Enter JSON file name">
+                <input type="text" id="sync-filename-input" value="zero_bookmark_manager_backup.json"
+                    class="input-field"
+                    style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box;"
+                    placeholder="Enter JSON file name">
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
-                <button id="btn-backup-drive" class="button" style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--focus-outline); border: 1px solid var(--focus-outline); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
+                <button id="btn-backup-drive" class="button"
+                    style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--focus-outline); border: 1px solid var(--focus-outline); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
                     <i class="fas fa-cloud-upload-alt" style="margin-right: 8px;"></i> Backup to Drive (JSON)
                 </button>
-                <button id="btn-restore-drive" class="button" style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--text-secondary); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
+                <button id="btn-restore-drive" class="button"
+                    style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--text-secondary); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
                     <i class="fas fa-cloud-download-alt" style="margin-right: 8px;"></i> Restore from Drive (JSON)
                 </button>
             </div>
-            
-            <p id="sync-status-message" style="margin-top: 10px; font-size: 12px; font-weight: 500; min-height: 18px;"></p>
-            
+
+            <p id="sync-status-message" style="margin-top: 10px; font-size: 12px; font-weight: 500; min-height: 18px;">
+            </p>
+
             <div class="rename-popup-buttons" style="margin-top: 10px;">
-                <button id="cloud-sync-close" class="button cancel" style="width: 100%; justify-content: center;">Close</button>
+                <button id="cloud-sync-close" class="button cancel"
+                    style="width: 100%; justify-content: center;">Close</button>
             </div>
         </div>
     </div>

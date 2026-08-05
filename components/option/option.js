@@ -174,6 +174,7 @@ export function customSaveUIState() {
         showTagsInView: uiState.showTagsInView,
         headerLineStyle: uiState.headerLineStyle,
         bookmarkMenuBg: uiState.bookmarkMenuBg,
+        showSmartFolders: uiState.showSmartFolders,
       },
       checkboxesVisible: storageSettings.checkboxesVisible
         ? uiState.checkboxesVisible
@@ -283,6 +284,7 @@ export async function customLoadUIState(callback) {
         uiState.showTagsInView = result.uiState.showTagsInView ?? false
       uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
       uiState.bookmarkMenuBg = result.uiState.bookmarkMenuBg || "glass"
+      uiState.showSmartFolders = result.uiState.showSmartFolders ?? true
     }
     if (storageSettings.checkboxesVisible) {
       uiState.checkboxesVisible = result.checkboxesVisible || false

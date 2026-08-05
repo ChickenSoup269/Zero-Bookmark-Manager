@@ -350,6 +350,42 @@ function setupBookmarkMenuBgControl() {
   }
 }
 
+function setupSmartFoldersControl() {
+  const select = document.getElementById("smart-folders-select")
+  const saved = uiState.showSmartFolders !== false ? "show" : "hide"
+
+  if (!select) return
+
+  if (select.dataset.bound === "true") return
+  select.dataset.bound = "true"
+
+  const swatches = select.querySelectorAll('.setting-swatch')
+  swatches.forEach(btn => {
+    btn.classList.remove('active')
+    if (btn.dataset.value === saved) btn.classList.add('active')
+  })
+  
+  select.addEventListener("click", (e) => {
+    const btn = e.target.closest('.setting-swatch')
+    if (!btn) return
+    swatches.forEach(b => b.classList.remove('active'))
+    btn.classList.add('active')
+    updateSmartFolders(btn.dataset.value === "show")
+  })
+
+  function updateSmartFolders(val) {
+    uiState.showSmartFolders = val
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.showSmartFolders = val
+      chrome.storage.local.set({ uiState: newUiState }, () => {
+        // Trigger a re-render of folders
+        window.location.reload()
+      })
+    })
+  }
+}
+
 function normalizeCustomLanguagePack(rawPack) {
   if (!rawPack || typeof rawPack !== "object" || Array.isArray(rawPack)) {
     throw new Error("Invalid language pack")
@@ -1084,24 +1120,13 @@ function startFirstRunTour() {
 }
 
 // Global scroll listener for glassmorphism headers
-const dashboardViewScroll = document.getElementById("dashboard-view");
-if (dashboardViewScroll) {
-    dashboardViewScroll.addEventListener('scroll', () => {
-        if (dashboardViewScroll.scrollTop > 10) {
-            document.body.classList.add('is-scrolled');
-        } else {
-            document.body.classList.remove('is-scrolled');
-        }
-    });
-} else {
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 10) {
-            document.body.classList.add('is-scrolled');
-        } else {
-            document.body.classList.remove('is-scrolled');
-        }
-    }, { passive: true });
-}
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 10) {
+        document.body.classList.add('is-scrolled');
+    } else {
+        document.body.classList.remove('is-scrolled');
+    }
+}, { passive: true });
 
 function setupRestartGuideControl() {
   const button = document.getElementById("restart-guide-option")
@@ -1196,6 +1221,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const init = () => {
     setupBookmarkMenuBgControl()
+    setupSmartFoldersControl()
     initCopyButtons()
     registerCustomLanguagePacks()
     renderCustomLanguageOptions(elements.languageSwitcher)
