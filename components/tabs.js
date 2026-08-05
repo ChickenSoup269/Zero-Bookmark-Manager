@@ -65,4 +65,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const savedTab = localStorage.getItem("activeTab") || "dashboard";
         switchTab(savedTab);
     }
+
+    // Listen for resize messages from quick-save iframe
+    window.addEventListener("message", (event) => {
+        if (event.data && event.data.type === "resizeIframe") {
+            if (quickSaveFrame) {
+                quickSaveFrame.style.height = event.data.height + "px";
+                quickSaveView.style.overflow = "visible";
+            }
+        }
+    });
 });

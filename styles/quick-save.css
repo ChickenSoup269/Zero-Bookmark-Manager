@@ -29,11 +29,53 @@ body.embedded {
   min-height: 100%;
   background-image: none;
   background-color: transparent;
+  overflow: hidden;
 }
 
 body.embedded .quick-save-shell {
-  padding: 0 16px 16px 16px;
+  padding: 8px 12px 12px 12px;
+  gap: 8px;
   animation: none;
+}
+
+body.embedded .quick-save-header {
+  margin-bottom: 4px;
+}
+
+body.embedded .quick-save-header h1 {
+  font-size: 1.1rem;
+}
+
+body.embedded .quick-save-header p {
+  margin-top: 2px;
+  font-size: 0.8rem;
+}
+
+body.embedded .quick-save-form {
+  gap: 8px;
+  margin-top: 0;
+}
+
+body.embedded label {
+  gap: 4px;
+}
+
+body.embedded input,
+body.embedded select,
+body.embedded textarea {
+  padding: 0.5rem;
+}
+
+body.embedded textarea {
+  min-height: 60px;
+}
+
+body.embedded .actions {
+  margin-top: 4px;
+}
+
+body.embedded .primary-button {
+  padding: 10px 16px;
 }
 
 .quick-save-shell {

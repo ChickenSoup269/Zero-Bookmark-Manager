@@ -12,38 +12,39 @@ const openDashboardButton = document.getElementById("open-dashboard")
 const quickOpenActionSelect = document.getElementById("quick-open-action")
 
 // Hide header and adjust padding if embedded in the main dashboard
-const isEmbedded = new URLSearchParams(window.location.search).get("embedded") === "true";
+const isEmbedded =
+  new URLSearchParams(window.location.search).get("embedded") === "true"
 if (isEmbedded) {
-    document.body.classList.add("embedded");
-    const header = document.querySelector(".quick-save-header");
-    if (header) header.style.display = "none";
-    const actionGroup = document.getElementById("quick-open-action-group");
-    if (actionGroup && actionGroup.parentElement) {
-        actionGroup.parentElement.style.display = "none";
-    }
+  document.body.classList.add("embedded")
+  const header = document.querySelector(".quick-save-header")
+  if (header) header.style.display = "none"
+  const actionGroup = document.getElementById("quick-open-action-group")
+  if (actionGroup && actionGroup.parentElement) {
+    actionGroup.parentElement.style.display = "none"
+  }
 
-    // Auto resize disabled - managed by CSS flex
-    // let lastHeight = 0;
-    // const updateHeight = () => {
-    //     if (window.parent) {
-    //         const frame = window.parent.document.getElementById("quick-save-frame");
-    //         const shell = document.querySelector(".quick-save-shell");
-    //         if (frame && shell) {
-    //             const newHeight = shell.offsetHeight + 24; 
-    //             if (Math.abs(newHeight - lastHeight) > 2) {
-    //                 lastHeight = newHeight;
-    //                 frame.style.height = newHeight + "px";
-    //             }
-    //         }
-    //     }
-    // };
-    // const shell = document.querySelector(".quick-save-shell");
-    // if (shell) {
-    //     const resizeObserver = new ResizeObserver(updateHeight);
-    //     resizeObserver.observe(shell);
-    // }
-    // window.addEventListener("load", updateHeight);
-    // setTimeout(updateHeight, 100);
+  // Auto resize disabled - managed by CSS flex
+  let lastHeight = 0
+  const updateHeight = () => {
+    if (window.parent) {
+      const frame = window.parent.document.getElementById("quick-save-frame")
+      const shell = document.querySelector(".quick-save-shell")
+      if (frame && shell) {
+        const newHeight = shell.offsetHeight + 24
+        if (Math.abs(newHeight - lastHeight) > 2) {
+          lastHeight = newHeight
+          frame.style.height = newHeight + "px"
+        }
+      }
+    }
+  }
+  const shell = document.querySelector(".quick-save-shell")
+  if (shell) {
+    const resizeObserver = new ResizeObserver(updateHeight)
+    resizeObserver.observe(shell)
+  }
+  window.addEventListener("load", updateHeight)
+  setTimeout(updateHeight, 100)
 }
 
 const qsTranslations = {
@@ -62,7 +63,8 @@ const qsTranslations = {
     btnSuggestText: "Suggest",
     phTags: "Type and press Enter...",
     lblNotes: "Notes",
-    phNotes: "Why this page matters, what to revisit, or any context you need later.",
+    phNotes:
+      "Why this page matters, what to revisit, or any context you need later.",
     btnSaveBookmark: "Save Bookmark",
     statusNoSourceTab: "No source tab specified.",
     phNewFolder: "New folder name...",
@@ -77,7 +79,7 @@ const qsTranslations = {
     statusUpdatedSuccess: "Updated successfully! ({0} tags)",
     statusSavedSuccess: "Saved successfully! ({0} tags)",
     btnDone: "Done",
-    phQuickNewFolder: "Or type new folder (Other Bookmarks)..."
+    phQuickNewFolder: "Or type new folder (Other Bookmarks)...",
   },
   vi: {
     qsTitle: "Lưu Nhanh",
@@ -94,7 +96,8 @@ const qsTranslations = {
     btnSuggestText: "Gợi ý",
     phTags: "Nhập và nhấn Enter...",
     lblNotes: "Ghi chú",
-    phNotes: "Tại sao trang này quan trọng, cần xem lại gì, hoặc bất kỳ ngữ cảnh nào cần lưu lại.",
+    phNotes:
+      "Tại sao trang này quan trọng, cần xem lại gì, hoặc bất kỳ ngữ cảnh nào cần lưu lại.",
     btnSaveBookmark: "Lưu Bookmark",
     statusNoSourceTab: "Không tìm thấy tab nguồn.",
     phNewFolder: "Tên thư mục mới...",
@@ -109,9 +112,9 @@ const qsTranslations = {
     statusUpdatedSuccess: "Đã cập nhật thành công! ({0} thẻ)",
     statusSavedSuccess: "Đã lưu thành công! ({0} thẻ)",
     btnDone: "Xong",
-    phQuickNewFolder: "Hoặc tạo mới thư mục (vào Other Bookmarks)..."
-  }
-};
+    phQuickNewFolder: "Hoặc tạo mới thư mục (vào Other Bookmarks)...",
+  },
+}
 
 let currentTab = null
 let existingBookmark = null
@@ -221,18 +224,22 @@ function parseTags(value) {
 }
 
 function flattenFolders(nodes, prefix = "", folders = []) {
-  const folderNodes = nodes.filter(n => n.children)
+  const folderNodes = nodes.filter((n) => n.children)
   folderNodes.forEach((node, index) => {
     const isLast = index === folderNodes.length - 1
     let currentPrefix = prefix
     let nextPrefix = prefix
-    
+
     if (node.id !== "0") {
       currentPrefix = prefix + (isLast ? "└─ " : "├─ ")
       nextPrefix = prefix + (isLast ? "\u00A0\u00A0\u00A0" : "│\u00A0\u00A0")
     }
-    
-    folders.push({ id: node.id, title: node.title || "Bookmarks", prefix: currentPrefix })
+
+    folders.push({
+      id: node.id,
+      title: node.title || "Bookmarks",
+      prefix: currentPrefix,
+    })
     flattenFolders(node.children, nextPrefix, folders)
   })
   return folders
@@ -243,7 +250,7 @@ function fillFolders() {
     const folders = flattenFolders(tree)
     const folderList = document.getElementById("folder-list")
     folderList.innerHTML = ""
-    
+
     folders
       .filter((folder) => folder.id !== "0")
       .forEach((folder) => {
@@ -252,12 +259,12 @@ function fillFolders() {
         if (folder.id === preferredFolderId) {
           item.classList.add("active")
         }
-        
+
         const icon = document.createElement("i")
         icon.className = "fas fa-folder"
-        
+
         const text = document.createTextNode(folder.title)
-        
+
         if (folder.prefix) {
           const prefixSpan = document.createElement("span")
           prefixSpan.style.fontFamily = "monospace"
@@ -267,49 +274,61 @@ function fillFolders() {
         }
         item.appendChild(icon)
         item.appendChild(text)
-        
+
         item.addEventListener("click", () => {
-          document.querySelectorAll(".folder-tree-item").forEach(el => el.classList.remove("active"))
+          document
+            .querySelectorAll(".folder-tree-item")
+            .forEach((el) => el.classList.remove("active"))
           item.classList.add("active")
           preferredFolderId = folder.id
-          
-          const selectedDisplayName = document.getElementById("selected-folder-name-display")
+
+          const selectedDisplayName = document.getElementById(
+            "selected-folder-name-display",
+          )
           if (selectedDisplayName) {
             selectedDisplayName.textContent = folder.title
           }
         })
-        
+
         item.addEventListener("dblclick", () => {
           if (typeof toggleFolderView === "function") {
             toggleFolderView(false)
           }
         })
-        
+
         folderList.appendChild(item)
       })
 
     const bookmarksBar = folders.find((folder) => folder.id === "1")
     if (bookmarksBar && preferredFolderId === "1") {
       preferredFolderId = bookmarksBar.id
-      const barItem = Array.from(folderList.children).find(el => el.textContent.includes(bookmarksBar.title))
+      const barItem = Array.from(folderList.children).find((el) =>
+        el.textContent.includes(bookmarksBar.title),
+      )
       if (barItem && !folderList.querySelector(".active")) {
         barItem.classList.add("active")
       }
     }
-    
+
     // Update the button text to show selected folder
     const activeItem = folderList.querySelector(".active")
-    const selectedDisplayName = document.getElementById("selected-folder-name-display")
+    const selectedDisplayName = document.getElementById(
+      "selected-folder-name-display",
+    )
     if (activeItem && selectedDisplayName) {
       // Find the text node inside the active item (skip prefix span and icon)
-      const textNode = Array.from(activeItem.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0)
+      const textNode = Array.from(activeItem.childNodes).find(
+        (node) =>
+          node.nodeType === Node.TEXT_NODE &&
+          node.textContent.trim().length > 0,
+      )
       if (textNode) {
         selectedDisplayName.textContent = textNode.textContent
       } else {
         selectedDisplayName.textContent = activeItem.textContent.trim()
       }
     }
-    
+
     // Auto scroll to active item
     if (activeItem) {
       setTimeout(() => activeItem.scrollIntoView({ block: "nearest" }), 10)
@@ -318,15 +337,18 @@ function fillFolders() {
 }
 
 function fillExistingMetadata(bookmarkId) {
-  chrome.storage.local.get(["bookmarkTags", "bookmarkNotes", "tagColors", "tagTextColors"], (data) => {
-    const tags = data.bookmarkTags?.[bookmarkId] || []
-    const note = data.bookmarkNotes?.[bookmarkId] || ""
-    if (data.tagColors) tagColorsCache = data.tagColors
-    if (data.tagTextColors) tagTextColorsCache = data.tagTextColors
-    currentTags = [...tags]
-    renderTags()
-    notesInput.value = note
-  })
+  chrome.storage.local.get(
+    ["bookmarkTags", "bookmarkNotes", "tagColors", "tagTextColors"],
+    (data) => {
+      const tags = data.bookmarkTags?.[bookmarkId] || []
+      const note = data.bookmarkNotes?.[bookmarkId] || ""
+      if (data.tagColors) tagColorsCache = data.tagColors
+      if (data.tagTextColors) tagTextColorsCache = data.tagTextColors
+      currentTags = [...tags]
+      renderTags()
+      notesInput.value = note
+    },
+  )
 }
 
 function populateFromTab(tab) {
@@ -341,10 +363,7 @@ function populateFromTab(tab) {
   urlInput.value = tab.url
 
   if (/^(chrome|edge|about|chrome-extension):\/\//i.test(tab.url)) {
-    showStatus(
-      tStatus("statusErrorContext"),
-      "error",
-    )
+    showStatus(tStatus("statusErrorContext"), "error")
     saveButton.disabled = true
     return
   }
@@ -358,10 +377,7 @@ function populateFromTab(tab) {
         fillFolders()
       }
       fillExistingMetadata(existingBookmark.id)
-      showStatus(
-        tStatus("statusAlreadySaved"),
-        "success",
-      )
+      showStatus(tStatus("statusAlreadySaved"), "success")
     }
   })
 }
@@ -369,7 +385,7 @@ function populateFromTab(tab) {
 function loadCurrentTab() {
   const tabId = getSourceTabId()
   if (!tabId) {
-    chrome.windows.getLastFocused({ windowTypes: ['normal'] }, function(win) {
+    chrome.windows.getLastFocused({ windowTypes: ["normal"] }, function (win) {
       if (win && win.id) {
         chrome.tabs.query({ active: true, windowId: win.id }, (tabs) => {
           if (tabs && tabs.length > 0) {
@@ -383,7 +399,7 @@ function loadCurrentTab() {
         showStatus(tStatus("statusNoSourceTab"), "error")
         saveButton.disabled = true
       }
-    });
+    })
     return
   }
 
@@ -391,33 +407,37 @@ function loadCurrentTab() {
 }
 
 function saveMetadata(bookmarkId, tags, note, callback) {
-  chrome.storage.local.get(["bookmarkTags", "bookmarkNotes", "tagColors", "tagTextColors"], (data) => {
-    const bookmarkTags = data.bookmarkTags || {}
-    const bookmarkNotes = data.bookmarkNotes || {}
-    const tagColors = data.tagColors || {}
-    const tagTextColors = data.tagTextColors || {}
+  chrome.storage.local.get(
+    ["bookmarkTags", "bookmarkNotes", "tagColors", "tagTextColors"],
+    (data) => {
+      const bookmarkTags = data.bookmarkTags || {}
+      const bookmarkNotes = data.bookmarkNotes || {}
+      const tagColors = data.tagColors || {}
+      const tagTextColors = data.tagTextColors || {}
 
-    if (tags.length) {
-      bookmarkTags[bookmarkId] = tags
-      tags.forEach((tag) => {
-        tagColors[tag] = tagColorsCache[tag] || tagColors[tag] || "#3B82F6"
-        tagTextColors[tag] = tagTextColorsCache[tag] || tagTextColors[tag] || "#FFFFFF"
-      })
-    } else {
-      delete bookmarkTags[bookmarkId]
-    }
+      if (tags.length) {
+        bookmarkTags[bookmarkId] = tags
+        tags.forEach((tag) => {
+          tagColors[tag] = tagColorsCache[tag] || tagColors[tag] || "#3B82F6"
+          tagTextColors[tag] =
+            tagTextColorsCache[tag] || tagTextColors[tag] || "#FFFFFF"
+        })
+      } else {
+        delete bookmarkTags[bookmarkId]
+      }
 
-    if (note) {
-      bookmarkNotes[bookmarkId] = note
-    } else {
-      delete bookmarkNotes[bookmarkId]
-    }
+      if (note) {
+        bookmarkNotes[bookmarkId] = note
+      } else {
+        delete bookmarkNotes[bookmarkId]
+      }
 
-    chrome.storage.local.set(
-      { bookmarkTags, bookmarkNotes, tagColors, tagTextColors },
-      callback,
-    )
-  })
+      chrome.storage.local.set(
+        { bookmarkTags, bookmarkNotes, tagColors, tagTextColors },
+        callback,
+      )
+    },
+  )
 }
 
 function saveBookmark(event) {
@@ -449,11 +469,13 @@ function saveBookmark(event) {
         const verbKey = isUpdate ? "statusUpdatedSuccess" : "statusSavedSuccess"
         showStatus(tStatus(verbKey, currentTags.length))
         saveButton.innerHTML = `<i class="fas fa-check"></i> ${tStatus(verbKey, currentTags.length)}`
-        
+
         // Close window after 2 seconds
         setTimeout(() => {
           if (isEmbedded && window.parent && window.parent !== window) {
-            try { window.parent.close() } catch(e) {}
+            try {
+              window.parent.close()
+            } catch (e) {}
           } else {
             window.close()
           }
@@ -469,45 +491,61 @@ function saveBookmark(event) {
 
   function proceedSaving(finalParentId) {
     if (existingBookmark) {
-      chrome.bookmarks.update(existingBookmark.id, { title, url }, (updated) => {
-        if (chrome.runtime.lastError || !updated) {
-          console.error(chrome.runtime.lastError);
-          finish(null, true);
-          return;
-        }
-        if (updated.parentId !== finalParentId) {
-          chrome.bookmarks.move(updated.id, { parentId: finalParentId }, (moved) => finish(moved || updated, true))
-        } else {
-          finish(updated, true)
-        }
-      })
+      chrome.bookmarks.update(
+        existingBookmark.id,
+        { title, url },
+        (updated) => {
+          if (chrome.runtime.lastError || !updated) {
+            console.error(chrome.runtime.lastError)
+            finish(null, true)
+            return
+          }
+          if (updated.parentId !== finalParentId) {
+            chrome.bookmarks.move(
+              updated.id,
+              { parentId: finalParentId },
+              (moved) => finish(moved || updated, true),
+            )
+          } else {
+            finish(updated, true)
+          }
+        },
+      )
     } else {
-      chrome.bookmarks.create({ parentId: finalParentId, title, url }, (created) => {
-        if (chrome.runtime.lastError || !created) {
-          console.error(chrome.runtime.lastError);
-          finish(null, false);
-          return;
-        }
-        finish(created, false)
-      })
+      chrome.bookmarks.create(
+        { parentId: finalParentId, title, url },
+        (created) => {
+          if (chrome.runtime.lastError || !created) {
+            console.error(chrome.runtime.lastError)
+            finish(null, false)
+            return
+          }
+          finish(created, false)
+        },
+      )
     }
   }
 
   const quickNewFolderInput = document.getElementById("quick-new-folder-input")
-  const quickNewFolderName = quickNewFolderInput ? quickNewFolderInput.value.trim() : ""
+  const quickNewFolderName = quickNewFolderInput
+    ? quickNewFolderInput.value.trim()
+    : ""
 
   if (quickNewFolderName) {
     // Default to 'Other Bookmarks' (ID "2") as requested
-    chrome.bookmarks.create({ parentId: "2", title: quickNewFolderName }, (newFolder) => {
-      if (chrome.runtime.lastError || !newFolder) {
-        console.error(chrome.runtime.lastError);
-        showStatus("Error creating folder", "error");
-        saveButton.disabled = false;
-        saveButton.innerHTML = originalButtonHtml;
-        return;
-      }
-      proceedSaving(newFolder.id)
-    })
+    chrome.bookmarks.create(
+      { parentId: "2", title: quickNewFolderName },
+      (newFolder) => {
+        if (chrome.runtime.lastError || !newFolder) {
+          console.error(chrome.runtime.lastError)
+          showStatus("Error creating folder", "error")
+          saveButton.disabled = false
+          saveButton.innerHTML = originalButtonHtml
+          return
+        }
+        proceedSaving(newFolder.id)
+      },
+    )
   } else {
     proceedSaving(parentId)
   }
@@ -520,21 +558,21 @@ openDashboardButton.addEventListener("click", () => {
 // Initialize quick open action setting
 chrome.storage.local.get(["quickOpenAction"], (result) => {
   const action = result.quickOpenAction || "quickSave"
-  const btns = document.querySelectorAll(".quick-action-btn");
-  btns.forEach(btn => {
+  const btns = document.querySelectorAll(".quick-action-btn")
+  btns.forEach((btn) => {
     if (btn.dataset.value === action) {
-      btn.classList.add("active");
+      btn.classList.add("active")
     } else {
-      btn.classList.remove("active");
+      btn.classList.remove("active")
     }
-    
+
     // Add click event listener to each button
     btn.addEventListener("click", () => {
-      btns.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      chrome.storage.local.set({ quickOpenAction: btn.dataset.value });
-    });
-  });
+      btns.forEach((b) => b.classList.remove("active"))
+      btn.classList.add("active")
+      chrome.storage.local.set({ quickOpenAction: btn.dataset.value })
+    })
+  })
 })
 
 let tagColorsCache = {}
@@ -544,69 +582,75 @@ let activeSuggestionIndex = -1
 const customTagSuggestions = document.getElementById("custom-tag-suggestions")
 
 function loadTags() {
-  chrome.storage.local.get(["bookmarkTags", "tagColors", "tagTextColors"], (result) => {
-    const bookmarkTags = result.bookmarkTags || {}
-    tagColorsCache = result.tagColors || {}
-    tagTextColorsCache = result.tagTextColors || {}
-    const allTags = new Set()
-    Object.values(bookmarkTags).forEach((tags) => {
-      tags.forEach((tag) => allTags.add(tag))
-    })
-    allAvailableTags = Array.from(allTags).sort()
-  })
+  chrome.storage.local.get(
+    ["bookmarkTags", "tagColors", "tagTextColors"],
+    (result) => {
+      const bookmarkTags = result.bookmarkTags || {}
+      tagColorsCache = result.tagColors || {}
+      tagTextColorsCache = result.tagTextColors || {}
+      const allTags = new Set()
+      Object.values(bookmarkTags).forEach((tags) => {
+        tags.forEach((tag) => allTags.add(tag))
+      })
+      allAvailableTags = Array.from(allTags).sort()
+    },
+  )
 }
 
 function showSuggestions(query) {
-  if (!customTagSuggestions) return;
+  if (!customTagSuggestions) return
   if (!query) {
     customTagSuggestions.classList.add("hidden")
     return
   }
-  const filtered = allAvailableTags.filter(t => t.toLowerCase().includes(query.toLowerCase()) && !currentTags.includes(t))
+  const filtered = allAvailableTags.filter(
+    (t) =>
+      t.toLowerCase().includes(query.toLowerCase()) && !currentTags.includes(t),
+  )
   if (filtered.length === 0) {
     customTagSuggestions.classList.add("hidden")
     return
   }
-  
+
   customTagSuggestions.innerHTML = ""
   filtered.forEach((tag) => {
     const item = document.createElement("div")
     item.className = "suggestion-item"
-    
+
     const dot = document.createElement("span")
     dot.className = "suggestion-color-dot"
     dot.style.backgroundColor = tagColorsCache[tag] || "var(--accent-color)"
-    
+
     const text = document.createElement("span")
     text.textContent = tag
-    
+
     item.appendChild(dot)
     item.appendChild(text)
-    
+
     item.addEventListener("mousedown", (e) => {
       e.preventDefault() // prevent input blur
       addTag(tag)
     })
-    
+
     customTagSuggestions.appendChild(item)
   })
-  
+
   customTagSuggestions.classList.remove("hidden")
   activeSuggestionIndex = -1
 }
 
-let nextTagColor = "#3B82F6";
+let nextTagColor = "#3B82F6"
 
 function addTag(tag) {
   if (tag && !currentTags.includes(tag)) {
     currentTags.push(tag)
-    
+
     // Apply selected color if not already cached
     if (!tagColorsCache[tag]) {
-      tagColorsCache[tag] = nextTagColor;
-      tagTextColorsCache[tag] = getContrastYIQ(nextTagColor);
+      tagColorsCache[tag] = nextTagColor
+      tagTextColorsCache[tag] = getContrastYIQ(nextTagColor)
     }
-    
+
     tagsInput.value = ""
     renderTags()
     if (customTagSuggestions) customTagSuggestions.classList.add("hidden")
@@ -614,149 +658,171 @@ function addTag(tag) {
 }
 
 const CUSTOM_COLORS = [
-  "#EF4444", "#F97316", "#F59E0B", "#EAB308", "#84CC16", "#22C55E",
-  "#14B8A6", "#06B6D4", "#0EA5E9", "#3B82F6", "#6366F1", "#8B5CF6",
-  "#A855F7", "#D946EF", "#EC4899", "#F43F5E", "#78716C", "#64748B",
-  "#111827", "#FFFFFF"
-];
+  "#EF4444",
+  "#F97316",
+  "#F59E0B",
+  "#EAB308",
+  "#84CC16",
+  "#22C55E",
+  "#14B8A6",
+  "#06B6D4",
+  "#0EA5E9",
+  "#3B82F6",
+  "#6366F1",
+  "#8B5CF6",
+  "#A855F7",
+  "#D946EF",
+  "#EC4899",
+  "#F43F5E",
+  "#78716C",
+  "#64748B",
+  "#111827",
+  "#FFFFFF",
+]
 
-let globalColorPalette = null;
-let currentEditingTag = null;
+let globalColorPalette = null
+let currentEditingTag = null
 
 function showColorPalette(tag, chipElement) {
   if (!globalColorPalette) {
-    globalColorPalette = document.createElement("div");
-    globalColorPalette.className = "custom-tag-suggestions";
-    globalColorPalette.style.display = "flex";
-    globalColorPalette.style.flexDirection = "row";
-    globalColorPalette.style.flexWrap = "wrap";
-    globalColorPalette.style.padding = "8px";
-    globalColorPalette.style.gap = "6px";
-    globalColorPalette.style.width = "200px";
-    globalColorPalette.style.zIndex = "1000";
-    
-    CUSTOM_COLORS.forEach(color => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.style.width = "24px";
-      btn.style.height = "24px";
-      btn.style.borderRadius = "50%";
-      btn.style.border = "1px solid var(--border-color)";
-      btn.style.backgroundColor = color;
-      btn.style.cursor = "pointer";
-      
+    globalColorPalette = document.createElement("div")
+    globalColorPalette.className = "custom-tag-suggestions"
+    globalColorPalette.style.display = "flex"
+    globalColorPalette.style.flexDirection = "row"
+    globalColorPalette.style.flexWrap = "wrap"
+    globalColorPalette.style.padding = "8px"
+    globalColorPalette.style.gap = "6px"
+    globalColorPalette.style.width = "200px"
+    globalColorPalette.style.zIndex = "1000"
+
+    CUSTOM_COLORS.forEach((color) => {
+      const btn = document.createElement("button")
+      btn.type = "button"
+      btn.style.width = "24px"
+      btn.style.height = "24px"
+      btn.style.borderRadius = "50%"
+      btn.style.border = "1px solid var(--border-color)"
+      btn.style.backgroundColor = color
+      btn.style.cursor = "pointer"
+
       btn.addEventListener("mouseover", () => {
-        btn.style.transform = "scale(1.1)";
-      });
+        btn.style.transform = "scale(1.1)"
+      })
       btn.addEventListener("mouseout", () => {
-        btn.style.transform = "scale(1)";
-      });
-      
+        btn.style.transform = "scale(1)"
+      })
+
       btn.addEventListener("click", (e) => {
-        e.stopPropagation();
+        e.stopPropagation()
         if (currentEditingTag && currentEditingTag.tag) {
-          tagColorsCache[currentEditingTag.tag] = color;
-          tagTextColorsCache[currentEditingTag.tag] = getContrastYIQ(color);
-          currentEditingTag.chip.style.backgroundColor = color;
-          currentEditingTag.chip.style.color = tagTextColorsCache[currentEditingTag.tag];
+          tagColorsCache[currentEditingTag.tag] = color
+          tagTextColorsCache[currentEditingTag.tag] = getContrastYIQ(color)
+          currentEditingTag.chip.style.backgroundColor = color
+          currentEditingTag.chip.style.color =
+            tagTextColorsCache[currentEditingTag.tag]
         } else if (currentEditingTag && !currentEditingTag.tag) {
           // It's the next-tag-color-btn
-          nextTagColor = color;
-          currentEditingTag.chip.style.backgroundColor = color;
+          nextTagColor = color
+          currentEditingTag.chip.style.backgroundColor = color
         }
-        globalColorPalette.classList.add("hidden");
-      });
-      globalColorPalette.appendChild(btn);
-    });
-    
+        globalColorPalette.classList.add("hidden")
+      })
+      globalColorPalette.appendChild(btn)
+    })
+
     document.addEventListener("mousedown", (e) => {
       if (globalColorPalette && !globalColorPalette.contains(e.target)) {
-        globalColorPalette.classList.add("hidden");
+        globalColorPalette.classList.add("hidden")
       }
-    });
-    
-    document.body.appendChild(globalColorPalette);
+    })
+
+    document.body.appendChild(globalColorPalette)
   }
-  
-  currentEditingTag = { tag, chip: chipElement };
-  globalColorPalette.classList.remove("hidden");
-  
-  const rect = chipElement.getBoundingClientRect();
-  globalColorPalette.style.position = "absolute";
-  globalColorPalette.style.top = (rect.bottom + window.scrollY + 4) + "px";
-  
-  let leftPos = rect.left + window.scrollX;
-  if (leftPos + 220 > window.innerWidth) { // 220px to leave some margin
-    leftPos = Math.max(10, (rect.right + window.scrollX) - 210);
+
+  currentEditingTag = { tag, chip: chipElement }
+  globalColorPalette.classList.remove("hidden")
+
+  const rect = chipElement.getBoundingClientRect()
+  globalColorPalette.style.position = "absolute"
+  globalColorPalette.style.top = rect.bottom + window.scrollY + 4 + "px"
+
+  let leftPos = rect.left + window.scrollX
+  if (leftPos + 220 > window.innerWidth) {
+    // 220px to leave some margin
+    leftPos = Math.max(10, rect.right + window.scrollX - 210)
   }
-  globalColorPalette.style.left = leftPos + "px";
+  globalColorPalette.style.left = leftPos + "px"
 }
 
 function getContrastYIQ(hexcolor) {
-    if (!hexcolor) return '#FFFFFF';
-    hexcolor = hexcolor.replace("#", "");
-    if (hexcolor.length === 3) hexcolor = hexcolor.split('').map(c => c + c).join('');
-    const r = parseInt(hexcolor.substr(0, 2), 16);
-    const g = parseInt(hexcolor.substr(2, 2), 16);
-    const b = parseInt(hexcolor.substr(4, 2), 16);
-    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-    return (yiq >= 128) ? '#000000' : '#FFFFFF';
+  if (!hexcolor) return "#FFFFFF"
+  hexcolor = hexcolor.replace("#", "")
+  if (hexcolor.length === 3)
+    hexcolor = hexcolor
+      .split("")
+      .map((c) => c + c)
+      .join("")
+  const r = parseInt(hexcolor.substr(0, 2), 16)
+  const g = parseInt(hexcolor.substr(2, 2), 16)
+  const b = parseInt(hexcolor.substr(4, 2), 16)
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000
+  return yiq >= 128 ? "#000000" : "#FFFFFF"
 }
 
 function renderTags() {
-  tagsContainer.querySelectorAll(".tag-chip").forEach(c => c.remove())
+  tagsContainer.querySelectorAll(".tag-chip").forEach((c) => c.remove())
   currentTags.forEach((tag, index) => {
     const chip = document.createElement("div")
     chip.className = "tag-chip"
-    
+
     // Apply custom colors if they exist
     const bgColor = tagColorsCache[tag] || "#3B82F6"
     const textColor = tagTextColorsCache[tag] || getContrastYIQ(bgColor)
     chip.style.backgroundColor = bgColor
     chip.style.color = textColor
 
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = tag;
-    nameSpan.style.cursor = "pointer";
-    nameSpan.title = "Click to change color";
-    
+    const nameSpan = document.createElement("span")
+    nameSpan.textContent = tag
+    nameSpan.style.cursor = "pointer"
+    nameSpan.title = "Click to change color"
+
     nameSpan.addEventListener("click", (e) => {
-      e.stopPropagation();
-      showColorPalette(tag, chip);
-    });
+      e.stopPropagation()
+      showColorPalette(tag, chip)
+    })
 
-    const removeSpan = document.createElement("span");
-    removeSpan.className = "remove";
-    removeSpan.setAttribute("data-index", index);
-    removeSpan.innerHTML = "&times;";
+    const removeSpan = document.createElement("span")
+    removeSpan.className = "remove"
+    removeSpan.setAttribute("data-index", index)
+    removeSpan.innerHTML = "&times;"
 
-    chip.appendChild(nameSpan);
-    chip.appendChild(removeSpan);
-    
-    const inputWrapper = document.getElementById("tags-input-wrapper");
+    chip.appendChild(nameSpan)
+    chip.appendChild(removeSpan)
+
+    const inputWrapper = document.getElementById("tags-input-wrapper")
     tagsContainer.insertBefore(chip, inputWrapper)
   })
   tagsHiddenInput.value = currentTags.join(",")
 }
 
-const nextTagColorBtn = document.getElementById("next-tag-color-btn");
+const nextTagColorBtn = document.getElementById("next-tag-color-btn")
 if (nextTagColorBtn) {
   nextTagColorBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    showColorPalette(null, nextTagColorBtn);
-  });
+    e.stopPropagation()
+    showColorPalette(null, nextTagColorBtn)
+  })
 }
 
 tagsContainer.addEventListener("click", (e) => {
-  const removeBtn = e.target.closest(".remove");
+  const removeBtn = e.target.closest(".remove")
   if (removeBtn) {
-    const index = parseInt(removeBtn.getAttribute("data-index"), 10);
+    const index = parseInt(removeBtn.getAttribute("data-index"), 10)
     if (!isNaN(index)) {
-      currentTags.splice(index, 1);
-      renderTags();
+      currentTags.splice(index, 1)
+      renderTags()
     }
   } else if (!e.target.closest(".tag-chip")) {
-    tagsInput.focus();
+    tagsInput.focus()
   }
 })
 
@@ -779,24 +845,42 @@ if (customTagSuggestions) {
 }
 
 tagsInput.addEventListener("keydown", (e) => {
-  const items = customTagSuggestions ? customTagSuggestions.querySelectorAll(".suggestion-item") : []
-  
+  const items = customTagSuggestions
+    ? customTagSuggestions.querySelectorAll(".suggestion-item")
+    : []
+
   if (e.key === "ArrowDown") {
     e.preventDefault()
-    if (customTagSuggestions && !customTagSuggestions.classList.contains("hidden") && items.length > 0) {
+    if (
+      customTagSuggestions &&
+      !customTagSuggestions.classList.contains("hidden") &&
+      items.length > 0
+    ) {
       activeSuggestionIndex = (activeSuggestionIndex + 1) % items.length
       updateActiveSuggestion(items)
     }
   } else if (e.key === "ArrowUp") {
     e.preventDefault()
-    if (customTagSuggestions && !customTagSuggestions.classList.contains("hidden") && items.length > 0) {
-      activeSuggestionIndex = (activeSuggestionIndex - 1 + items.length) % items.length
+    if (
+      customTagSuggestions &&
+      !customTagSuggestions.classList.contains("hidden") &&
+      items.length > 0
+    ) {
+      activeSuggestionIndex =
+        (activeSuggestionIndex - 1 + items.length) % items.length
       updateActiveSuggestion(items)
     }
   } else if (e.key === "Enter" || e.key === ",") {
     e.preventDefault()
-    if (customTagSuggestions && !customTagSuggestions.classList.contains("hidden") && activeSuggestionIndex >= 0) {
-      addTag(items[activeSuggestionIndex].querySelector("span:last-child").textContent)
+    if (
+      customTagSuggestions &&
+      !customTagSuggestions.classList.contains("hidden") &&
+      activeSuggestionIndex >= 0
+    ) {
+      addTag(
+        items[activeSuggestionIndex].querySelector("span:last-child")
+          .textContent,
+      )
     } else {
       addTag(tagsInput.value.trim().replace(/,/g, ""))
     }
@@ -853,13 +937,16 @@ function toggleFolderView(show) {
   }
 }
 
-if (openFolderBtn) openFolderBtn.addEventListener("click", () => toggleFolderView(true))
-if (closeFolderBtn) closeFolderBtn.addEventListener("click", () => toggleFolderView(false))
+if (openFolderBtn)
+  openFolderBtn.addEventListener("click", () => toggleFolderView(true))
+if (closeFolderBtn)
+  closeFolderBtn.addEventListener("click", () => toggleFolderView(false))
 
 const createFolderBtn = document.getElementById("create-folder-btn")
 const doneFolderBtn = document.getElementById("done-folder-view-btn")
 
-if (doneFolderBtn) doneFolderBtn.addEventListener("click", () => toggleFolderView(false))
+if (doneFolderBtn)
+  doneFolderBtn.addEventListener("click", () => toggleFolderView(false))
 
 if (createFolderBtn && newFolderInput) {
   createFolderBtn.addEventListener("click", () => {
@@ -869,7 +956,7 @@ if (createFolderBtn && newFolderInput) {
       newFolderInput.focus()
       return
     }
-    
+
     // Create folder and update UI
     chrome.bookmarks.create({ parentId, title }, (newFolder) => {
       preferredFolderId = newFolder.id
@@ -885,7 +972,7 @@ if (folderSearchInput) {
   folderSearchInput.addEventListener("input", (e) => {
     const query = e.target.value.toLowerCase()
     const items = document.querySelectorAll(".folder-tree-item")
-    items.forEach(item => {
+    items.forEach((item) => {
       if (item.textContent.toLowerCase().includes(query)) {
         item.style.display = "flex"
       } else {
@@ -897,101 +984,128 @@ if (folderSearchInput) {
 const suggestTagBtn = document.getElementById("suggest-tag-btn")
 if (suggestTagBtn) {
   suggestTagBtn.addEventListener("click", async () => {
-    if (!currentTab || !currentTab.url) return;
-    
-    suggestTagBtn.disabled = true;
-    const suggestTagIcon = document.getElementById("suggest-tag-icon");
-    const suggestTagText = document.getElementById("suggest-tag-text");
-    
-    if (suggestTagIcon) suggestTagIcon.className = "fas fa-spinner fa-spin";
-    if (suggestTagText) suggestTagText.textContent = "...";
-    
-    let suggestedTag = "";
-    
+    if (!currentTab || !currentTab.url) return
+
+    suggestTagBtn.disabled = true
+    const suggestTagIcon = document.getElementById("suggest-tag-icon")
+    const suggestTagText = document.getElementById("suggest-tag-text")
+
+    if (suggestTagIcon) suggestTagIcon.className = "fas fa-spinner fa-spin"
+    if (suggestTagText) suggestTagText.textContent = "..."
+
+    let suggestedTag = ""
+
     try {
-      const data = await new Promise(resolve => chrome.storage.local.get(["aiConfig"], resolve));
-      const config = data.aiConfig || { model: "gemini", apiKey: "" };
-      
+      const data = await new Promise((resolve) =>
+        chrome.storage.local.get(["aiConfig"], resolve),
+      )
+      const config = data.aiConfig || { model: "gemini", apiKey: "" }
+
       if (config.apiKey && config.model === "gemini") {
-        const modelName = config.modelName || "gemini-1.5-flash";
-        let apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=${config.apiKey}";
-        
+        const modelName = config.modelName || "gemini-1.5-flash"
+        let apiUrl =
+          "https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=${config.apiKey}"
+
         const response = await fetch(apiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.\nTitle: \"${currentTab.title}\", URL: \"${currentTab.url}\"" }] }]
-          })
-        });
-        
+            contents: [
+              {
+                parts: [
+                  {
+                    text: 'You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.\nTitle: "${currentTab.title}", URL: "${currentTab.url}"',
+                  },
+                ],
+              },
+            ],
+          }),
+        })
+
         if (response.ok) {
-          const resData = await response.json();
-          if (resData.candidates && resData.candidates[0].content.parts[0].text) {
-            suggestedTag = resData.candidates[0].content.parts[0].text.trim().replace(/['"]/g, '').substring(0, 20);
+          const resData = await response.json()
+          if (
+            resData.candidates &&
+            resData.candidates[0].content.parts[0].text
+          ) {
+            suggestedTag = resData.candidates[0].content.parts[0].text
+              .trim()
+              .replace(/['"]/g, "")
+              .substring(0, 20)
           }
         }
-      } else if (config.model === "local" && typeof self.ai !== "undefined" && self.ai.languageModel) {
-          const session = await self.ai.languageModel.create({
-              systemPrompt: "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark."
-          });
-          const result = await session.prompt("Title: \"${currentTab.title}\", URL: \"${currentTab.url}\"");
-          if (result) {
-              suggestedTag = result.trim().replace(/['"]/g, '').substring(0, 20);
-          }
+      } else if (
+        config.model === "local" &&
+        typeof self.ai !== "undefined" &&
+        self.ai.languageModel
+      ) {
+        const session = await self.ai.languageModel.create({
+          systemPrompt:
+            "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.",
+        })
+        const result = await session.prompt(
+          'Title: "${currentTab.title}", URL: "${currentTab.url}"',
+        )
+        if (result) {
+          suggestedTag = result.trim().replace(/['"]/g, "").substring(0, 20)
+        }
       }
     } catch (e) {
-      console.error("AI Categorize failed", e);
+      console.error("AI Categorize failed", e)
     }
-    
+
     if (!suggestedTag) {
       try {
-        const urlObj = new URL(currentTab.url);
-        let hostname = urlObj.hostname.replace("www.", "");
-        suggestedTag = hostname.split(".")[0];
-      } catch(e) {}
+        const urlObj = new URL(currentTab.url)
+        let hostname = urlObj.hostname.replace("www.", "")
+        suggestedTag = hostname.split(".")[0]
+      } catch (e) {}
     }
-    
+
     if (suggestedTag) {
-      suggestedTag = suggestedTag.charAt(0).toUpperCase() + suggestedTag.slice(1).toLowerCase();
-      addTag(suggestedTag);
+      suggestedTag =
+        suggestedTag.charAt(0).toUpperCase() +
+        suggestedTag.slice(1).toLowerCase()
+      addTag(suggestedTag)
     }
-    
-    suggestTagBtn.disabled = false;
-    if (suggestTagIcon) suggestTagIcon.className = "fas fa-wand-magic-sparkles";
+
+    suggestTagBtn.disabled = false
+    if (suggestTagIcon) suggestTagIcon.className = "fas fa-wand-magic-sparkles"
     if (suggestTagText) {
-      const lang = localStorage.getItem("appLanguage") || "en";
-      suggestTagText.textContent = qsTranslations[lang]?.btnSuggestText || "Suggest";
+      const lang = localStorage.getItem("appLanguage") || "en"
+      suggestTagText.textContent =
+        qsTranslations[lang]?.btnSuggestText || "Suggest"
     }
-  });
+  })
 }
 
 function applyTranslations() {
-  const lang = localStorage.getItem("appLanguage") || "en";
-  const t = qsTranslations[lang] || qsTranslations.en;
-  
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.getAttribute("data-i18n");
+  const lang = localStorage.getItem("appLanguage") || "en"
+  const t = qsTranslations[lang] || qsTranslations.en
+
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n")
     if (t[key]) {
-      el.textContent = t[key];
+      el.textContent = t[key]
     }
-  });
-  
-  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-    const key = el.getAttribute("data-i18n-placeholder");
+  })
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-placeholder")
     if (t[key]) {
-      el.setAttribute("placeholder", t[key]);
+      el.setAttribute("placeholder", t[key])
     }
-  });
+  })
 }
-document.addEventListener("DOMContentLoaded", applyTranslations);
-applyTranslations(); // Run immediately in case DOM is already loaded
+document.addEventListener("DOMContentLoaded", applyTranslations)
+applyTranslations() // Run immediately in case DOM is already loaded
 
 function tStatus(key, ...args) {
-  const lang = localStorage.getItem("appLanguage") || "en";
-  const t = qsTranslations[lang] || qsTranslations.en;
-  let text = t[key] || key;
+  const lang = localStorage.getItem("appLanguage") || "en"
+  const t = qsTranslations[lang] || qsTranslations.en
+  let text = t[key] || key
   args.forEach((arg, index) => {
-    text = text.replace("{" + index + "}", arg);
-  });
-  return text;
+    text = text.replace("{" + index + "}", arg)
+  })
+  return text
 }
