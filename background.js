@@ -48,7 +48,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 // Note: quick-save.html is already the default_popup in manifest.json.
 // Only override if user has chosen a different action to avoid async delay.
 chrome.storage.local.get(["quickOpenAction"], (data) => {
-  const action = data.quickOpenAction || "quickSave"
+  const action = data.quickOpenAction || "popup"
   if (action === "nativePopup") {
     chrome.action.setPopup({ popup: "index.html?mode=native_popup" })
   } else if (action === "quickSave") {
@@ -468,7 +468,7 @@ function createPopupWindow(tab) {
     const screenWidth = display.workArea.width
 
     const popupWidth = 380
-    const popupHeight = 680
+    const popupHeight = 750
     const padding = 20
 
     const tabIdParam = tab?.id ? `?tabId=${encodeURIComponent(tab.id)}` : ""
@@ -537,7 +537,7 @@ function findExistingExtensionPopup(path, callback) {
 chrome.action.onClicked.addListener((tab) => {
   chrome.storage.local.get(["quickOpenAction"], (result) => {
     // console.log("Quick Open Action retrieved:", result.quickOpenAction)
-    const action = result.quickOpenAction || "quickSave"
+    const action = result.quickOpenAction || "popup"
 
     if (action === "web") {
       const bookmarksUrl = chrome.runtime.getURL("bookmarks.html")

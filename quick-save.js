@@ -26,15 +26,19 @@ if (isEmbedded) {
   // Auto resize disabled - managed by CSS flex
   let lastHeight = 0
   const updateHeight = () => {
-    if (window.parent) {
-      const frame = window.parent.document.getElementById("quick-save-frame")
-      const shell = document.querySelector(".quick-save-shell")
-      if (frame && shell) {
-        const newHeight = shell.offsetHeight + 24
-        if (Math.abs(newHeight - lastHeight) > 2) {
-          lastHeight = newHeight
-          frame.style.height = newHeight + "px"
-        }
+    const shell = document.querySelector(".quick-save-shell")
+    if (shell && window.parent) {
+      const newHeight = shell.offsetHeight + 24
+      if (Math.abs(newHeight - lastHeight) > 2) {
+        lastHeight = newHeight
+        // Send message to parent to resize iframe (safest method)
+        window.parent.postMessage({ type: "resizeIframe", height: newHeight }, "*")
+        
+        // Also try direct DOM access as fallback
+        try {
+          const frame = window.parent.document.getElementById("quick-save-frame")
+          if (frame) frame.style.height = newHeight + "px"
+        } catch (e) {}
       }
     }
   }
@@ -557,7 +561,7 @@ openDashboardButton.addEventListener("click", () => {
 
 // Initialize quick open action setting
 chrome.storage.local.get(["quickOpenAction"], (result) => {
-  const action = result.quickOpenAction || "quickSave"
+  const action = result.quickOpenAction || "popup"
   const btns = document.querySelectorAll(".quick-action-btn")
   btns.forEach((btn) => {
     if (btn.dataset.value === action) {

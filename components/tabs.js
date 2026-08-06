@@ -71,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.data && event.data.type === "resizeIframe") {
             if (quickSaveFrame) {
                 quickSaveFrame.style.height = event.data.height + "px";
-                quickSaveView.style.overflow = "visible";
             }
         }
     });
