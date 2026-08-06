@@ -1479,6 +1479,45 @@
             </div>
         </div>
 
+    <!-- Save Session Modal -->
+    <div id="save-session-popup" class="rename-popup hidden" role="dialog" aria-labelledby="save-session-title">
+        <div class="rename-popup-content" style="max-width: 400px;">
+            <div style="font-size: 28px; color: var(--primary-color); margin-bottom: 8px; text-align: center;">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <h3 id="save-session-title"
+                style="margin-top:0; font-size: 18px; font-weight: 600; color: var(--text-color); text-align: center;">
+                Save Current Session
+            </h3>
+            <p style="margin-bottom: 15px; font-size: 13px; color: var(--text-muted); text-align: center;">
+                Save all open tabs in this window to a bookmark folder.
+            </p>
+
+            <div style="margin-bottom: 15px; text-align: left;">
+                <label
+                    style="display: block; font-size: 12px; margin-bottom: 6px; color: var(--text-color); font-weight: 500;">Select Folder:</label>
+                <select id="save-session-folder-select" class="select"
+                    style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box; margin-bottom: 8px;">
+                    <option value="new">-- Create New Folder --</option>
+                </select>
+                
+                <input type="text" id="save-session-folder-name" class="search-input"
+                    placeholder="New Folder Name"
+                    style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box;">
+            </div>
+
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button id="cancel-save-session-btn" class="button cancel"
+                    style="flex: 1; justify-content: center; background: var(--bg-secondary); color: var(--text-color);">
+                    Cancel
+                </button>
+                <button id="confirm-save-session-btn" class="button save"
+                    style="flex: 1; justify-content: center; background: var(--primary-color); color: white;">
+                    <i class="fas fa-save"></i> Save Tabs
+                </button>
+            </div>
+        </div>
+    </div>
     <!-- Cloud Sync Modal -->
     <div id="cloud-sync-popup" class="rename-popup hidden" role="dialog" aria-labelledby="cloud-sync-title">
         <div class="rename-popup-content" style="max-width: 400px; text-align: center;">
