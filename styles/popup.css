@@ -921,6 +921,7 @@ body.is-scrolled .sticky-search {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   word-break: break-word;
 }
 
@@ -933,6 +934,7 @@ body.is-scrolled .sticky-search {
 
 .detail-note-preview span {
   -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 .card-note-preview {
@@ -2161,7 +2163,7 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 /* Native Popup Mode Styles */
 body.native-popup {
   width: 350px;
-  height: 600px;
+  height: 300px;
   overflow-x: hidden;
   overflow-y: auto;
 }

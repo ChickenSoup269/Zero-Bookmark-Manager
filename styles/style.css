@@ -3807,8 +3807,6 @@ html {
   box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
 }
 
-}
-
 /* Override default grid layout for Kanban and Bento views */
 .folder-list.kanban-view,
 .folder-list.bento-view {
@@ -3928,6 +3926,7 @@ html {
   text-decoration: none;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.35;
@@ -3948,11 +3947,6 @@ html {
 }
 
 /* --- Responsive cho Popup hoặc Màn hình nhỏ --- */
-@media (max-width: 1100px) {
-  .folder-list.mockup-view {
-    /* grid-template-columns removed for responsiveness */
-  }
-}
 
 @media (max-width: 768px) {
   .folder-list.mockup-view {
@@ -3977,6 +3971,7 @@ html {
   .mockup-title {
     font-size: 0.8rem; /* Tiêu đề nhỏ hơn nữa ở popup */
   }
+}
 @media (max-width: 800px) {
   .folder-list.mockup-view {
     /* grid-template-columns removed */
@@ -4015,7 +4010,9 @@ html {
     padding-top: 4px;
   }
   .mockup-title {
+    -webkit-box-orient: vertical;
     -webkit-line-clamp: 2; /* Vẫn giữ 2 dòng nhưng co lại */
+    line-clamp: 2;
     line-height: 1.25;
   }
   
@@ -4925,7 +4922,7 @@ html {
   display: grid;
   grid-template-columns: 32px minmax(0, 1fr);
   gap: 12px;
-
+}
 
 /* KEYBOARD FOCUS STYLES */
 .keyboard-focus {
