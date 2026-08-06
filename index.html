@@ -170,7 +170,7 @@
                         <button id="open-side-panel-option" class="menu-item">
                             <i class="fas fa-columns"></i> Open Side Panel
                         </button>
-                        
+
                         <!-- Tools -->
                         <button id="smart-cleanup-button" class="menu-item">
                             <i class="fas fa-magic" aria-hidden="true" style="color: var(--accent-color);"></i>
@@ -209,14 +209,16 @@
                     <div class="menu-group">
                         <div id="quick-open-settings" class="quick-open-settings">
                             <label class="segmented-control-item">
-                                <input type="radio" id="quick-open-quickSave" name="quickOpenAction" value="quickSave" />
+                                <input type="radio" id="quick-open-quickSave" name="quickOpenAction"
+                                    value="quickSave" />
                                 <span class="control-label">
                                     <i class="fas fa-bookmark" aria-hidden="true"></i>
                                     <span data-i18n="quickOpenQuickSave">Quick Save</span>
                                 </span>
                             </label>
                             <label class="segmented-control-item">
-                                <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup" checked />
+                                <input type="radio" id="quick-open-popup" name="quickOpenAction" value="popup"
+                                    checked />
                                 <span class="control-label">
                                     <i class="fas fa-window-restore" aria-hidden="true"></i>
                                     <span data-i18n="quickOpenPopup">Popup</span>
@@ -372,8 +374,8 @@
                         </div>
 
                         <div class="app-setting-field">
-                            <label><i class="fas fa-folder-tree"></i> <span
-                                    data-i18n="smartFoldersConfig">Smart Folders:</span></label>
+                            <label><i class="fas fa-folder-tree"></i> <span data-i18n="smartFoldersConfig">Smart
+                                    Folders:</span></label>
                             <div class="setting-pill-group" id="smart-folders-select">
                                 <button class="theme-swatch setting-swatch" data-value="show"
                                     data-i18n="smartFoldersShow">Show</button>
@@ -911,9 +913,9 @@
             </div>
         </div> <!-- end dashboard-view -->
 
-        <div id="quick-save-view" class="tab-content"
-            style="display: none; padding-bottom: 20px;">
-            <iframe id="quick-save-frame" style="width: 100%; height: 100%; min-height: 600px; border: none; display: block;"
+        <div id="quick-save-view" class="tab-content" style="display: none; padding-bottom: 20px;">
+            <iframe id="quick-save-frame"
+                style="width: 100%; height: 80%; min-height: 550px; border: none; display: block;"
                 scrolling="auto"></iframe>
         </div>
 
@@ -942,14 +944,14 @@
 
             <div style="margin-bottom: 15px; text-align: left;">
                 <label
-                    style="display: block; font-size: 12px; margin-bottom: 6px; color: var(--text-color); font-weight: 500;">Select Folder:</label>
+                    style="display: block; font-size: 12px; margin-bottom: 6px; color: var(--text-color); font-weight: 500;">Select
+                    Folder:</label>
                 <select id="save-session-folder-select" class="select"
                     style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box; margin-bottom: 8px;">
                     <option value="new">-- Create New Folder --</option>
                 </select>
-                
-                <input type="text" id="save-session-folder-name" class="search-input"
-                    placeholder="New Folder Name"
+
+                <input type="text" id="save-session-folder-name" class="search-input" placeholder="New Folder Name"
                     style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box;">
             </div>
 
