@@ -955,6 +955,8 @@ html {
   text-align: center;
   max-width: 400px;
   width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .rename-popup-content h3 {
@@ -4472,6 +4474,7 @@ html {
 
 .smart-cleanup-body {
   min-height: 0;
+  flex: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: 14px;
@@ -4507,6 +4510,12 @@ html {
   margin-top: 14px;
   padding-top: 14px;
   border-top: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+  .smart-cleanup-body {
+    grid-template-columns: 1fr;
+  }
 }
 
 .smart-cleanup-popup-content > .rename-popup-buttons .button {

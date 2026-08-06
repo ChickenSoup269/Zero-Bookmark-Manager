@@ -29,11 +29,12 @@ body.embedded {
   min-height: 100%;
   background-image: none;
   background-color: transparent;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 body.embedded .quick-save-shell {
-  padding: 8px 12px 12px 12px;
+  padding: 4px 12px 0px 12px;
+  background: none;
   gap: 8px;
   animation: none;
 }
@@ -327,7 +328,9 @@ option:hover {
   font-weight: 600;
   font-size: 1rem;
   padding: 14px 20px;
-  transition: opacity 0.2s ease, transform 0.1s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
   display: flex;
   justify-content: center;
   align-items: center;

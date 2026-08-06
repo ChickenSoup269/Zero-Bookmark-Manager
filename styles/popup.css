@@ -401,6 +401,14 @@ body.is-scrolled .sticky-search {
   display: flex;
   gap: 20px;
   align-items: flex-start;
+  text-align: left;
+}
+
+@media (max-width: 480px) {
+  #bookmark-detail-popup .rename-popup-content {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 #bookmark-detail-popup .bookmark-thumbnail {
@@ -1135,6 +1143,7 @@ body.is-scrolled .sticky-search {
     transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
   max-height: none;
   overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
@@ -2089,8 +2098,6 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   margin-bottom: 2px;
   font-weight: 900 !important;
 }
-
-
 
 .app-setting-action {
   justify-content: flex-start;
