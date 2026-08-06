@@ -99,7 +99,8 @@ body.dracula-theme {
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --text-option: #ff79c6;
   --hover-bg-option: #3a3c4e;
-  --bg-tags-select: rgba(40, 42, 54, 0.9);}
+  --bg-tags-select: rgba(40, 42, 54, 0.9);
+}
 
 /* OneDark theme */
 [data-theme="onedark"],
@@ -128,7 +129,7 @@ body.onedark-theme {
   --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
   --text-option: #98c379;
   --hover-bg-option: #323842;
-  --bg-tags-select: rgba(40, 44, 52, 0.9)
+  --bg-tags-select: rgba(40, 44, 52, 0.9);
 }
 
 /* Tet theme */
@@ -341,7 +342,8 @@ body.winter-is-coming-theme {
 }
 
 /* Nord Theme */
-[data-theme="nord"], body.nord-theme {
+[data-theme="nord"],
+body.nord-theme {
   --bg-primary: #2e3440;
   --bg-secondary: #3b4252;
   --text-primary: #d8dee9;
@@ -355,7 +357,8 @@ body.winter-is-coming-theme {
 }
 
 /* SynthWave '84 Theme */
-[data-theme="synthwave"], body.synthwave-theme {
+[data-theme="synthwave"],
+body.synthwave-theme {
   --bg-primary: #2b213a;
   --bg-secondary: #1a1625;
   --text-primary: #fdfdfd;
@@ -369,7 +372,8 @@ body.winter-is-coming-theme {
 }
 
 /* Gruvbox Theme */
-[data-theme="gruvbox"], body.gruvbox-theme {
+[data-theme="gruvbox"],
+body.gruvbox-theme {
   --bg-primary: #282828;
   --bg-secondary: #3c3836;
   --text-primary: #ebdbb2;
@@ -383,7 +387,8 @@ body.winter-is-coming-theme {
 }
 
 /* Catppuccin Theme */
-[data-theme="catppuccin"], body.catppuccin-theme {
+[data-theme="catppuccin"],
+body.catppuccin-theme {
   --bg-primary: #1e1e2e;
   --bg-secondary: #181825;
   --text-primary: #cdd6f4;
@@ -397,7 +402,8 @@ body.winter-is-coming-theme {
 }
 
 /* Night Owl Theme */
-[data-theme="nightowl"], body.nightowl-theme {
+[data-theme="nightowl"],
+body.nightowl-theme {
   --bg-primary: #011627;
   --bg-secondary: #0b2942;
   --text-primary: #d6deeb;
@@ -411,7 +417,8 @@ body.winter-is-coming-theme {
 }
 
 /* Nord Light Theme */
-[data-theme="nord-light"], body.nord-light-theme {
+[data-theme="nord-light"],
+body.nord-light-theme {
   --bg-primary: #eceff4;
   --bg-secondary: #ffffff;
   --bg-tertiary: #e5e9f0;
@@ -426,7 +433,8 @@ body.winter-is-coming-theme {
 }
 
 /* Gruvbox Light Theme */
-[data-theme="gruvbox-light"], body.gruvbox-light-theme {
+[data-theme="gruvbox-light"],
+body.gruvbox-light-theme {
   --bg-primary: #ebdbb2;
   --bg-secondary: #fbf1c7;
   --bg-tertiary: #d5c4a1;
@@ -441,7 +449,8 @@ body.winter-is-coming-theme {
 }
 
 /* Catppuccin Light Theme */
-[data-theme="catppuccin-light"], body.catppuccin-light-theme {
+[data-theme="catppuccin-light"],
+body.catppuccin-light-theme {
   --bg-primary: #e6e9ef;
   --bg-secondary: #eff1f5;
   --bg-tertiary: #dce0e8;
@@ -456,7 +465,8 @@ body.winter-is-coming-theme {
 }
 
 /* Night Owl Light Theme */
-[data-theme="nightowl-light"], body.nightowl-light-theme {
+[data-theme="nightowl-light"],
+body.nightowl-light-theme {
   --bg-primary: #e8ebf0;
   --bg-secondary: #ffffff;
   --bg-tertiary: #d2dbe2;
@@ -468,4 +478,27 @@ body.winter-is-coming-theme {
   --success-color: #08916a;
   --hover-bg: #d2dbe2;
   --bg-tags-select: rgba(255, 255, 255, 0.95);
+}
+
+/* Fix tree-view bookmark items being too dark in certain light themes */
+[data-theme="nord-light"] .tree-view .bookmark-item,
+[data-theme="nord-light"] .tree-view .folder-item,
+[data-theme="gruvbox-light"] .tree-view .bookmark-item,
+[data-theme="gruvbox-light"] .tree-view .folder-item,
+[data-theme="catppuccin-light"] .tree-view .bookmark-item,
+[data-theme="catppuccin-light"] .tree-view .folder-item,
+[data-theme="nightowl-light"] .tree-view .bookmark-item,
+[data-theme="nightowl-light"] .tree-view .folder-item {
+  background: var(--bg-secondary) !important;
+}
+
+[data-theme="nord-light"] .tree-view .bookmark-item:hover,
+[data-theme="nord-light"] .tree-view .folder-item:hover,
+[data-theme="gruvbox-light"] .tree-view .bookmark-item:hover,
+[data-theme="gruvbox-light"] .tree-view .folder-item:hover,
+[data-theme="catppuccin-light"] .tree-view .bookmark-item:hover,
+[data-theme="catppuccin-light"] .tree-view .folder-item:hover,
+[data-theme="nightowl-light"] .tree-view .bookmark-item:hover,
+[data-theme="nightowl-light"] .tree-view .folder-item:hover {
+  background: var(--bg-primary) !important;
 }
