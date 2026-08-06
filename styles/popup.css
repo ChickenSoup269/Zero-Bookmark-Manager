@@ -2163,7 +2163,7 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 /* Native Popup Mode Styles */
 body.native-popup {
   width: 350px;
-  height: 300px;
+  height: 600px;
   overflow-x: hidden;
   overflow-y: auto;
 }

@@ -32,7 +32,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
       updateUninstallFeedbackUrl(changes.appLanguage.newValue)
     }
     if (changes.quickOpenAction) {
-      const action = changes.quickOpenAction.newValue;
+      const action = changes.quickOpenAction.newValue
       if (action === "nativePopup") {
         chrome.action.setPopup({ popup: "index.html?mode=native_popup" })
       } else if (action === "quickSave") {
@@ -364,95 +364,115 @@ const handleDuplicateBookmarks = (id, newBookmark) => {
 chrome.bookmarks.onCreated.addListener(handleDuplicateBookmarks)
 
 const handleAutoCategorizeBookmark = (id, newBookmark) => {
-  chrome.storage.local.get(["uiState", "aiConfig", "bookmarkTags", "tagColors", "tagTextColors"], async (data) => {
-    const state = data.uiState || {}
-    if (!state.autoAiCategorize || !newBookmark.url) return;
-    
-    let suggestedTag = "";
-    
-    // Attempt AI extraction
-    try {
-      const config = data.aiConfig || { model: "gemini", apiKey: "" };
-      if (config.apiKey && config.model === "gemini") {
-        const modelName = config.modelName || "gemini-1.5-flash";
-        let apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${config.apiKey}`;
-        const prompt = `Classify this bookmark into ONE single short category tag (max 2 words): Title: "${newBookmark.title}", URL: "${newBookmark.url}". Return ONLY the tag name, nothing else.`;
-        
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.1 }
+  chrome.storage.local.get(
+    ["uiState", "aiConfig", "bookmarkTags", "tagColors", "tagTextColors"],
+    async (data) => {
+      const state = data.uiState || {}
+      if (!state.autoAiCategorize || !newBookmark.url) return
+
+      let suggestedTag = ""
+
+      // Attempt AI extraction
+      try {
+        const config = data.aiConfig || { model: "gemini", apiKey: "" }
+        if (config.apiKey && config.model === "gemini") {
+          const modelName = config.modelName || "gemini-1.5-flash"
+          let apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${config.apiKey}`
+          const prompt = `Classify this bookmark into ONE single short category tag (max 2 words): Title: "${newBookmark.title}", URL: "${newBookmark.url}". Return ONLY the tag name, nothing else.`
+
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { temperature: 0.1 },
+            }),
           })
-        });
-        
-        if (response.ok) {
-          const resData = await response.json();
-          if (resData.candidates && resData.candidates[0].content.parts[0].text) {
-            suggestedTag = resData.candidates[0].content.parts[0].text.trim().replace(/['"]/g, '').substring(0, 20);
+
+          if (response.ok) {
+            const resData = await response.json()
+            if (
+              resData.candidates &&
+              resData.candidates[0].content.parts[0].text
+            ) {
+              suggestedTag = resData.candidates[0].content.parts[0].text
+                .trim()
+                .replace(/['"]/g, "")
+                .substring(0, 20)
+            }
           }
-        }
-      } else if (config.model === "local" && typeof self.ai !== "undefined" && self.ai.languageModel) {
+        } else if (
+          config.model === "local" &&
+          typeof self.ai !== "undefined" &&
+          self.ai.languageModel
+        ) {
           // Chrome built in AI
           const session = await self.ai.languageModel.create({
-              systemPrompt: "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark."
-          });
-          const result = await session.prompt(`Title: "${newBookmark.title}", URL: "${newBookmark.url}"`);
+            systemPrompt:
+              "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.",
+          })
+          const result = await session.prompt(
+            `Title: "${newBookmark.title}", URL: "${newBookmark.url}"`,
+          )
           if (result) {
-              suggestedTag = result.trim().replace(/['"]/g, '').substring(0, 20);
+            suggestedTag = result.trim().replace(/['"]/g, "").substring(0, 20)
           }
+        }
+      } catch (e) {
+        console.error("AI Categorize failed", e)
       }
-    } catch (e) {
-      console.error("AI Categorize failed", e);
-    }
-    
-    // Fallback to domain if AI failed
-    if (!suggestedTag) {
-      try {
-        const urlObj = new URL(newBookmark.url);
-        let hostname = urlObj.hostname.replace("www.", "");
-        suggestedTag = hostname.split(".")[0];
-      } catch(e) {}
-    }
-    
-    if (suggestedTag) {
+
+      // Fallback to domain if AI failed
+      if (!suggestedTag) {
+        try {
+          const urlObj = new URL(newBookmark.url)
+          let hostname = urlObj.hostname.replace("www.", "")
+          suggestedTag = hostname.split(".")[0]
+        } catch (e) {}
+      }
+
+      if (suggestedTag) {
         // Capitalize tag
-        suggestedTag = suggestedTag.charAt(0).toUpperCase() + suggestedTag.slice(1).toLowerCase();
-        
+        suggestedTag =
+          suggestedTag.charAt(0).toUpperCase() +
+          suggestedTag.slice(1).toLowerCase()
+
         // Re-fetch storage to avoid race conditions with Quick Save
-        chrome.storage.local.get(["bookmarkTags", "tagColors", "tagTextColors"], (latestData) => {
-            let tags = latestData.bookmarkTags || {};
-            let colors = latestData.tagColors || {};
-            let textColors = latestData.tagTextColors || {};
-            
+        chrome.storage.local.get(
+          ["bookmarkTags", "tagColors", "tagTextColors"],
+          (latestData) => {
+            let tags = latestData.bookmarkTags || {}
+            let colors = latestData.tagColors || {}
+            let textColors = latestData.tagTextColors || {}
+
             // If the user already manually added tags (e.g., via Quick Save) while we were waiting,
             // we should respect their choice and not auto-categorize it, or at least not overwrite.
             if (tags[id] && tags[id].length > 0) {
-                return; // Skip auto-categorize if already tagged
+              return // Skip auto-categorize if already tagged
             }
-            
-            if (!tags[id]) tags[id] = [];
+
+            if (!tags[id]) tags[id] = []
             if (!tags[id].includes(suggestedTag)) {
-                tags[id].push(suggestedTag);
+              tags[id].push(suggestedTag)
             }
-            
+
             if (!colors[suggestedTag]) {
-                colors[suggestedTag] = "#3B82F6"; // default blue
-                textColors[suggestedTag] = "#FFFFFF";
+              colors[suggestedTag] = "#3B82F6" // default blue
+              textColors[suggestedTag] = "#FFFFFF"
             }
-            
+
             chrome.storage.local.set({
-                bookmarkTags: tags,
-                tagColors: colors,
-                tagTextColors: textColors
-            });
-        });
-    }
-  });
+              bookmarkTags: tags,
+              tagColors: colors,
+              tagTextColors: textColors,
+            })
+          },
+        )
+      }
+    },
+  )
 }
 chrome.bookmarks.onCreated.addListener(handleAutoCategorizeBookmark)
-
 
 let popupWindowId = null
 let quickSaveWindowId = null
@@ -468,7 +488,7 @@ function createPopupWindow(tab) {
     const screenWidth = display.workArea.width
 
     const popupWidth = 380
-    const popupHeight = 750
+    const popupHeight = 700
     const padding = 20
 
     const tabIdParam = tab?.id ? `?tabId=${encodeURIComponent(tab.id)}` : ""
@@ -515,23 +535,23 @@ function createQuickSaveWindow(tab) {
 }
 
 function findExistingExtensionPopup(path, callback) {
-  const popupUrl = chrome.runtime.getURL(path.split('?')[0]);
+  const popupUrl = chrome.runtime.getURL(path.split("?")[0])
 
   chrome.tabs.query({ url: popupUrl + "*" }, (tabs) => {
     if (tabs && tabs.length > 0) {
       // Find the window for the first matching tab
-      const tab = tabs[0];
+      const tab = tabs[0]
       chrome.windows.get(tab.windowId, { populate: true }, (win) => {
         if (win && win.type === "popup") {
-          callback(win);
+          callback(win)
         } else {
-          callback(null);
+          callback(null)
         }
-      });
+      })
     } else {
-      callback(null);
+      callback(null)
     }
-  });
+  })
 }
 
 chrome.action.onClicked.addListener((tab) => {
@@ -618,32 +638,32 @@ chrome.commands.onCommand.addListener((command, tab) => {
 })
 // Snooze Bookmark Logic
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name.startsWith('snooze_')) {
-    const bookmarkId = alarm.name.replace('snooze_', '');
+  if (alarm.name.startsWith("snooze_")) {
+    const bookmarkId = alarm.name.replace("snooze_", "")
     chrome.bookmarks.get(bookmarkId, (results) => {
       if (results && results.length > 0) {
-        const bookmark = results[0];
+        const bookmark = results[0]
         chrome.notifications.create(alarm.name, {
-          type: 'basic',
-          iconUrl: 'icons/icon.png',
-          title: '⏰ Nhắc nhở đọc Bookmark',
+          type: "basic",
+          iconUrl: "icons/icon.png",
+          title: "⏰ Nhắc nhở đọc Bookmark",
           message: bookmark.title,
-          contextMessage: 'Nhấn vào đây để mở liên kết',
-          requireInteraction: true
-        });
+          contextMessage: "Nhấn vào đây để mở liên kết",
+          requireInteraction: true,
+        })
       }
-    });
+    })
   }
-});
+})
 chrome.notifications.onClicked.addListener((notificationId) => {
-  if (notificationId.startsWith('snooze_')) {
-    const bookmarkId = notificationId.replace('snooze_', '');
+  if (notificationId.startsWith("snooze_")) {
+    const bookmarkId = notificationId.replace("snooze_", "")
     chrome.bookmarks.get(bookmarkId, (results) => {
       if (results && results.length > 0) {
-        const bookmark = results[0];
-        chrome.tabs.create({ url: bookmark.url });
-        chrome.notifications.clear(notificationId);
+        const bookmark = results[0]
+        chrome.tabs.create({ url: bookmark.url })
+        chrome.notifications.clear(notificationId)
       }
-    });
+    })
   }
-});
+})
