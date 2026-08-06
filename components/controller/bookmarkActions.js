@@ -1062,7 +1062,7 @@ function handleRenameSave(e, elements) {
             renderFilteredBookmarks(nodes, elements)
             showCustomPopup(getTranslation("renameSuccess"), "success")
             registerUndo({
-              message: getTranslation("undoRenameMessage", "Bookmark renamed."),
+              message: getTranslation("undoRenameMessage", "Bookmark renamed.") + ` (${previousTitle} - ID: ${updated.id})`,
               actionLabel: getTranslation("undoAction", "Undo"),
               elements,
               undo: () =>
@@ -1136,7 +1136,7 @@ function handleDeleteBookmark(e, elements) {
         showCustomPopup(getTranslation("deleteBookmarkSuccess"), "success")
         if (snapshots.length) {
           registerUndo({
-            message: getTranslation("undoDeleteMessage", "Bookmark deleted."),
+            message: getTranslation("undoDeleteMessage", "Bookmark deleted.") + ` (${snapshots[0].title} - ID: ${id})`,
             actionLabel: getTranslation("undoAction", "Undo"),
             elements,
             undo: () => restoreDeletedBookmarks(snapshots),

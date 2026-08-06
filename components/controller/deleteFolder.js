@@ -108,7 +108,7 @@ export function handleDeleteFolder(folderId, elements) {
             const t = translations[language] || translations.en;
             
             registerUndo({
-              message: t.undoDeleteMessage || "Folder deleted.",
+              message: (t.undoDeleteMessage || "Folder deleted.") + ` (${folderNode.title} - ID: ${folderNode.id})`,
               actionLabel: t.undoAction || "Undo",
               elements: elements,
               undo: async () => {
