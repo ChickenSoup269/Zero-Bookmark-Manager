@@ -26,21 +26,23 @@ if (isEmbedded) {
   // Auto resize disabled - managed by CSS flex
   let lastHeight = 0
   const updateHeight = () => {
-    const shell = document.querySelector(".quick-save-shell")
-    if (shell && window.parent) {
-      const newHeight = shell.offsetHeight + 24
-      if (Math.abs(newHeight - lastHeight) > 2) {
-        lastHeight = newHeight
-        // Send message to parent to resize iframe (safest method)
-        window.parent.postMessage({ type: "resizeIframe", height: newHeight }, "*")
-        
-        // Also try direct DOM access as fallback
-        try {
-          const frame = window.parent.document.getElementById("quick-save-frame")
-          if (frame) frame.style.height = newHeight + "px"
-        } catch (e) {}
+    window.requestAnimationFrame(() => {
+      const shell = document.querySelector(".quick-save-shell")
+      if (shell && window.parent) {
+        const newHeight = shell.offsetHeight + 24
+        if (Math.abs(newHeight - lastHeight) > 2) {
+          lastHeight = newHeight
+          // Send message to parent to resize iframe (safest method)
+          window.parent.postMessage({ type: "resizeIframe", height: newHeight }, "*")
+          
+          // Also try direct DOM access as fallback
+          try {
+            const frame = window.parent.document.getElementById("quick-save-frame")
+            if (frame) frame.style.height = newHeight + "px"
+          } catch (e) {}
+        }
       }
-    }
+    })
   }
   const shell = document.querySelector(".quick-save-shell")
   if (shell) {
@@ -388,6 +390,36 @@ function populateFromTab(tab) {
 
 function loadCurrentTab() {
   const tabId = getSourceTabId()
+
+  // Real-time tab tracking for embedded views (Side Panel / Dashboard)
+  if (isEmbedded && chrome.tabs) {
+    const handleTabSwitch = (tab) => {
+      if (tab && tab.url && !/^(chrome|edge|about|chrome-extension):\/\//i.test(tab.url)) {
+        // Reset form for new tab
+        currentTags = []
+        renderTags()
+        notesInput.value = ""
+        existingBookmark = null
+        saveButton.disabled = false
+        if (statusBox) {
+          statusBox.className = "status-box hidden"
+          statusBox.textContent = ""
+        }
+        populateFromTab(tab)
+      }
+    }
+
+    chrome.tabs.onActivated.addListener((activeInfo) => {
+      chrome.tabs.get(activeInfo.tabId, handleTabSwitch)
+    })
+
+    chrome.tabs.onUpdated.addListener((updatedTabId, changeInfo, tab) => {
+      if (tab.active && changeInfo.status === 'complete') {
+        handleTabSwitch(tab)
+      }
+    })
+  }
+
   if (!tabId) {
     chrome.windows.getLastFocused({ windowTypes: ["normal"] }, function (win) {
       if (win && win.id) {
