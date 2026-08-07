@@ -1,56 +1,60 @@
-const form = document.getElementById("quick-save-form")
-const titleInput = document.getElementById("title")
-const urlInput = document.getElementById("url")
+const form = document.getElementById("quick-save-form");
+const titleInput = document.getElementById("title");
+const urlInput = document.getElementById("url");
 // Removed folderSelect
-const tagsHiddenInput = document.getElementById("tags")
-const tagsInput = document.getElementById("tags-input")
-const tagsContainer = document.getElementById("tags-container")
-const notesInput = document.getElementById("notes")
-const saveButton = document.getElementById("save")
-const statusBox = document.getElementById("status")
-const openDashboardButton = document.getElementById("open-dashboard")
-const quickOpenActionSelect = document.getElementById("quick-open-action")
+const tagsHiddenInput = document.getElementById("tags");
+const tagsInput = document.getElementById("tags-input");
+const tagsContainer = document.getElementById("tags-container");
+const notesInput = document.getElementById("notes");
+const saveButton = document.getElementById("save");
+const statusBox = document.getElementById("status");
+const openDashboardButton = document.getElementById("open-dashboard");
+const quickOpenActionSelect = document.getElementById("quick-open-action");
 
 // Hide header and adjust padding if embedded in the main dashboard
 const isEmbedded =
-  new URLSearchParams(window.location.search).get("embedded") === "true"
+  new URLSearchParams(window.location.search).get("embedded") === "true";
 if (isEmbedded) {
-  document.body.classList.add("embedded")
-  const header = document.querySelector(".quick-save-header")
-  if (header) header.style.display = "none"
-  const actionGroup = document.getElementById("quick-open-action-group")
+  document.body.classList.add("embedded");
+  const header = document.querySelector(".quick-save-header");
+  if (header) header.style.display = "none";
+  const actionGroup = document.getElementById("quick-open-action-group");
   if (actionGroup && actionGroup.parentElement) {
-    actionGroup.parentElement.style.display = "none"
+    actionGroup.parentElement.style.display = "none";
   }
 
   // Auto resize disabled - managed by CSS flex
-  let lastHeight = 0
+  let lastHeight = 0;
   const updateHeight = () => {
     window.requestAnimationFrame(() => {
-      const shell = document.querySelector(".quick-save-shell")
+      const shell = document.querySelector(".quick-save-shell");
       if (shell && window.parent) {
-        const newHeight = shell.offsetHeight + 24
+        const newHeight = shell.offsetHeight + 24;
         if (Math.abs(newHeight - lastHeight) > 2) {
-          lastHeight = newHeight
+          lastHeight = newHeight;
           // Send message to parent to resize iframe (safest method)
-          window.parent.postMessage({ type: "resizeIframe", height: newHeight }, "*")
-          
+          window.parent.postMessage(
+            { type: "resizeIframe", height: newHeight },
+            "*",
+          );
+
           // Also try direct DOM access as fallback
           try {
-            const frame = window.parent.document.getElementById("quick-save-frame")
-            if (frame) frame.style.height = newHeight + "px"
+            const frame =
+              window.parent.document.getElementById("quick-save-frame");
+            if (frame) frame.style.height = newHeight + "px";
           } catch (e) {}
         }
       }
-    })
-  }
-  const shell = document.querySelector(".quick-save-shell")
+    });
+  };
+  const shell = document.querySelector(".quick-save-shell");
   if (shell) {
-    const resizeObserver = new ResizeObserver(updateHeight)
-    resizeObserver.observe(shell)
+    const resizeObserver = new ResizeObserver(updateHeight);
+    resizeObserver.observe(shell);
   }
-  window.addEventListener("load", updateHeight)
-  setTimeout(updateHeight, 100)
+  window.addEventListener("load", updateHeight);
+  setTimeout(updateHeight, 100);
 }
 
 const qsTranslations = {
@@ -120,12 +124,12 @@ const qsTranslations = {
     btnDone: "Xong",
     phQuickNewFolder: "Hoặc tạo mới thư mục (vào Other Bookmarks)...",
   },
-}
+};
 
-let currentTab = null
-let existingBookmark = null
-let preferredFolderId = "1"
-let currentTags = []
+let currentTab = null;
+let existingBookmark = null;
+let preferredFolderId = "1";
+let currentTags = [];
 
 const AVAILABLE_THEMES = [
   "light",
@@ -147,27 +151,27 @@ const AVAILABLE_THEMES = [
   "github-blue",
   "github-light",
   "tet",
-]
+];
 
 function resolveActiveTheme(theme) {
   const isDarkMode =
     theme === "dark" ||
     (theme === "system" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches)
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-  if (theme === "system") return isDarkMode ? "dark" : "light"
-  return AVAILABLE_THEMES.includes(theme) ? theme : "light"
+  if (theme === "system") return isDarkMode ? "dark" : "light";
+  return AVAILABLE_THEMES.includes(theme) ? theme : "light";
 }
 
 function applyTheme(theme) {
-  const activeTheme = resolveActiveTheme(theme)
+  const activeTheme = resolveActiveTheme(theme);
 
   AVAILABLE_THEMES.forEach((themeName) => {
-    document.body.classList.remove(`${themeName}-theme`)
-  })
-  document.body.classList.remove("light-theme", "dark-theme")
-  document.body.classList.add(`${activeTheme}-theme`)
-  document.documentElement.setAttribute("data-theme", activeTheme)
+    document.body.classList.remove(`${themeName}-theme`);
+  });
+  document.body.classList.remove("light-theme", "dark-theme");
+  document.body.classList.add(`${activeTheme}-theme`);
+  document.documentElement.setAttribute("data-theme", activeTheme);
 
   const lightThemes = new Set([
     "light",
@@ -176,49 +180,49 @@ function applyTheme(theme) {
     "gruvbox-light",
     "catppuccin-light",
     "nightowl-light",
-  ])
+  ]);
   document.documentElement.style.colorScheme = lightThemes.has(activeTheme)
     ? "light"
-    : "dark"
+    : "dark";
 }
 
 function initTheme() {
-  applyTheme(localStorage.getItem("appTheme") || "system")
+  applyTheme(localStorage.getItem("appTheme") || "system");
 
   window.addEventListener("storage", (event) => {
     if (event.key === "appTheme") {
-      applyTheme(event.newValue || "system")
+      applyTheme(event.newValue || "system");
     }
-  })
+  });
 
   window.addEventListener("themeChanged", (event) => {
     const selection =
-      event.detail?.originalSelection || event.detail?.theme || "system"
-    applyTheme(selection)
-  })
+      event.detail?.originalSelection || event.detail?.theme || "system";
+    applyTheme(selection);
+  });
 
   window
     .matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", () => {
       if ((localStorage.getItem("appTheme") || "system") === "system") {
-        applyTheme("system")
+        applyTheme("system");
       }
-    })
+    });
 }
 
 function getSourceTabId() {
-  const params = new URLSearchParams(window.location.search)
-  const tabId = Number.parseInt(params.get("tabId") || "", 10)
-  return Number.isFinite(tabId) ? tabId : null
+  const params = new URLSearchParams(window.location.search);
+  const tabId = Number.parseInt(params.get("tabId") || "", 10);
+  return Number.isFinite(tabId) ? tabId : null;
 }
 
 function showStatus(message, type = "") {
-  statusBox.textContent = message
-  statusBox.className = `status ${type}`.trim()
-  statusBox.classList.remove("hidden")
+  statusBox.textContent = message;
+  statusBox.className = `status ${type}`.trim();
+  statusBox.classList.remove("hidden");
   setTimeout(() => {
-    statusBox.scrollIntoView({ behavior: "smooth", block: "nearest" })
-  }, 50)
+    statusBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, 50);
 }
 
 function parseTags(value) {
@@ -226,198 +230,224 @@ function parseTags(value) {
     .split(/[,;\n]/)
     .map((tag) => tag.trim())
     .filter(Boolean)
-    .slice(0, 10)
+    .slice(0, 10);
 }
 
 function flattenFolders(nodes, prefix = "", folders = []) {
-  const folderNodes = nodes.filter((n) => n.children)
+  const folderNodes = nodes.filter((n) => n.children);
   folderNodes.forEach((node, index) => {
-    const isLast = index === folderNodes.length - 1
-    let currentPrefix = prefix
-    let nextPrefix = prefix
+    const isLast = index === folderNodes.length - 1;
+    let currentPrefix = prefix;
+    let nextPrefix = prefix;
 
     if (node.id !== "0") {
-      currentPrefix = prefix + (isLast ? "└─ " : "├─ ")
-      nextPrefix = prefix + (isLast ? "\u00A0\u00A0\u00A0" : "│\u00A0\u00A0")
+      currentPrefix = prefix + (isLast ? "└─ " : "├─ ");
+      nextPrefix = prefix + (isLast ? "\u00A0\u00A0\u00A0" : "│\u00A0\u00A0");
     }
 
     folders.push({
       id: node.id,
       title: node.title || "Bookmarks",
       prefix: currentPrefix,
-    })
-    flattenFolders(node.children, nextPrefix, folders)
-  })
-  return folders
+    });
+    flattenFolders(node.children, nextPrefix, folders);
+  });
+  return folders;
 }
 
 function fillFolders() {
   chrome.bookmarks.getTree((tree) => {
-    const folders = flattenFolders(tree)
-    const folderList = document.getElementById("folder-list")
-    folderList.innerHTML = ""
+    const folders = flattenFolders(tree);
+    const folderList = document.getElementById("folder-list");
+    folderList.innerHTML = "";
 
     folders
       .filter((folder) => folder.id !== "0")
       .forEach((folder) => {
-        const item = document.createElement("div")
-        item.className = "folder-tree-item"
+        const item = document.createElement("div");
+        item.className = "folder-tree-item";
         if (folder.id === preferredFolderId) {
-          item.classList.add("active")
+          item.classList.add("active");
         }
 
-        const icon = document.createElement("i")
-        icon.className = "fas fa-folder"
+        const icon = document.createElement("i");
+        icon.className = "fas fa-folder";
 
-        const text = document.createTextNode(folder.title)
+        const text = document.createTextNode(folder.title);
 
         if (folder.prefix) {
-          const prefixSpan = document.createElement("span")
-          prefixSpan.style.fontFamily = "monospace"
-          prefixSpan.style.whiteSpace = "pre"
-          prefixSpan.textContent = folder.prefix
-          item.appendChild(prefixSpan)
+          const prefixSpan = document.createElement("span");
+          prefixSpan.style.fontFamily = "monospace";
+          prefixSpan.style.whiteSpace = "pre";
+          prefixSpan.textContent = folder.prefix;
+          item.appendChild(prefixSpan);
         }
-        item.appendChild(icon)
-        item.appendChild(text)
+        item.appendChild(icon);
+        item.appendChild(text);
 
         item.addEventListener("click", () => {
           document
             .querySelectorAll(".folder-tree-item")
-            .forEach((el) => el.classList.remove("active"))
-          item.classList.add("active")
-          preferredFolderId = folder.id
+            .forEach((el) => el.classList.remove("active"));
+          item.classList.add("active");
+          preferredFolderId = folder.id;
 
           const selectedDisplayName = document.getElementById(
             "selected-folder-name-display",
-          )
+          );
           if (selectedDisplayName) {
-            selectedDisplayName.textContent = folder.title
+            selectedDisplayName.textContent = folder.title;
           }
-        })
+        });
 
         item.addEventListener("dblclick", () => {
           if (typeof toggleFolderView === "function") {
-            toggleFolderView(false)
+            toggleFolderView(false);
           }
-        })
+        });
 
-        folderList.appendChild(item)
-      })
+        folderList.appendChild(item);
+      });
 
-    const bookmarksBar = folders.find((folder) => folder.id === "1")
+    const bookmarksBar = folders.find((folder) => folder.id === "1");
     if (bookmarksBar && preferredFolderId === "1") {
-      preferredFolderId = bookmarksBar.id
+      preferredFolderId = bookmarksBar.id;
       const barItem = Array.from(folderList.children).find((el) =>
         el.textContent.includes(bookmarksBar.title),
-      )
+      );
       if (barItem && !folderList.querySelector(".active")) {
-        barItem.classList.add("active")
+        barItem.classList.add("active");
       }
     }
 
     // Update the button text to show selected folder
-    const activeItem = folderList.querySelector(".active")
+    const activeItem = folderList.querySelector(".active");
     const selectedDisplayName = document.getElementById(
       "selected-folder-name-display",
-    )
+    );
     if (activeItem && selectedDisplayName) {
       // Find the text node inside the active item (skip prefix span and icon)
       const textNode = Array.from(activeItem.childNodes).find(
         (node) =>
           node.nodeType === Node.TEXT_NODE &&
           node.textContent.trim().length > 0,
-      )
+      );
       if (textNode) {
-        selectedDisplayName.textContent = textNode.textContent
+        selectedDisplayName.textContent = textNode.textContent;
       } else {
-        selectedDisplayName.textContent = activeItem.textContent.trim()
+        selectedDisplayName.textContent = activeItem.textContent.trim();
       }
     }
 
     // Auto scroll to active item
     if (activeItem) {
-      setTimeout(() => activeItem.scrollIntoView({ block: "nearest" }), 10)
+      setTimeout(() => activeItem.scrollIntoView({ block: "nearest" }), 10);
     }
-  })
+  });
+}
+
+function updateSelectedFolderDisplay() {
+  const selectedDisplayName = document.getElementById(
+    "selected-folder-name-display",
+  );
+  if (!selectedDisplayName) return;
+
+  if (preferredFolderId === "1") {
+    // "1" is typically "Bookmarks Bar", but let's fetch it anyway
+    chrome.bookmarks.get(preferredFolderId, (results) => {
+      if (results && results.length > 0) {
+        selectedDisplayName.textContent = results[0].title || "Bookmarks Bar";
+      }
+    });
+  } else {
+    chrome.bookmarks.get(preferredFolderId, (results) => {
+      if (results && results.length > 0) {
+        selectedDisplayName.textContent = results[0].title || "Bookmarks";
+      }
+    });
+  }
 }
 
 function fillExistingMetadata(bookmarkId) {
   chrome.storage.local.get(
     ["bookmarkTags", "bookmarkNotes", "tagColors", "tagTextColors"],
     (data) => {
-      const tags = data.bookmarkTags?.[bookmarkId] || []
-      const note = data.bookmarkNotes?.[bookmarkId] || ""
-      if (data.tagColors) tagColorsCache = data.tagColors
-      if (data.tagTextColors) tagTextColorsCache = data.tagTextColors
-      currentTags = [...tags]
-      renderTags()
-      notesInput.value = note
+      const tags = data.bookmarkTags?.[bookmarkId] || [];
+      const note = data.bookmarkNotes?.[bookmarkId] || "";
+      if (data.tagColors) tagColorsCache = data.tagColors;
+      if (data.tagTextColors) tagTextColorsCache = data.tagTextColors;
+      currentTags = [...tags];
+      renderTags();
+      notesInput.value = note;
     },
-  )
+  );
 }
 
 function populateFromTab(tab) {
   if (chrome.runtime.lastError || !tab?.url) {
-    showStatus(tStatus("statusNoPage"), "error")
-    saveButton.disabled = true
-    return
+    showStatus(tStatus("statusNoPage"), "error");
+    saveButton.disabled = true;
+    return;
   }
 
-  currentTab = tab
-  titleInput.value = tab.title || tab.url
-  urlInput.value = tab.url
+  currentTab = tab;
+  titleInput.value = tab.title || tab.url;
+  urlInput.value = tab.url;
 
   if (/^(chrome|edge|about|chrome-extension):\/\//i.test(tab.url)) {
-    showStatus(tStatus("statusErrorContext"), "error")
-    saveButton.disabled = true
-    return
+    showStatus(tStatus("statusErrorContext"), "error");
+    saveButton.disabled = true;
+    return;
   }
 
   chrome.bookmarks.search({ url: tab.url }, (matches) => {
-    existingBookmark = matches?.[0] || null
+    existingBookmark = matches?.[0] || null;
     if (existingBookmark) {
-      titleInput.value = existingBookmark.title || titleInput.value
+      titleInput.value = existingBookmark.title || titleInput.value;
       if (existingBookmark.parentId) {
-        preferredFolderId = existingBookmark.parentId
-        fillFolders()
+        preferredFolderId = existingBookmark.parentId;
+        updateSelectedFolderDisplay();
       }
-      fillExistingMetadata(existingBookmark.id)
-      showStatus(tStatus("statusAlreadySaved"), "success")
+      fillExistingMetadata(existingBookmark.id);
+      showStatus(tStatus("statusAlreadySaved"), "success");
     }
-  })
+  });
 }
 
 function loadCurrentTab() {
-  const tabId = getSourceTabId()
+  const tabId = getSourceTabId();
 
   // Real-time tab tracking for embedded views (Side Panel / Dashboard)
   if (isEmbedded && chrome.tabs) {
     const handleTabSwitch = (tab) => {
-      if (tab && tab.url && !/^(chrome|edge|about|chrome-extension):\/\//i.test(tab.url)) {
+      if (
+        tab &&
+        tab.url &&
+        !/^(chrome|edge|about|chrome-extension):\/\//i.test(tab.url)
+      ) {
         // Reset form for new tab
-        currentTags = []
-        renderTags()
-        notesInput.value = ""
-        existingBookmark = null
-        saveButton.disabled = false
+        currentTags = [];
+        renderTags();
+        notesInput.value = "";
+        existingBookmark = null;
+        saveButton.disabled = false;
         if (statusBox) {
-          statusBox.className = "status-box hidden"
-          statusBox.textContent = ""
+          statusBox.className = "status-box hidden";
+          statusBox.textContent = "";
         }
-        populateFromTab(tab)
+        populateFromTab(tab);
       }
-    }
+    };
 
     chrome.tabs.onActivated.addListener((activeInfo) => {
-      chrome.tabs.get(activeInfo.tabId, handleTabSwitch)
-    })
+      chrome.tabs.get(activeInfo.tabId, handleTabSwitch);
+    });
 
     chrome.tabs.onUpdated.addListener((updatedTabId, changeInfo, tab) => {
-      if (tab.active && changeInfo.status === 'complete') {
-        handleTabSwitch(tab)
+      if (tab.active && changeInfo.status === "complete") {
+        handleTabSwitch(tab);
       }
-    })
+    });
   }
 
   if (!tabId) {
@@ -425,104 +455,106 @@ function loadCurrentTab() {
       if (win && win.id) {
         chrome.tabs.query({ active: true, windowId: win.id }, (tabs) => {
           if (tabs && tabs.length > 0) {
-            populateFromTab(tabs[0])
+            populateFromTab(tabs[0]);
           } else {
-            showStatus(tStatus("statusNoSourceTab"), "error")
-            saveButton.disabled = true
+            showStatus(tStatus("statusNoSourceTab"), "error");
+            saveButton.disabled = true;
           }
-        })
+        });
       } else {
-        showStatus(tStatus("statusNoSourceTab"), "error")
-        saveButton.disabled = true
+        showStatus(tStatus("statusNoSourceTab"), "error");
+        saveButton.disabled = true;
       }
-    })
-    return
+    });
+    return;
   }
 
-  chrome.tabs.get(tabId, populateFromTab)
+  chrome.tabs.get(tabId, populateFromTab);
 }
 
 function saveMetadata(bookmarkId, tags, note, callback) {
   chrome.storage.local.get(
     ["bookmarkTags", "bookmarkNotes", "tagColors", "tagTextColors"],
     (data) => {
-      const bookmarkTags = data.bookmarkTags || {}
-      const bookmarkNotes = data.bookmarkNotes || {}
-      const tagColors = data.tagColors || {}
-      const tagTextColors = data.tagTextColors || {}
+      const bookmarkTags = data.bookmarkTags || {};
+      const bookmarkNotes = data.bookmarkNotes || {};
+      const tagColors = data.tagColors || {};
+      const tagTextColors = data.tagTextColors || {};
 
       if (tags.length) {
-        bookmarkTags[bookmarkId] = tags
+        bookmarkTags[bookmarkId] = tags;
         tags.forEach((tag) => {
-          tagColors[tag] = tagColorsCache[tag] || tagColors[tag] || "#3B82F6"
+          tagColors[tag] = tagColorsCache[tag] || tagColors[tag] || "#3B82F6";
           tagTextColors[tag] =
-            tagTextColorsCache[tag] || tagTextColors[tag] || "#FFFFFF"
-        })
+            tagTextColorsCache[tag] || tagTextColors[tag] || "#FFFFFF";
+        });
       } else {
-        delete bookmarkTags[bookmarkId]
+        delete bookmarkTags[bookmarkId];
       }
 
       if (note) {
-        bookmarkNotes[bookmarkId] = note
+        bookmarkNotes[bookmarkId] = note;
       } else {
-        delete bookmarkNotes[bookmarkId]
+        delete bookmarkNotes[bookmarkId];
       }
 
       chrome.storage.local.set(
         { bookmarkTags, bookmarkNotes, tagColors, tagTextColors },
         callback,
-      )
+      );
     },
-  )
+  );
 }
 
 function saveBookmark(event) {
-  event.preventDefault()
-  const title = titleInput.value.trim() || urlInput.value.trim()
-  const url = urlInput.value.trim()
-  const parentId = preferredFolderId || "1"
-  const tags = parseTags(tagsHiddenInput.value)
-  const note = notesInput.value.trim()
+  event.preventDefault();
+  const title = titleInput.value.trim() || urlInput.value.trim();
+  const url = urlInput.value.trim();
+  const parentId = preferredFolderId || "1";
+  const tags = parseTags(tagsHiddenInput.value);
+  const note = notesInput.value.trim();
 
-  const originalButtonHtml = saveButton.innerHTML
-  saveButton.disabled = true
-  showStatus(tStatus("statusSaving"), "success")
+  const originalButtonHtml = saveButton.innerHTML;
+  saveButton.disabled = true;
+  showStatus(tStatus("statusSaving"), "success");
 
   function finish(bookmark, isUpdate) {
     if (!bookmark) {
-      showStatus(tStatus("statusErrorSave"), "error")
-      saveButton.disabled = false
-      saveButton.innerHTML = originalButtonHtml
-      return
+      showStatus(tStatus("statusErrorSave"), "error");
+      saveButton.disabled = false;
+      saveButton.innerHTML = originalButtonHtml;
+      return;
     }
 
     saveMetadata(bookmark.id, tags, note, () => {
       if (chrome.runtime.lastError) {
-        showStatus(tStatus("statusErrorMeta"), "error")
-        saveButton.disabled = false
-        saveButton.innerHTML = originalButtonHtml
+        showStatus(tStatus("statusErrorMeta"), "error");
+        saveButton.disabled = false;
+        saveButton.innerHTML = originalButtonHtml;
       } else {
-        const verbKey = isUpdate ? "statusUpdatedSuccess" : "statusSavedSuccess"
-        showStatus(tStatus(verbKey, currentTags.length))
-        saveButton.innerHTML = `<i class="fas fa-check"></i> ${tStatus(verbKey, currentTags.length)}`
+        const verbKey = isUpdate
+          ? "statusUpdatedSuccess"
+          : "statusSavedSuccess";
+        showStatus(tStatus(verbKey, currentTags.length));
+        saveButton.innerHTML = `<i class="fas fa-check"></i> ${tStatus(verbKey, currentTags.length)}`;
 
         // Close window after 2 seconds
         setTimeout(() => {
           if (isEmbedded && window.parent && window.parent !== window) {
             try {
-              window.parent.close()
+              window.parent.close();
             } catch (e) {}
           } else {
-            window.close()
+            window.close();
           }
           // Restore button state just in case window doesn't close (e.g. side panel)
           setTimeout(() => {
-            saveButton.disabled = false
-            saveButton.innerHTML = originalButtonHtml
-          }, 500)
-        }, 2000)
+            saveButton.disabled = false;
+            saveButton.innerHTML = originalButtonHtml;
+          }, 500);
+        }, 2000);
       }
-    })
+    });
   }
 
   function proceedSaving(finalParentId) {
@@ -532,40 +564,40 @@ function saveBookmark(event) {
         { title, url },
         (updated) => {
           if (chrome.runtime.lastError || !updated) {
-            console.error(chrome.runtime.lastError)
-            finish(null, true)
-            return
+            console.error(chrome.runtime.lastError);
+            finish(null, true);
+            return;
           }
           if (updated.parentId !== finalParentId) {
             chrome.bookmarks.move(
               updated.id,
               { parentId: finalParentId },
               (moved) => finish(moved || updated, true),
-            )
+            );
           } else {
-            finish(updated, true)
+            finish(updated, true);
           }
         },
-      )
+      );
     } else {
       chrome.bookmarks.create(
         { parentId: finalParentId, title, url },
         (created) => {
           if (chrome.runtime.lastError || !created) {
-            console.error(chrome.runtime.lastError)
-            finish(null, false)
-            return
+            console.error(chrome.runtime.lastError);
+            finish(null, false);
+            return;
           }
-          finish(created, false)
+          finish(created, false);
         },
-      )
+      );
     }
   }
 
-  const quickNewFolderInput = document.getElementById("quick-new-folder-input")
+  const quickNewFolderInput = document.getElementById("quick-new-folder-input");
   const quickNewFolderName = quickNewFolderInput
     ? quickNewFolderInput.value.trim()
-    : ""
+    : "";
 
   if (quickNewFolderName) {
     // Default to 'Other Bookmarks' (ID "2") as requested
@@ -573,123 +605,123 @@ function saveBookmark(event) {
       { parentId: "2", title: quickNewFolderName },
       (newFolder) => {
         if (chrome.runtime.lastError || !newFolder) {
-          console.error(chrome.runtime.lastError)
-          showStatus("Error creating folder", "error")
-          saveButton.disabled = false
-          saveButton.innerHTML = originalButtonHtml
-          return
+          console.error(chrome.runtime.lastError);
+          showStatus("Error creating folder", "error");
+          saveButton.disabled = false;
+          saveButton.innerHTML = originalButtonHtml;
+          return;
         }
-        proceedSaving(newFolder.id)
+        proceedSaving(newFolder.id);
       },
-    )
+    );
   } else {
-    proceedSaving(parentId)
+    proceedSaving(parentId);
   }
 }
 
 openDashboardButton.addEventListener("click", () => {
-  chrome.tabs.create({ url: chrome.runtime.getURL("bookmarks.html") })
-})
+  chrome.tabs.create({ url: chrome.runtime.getURL("bookmarks.html") });
+});
 
 // Initialize quick open action setting
 chrome.storage.local.get(["quickOpenAction"], (result) => {
-  const action = result.quickOpenAction || "popup"
-  const btns = document.querySelectorAll(".quick-action-btn")
+  const action = result.quickOpenAction || "popup";
+  const btns = document.querySelectorAll(".quick-action-btn");
   btns.forEach((btn) => {
     if (btn.dataset.value === action) {
-      btn.classList.add("active")
+      btn.classList.add("active");
     } else {
-      btn.classList.remove("active")
+      btn.classList.remove("active");
     }
 
     // Add click event listener to each button
     btn.addEventListener("click", () => {
-      btns.forEach((b) => b.classList.remove("active"))
-      btn.classList.add("active")
-      chrome.storage.local.set({ quickOpenAction: btn.dataset.value })
-    })
-  })
-})
+      btns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      chrome.storage.local.set({ quickOpenAction: btn.dataset.value });
+    });
+  });
+});
 
-let tagColorsCache = {}
-let tagTextColorsCache = {}
-let allAvailableTags = []
-let activeSuggestionIndex = -1
-const customTagSuggestions = document.getElementById("custom-tag-suggestions")
+let tagColorsCache = {};
+let tagTextColorsCache = {};
+let allAvailableTags = [];
+let activeSuggestionIndex = -1;
+const customTagSuggestions = document.getElementById("custom-tag-suggestions");
 
 function loadTags() {
   chrome.storage.local.get(
     ["bookmarkTags", "tagColors", "tagTextColors"],
     (result) => {
-      const bookmarkTags = result.bookmarkTags || {}
-      tagColorsCache = result.tagColors || {}
-      tagTextColorsCache = result.tagTextColors || {}
-      const allTags = new Set()
+      const bookmarkTags = result.bookmarkTags || {};
+      tagColorsCache = result.tagColors || {};
+      tagTextColorsCache = result.tagTextColors || {};
+      const allTags = new Set();
       Object.values(bookmarkTags).forEach((tags) => {
-        tags.forEach((tag) => allTags.add(tag))
-      })
-      allAvailableTags = Array.from(allTags).sort()
+        tags.forEach((tag) => allTags.add(tag));
+      });
+      allAvailableTags = Array.from(allTags).sort();
     },
-  )
+  );
 }
 
 function showSuggestions(query) {
-  if (!customTagSuggestions) return
+  if (!customTagSuggestions) return;
   if (!query) {
-    customTagSuggestions.classList.add("hidden")
-    return
+    customTagSuggestions.classList.add("hidden");
+    return;
   }
   const filtered = allAvailableTags.filter(
     (t) =>
       t.toLowerCase().includes(query.toLowerCase()) && !currentTags.includes(t),
-  )
+  );
   if (filtered.length === 0) {
-    customTagSuggestions.classList.add("hidden")
-    return
+    customTagSuggestions.classList.add("hidden");
+    return;
   }
 
-  customTagSuggestions.innerHTML = ""
+  customTagSuggestions.innerHTML = "";
   filtered.forEach((tag) => {
-    const item = document.createElement("div")
-    item.className = "suggestion-item"
+    const item = document.createElement("div");
+    item.className = "suggestion-item";
 
-    const dot = document.createElement("span")
-    dot.className = "suggestion-color-dot"
-    dot.style.backgroundColor = tagColorsCache[tag] || "var(--accent-color)"
+    const dot = document.createElement("span");
+    dot.className = "suggestion-color-dot";
+    dot.style.backgroundColor = tagColorsCache[tag] || "var(--accent-color)";
 
-    const text = document.createElement("span")
-    text.textContent = tag
+    const text = document.createElement("span");
+    text.textContent = tag;
 
-    item.appendChild(dot)
-    item.appendChild(text)
+    item.appendChild(dot);
+    item.appendChild(text);
 
     item.addEventListener("mousedown", (e) => {
-      e.preventDefault() // prevent input blur
-      addTag(tag)
-    })
+      e.preventDefault(); // prevent input blur
+      addTag(tag);
+    });
 
-    customTagSuggestions.appendChild(item)
-  })
+    customTagSuggestions.appendChild(item);
+  });
 
-  customTagSuggestions.classList.remove("hidden")
-  activeSuggestionIndex = -1
+  customTagSuggestions.classList.remove("hidden");
+  activeSuggestionIndex = -1;
 }
 
-let nextTagColor = "#3B82F6"
+let nextTagColor = "#3B82F6";
 
 function addTag(tag) {
   if (tag && !currentTags.includes(tag)) {
-    currentTags.push(tag)
+    currentTags.push(tag);
 
     // Apply selected color if not already cached
     if (!tagColorsCache[tag]) {
-      tagColorsCache[tag] = nextTagColor
-      tagTextColorsCache[tag] = getContrastYIQ(nextTagColor)
+      tagColorsCache[tag] = nextTagColor;
+      tagTextColorsCache[tag] = getContrastYIQ(nextTagColor);
     }
 
-    tagsInput.value = ""
-    renderTags()
-    if (customTagSuggestions) customTagSuggestions.classList.add("hidden")
+    tagsInput.value = "";
+    renderTags();
+    if (customTagSuggestions) customTagSuggestions.classList.add("hidden");
   }
 }
 
@@ -714,200 +746,200 @@ const CUSTOM_COLORS = [
   "#64748B",
   "#111827",
   "#FFFFFF",
-]
+];
 
-let globalColorPalette = null
-let currentEditingTag = null
+let globalColorPalette = null;
+let currentEditingTag = null;
 
 function showColorPalette(tag, chipElement) {
   if (!globalColorPalette) {
-    globalColorPalette = document.createElement("div")
-    globalColorPalette.className = "custom-tag-suggestions"
-    globalColorPalette.style.display = "flex"
-    globalColorPalette.style.flexDirection = "row"
-    globalColorPalette.style.flexWrap = "wrap"
-    globalColorPalette.style.padding = "8px"
-    globalColorPalette.style.gap = "6px"
-    globalColorPalette.style.width = "200px"
-    globalColorPalette.style.zIndex = "1000"
+    globalColorPalette = document.createElement("div");
+    globalColorPalette.className = "custom-tag-suggestions";
+    globalColorPalette.style.display = "flex";
+    globalColorPalette.style.flexDirection = "row";
+    globalColorPalette.style.flexWrap = "wrap";
+    globalColorPalette.style.padding = "8px";
+    globalColorPalette.style.gap = "6px";
+    globalColorPalette.style.width = "200px";
+    globalColorPalette.style.zIndex = "1000";
 
     CUSTOM_COLORS.forEach((color) => {
-      const btn = document.createElement("button")
-      btn.type = "button"
-      btn.style.width = "24px"
-      btn.style.height = "24px"
-      btn.style.borderRadius = "50%"
-      btn.style.border = "1px solid var(--border-color)"
-      btn.style.backgroundColor = color
-      btn.style.cursor = "pointer"
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.style.width = "24px";
+      btn.style.height = "24px";
+      btn.style.borderRadius = "50%";
+      btn.style.border = "1px solid var(--border-color)";
+      btn.style.backgroundColor = color;
+      btn.style.cursor = "pointer";
 
       btn.addEventListener("mouseover", () => {
-        btn.style.transform = "scale(1.1)"
-      })
+        btn.style.transform = "scale(1.1)";
+      });
       btn.addEventListener("mouseout", () => {
-        btn.style.transform = "scale(1)"
-      })
+        btn.style.transform = "scale(1)";
+      });
 
       btn.addEventListener("click", (e) => {
-        e.stopPropagation()
+        e.stopPropagation();
         if (currentEditingTag && currentEditingTag.tag) {
-          tagColorsCache[currentEditingTag.tag] = color
-          tagTextColorsCache[currentEditingTag.tag] = getContrastYIQ(color)
-          currentEditingTag.chip.style.backgroundColor = color
+          tagColorsCache[currentEditingTag.tag] = color;
+          tagTextColorsCache[currentEditingTag.tag] = getContrastYIQ(color);
+          currentEditingTag.chip.style.backgroundColor = color;
           currentEditingTag.chip.style.color =
-            tagTextColorsCache[currentEditingTag.tag]
+            tagTextColorsCache[currentEditingTag.tag];
         } else if (currentEditingTag && !currentEditingTag.tag) {
           // It's the next-tag-color-btn
-          nextTagColor = color
-          currentEditingTag.chip.style.backgroundColor = color
+          nextTagColor = color;
+          currentEditingTag.chip.style.backgroundColor = color;
         }
-        globalColorPalette.classList.add("hidden")
-      })
-      globalColorPalette.appendChild(btn)
-    })
+        globalColorPalette.classList.add("hidden");
+      });
+      globalColorPalette.appendChild(btn);
+    });
 
     document.addEventListener("mousedown", (e) => {
       if (globalColorPalette && !globalColorPalette.contains(e.target)) {
-        globalColorPalette.classList.add("hidden")
+        globalColorPalette.classList.add("hidden");
       }
-    })
+    });
 
-    document.body.appendChild(globalColorPalette)
+    document.body.appendChild(globalColorPalette);
   }
 
-  currentEditingTag = { tag, chip: chipElement }
-  globalColorPalette.classList.remove("hidden")
+  currentEditingTag = { tag, chip: chipElement };
+  globalColorPalette.classList.remove("hidden");
 
-  const rect = chipElement.getBoundingClientRect()
-  globalColorPalette.style.position = "absolute"
-  globalColorPalette.style.top = rect.bottom + window.scrollY + 4 + "px"
+  const rect = chipElement.getBoundingClientRect();
+  globalColorPalette.style.position = "absolute";
+  globalColorPalette.style.top = rect.bottom + window.scrollY + 4 + "px";
 
-  let leftPos = rect.left + window.scrollX
+  let leftPos = rect.left + window.scrollX;
   if (leftPos + 220 > window.innerWidth) {
     // 220px to leave some margin
-    leftPos = Math.max(10, rect.right + window.scrollX - 210)
+    leftPos = Math.max(10, rect.right + window.scrollX - 210);
   }
-  globalColorPalette.style.left = leftPos + "px"
+  globalColorPalette.style.left = leftPos + "px";
 }
 
 function getContrastYIQ(hexcolor) {
-  if (!hexcolor) return "#FFFFFF"
-  hexcolor = hexcolor.replace("#", "")
+  if (!hexcolor) return "#FFFFFF";
+  hexcolor = hexcolor.replace("#", "");
   if (hexcolor.length === 3)
     hexcolor = hexcolor
       .split("")
       .map((c) => c + c)
-      .join("")
-  const r = parseInt(hexcolor.substr(0, 2), 16)
-  const g = parseInt(hexcolor.substr(2, 2), 16)
-  const b = parseInt(hexcolor.substr(4, 2), 16)
-  const yiq = (r * 299 + g * 587 + b * 114) / 1000
-  return yiq >= 128 ? "#000000" : "#FFFFFF"
+      .join("");
+  const r = parseInt(hexcolor.substr(0, 2), 16);
+  const g = parseInt(hexcolor.substr(2, 2), 16);
+  const b = parseInt(hexcolor.substr(4, 2), 16);
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 128 ? "#000000" : "#FFFFFF";
 }
 
 function renderTags() {
-  tagsContainer.querySelectorAll(".tag-chip").forEach((c) => c.remove())
+  tagsContainer.querySelectorAll(".tag-chip").forEach((c) => c.remove());
   currentTags.forEach((tag, index) => {
-    const chip = document.createElement("div")
-    chip.className = "tag-chip"
+    const chip = document.createElement("div");
+    chip.className = "tag-chip";
 
     // Apply custom colors if they exist
-    const bgColor = tagColorsCache[tag] || "#3B82F6"
-    const textColor = tagTextColorsCache[tag] || getContrastYIQ(bgColor)
-    chip.style.backgroundColor = bgColor
-    chip.style.color = textColor
+    const bgColor = tagColorsCache[tag] || "#3B82F6";
+    const textColor = tagTextColorsCache[tag] || getContrastYIQ(bgColor);
+    chip.style.backgroundColor = bgColor;
+    chip.style.color = textColor;
 
-    const nameSpan = document.createElement("span")
-    nameSpan.textContent = tag
-    nameSpan.style.cursor = "pointer"
-    nameSpan.title = "Click to change color"
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = tag;
+    nameSpan.style.cursor = "pointer";
+    nameSpan.title = "Click to change color";
 
     nameSpan.addEventListener("click", (e) => {
-      e.stopPropagation()
-      showColorPalette(tag, chip)
-    })
+      e.stopPropagation();
+      showColorPalette(tag, chip);
+    });
 
-    const removeSpan = document.createElement("span")
-    removeSpan.className = "remove"
-    removeSpan.setAttribute("data-index", index)
-    removeSpan.innerHTML = "&times;"
+    const removeSpan = document.createElement("span");
+    removeSpan.className = "remove";
+    removeSpan.setAttribute("data-index", index);
+    removeSpan.innerHTML = "&times;";
 
-    chip.appendChild(nameSpan)
-    chip.appendChild(removeSpan)
+    chip.appendChild(nameSpan);
+    chip.appendChild(removeSpan);
 
-    const inputWrapper = document.getElementById("tags-input-wrapper")
-    tagsContainer.insertBefore(chip, inputWrapper)
-  })
-  tagsHiddenInput.value = currentTags.join(",")
+    const inputWrapper = document.getElementById("tags-input-wrapper");
+    tagsContainer.insertBefore(chip, inputWrapper);
+  });
+  tagsHiddenInput.value = currentTags.join(",");
 }
 
-const nextTagColorBtn = document.getElementById("next-tag-color-btn")
+const nextTagColorBtn = document.getElementById("next-tag-color-btn");
 if (nextTagColorBtn) {
   nextTagColorBtn.addEventListener("click", (e) => {
-    e.stopPropagation()
-    showColorPalette(null, nextTagColorBtn)
-  })
+    e.stopPropagation();
+    showColorPalette(null, nextTagColorBtn);
+  });
 }
 
 tagsContainer.addEventListener("click", (e) => {
-  const removeBtn = e.target.closest(".remove")
+  const removeBtn = e.target.closest(".remove");
   if (removeBtn) {
-    const index = parseInt(removeBtn.getAttribute("data-index"), 10)
+    const index = parseInt(removeBtn.getAttribute("data-index"), 10);
     if (!isNaN(index)) {
-      currentTags.splice(index, 1)
-      renderTags()
+      currentTags.splice(index, 1);
+      renderTags();
     }
   } else if (!e.target.closest(".tag-chip")) {
-    tagsInput.focus()
+    tagsInput.focus();
   }
-})
+});
 
 tagsInput.addEventListener("input", (e) => {
-  showSuggestions(e.target.value.trim().replace(/,/g, ""))
-})
+  showSuggestions(e.target.value.trim().replace(/,/g, ""));
+});
 
 tagsInput.addEventListener("focus", (e) => {
-  showSuggestions(e.target.value.trim().replace(/,/g, ""))
-})
+  showSuggestions(e.target.value.trim().replace(/,/g, ""));
+});
 
 tagsInput.addEventListener("blur", () => {
-  if (customTagSuggestions) customTagSuggestions.classList.add("hidden")
-})
+  if (customTagSuggestions) customTagSuggestions.classList.add("hidden");
+});
 
 if (customTagSuggestions) {
   customTagSuggestions.addEventListener("mousedown", (e) => {
-    e.preventDefault() // prevent blur when clicking scrollbar
-  })
+    e.preventDefault(); // prevent blur when clicking scrollbar
+  });
 }
 
 tagsInput.addEventListener("keydown", (e) => {
   const items = customTagSuggestions
     ? customTagSuggestions.querySelectorAll(".suggestion-item")
-    : []
+    : [];
 
   if (e.key === "ArrowDown") {
-    e.preventDefault()
+    e.preventDefault();
     if (
       customTagSuggestions &&
       !customTagSuggestions.classList.contains("hidden") &&
       items.length > 0
     ) {
-      activeSuggestionIndex = (activeSuggestionIndex + 1) % items.length
-      updateActiveSuggestion(items)
+      activeSuggestionIndex = (activeSuggestionIndex + 1) % items.length;
+      updateActiveSuggestion(items);
     }
   } else if (e.key === "ArrowUp") {
-    e.preventDefault()
+    e.preventDefault();
     if (
       customTagSuggestions &&
       !customTagSuggestions.classList.contains("hidden") &&
       items.length > 0
     ) {
       activeSuggestionIndex =
-        (activeSuggestionIndex - 1 + items.length) % items.length
-      updateActiveSuggestion(items)
+        (activeSuggestionIndex - 1 + items.length) % items.length;
+      updateActiveSuggestion(items);
     }
   } else if (e.key === "Enter" || e.key === ",") {
-    e.preventDefault()
+    e.preventDefault();
     if (
       customTagSuggestions &&
       !customTagSuggestions.classList.contains("hidden") &&
@@ -916,131 +948,131 @@ tagsInput.addEventListener("keydown", (e) => {
       addTag(
         items[activeSuggestionIndex].querySelector("span:last-child")
           .textContent,
-      )
+      );
     } else {
-      addTag(tagsInput.value.trim().replace(/,/g, ""))
+      addTag(tagsInput.value.trim().replace(/,/g, ""));
     }
   } else if (e.key === "Backspace" && !tagsInput.value && currentTags.length) {
-    currentTags.pop()
-    renderTags()
+    currentTags.pop();
+    renderTags();
   }
-})
+});
 
 function updateActiveSuggestion(items) {
   items.forEach((item, index) => {
     if (index === activeSuggestionIndex) {
-      item.classList.add("active")
-      item.scrollIntoView({ block: "nearest" })
+      item.classList.add("active");
+      item.scrollIntoView({ block: "nearest" });
     } else {
-      item.classList.remove("active")
+      item.classList.remove("active");
     }
-  })
+  });
 }
 
 form.addEventListener("submit", (e) => {
   // If user hasn't pressed enter on a typed tag, add it
-  const pendingTag = tagsInput.value.trim().replace(/,/g, "")
+  const pendingTag = tagsInput.value.trim().replace(/,/g, "");
   if (pendingTag && !currentTags.includes(pendingTag)) {
-    currentTags.push(pendingTag)
-    renderTags()
+    currentTags.push(pendingTag);
+    renderTags();
   }
-  saveBookmark(e)
-})
+  saveBookmark(e);
+});
 
-initTheme()
-fillFolders()
-loadCurrentTab()
-loadTags()
+initTheme();
+updateSelectedFolderDisplay();
+loadCurrentTab();
+loadTags();
 
-const newFolderInput = document.getElementById("new-folder-input")
-const openFolderBtn = document.getElementById("open-folder-view-btn")
-const closeFolderBtn = document.getElementById("close-folder-view-btn")
-const folderView = document.getElementById("folder-selection-view")
+const newFolderInput = document.getElementById("new-folder-input");
+const openFolderBtn = document.getElementById("open-folder-view-btn");
+const closeFolderBtn = document.getElementById("close-folder-view-btn");
+const folderView = document.getElementById("folder-selection-view");
 
 function toggleFolderView(show) {
   if (show) {
-    form.classList.add("hidden")
-    folderView.classList.remove("hidden")
+    form.classList.add("hidden");
+    folderView.classList.remove("hidden");
     // Use requestAnimationFrame to let DOM update before scrolling/focusing
     requestAnimationFrame(() => {
-      fillFolders() // Ensure it is updated and scrolled to active
-      const searchInput = document.getElementById("folder-search-input")
-      if (searchInput) searchInput.focus()
-    })
+      fillFolders(); // Ensure it is updated and scrolled to active
+      const searchInput = document.getElementById("folder-search-input");
+      if (searchInput) searchInput.focus();
+    });
   } else {
-    folderView.classList.add("hidden")
-    form.classList.remove("hidden")
+    folderView.classList.add("hidden");
+    form.classList.remove("hidden");
   }
 }
 
 if (openFolderBtn)
-  openFolderBtn.addEventListener("click", () => toggleFolderView(true))
+  openFolderBtn.addEventListener("click", () => toggleFolderView(true));
 if (closeFolderBtn)
-  closeFolderBtn.addEventListener("click", () => toggleFolderView(false))
+  closeFolderBtn.addEventListener("click", () => toggleFolderView(false));
 
-const createFolderBtn = document.getElementById("create-folder-btn")
-const doneFolderBtn = document.getElementById("done-folder-view-btn")
+const createFolderBtn = document.getElementById("create-folder-btn");
+const doneFolderBtn = document.getElementById("done-folder-view-btn");
 
 if (doneFolderBtn)
-  doneFolderBtn.addEventListener("click", () => toggleFolderView(false))
+  doneFolderBtn.addEventListener("click", () => toggleFolderView(false));
 
 if (createFolderBtn && newFolderInput) {
   createFolderBtn.addEventListener("click", () => {
-    const parentId = preferredFolderId || "1"
-    const title = newFolderInput.value.trim()
+    const parentId = preferredFolderId || "1";
+    const title = newFolderInput.value.trim();
     if (!title) {
-      newFolderInput.focus()
-      return
+      newFolderInput.focus();
+      return;
     }
 
     // Create folder and update UI
     chrome.bookmarks.create({ parentId, title }, (newFolder) => {
-      preferredFolderId = newFolder.id
-      newFolderInput.value = ""
-      fillFolders()
+      preferredFolderId = newFolder.id;
+      newFolderInput.value = "";
+      fillFolders();
       // We don't close the view automatically anymore so they can see the created folder
-    })
-  })
+    });
+  });
 }
 
-const folderSearchInput = document.getElementById("folder-search-input")
+const folderSearchInput = document.getElementById("folder-search-input");
 if (folderSearchInput) {
   folderSearchInput.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase()
-    const items = document.querySelectorAll(".folder-tree-item")
+    const query = e.target.value.toLowerCase();
+    const items = document.querySelectorAll(".folder-tree-item");
     items.forEach((item) => {
       if (item.textContent.toLowerCase().includes(query)) {
-        item.style.display = "flex"
+        item.style.display = "flex";
       } else {
-        item.style.display = "none"
+        item.style.display = "none";
       }
-    })
-  })
+    });
+  });
 }
-const suggestTagBtn = document.getElementById("suggest-tag-btn")
+const suggestTagBtn = document.getElementById("suggest-tag-btn");
 if (suggestTagBtn) {
   suggestTagBtn.addEventListener("click", async () => {
-    if (!currentTab || !currentTab.url) return
+    if (!currentTab || !currentTab.url) return;
 
-    suggestTagBtn.disabled = true
-    const suggestTagIcon = document.getElementById("suggest-tag-icon")
-    const suggestTagText = document.getElementById("suggest-tag-text")
+    suggestTagBtn.disabled = true;
+    const suggestTagIcon = document.getElementById("suggest-tag-icon");
+    const suggestTagText = document.getElementById("suggest-tag-text");
 
-    if (suggestTagIcon) suggestTagIcon.className = "fas fa-spinner fa-spin"
-    if (suggestTagText) suggestTagText.textContent = "..."
+    if (suggestTagIcon) suggestTagIcon.className = "fas fa-spinner fa-spin";
+    if (suggestTagText) suggestTagText.textContent = "...";
 
-    let suggestedTag = ""
+    let suggestedTag = "";
 
     try {
       const data = await new Promise((resolve) =>
         chrome.storage.local.get(["aiConfig"], resolve),
-      )
-      const config = data.aiConfig || { model: "gemini", apiKey: "" }
+      );
+      const config = data.aiConfig || { model: "gemini", apiKey: "" };
 
       if (config.apiKey && config.model === "gemini") {
-        const modelName = config.modelName || "gemini-1.5-flash"
+        const modelName = config.modelName || "gemini-1.5-flash";
         let apiUrl =
-          "https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=${config.apiKey}"
+          "https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=${config.apiKey}";
 
         const response = await fetch(apiUrl, {
           method: "POST",
@@ -1056,10 +1088,10 @@ if (suggestTagBtn) {
               },
             ],
           }),
-        })
+        });
 
         if (response.ok) {
-          const resData = await response.json()
+          const resData = await response.json();
           if (
             resData.candidates &&
             resData.candidates[0].content.parts[0].text
@@ -1067,7 +1099,7 @@ if (suggestTagBtn) {
             suggestedTag = resData.candidates[0].content.parts[0].text
               .trim()
               .replace(/['"]/g, "")
-              .substring(0, 20)
+              .substring(0, 20);
           }
         }
       } else if (
@@ -1078,70 +1110,70 @@ if (suggestTagBtn) {
         const session = await self.ai.languageModel.create({
           systemPrompt:
             "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.",
-        })
+        });
         const result = await session.prompt(
           'Title: "${currentTab.title}", URL: "${currentTab.url}"',
-        )
+        );
         if (result) {
-          suggestedTag = result.trim().replace(/['"]/g, "").substring(0, 20)
+          suggestedTag = result.trim().replace(/['"]/g, "").substring(0, 20);
         }
       }
     } catch (e) {
-      console.error("AI Categorize failed", e)
+      console.error("AI Categorize failed", e);
     }
 
     if (!suggestedTag) {
       try {
-        const urlObj = new URL(currentTab.url)
-        let hostname = urlObj.hostname.replace("www.", "")
-        suggestedTag = hostname.split(".")[0]
+        const urlObj = new URL(currentTab.url);
+        let hostname = urlObj.hostname.replace("www.", "");
+        suggestedTag = hostname.split(".")[0];
       } catch (e) {}
     }
 
     if (suggestedTag) {
       suggestedTag =
         suggestedTag.charAt(0).toUpperCase() +
-        suggestedTag.slice(1).toLowerCase()
-      addTag(suggestedTag)
+        suggestedTag.slice(1).toLowerCase();
+      addTag(suggestedTag);
     }
 
-    suggestTagBtn.disabled = false
-    if (suggestTagIcon) suggestTagIcon.className = "fas fa-wand-magic-sparkles"
+    suggestTagBtn.disabled = false;
+    if (suggestTagIcon) suggestTagIcon.className = "fas fa-wand-magic-sparkles";
     if (suggestTagText) {
-      const lang = localStorage.getItem("appLanguage") || "en"
+      const lang = localStorage.getItem("appLanguage") || "en";
       suggestTagText.textContent =
-        qsTranslations[lang]?.btnSuggestText || "Suggest"
+        qsTranslations[lang]?.btnSuggestText || "Suggest";
     }
-  })
+  });
 }
 
 function applyTranslations() {
-  const lang = localStorage.getItem("appLanguage") || "en"
-  const t = qsTranslations[lang] || qsTranslations.en
+  const lang = localStorage.getItem("appLanguage") || "en";
+  const t = qsTranslations[lang] || qsTranslations.en;
 
   document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n")
+    const key = el.getAttribute("data-i18n");
     if (t[key]) {
-      el.textContent = t[key]
+      el.textContent = t[key];
     }
-  })
+  });
 
   document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
-    const key = el.getAttribute("data-i18n-placeholder")
+    const key = el.getAttribute("data-i18n-placeholder");
     if (t[key]) {
-      el.setAttribute("placeholder", t[key])
+      el.setAttribute("placeholder", t[key]);
     }
-  })
+  });
 }
-document.addEventListener("DOMContentLoaded", applyTranslations)
-applyTranslations() // Run immediately in case DOM is already loaded
+document.addEventListener("DOMContentLoaded", applyTranslations);
+applyTranslations(); // Run immediately in case DOM is already loaded
 
 function tStatus(key, ...args) {
-  const lang = localStorage.getItem("appLanguage") || "en"
-  const t = qsTranslations[lang] || qsTranslations.en
-  let text = t[key] || key
+  const lang = localStorage.getItem("appLanguage") || "en";
+  const t = qsTranslations[lang] || qsTranslations.en;
+  let text = t[key] || key;
   args.forEach((arg, index) => {
-    text = text.replace("{" + index + "}", arg)
-  })
-  return text
+    text = text.replace("{" + index + "}", arg);
+  });
+  return text;
 }
