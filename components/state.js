@@ -32,6 +32,7 @@ export const uiState = {
   headerLineStyle: "pattern", // "pattern" | "simple" | "hidden"
   bookmarkMenuBg: "normal", // "glass" | "normal"
   showSmartFolders: true,
+  sidebarWidth: 260,
 }
 
 export const selectedBookmarks = uiState.selectedBookmarks
@@ -84,6 +85,8 @@ export function saveUIState() {
       showTagsInView: uiState.showTagsInView,
       headerLineStyle: uiState.headerLineStyle,
       bookmarkMenuBg: uiState.bookmarkMenuBg,
+      showSmartFolders: uiState.showSmartFolders,
+      sidebarWidth: uiState.sidebarWidth,
     },
     checkboxesVisible: uiState.checkboxesVisible,
     bookmarkTags: uiState.bookmarkTags,
@@ -128,8 +131,11 @@ export function loadUIState(callback) {
         uiState.showTagsInView = result.uiState.showTagsInView ?? false
         uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
         uiState.bookmarkMenuBg = result.uiState.bookmarkMenuBg || "glass"
+        uiState.showSmartFolders = result.uiState.showSmartFolders ?? true
+        uiState.sidebarWidth = result.uiState.sidebarWidth || 260
         document.body.setAttribute("data-header-line", uiState.headerLineStyle)
         document.body.setAttribute("data-bookmark-menu-bg", uiState.bookmarkMenuBg)
+        document.documentElement.style.setProperty("--sidebar-width", `${uiState.sidebarWidth}px`)
       }
       uiState.checkboxesVisible = result.checkboxesVisible || false
       uiState.bookmarkTags = result.bookmarkTags || {}

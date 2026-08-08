@@ -19,6 +19,7 @@ export const en = {
   "smartFoldersConfig": "Smart Folders:",
   "smartFoldersShow": "Show",
   "smartFoldersHide": "Hide",
+  "sidebarWidthConfig": "Sidebar Width:",
   "tabDashboard": "Dashboard",
   "tabQuickSave": "Quick Save",
   "exportBookmarks": "Export Bookmarks",

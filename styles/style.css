@@ -4930,3 +4930,31 @@ html {
   outline-offset: -2px;
   background: color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
+
+/* SIDEBAR WIDTH RANGE INPUT STYLES */
+#sidebar-width-input {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 4px;
+  outline: none;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+#sidebar-width-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+#sidebar-width-input::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 5px var(--accent-color);
+}

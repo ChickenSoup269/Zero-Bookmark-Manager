@@ -19,6 +19,7 @@ export const vi = {
   smartFoldersConfig: "Thư mục thông minh:",
   smartFoldersShow: "Hiện",
   smartFoldersHide: "Ẩn",
+  sidebarWidthConfig: "Chiều rộng Sidebar:",
   tabDashboard: "Bảng Điều Khiển",
   tabQuickSave: "Lưu Nhanh",
   exportBookmarks: "Xuất Bookmarks",

@@ -386,6 +386,59 @@ function setupSmartFoldersControl() {
   }
 }
 
+function setupSidebarWidthControl() {
+  const input = document.getElementById("sidebar-width-input")
+  const display = document.getElementById("sidebar-width-display")
+  const btnDecrease = document.getElementById("sidebar-width-decrease")
+  const btnIncrease = document.getElementById("sidebar-width-increase")
+  
+  if (!input || !display) return
+
+  // Initialization is handled by loadUIState which sets the property.
+  // We just need to sync the input with uiState
+  input.value = uiState.sidebarWidth || 260
+  display.textContent = `${input.value}px`
+
+  const updateWidth = (val) => {
+    input.value = val
+    display.textContent = `${val}px`
+    document.documentElement.style.setProperty("--sidebar-width", `${val}px`)
+    uiState.sidebarWidth = val
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.sidebarWidth = val
+      chrome.storage.local.set({ uiState: newUiState })
+    })
+  }
+
+  input.addEventListener("input", (e) => {
+    const val = parseInt(e.target.value)
+    display.textContent = `${val}px`
+    document.documentElement.style.setProperty("--sidebar-width", `${val}px`)
+  })
+
+  input.addEventListener("change", (e) => {
+    const val = parseInt(e.target.value)
+    updateWidth(val)
+  })
+
+  if (btnDecrease) {
+    btnDecrease.addEventListener("click", () => {
+      let val = parseInt(input.value) - parseInt(input.step || 10)
+      if (val < parseInt(input.min || 200)) val = parseInt(input.min || 200)
+      updateWidth(val)
+    })
+  }
+
+  if (btnIncrease) {
+    btnIncrease.addEventListener("click", () => {
+      let val = parseInt(input.value) + parseInt(input.step || 10)
+      if (val > parseInt(input.max || 400)) val = parseInt(input.max || 400)
+      updateWidth(val)
+    })
+  }
+}
+
 function normalizeCustomLanguagePack(rawPack) {
   if (!rawPack || typeof rawPack !== "object" || Array.isArray(rawPack)) {
     throw new Error("Invalid language pack")
@@ -1220,8 +1273,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const init = () => {
-    setupBookmarkMenuBgControl()
-    setupSmartFoldersControl()
+    // setupBookmarkMenuBgControl is also called in customLoadUIState callback, so we can remove it here too
     initCopyButtons()
     registerCustomLanguagePacks()
     renderCustomLanguageOptions(elements.languageSwitcher)
@@ -1546,6 +1598,8 @@ document.addEventListener("DOMContentLoaded", () => {
         loadVisitCounts(() => {
           customLoadUIState(() => {
             setupBookmarkMenuBgControl()
+            setupSmartFoldersControl()
+            setupSidebarWidthControl()
             renderFilteredBookmarks(bookmarkTreeNodes, elements)
             setupBookmarkChangeListeners(elements)
           })

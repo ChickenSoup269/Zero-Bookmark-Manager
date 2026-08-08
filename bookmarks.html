@@ -646,6 +646,15 @@
                         </div>
                     </div>
 
+                    <div class="app-setting-field">
+                        <label style="display: flex; justify-content: space-between; width: 100%;"><span style="display: flex; gap: 8px; align-items: center;"><i class="fas fa-arrows-left-right"></i> <span data-i18n="sidebarWidthConfig">Sidebar Width:</span></span> <span id="sidebar-width-display" style="font-weight: normal; opacity: 0.8;"></span></label>
+                        <div style="display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 8px;">
+                            <button id="sidebar-width-decrease" class="icon-button" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 4px; padding: 4px 8px; cursor: pointer;"><i class="fas fa-minus"></i></button>
+                            <input type="range" id="sidebar-width-input" min="200" max="400" step="10" value="260" style="flex: 1;">
+                            <button id="sidebar-width-increase" class="icon-button" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 4px; padding: 4px 8px; cursor: pointer;"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+
                     <button id="localstorage-settings-option" class="menu-item app-setting-action">
                         <i class="fas fa-cog"></i> <span data-i18n="localStorageSettingsTitle">Local Storage
                             Settings</span>
