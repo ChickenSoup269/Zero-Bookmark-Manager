@@ -34,8 +34,10 @@ export async function exportToCSV(
       visitCounts = {}
     }
 
-    const { bookmarkTags } = await chrome.storage.local.get(["bookmarkTags"])
+    const { bookmarkTags, favoriteBookmarks, pinnedBookmarks } = await chrome.storage.local.get(["bookmarkTags", "favoriteBookmarks", "pinnedBookmarks"])
     const allTags = bookmarkTags || {}
+    const favorites = favoriteBookmarks || {}
+    const pins = pinnedBookmarks || {}
 
     if (!Array.isArray(bookmarkTreeNodes)) {
       throw new Error("Invalid bookmarkTreeNodes: must be an array")
@@ -102,7 +104,7 @@ export async function exportToCSV(
     if (includeCreationDates) headers.push("Date Added")
     if (includeFolderModDates) headers.push("Date Group Modified")
     if (includeFolderPath) headers.push("Folder Path")
-    headers.push("Tags", "Access Count")
+    headers.push("Tags", "Access Count", "Favorite", "Pinned")
     if (includeIconData) headers.push("Icon Data")
 
     let csvContent = headers.join(",") + "\n"
@@ -138,6 +140,8 @@ export async function exportToCSV(
         .join(", ")
       row.push(`"${escapedTagsJoin}"`)
       row.push(visitCounts[bookmark.id] || 0)
+      row.push(favorites[bookmark.id] ? '"Yes"' : '"No"')
+      row.push(pins[bookmark.id] ? '"Yes"' : '"No"')
       if (includeIconData) {
         const faviconBase64 = await getFaviconBase64(bookmark.url)
         row.push(`"${faviconBase64.replace(/"/g, '""')}"`)

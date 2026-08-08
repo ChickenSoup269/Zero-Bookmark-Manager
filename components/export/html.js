@@ -10,17 +10,41 @@ export async function exportToHTML(
   currentTheme
 ) {
   let faviconMap = {}
-  let bookmarkTags = {}
-
-  // Fetch tags from chrome.storage.local
+  
+  let visitCounts = {}
   try {
-    const storageData = await new Promise((resolve) =>
-      chrome.storage.local.get(["bookmarkTags"], resolve)
-    )
-    bookmarkTags = storageData.bookmarkTags || {}
-  } catch (error) {
-    console.error("Failed to fetch bookmarkTags:", error)
+    visitCounts = await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ action: "getVisitCounts" }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn("Error getting visit counts:", chrome.runtime.lastError)
+          resolve({})
+        } else {
+          resolve(response?.visitCounts || {})
+        }
+      })
+      setTimeout(() => resolve({}), 2000)
+    })
+  } catch (err) {
+    console.warn("Failed to get visit counts:", err)
+    visitCounts = {}
   }
+
+  let storageData = {}
+  try {
+    storageData = await new Promise((resolve) =>
+      chrome.storage.local.get(
+        ["bookmarkTags", "favoriteBookmarks", "pinnedBookmarks", "tagColors", "tagTextColors"],
+        resolve
+      )
+    )
+  } catch (error) {
+    console.error("Failed to fetch storage data:", error)
+  }
+  const bookmarkTags = storageData.bookmarkTags || {}
+  const favoriteBookmarks = storageData.favoriteBookmarks || {}
+  const pinnedBookmarks = storageData.pinnedBookmarks || {}
+  const tagColors = storageData.tagColors || {}
+  const tagTextColors = storageData.tagTextColors || {}
 
   if (includeIconData) {
     const bookmarksWithUrls = flattenBookmarks(bookmarkTreeNodes).filter(
@@ -59,6 +83,7 @@ export async function exportToHTML(
     bookmarks: translations[language].bookmarks || "bookmarks",
     folders: translations[language].folders || "folders",
     tags: translations[language].tags || "Tags", // Added for tag labels
+    visits: translations[language].visits || "Visits",
   }
 
   const cssTheme = `
@@ -607,6 +632,11 @@ export async function exportToHTML(
           )};
           const faviconMap = ${JSON.stringify(faviconMap)};
           const bookmarkTags = ${JSON.stringify(bookmarkTags)};
+          const visitCounts = ${JSON.stringify(visitCounts)};
+          const favoriteBookmarks = ${JSON.stringify(favoriteBookmarks)};
+          const pinnedBookmarks = ${JSON.stringify(pinnedBookmarks)};
+          const tagColors = ${JSON.stringify(tagColors)};
+          const tagTextColors = ${JSON.stringify(tagTextColors)};
           
           const listContainer = document.getElementById("bookmarkList");
           const gridContainer = document.getElementById("bookmarkGrid");
@@ -639,7 +669,29 @@ export async function exportToHTML(
           function renderTags(bookmarkId) {
             const tags = bookmarkTags[bookmarkId] || [];
             if (!tags.length) return '';
-            return \`<div class="tags-container"><span class="meta-info"><i class="fas fa-tags"></i> \${translations.tags}: \${tags.map(tag => \`<span class="tag">\${tag}</span>\`).join('')}</span></div>\`;
+            return \`<div class="tags-container"><span class="meta-info"><i class="fas fa-tags"></i> \${translations.tags}: \${tags.map(tag => {
+              const bgColor = tagColors[tag] || 'var(--tag-bg)';
+              const color = tagTextColors[tag] || 'var(--tag-text)';
+              return \`<span class="tag" style="background-color: \${bgColor}; color: \${color};">\${tag}</span>\`;
+            }).join('')}</span></div>\`;
+          }
+
+          function renderExtraMeta(node) {
+            let html = '';
+            const visits = visitCounts[node.id] || 0;
+            if (visits > 0) {
+              html += \`<span class="meta-info"><i class="fas fa-eye"></i> \${visits}</span> \`;
+            }
+            if (favoriteBookmarks[node.id]) {
+              html += \`<span class="meta-info" style="color: #fbbf24;"><i class="fas fa-star"></i></span> \`;
+            }
+            if (pinnedBookmarks[node.id]) {
+              html += \`<span class="meta-info" style="color: #ef4444;"><i class="fas fa-thumbtack"></i></span> \`;
+            }
+            if (html) {
+              return \`<div class="tags-container">\${html}</div>\`;
+            }
+            return '';
           }
 
           function renderBookmarks(nodes, parent = listContainer, gridParent = gridContainer, treeParent = treeContainer, depth = 0) {
@@ -658,6 +710,7 @@ export async function exportToHTML(
                 if (includeCreationDates) {
                   li.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> \${translations.created}: \${formatDate(node.dateAdded)}</div>\`;
                 }
+                li.innerHTML += renderExtraMeta(node);
                 li.innerHTML += renderTags(node.id);
                 parent.appendChild(li);
 
@@ -671,6 +724,7 @@ export async function exportToHTML(
                 if (includeCreationDates) {
                   gridItem.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> \${translations.created}: \${formatDate(node.dateAdded)}</div>\`;
                 }
+                gridItem.innerHTML += renderExtraMeta(node);
                 gridItem.innerHTML += renderTags(node.id);
                 gridParent.appendChild(gridItem);
               }
@@ -688,6 +742,7 @@ export async function exportToHTML(
                 if (includeCreationDates) {
                   treeItem.innerHTML += \`<div class="meta-info"><i class="far fa-calendar"></i> \${translations.created}: \${formatDate(node.dateAdded)}</div>\`;
                 }
+                treeItem.innerHTML += renderExtraMeta(node);
                 treeItem.innerHTML += renderTags(node.id);
               } else if (node.children) {
                 treeItem.className = "folder";
