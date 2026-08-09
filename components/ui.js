@@ -4025,36 +4025,47 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
   const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
   const isChecked = uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
 
-  div.innerHTML = `
-    <input type="checkbox" class="bookmark-checkbox" data-id="${
-      bookmark.id
-    }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
-    <div class="bookmark-favicon" style="width: 22px; height: 22px; border-radius: 4px; overflow: hidden; background: white; display: flex; justify-content: center; align-items: center;">
-      <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" 
-        data-hostname="${hostname}"
-      >
-    </div>
-    <a href="${
-      bookmark.url
-    }" target="_blank" class="bookmark-title" style="flex: 1; color: var(--text-primary); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${
-      bookmark.title
-    }">
-      ${bookmark.title || bookmark.url}
-    </a>
-       ${createNotesPreviewHTML(bookmark, "tree-note-preview")}
-       ${healthIcon} 
-       ${visitCountBadge}
-    <div class="bookmark-url" style="font-size: 11px; color: var(--text-secondary); opacity: 0.7; max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${extractDomain(
-      bookmark.url,
-    )}</div>
+  const isPopup = window.location.pathname.includes('index.html')
+
+  if (isPopup) {
+    div.innerHTML = `
+      <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
+      <div class="bookmark-favicon" style="width: 22px; height: 22px; border-radius: 4px; overflow: hidden; background: white; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
+        <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" data-hostname="${hostname}">
+      </div>
+      <div class="bookmark-main-content" style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; justify-content: center;">
+        <a href="${bookmark.url}" target="_blank" class="bookmark-title" style="color: var(--text-primary); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;" title="${bookmark.title}">
+          ${bookmark.title || bookmark.url}
+        </a>
+        <div class="bookmark-metadata" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+          ${createNotesPreviewHTML(bookmark, "tree-note-preview")}
+          ${healthIcon} 
+          ${visitCountBadge}
+          <div class="bookmark-url" style="font-size: 11px; color: var(--text-secondary); opacity: 0.7; max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${extractDomain(bookmark.url)}</div>
+          ${createTagsInViewHTML(bookmark.tags, "tree-view-tags")}
+          ${uiState.showBookmarkIds ? `<span class="bookmark-id" style="font-size: 11px; color: #888;">[${bookmark.id}]</span>` : ""}
+        </div>
+      </div>
+      ${createDropdownHTML(bookmark, language)}
+    `
+  } else {
+    div.innerHTML = `
+      <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
+      <div class="bookmark-favicon" style="width: 22px; height: 22px; border-radius: 4px; overflow: hidden; background: white; display: flex; justify-content: center; align-items: center;">
+        <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" data-hostname="${hostname}">
+      </div>
+      <a href="${bookmark.url}" target="_blank" class="bookmark-title" style="flex: 1; color: var(--text-primary); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${bookmark.title}">
+        ${bookmark.title || bookmark.url}
+      </a>
+      ${createNotesPreviewHTML(bookmark, "tree-note-preview")}
+      ${healthIcon} 
+      ${visitCountBadge}
+      <div class="bookmark-url" style="font-size: 11px; color: var(--text-secondary); opacity: 0.7; max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${extractDomain(bookmark.url)}</div>
       ${createTagsInViewHTML(bookmark.tags, "tree-view-tags")}
-    ${
-      uiState.showBookmarkIds
-        ? `<span class="bookmark-id" style="font-size: 11px; color: #888;">[${bookmark.id}]</span>`
-        : ""
-    }
-    ${createDropdownHTML(bookmark, language)}
-  `
+      ${uiState.showBookmarkIds ? `<span class="bookmark-id" style="font-size: 11px; color: #888;">[${bookmark.id}]</span>` : ""}
+      ${createDropdownHTML(bookmark, language)}
+    `
+  }
 
   div
     .querySelector(".bookmark-title")
@@ -4082,27 +4093,37 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
     hostname = new URL(bookmark.url).hostname
   } catch (e) {}
 
-  div.innerHTML = `
-    <input type="checkbox" class="bookmark-checkbox" data-id="${
-      bookmark.id
-    }" ${isChecked} style="display: ${checkboxDisplay}">
-    <img src="${favicon}" alt="fav" class="favicon"
-      data-hostname="${hostname}"
-    >
-    <a href="${bookmark.url}" target="_blank" class="link">${
-      bookmark.title || bookmark.url
-    }</a>
-    ${healthIcon}
-    ${visitCountBadge}
-    ${
-      uiState.showBookmarkIds
-        ? `<span class="bookmark-id">[ID: ${bookmark.id}]</span>`
-        : ""
-    }
-    ${createDropdownHTML(bookmark, language)}
-    ${createNotesPreviewHTML(bookmark, "flat-note-preview")}
-    ${createTagsInViewHTML(bookmark.tags, "flat-view-tags")}
-  `
+  const isPopup = window.location.pathname.includes('index.html')
+
+  if (isPopup) {
+    div.innerHTML = `
+      <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}">
+      <img src="${favicon}" alt="fav" class="favicon" data-hostname="${hostname}">
+      <div class="bookmark-main-content" style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; justify-content: center;">
+        <a href="${bookmark.url}" target="_blank" class="link" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">${bookmark.title || bookmark.url}</a>
+        <div class="bookmark-metadata" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+          ${createNotesPreviewHTML(bookmark, "flat-note-preview")}
+          ${healthIcon}
+          ${visitCountBadge}
+          ${createTagsInViewHTML(bookmark.tags, "flat-view-tags")}
+          ${uiState.showBookmarkIds ? `<span class="bookmark-id" style="font-size: 11px; color: #888;">[ID: ${bookmark.id}]</span>` : ""}
+        </div>
+      </div>
+      ${createDropdownHTML(bookmark, language)}
+    `
+  } else {
+    div.innerHTML = `
+      <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}">
+      <img src="${favicon}" alt="fav" class="favicon" data-hostname="${hostname}">
+      <a href="${bookmark.url}" target="_blank" class="link">${bookmark.title || bookmark.url}</a>
+      ${healthIcon}
+      ${visitCountBadge}
+      ${uiState.showBookmarkIds ? `<span class="bookmark-id">[ID: ${bookmark.id}]</span>` : ""}
+      ${createDropdownHTML(bookmark, language)}
+      ${createNotesPreviewHTML(bookmark, "flat-note-preview")}
+      ${createTagsInViewHTML(bookmark.tags, "flat-view-tags")}
+    `
+  }
 
   div
     .querySelector(".link")
