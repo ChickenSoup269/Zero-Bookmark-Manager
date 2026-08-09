@@ -4473,7 +4473,7 @@ html {
   min-height: 0;
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-columns: minmax(0, 1fr) 260px;
   gap: 14px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -4509,8 +4509,27 @@ html {
   border-top: 1px solid var(--border-color);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .smart-cleanup-body {
+    grid-template-columns: 1fr;
+  }
+  
+  .smart-cleanup-next {
+    margin-top: 14px;
+    max-height: 240px;
+    overflow-y: auto;
+  }
+  
+  .smart-cleanup-details {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 500px) {
+  .smart-cleanup-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+  .smart-cleanup-list li {
     grid-template-columns: 1fr;
   }
 }
