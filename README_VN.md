@@ -53,10 +53,10 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 - **Xem Bookmark (8 chế độ):** Chuyển đổi linh hoạt giữa Phẳng (Flat), Cây (Tree), Chi tiết (Detail), Thẻ (Card), Danh sách (List), Bento, Kanban/Split, và Mockup.
 - **Tìm kiếm:** Tìm bookmark ngay lập tức bằng từ khóa (tiêu đề hoặc URL) với hỗ trợ **Tìm kiếm mờ (Fuzzy Search)**.
 - **Sắp xếp:** Sắp xếp bookmark theo ngày thêm, lần mở gần nhất, bảng chữ cái (A–Z, Z–A), yêu thích, lượt truy cập nhiều nhất hoặc **theo Tên miền (Domain)**.
-- **Thanh bên & Quản lý Thư mục:** Thanh bên phong cách Raindrop với cây thư mục phân cấp. Hỗ trợ **Kéo & Thả (Drag & Drop)** để tổ chức nhanh chóng.
+- **Thanh bên & Quản lý Thư mục:** Thanh bên phong cách Raindrop với cây thư mục phân cấp và có thể tùy chỉnh độ rộng. Hỗ trợ **Kéo & Thả (Drag & Drop)** để tổ chức nhanh chóng.
 - **Chỉnh sửa Bookmark:** Thêm vào thư mục, đổi tên hoặc xóa dấu trang. Xem chi tiết, đánh dấu yêu thích, thêm thẻ (tags).
 - **Xem trước Trang web:** Mở một **Modal Iframe** trong Chế độ chi tiết để xem trước trang web mà không cần rời khỏi extension.
-- **Xuất/Nhập:** Lưu bookmark dưới dạng JSON/HTML/CSV hoặc nhập vào bằng tệp JSON (tự động phát hiện trùng lặp dựa trên URL).
+- **Xuất/Nhập:** Lưu bookmark dưới dạng JSON/HTML/CSV (đầy đủ metadata) hoặc nhập vào bằng tệp JSON (tự động phát hiện trùng lặp dựa trên URL).
 - **Giao diện (Themes):** Chuyển đổi giữa các chủ đề Sáng, Tối, Dracula, One Dark, **Tokyo Night**, **Monokai**, **Winter is Coming**, **GitHub Blue**, **GitHub Light**, Tết hoặc theo hệ thống.
 - **Phông chữ:** Tùy chỉnh giao diện với các kiểu phông chữ khác nhau (hỗ trợ Nerd Fonts).
 - **Đa ngôn ngữ:** Hỗ trợ tiếng Anh và tiếng Việt.
@@ -72,7 +72,8 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 - **Quản lý Bookmark Trùng lặp:** Tự động xóa bookmark trùng lặp khi tạo hoặc quét thủ công.
 - **Cấu hình linh hoạt:** Tùy chỉnh nguồn Favicon (Google, DuckDuckGo, Auto), hành động khi nhấp icon, v.v.
 - **Đồng bộ Đám mây (Google Drive):** Sao lưu và khôi phục bookmark an toàn dưới định dạng JSON trực tiếp qua Google Drive.
-- **Tối ưu Hiệu suất:** Áp dụng Lazy Rendering (Cuộn vô hạn) để xử lý mượt mà hàng ngàn bookmark mà không gây giật lag.
+- **Tối ưu Hiệu suất:** Áp dụng Lazy Rendering (Cuộn vô hạn) và tải chậm cây thư mục (lazy load) để xử lý mượt mà hàng ngàn bookmark, tăng tốc mở popup.
+- **Cải tiến UI/UX:** Tối ưu hóa hiển thị dọn dẹp thông minh trên màn hình nhỏ, chống đè chéo chữ cho thẻ (tags) và ghi chú.
 - **Gói Ngôn ngữ Tùy chỉnh:** Dịch giao diện sang bất kỳ ngôn ngữ nào bằng AI, lưu thành file JSON và áp dụng ngay lập tức.
 - **Không gian làm việc (Workspaces):** Lưu trạng thái giao diện hiện tại thành các không gian Work, Learning, Design, hoặc Personal để chuyển đổi nhanh chóng.
 
@@ -131,9 +132,9 @@ Cài đặt Bookmark-Manager
 | `Tìm kiếm`                 | Nhập từ khóa (Hỗ trợ tìm kiếm mờ).                                                       |
 | `Lọc thư mục`              | Chọn thư mục từ thanh bên hoặc dropdown.                                                 |
 | `Sắp xếp`                  | Ngày thêm, A-Z, Yêu thích, Truy cập nhiều, hoặc Tên miền.                                |
-| `Quản lý thư mục`          | Tạo, sửa, xóa thư mục. Sử dụng Kéo & Thả ở thanh bên để tổ chức.                         |
+| `Quản lý thư mục`          | Tạo, sửa, xóa thư mục. Kéo & Thả ở thanh bên để tổ chức. Tùy chỉnh độ rộng thanh bên.    |
 | `Quản lý bookmark`         | Nhấn “⋮” để thao tác. Xem Chi tiết để mở modal xem trước trang web.                      |
-| `Xuất/Nhập`                | Xuất ra JSON/HTML/CSV hoặc nhập vào với kiểm tra trùng lặp.                              |
+| `Xuất/Nhập`                | Xuất ra JSON/HTML/CSV (đầy đủ metadata) hoặc nhập vào với kiểm tra trùng lặp.            |
 | `Dọn dẹp trùng lặp`        | Quét thủ công hoặc tự động (CleanUp) để loại bỏ các link trùng lặp.                      |
 | `Workspaces`               | Chuyển đổi giữa các không gian (Work, Learning, Design, Personal).                       |
 | `Danh sách đọc`            | Thêm bookmark vào hàng đợi (Reading Queue) để đọc sau.                                   |

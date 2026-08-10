@@ -90,10 +90,10 @@ Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bo
 - **View Bookmarks (8 Modes):** Browse your bookmarks via Flat, Tree, Detail, Card, List, Bento, Split/Kanban, and Mockup views.
 - **Search:** Instantly find bookmarks by keyword (title or URL) with **Fuzzy Search** support.
 - **Sort:** Organize bookmarks by date added, last opened, alphabetically (A-Z, Z-A), favourite, most visited, or **by Domain**.
-- **Sidebar & Folder Management:** Raindrop-style sidebar with nested folder tree. Supports **Drag & Drop** for quick organization.
+- **Sidebar & Folder Management:** Raindrop-style sidebar with nested folder tree and adjustable width. Supports **Drag & Drop** for quick organization.
 - **Edit Bookmarks:** Add to folder, rename or delete bookmarks. View details, favourite, add tags.
 - **Web Preview:** Open an **Iframe Modal** in Detail View to preview websites without leaving the extension.
-- **Export/Import:** Save bookmarks to JSON/HTML/CSV or import with JSON duplicate detection (based on URL).
+- **Export/Import:** Save bookmarks to JSON/HTML/CSV (with full metadata) or import with JSON duplicate detection (based on URL).
 - **Themes:** Switch between Light, Dark, Dracula, One Dark, **Tokyo Night**, **Monokai**, **Winter is Coming**, **GitHub Blue**, **GitHub Light**, Tet, or system-based themes.
 - **Fonts:** Customize interface with various font styles, including improved Nerd Fonts support.
 - **Multilingual:** Supports English and Vietnamese for a localized experience.
@@ -109,7 +109,8 @@ Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bo
 - **Duplicate Management:** Automatically removes duplicate bookmarks upon creation. Includes a manual scan option.
 - **Configurable Settings:** Customize Favicon provider, click actions, and more.
 - **Cloud Backup & Sync:** Securely backup and restore your bookmarks in JSON format directly to your Google Drive.
-- **Performance Optimization:** Implemented Lazy Rendering (Infinite Scrolling) to smoothly handle thousands of bookmarks without lag.
+- **Performance Optimization:** Implemented Lazy Rendering (Infinite Scrolling) and lazy loaded folder trees to smoothly handle thousands of bookmarks without lag and improve popup render speed.
+- **UI/UX Enhancements:** Enhanced responsiveness for smart cleanup on small screens, and improved text wrapping for tags and notes to prevent overlapping.
 - **Custom Language Packs:** Easily translate the UI to any language using AI, save as JSON, and apply instantly.
 - **Workspaces:** Save current views and folders as Work, Learning, Design, or Personal workspaces for quick context switching.
 
@@ -171,9 +172,9 @@ Install Bookmark-Manager
 | `Search`            | Type keywords in the search box (Fuzzy match enabled).                                 |
 | `Filter folders`    | Select a folder from the sidebar or dropdown.                                          |
 | `Sort`              | Choose sorting: Date, A-Z, Favorites, Most Visited, or Domain.                         |
-| `Manage folders`    | Create, rename, or delete folders. Use Drag & Drop in sidebar to move folders.         |
+| `Manage folders`    | Create, rename, or delete folders. Drag & Drop to move folders. Adjust sidebar width.  |
 | `Manage bookmarks`  | Click "⋮" to add to folder, rename, or delete. View Details to open Web Preview modal. |
-| `Export/Import`     | Use Settings to export as JSON/HTML/CSV or import with duplicate check.                |
+| `Export/Import`     | Use Settings to export as JSON/HTML/CSV (full metadata) or import with duplicate check.|
 | `CleanUp Duplicates`| Manually scan or auto-remove duplicate bookmarks.                                      |
 | `Workspaces`        | Switch context between Work, Learning, Design, or Personal setups.                     |
 | `Reading Queue`     | Save links to read later, keeping main folders clean.                                  |
