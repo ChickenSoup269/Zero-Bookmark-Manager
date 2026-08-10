@@ -42,8 +42,6 @@
   </table>
 </div>
 
-
-
 ## Introduction
 
 Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản hóa việc tổ chức bookmark. Dễ dàng xem, tìm kiếm, sắp xếp và quản lý bookmark của bạn với giao diện dễ nhìn? Hỗ trợ chủ đề sáng/tối, hiển thị ngôn ngữ (Tiếng Anh/Tiếng Việt), và chức năng xuất/nhập để sao lưu và khôi phục liền mạch.
@@ -126,30 +124,30 @@ Cài đặt Bookmark-Manager
 
 ## Usage/Examples
 
-| Parameter                  | Description                                                                              |
-| :------------------------- | :--------------------------------------------------------------------------------------- |
-| `Chế độ hiển thị (Views)`  | Chuyển đổi linh hoạt 8 chế độ: Flat, Tree, Detail, Card, List, Bento, Kanban, Mockup.                    |
-| `Tìm kiếm`                 | Nhập từ khóa (Hỗ trợ tìm kiếm mờ).                                                       |
-| `Lọc thư mục`              | Chọn thư mục từ thanh bên hoặc dropdown.                                                 |
-| `Sắp xếp`                  | Ngày thêm, A-Z, Yêu thích, Truy cập nhiều, hoặc Tên miền.                                |
-| `Quản lý thư mục`          | Tạo, sửa, xóa thư mục. Kéo & Thả ở thanh bên để tổ chức. Tùy chỉnh độ rộng thanh bên.    |
-| `Quản lý bookmark`         | Nhấn “⋮” để thao tác. Xem Chi tiết để mở modal xem trước trang web.                      |
-| `Xuất/Nhập`                | Xuất ra JSON/HTML/CSV (đầy đủ metadata) hoặc nhập vào với kiểm tra trùng lặp.            |
-| `Dọn dẹp trùng lặp`        | Quét thủ công hoặc tự động (CleanUp) để loại bỏ các link trùng lặp.                      |
-| `Workspaces`               | Chuyển đổi giữa các không gian (Work, Learning, Design, Personal).                       |
-| `Danh sách đọc`            | Thêm bookmark vào hàng đợi (Reading Queue) để đọc sau.                                   |
-| `Tùy chỉnh`                | Điều chỉnh giao diện (Tokyo Night, Monokai...), phông chữ, gói ngôn ngữ AI.              |
-| `Xem trước Web`            | Xem nội dung trang web ngay trong extension qua modal (nút Chi tiết).                    |
-| `Mở trong bảng điều khiển` | Mở bookmark trong bảng điều khiển bên cạnh (Side Panel).                                 |
-| `Hành động mở nhanh`       | Chọn hành động mặc định khi nhấp vào biểu tượng tiện ích.                                |
-| `Tags`                     | Lọc theo thẻ qua thanh bên hoặc Popup trình duyệt Thẻ. Tự động gắn thẻ bằng AI.          |
-| `Ghim lên đầu`             | Ghim các bookmark quan trọng lên trên cùng.                                              |
-| `Kiểm tra tình trạng`      | Xác minh link sống/chết hoặc nghi ngờ.                                                   |
-| `Lượt truy cập`            | Theo dõi và hiển thị số lần mở bookmark.                                                 |
-| `Chatbot`                  | Điều khiển qua ngôn ngữ tự nhiên. Hỗ trợ các nhà cung cấp AI phổ biến.                   |
-| `Nguồn Favicon`            | Chọn giữa Google, DuckDuckGo hoặc Auto để lấy biểu tượng.                                |
-| `Bảng lệnh (Command)`      | Nhấn `Ctrl + K` để mở Command Palette tìm kiếm và chạy lệnh siêu tốc.                    |
-| `Ghi chú`                  | Thêm ghi chú cá nhân (Markdown) vào từng bookmark thông qua nút Chi tiết.                |
+| Parameter                  | Description                                                                           |
+| :------------------------- | :------------------------------------------------------------------------------------ |
+| `Chế độ hiển thị (Views)`  | Chuyển đổi linh hoạt 8 chế độ: Flat, Tree, Detail, Card, List, Bento, Kanban, Mockup. |
+| `Tìm kiếm`                 | Nhập từ khóa (Hỗ trợ tìm kiếm mờ).                                                    |
+| `Lọc thư mục`              | Chọn thư mục từ thanh bên hoặc dropdown.                                              |
+| `Sắp xếp`                  | Ngày thêm, A-Z, Yêu thích, Truy cập nhiều, hoặc Tên miền.                             |
+| `Quản lý thư mục`          | Tạo, sửa, xóa thư mục. Kéo & Thả ở thanh bên để tổ chức. Tùy chỉnh độ rộng thanh bên. |
+| `Quản lý bookmark`         | Nhấn “⋮” để thao tác. Xem Chi tiết để mở modal xem trước trang web.                   |
+| `Xuất/Nhập`                | Xuất ra JSON/HTML/CSV (đầy đủ metadata) hoặc nhập vào với kiểm tra trùng lặp.         |
+| `Dọn dẹp trùng lặp`        | Quét thủ công hoặc tự động (CleanUp) để loại bỏ các link trùng lặp.                   |
+| `Workspaces`               | Chuyển đổi giữa các không gian (Work, Learning, Design, Personal).                    |
+| `Danh sách đọc`            | Thêm bookmark vào hàng đợi (Reading Queue) để đọc sau.                                |
+| `Tùy chỉnh`                | Điều chỉnh giao diện (Tokyo Night, Monokai...), phông chữ, gói ngôn ngữ AI.           |
+| `Xem trước Web`            | Xem nội dung trang web ngay trong extension qua modal (nút Chi tiết).                 |
+| `Mở trong bảng điều khiển` | Mở bookmark trong bảng điều khiển bên cạnh (Side Panel).                              |
+| `Hành động mở nhanh`       | Chọn hành động mặc định khi nhấp vào biểu tượng tiện ích.                             |
+| `Tags`                     | Lọc theo thẻ qua thanh bên hoặc Popup trình duyệt Thẻ. Tự động gắn thẻ bằng AI.       |
+| `Ghim lên đầu`             | Ghim các bookmark quan trọng lên trên cùng.                                           |
+| `Kiểm tra tình trạng`      | Xác minh link sống/chết hoặc nghi ngờ.                                                |
+| `Lượt truy cập`            | Theo dõi và hiển thị số lần mở bookmark.                                              |
+| `Chatbot`                  | Điều khiển qua ngôn ngữ tự nhiên. Hỗ trợ các nhà cung cấp AI phổ biến.                |
+| `Nguồn Favicon`            | Chọn giữa Google, DuckDuckGo hoặc Auto để lấy biểu tượng.                             |
+| `Bảng lệnh (Command)`      | Nhấn `Ctrl + K` để mở Command Palette tìm kiếm và chạy lệnh siêu tốc.                 |
+| `Ghi chú`                  | Thêm ghi chú cá nhân (Markdown) vào từng bookmark thông qua nút Chi tiết.             |
 
 ## Video & screenshots
 

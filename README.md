@@ -55,7 +55,7 @@
 <p>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Generic badge](https://img.shields.io/badge/Version-1.3.0-white.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Version-1.7.0-white.svg)](https://shields.io/)
 
 </p>
 <p>
@@ -166,30 +166,30 @@ Install Bookmark-Manager
 
 ## Usage/Examples
 
-| Parameter           | Description                                                                            |
-| :------------------ | :------------------------------------------------------------------------------------- |
-| `Display Views`     | Switch seamlessly between Flat, Tree, Detail, Card, List, Bento, Split/Kanban, and Mockup.             |
-| `Search`            | Type keywords in the search box (Fuzzy match enabled).                                 |
-| `Filter folders`    | Select a folder from the sidebar or dropdown.                                          |
-| `Sort`              | Choose sorting: Date, A-Z, Favorites, Most Visited, or Domain.                         |
-| `Manage folders`    | Create, rename, or delete folders. Drag & Drop to move folders. Adjust sidebar width.  |
-| `Manage bookmarks`  | Click "⋮" to add to folder, rename, or delete. View Details to open Web Preview modal. |
-| `Export/Import`     | Use Settings to export as JSON/HTML/CSV (full metadata) or import with duplicate check.|
-| `CleanUp Duplicates`| Manually scan or auto-remove duplicate bookmarks.                                      |
-| `Workspaces`        | Switch context between Work, Learning, Design, or Personal setups.                     |
-| `Reading Queue`     | Save links to read later, keeping main folders clean.                                  |
-| `Customize`         | Adjust themes, custom fonts, or AI language packs in Settings.                         |
-| `Web Preview`       | Open sites in a modal within the extension (Details button).                           |
-| `Open Side Panel`   | Open bookmark in a side panel for quick viewing.                                       |
-| `Quick Open Action` | Choose default action (Popup, Full Page, Side Panel) for the extension icon.           |
-| `Tags`              | Filter by tags using sidebar or popup. Auto-categorize via AI.                         |
-| `Pin to top`        | Pin important bookmarks to the top of your list.                                       |
-| `Check Link Health` | Verify bookmark health (Alive, Dead, or Suspicious).                                   |
-| `Visit Count`       | Track and display how many times a bookmark was opened.                                |
-| `Chatbot`           | Control extension via natural language. Supports major AI providers.                   |
-| `Favicon Provider`  | Choose between Google, DuckDuckGo, or Auto for fetching icons.                         |
-| `Command Palette`   | Press `Ctrl + K` to search and run commands quickly.                                   |
-| `Notes`             | Add personal notes to bookmarks from the Detail view.                                  |
+| Parameter            | Description                                                                                |
+| :------------------- | :----------------------------------------------------------------------------------------- |
+| `Display Views`      | Switch seamlessly between Flat, Tree, Detail, Card, List, Bento, Split/Kanban, and Mockup. |
+| `Search`             | Type keywords in the search box (Fuzzy match enabled).                                     |
+| `Filter folders`     | Select a folder from the sidebar or dropdown.                                              |
+| `Sort`               | Choose sorting: Date, A-Z, Favorites, Most Visited, or Domain.                             |
+| `Manage folders`     | Create, rename, or delete folders. Drag & Drop to move folders. Adjust sidebar width.      |
+| `Manage bookmarks`   | Click "⋮" to add to folder, rename, or delete. View Details to open Web Preview modal.     |
+| `Export/Import`      | Use Settings to export as JSON/HTML/CSV (full metadata) or import with duplicate check.    |
+| `CleanUp Duplicates` | Manually scan or auto-remove duplicate bookmarks.                                          |
+| `Workspaces`         | Switch context between Work, Learning, Design, or Personal setups.                         |
+| `Reading Queue`      | Save links to read later, keeping main folders clean.                                      |
+| `Customize`          | Adjust themes, custom fonts, or AI language packs in Settings.                             |
+| `Web Preview`        | Open sites in a modal within the extension (Details button).                               |
+| `Open Side Panel`    | Open bookmark in a side panel for quick viewing.                                           |
+| `Quick Open Action`  | Choose default action (Popup, Full Page, Side Panel) for the extension icon.               |
+| `Tags`               | Filter by tags using sidebar or popup. Auto-categorize via AI.                             |
+| `Pin to top`         | Pin important bookmarks to the top of your list.                                           |
+| `Check Link Health`  | Verify bookmark health (Alive, Dead, or Suspicious).                                       |
+| `Visit Count`        | Track and display how many times a bookmark was opened.                                    |
+| `Chatbot`            | Control extension via natural language. Supports major AI providers.                       |
+| `Favicon Provider`   | Choose between Google, DuckDuckGo, or Auto for fetching icons.                             |
+| `Command Palette`    | Press `Ctrl + K` to search and run commands quickly.                                       |
+| `Notes`              | Add personal notes to bookmarks from the Detail view.                                      |
 
 ## Video & screenshots
 
