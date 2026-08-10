@@ -1824,3 +1824,13 @@ configureShortcutsBtns.forEach(btn => {
     });
   }
 });
+
+const openMomoBtn = document.getElementById("open-momo-qr-btn");
+const closeMomoBtn = document.getElementById("close-momo-qr-btn");
+const momoPopup = document.getElementById("momo-qr-popup");
+if (openMomoBtn && momoPopup) {
+  openMomoBtn.addEventListener("click", () => momoPopup.classList.remove("hidden"));
+}
+if (closeMomoBtn && momoPopup) {
+  closeMomoBtn.addEventListener("click", () => momoPopup.classList.add("hidden"));
+}
