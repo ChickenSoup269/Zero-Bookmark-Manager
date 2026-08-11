@@ -248,7 +248,7 @@
   justify-content: center;
   font-size: 1rem;
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chatbox-message {
@@ -260,7 +260,7 @@
   overflow-wrap: break-word;
   position: relative;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .chatbox-message:hover .chatbox-copy-btn {
@@ -619,7 +619,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s ease;
 }
 
@@ -880,13 +880,13 @@
   opacity: 0.8;
 }
 
-.ai-config-content select, 
+.ai-config-content select,
 .ai-config-content input {
   background: rgba(255, 255, 255, 0.05) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-.ai-config-content select:focus, 
+.ai-config-content select:focus,
 .ai-config-content input:focus {
   border-color: var(--accent-color) !important;
   background: rgba(255, 255, 255, 0.08) !important;
@@ -1194,19 +1194,19 @@
 }
 
 /* Light Theme Adjustments */
-[data-theme="light"] .command-group, 
+[data-theme="light"] .command-group,
 [data-theme="light"] .guide-card {
   background: #f8f9fa;
   border-color: #e9ecef;
 }
 
-[data-theme="light"] .command-group:hover, 
+[data-theme="light"] .command-group:hover,
 [data-theme="light"] .guide-card:hover {
   background: #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-[data-theme="light"] .command-tip, 
+[data-theme="light"] .command-tip,
 [data-theme="light"] .guide-footer-note {
   background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.05);
 }
