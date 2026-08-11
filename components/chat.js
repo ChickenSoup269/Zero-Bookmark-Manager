@@ -2688,6 +2688,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       renderModelSuggestions(aiProviderSelect.value)
+
+      // Auto-save the choice immediately in case they don't click Save
+      const apiVisible = aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none"
+      saveAiConfig(
+        aiProviderSelect.value,
+        aiApiKeyInput.value,
+        aiModelNameInput.value,
+        apiVisible
+      )
+      updateAiStatusIndicator({
+        model: aiProviderSelect.value,
+        apiKey: aiApiKeyInput.value,
+        modelName: aiModelNameInput.value,
+        apiVisible
+      })
     })
   }
 

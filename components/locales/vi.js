@@ -132,16 +132,18 @@ export const vi = {
   modelLabel: "Tên Model",
   aiLocalOption: "AI Tích hợp Trình duyệt (Thử nghiệm)",
   localAiExperimentalNote:
-    "Lưu ý: Đây là tính năng thử nghiệm của Chrome và có thể không khả dụng ở một số trình duyệt hoặc khu vực (như Việt Nam).",
+    "Lưu ý: Đây là tính năng thử nghiệm của Chrome và có thể không khả dụng ở một số trình duyệt hoặc khu vực .",
   localOnlyOption: "Chế độ Ngoại tuyến (Không AI)",
   localOnlyDescription:
     "Không cần nhà cung cấp AI. Chỉ hỗ trợ các lệnh cơ bản.",
   localOnlyNotSupported:
     "Lệnh này không được hỗ trợ trong Chế độ Ngoại tuyến. Vui lòng bật AI để thực hiện các tác vụ nâng cao.",
-  localGeminiNotAvailable: "Chrome Built-in AI không khả dụng. Vui lòng bật nó trong chrome://flags.",
+  localGeminiNotAvailable:
+    "Chrome Built-in AI không khả dụng. Vui lòng bật nó trong chrome://flags.",
   learnHowToEnable: "Xem hướng dẫn bật",
   localAiGuideTitle: "Cách kích hoạt Gemini nội bộ trong Chrome",
-  localAiGuideSteps: "<div style='text-align:left; line-height:1.6; font-size: 0.95em;'><b>Hướng dẫn bật AI cục bộ trên Chrome:</b><br><br>1. Copy và dán link này vào thanh địa chỉ: <br><code style='background:var(--bg-tertiary);padding:3px 6px;border-radius:4px;user-select:all;'>chrome://flags/#prompt-api</code><br>👉 Chuyển sang <b>Enabled</b><br><br>2. Dán tiếp link này: <br><code style='background:var(--bg-tertiary);padding:3px 6px;border-radius:4px;user-select:all;'>chrome://flags/#optimization-guide-on-device-model</code><br>👉 Chuyển sang <b>Enabled BypassPerfRequirement</b><br><br>3. Bấm nút <b>Relaunch</b> màu xanh ở góc dưới cùng.<br><br><i>Lưu ý: Trong lần đầu, Chrome sẽ tải mô hình AI (~1.5GB) ngầm. Bạn sẽ thấy thanh tiến trình tải trong khung chat.</i></div>",
+  localAiGuideSteps:
+    "<div style='text-align:left; line-height:1.6; font-size: 0.95em;'><b>Hướng dẫn bật AI cục bộ trên Chrome:</b><br><br>1. Copy và dán link này vào thanh địa chỉ: <br><code style='background:var(--bg-tertiary);padding:3px 6px;border-radius:4px;user-select:all;'>chrome://flags/#prompt-api</code><br>👉 Chuyển sang <b>Enabled</b> (hoặc Enabled Multilingual)<br><br>2. Dán tiếp link này: <br><code style='background:var(--bg-tertiary);padding:3px 6px;border-radius:4px;user-select:all;'>chrome://flags/#prompt-api-multimodal-input</code><br>👉 Chuyển sang <b>Enabled</b><br><br>3. Bấm nút <b>Relaunch</b> màu xanh ở góc dưới cùng.<br><br><i>Lưu ý: Trong lần đầu, Chrome sẽ tải mô hình AI (~1.5GB) ngầm. Bạn sẽ thấy thanh tiến trình tải trong khung chat.</i></div>",
   copyToClipboard: "Sao chép vào bộ nhớ tạm",
   copySuccess: "Đã sao chép!",
   aiConfigSaveSuccess: "Đã lưu cài đặt AI!",
@@ -222,7 +224,8 @@ export const vi = {
   smartCleanupDeleteStale: "Xóa link cũ ít dùng",
   smartCleanupDeleteDead: "Xóa link hỏng",
   smartCleanupFilterUntagged: "Lọc chưa gắn thẻ",
-  smartCleanupConfirmDelete: "Bạn có chắc chắn muốn xóa các mục này không? Hành động này không thể hoàn tác.",
+  smartCleanupConfirmDelete:
+    "Bạn có chắc chắn muốn xóa các mục này không? Hành động này không thể hoàn tác.",
   smartCleanupNone: "Không có gì cần xem ở mục này.",
   smartCleanupMore: "mục khác",
   smartCleanupTotalIssues: "mục cần xem",
@@ -263,13 +266,17 @@ export const vi = {
     "Backup, Share Selected, CSV và Netscape chỉ với một lần bấm.",
   smartCleanupGuideTitle: "Hướng dẫn sử dụng",
   smartCleanupGuideStart: "Bắt đầu nhanh",
-  smartCleanupGuideStartText: "Nhấn vào các thẻ bên trái để xem trước các mục cần dọn dẹp và thực hiện thao tác tương ứng.",
+  smartCleanupGuideStartText:
+    "Nhấn vào các thẻ bên trái để xem trước các mục cần dọn dẹp và thực hiện thao tác tương ứng.",
   smartCleanupGuideMerge: "Gộp link trùng lặp",
-  smartCleanupGuideMergeText: "Gộp các liên kết giống nhau một cách an toàn. Các liên kết cập nhật gần nhất sẽ luôn được giữ lại.",
+  smartCleanupGuideMergeText:
+    "Gộp các liên kết giống nhau một cách an toàn. Các liên kết cập nhật gần nhất sẽ luôn được giữ lại.",
   smartCleanupGuideDead: "Xóa link hỏng",
-  smartCleanupGuideDeadText: "Quét và phát hiện các bookmark không còn truy cập được (Lỗi 404, không thể kết nối tới máy chủ).",
+  smartCleanupGuideDeadText:
+    "Quét và phát hiện các bookmark không còn truy cập được (Lỗi 404, không thể kết nối tới máy chủ).",
   smartCleanupGuideOrganize: "Gom nhóm tên miền",
-  smartCleanupGuideOrganizeText: "Tự động gom các website bạn truy cập nhiều nhất vào thư mục hoặc tự động gắn thẻ (tag) để dễ quản lý.",
+  smartCleanupGuideOrganizeText:
+    "Tự động gom các website bạn truy cập nhiều nhất vào thư mục hoặc tự động gắn thẻ (tag) để dễ quản lý.",
   duplicateMergeTitle: "Gộp bookmark trùng",
   duplicateMergeSubtitle:
     "Chọn bookmark muốn giữ trong từng nhóm trùng. Metadata từ các bản bị xóa sẽ được gộp vào bản giữ lại.",
@@ -611,4 +618,3 @@ export const vi = {
   analyticsAddedThisWeek: "Thêm tuần này",
   analyticsTopDomains: "Top Trang Web",
 }
-
