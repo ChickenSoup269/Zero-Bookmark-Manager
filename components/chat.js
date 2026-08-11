@@ -284,6 +284,44 @@ document.addEventListener("DOMContentLoaded", () => {
     const indicator = document.getElementById("typing-indicator")
     if (indicator) indicator.remove()
   }
+
+  function updateDownloadProgress(percent) {
+    let indicator = document.getElementById("typing-indicator")
+    if (!indicator) {
+      showTypingIndicator()
+      indicator = document.getElementById("typing-indicator")
+    }
+    const messageDiv = indicator.querySelector(".chatbox-message")
+    if (messageDiv) {
+      messageDiv.innerHTML = `
+        <div style="display: flex; flex-direction: column; min-width: 150px; gap: 6px;">
+           <span style="font-size: 0.85em; font-weight: 500;">${t("downloadingModel") || "Downloading Local AI Model..."} ${percent}%</span>
+           <div style="width: 100%; background-color: var(--bg-color, rgba(128,128,128,0.2)); border-radius: 4px; overflow: hidden; height: 6px;">
+              <div style="width: ${percent}%; height: 100%; background-color: var(--primary-color, #4facfe); transition: width 0.2s ease;"></div>
+           </div>
+        </div>
+      `
+    }
+    chatMessages.scrollTop = chatMessages.scrollHeight
+  }
+  function extractJSON(text) {
+    try {
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}');
+      if (start !== -1 && end !== -1 && end >= start) {
+        return JSON.parse(text.substring(start, end + 1));
+      }
+      const arrStart = text.indexOf('[');
+      const arrEnd = text.lastIndexOf(']');
+      if (arrStart !== -1 && arrEnd !== -1 && arrEnd >= arrStart) {
+        return JSON.parse(text.substring(arrStart, arrEnd + 1));
+      }
+    } catch (e) {
+      console.warn("Failed to extract JSON using strict bounds:", e);
+    }
+    // Fallback to original method
+    return JSON.parse(text.replace(/```json\n?|\n?```/gi, "").trim());
+  }
   // ===== END OF NEW HELPERS =====
 
   function normalizeText(text) {
@@ -668,10 +706,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const checkLocalAiAvailability = async () => {
     try {
+      let factory = null;
       if (typeof window.ai !== "undefined" && window.ai.languageModel) {
-        const capabilities = await window.ai.languageModel.capabilities()
-        return capabilities.available !== "no"
+         factory = window.ai.languageModel;
+      } else if (typeof window.LanguageModel !== "undefined") {
+         factory = window.LanguageModel;
+      } else if (typeof window.ai !== "undefined" && window.ai.assistant) {
+         factory = window.ai.assistant;
       }
+
+      if (factory) {
+         if (typeof factory.availability === "function") {
+            const avail = await factory.availability();
+            return avail !== "no";
+         } else if (typeof factory.capabilities === "function") {
+            const cap = await factory.capabilities();
+            return cap.available !== "no";
+         }
+         return true; // Factory exists but no availability check, assume true
+      }
+
       if (typeof window.ai !== "undefined" && window.ai.canCreateTextSession) {
         const status = await window.ai.canCreateTextSession()
         return status !== "no"
@@ -851,9 +905,8 @@ document.addEventListener("DOMContentLoaded", () => {
           text = data.text || "{}"
         }
         
-        // Clean markdown backticks
-        const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim()
-        result = JSON.parse(cleanedText)
+        // Extract JSON robustly to handle extra text from local AI
+        result = extractJSON(text)
       } catch (parseError) {
         throw new Error(
           `${
@@ -905,9 +958,8 @@ document.addEventListener("DOMContentLoaded", () => {
           text = data.text || "{}"
         }
         
-        // Clean markdown backticks
-        const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim()
-        result = JSON.parse(cleanedText)
+        // Extract JSON robustly to handle extra text from local AI
+        result = extractJSON(text)
       } catch (parseError) {
         throw new Error(
           `${
@@ -2063,19 +2115,49 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let session
-        if (window.ai.languageModel) {
-          session = await window.ai.languageModel.create({
+        let factory = null;
+        if (typeof window.ai !== "undefined" && window.ai.languageModel) {
+           factory = window.ai.languageModel;
+        } else if (typeof window.LanguageModel !== "undefined") {
+           factory = window.LanguageModel;
+        } else if (typeof window.ai !== "undefined" && window.ai.assistant) {
+           factory = window.ai.assistant;
+        }
+
+        if (factory) {
+          let isAfterDownload = false;
+          if (typeof factory.availability === "function") {
+             isAfterDownload = (await factory.availability()) === "after-download";
+          } else if (typeof factory.capabilities === "function") {
+             isAfterDownload = (await factory.capabilities()).available === "after-download";
+          }
+          if (isAfterDownload) {
+             console.log("Local AI model needs to be downloaded. Starting download...")
+          }
+
+          session = await factory.create({
             systemPrompt: request.prompt,
+            monitor(m) {
+              m.addEventListener("downloadprogress", (e) => {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                console.log(`Downloading local AI model: ${percent}% (${e.loaded}/${e.total} bytes)`);
+                if (typeof updateDownloadProgress === "function") {
+                  updateDownloadProgress(percent);
+                }
+              });
+            }
           })
           responseText = await session.prompt(request.message)
-        } else {
-          // Legacy Text Session API
+        } else if (typeof window.ai !== "undefined" && window.ai.createTextSession) {
+          // Legacy Text Session API fallback
           session = await window.ai.createTextSession()
           responseText = await session.prompt(
             `${request.prompt}\n\nUser: ${request.message}`,
           )
+        } else {
+           throw new Error("Local AI API is missing in this browser. Please update Chrome.")
         }
-        if (session.destroy) session.destroy()
+        if (session && session.destroy) session.destroy()
       } else {
         const response = await fetch(request.url, {
           method: request.method,
@@ -2175,9 +2257,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let aiResult
         
         try {
-          // Clean the response in case AI includes markdown code blocks
-          const cleanedText = responseText.replace(/```json\n?|\n?```/g, "").trim()
-          aiResult = JSON.parse(cleanedText)
+          // Extract JSON robustly to handle extra text from local AI
+          aiResult = extractJSON(responseText)
         } catch (parseError) {
           console.error("Failed to parse AI JSON:", responseText)
           // Fallback: If AI didn't return JSON, treat the whole response as a chat message
