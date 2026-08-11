@@ -138,12 +138,10 @@ export const vi = {
     "Không cần nhà cung cấp AI. Chỉ hỗ trợ các lệnh cơ bản.",
   localOnlyNotSupported:
     "Lệnh này không được hỗ trợ trong Chế độ Ngoại tuyến. Vui lòng bật AI để thực hiện các tác vụ nâng cao.",
-  localGeminiNotAvailable:
-    "Chrome Built-in AI không khả dụng. Vui lòng bật nó trong chrome://flags.",
-  learnHowToEnable: "Hướng dẫn kích hoạt",
+  localGeminiNotAvailable: "Chrome Built-in AI không khả dụng. Vui lòng bật nó trong chrome://flags.",
+  learnHowToEnable: "Xem hướng dẫn bật",
   localAiGuideTitle: "Cách kích hoạt Gemini nội bộ trong Chrome",
-  localAiGuideSteps:
-    "1. Truy cập chrome://flags<br>2. Bật 'Prompt API for Gemini Nano'<br>3. Bật 'Enables optimization guide on device' (BypassPrefRequirement)<br>4. Khởi động lại Chrome và chờ tải mô hình trong chrome://components",
+  localAiGuideSteps: "<div style='text-align:left; line-height:1.6; font-size: 0.95em;'><b>Hướng dẫn bật AI cục bộ trên Chrome:</b><br><br>1. Copy và dán link này vào thanh địa chỉ: <br><code style='background:var(--bg-tertiary);padding:3px 6px;border-radius:4px;user-select:all;'>chrome://flags/#prompt-api</code><br>👉 Chuyển sang <b>Enabled</b><br><br>2. Dán tiếp link này: <br><code style='background:var(--bg-tertiary);padding:3px 6px;border-radius:4px;user-select:all;'>chrome://flags/#optimization-guide-on-device-model</code><br>👉 Chuyển sang <b>Enabled BypassPerfRequirement</b><br><br>3. Bấm nút <b>Relaunch</b> màu xanh ở góc dưới cùng.<br><br><i>Lưu ý: Trong lần đầu, Chrome sẽ tải mô hình AI (~1.5GB) ngầm. Bạn sẽ thấy thanh tiến trình tải trong khung chat.</i></div>",
   copyToClipboard: "Sao chép vào bộ nhớ tạm",
   copySuccess: "Đã sao chép!",
   aiConfigSaveSuccess: "Đã lưu cài đặt AI!",
