@@ -3315,7 +3315,8 @@ html {
   background: var(--accent-color);
   border-color: var(--accent-color);
   color: var(--bg-primary);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 40%, transparent);
+  box-shadow: 0 4px 12px
+    color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 
 .quick-open-settings input[type="radio"]:checked + .control-label i {
@@ -3611,7 +3612,9 @@ html {
 
 .guide-command-code {
   cursor: pointer;
-  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .guide-command-code:hover {
@@ -3665,19 +3668,27 @@ html {
   padding-top: 10px;
 }
 .drop-target-above {
-  box-shadow: inset 0 3px 0 var(--accent-color), 0 -4px 12px rgba(0,0,0,0.1) !important;
+  box-shadow:
+    inset 0 3px 0 var(--accent-color),
+    0 -4px 12px rgba(0, 0, 0, 0.1) !important;
   transform: translateY(2px);
 }
 .drop-target-below {
-  box-shadow: inset 0 -3px 0 var(--accent-color), 0 4px 12px rgba(0,0,0,0.1) !important;
+  box-shadow:
+    inset 0 -3px 0 var(--accent-color),
+    0 4px 12px rgba(0, 0, 0, 0.1) !important;
   transform: translateY(-2px);
 }
 .drop-target-left {
-  box-shadow: inset 3px 0 0 var(--accent-color), -4px 0 12px rgba(0,0,0,0.1) !important;
+  box-shadow:
+    inset 3px 0 0 var(--accent-color),
+    -4px 0 12px rgba(0, 0, 0, 0.1) !important;
   transform: translateX(2px);
 }
 .drop-target-right {
-  box-shadow: inset -3px 0 0 var(--accent-color), 4px 0 12px rgba(0,0,0,0.1) !important;
+  box-shadow:
+    inset -3px 0 0 var(--accent-color),
+    4px 0 12px rgba(0, 0, 0, 0.1) !important;
   transform: translateX(-2px);
 }
 
@@ -3822,12 +3833,18 @@ html {
 
 /* Bookmark Item Dropdown base styles */
 .bookmark-dropdown-menu {
-  position: absolute; right: 0; top: 100%; margin-top: 4px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
   background: color-mix(in srgb, var(--bg-secondary, #2d2d2d) 82%, transparent);
   backdrop-filter: blur(14px);
   border: 1px solid var(--border-color, #404040);
-  border-radius: 8px; min-width: 180px; padding: 4px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2); z-index: 1000;
+  border-radius: 8px;
+  min-width: 180px;
+  padding: 4px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }
 
 /* Override default grid layout for Kanban and Bento views */
@@ -3903,7 +3920,7 @@ html {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to right, transparent 50%, rgba(0,0,0,0.1));
+  background: linear-gradient(to right, transparent 50%, rgba(0, 0, 0, 0.1));
   pointer-events: none;
 }
 
@@ -3977,20 +3994,20 @@ html {
     padding: 12px;
     gap: 12px;
   }
-  
+
   .mockup-bookmark-item {
     min-height: 110px; /* Thu gọn chiều cao ở popup */
     height: auto;
   }
-  
+
   .mockup-image-container {
     width: 110px; /* Thu gọn ảnh ở popup */
   }
-  
+
   .mockup-content {
     padding: 10px 12px;
   }
-  
+
   .mockup-title {
     font-size: 0.8rem; /* Tiêu đề nhỏ hơn nữa ở popup */
   }
@@ -4038,7 +4055,7 @@ html {
     line-clamp: 2;
     line-height: 1.25;
   }
-  
+
   /* --- List View Mobile --- */
   body.popup .list-view-header {
     display: none !important; /* Hide header on mobile */
@@ -4067,13 +4084,15 @@ html {
   max-width: 250px;
   width: max-content;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 999999;
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
   transform: translateX(-50%) translateY(-100%);
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
 }
 
 .global-css-toast::after {
@@ -4091,8 +4110,6 @@ html {
   visibility: visible;
   opacity: 1;
 }
-
-
 
 /* Compact Tree View for Organize Folders */
 .tree-view.compact-tree {
@@ -4120,8 +4137,6 @@ html {
   transform: translateX(4px) scale(1) !important;
 }
 
-
-
 .theme-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
@@ -4139,7 +4154,7 @@ html {
   justify-content: center;
   transition: all 0.2s ease;
   font-size: 14px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 .font-swatch,
 .view-swatch,
@@ -4154,7 +4169,9 @@ html {
 }
 .theme-swatch.active {
   transform: scale(1.1);
-  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--text-primary);
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    0 0 0 4px var(--text-primary);
 }
 .theme-swatch:hover {
   transform: scale(1.05);
@@ -4165,7 +4182,9 @@ html {
 .setting-swatch.active,
 .language-swatch.active {
   transform: scale(1.03);
-  box-shadow: 0 0 0 1px var(--bg-primary), 0 0 0 2px var(--text-primary);
+  box-shadow:
+    0 0 0 1px var(--bg-primary),
+    0 0 0 2px var(--text-primary);
 }
 .font-swatch:hover,
 .view-swatch:hover,
@@ -4174,17 +4193,13 @@ html {
   transform: scale(1.02);
 }
 
-
-
-
-
 .settings-card {
   background: var(--bg-primary);
   border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 8px;
   padding: 12px;
   margin: 10px 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 .settings-card-header {
   font-size: 13px;
@@ -4238,7 +4253,6 @@ html {
   transform: rotate(180deg);
 }
 
-
 .theme-swatch {
   position: relative;
 }
@@ -4257,10 +4271,10 @@ html {
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 100000;
   pointer-events: none;
-  border: 1px solid var(--border-color, rgba(255,255,255,0.1));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
 }
 .theme-swatch[data-hint]:hover::before {
   opacity: 1;
@@ -4268,17 +4282,22 @@ html {
   transform: translateX(-50%) translateY(0);
 }
 
-.setting-pill-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.app-setting-field { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 6px; 
-  margin-bottom: 16px; 
-} 
-.app-setting-field label { 
-  font-size: 0.95rem; 
+.setting-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.app-setting-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.app-setting-field label {
+  font-size: 0.95rem;
   font-weight: 600;
-  color: var(--text-primary); 
+  color: var(--text-primary);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -4292,20 +4311,34 @@ html {
   font-size: 1.1rem;
 }
 
-.font-swatch.active, .view-swatch.active, .setting-swatch.active { 
-  transform: none; 
-  background: var(--accent-color) !important; 
-  color: var(--bg-primary) !important; 
-  border-color: var(--accent-color) !important; 
-  box-shadow: none; 
-} 
-.font-swatch:hover, .view-swatch:hover, .setting-swatch:hover { 
-  transform: translateY(-1px); 
+.font-swatch.active,
+.view-swatch.active,
+.setting-swatch.active {
+  transform: none;
+  background: var(--accent-color) !important;
+  color: var(--bg-primary) !important;
+  border-color: var(--accent-color) !important;
+  box-shadow: none;
+}
+.font-swatch:hover,
+.view-swatch:hover,
+.setting-swatch:hover {
+  transform: translateY(-1px);
   background: var(--hover-bg, #f0f0f0);
 }
-.font-swatch, .view-swatch, .setting-swatch { border: 1px solid var(--border-color, #ccc); }
-.font-swatch, .view-swatch, .setting-swatch { font-size: 0.85rem; }
-.menu-item:hover i { color: var(--bg-primary) !important; }
+.font-swatch,
+.view-swatch,
+.setting-swatch {
+  border: 1px solid var(--border-color, #ccc);
+}
+.font-swatch,
+.view-swatch,
+.setting-swatch {
+  font-size: 0.85rem;
+}
+.menu-item:hover i {
+  color: var(--bg-primary) !important;
+}
 
 /* App Tabs UI */
 .app-tabs-wrapper {
@@ -4340,7 +4373,6 @@ html {
   gap: 8px;
   z-index: 1;
 }
-
 
 /* App Tabs UI */
 .app-tabs-wrapper {
@@ -4380,7 +4412,7 @@ html {
 
 .app-tab-btn:hover {
   color: var(--text-primary);
-  background-color: var(--hover-bg, rgba(0,0,0,0.03));
+  background-color: var(--hover-bg, rgba(0, 0, 0, 0.03));
 }
 
 .app-tab-btn.active {
@@ -4466,7 +4498,9 @@ html {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .smart-cleanup-summary div:hover {
@@ -4536,13 +4570,13 @@ html {
   .smart-cleanup-body {
     grid-template-columns: 1fr;
   }
-  
+
   .smart-cleanup-next {
     margin-top: 14px;
     max-height: 240px;
     overflow-y: auto;
   }
-  
+
   .smart-cleanup-details {
     min-height: 220px;
   }
@@ -4993,7 +5027,9 @@ html {
   border-radius: 50%;
   background: var(--accent-color);
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.2s ease;
 }
 
 #sidebar-width-input::-webkit-slider-thumb:hover {
