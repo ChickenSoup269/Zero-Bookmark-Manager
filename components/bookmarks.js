@@ -171,7 +171,8 @@ export function moveBookmarksToFolder(
 
         if (
           bookmark.url &&
-          !uiState.autoRemoveDup && uiState.duplicateScope === "all"
+          !uiState.autoRemoveDup &&
+          uiState.duplicateScope === "all"
         ) {
           safeChromeBookmarksCall(
             "create",

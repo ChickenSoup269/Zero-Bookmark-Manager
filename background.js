@@ -86,7 +86,7 @@ chrome.storage.local.get(["visitCounts"], (result) => {
 // Build a map of bookmark URLs to their IDs for efficient lookup
 function buildBookmarkUrlMap() {
   // console.log(
-  //   "🔨 Building bookmark URL map... calling chrome.bookmarks.getTree()",
+  //   " Building bookmark URL map... calling chrome.bookmarks.getTree()",
   // )
   try {
     chrome.bookmarks.getTree((bookmarkTreeNodes) => {
@@ -110,7 +110,7 @@ function buildBookmarkUrlMap() {
       // Log ALL entries for debugging
       // console.log(" All bookmarks in map:")
       // Object.entries(bookmarkUrlMap).forEach(([url, id]) => {
-      //   console.log(`  📌 ${url} -> ${id}`)
+      //   console.log(`   ${url} -> ${id}`)
       // })
     })
   } catch (err) {
@@ -166,12 +166,12 @@ chrome.webNavigation.onCompleted.addListener((details) => {
 
   // If bookmarkUrlMap is still empty, rebuild it (timing issue)
   if (Object.keys(bookmarkUrlMap).length === 0) {
-    // console.warn("⚠️ Bookmark URL map is empty! Rebuilding...")
+    // console.warn(" Bookmark URL map is empty! Rebuilding...")
     buildBookmarkUrlMap()
   }
 
   const normalizedUrl = normalizeUrl(url)
-  // console.log(`🌐 Navigation detected: ${normalizedUrl}`)
+  // console.log(` Navigation detected: ${normalizedUrl}`)
   // console.log(`   Original URL: ${url}`)
 
   let bookmarkId = bookmarkUrlMap[normalizedUrl]
@@ -185,7 +185,7 @@ chrome.webNavigation.onCompleted.addListener((details) => {
     // Check if this bookmark was just clicked in extension (avoid double counting)
     if (recentlyClickedInExtension.has(bookmarkId)) {
       // console.log(
-      //   `⏭️  Skipping count for ${bookmarkId} - already counted from extension click`,
+      //   `⏭  Skipping count for ${bookmarkId} - already counted from extension click`,
       // )
       recentlyClickedInExtension.delete(bookmarkId) // Remove from set
       return
@@ -198,10 +198,10 @@ chrome.webNavigation.onCompleted.addListener((details) => {
     saveVisitCounts()
 
     // console.log(
-    //   `✅ Bookmark visited: ${url} (ID: ${bookmarkId}, Count: ${visitCounts[bookmarkId]})`,
+    //   ` Bookmark visited: ${url} (ID: ${bookmarkId}, Count: ${visitCounts[bookmarkId]})`,
     // )
   } else {
-    // console.log(`❌ Not a bookmark: ${normalizedUrl}`)
+    // console.log(` Not a bookmark: ${normalizedUrl}`)
     // Try to find similar bookmarks by domain
     const domain = normalizedUrl.split("/")[2] // Extract domain
     const similar = Object.keys(bookmarkUrlMap).filter((b) =>
@@ -260,7 +260,7 @@ function saveVisitCounts() {
     // console.log(" Saving visit counts to storage:", visitCounts)
     chrome.storage.local.set({ visitCounts }, () => {
       if (chrome.runtime.lastError) {
-        // console.error("❌ Error saving visit counts:", chrome.runtime.lastError)
+        // console.error(" Error saving visit counts:", chrome.runtime.lastError)
       } else {
         // console.log(" Visit counts saved successfully")
       }
