@@ -92,12 +92,14 @@ Bookmark Manager is a powerful and intuitive Chrome extension that simplifies bo
 - **Sort:** Organize bookmarks by date added, last opened, alphabetically (A-Z, Z-A), favourite, most visited, or **by Domain**.
 - **Sidebar & Folder Management:** Raindrop-style sidebar with nested folder tree and adjustable width. Supports **Drag & Drop** for quick organization.
 - **Edit Bookmarks:** Add to folder, rename or delete bookmarks. View details, favourite, add tags.
+- **Quick Save Multi-tab:** Save multiple open tabs at once with auto-generated folder names and full metadata.
 - **Web Preview:** Open an **Iframe Modal** in Detail View to preview websites without leaving the extension.
 - **Export/Import:** Save bookmarks to JSON/HTML/CSV (with full metadata) or import with JSON duplicate detection (based on URL).
 - **Themes:** Switch between Light, Dark, Dracula, One Dark, **Tokyo Night**, **Monokai**, **Winter is Coming**, **GitHub Blue**, **GitHub Light**, Tet, or system-based themes.
 - **Fonts:** Customize interface with various font styles, including improved Nerd Fonts support.
 - **Multilingual:** Supports English and Vietnamese for a localized experience.
-- **Check Link Health:** Verify the availability and safety of your bookmarked links.
+- **Check Link Health & Archive:** Verify the availability and safety of your bookmarked links. Use the **Wayback Machine** lookup to view archived versions of dead links.
+- **Snooze Bookmarks:** Set reminders to revisit specific bookmarks at a later time or date.
 - **Auto-Categorize with AI:** Automatically generate tags for new bookmarks based on their URL and title using Gemini API, Chrome Built-in AI, or a domain-name fallback.
 - **Generate QR Code:** Create QR codes for your bookmarks for easy sharing and access on other devices.
 - **Visit Count Tracking:** Track how many times each bookmark is opened inside the extension and in normal browsing.
@@ -182,9 +184,10 @@ Install Bookmark-Manager
 | `Web Preview`        | Open sites in a modal within the extension (Details button).                               |
 | `Open Side Panel`    | Open bookmark in a side panel for quick viewing.                                           |
 | `Quick Open Action`  | Choose default action (Popup, Full Page, Side Panel) for the extension icon.               |
+| `Quick Save Multi-tab`| Save multiple currently open browser tabs simultaneously into a folder with a single click.|
 | `Tags`               | Filter by tags using sidebar or popup. Auto-categorize via AI.                             |
 | `Pin to top`         | Pin important bookmarks to the top of your list.                                           |
-| `Check Link Health`  | Verify bookmark health (Alive, Dead, or Suspicious).                                       |
+| `Check Link & Archive`| Verify bookmark health (Alive, Dead, or Suspicious). Lookup dead links via Wayback Machine.|
 | `Visit Count`        | Track and display how many times a bookmark was opened.                                    |
 | `Chatbot`            | Control extension via natural language. Supports major AI providers.                       |
 | `Favicon Provider`   | Choose between Google, DuckDuckGo, or Auto for fetching icons.                             |

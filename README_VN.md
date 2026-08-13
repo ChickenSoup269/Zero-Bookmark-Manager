@@ -53,12 +53,14 @@ Quản lý Bookmark là một tiện ích mở rộng Chrome, giúp đơn giản
 - **Sắp xếp:** Sắp xếp bookmark theo ngày thêm, lần mở gần nhất, bảng chữ cái (A–Z, Z–A), yêu thích, lượt truy cập nhiều nhất hoặc **theo Tên miền (Domain)**.
 - **Thanh bên & Quản lý Thư mục:** Thanh bên phong cách Raindrop với cây thư mục phân cấp và có thể tùy chỉnh độ rộng. Hỗ trợ **Kéo & Thả (Drag & Drop)** để tổ chức nhanh chóng.
 - **Chỉnh sửa Bookmark:** Thêm vào thư mục, đổi tên hoặc xóa dấu trang. Xem chi tiết, đánh dấu yêu thích, thêm thẻ (tags).
+- **Lưu Đa Tab (Quick Save Multi-tab):** Lưu nhanh nhiều tab đang mở cùng lúc với tên thư mục tự động và đầy đủ metadata.
 - **Xem trước Trang web:** Mở một **Modal Iframe** trong Chế độ chi tiết để xem trước trang web mà không cần rời khỏi extension.
 - **Xuất/Nhập:** Lưu bookmark dưới dạng JSON/HTML/CSV (đầy đủ metadata) hoặc nhập vào bằng tệp JSON (tự động phát hiện trùng lặp dựa trên URL).
 - **Giao diện (Themes):** Chuyển đổi giữa các chủ đề Sáng, Tối, Dracula, One Dark, **Tokyo Night**, **Monokai**, **Winter is Coming**, **GitHub Blue**, **GitHub Light**, Tết hoặc theo hệ thống.
 - **Phông chữ:** Tùy chỉnh giao diện với các kiểu phông chữ khác nhau (hỗ trợ Nerd Fonts).
 - **Đa ngôn ngữ:** Hỗ trợ tiếng Anh và tiếng Việt.
-- **Kiểm tra tình trạng liên kết:** Xác minh tính khả dụng và an toàn của các liên kết.
+- **Kiểm tra Liên kết & Lưu trữ:** Xác minh tính khả dụng và an toàn của các liên kết. Sử dụng tính năng tra cứu **Wayback Machine** để xem lại nội dung cũ của các link đã chết.
+- **Báo lại (Snooze Bookmarks):** Đặt lịch hẹn nhắc nhở để đọc lại hoặc xem lại các bookmark vào một thời điểm cụ thể trong tương lai.
 - **Tự động phân loại bằng AI:** Tự động tạo thẻ (tags) cho bookmark mới thêm vào dựa trên tiêu đề và URL thông qua API Gemini, AI tích hợp của Chrome, hoặc tự động lấy tên miền.
 - **Tạo mã QR cho Bookmark:** Tạo mã QR để dễ dàng chia sẻ và truy cập trên các thiết bị khác.
 - **Theo dõi lượt truy cập:** Theo dõi số lần mở của mỗi bookmark trong extension và khi duyệt bình thường.
@@ -132,17 +134,19 @@ Cài đặt Bookmark-Manager
 | `Sắp xếp`                  | Ngày thêm, A-Z, Yêu thích, Truy cập nhiều, hoặc Tên miền.                             |
 | `Quản lý thư mục`          | Tạo, sửa, xóa thư mục. Kéo & Thả ở thanh bên để tổ chức. Tùy chỉnh độ rộng thanh bên. |
 | `Quản lý bookmark`         | Nhấn “⋮” để thao tác. Xem Chi tiết để mở modal xem trước trang web.                   |
+| `Lưu Đa Tab`               | Lưu toàn bộ các tab đang mở vào một thư mục chỉ với một thao tác click chuột.         |
 | `Xuất/Nhập`                | Xuất ra JSON/HTML/CSV (đầy đủ metadata) hoặc nhập vào với kiểm tra trùng lặp.         |
 | `Dọn dẹp trùng lặp`        | Quét thủ công hoặc tự động (CleanUp) để loại bỏ các link trùng lặp.                   |
 | `Workspaces`               | Chuyển đổi giữa các không gian (Work, Learning, Design, Personal).                    |
 | `Danh sách đọc`            | Thêm bookmark vào hàng đợi (Reading Queue) để đọc sau.                                |
+| `Báo lại (Snooze)`         | Đặt lịch hẹn để tiện ích nhắc nhở bạn xem lại bookmark vào một lúc khác.              |
 | `Tùy chỉnh`                | Điều chỉnh giao diện (Tokyo Night, Monokai...), phông chữ, gói ngôn ngữ AI.           |
 | `Xem trước Web`            | Xem nội dung trang web ngay trong extension qua modal (nút Chi tiết).                 |
 | `Mở trong bảng điều khiển` | Mở bookmark trong bảng điều khiển bên cạnh (Side Panel).                              |
 | `Hành động mở nhanh`       | Chọn hành động mặc định khi nhấp vào biểu tượng tiện ích.                             |
 | `Tags`                     | Lọc theo thẻ qua thanh bên hoặc Popup trình duyệt Thẻ. Tự động gắn thẻ bằng AI.       |
 | `Ghim lên đầu`             | Ghim các bookmark quan trọng lên trên cùng.                                           |
-| `Kiểm tra tình trạng`      | Xác minh link sống/chết hoặc nghi ngờ.                                                |
+| `Kiểm tra & Lưu trữ`       | Kiểm tra link chết/sống. Tra cứu lại nội dung web cũ qua Wayback Machine.             |
 | `Lượt truy cập`            | Theo dõi và hiển thị số lần mở bookmark.                                              |
 | `Chatbot`                  | Điều khiển qua ngôn ngữ tự nhiên. Hỗ trợ các nhà cung cấp AI phổ biến.                |
 | `Nguồn Favicon`            | Chọn giữa Google, DuckDuckGo hoặc Auto để lấy biểu tượng.                             |
