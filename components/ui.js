@@ -383,8 +383,10 @@ function createDropdownHTML(bookmark, language) {
         }
       </button>
       <div class="dropdown-menu bookmark-dropdown-menu hidden">
-        <div class="dropdown-menu-header" style="padding: 6px 12px; font-weight: 600; font-size: 0.85em; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;" title="${escapeHtml(bookmark.title || bookmark.url)}">
-          ${escapeHtml(bookmark.title || bookmark.url)}
+        <div class="dropdown-menu-header" style="padding: 6px 12px; font-weight: 600; font-size: 0.85em; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); margin-bottom: 4px;" title="${escapeHtml(bookmark.title || bookmark.url)}">
+          <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
+            ${escapeHtml(bookmark.title || bookmark.url)}
+          </div>
         </div>
         <button class="menu-item pin-btn" data-id="${bookmark.id}">
             <i class="fas fa-thumbtack" style="${iconStyle}"></i>
@@ -436,7 +438,7 @@ function createDropdownHTML(bookmark, language) {
           bookmark.url
         }"><i class="fas fa-history" style="${iconStyle}"></i>${
           t.waybackMachine || "Wayback Machine"
-        }</button>
+        } <span style="font-size: 10px; background: #ff9800; color: #fff; padding: 2px 5px; border-radius: 4px; margin-left: auto;">Demo</span></button>
         <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;"/>
         <button class="menu-item favorite-btn" data-id="${bookmark.id}">
             <i class="fas fa-star" style="${iconStyle}"></i>
@@ -1668,7 +1670,6 @@ function renderSidebarFolderTree(folders, elements) {
   if (uiState.showSmartFolders !== false) {
     const smartFolders = [
       { id: "__smart_recent", title: t.sidebarRecent || "Mới lưu (7 ngày)" },
-      { id: "__smart_most_visited", title: t.sidebarMostVisited || "Truy cập nhiều" },
       { id: "__smart_untagged", title: t.sidebarUntagged || "Chưa gắn thẻ" }
     ];
 
@@ -4365,7 +4366,7 @@ export function attachTreeListeners(elements, targetContainer = null) {
       e.stopPropagation()
       const url = waybackBtn.dataset.url
       if (url) {
-        window.open(`https://web.archive.org/web/*/${url}`, "_blank")
+        chrome.tabs.create({ url: `https://web.archive.org/web/*/${url}` })
       }
       document
         .querySelectorAll(".dropdown-menu")
@@ -4494,7 +4495,6 @@ export function populateFolderDropdown(
   selectElement.innerHTML = `
     <option value="">${initialOptionText}</option>
     <option value="__smart_recent">${t.sidebarRecent || "Mới lưu (7 ngày)"}</option>
-    <option value="__smart_most_visited">${t.sidebarMostVisited || "Truy cập nhiều"}</option>
     <option value="__smart_untagged">${t.sidebarUntagged || "Chưa gắn thẻ"}</option>
   `
 

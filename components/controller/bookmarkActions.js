@@ -192,7 +192,7 @@ function handleMenuItemClick(e, elements) {
     "snooze-btn": () => openSnoozePopup(bookmarkId, elements),
     "wayback-btn": () => {
       const url = target.dataset.url;
-      if (url) window.open(`https://web.archive.org/web/*/${url}`, "_blank");
+      if (url) chrome.tabs.create({ url: `https://web.archive.org/web/*/${url}` });
     },
   }
 
