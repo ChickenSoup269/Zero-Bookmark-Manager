@@ -83,6 +83,11 @@ body.embedded .primary-button {
 .quick-save-shell {
   display: flex;
   flex-direction: column;
+  background: linear-gradient(
+    to bottom,
+    var(--bg-tertiary),
+    var(--bg-secondary)
+  ) !important;
   gap: 16px;
   padding: 24px;
   animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -545,4 +550,125 @@ select#folder:focus {
   margin-right: 8px;
   color: inherit;
   font-size: 0.9em;
+}
+
+/* Multi-tab UI Styles */
+.multi-tab-list {
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius, 8px);
+  background: var(--bg-secondary, rgba(0, 0, 0, 0.02));
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.multi-tab-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  user-select: none;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: normal;
+}
+
+.multi-tab-item:last-child {
+  border-bottom: none;
+}
+
+.multi-tab-item:hover {
+  background-color: var(--hover-bg, rgba(0, 0, 0, 0.05));
+}
+
+.multi-tab-item input[type="checkbox"] {
+  accent-color: var(--accent-color, #007bff);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.multi-tab-item img {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.multi-tab-item .tab-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.multi-tab-item .tab-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.multi-tab-item .tab-url {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Toggle switch */
+.toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-knob {
+  position: absolute;
+  inset: 0;
+  background-color: var(--border-color);
+  border-radius: 999px;
+  transition: background-color 0.25s ease;
+}
+
+.toggle-knob::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  bottom: 3px;
+  background: var(--bg-primary, #fff);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease;
+}
+
+.toggle-switch input:checked + .toggle-knob {
+  background: var(--accent-color, #007bff);
+}
+
+.toggle-switch input:checked + .toggle-knob::before {
+  transform: translateX(16px);
 }

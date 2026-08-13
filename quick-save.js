@@ -11,6 +11,12 @@ const statusBox = document.getElementById("status");
 const openDashboardButton = document.getElementById("open-dashboard");
 const quickOpenActionSelect = document.getElementById("quick-open-action");
 
+const multiSaveToggle = document.getElementById("multi-save-toggle");
+const singleSaveFields = document.getElementById("single-save-fields");
+const multiSaveFields = document.getElementById("multi-save-fields");
+const multiSaveTabList = document.getElementById("multi-save-tab-list");
+const multiSaveCount = document.getElementById("multi-save-count");
+
 // Hide header and adjust padding if embedded in the main dashboard
 const isEmbedded =
   new URLSearchParams(window.location.search).get("embedded") === "true";
@@ -127,9 +133,11 @@ const qsTranslations = {
 };
 
 let currentTab = null;
+let allOpenTabs = [];
 let existingBookmark = null;
 let preferredFolderId = "1";
 let currentTags = [];
+let isMultiSaveMode = false;
 
 const AVAILABLE_THEMES = [
   "light",
@@ -450,26 +458,138 @@ function loadCurrentTab() {
     });
   }
 
-  if (!tabId) {
-    chrome.windows.getLastFocused({ windowTypes: ["normal"] }, function (win) {
-      if (win && win.id) {
-        chrome.tabs.query({ active: true, windowId: win.id }, (tabs) => {
-          if (tabs && tabs.length > 0) {
-            populateFromTab(tabs[0]);
-          } else {
-            showStatus(tStatus("statusNoSourceTab"), "error");
-            saveButton.disabled = true;
-          }
-        });
+  const filterValidTabs = (tabs) => {
+    if (!tabs) return [];
+    return tabs.filter(t => t.url && !/^(chrome|edge|about|chrome-extension):\/\//i.test(t.url));
+  };
+
+  const processAllTabs = (validTabs, originalTabs) => {
+    allOpenTabs = validTabs;
+    renderMultiTabList();
+    
+    if (tabId) {
+      chrome.tabs.get(tabId, populateFromTab);
+    } else {
+      if (validTabs.length > 0) {
+        const activeTab = originalTabs.find(t => t.active && validTabs.includes(t));
+        if (activeTab) {
+          populateFromTab(activeTab);
+        } else {
+          populateFromTab(validTabs[0]);
+        }
       } else {
         showStatus(tStatus("statusNoSourceTab"), "error");
         saveButton.disabled = true;
       }
-    });
+    }
+  };
+
+  chrome.tabs.query({ currentWindow: true }, (tabs) => {
+    const validTabs = filterValidTabs(tabs);
+    if (validTabs.length > 0) {
+      processAllTabs(validTabs, tabs);
+    } else {
+      chrome.windows.getLastFocused({ windowTypes: ["normal"] }, function (win) {
+        if (win && win.id) {
+          chrome.tabs.query({ windowId: win.id }, (winTabs) => {
+            processAllTabs(filterValidTabs(winTabs), winTabs);
+          });
+        } else {
+          chrome.tabs.query({}, (allTabs) => {
+            processAllTabs(filterValidTabs(allTabs), allTabs);
+          });
+        }
+      });
+    }
+  });
+}
+
+function renderMultiTabList() {
+  if (!multiSaveTabList) return;
+  multiSaveTabList.innerHTML = "";
+  
+  if (allOpenTabs.length === 0) {
+    multiSaveTabList.innerHTML = `<div style="padding: 8px; color: var(--text-secondary); text-align: center; font-size: 0.85rem;">No savable tabs found.</div>`;
+    if (multiSaveCount) multiSaveCount.textContent = "0";
     return;
   }
 
-  chrome.tabs.get(tabId, populateFromTab);
+  allOpenTabs.forEach((tab, index) => {
+    const item = document.createElement("label");
+    item.className = "multi-tab-item";
+    
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = true;
+    checkbox.dataset.index = index;
+    
+    const icon = document.createElement("img");
+    icon.src = tab.favIconUrl || "icons/default-favicon.png";
+    icon.onerror = () => { icon.src = "icons/default-favicon.png"; };
+    
+    const info = document.createElement("div");
+    info.className = "tab-info";
+    
+    const title = document.createElement("div");
+    title.className = "tab-title";
+    title.textContent = tab.title || tab.url;
+    title.title = tab.title || tab.url;
+    
+    const url = document.createElement("div");
+    url.className = "tab-url";
+    url.textContent = tab.url;
+    url.title = tab.url;
+    
+    info.appendChild(title);
+    info.appendChild(url);
+    
+    item.appendChild(checkbox);
+    item.appendChild(icon);
+    item.appendChild(info);
+    
+    checkbox.addEventListener("change", updateMultiSaveCount);
+    
+    multiSaveTabList.appendChild(item);
+  });
+  
+  updateMultiSaveCount();
+}
+
+function updateMultiSaveCount() {
+  if (!multiSaveCount || !multiSaveTabList) return;
+  const checked = multiSaveTabList.querySelectorAll('input[type="checkbox"]:checked').length;
+  multiSaveCount.textContent = checked.toString();
+  
+  if (isMultiSaveMode) {
+    saveButton.disabled = checked === 0;
+  }
+}
+
+if (multiSaveToggle) {
+  multiSaveToggle.addEventListener("change", (e) => {
+    isMultiSaveMode = e.target.checked;
+    const quickNewFolderInput = document.getElementById("quick-new-folder-input");
+    
+    if (isMultiSaveMode) {
+      singleSaveFields.classList.add("hidden");
+      multiSaveFields.classList.remove("hidden");
+      updateMultiSaveCount();
+      
+      if (quickNewFolderInput && !quickNewFolderInput.value.trim()) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString() + " " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        quickNewFolderInput.value = "Saved Tabs - " + dateStr;
+      }
+    } else {
+      singleSaveFields.classList.remove("hidden");
+      multiSaveFields.classList.add("hidden");
+      saveButton.disabled = !currentTab || !currentTab.url;
+      
+      if (quickNewFolderInput && quickNewFolderInput.value.startsWith("Saved Tabs - ")) {
+        quickNewFolderInput.value = "";
+      }
+    }
+  });
 }
 
 function saveMetadata(bookmarkId, tags, note, callback) {
@@ -508,8 +628,6 @@ function saveMetadata(bookmarkId, tags, note, callback) {
 
 function saveBookmark(event) {
   event.preventDefault();
-  const title = titleInput.value.trim() || urlInput.value.trim();
-  const url = urlInput.value.trim();
   const parentId = preferredFolderId || "1";
   const tags = parseTags(tagsHiddenInput.value);
   const note = notesInput.value.trim();
@@ -517,81 +635,111 @@ function saveBookmark(event) {
   const originalButtonHtml = saveButton.innerHTML;
   saveButton.disabled = true;
   showStatus(tStatus("statusSaving"), "success");
+  
+  let tabsToSave = [];
+  
+  if (isMultiSaveMode) {
+    const checkboxes = multiSaveTabList.querySelectorAll('input[type="checkbox"]:checked');
+    checkboxes.forEach(cb => {
+      const idx = parseInt(cb.dataset.index, 10);
+      if (allOpenTabs[idx]) {
+        tabsToSave.push({
+          title: allOpenTabs[idx].title || allOpenTabs[idx].url,
+          url: allOpenTabs[idx].url
+        });
+      }
+    });
+  } else {
+    tabsToSave.push({
+      title: titleInput.value.trim() || urlInput.value.trim(),
+      url: urlInput.value.trim()
+    });
+  }
+  
+  if (tabsToSave.length === 0) {
+    showStatus(tStatus("statusNoSourceTab"), "error");
+    saveButton.disabled = false;
+    saveButton.innerHTML = originalButtonHtml;
+    return;
+  }
 
-  function finish(bookmark, isUpdate) {
-    if (!bookmark) {
+  let savedCount = 0;
+  let errorCount = 0;
+
+  function finishAll() {
+    if (errorCount > 0 && savedCount === 0) {
       showStatus(tStatus("statusErrorSave"), "error");
       saveButton.disabled = false;
       saveButton.innerHTML = originalButtonHtml;
       return;
     }
+    
+    const text = isMultiSaveMode ? `Saved ${savedCount} bookmarks!` : tStatus(existingBookmark && !isMultiSaveMode ? "statusUpdatedSuccess" : "statusSavedSuccess", currentTags.length);
+    showStatus(text);
+    saveButton.innerHTML = `<i class="fas fa-check"></i> ${text}`;
 
-    saveMetadata(bookmark.id, tags, note, () => {
-      if (chrome.runtime.lastError) {
-        showStatus(tStatus("statusErrorMeta"), "error");
+    setTimeout(() => {
+      if (isEmbedded && window.parent && window.parent !== window) {
+        try { window.parent.close(); } catch (e) {}
+      } else {
+        window.close();
+      }
+      setTimeout(() => {
         saveButton.disabled = false;
         saveButton.innerHTML = originalButtonHtml;
-      } else {
-        const verbKey = isUpdate
-          ? "statusUpdatedSuccess"
-          : "statusSavedSuccess";
-        showStatus(tStatus(verbKey, currentTags.length));
-        saveButton.innerHTML = `<i class="fas fa-check"></i> ${tStatus(verbKey, currentTags.length)}`;
-
-        // Close window after 2 seconds
-        setTimeout(() => {
-          if (isEmbedded && window.parent && window.parent !== window) {
-            try {
-              window.parent.close();
-            } catch (e) {}
-          } else {
-            window.close();
-          }
-          // Restore button state just in case window doesn't close (e.g. side panel)
-          setTimeout(() => {
-            saveButton.disabled = false;
-            saveButton.innerHTML = originalButtonHtml;
-          }, 500);
-        }, 2000);
-      }
-    });
+      }, 500);
+    }, 2000);
   }
 
   function proceedSaving(finalParentId) {
-    if (existingBookmark) {
-      chrome.bookmarks.update(
-        existingBookmark.id,
-        { title, url },
-        (updated) => {
-          if (chrome.runtime.lastError || !updated) {
-            console.error(chrome.runtime.lastError);
-            finish(null, true);
-            return;
+    let pending = tabsToSave.length;
+    
+    tabsToSave.forEach(tabData => {
+      // For multi-save we just create. We could check existing but it gets complex.
+      // For single save, we use existingBookmark logic.
+      if (!isMultiSaveMode && existingBookmark) {
+        chrome.bookmarks.update(
+          existingBookmark.id,
+          { title: tabData.title, url: tabData.url },
+          (updated) => {
+            if (chrome.runtime.lastError || !updated) {
+              errorCount++;
+              checkDone();
+            } else if (updated.parentId !== finalParentId) {
+              chrome.bookmarks.move(
+                updated.id,
+                { parentId: finalParentId },
+                (moved) => {
+                  savedCount++;
+                  saveMetadata(moved ? moved.id : updated.id, tags, note, checkDone);
+                }
+              );
+            } else {
+              savedCount++;
+              saveMetadata(updated.id, tags, note, checkDone);
+            }
           }
-          if (updated.parentId !== finalParentId) {
-            chrome.bookmarks.move(
-              updated.id,
-              { parentId: finalParentId },
-              (moved) => finish(moved || updated, true),
-            );
-          } else {
-            finish(updated, true);
+        );
+      } else {
+        chrome.bookmarks.create(
+          { parentId: finalParentId, title: tabData.title, url: tabData.url },
+          (created) => {
+            if (chrome.runtime.lastError || !created) {
+              errorCount++;
+              checkDone();
+            } else {
+              savedCount++;
+              saveMetadata(created.id, tags, note, checkDone);
+            }
           }
-        },
-      );
-    } else {
-      chrome.bookmarks.create(
-        { parentId: finalParentId, title, url },
-        (created) => {
-          if (chrome.runtime.lastError || !created) {
-            console.error(chrome.runtime.lastError);
-            finish(null, false);
-            return;
-          }
-          finish(created, false);
-        },
-      );
-    }
+        );
+      }
+      
+      function checkDone() {
+        pending--;
+        if (pending === 0) finishAll();
+      }
+    });
   }
 
   const quickNewFolderInput = document.getElementById("quick-new-folder-input");
