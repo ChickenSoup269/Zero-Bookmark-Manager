@@ -463,45 +463,64 @@ function loadCurrentTab() {
     return tabs.filter(t => t.url && !/^(chrome|edge|about|chrome-extension):\/\//i.test(t.url));
   };
 
-  const processAllTabs = (validTabs, originalTabs) => {
-    allOpenTabs = validTabs;
-    renderMultiTabList();
-    
-    if (tabId) {
-      chrome.tabs.get(tabId, populateFromTab);
-    } else {
+  const fetchAllTabsBackground = () => {
+    chrome.tabs.query({ currentWindow: true }, (tabs) => {
+      const validTabs = filterValidTabs(tabs);
       if (validTabs.length > 0) {
-        const activeTab = originalTabs.find(t => t.active && validTabs.includes(t));
-        if (activeTab) {
-          populateFromTab(activeTab);
-        } else {
-          populateFromTab(validTabs[0]);
-        }
+        allOpenTabs = validTabs;
       } else {
-        showStatus(tStatus("statusNoSourceTab"), "error");
-        saveButton.disabled = true;
+        chrome.windows.getLastFocused({ windowTypes: ["normal"] }, function (win) {
+          if (win && win.id) {
+            chrome.tabs.query({ windowId: win.id }, (winTabs) => {
+              allOpenTabs = filterValidTabs(winTabs);
+              if (isMultiSaveMode) renderMultiTabList();
+            });
+          } else {
+            chrome.tabs.query({}, (allTabs) => {
+              allOpenTabs = filterValidTabs(allTabs);
+              if (isMultiSaveMode) renderMultiTabList();
+            });
+          }
+        });
+        return;
       }
-    }
+      if (isMultiSaveMode) {
+        renderMultiTabList();
+      }
+    });
   };
 
-  chrome.tabs.query({ currentWindow: true }, (tabs) => {
-    const validTabs = filterValidTabs(tabs);
-    if (validTabs.length > 0) {
-      processAllTabs(validTabs, tabs);
-    } else {
-      chrome.windows.getLastFocused({ windowTypes: ["normal"] }, function (win) {
-        if (win && win.id) {
-          chrome.tabs.query({ windowId: win.id }, (winTabs) => {
-            processAllTabs(filterValidTabs(winTabs), winTabs);
-          });
+  if (tabId) {
+    chrome.tabs.get(tabId, populateFromTab);
+    setTimeout(fetchAllTabsBackground, 50);
+  } else {
+    // FAST PATH: Get active tab instantly for immediate UI rendering
+    chrome.tabs.query({ active: true, currentWindow: true }, (activeTabs) => {
+      if (activeTabs && activeTabs.length > 0) {
+        const validActiveTabs = filterValidTabs(activeTabs);
+        if (validActiveTabs.length > 0) {
+          populateFromTab(validActiveTabs[0]);
         } else {
-          chrome.tabs.query({}, (allTabs) => {
-            processAllTabs(filterValidTabs(allTabs), allTabs);
-          });
+          populateFromTab(activeTabs[0]); // will trigger invalid context logic
         }
-      });
-    }
-  });
+      } else {
+        // Fallback to getLastFocused if popup opened from another window type
+        chrome.windows.getLastFocused({ windowTypes: ["normal"] }, function (win) {
+          if (win && win.id) {
+            chrome.tabs.query({ active: true, windowId: win.id }, (winTabs) => {
+               if (winTabs && winTabs.length > 0) {
+                 const validWinTabs = filterValidTabs(winTabs);
+                 populateFromTab(validWinTabs.length > 0 ? validWinTabs[0] : winTabs[0]);
+               }
+            });
+          }
+        });
+      }
+      
+      // Defer heavy fetching of all tabs and rendering to background
+      setTimeout(fetchAllTabsBackground, 50);
+    });
+  }
 }
 
 function renderMultiTabList() {
@@ -573,7 +592,12 @@ if (multiSaveToggle) {
     if (isMultiSaveMode) {
       singleSaveFields.classList.add("hidden");
       multiSaveFields.classList.remove("hidden");
-      updateMultiSaveCount();
+      
+      if (multiSaveTabList && multiSaveTabList.children.length === 0) {
+        renderMultiTabList();
+      } else {
+        updateMultiSaveCount();
+      }
       
       if (quickNewFolderInput && !quickNewFolderInput.value.trim()) {
         const now = new Date();

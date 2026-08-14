@@ -1600,8 +1600,18 @@ document.addEventListener("DOMContentLoaded", () => {
             setupBookmarkMenuBgControl()
             setupSmartFoldersControl()
             setupSidebarWidthControl()
-            renderFilteredBookmarks(bookmarkTreeNodes, elements)
-            setupBookmarkChangeListeners(elements)
+            
+            const activeTab = localStorage.getItem("activeTab") || "dashboard"
+            if (activeTab === "quick-save") {
+              // Defer rendering so iframe can load without lag
+              setTimeout(() => {
+                renderFilteredBookmarks(bookmarkTreeNodes, elements)
+                setupBookmarkChangeListeners(elements)
+              }, 100)
+            } else {
+              renderFilteredBookmarks(bookmarkTreeNodes, elements)
+              setupBookmarkChangeListeners(elements)
+            }
           })
         })
       } else {
