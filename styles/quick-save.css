@@ -28,16 +28,20 @@ body {
 body.embedded {
   min-width: 100%;
   min-height: 100%;
+  height: 100%;
   background-image: none;
   background-color: transparent;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
 body.embedded .quick-save-shell {
-  padding: 4px 12px 0px 12px;
-  background: none;
+  padding: 6px 14px 16px 14px;
+  background: transparent;
   gap: 8px;
   animation: none;
+  min-height: 100%;
+  box-sizing: border-box;
 }
 
 body.embedded .quick-save-header {

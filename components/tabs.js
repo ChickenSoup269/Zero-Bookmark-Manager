@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const footer = document.querySelector(".footer");
+
     function switchTab(tab) {
         localStorage.setItem("activeTab", tab);
 
@@ -41,11 +43,13 @@ document.addEventListener("DOMContentLoaded", () => {
             tabQuickSave.classList.remove("active");
             dashboardView.style.display = "flex";
             quickSaveView.style.display = "none";
+            if (footer) footer.style.display = "";
         } else if (tab === "quick-save") {
             tabQuickSave.classList.add("active");
             tabDashboard.classList.remove("active");
             quickSaveView.style.display = "flex";
             dashboardView.style.display = "none";
+            if (footer) footer.style.display = "none";
 
             // Lazy-load iframe src only on first activation
             if (quickSaveFrame && !iframeLoaded) {
@@ -69,8 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Listen for resize messages from quick-save iframe
     window.addEventListener("message", (event) => {
         if (event.data && event.data.type === "resizeIframe") {
-            if (quickSaveFrame) {
-                quickSaveFrame.style.height = event.data.height + "px";
+            if (quickSaveFrame && event.data.height) {
+                quickSaveFrame.style.minHeight = event.data.height + "px";
             }
         }
     });

@@ -488,7 +488,7 @@ function createPopupWindow(tab) {
     const screenWidth = display.workArea.width
 
     const popupWidth = 380
-    const popupHeight = 700
+    const popupHeight = 680
     const padding = 20
 
     const tabIdParam = tab?.id ? `?tabId=${encodeURIComponent(tab.id)}` : ""
