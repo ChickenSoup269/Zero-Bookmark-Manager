@@ -292,22 +292,32 @@ option:hover {
   gap: 6px;
   background: var(--accent-color);
   color: var(--bg-primary);
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 4px 6px 4px 10px;
+  border-radius: 14px;
   font-size: 0.75rem;
   font-weight: 600;
   animation: slideIn 0.2s ease;
+  user-select: none;
 }
 
 .tag-chip .remove {
   cursor: pointer;
-  opacity: 0.7;
-  font-size: 0.9rem;
+  opacity: 0.8;
+  font-size: 1.05rem;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  transition: all 0.15s ease;
 }
 
 .tag-chip .remove:hover {
   opacity: 1;
+  background: rgba(0, 0, 0, 0.25);
+  transform: scale(1.15);
 }
 
 .tags-input {

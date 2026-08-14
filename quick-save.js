@@ -452,9 +452,20 @@ function loadCurrentTab() {
     });
 
     chrome.tabs.onUpdated.addListener((updatedTabId, changeInfo, tab) => {
-      if (tab.active && changeInfo.status === "complete") {
+      if (tab.active && (changeInfo.status === "complete" || changeInfo.title || changeInfo.url)) {
         handleTabSwitch(tab);
       }
+      if (isMultiSaveMode) {
+        fetchAllTabsBackground();
+      }
+    });
+
+    chrome.tabs.onCreated.addListener(() => {
+      if (isMultiSaveMode) fetchAllTabsBackground();
+    });
+
+    chrome.tabs.onRemoved.addListener(() => {
+      if (isMultiSaveMode) fetchAllTabsBackground();
     });
   }
 
@@ -543,8 +554,11 @@ function renderMultiTabList() {
     checkbox.dataset.index = index;
     
     const icon = document.createElement("img");
-    icon.src = tab.favIconUrl || "icons/default-favicon.png";
-    icon.onerror = () => { icon.src = "icons/default-favicon.png"; };
+    icon.src = tab.favIconUrl || "images/default-favicon.png";
+    icon.onerror = function () {
+      this.onerror = null;
+      this.src = "images/default-favicon.png";
+    };
     
     const info = document.createElement("div");
     info.className = "tab-info";
@@ -837,6 +851,15 @@ function loadTags() {
   );
 }
 
+// Keep tags and colors in real-time sync with storage changes
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "local") {
+    if (changes.bookmarkTags || changes.tagColors || changes.tagTextColors) {
+      loadTags();
+    }
+  }
+});
+
 function showSuggestions(query) {
   if (!customTagSuggestions) return;
   if (!query) {
@@ -1034,7 +1057,17 @@ function renderTags() {
     const removeSpan = document.createElement("span");
     removeSpan.className = "remove";
     removeSpan.setAttribute("data-index", index);
+    removeSpan.setAttribute("role", "button");
+    removeSpan.setAttribute("title", "Remove tag");
     removeSpan.innerHTML = "&times;";
+
+    removeSpan.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      currentTags.splice(index, 1);
+      renderTags();
+      tagsInput.focus();
+    });
 
     chip.appendChild(nameSpan);
     chip.appendChild(removeSpan);
@@ -1056,10 +1089,12 @@ if (nextTagColorBtn) {
 tagsContainer.addEventListener("click", (e) => {
   const removeBtn = e.target.closest(".remove");
   if (removeBtn) {
+    e.stopPropagation();
     const index = parseInt(removeBtn.getAttribute("data-index"), 10);
-    if (!isNaN(index)) {
+    if (!isNaN(index) && index >= 0 && index < currentTags.length) {
       currentTags.splice(index, 1);
       renderTags();
+      tagsInput.focus();
     }
   } else if (!e.target.closest(".tag-chip")) {
     tagsInput.focus();
@@ -1243,8 +1278,7 @@ if (suggestTagBtn) {
 
       if (config.apiKey && config.model === "gemini") {
         const modelName = config.modelName || "gemini-1.5-flash";
-        let apiUrl =
-          "https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=${config.apiKey}";
+        let apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${config.apiKey}`;
 
         const response = await fetch(apiUrl, {
           method: "POST",
@@ -1254,7 +1288,7 @@ if (suggestTagBtn) {
               {
                 parts: [
                   {
-                    text: 'You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.\nTitle: "${currentTab.title}", URL: "${currentTab.url}"',
+                    text: `You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.\nTitle: "${currentTab.title}", URL: "${currentTab.url}"`,
                   },
                 ],
               },
@@ -1284,7 +1318,7 @@ if (suggestTagBtn) {
             "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.",
         });
         const result = await session.prompt(
-          'Title: "${currentTab.title}", URL: "${currentTab.url}"',
+          `Title: "${currentTab.title}", URL: "${currentTab.url}"`,
         );
         if (result) {
           suggestedTag = result.trim().replace(/['"]/g, "").substring(0, 20);
