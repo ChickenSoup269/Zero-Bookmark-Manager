@@ -919,14 +919,14 @@ function extractSmartTagSuggestions(title = "", url = "") {
 
       if (domainMap[mainDomain]) {
         suggestions.add(domainMap[mainDomain]);
-      } else if (mainDomain && mainDomain.length > 2 && mainDomain.length <= 15) {
+      } else if (mainDomain && mainDomain.length >= 3 && mainDomain.length <= 15) {
         suggestions.add(mainDomain.charAt(0).toUpperCase() + mainDomain.slice(1));
       }
 
       if (host.includes("docs.") || url.includes("/docs") || url.includes("/documentation")) {
         suggestions.add("Docs");
       }
-      if (host.includes("blog.") || url.includes("/blog")) {
+      if (host.includes("blog.") || url.includes("/blog") || url.includes("/posts")) {
         suggestions.add("Blog");
       }
       if (host.includes("api.") || url.includes("/api")) {
@@ -951,6 +951,22 @@ function extractSmartTagSuggestions(title = "", url = "") {
         }
       }
     });
+
+    // Extract capitalized words or topic words from title if suggestions are few
+    if (suggestions.size < 4) {
+      const words = title.split(/[\s|\-_:–—•/\\()[\],.]+/).filter((w) => w.length >= 3 && w.length <= 15 && !/^(http|https|www|com|net|org|the|and|for|with|from|trang|chu|web)$/i.test(w));
+      for (const w of words) {
+        if (/^[A-Z]/.test(w) || w.length >= 4) {
+          suggestions.add(w.charAt(0).toUpperCase() + w.slice(1));
+          if (suggestions.size >= 5) break;
+        }
+      }
+    }
+  }
+
+  // Fallback to top existing tags if still empty
+  if (suggestions.size === 0 && allAvailableTags.length > 0) {
+    allAvailableTags.slice(0, 4).forEach((t) => suggestions.add(t));
   }
 
   return Array.from(suggestions).filter((t) => !currentTags.includes(t)).slice(0, 6);
@@ -961,8 +977,8 @@ function renderQuickSuggestedTags() {
   const list = document.getElementById("suggested-tags-list");
   if (!container || !list) return;
 
-  const currentUrl = urlInput ? urlInput.value : (currentTab?.url || "");
-  const currentTitle = titleInput ? titleInput.value : (currentTab?.title || "");
+  const currentUrl = (urlInput && urlInput.value) || currentTab?.url || "";
+  const currentTitle = (titleInput && titleInput.value) || currentTab?.title || "";
 
   const suggestions = extractSmartTagSuggestions(currentTitle, currentUrl);
   
@@ -1458,7 +1474,9 @@ if (folderSearchInput) {
 const suggestTagBtn = document.getElementById("suggest-tag-btn");
 if (suggestTagBtn) {
   suggestTagBtn.addEventListener("click", async () => {
-    if (!currentTab || !currentTab.url) return;
+    const targetUrl = (urlInput && urlInput.value) || currentTab?.url || "";
+    const targetTitle = (titleInput && titleInput.value) || currentTab?.title || "";
+    if (!targetUrl) return;
 
     suggestTagBtn.disabled = true;
     const suggestTagIcon = document.getElementById("suggest-tag-icon");
@@ -1487,7 +1505,7 @@ if (suggestTagBtn) {
               {
                 parts: [
                   {
-                    text: `You are a bookmark categorization assistant. Return 1 to 3 relevant, concise tags (max 2 words per tag) separated by comma for the bookmark.\nTitle: "${currentTab.title}", URL: "${currentTab.url}"`,
+                    text: `You are a bookmark categorization assistant. Return 1 to 3 relevant, concise tags (max 2 words per tag) separated by comma for the bookmark.\nTitle: "${targetTitle}", URL: "${targetUrl}"`,
                   },
                 ],
               },
@@ -1515,7 +1533,7 @@ if (suggestTagBtn) {
             "You are a bookmark categorization assistant. Return 1 to 3 relevant, concise tags (max 2 words per tag) separated by comma for the bookmark.",
         });
         const result = await session.prompt(
-          `Title: "${currentTab.title}", URL: "${currentTab.url}"`,
+          `Title: "${targetTitle}", URL: "${targetUrl}"`,
         );
         if (result) {
           suggestedTags = result.trim().split(/[,;\n]+/).map((t) => t.trim().replace(/^['"#]+|['"]+$/g, "")).filter(Boolean);
@@ -1526,7 +1544,7 @@ if (suggestTagBtn) {
     }
 
     if (suggestedTags.length === 0) {
-      const smartHeuristics = extractSmartTagSuggestions(currentTab.title, currentTab.url);
+      const smartHeuristics = extractSmartTagSuggestions(targetTitle, targetUrl);
       if (smartHeuristics.length > 0) {
         suggestedTags = smartHeuristics.slice(0, 3);
       }
@@ -1547,6 +1565,13 @@ if (suggestTagBtn) {
         qsTranslations[lang]?.btnSuggestText || "Suggest";
     }
   });
+}
+
+if (titleInput) {
+  titleInput.addEventListener("input", renderQuickSuggestedTags);
+}
+if (urlInput) {
+  urlInput.addEventListener("input", renderQuickSuggestedTags);
 }
 
 function applyTranslations() {
