@@ -40,10 +40,7 @@ function syncNotesPreviewBodyClass() {
 }
 
 function syncTagsInViewBodyClass() {
-  document.body.classList.toggle(
-    "show-tags-in-view",
-    !!uiState.showTagsInView,
-  )
+  document.body.classList.toggle("show-tags-in-view", !!uiState.showTagsInView)
 }
 
 function createNotesPreviewHTML(bookmark, extraClass = "") {
@@ -64,18 +61,30 @@ function createNotesPreviewHTML(bookmark, extraClass = "") {
 }
 
 // Centralized Favicon Error Handling
-window.addEventListener('error', function(e) {
-  const t = e.target;
-  if (t && t.tagName === 'IMG') {
-    if (t.dataset.hostname) window.handleFaviconError(t, t.dataset.hostname);
-    else if (t.dataset.hideOnError) t.style.opacity = 0;
-    else if (!t.dataset.errorHandled) { t.dataset.errorHandled = 'true'; t.src = './images/default-favicon.png'; }
-  }
-}, true);
-window.addEventListener('load', function(e) {
-  const t = e.target;
-  if (t && t.tagName === 'IMG' && t.dataset.bgOnLoad) t.style.background = t.dataset.bgOnLoad;
-}, true);
+window.addEventListener(
+  "error",
+  function (e) {
+    const t = e.target
+    if (t && t.tagName === "IMG") {
+      if (t.dataset.hostname) window.handleFaviconError(t, t.dataset.hostname)
+      else if (t.dataset.hideOnError) t.style.opacity = 0
+      else if (!t.dataset.errorHandled) {
+        t.dataset.errorHandled = "true"
+        t.src = "./images/default-favicon.png"
+      }
+    }
+  },
+  true,
+)
+window.addEventListener(
+  "load",
+  function (e) {
+    const t = e.target
+    if (t && t.tagName === "IMG" && t.dataset.bgOnLoad)
+      t.style.background = t.dataset.bgOnLoad
+  },
+  true,
+)
 window.handleFaviconError = function (img, hostname) {
   if (!img || img.dataset.fallback === "final") return
 
@@ -134,9 +143,9 @@ let autoscrollInterval = null
 let currentMouseY = 0
 
 function startAutoscroll(container, event) {
-  currentMouseY = event.clientY;
+  currentMouseY = event.clientY
 
-  if (autoscrollInterval) return; // Already running
+  if (autoscrollInterval) return // Already running
 
   const rect = container.getBoundingClientRect()
   const scrollThreshold = 50 // Pixels from edge to start scrolling
@@ -172,35 +181,35 @@ export function setupGlobalDragScroll(elements) {
   const containers = [
     elements.folderListDiv,
     elements.sidebarList,
-    document.getElementById("organize-folders-tree-view")
-  ];
+    document.getElementById("organize-folders-tree-view"),
+  ]
 
-  containers.forEach(container => {
-    if (!container) return;
-    
+  containers.forEach((container) => {
+    if (!container) return
+
     container.addEventListener("dragover", (e) => {
       // Only autoscroll if dragging a bookmark or folder
-      if (typeof currentDragType !== 'undefined' && currentDragType) {
-        startAutoscroll(container, e);
+      if (typeof currentDragType !== "undefined" && currentDragType) {
+        startAutoscroll(container, e)
       }
-    });
+    })
 
     container.addEventListener("dragleave", (e) => {
       // If we leave the container bounds
       if (!container.contains(e.relatedTarget)) {
-        stopAutoscroll();
+        stopAutoscroll()
       }
-    });
+    })
 
     container.addEventListener("drop", () => {
-      stopAutoscroll();
-    });
+      stopAutoscroll()
+    })
 
     // Also handle dragend on window/document just in case
     document.addEventListener("dragend", () => {
-      stopAutoscroll();
-    });
-  });
+      stopAutoscroll()
+    })
+  })
 }
 
 // Helper function for fuzzy search matching
@@ -217,7 +226,10 @@ function matchesSearchQuery(bookmark) {
   if (urlScore >= 0.4) return true
 
   // Check private note match
-  const noteScore = calculateMatchScore(uiState.bookmarkNotes?.[bookmark.id] || "", query)
+  const noteScore = calculateMatchScore(
+    uiState.bookmarkNotes?.[bookmark.id] || "",
+    query,
+  )
   if (noteScore >= 0.35) return true
 
   // Check tags match
@@ -286,7 +298,9 @@ function renderHealthIcon(bookmarkId) {
   const language = localStorage.getItem("appLanguage") || "en"
 
   const checkingTitle =
-    language === "vi" ? "Đang kiểm tra liên kết này..." : "Checking this link..."
+    language === "vi"
+      ? "Đang kiểm tra liên kết này..."
+      : "Checking this link..."
   const deadTitle =
     language === "vi"
       ? "Liên kết có thể đã chết hoặc website không phản hồi."
@@ -336,7 +350,6 @@ function renderHealthIcon(bookmarkId) {
 
   return ""
 }
-
 
 // Render visit count badge
 function renderVisitCount(bookmarkId) {
@@ -475,59 +488,62 @@ function attachDropdownToggle(element) {
   // But we DO need to handle contextmenu on the element itself.
 
   element.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault()
+    e.stopPropagation()
 
     // Find the button to get the data-id, or just look for the dropdown-menu in this element.
-    const btn = element.querySelector(".dropdown-btn");
-    let menu = element.querySelector(".dropdown-menu");
-    const bookmarkId = btn ? btn.getAttribute("data-id") : null;
+    const btn = element.querySelector(".dropdown-btn")
+    let menu = element.querySelector(".dropdown-menu")
+    const bookmarkId = btn ? btn.getAttribute("data-id") : null
 
     if (!menu && bookmarkId) {
       // It might have been moved to document.body by click handler or previous contextmenu
-      const bodyMenus = document.body.querySelectorAll(".bookmark-dropdown-menu");
-      bodyMenus.forEach(m => {
+      const bodyMenus = document.body.querySelectorAll(
+        ".bookmark-dropdown-menu",
+      )
+      bodyMenus.forEach((m) => {
         if (m.querySelector(`[data-id="${bookmarkId}"]`)) {
-          menu = m;
+          menu = m
         }
-      });
+      })
     }
 
     if (menu) {
-      const isHidden = menu.classList.contains("hidden");
-      
+      const isHidden = menu.classList.contains("hidden")
+
       document
         .querySelectorAll(".dropdown-menu")
-        .forEach((m) => m.classList.add("hidden"));
+        .forEach((m) => m.classList.add("hidden"))
 
       if (isHidden) {
         if (menu.parentNode !== document.body) {
-          document.body.appendChild(menu);
+          document.body.appendChild(menu)
         }
 
-        menu.classList.remove("hidden");
-        menu.style.position = "fixed";
-        menu.style.zIndex = "10000";
-        menu.style.right = "auto";
-        let x = e.clientX;
-        let y = e.clientY;
-        const menuRect = menu.getBoundingClientRect();
-        if (x + menuRect.width > window.innerWidth) x = window.innerWidth - menuRect.width - 5;
+        menu.classList.remove("hidden")
+        menu.style.position = "fixed"
+        menu.style.zIndex = "10000"
+        menu.style.right = "auto"
+        let x = e.clientX
+        let y = e.clientY
+        const menuRect = menu.getBoundingClientRect()
+        if (x + menuRect.width > window.innerWidth)
+          x = window.innerWidth - menuRect.width - 5
         if (y + menuRect.height > window.innerHeight) {
-          y = window.innerHeight - menuRect.height - 5;
-          if (y < 0) y = 5;
+          y = window.innerHeight - menuRect.height - 5
+          if (y < 0) y = 5
         }
-        menu.style.left = `${x}px`;
-        menu.style.top = `${y}px`;
+        menu.style.left = `${x}px`
+        menu.style.top = `${y}px`
       } else {
-        menu.classList.add("hidden");
+        menu.classList.add("hidden")
       }
     }
-  });
+  })
 
   const btn = element.querySelector(".dropdown-btn")
   const menu = element.querySelector(".dropdown-menu")
-  
+
   if (btn && menu) {
     element.addEventListener("mouseenter", () => {
       if (
@@ -539,21 +555,27 @@ function attachDropdownToggle(element) {
     })
     element.addEventListener("mouseleave", () => {
       // Find the menu wherever it is
-      const bookmarkId = btn.getAttribute("data-id");
-      let currentMenu = menu;
-      if (currentMenu.parentNode === null || currentMenu.parentNode === document.body) {
-        const bodyMenus = document.body.querySelectorAll(".bookmark-dropdown-menu");
-        bodyMenus.forEach(m => {
+      const bookmarkId = btn.getAttribute("data-id")
+      let currentMenu = menu
+      if (
+        currentMenu.parentNode === null ||
+        currentMenu.parentNode === document.body
+      ) {
+        const bodyMenus = document.body.querySelectorAll(
+          ".bookmark-dropdown-menu",
+        )
+        bodyMenus.forEach((m) => {
           if (m.querySelector(`[data-id="${bookmarkId}"]`)) {
-            currentMenu = m;
+            currentMenu = m
           }
-        });
+        })
       }
 
       if (
         (element.classList.contains("detail-bookmark-item") ||
           element.classList.contains("bookmark-item")) &&
-        currentMenu && currentMenu.classList.contains("hidden")
+        currentMenu &&
+        currentMenu.classList.contains("hidden")
       ) {
         btn.style.opacity = "0"
       }
@@ -605,7 +627,7 @@ function openWebPreviewModal(bookmark) {
         
         <!-- Fallback Message (Behind Iframe) -->
         <div class="iframe-fallback" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; width: 80%; color: #555; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-            <img src="${chrome.runtime.getURL('icons/icon.png')}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white; padding: 10px;" alt="Zero Bookmark Manager Logo">
+            <img src="${chrome.runtime.getURL("icons/icon.png")}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white; padding: 10px;" alt="Zero Bookmark Manager Logo">
             <p><strong>Loading or Preview unavailable?</strong></p>
             <p style="font-size:12px;">Many websites block being displayed inside extensions.</p>
             <a href="${
@@ -849,8 +871,6 @@ export function updateUILanguage(elements, language) {
   elements.sortFilter.innerHTML = `
     <option value="default">${t.sortDefault}</option>
     <option value="favorites">${t.sortFavorites}</option>
-    <option value="has-notes">${t.sortHasNotes || "Has Notes"}</option>
-    <option value="has-tags">${t.sortHasTags || "Has Tags"}</option>
     <option value="new">${t.sortNew}</option>
     <option value="old">${t.sortOld}</option>
     <option value="most-visited">${t.sortMostVisited || "Most Visited"}</option>
@@ -858,6 +878,8 @@ export function updateUILanguage(elements, language) {
     <option value="a-z">${t.sortAZ}</option>
     <option value="z-a">${t.sortZA}</option>
     <option value="domain">${t.sortDomain || "By Domain"}</option>
+        <option value="has-notes">${t.sortHasNotes || "Has Notes"}</option>
+    <option value="has-tags">${t.sortHasTags || "Has Tags"}</option>
   `
   const updateButtonText = (btnElem, text) => {
     if (!btnElem) return
@@ -1001,7 +1023,8 @@ function reRenderCurrentView(elements) {
       const status = uiState.healthStatus[bookmark.id]
       if (uiState.healthFilter === "dead") return status === "dead"
       if (uiState.healthFilter === "malware") return status === "alive_malware"
-      if (uiState.healthFilter === "suspicious") return status === "alive_suspicious"
+      if (uiState.healthFilter === "suspicious")
+        return status === "alive_suspicious"
       if (uiState.healthFilter === "safe") return status === "alive_safe"
       return false
     })
@@ -1298,7 +1321,7 @@ export async function populateTagFilter(elements) {
       `
 
       // We need to stop propagation on the action buttons so they don't trigger the filter toggle
-      const contentDiv = pill.querySelector('.tag-pill-content')
+      const contentDiv = pill.querySelector(".tag-pill-content")
       contentDiv.addEventListener("click", () => {
         const idx = uiState.selectedTags.indexOf(tag)
         if (idx > -1) {
@@ -1321,15 +1344,15 @@ export async function populateTagFilter(elements) {
         })
       })
 
-      const editBtn = pill.querySelector('.tag-edit-btn')
+      const editBtn = pill.querySelector(".tag-edit-btn")
       editBtn.addEventListener("click", (e) => {
         e.stopPropagation()
         const newTag = prompt(`Rename tag "${tag}" to:`, tag)
         if (newTag && newTag.trim() !== "" && newTag !== tag) {
           const trimmedNewTag = newTag.trim()
-          
+
           // Update bookmarkTags
-          Object.keys(uiState.bookmarkTags).forEach(id => {
+          Object.keys(uiState.bookmarkTags).forEach((id) => {
             const tagsArray = uiState.bookmarkTags[id]
             const idx = tagsArray.indexOf(tag)
             if (idx > -1) {
@@ -1338,13 +1361,13 @@ export async function populateTagFilter(elements) {
               uiState.bookmarkTags[id] = [...new Set(tagsArray)]
             }
           })
-          
+
           // Update selectedTags filter
           const selectedIdx = uiState.selectedTags.indexOf(tag)
           if (selectedIdx > -1) {
             uiState.selectedTags[selectedIdx] = trimmedNewTag
           }
-          
+
           // Move colors
           if (uiState.tagColors[tag]) {
             uiState.tagColors[trimmedNewTag] = uiState.tagColors[tag]
@@ -1354,9 +1377,13 @@ export async function populateTagFilter(elements) {
             uiState.tagTextColors[trimmedNewTag] = uiState.tagTextColors[tag]
             delete uiState.tagTextColors[tag]
           }
-          
+
           import("./tag.js").then(({ saveTags }) => {
-            saveTags(uiState.bookmarkTags, uiState.tagColors, uiState.tagTextColors)
+            saveTags(
+              uiState.bookmarkTags,
+              uiState.tagColors,
+              uiState.tagTextColors,
+            )
             setTimeout(() => {
               renderBrowserPills(tagsBrowserSearch?.value || "")
               renderTagPills(tagSearchInput?.value || "")
@@ -1369,8 +1396,8 @@ export async function populateTagFilter(elements) {
           })
         }
       })
-      
-      const deleteBtn = pill.querySelector('.tag-delete-btn')
+
+      const deleteBtn = pill.querySelector(".tag-delete-btn")
       deleteBtn.addEventListener("click", (e) => {
         e.stopPropagation()
         import("./dialog.js").then(({ showConfirm }) => {
@@ -1381,7 +1408,7 @@ export async function populateTagFilter(elements) {
             cancelText: "Cancel",
             onConfirm: () => {
               // Remove from all bookmarks
-              Object.keys(uiState.bookmarkTags).forEach(id => {
+              Object.keys(uiState.bookmarkTags).forEach((id) => {
                 const tagsArray = uiState.bookmarkTags[id]
                 const idx = tagsArray.indexOf(tag)
                 if (idx > -1) {
@@ -1391,19 +1418,23 @@ export async function populateTagFilter(elements) {
                   }
                 }
               })
-              
+
               // Remove from selected filters
               const selectedIdx = uiState.selectedTags.indexOf(tag)
               if (selectedIdx > -1) {
                 uiState.selectedTags.splice(selectedIdx, 1)
               }
-              
+
               // Remove colors
               delete uiState.tagColors[tag]
               delete uiState.tagTextColors[tag]
-              
+
               import("./tag.js").then(({ saveTags }) => {
-                saveTags(uiState.bookmarkTags, uiState.tagColors, uiState.tagTextColors)
+                saveTags(
+                  uiState.bookmarkTags,
+                  uiState.tagColors,
+                  uiState.tagTextColors,
+                )
                 setTimeout(() => {
                   renderBrowserPills(tagsBrowserSearch?.value || "")
                   renderTagPills(tagSearchInput?.value || "")
@@ -1414,7 +1445,7 @@ export async function populateTagFilter(elements) {
                   })
                 }, 100)
               })
-            }
+            },
           })
         })
       })
@@ -1668,25 +1699,25 @@ function renderSidebarFolderTree(folders, elements) {
 
   // Add "All Bookmarks" pseudo folder at the beginning
   const t = translations[language] || translations.en
-  
+
   if (uiState.showSmartFolders !== false) {
     const smartFolders = [
       { id: "__smart_recent", title: t.sidebarRecent || "Mới lưu (7 ngày)" },
-      { id: "__smart_untagged", title: t.sidebarUntagged || "Chưa gắn thẻ" }
-    ];
+      { id: "__smart_untagged", title: t.sidebarUntagged || "Chưa gắn thẻ" },
+    ]
 
-    smartFolders.reverse().forEach(sf => {
+    smartFolders.reverse().forEach((sf) => {
       rootFolders.unshift({ ...sf, children: [], isVirtual: true })
     })
   }
-  
+
   const allBookmarksFolder = {
     id: "__all_bookmarks",
     title: t.sidebarAllBookmarks || "All Bookmarks",
     children: [],
     isVirtual: true,
   }
-  
+
   rootFolders.unshift(allBookmarksFolder)
 
   // Sort children alphabetically
@@ -1810,8 +1841,8 @@ function renderSidebarFolderTree(folders, elements) {
       e.dataTransfer.setData("text/plain", folder.id)
       e.dataTransfer.effectAllowed = "move"
       li.classList.add("dragging")
-      
-      setCustomDragImage(e, folder.title || `Folder ${folder.id}`, true);
+
+      setCustomDragImage(e, folder.title || `Folder ${folder.id}`, true)
     })
 
     // Dragend event
@@ -1845,7 +1876,13 @@ function renderSidebarFolderTree(folders, elements) {
         return
       }
 
-      if (currentDragType === "bookmark" && draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
+      if (
+        currentDragType === "bookmark" &&
+        draggedNode &&
+        draggedNode.parentId !== folder.id &&
+        !uiState.autoRemoveDup &&
+        uiState.duplicateScope === "all"
+      ) {
         e.dataTransfer.dropEffect = "copy"
       } else {
         e.dataTransfer.dropEffect = "move"
@@ -1900,7 +1937,9 @@ function renderSidebarFolderTree(folders, elements) {
       e.stopPropagation()
 
       // Remove existing context menu if any
-      const existingMenu = document.querySelector(".sidebar-folder-context-menu")
+      const existingMenu = document.querySelector(
+        ".sidebar-folder-context-menu",
+      )
       if (existingMenu) {
         existingMenu.remove()
       }
@@ -1912,19 +1951,24 @@ function renderSidebarFolderTree(folders, elements) {
       const language = localStorage.getItem("appLanguage") || "en"
       const t = translations[language] || translations.en
 
-      const isDefaultFolder = folder.id === "1" || folder.id === "2" || folder.id === "3"
+      const isDefaultFolder =
+        folder.id === "1" || folder.id === "2" || folder.id === "3"
 
       contextMenu.innerHTML = `
         <div class="context-menu-item" data-action="move-to-folder">
           <i class="fas fa-folder-open"></i>
           <span>${t.moveToFolder || "Move to Folder"}</span>
         </div>
-        ${!isDefaultFolder ? `
+        ${
+          !isDefaultFolder
+            ? `
         <div class="context-menu-item delete" data-action="delete-folder" style="color: var(--danger-color);">
           <i class="fas fa-trash"></i>
           <span>${t.deleteFolder || "Delete Folder"}</span>
         </div>
-        ` : ''}
+        `
+            : ""
+        }
       `
 
       // Position context menu
@@ -1938,14 +1982,18 @@ function renderSidebarFolderTree(folders, elements) {
       // Handle context menu click
       contextMenu.addEventListener("click", (menuEvent) => {
         menuEvent.stopPropagation()
-        const action = menuEvent.target.closest(".context-menu-item")?.dataset.action
+        const action =
+          menuEvent.target.closest(".context-menu-item")?.dataset.action
 
         if (action === "move-to-folder") {
           const popupElements = {
             addToFolderPopup: document.getElementById("add-to-folder-popup"),
             addToFolderSelect: document.getElementById("add-to-folder-select"),
-            addToFolderSaveButton: document.getElementById("add-to-folder-save"),
-            addToFolderCancelButton: document.getElementById("add-to-folder-cancel"),
+            addToFolderSaveButton:
+              document.getElementById("add-to-folder-save"),
+            addToFolderCancelButton: document.getElementById(
+              "add-to-folder-cancel",
+            ),
           }
           if (popupElements.addToFolderPopup) {
             showMoveFolderToFolderPopup(popupElements, folder.id)
@@ -2063,7 +2111,7 @@ function runBookmarkViewTransition(elements) {
 }
 
 export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
-  uiState.bookmarkTree = bookmarkTreeNodes;
+  uiState.bookmarkTree = bookmarkTreeNodes
   chrome.storage.local.get(
     [
       "favoriteBookmarks",
@@ -2129,8 +2177,10 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
         filtered = filtered.filter((bookmark) => {
           const status = uiState.healthStatus[bookmark.id]
           if (uiState.healthFilter === "dead") return status === "dead"
-          if (uiState.healthFilter === "malware") return status === "alive_malware"
-          if (uiState.healthFilter === "suspicious") return status === "alive_suspicious"
+          if (uiState.healthFilter === "malware")
+            return status === "alive_malware"
+          if (uiState.healthFilter === "suspicious")
+            return status === "alive_suspicious"
           if (uiState.healthFilter === "safe") return status === "alive_safe"
           return false
         })
@@ -2157,11 +2207,14 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       ) {
         if (uiState.selectedFolderId === "__smart_recent") {
           const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
-          filtered = filtered.filter((b) => b.dateAdded && b.dateAdded >= oneWeekAgo)
+          filtered = filtered.filter(
+            (b) => b.dateAdded && b.dateAdded >= oneWeekAgo,
+          )
         } else if (uiState.selectedFolderId === "__smart_most_visited") {
-          filtered = filtered.filter((b) => b.accessCount && b.accessCount > 0)
-                             .sort((a, b) => b.accessCount - a.accessCount)
-                             .slice(0, 50)
+          filtered = filtered
+            .filter((b) => b.accessCount && b.accessCount > 0)
+            .sort((a, b) => b.accessCount - a.accessCount)
+            .slice(0, 50)
         } else if (uiState.selectedFolderId === "__smart_untagged") {
           filtered = filtered.filter((b) => !b.tags || b.tags.length === 0)
         }
@@ -2184,7 +2237,10 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
           .map((bookmark) => {
             const titleScore = calculateMatchScore(bookmark.title || "", query)
             const urlScore = calculateMatchScore(bookmark.url || "", query)
-            const noteScore = calculateMatchScore(bookmarkNotes[bookmark.id] || "", query)
+            const noteScore = calculateMatchScore(
+              bookmarkNotes[bookmark.id] || "",
+              query,
+            )
             // Also check tags
             let tagScore = 0
             if (bookmark.tags && bookmark.tags.length > 0) {
@@ -2203,20 +2259,26 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
       // Render Views
       if (elements && elements.folderListDiv) {
         elements.folderListDiv.style.display = ""
-        
-        let currentViewMode = uiState.viewMode;
-        if (uiState.selectedFolderId && uiState.selectedFolderId.startsWith("__smart_")) {
-           if (["tree", "bento", "split", "kanban"].includes(currentViewMode)) {
-              currentViewMode = "card";
-           }
+
+        let currentViewMode = uiState.viewMode
+        if (
+          uiState.selectedFolderId &&
+          uiState.selectedFolderId.startsWith("__smart_")
+        ) {
+          if (["tree", "bento", "split", "kanban"].includes(currentViewMode)) {
+            currentViewMode = "card"
+          }
         }
-        
+
         if (currentViewMode === "tree") {
           const rootChildren = bookmarkTreeNodes[0]?.children || []
           renderTreeView(rootChildren, elements)
         } else if (currentViewMode === "bento") {
           renderBentoView(bookmarkTreeNodes, filtered, elements)
-        } else if (currentViewMode === "split" || currentViewMode === "kanban") {
+        } else if (
+          currentViewMode === "split" ||
+          currentViewMode === "kanban"
+        ) {
           renderKanbanView(bookmarkTreeNodes, filtered, elements)
         } else if (currentViewMode === "detail") {
           renderDetailView(filtered, elements)
@@ -2274,7 +2336,13 @@ function clearCardFolderDropState(folderCard) {
   )
 }
 
-function moveFolderByCardDrop(draggedId, targetId, dropPosition, elements, language) {
+function moveFolderByCardDrop(
+  draggedId,
+  targetId,
+  dropPosition,
+  elements,
+  language,
+) {
   if (!draggedId || !targetId || draggedId === targetId) return
 
   if (uiState.sortType !== "default" || uiState.searchQuery) {
@@ -2310,7 +2378,9 @@ function moveFolderByCardDrop(draggedId, targetId, dropPosition, elements, langu
           showCustomPopup(chrome.runtime.lastError.message, "error", true)
           return
         }
-        window.BookmarkCache.getTree((tree) => renderFilteredBookmarks(tree, elements))
+        window.BookmarkCache.getTree((tree) =>
+          renderFilteredBookmarks(tree, elements),
+        )
       },
     )
   })
@@ -2345,7 +2415,7 @@ function renderDetailView(bookmarksList, elements) {
     sortedBookmarks,
     (bookmark) => createDetailBookmarkElement(bookmark, language, elements),
     commonPostRenderOps,
-    elements
+    elements,
   )
 }
 
@@ -2367,10 +2437,10 @@ function renderListView(bookmarksList, elements) {
   const header = document.createElement("div")
   header.className = "list-view-header"
   header.innerHTML = `
-    <div class="header-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden;"></div>
+    <div class="header-col-check" style="width: ${uiState.checkboxesVisible ? "30px" : "0px"}; overflow: hidden;"></div>
     <div class="header-col-icon"></div>
-    <div class="header-col-info">${t.name || 'Name'} &amp; URL</div>
-    <div class="header-col-actions">${t.actions || 'Actions'}</div>
+    <div class="header-col-info">${t.name || "Name"} &amp; URL</div>
+    <div class="header-col-actions">${t.actions || "Actions"}</div>
   `
   fragment.appendChild(header)
 
@@ -2380,10 +2450,10 @@ function renderListView(bookmarksList, elements) {
     backRow.className = "list-bookmark-item back-row"
     backRow.style.cursor = "pointer"
     backRow.innerHTML = `
-      <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden;"></div>
+      <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? "30px" : "0px"}; overflow: hidden;"></div>
       <div class="list-bookmark-favicon"><i class="fas fa-arrow-left"></i></div>
       <div class="list-info-main">
-        <span class="list-bookmark-title-link">${t.back || 'Back'}</span>
+        <span class="list-bookmark-title-link">${t.back || "Back"}</span>
         <div class="list-bookmark-url-display">Go up one level</div>
       </div>
       <div class="list-actions"></div>
@@ -2419,14 +2489,14 @@ function renderListView(bookmarksList, elements) {
 
   // Render Bookmarks
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
-  
+
   appendBookmarksLazily(
     elements.folderListDiv,
     fragment,
     sortedBookmarks,
     (bookmark) => createListBookmarkElement(bookmark, language, elements),
     commonPostRenderOps,
-    elements
+    elements,
   )
 }
 
@@ -2455,538 +2525,617 @@ function createListFolderElement(folder, elements) {
     if (e.target.closest(".dropdown-btn")) return
     uiState.selectedFolderId = folder.id
     if (elements.folderFilter) elements.folderFilter.value = folder.id
-    window.BookmarkCache.getTree((tree) => renderFilteredBookmarks(tree, elements))
+    window.BookmarkCache.getTree((tree) =>
+      renderFilteredBookmarks(tree, elements),
+    )
   }
 
   return div
 }
 
 function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
-  if (!elements || !elements.folderListDiv) return;
-  elements.folderListDiv.innerHTML = "";
-  elements.folderListDiv.className = `folder-list bento-view ${!uiState.folderListBg ? 'no-bg' : ''}`;
-  elements.folderListDiv.style.display = "block";
-  
-  const isPopup = window.innerWidth <= 800;
-  
-  const container = document.createElement("div");
-  container.style.display = "grid";
-  container.style.gridTemplateColumns = isPopup ? "1fr" : "repeat(auto-fit, minmax(320px, 1fr))";
-  container.style.gridAutoFlow = "dense";
-  container.style.gap = isPopup ? "16px" : "24px";
-  container.style.padding = isPopup ? "0" : "24px"; // Fixed padding in popup
-  
-  const folders = getFolders(bookmarkTreeNodes);
-  const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6", "#FF3B30", "#34C759", "#AF52DE"];
-  
+  if (!elements || !elements.folderListDiv) return
+  elements.folderListDiv.innerHTML = ""
+  elements.folderListDiv.className = `folder-list bento-view ${!uiState.folderListBg ? "no-bg" : ""}`
+  elements.folderListDiv.style.display = "block"
+
+  const isPopup = window.innerWidth <= 800
+
+  const container = document.createElement("div")
+  container.style.display = "grid"
+  container.style.gridTemplateColumns = isPopup
+    ? "1fr"
+    : "repeat(auto-fit, minmax(320px, 1fr))"
+  container.style.gridAutoFlow = "dense"
+  container.style.gap = isPopup ? "16px" : "24px"
+  container.style.padding = isPopup ? "0" : "24px" // Fixed padding in popup
+
+  const folders = getFolders(bookmarkTreeNodes)
+  const colors = [
+    "#FF2D55",
+    "#FF9500",
+    "#4CD964",
+    "#5AC8FA",
+    "#007AFF",
+    "#5856D6",
+    "#FF3B30",
+    "#34C759",
+    "#AF52DE",
+  ]
+
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
-    if (folder.id === "0") return; // Never render the root folder as a category
-    let folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
-    folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
+    if (folder.id === "0") return // Never render the root folder as a category
+    let folderBookmarks = filteredBookmarks.filter(
+      (b) => b.parentId === folder.id,
+    )
+    folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType)
     if (folderBookmarks.length === 0) {
-      if (uiState.searchQuery) return;
+      if (uiState.searchQuery) return
       if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
-        if (!isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes)) return;
+        if (!isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes))
+          return
       }
     }
-    
-    const color = colors[index % colors.length];
-    
-    const widget = document.createElement("div");
-    widget.style.position = "relative";
-    widget.style.background = "var(--bg-secondary)";
-    widget.style.borderRadius = "24px";
-    widget.style.padding = "20px";
-    widget.style.display = "flex";
-    widget.style.flexDirection = "column";
-    widget.style.minWidth = "0";
-    widget.style.boxSizing = "border-box";
-    widget.style.gap = "12px";
-    widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
-    widget.style.border = "1px solid var(--border-color)";
-    widget.style.height = "100%";
-    widget.style.minHeight = isPopup ? "220px" : "280px";
-    widget.style.maxHeight = isPopup ? "320px" : "400px";
-    widget.style.transition = "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease";
-    
+
+    const color = colors[index % colors.length]
+
+    const widget = document.createElement("div")
+    widget.style.position = "relative"
+    widget.style.background = "var(--bg-secondary)"
+    widget.style.borderRadius = "24px"
+    widget.style.padding = "20px"
+    widget.style.display = "flex"
+    widget.style.flexDirection = "column"
+    widget.style.minWidth = "0"
+    widget.style.boxSizing = "border-box"
+    widget.style.gap = "12px"
+    widget.style.boxShadow =
+      "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)"
+    widget.style.border = "1px solid var(--border-color)"
+    widget.style.height = "100%"
+    widget.style.minHeight = isPopup ? "220px" : "280px"
+    widget.style.maxHeight = isPopup ? "320px" : "400px"
+    widget.style.transition =
+      "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease"
+
     // Setup drag and drop for widget
-    widget.dataset.folderId = folder.id;
+    widget.dataset.folderId = folder.id
     widget.addEventListener("dragover", (e) => {
-      e.preventDefault(); e.stopPropagation();
-      if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
-      const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
-      if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
-        e.dataTransfer.dropEffect = "copy";
+      e.preventDefault()
+      e.stopPropagation()
+      if (
+        typeof currentDragType === "undefined" ||
+        currentDragType !== "bookmark"
+      )
+        return
+      const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree)
+      if (
+        draggedNode &&
+        draggedNode.parentId !== folder.id &&
+        !uiState.autoRemoveDup &&
+        uiState.duplicateScope === "all"
+      ) {
+        e.dataTransfer.dropEffect = "copy"
       } else {
-        e.dataTransfer.dropEffect = "move";
+        e.dataTransfer.dropEffect = "move"
       }
-      widget.classList.add("drag-over");
-      widget.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 14px 40px rgba(0,0,0,0.12)`;
-      widget.style.background = `var(--hover-bg, rgba(0, 123, 255, 0.05))`;
-    });
+      widget.classList.add("drag-over")
+      widget.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 14px 40px rgba(0,0,0,0.12)`
+      widget.style.background = `var(--hover-bg, rgba(0, 123, 255, 0.05))`
+    })
     widget.addEventListener("dragleave", (e) => {
-      e.stopPropagation();
+      e.stopPropagation()
       if (!widget.contains(e.relatedTarget)) {
-        widget.classList.remove("drag-over");
-        widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
-        widget.style.background = "var(--bg-secondary)";
+        widget.classList.remove("drag-over")
+        widget.style.boxShadow =
+          "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)"
+        widget.style.background = "var(--bg-secondary)"
       }
-    });
+    })
     widget.addEventListener("drop", (e) => {
-      e.preventDefault(); e.stopPropagation();
-      widget.classList.remove("drag-over");
-      widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
-      widget.style.background = "var(--bg-secondary)";
-      if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
-      handleFolderDrop(e, folder, widget, bookmarkTreeNodes, language, elements);
-    });
+      e.preventDefault()
+      e.stopPropagation()
+      widget.classList.remove("drag-over")
+      widget.style.boxShadow =
+        "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)"
+      widget.style.background = "var(--bg-secondary)"
+      if (
+        typeof currentDragType === "undefined" ||
+        currentDragType !== "bookmark"
+      )
+        return
+      handleFolderDrop(e, folder, widget, bookmarkTreeNodes, language, elements)
+    })
 
     // Feature widget logic (disable spanning in popup mode to prevent horizontal overflow)
     if (!isPopup && folderBookmarks.length >= 6 && index % 3 === 0) {
-      widget.style.gridColumn = "span 2";
-      widget.style.gridRow = "span 2";
+      widget.style.gridColumn = "span 2"
+      widget.style.gridRow = "span 2"
     }
 
     widget.onmouseover = () => {
-      widget.style.transform = "translateY(-4px)";
-      widget.style.boxShadow = `0 14px 40px rgba(0,0,0,0.12), 0 0 0 1px ${color}40, inset 0 1px 0 rgba(255,255,255,0.2)`;
-    };
+      widget.style.transform = "translateY(-4px)"
+      widget.style.boxShadow = `0 14px 40px rgba(0,0,0,0.12), 0 0 0 1px ${color}40, inset 0 1px 0 rgba(255,255,255,0.2)`
+    }
     widget.onmouseout = () => {
-      widget.style.transform = "translateY(0)";
-      widget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)";
-    };
-    
+      widget.style.transform = "translateY(0)"
+      widget.style.boxShadow =
+        "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)"
+    }
+
     // Background glowing orb
-    const orbWrapper = document.createElement("div");
-    orbWrapper.style.position = "absolute";
-    orbWrapper.style.top = "0";
-    orbWrapper.style.left = "0";
-    orbWrapper.style.width = "100%";
-    orbWrapper.style.height = "100%";
-    orbWrapper.style.overflow = "hidden";
-    orbWrapper.style.borderRadius = "24px";
-    orbWrapper.style.pointerEvents = "none";
-    orbWrapper.style.zIndex = "0";
-    
-    const orb = document.createElement("div");
-    orb.style.position = "absolute";
-    orb.style.top = "-50px";
-    orb.style.right = "-50px";
-    orb.style.width = "150px";
-    orb.style.height = "150px";
-    orb.style.background = `radial-gradient(circle, ${color}20 0%, transparent 70%)`;
-    orb.style.borderRadius = "50%";
-    orbWrapper.appendChild(orb);
-    widget.appendChild(orbWrapper);
-    
-    const header = document.createElement("div");
-    header.style.display = "flex";
-    header.style.alignItems = "center";
-    header.style.justifyContent = "space-between";
-    header.style.zIndex = "1";
-    header.style.minWidth = "0";
-    
-    const title = document.createElement("h3");
-    title.style.margin = "0";
-    title.style.fontSize = "1rem"; // Reduced from 1.3rem
-    title.style.fontWeight = "700";
-    title.style.color = "var(--text-color)";
-    title.style.display = "flex";
-    title.style.alignItems = "center";
-    title.style.gap = "8px";
-    title.style.whiteSpace = "nowrap";
-    title.style.overflow = "hidden";
-    title.style.textOverflow = "ellipsis";
-    title.style.minWidth = "0";
-    title.style.flex = "1";
-    title.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;border-radius:8px;background:${color}15;color:${color}"><i class="fas fa-folder"></i></div> <span style="overflow:hidden;text-overflow:ellipsis;min-width:0;">${folder.title}</span>`;
-    
-    const countBadge = document.createElement("span");
-    countBadge.style.background = "var(--bg-tertiary)";
-    countBadge.style.color = "var(--text-secondary)";
-    countBadge.style.padding = "4px 10px";
-    countBadge.style.borderRadius = "20px";
-    countBadge.style.fontSize = "0.75rem";
-    countBadge.style.fontWeight = "600";
-    countBadge.style.flexShrink = "0";
-    countBadge.textContent = `${folderBookmarks.length} items`;
-    
-    header.appendChild(title);
-    header.appendChild(countBadge);
-    widget.appendChild(header);
-    
-    const listContainer = document.createElement("div");
-    listContainer.style.overflowY = "auto";
-    listContainer.style.display = "flex";
-    listContainer.style.flexDirection = "column";
-    listContainer.style.gap = "8px";
-    listContainer.style.paddingRight = "4px";
-    listContainer.style.marginTop = "8px";
-    listContainer.style.zIndex = "1";
-    listContainer.style.flexGrow = "1";
-    
+    const orbWrapper = document.createElement("div")
+    orbWrapper.style.position = "absolute"
+    orbWrapper.style.top = "0"
+    orbWrapper.style.left = "0"
+    orbWrapper.style.width = "100%"
+    orbWrapper.style.height = "100%"
+    orbWrapper.style.overflow = "hidden"
+    orbWrapper.style.borderRadius = "24px"
+    orbWrapper.style.pointerEvents = "none"
+    orbWrapper.style.zIndex = "0"
+
+    const orb = document.createElement("div")
+    orb.style.position = "absolute"
+    orb.style.top = "-50px"
+    orb.style.right = "-50px"
+    orb.style.width = "150px"
+    orb.style.height = "150px"
+    orb.style.background = `radial-gradient(circle, ${color}20 0%, transparent 70%)`
+    orb.style.borderRadius = "50%"
+    orbWrapper.appendChild(orb)
+    widget.appendChild(orbWrapper)
+
+    const header = document.createElement("div")
+    header.style.display = "flex"
+    header.style.alignItems = "center"
+    header.style.justifyContent = "space-between"
+    header.style.zIndex = "1"
+    header.style.minWidth = "0"
+
+    const title = document.createElement("h3")
+    title.style.margin = "0"
+    title.style.fontSize = "1rem" // Reduced from 1.3rem
+    title.style.fontWeight = "700"
+    title.style.color = "var(--text-color)"
+    title.style.display = "flex"
+    title.style.alignItems = "center"
+    title.style.gap = "8px"
+    title.style.whiteSpace = "nowrap"
+    title.style.overflow = "hidden"
+    title.style.textOverflow = "ellipsis"
+    title.style.minWidth = "0"
+    title.style.flex = "1"
+    title.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;border-radius:8px;background:${color}15;color:${color}"><i class="fas fa-folder"></i></div> <span style="overflow:hidden;text-overflow:ellipsis;min-width:0;">${folder.title}</span>`
+
+    const countBadge = document.createElement("span")
+    countBadge.style.background = "var(--bg-tertiary)"
+    countBadge.style.color = "var(--text-secondary)"
+    countBadge.style.padding = "4px 10px"
+    countBadge.style.borderRadius = "20px"
+    countBadge.style.fontSize = "0.75rem"
+    countBadge.style.fontWeight = "600"
+    countBadge.style.flexShrink = "0"
+    countBadge.textContent = `${folderBookmarks.length} items`
+
+    header.appendChild(title)
+    header.appendChild(countBadge)
+    widget.appendChild(header)
+
+    const listContainer = document.createElement("div")
+    listContainer.style.overflowY = "auto"
+    listContainer.style.display = "flex"
+    listContainer.style.flexDirection = "column"
+    listContainer.style.gap = "8px"
+    listContainer.style.paddingRight = "4px"
+    listContainer.style.marginTop = "8px"
+    listContainer.style.zIndex = "1"
+    listContainer.style.flexGrow = "1"
+
     // Custom scrollbar for listContainer
-    listContainer.classList.add("custom-scrollbar");
-    
-    const language = localStorage.getItem("appLanguage") || "en";
-    
-    folderBookmarks.forEach(b => {
-      const item = document.createElement("div");
-      item.style.cursor = "pointer";
+    listContainer.classList.add("custom-scrollbar")
+
+    const language = localStorage.getItem("appLanguage") || "en"
+
+    folderBookmarks.forEach((b) => {
+      const item = document.createElement("div")
+      item.style.cursor = "pointer"
       item.onclick = (e) => {
-        if (!e.target.closest('.dropdown-btn-group')) window.open(b.url, '_blank');
-      };
-      item.style.display = "flex";
-      item.style.alignItems = "center";
-      item.style.gap = "12px";
-      item.style.textDecoration = "none";
-      item.style.color = "var(--text-color)";
-      item.style.padding = "10px 12px";
-      item.style.borderRadius = "14px";
-      item.style.background = "var(--bg-primary)";
-      item.style.border = "1px solid var(--border-color)";
-      item.style.transition = "all 0.25s ease";
-      makeBookmarkDraggableAndDroppable(item, b, elements, language);
-      
-      item.onmouseover = () => {
-        item.style.background = `${color}10`;
-        item.style.borderColor = `${color}40`;
-        item.style.transform = "translateX(4px)";
-      };
-      item.onmouseout = () => {
-        item.style.background = "var(--bg-primary)";
-        item.style.borderColor = "var(--border-color)";
-        item.style.transform = "translateX(0)";
-      };
-      
-      const icon = document.createElement("img");
-      icon.src = getFaviconUrl(b.url);
-      icon.style.width = "22px";
-      icon.style.height = "22px";
-      icon.style.borderRadius = "6px";
-      icon.style.flexShrink = "0";
-      icon.style.background = "#fff";
-      icon.style.padding = "2px";
-      
-      const textWrap = document.createElement("div");
-      textWrap.dataset.tooltip = b.title || b.url;
-      textWrap.style.display = "flex";
-      textWrap.style.flexDirection = "column";
-      textWrap.style.minWidth = "0";
-      textWrap.style.flex = "1";
-      
-      const text = document.createElement("span");
-      text.textContent = b.title;
-      text.style.fontWeight = "500";
-      text.style.fontSize = "0.95rem";
-      text.style.whiteSpace = "nowrap";
-      text.style.overflow = "hidden";
-      text.style.textOverflow = "ellipsis";
-      
-      const urlText = document.createElement("span");
-      urlText.textContent = b.url;
-      urlText.style.fontSize = "0.7rem";
-      urlText.style.color = "var(--text-secondary)";
-      urlText.style.whiteSpace = "nowrap";
-      urlText.style.overflow = "hidden";
-      urlText.style.textOverflow = "ellipsis";
-      
-      textWrap.appendChild(text);
-      textWrap.appendChild(urlText);
-      textWrap.insertAdjacentHTML("beforeend", createNotesPreviewHTML(b, "compact-note-preview"));
-      textWrap.insertAdjacentHTML("beforeend", createTagsInViewHTML(b.tags, "kanban-view-tags"));
-      
-      item.appendChild(icon);
-      item.appendChild(textWrap);
-      
-      const badgeStr = renderVisitCount(b.id);
-      if (badgeStr) {
-        const badgeWrap = document.createElement("div");
-        badgeWrap.style.marginRight = "8px";
-        badgeWrap.style.display = "flex";
-        badgeWrap.style.alignItems = "center";
-        badgeWrap.innerHTML = badgeStr;
-        item.appendChild(badgeWrap);
+        if (!e.target.closest(".dropdown-btn-group"))
+          window.open(b.url, "_blank")
       }
-      
-      const dropdownWrap = document.createElement("div");
-      dropdownWrap.style.marginLeft = "auto";
-      dropdownWrap.innerHTML = createDropdownHTML(b, language);
-      item.appendChild(dropdownWrap);
-      
-      attachDropdownToggle(item);
-      listContainer.appendChild(item);
-    });
-    
-    widget.appendChild(listContainer);
-    container.appendChild(widget);
-  });
-  
-  elements.folderListDiv.appendChild(container);
-  if (typeof commonPostRenderOps === "function") commonPostRenderOps(elements);
+      item.style.display = "flex"
+      item.style.alignItems = "center"
+      item.style.gap = "12px"
+      item.style.textDecoration = "none"
+      item.style.color = "var(--text-color)"
+      item.style.padding = "10px 12px"
+      item.style.borderRadius = "14px"
+      item.style.background = "var(--bg-primary)"
+      item.style.border = "1px solid var(--border-color)"
+      item.style.transition = "all 0.25s ease"
+      makeBookmarkDraggableAndDroppable(item, b, elements, language)
+
+      item.onmouseover = () => {
+        item.style.background = `${color}10`
+        item.style.borderColor = `${color}40`
+        item.style.transform = "translateX(4px)"
+      }
+      item.onmouseout = () => {
+        item.style.background = "var(--bg-primary)"
+        item.style.borderColor = "var(--border-color)"
+        item.style.transform = "translateX(0)"
+      }
+
+      const icon = document.createElement("img")
+      icon.src = getFaviconUrl(b.url)
+      icon.style.width = "22px"
+      icon.style.height = "22px"
+      icon.style.borderRadius = "6px"
+      icon.style.flexShrink = "0"
+      icon.style.background = "#fff"
+      icon.style.padding = "2px"
+
+      const textWrap = document.createElement("div")
+      textWrap.dataset.tooltip = b.title || b.url
+      textWrap.style.display = "flex"
+      textWrap.style.flexDirection = "column"
+      textWrap.style.minWidth = "0"
+      textWrap.style.flex = "1"
+
+      const text = document.createElement("span")
+      text.textContent = b.title
+      text.style.fontWeight = "500"
+      text.style.fontSize = "0.95rem"
+      text.style.whiteSpace = "nowrap"
+      text.style.overflow = "hidden"
+      text.style.textOverflow = "ellipsis"
+
+      const urlText = document.createElement("span")
+      urlText.textContent = b.url
+      urlText.style.fontSize = "0.7rem"
+      urlText.style.color = "var(--text-secondary)"
+      urlText.style.whiteSpace = "nowrap"
+      urlText.style.overflow = "hidden"
+      urlText.style.textOverflow = "ellipsis"
+
+      textWrap.appendChild(text)
+      textWrap.appendChild(urlText)
+      textWrap.insertAdjacentHTML(
+        "beforeend",
+        createNotesPreviewHTML(b, "compact-note-preview"),
+      )
+      textWrap.insertAdjacentHTML(
+        "beforeend",
+        createTagsInViewHTML(b.tags, "kanban-view-tags"),
+      )
+
+      item.appendChild(icon)
+      item.appendChild(textWrap)
+
+      const badgeStr = renderVisitCount(b.id)
+      if (badgeStr) {
+        const badgeWrap = document.createElement("div")
+        badgeWrap.style.marginRight = "8px"
+        badgeWrap.style.display = "flex"
+        badgeWrap.style.alignItems = "center"
+        badgeWrap.innerHTML = badgeStr
+        item.appendChild(badgeWrap)
+      }
+
+      const dropdownWrap = document.createElement("div")
+      dropdownWrap.style.marginLeft = "auto"
+      dropdownWrap.innerHTML = createDropdownHTML(b, language)
+      item.appendChild(dropdownWrap)
+
+      attachDropdownToggle(item)
+      listContainer.appendChild(item)
+    })
+
+    widget.appendChild(listContainer)
+    container.appendChild(widget)
+  })
+
+  elements.folderListDiv.appendChild(container)
+  if (typeof commonPostRenderOps === "function") commonPostRenderOps(elements)
 }
 
 function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
-  if (!elements || !elements.folderListDiv) return;
-  elements.folderListDiv.innerHTML = "";
-  elements.folderListDiv.className = `folder-list kanban-view ${!uiState.folderListBg ? 'no-bg' : ''}`;
-  elements.folderListDiv.style.display = "block";
-  
-  const isPopup = window.innerWidth <= 800;
-  
-  const container = document.createElement("div");
-  container.style.display = isPopup ? "flex" : "grid";
-  container.style.gridTemplateColumns = isPopup ? "none" : "repeat(auto-fill, minmax(280px, 1fr))";
-  container.style.gridAutoRows = isPopup ? "auto" : "1fr"; 
-  container.style.gap = isPopup ? "16px" : "20px";
-  container.style.padding = isPopup ? "0" : "16px 8px";
-  container.style.overflowX = "hidden";
-  container.style.overflowY = isPopup ? "visible" : "hidden";
-  container.style.alignItems = "stretch";
+  if (!elements || !elements.folderListDiv) return
+  elements.folderListDiv.innerHTML = ""
+  elements.folderListDiv.className = `folder-list kanban-view ${!uiState.folderListBg ? "no-bg" : ""}`
+  elements.folderListDiv.style.display = "block"
+
+  const isPopup = window.innerWidth <= 800
+
+  const container = document.createElement("div")
+  container.style.display = isPopup ? "flex" : "grid"
+  container.style.gridTemplateColumns = isPopup
+    ? "none"
+    : "repeat(auto-fill, minmax(280px, 1fr))"
+  container.style.gridAutoRows = isPopup ? "auto" : "1fr"
+  container.style.gap = isPopup ? "16px" : "20px"
+  container.style.padding = isPopup ? "0" : "16px 8px"
+  container.style.overflowX = "hidden"
+  container.style.overflowY = isPopup ? "visible" : "hidden"
+  container.style.alignItems = "stretch"
   if (isPopup) {
-    container.style.flexDirection = "column"; // Bắt buộc hàng dọc
-    container.style.flexWrap = "nowrap";
+    container.style.flexDirection = "column" // Bắt buộc hàng dọc
+    container.style.flexWrap = "nowrap"
   }
-  container.classList.add("custom-scrollbar");
-  
-  const folders = getFolders(bookmarkTreeNodes);
-  const colors = ["#FF2D55", "#FF9500", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6"];
-  
+  container.classList.add("custom-scrollbar")
+
+  const folders = getFolders(bookmarkTreeNodes)
+  const colors = [
+    "#FF2D55",
+    "#FF9500",
+    "#4CD964",
+    "#5AC8FA",
+    "#007AFF",
+    "#5856D6",
+  ]
+
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
-    if (folder.id === "0") return; // Never render the root folder as a column
-    let folderBookmarks = filteredBookmarks.filter(b => b.parentId === folder.id);
-    folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType);
+    if (folder.id === "0") return // Never render the root folder as a column
+    let folderBookmarks = filteredBookmarks.filter(
+      (b) => b.parentId === folder.id,
+    )
+    folderBookmarks = sortBookmarks(folderBookmarks, uiState.sortType)
     if (folderBookmarks.length === 0) {
-      if (uiState.searchQuery) return;
+      if (uiState.searchQuery) return
       if (uiState.selectedFolderId && uiState.selectedFolderId !== "0") {
-        if (!isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes)) return;
+        if (!isInFolder(folder, uiState.selectedFolderId, bookmarkTreeNodes))
+          return
       }
     }
-    
-    const accent = colors[index % colors.length];
-    
-    const column = document.createElement("div");
-    column.style.background = "var(--bg-secondary)";
-    column.style.backdropFilter = "blur(12px)";
-    column.style.webkitBackdropFilter = "blur(12px)";
-    column.style.border = "1px solid var(--border-color)";
-    column.style.borderRadius = "20px";
+
+    const accent = colors[index % colors.length]
+
+    const column = document.createElement("div")
+    column.style.background = "var(--bg-secondary)"
+    column.style.backdropFilter = "blur(12px)"
+    column.style.webkitBackdropFilter = "blur(12px)"
+    column.style.border = "1px solid var(--border-color)"
+    column.style.borderRadius = "20px"
     // For popup, use 100% width so it stacks vertically perfectly
-    column.style.minWidth = isPopup ? "100%" : "280px"; 
-    column.style.maxWidth = isPopup ? "100%" : "320px";
-    column.style.flex = isPopup ? "0 0 auto" : "1 1 280px";  
-    column.style.display = "flex";
-    column.style.flexDirection = "column";
-    column.style.maxHeight = isPopup ? "400px" : "65vh"; 
+    column.style.minWidth = isPopup ? "100%" : "280px"
+    column.style.maxWidth = isPopup ? "100%" : "320px"
+    column.style.flex = isPopup ? "0 0 auto" : "1 1 280px"
+    column.style.display = "flex"
+    column.style.flexDirection = "column"
+    column.style.maxHeight = isPopup ? "400px" : "65vh"
     // Removed height: 100% to allow flex/grid stretch to work naturally
-    column.style.padding = "12px 10px";
-    column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
-    column.style.scrollSnapAlign = "start"; 
-    column.style.position = "relative";
-    column.style.transition = "transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)";
-    
+    column.style.padding = "12px 10px"
+    column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)"
+    column.style.scrollSnapAlign = "start"
+    column.style.position = "relative"
+    column.style.transition =
+      "transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)"
+
     // Setup drag and drop for column
-    column.dataset.folderId = folder.id;
+    column.dataset.folderId = folder.id
     column.addEventListener("dragover", (e) => {
-      e.preventDefault(); e.stopPropagation();
-      if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
-      const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
-      if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
-        e.dataTransfer.dropEffect = "copy";
+      e.preventDefault()
+      e.stopPropagation()
+      if (
+        typeof currentDragType === "undefined" ||
+        currentDragType !== "bookmark"
+      )
+        return
+      const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree)
+      if (
+        draggedNode &&
+        draggedNode.parentId !== folder.id &&
+        !uiState.autoRemoveDup &&
+        uiState.duplicateScope === "all"
+      ) {
+        e.dataTransfer.dropEffect = "copy"
       } else {
-        e.dataTransfer.dropEffect = "move";
+        e.dataTransfer.dropEffect = "move"
       }
-      column.classList.add("drag-over");
-      column.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 14px 28px rgba(0, 0, 0, 0.1)`;
-      column.style.background = `var(--hover-bg, rgba(0, 123, 255, 0.05))`;
-    });
+      column.classList.add("drag-over")
+      column.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 14px 28px rgba(0, 0, 0, 0.1)`
+      column.style.background = `var(--hover-bg, rgba(0, 123, 255, 0.05))`
+    })
     column.addEventListener("dragleave", (e) => {
-      e.stopPropagation();
+      e.stopPropagation()
       if (!column.contains(e.relatedTarget)) {
-        column.classList.remove("drag-over");
-        column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
-        column.style.background = "var(--bg-secondary)";
+        column.classList.remove("drag-over")
+        column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)"
+        column.style.background = "var(--bg-secondary)"
       }
-    });
+    })
     column.addEventListener("drop", (e) => {
-      e.preventDefault(); e.stopPropagation();
-      column.classList.remove("drag-over");
-      column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
-      column.style.background = "var(--bg-secondary)";
-      if (typeof currentDragType === 'undefined' || currentDragType !== "bookmark") return;
-      handleFolderDrop(e, folder, column, bookmarkTreeNodes, language, elements);
-    });
+      e.preventDefault()
+      e.stopPropagation()
+      column.classList.remove("drag-over")
+      column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)"
+      column.style.background = "var(--bg-secondary)"
+      if (
+        typeof currentDragType === "undefined" ||
+        currentDragType !== "bookmark"
+      )
+        return
+      handleFolderDrop(e, folder, column, bookmarkTreeNodes, language, elements)
+    })
 
     // Smooth hover effect
     column.onmouseover = () => {
-      column.style.transform = "translateY(-4px)";
-      column.style.boxShadow = "0 14px 28px rgba(0, 0, 0, 0.1)";
-    };
+      column.style.transform = "translateY(-4px)"
+      column.style.boxShadow = "0 14px 28px rgba(0, 0, 0, 0.1)"
+    }
     column.onmouseout = () => {
-      column.style.transform = "translateY(0)";
-      column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)";
-    };
-    
-    const header = document.createElement("div");
-    header.style.padding = "0 0 16px 0";
-    header.style.display = "flex";
-    header.style.alignItems = "center";
-    header.style.justifyContent = "space-between";
-    header.style.marginBottom = "8px";
-    
-    const titleWrap = document.createElement("div");
-    titleWrap.style.display = "flex";
-    titleWrap.style.alignItems = "center";
-    titleWrap.style.gap = "12px";
-    titleWrap.style.overflow = "hidden";
-    
-    const iconSpan = document.createElement("div");
-    iconSpan.style.background = `${accent}20`; // 20 hex opacity
-    iconSpan.style.color = accent;
-    iconSpan.style.display = "flex";
-    iconSpan.style.alignItems = "center";
-    iconSpan.style.justifyContent = "center";
-    iconSpan.style.width = "36px";
-    iconSpan.style.height = "36px";
-    iconSpan.style.borderRadius = "10px";
-    iconSpan.style.boxShadow = `0 4px 10px ${accent}30`;
-    iconSpan.innerHTML = `<i class="fas fa-folder" style="font-size: 1.1rem;"></i>`;
-    
-    const titleText = document.createElement("span");
-    titleText.textContent = folder.title;
-    titleText.style.fontWeight = "700";
-    titleText.style.fontSize = "1.05rem";
-    titleText.style.color = "var(--text-primary)";
-    titleText.style.whiteSpace = "nowrap";
-    titleText.style.overflow = "hidden";
-    titleText.style.textOverflow = "ellipsis";
-    
-    titleWrap.appendChild(iconSpan);
-    titleWrap.appendChild(titleText);
-    
-    const badge = document.createElement("span");
-    badge.textContent = folderBookmarks.length;
-    badge.style.background = `${accent}15`;
-    badge.style.color = accent;
-    badge.style.fontSize = "0.75rem";
-    badge.style.fontWeight = "700";
-    badge.style.padding = "4px 10px";
-    badge.style.borderRadius = "20px";
-    
-    header.appendChild(titleWrap);
-    header.appendChild(badge);
-    
-    const list = document.createElement("div");
-    list.style.overflowY = "auto";
-    list.style.display = "flex";
-    list.style.flexDirection = "column";
-    list.style.gap = "8px";
-    list.style.paddingRight = "4px";
-    list.style.flexGrow = "1";
-    list.classList.add("custom-scrollbar");
-    
-    const language = localStorage.getItem("appLanguage") || "en";
-    
-    folderBookmarks.forEach(b => {
-      const card = document.createElement("div");
-      card.className = "kanban-bookmark-card"; // Added class for z-index management
-      card.style.cursor = "pointer";
+      column.style.transform = "translateY(0)"
+      column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)"
+    }
+
+    const header = document.createElement("div")
+    header.style.padding = "0 0 16px 0"
+    header.style.display = "flex"
+    header.style.alignItems = "center"
+    header.style.justifyContent = "space-between"
+    header.style.marginBottom = "8px"
+
+    const titleWrap = document.createElement("div")
+    titleWrap.style.display = "flex"
+    titleWrap.style.alignItems = "center"
+    titleWrap.style.gap = "12px"
+    titleWrap.style.overflow = "hidden"
+
+    const iconSpan = document.createElement("div")
+    iconSpan.style.background = `${accent}20` // 20 hex opacity
+    iconSpan.style.color = accent
+    iconSpan.style.display = "flex"
+    iconSpan.style.alignItems = "center"
+    iconSpan.style.justifyContent = "center"
+    iconSpan.style.width = "36px"
+    iconSpan.style.height = "36px"
+    iconSpan.style.borderRadius = "10px"
+    iconSpan.style.boxShadow = `0 4px 10px ${accent}30`
+    iconSpan.innerHTML = `<i class="fas fa-folder" style="font-size: 1.1rem;"></i>`
+
+    const titleText = document.createElement("span")
+    titleText.textContent = folder.title
+    titleText.style.fontWeight = "700"
+    titleText.style.fontSize = "1.05rem"
+    titleText.style.color = "var(--text-primary)"
+    titleText.style.whiteSpace = "nowrap"
+    titleText.style.overflow = "hidden"
+    titleText.style.textOverflow = "ellipsis"
+
+    titleWrap.appendChild(iconSpan)
+    titleWrap.appendChild(titleText)
+
+    const badge = document.createElement("span")
+    badge.textContent = folderBookmarks.length
+    badge.style.background = `${accent}15`
+    badge.style.color = accent
+    badge.style.fontSize = "0.75rem"
+    badge.style.fontWeight = "700"
+    badge.style.padding = "4px 10px"
+    badge.style.borderRadius = "20px"
+
+    header.appendChild(titleWrap)
+    header.appendChild(badge)
+
+    const list = document.createElement("div")
+    list.style.overflowY = "auto"
+    list.style.display = "flex"
+    list.style.flexDirection = "column"
+    list.style.gap = "8px"
+    list.style.paddingRight = "4px"
+    list.style.flexGrow = "1"
+    list.classList.add("custom-scrollbar")
+
+    const language = localStorage.getItem("appLanguage") || "en"
+
+    folderBookmarks.forEach((b) => {
+      const card = document.createElement("div")
+      card.className = "kanban-bookmark-card" // Added class for z-index management
+      card.style.cursor = "pointer"
       card.onclick = (e) => {
-        if (!e.target.closest('.dropdown-btn-group')) window.open(b.url, '_blank');
-      };
-      card.style.background = "var(--bg-primary)";
-      card.style.border = "1px solid transparent"; // Invisible border to prevent shift on hover
-      card.style.padding = "8px 10px";
-      card.style.borderRadius = "12px";
-      card.style.display = "flex";
-      card.style.alignItems = "center";
-      card.style.gap = "12px";
-      card.style.textDecoration = "none";
-      card.style.color = "var(--text-primary)";
-      card.style.transition = "all 0.2s ease";
-      card.style.position = "relative";
-      card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)";
-      makeBookmarkDraggableAndDroppable(card, b, elements, language);
-      
-      card.onmouseover = () => {
-        card.style.background = "var(--hover-bg, var(--bg-tertiary))";
-        card.style.borderColor = "var(--border-color)";
-        card.style.transform = "translateY(-2px)";
-        card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.06)";
-      };
-      card.onmouseout = () => {
-        card.style.background = "var(--bg-primary)";
-        card.style.borderColor = "transparent";
-        card.style.transform = "translateY(0)";
-        card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)";
-      };
-      
-      const icon = document.createElement("img");
-      icon.src = getFaviconUrl(b.url);
-      icon.style.width = "20px";
-      icon.style.height = "20px";
-      icon.style.borderRadius = "4px";
-      icon.style.flexShrink = "0";
-      
-      const titleWrapper = document.createElement("div");
-      titleWrapper.dataset.tooltip = b.title || b.url;
-      titleWrapper.style.display = "flex";
-      titleWrapper.style.flexDirection = "column";
-      titleWrapper.style.gap = "2px";
-      titleWrapper.style.minWidth = "0";
-      titleWrapper.style.flex = "1";
-      
-      const title = document.createElement("div");
-      title.textContent = b.title;
-      title.style.fontWeight = "500";
-      title.style.fontSize = "0.9rem";
-      title.style.whiteSpace = "nowrap";
-      title.style.overflow = "hidden";
-      title.style.textOverflow = "ellipsis";
-      title.style.color = "var(--text-primary)";
-      
-      const url = document.createElement("div");
-      url.textContent = b.url;
-      url.style.fontSize = "0.75rem";
-      url.style.color = "var(--text-muted)";
-      url.style.whiteSpace = "nowrap";
-      url.style.overflow = "hidden";
-      url.style.textOverflow = "ellipsis";
-      
-      titleWrapper.appendChild(title);
-      titleWrapper.appendChild(url);
-      titleWrapper.insertAdjacentHTML("beforeend", createNotesPreviewHTML(b, "compact-note-preview"));
-      titleWrapper.insertAdjacentHTML("beforeend", createTagsInViewHTML(b.tags, "bento-view-tags"));
-      
-      card.appendChild(icon);
-      card.appendChild(titleWrapper);
-      
-      const badgeStr = renderVisitCount(b.id);
-      if (badgeStr) {
-        const badgeWrap = document.createElement("div");
-        badgeWrap.style.marginRight = "8px";
-        badgeWrap.style.display = "flex";
-        badgeWrap.style.alignItems = "center";
-        badgeWrap.innerHTML = badgeStr;
-        card.appendChild(badgeWrap);
+        if (!e.target.closest(".dropdown-btn-group"))
+          window.open(b.url, "_blank")
       }
-      
-      const dropdownWrap = document.createElement("div");
-      dropdownWrap.style.marginLeft = "auto";
-      dropdownWrap.innerHTML = createDropdownHTML(b, language);
-      card.appendChild(dropdownWrap);
-      
-      attachDropdownToggle(card);
-      list.appendChild(card);
-    });
-    
-    column.appendChild(header);
-    column.appendChild(list);
-    container.appendChild(column);
-  });
-  
-  elements.folderListDiv.appendChild(container);
-  if (typeof commonPostRenderOps === "function") commonPostRenderOps(elements);
+      card.style.background = "var(--bg-primary)"
+      card.style.border = "1px solid transparent" // Invisible border to prevent shift on hover
+      card.style.padding = "8px 10px"
+      card.style.borderRadius = "12px"
+      card.style.display = "flex"
+      card.style.alignItems = "center"
+      card.style.gap = "12px"
+      card.style.textDecoration = "none"
+      card.style.color = "var(--text-primary)"
+      card.style.transition = "all 0.2s ease"
+      card.style.position = "relative"
+      card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)"
+      makeBookmarkDraggableAndDroppable(card, b, elements, language)
+
+      card.onmouseover = () => {
+        card.style.background = "var(--hover-bg, var(--bg-tertiary))"
+        card.style.borderColor = "var(--border-color)"
+        card.style.transform = "translateY(-2px)"
+        card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.06)"
+      }
+      card.onmouseout = () => {
+        card.style.background = "var(--bg-primary)"
+        card.style.borderColor = "transparent"
+        card.style.transform = "translateY(0)"
+        card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)"
+      }
+
+      const icon = document.createElement("img")
+      icon.src = getFaviconUrl(b.url)
+      icon.style.width = "20px"
+      icon.style.height = "20px"
+      icon.style.borderRadius = "4px"
+      icon.style.flexShrink = "0"
+
+      const titleWrapper = document.createElement("div")
+      titleWrapper.dataset.tooltip = b.title || b.url
+      titleWrapper.style.display = "flex"
+      titleWrapper.style.flexDirection = "column"
+      titleWrapper.style.gap = "2px"
+      titleWrapper.style.minWidth = "0"
+      titleWrapper.style.flex = "1"
+
+      const title = document.createElement("div")
+      title.textContent = b.title
+      title.style.fontWeight = "500"
+      title.style.fontSize = "0.9rem"
+      title.style.whiteSpace = "nowrap"
+      title.style.overflow = "hidden"
+      title.style.textOverflow = "ellipsis"
+      title.style.color = "var(--text-primary)"
+
+      const url = document.createElement("div")
+      url.textContent = b.url
+      url.style.fontSize = "0.75rem"
+      url.style.color = "var(--text-muted)"
+      url.style.whiteSpace = "nowrap"
+      url.style.overflow = "hidden"
+      url.style.textOverflow = "ellipsis"
+
+      titleWrapper.appendChild(title)
+      titleWrapper.appendChild(url)
+      titleWrapper.insertAdjacentHTML(
+        "beforeend",
+        createNotesPreviewHTML(b, "compact-note-preview"),
+      )
+      titleWrapper.insertAdjacentHTML(
+        "beforeend",
+        createTagsInViewHTML(b.tags, "bento-view-tags"),
+      )
+
+      card.appendChild(icon)
+      card.appendChild(titleWrapper)
+
+      const badgeStr = renderVisitCount(b.id)
+      if (badgeStr) {
+        const badgeWrap = document.createElement("div")
+        badgeWrap.style.marginRight = "8px"
+        badgeWrap.style.display = "flex"
+        badgeWrap.style.alignItems = "center"
+        badgeWrap.innerHTML = badgeStr
+        card.appendChild(badgeWrap)
+      }
+
+      const dropdownWrap = document.createElement("div")
+      dropdownWrap.style.marginLeft = "auto"
+      dropdownWrap.innerHTML = createDropdownHTML(b, language)
+      card.appendChild(dropdownWrap)
+
+      attachDropdownToggle(card)
+      list.appendChild(card)
+    })
+
+    column.appendChild(header)
+    column.appendChild(list)
+    container.appendChild(column)
+  })
+
+  elements.folderListDiv.appendChild(container)
+  if (typeof commonPostRenderOps === "function") commonPostRenderOps(elements)
 }
 
 function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
@@ -3018,8 +3167,8 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     const searchHeader = document.createElement("h3")
     searchHeader.style.cssText = "margin: 10px; color: var(--text-primary);"
     searchHeader.textContent = isSmartFolder
-      ? (translations[language].smartFolderResults || "Smart Folder")
-      : (translations[language].searchResults || "Search Results")
+      ? translations[language].smartFolderResults || "Smart Folder"
+      : translations[language].searchResults || "Search Results"
     fragment.appendChild(searchHeader)
 
     const sortedBookmarks = sortBookmarks(filteredBookmarks, uiState.sortType)
@@ -3034,13 +3183,13 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
           currentDragType = "bookmark"
           e.dataTransfer.effectAllowed = "copyMove"
           el.classList.add("dragging")
-          
-          let iconUrl = "";
+
+          let iconUrl = ""
           if (bookmark.url) {
-            const urlObj = new URL(bookmark.url);
-            iconUrl = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32`;
+            const urlObj = new URL(bookmark.url)
+            iconUrl = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32`
           }
-          setCustomDragImage(e, bookmark.title, false, iconUrl);
+          setCustomDragImage(e, bookmark.title, false, iconUrl)
         })
         el.addEventListener("dragend", () => {
           el.classList.remove("dragging")
@@ -3098,9 +3247,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
     }
   } else {
     sortFoldersArray(folders, uiState.sortType).forEach((folder) => {
-
       if (folder.id === "0") return
-
 
       const folderBookmarks = filteredBookmarks.filter(
         (bookmark) =>
@@ -3140,8 +3287,8 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
         e.dataTransfer.effectAllowed = "move"
         folderCard.classList.add("dragging")
         elements.folderListDiv?.classList.add("is-folder-dragging")
-        
-        setCustomDragImage(e, folder.title || `Folder ${folder.id}`, true);
+
+        setCustomDragImage(e, folder.title || `Folder ${folder.id}`, true)
       })
 
       folderCard.addEventListener("dragend", () => {
@@ -3222,45 +3369,56 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       folderCard.addEventListener("dragover", (e) => {
         e.preventDefault()
         e.stopPropagation()
-        if (currentDragType !== "bookmark" && currentDragType !== "folder") return
+        if (currentDragType !== "bookmark" && currentDragType !== "folder")
+          return
 
         // Ngăn kéo folder vào chính nó hoặc con của nó
         const draggedId = currentDragId
         if (!draggedId) return
 
         if (currentDragType === "folder") {
-            if (draggedId === folder.id) {
-                e.dataTransfer.dropEffect = "none"
-                return
-            }
-            const draggedNode = findNodeById(draggedId, uiState.bookmarkTree)
-            if (draggedNode && isAncestorOf(draggedNode, folder.id)) {
-                e.dataTransfer.dropEffect = "none"
-                return
-            }
+          if (draggedId === folder.id) {
+            e.dataTransfer.dropEffect = "none"
+            return
+          }
+          const draggedNode = findNodeById(draggedId, uiState.bookmarkTree)
+          if (draggedNode && isAncestorOf(draggedNode, folder.id)) {
+            e.dataTransfer.dropEffect = "none"
+            return
+          }
 
-            // Logic Reorder cho Folder (Swap vị trí)
-            if (uiState.sortType === "default" && !uiState.searchQuery) {
-                folderCard.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+          // Logic Reorder cho Folder (Swap vị trí)
+          if (uiState.sortType === "default" && !uiState.searchQuery) {
+            folderCard.classList.remove(
+              "drop-target-above",
+              "drop-target-below",
+              "drop-target-left",
+              "drop-target-right",
+            )
 
-                // Trong Card View (Grid), ưu tiên check ngang
-                if (getCardDropPosition(e, folderCard) === "before") {
-                    folderCard.classList.add("drop-target-left")
-                } else {
-                    folderCard.classList.add("drop-target-right")
-                }
+            // Trong Card View (Grid), ưu tiên check ngang
+            if (getCardDropPosition(e, folderCard) === "before") {
+              folderCard.classList.add("drop-target-left")
+            } else {
+              folderCard.classList.add("drop-target-right")
             }
+          }
         }
 
         if (currentDragType === "bookmark") {
-            const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
-            if (draggedNode && draggedNode.parentId !== folder.id && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
-                e.dataTransfer.dropEffect = "copy";
-            } else {
-                e.dataTransfer.dropEffect = "move";
-            }
+          const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree)
+          if (
+            draggedNode &&
+            draggedNode.parentId !== folder.id &&
+            !uiState.autoRemoveDup &&
+            uiState.duplicateScope === "all"
+          ) {
+            e.dataTransfer.dropEffect = "copy"
+          } else {
+            e.dataTransfer.dropEffect = "move"
+          }
         } else {
-            e.dataTransfer.dropEffect = "move";
+          e.dataTransfer.dropEffect = "move"
         }
         folderCard.classList.add("drag-over")
       })
@@ -3268,30 +3426,49 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
       folderCard.addEventListener("dragleave", (e) => {
         e.stopPropagation()
         if (!folderCard.contains(e.relatedTarget)) {
-          folderCard.classList.remove("drag-over", "drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+          folderCard.classList.remove(
+            "drag-over",
+            "drop-target-above",
+            "drop-target-below",
+            "drop-target-left",
+            "drop-target-right",
+          )
         }
       })
 
       folderCard.addEventListener("drop", (e) => {
         e.preventDefault()
         e.stopPropagation()
-        folderCard.classList.remove("drag-over", "drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+        folderCard.classList.remove(
+          "drag-over",
+          "drop-target-above",
+          "drop-target-below",
+          "drop-target-left",
+          "drop-target-right",
+        )
 
         const draggedId = getDragId(e)
         const targetId = folder.id
 
         if (currentDragType === "bookmark") {
-            handleFolderDrop(e, folder, folderCard, bookmarkTreeNodes, language, elements)
+          handleFolderDrop(
+            e,
+            folder,
+            folderCard,
+            bookmarkTreeNodes,
+            language,
+            elements,
+          )
         } else if (currentDragType === "folder") {
-            if (!draggedId) return
-            if (draggedId === targetId) return
-            moveFolderByCardDrop(
-              draggedId,
-              targetId,
-              getCardDropPosition(e, folderCard),
-              elements,
-              language,
-            )
+          if (!draggedId) return
+          if (draggedId === targetId) return
+          moveFolderByCardDrop(
+            draggedId,
+            targetId,
+            getCardDropPosition(e, folderCard),
+            elements,
+            language,
+          )
         }
       })
 
@@ -3388,46 +3565,63 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     currentDragType = "bookmark"
     e.dataTransfer.effectAllowed = "copyMove"
     el.classList.add("dragging")
-    
-    let iconUrl = "";
+
+    let iconUrl = ""
     if (bookmark.url) {
       try {
-        const urlObj = new URL(bookmark.url);
-        iconUrl = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32`;
-      } catch(err) {}
+        const urlObj = new URL(bookmark.url)
+        iconUrl = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32`
+      } catch (err) {}
     }
-    setCustomDragImage(e, bookmark.title, false, iconUrl);
+    setCustomDragImage(e, bookmark.title, false, iconUrl)
   })
-    el.addEventListener("dragend", (e) => {
-      e.stopPropagation()
-      el.classList.remove("dragging")
-      currentDragType = null
-      currentDragId = null
-      document
-        .querySelectorAll(".drop-target-above, .drop-target-below, .drop-target-left, .drop-target-right")
-        .forEach((node) => {
-          node.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
-        })
-    })
+  el.addEventListener("dragend", (e) => {
+    e.stopPropagation()
+    el.classList.remove("dragging")
+    currentDragType = null
+    currentDragId = null
+    document
+      .querySelectorAll(
+        ".drop-target-above, .drop-target-below, .drop-target-left, .drop-target-right",
+      )
+      .forEach((node) => {
+        node.classList.remove(
+          "drop-target-above",
+          "drop-target-below",
+          "drop-target-left",
+          "drop-target-right",
+        )
+      })
+  })
 
   el.addEventListener("dragover", (e) => {
     if (currentDragType !== "bookmark") return
     if (uiState.sortType !== "default" || uiState.searchQuery) return
     e.preventDefault()
     e.stopPropagation()
-    const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree);
-    if (draggedNode && draggedNode.parentId !== bookmark.parentId && !uiState.autoRemoveDup && uiState.duplicateScope === "all") {
-      e.dataTransfer.dropEffect = "copy";
+    const draggedNode = findNodeById(currentDragId, uiState.bookmarkTree)
+    if (
+      draggedNode &&
+      draggedNode.parentId !== bookmark.parentId &&
+      !uiState.autoRemoveDup &&
+      uiState.duplicateScope === "all"
+    ) {
+      e.dataTransfer.dropEffect = "copy"
     } else {
-      e.dataTransfer.dropEffect = "move";
+      e.dataTransfer.dropEffect = "move"
     }
 
     const rect = el.getBoundingClientRect()
     const midX = rect.left + rect.width / 2
     const midY = rect.top + rect.height / 2
-    
+
     // Clear old classes
-    el.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+    el.classList.remove(
+      "drop-target-above",
+      "drop-target-below",
+      "drop-target-left",
+      "drop-target-right",
+    )
 
     if (uiState.viewMode === "card") {
       // In Card View (Grid), check horizontal position first
@@ -3447,13 +3641,23 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
   })
 
   el.addEventListener("dragleave", (e) => {
-    el.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+    el.classList.remove(
+      "drop-target-above",
+      "drop-target-below",
+      "drop-target-left",
+      "drop-target-right",
+    )
   })
 
   el.addEventListener("drop", (e) => {
     e.preventDefault()
     e.stopPropagation()
-    el.classList.remove("drop-target-above", "drop-target-below", "drop-target-left", "drop-target-right")
+    el.classList.remove(
+      "drop-target-above",
+      "drop-target-below",
+      "drop-target-left",
+      "drop-target-right",
+    )
 
     if (currentDragType !== "bookmark") return
     if (uiState.sortType !== "default" || uiState.searchQuery) {
@@ -3472,7 +3676,7 @@ function makeBookmarkDraggableAndDroppable(el, bookmark, elements, language) {
     const rect = el.getBoundingClientRect()
     const midX = rect.left + rect.width / 2
     const midY = rect.top + rect.height / 2
-    
+
     let dropPosition
     if (uiState.viewMode === "card") {
       dropPosition = e.clientX < midX ? "before" : "after"
@@ -3548,8 +3752,8 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
         <div class="bookmark-favicon"><img src="${favicon}" alt="icon" data-hostname="${hostname}"></div>
         <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; display: flex;">
           <a href="${bookmark.url}" target="_blank" class="card-bookmark-title">${
-          bookmark.title || bookmark.url
-        }</a>
+            bookmark.title || bookmark.url
+          }</a>
         </div>
         ${healthIcon}
         ${visitCountBadge}
@@ -3650,7 +3854,7 @@ function createListBookmarkElement(bookmark, language, elements) {
   } catch (e) {}
 
   div.innerHTML = `
-    <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? '30px' : '0px'}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+    <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? "30px" : "0px"}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
       <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(0.9);">
     </div>
     <div class="bookmark-favicon list-bookmark-favicon">
@@ -3683,7 +3887,6 @@ function createListBookmarkElement(bookmark, language, elements) {
   return div
 }
 
-
 function renderBookmarks(bookmarksList, elements) {
   if (!elements || !elements.folderListDiv) return
   const fragment = document.createDocumentFragment()
@@ -3703,11 +3906,17 @@ function renderBookmarks(bookmarksList, elements) {
     sortedBookmarks,
     (bookmark) => createBookmarkElement(bookmark, 0, elements),
     commonPostRenderOps,
-    elements
+    elements,
   )
 }
 
-function renderTreeView(nodes, elements, depth = 0, targetElement = null, options = {}) {
+function renderTreeView(
+  nodes,
+  elements,
+  depth = 0,
+  targetElement = null,
+  options = {},
+) {
   const fragment = document.createDocumentFragment()
   const language = localStorage.getItem("appLanguage") || "en"
 
@@ -3751,8 +3960,10 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null, option
   const folders = nodesToRender
     .filter((node) => node.children)
     .sort((a, b) => (a.title || "").localeCompare(b.title || ""))
-  
-  const bookmarks = options.onlyFolders ? [] : nodesToRender.filter((node) => node.url)
+
+  const bookmarks = options.onlyFolders
+    ? []
+    : nodesToRender.filter((node) => node.url)
   const sortedBookmarks = sortBookmarks(bookmarks, uiState.sortType)
 
   // --- LOOP QUA TỪNG NODE ---
@@ -3969,7 +4180,13 @@ function renderTreeView(nodes, elements, depth = 0, targetElement = null, option
       // Tự gọi lại chính nó nếu folder mở
       if (!isCollapsed)
         childrenContainer.appendChild(
-          renderTreeView(node.children, elements, depth + 1, actualTargetElement, options),
+          renderTreeView(
+            node.children,
+            elements,
+            depth + 1,
+            actualTargetElement,
+            options,
+          ),
         )
       fragment.appendChild(childrenContainer)
     }
@@ -4028,7 +4245,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
   const checkboxDisplay = uiState.checkboxesVisible ? "inline-block" : "none"
   const isChecked = uiState.selectedBookmarks.has(bookmark.id) ? "checked" : ""
 
-  const isPopup = window.location.pathname.includes('index.html')
+  const isPopup = window.location.pathname.includes("index.html")
 
   if (isPopup) {
     div.innerHTML = `
@@ -4096,7 +4313,7 @@ function createBookmarkElement(bookmark, depth = 0, elements) {
     hostname = new URL(bookmark.url).hostname
   } catch (e) {}
 
-  const isPopup = window.location.pathname.includes('index.html')
+  const isPopup = window.location.pathname.includes("index.html")
 
   if (isPopup) {
     div.innerHTML = `
@@ -4146,7 +4363,10 @@ function commonPostRenderOps(elements) {
   if (!elements) return
   if (elements.searchInput)
     elements.searchInput.value = uiState.searchQuery || ""
-  const isValidFolder = uiState.selectedFolderId && (uiState.selectedFolderId.startsWith("__smart_") || uiState.folders.some((f) => f.id === uiState.selectedFolderId))
+  const isValidFolder =
+    uiState.selectedFolderId &&
+    (uiState.selectedFolderId.startsWith("__smart_") ||
+      uiState.folders.some((f) => f.id === uiState.selectedFolderId))
   if (isValidFolder) {
     if (elements.folderFilter)
       elements.folderFilter.value = uiState.selectedFolderId
@@ -4388,7 +4608,8 @@ export function attachTreeListeners(elements, targetContainer = null) {
         // Mở folder ra
         uiState.collapsedFolders.delete(folderId)
         toggle.textContent = "−"
-        folderDiv.querySelector(".folder-icon").innerHTML = '<i class="fas fa-folder-open" style="color: var(--text-secondary);"></i>'
+        folderDiv.querySelector(".folder-icon").innerHTML =
+          '<i class="fas fa-folder-open" style="color: var(--text-secondary);"></i>'
         if (childrenContainer) {
           childrenContainer.style.display = "block"
           // Nếu chưa có nội dung thì render mới
@@ -4410,7 +4631,8 @@ export function attachTreeListeners(elements, targetContainer = null) {
         // Đóng folder lại
         uiState.collapsedFolders.add(folderId)
         toggle.textContent = "+"
-        folderDiv.querySelector(".folder-icon").innerHTML = '<i class="fas fa-folder" style="color: var(--text-secondary);"></i>'
+        folderDiv.querySelector(".folder-icon").innerHTML =
+          '<i class="fas fa-folder" style="color: var(--text-secondary);"></i>'
         if (childrenContainer) childrenContainer.style.display = "none"
       }
       customSaveUIState()
@@ -4561,7 +4783,10 @@ export function populateFolderFilter(bookmarkTreeNodes, elements) {
     translations[language].allBookmarks,
   )
 
-  const isValidFolder = uiState.selectedFolderId && (uiState.selectedFolderId.startsWith("__smart_") || uiState.folders.some((f) => f.id === uiState.selectedFolderId))
+  const isValidFolder =
+    uiState.selectedFolderId &&
+    (uiState.selectedFolderId.startsWith("__smart_") ||
+      uiState.folders.some((f) => f.id === uiState.selectedFolderId))
   if (isValidFolder) {
     folderFilter.value = uiState.selectedFolderId
   } else {
@@ -4745,7 +4970,9 @@ function renderOrganizeFoldersTree(elements, container) {
   window.BookmarkCache.getTree((tree) => {
     // uiState.bookmarkTree needs to be updated with the latest tree for findNodeById and isAncestorOf
     uiState.bookmarkTree = tree
-    renderTreeView(tree[0].children, elements, 0, container, { onlyFolders: true })
+    renderTreeView(tree[0].children, elements, 0, container, {
+      onlyFolders: true,
+    })
   })
 }
 
@@ -4758,12 +4985,19 @@ function refreshOrganizeFoldersPopup(elements) {
 
   if (popup && !popup.classList.contains("hidden") && treeViewContainer) {
     // Refresh the tree view in the popup
-    const language = localStorage.getItem("appLanguage") || "en";
-    const t = translations[language] || translations.en;
+    const language = localStorage.getItem("appLanguage") || "en"
+    const t = translations[language] || translations.en
     window.BookmarkCache.getTree((tree) => {
       uiState.bookmarkTree = tree
       // Use the current navigated folder, default to "0"
-      renderOrganizeExplorer(typeof currentOrganizeFolderId !== "undefined" ? currentOrganizeFolderId : "0", elements, treeViewContainer, t)
+      renderOrganizeExplorer(
+        typeof currentOrganizeFolderId !== "undefined"
+          ? currentOrganizeFolderId
+          : "0",
+        elements,
+        treeViewContainer,
+        t,
+      )
     })
   }
 }
@@ -4836,8 +5070,10 @@ function sortBookmarks(list, type) {
       case "favorites":
         return (b.dateAdded || 0) - (a.dateAdded || 0)
       case "has-notes": {
-        const noteA = uiState.bookmarkNotes?.[a.id]?.trim() || a.note?.trim() || ""
-        const noteB = uiState.bookmarkNotes?.[b.id]?.trim() || b.note?.trim() || ""
+        const noteA =
+          uiState.bookmarkNotes?.[a.id]?.trim() || a.note?.trim() || ""
+        const noteB =
+          uiState.bookmarkNotes?.[b.id]?.trim() || b.note?.trim() || ""
         const hasA = Boolean(noteA)
         const hasB = Boolean(noteB)
         if (hasA !== hasB) return hasB ? 1 : -1
@@ -4870,7 +5106,10 @@ function sortBookmarks(list, type) {
         return countB - countA
       }
       case "last-opened":
-        return (b.lastOpened || b.dateAdded || 0) - (a.lastOpened || a.dateAdded || 0)
+        return (
+          (b.lastOpened || b.dateAdded || 0) -
+          (a.lastOpened || a.dateAdded || 0)
+        )
       case "domain":
         return extractDomain(a.url).localeCompare(extractDomain(b.url))
       default:
@@ -4967,9 +5206,9 @@ export function openOrganizeFoldersModal(elements) {
   // Clear previous content
   treeViewContainer.innerHTML = ""
 
-  let toolbar = popup.querySelector('.organize-folders-toolbar');
+  let toolbar = popup.querySelector(".organize-folders-toolbar")
   if (toolbar) {
-      toolbar.remove();
+    toolbar.remove()
   }
 
   // Update bookmark tree state before rendering
@@ -5066,14 +5305,16 @@ export function toggleFavorite(bookmarkId, buttonElement) {
 
 function createMockupBookmarkElement(bookmark, language, elements) {
   const favicon = getFaviconUrl(bookmark.url)
-  const screenshot = `https://image.thum.io/get/width/400/crop/600/${bookmark.url}`;
+  const screenshot = `https://image.thum.io/get/width/400/crop/600/${bookmark.url}`
   const div = document.createElement("div")
-  div.className = `bookmark-item mockup-bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`;
+  div.className = `bookmark-item mockup-bookmark-item ${bookmark.isFavorite ? "favorited" : ""}`
   div.dataset.id = bookmark.id
   const healthIcon = renderHealthIcon(bookmark.id)
-  
+
   let hostname = ""
-  try { hostname = new URL(bookmark.url).hostname } catch (e) {}
+  try {
+    hostname = new URL(bookmark.url).hostname
+  } catch (e) {}
 
   div.innerHTML = `
     <div class="mockup-image-container">
@@ -5098,15 +5339,19 @@ function createMockupBookmarkElement(bookmark, language, elements) {
         ${createDropdownHTML(bookmark, language)}
       </div>
     </div>
-  `;
+  `
 
   // Entire card click opens bookmark (excluding buttons, dropdowns, and the title <a> which handles itself)
   div.addEventListener("click", (e) => {
-    if (!e.target.closest('button') && !e.target.closest('a') && !e.target.closest('.dropdown-menu-2')) {
-      handleBookmarkLinkClick(bookmark.id, elements);
-      window.open(bookmark.url, "_blank");
+    if (
+      !e.target.closest("button") &&
+      !e.target.closest("a") &&
+      !e.target.closest(".dropdown-menu-2")
+    ) {
+      handleBookmarkLinkClick(bookmark.id, elements)
+      window.open(bookmark.url, "_blank")
     }
-  });
+  })
 
   attachDropdownToggle(div)
   makeBookmarkDraggableAndDroppable(div, bookmark, elements, language)
@@ -5117,13 +5362,13 @@ function renderMockupView(bookmarkTreeNodes, filteredBookmarks, elements) {
   if (!elements || !elements.folderListDiv) return
   const fragment = document.createDocumentFragment()
   const language = localStorage.getItem("appLanguage") || "en"
-  
+
   elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.className = `folder-list mockup-view ${!uiState.folderListBg ? 'no-bg' : ''}`;
-  elements.folderListDiv.style.display = ""; // Reset inline display
-  elements.folderListDiv.style.gridTemplateColumns = ""; 
-  elements.folderListDiv.style.gap = "";
-  elements.folderListDiv.style.padding = "";
+  elements.folderListDiv.className = `folder-list mockup-view ${!uiState.folderListBg ? "no-bg" : ""}`
+  elements.folderListDiv.style.display = "" // Reset inline display
+  elements.folderListDiv.style.gridTemplateColumns = ""
+  elements.folderListDiv.style.gap = ""
+  elements.folderListDiv.style.padding = ""
 
   const sortedBookmarks = sortBookmarks(filteredBookmarks, uiState.sortType)
   sortedBookmarks.forEach((bookmark) => {
@@ -5132,119 +5377,123 @@ function renderMockupView(bookmarkTreeNodes, filteredBookmarks, elements) {
       fragment.appendChild(el)
     }
   })
-  
+
   elements.folderListDiv.appendChild(fragment)
-  if (typeof commonPostRenderOps === "function") commonPostRenderOps(elements);
+  if (typeof commonPostRenderOps === "function") commonPostRenderOps(elements)
 }
 
 // --- Global CSS Toast Logic ---
-const globalTooltip = document.createElement("div");
-globalTooltip.style.position = "fixed";
-globalTooltip.style.background = "var(--bg-tertiary, #333)";
-globalTooltip.style.color = "var(--text-primary, #fff)";
-globalTooltip.style.border = "1px solid var(--border-color, #444)";
-globalTooltip.style.padding = "6px 12px";
-globalTooltip.style.borderRadius = "8px";
-globalTooltip.style.fontSize = "13px";
-globalTooltip.style.fontWeight = "500";
-globalTooltip.style.whiteSpace = "normal";
-globalTooltip.style.maxWidth = "300px";
-globalTooltip.style.width = "max-content";
-globalTooltip.style.wordBreak = "break-word";
-globalTooltip.style.overflowWrap = "anywhere";
-globalTooltip.style.textAlign = "center";
-globalTooltip.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
-globalTooltip.style.zIndex = "2147483647"; // Max z-index
-globalTooltip.style.pointerEvents = "none";
-globalTooltip.style.transform = "translateX(-50%) translateY(-100%)";
+const globalTooltip = document.createElement("div")
+globalTooltip.style.position = "fixed"
+globalTooltip.style.background = "var(--bg-tertiary, #333)"
+globalTooltip.style.color = "var(--text-primary, #fff)"
+globalTooltip.style.border = "1px solid var(--border-color, #444)"
+globalTooltip.style.padding = "6px 12px"
+globalTooltip.style.borderRadius = "8px"
+globalTooltip.style.fontSize = "13px"
+globalTooltip.style.fontWeight = "500"
+globalTooltip.style.whiteSpace = "normal"
+globalTooltip.style.maxWidth = "300px"
+globalTooltip.style.width = "max-content"
+globalTooltip.style.wordBreak = "break-word"
+globalTooltip.style.overflowWrap = "anywhere"
+globalTooltip.style.textAlign = "center"
+globalTooltip.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)"
+globalTooltip.style.zIndex = "2147483647" // Max z-index
+globalTooltip.style.pointerEvents = "none"
+globalTooltip.style.transform = "translateX(-50%) translateY(-100%)"
 // Animation styles
-globalTooltip.style.visibility = "hidden";
-globalTooltip.style.opacity = "0";
-globalTooltip.style.transition = "opacity 0.25s ease, visibility 0.25s ease";
-document.body.appendChild(globalTooltip);
+globalTooltip.style.visibility = "hidden"
+globalTooltip.style.opacity = "0"
+globalTooltip.style.transition = "opacity 0.25s ease, visibility 0.25s ease"
+document.body.appendChild(globalTooltip)
 
 function checkIsTruncated(el) {
-  const style = window.getComputedStyle(el);
-  
+  const style = window.getComputedStyle(el)
+
   // If element uses webkit-line-clamp, scrollHeight/clientHeight can be unreliable
   // We clone it and remove the clamp to check its natural height
-  if (style.webkitLineClamp && style.webkitLineClamp !== 'none') {
-    const clone = el.cloneNode(true);
-    clone.style.webkitLineClamp = 'none';
-    clone.style.position = 'absolute';
-    clone.style.visibility = 'hidden';
-    clone.style.height = 'auto';
-    clone.style.maxHeight = 'none';
-    clone.style.width = el.clientWidth + 'px';
-    
+  if (style.webkitLineClamp && style.webkitLineClamp !== "none") {
+    const clone = el.cloneNode(true)
+    clone.style.webkitLineClamp = "none"
+    clone.style.position = "absolute"
+    clone.style.visibility = "hidden"
+    clone.style.height = "auto"
+    clone.style.maxHeight = "none"
+    clone.style.width = el.clientWidth + "px"
+
     // Append to parent to preserve contextual CSS (font-size, line-height, etc)
     if (el.parentNode) {
-      el.parentNode.appendChild(clone);
-      const naturalHeight = clone.offsetHeight;
-      el.parentNode.removeChild(clone);
+      el.parentNode.appendChild(clone)
+      const naturalHeight = clone.offsetHeight
+      el.parentNode.removeChild(clone)
       // Allow a small 3px variance for subpixel rendering or line-height quirks
-      return naturalHeight > el.offsetHeight + 3;
+      return naturalHeight > el.offsetHeight + 3
     }
   }
 
   // Normal elements (horizontal overflow or normal vertical overflow)
   // Also fallback if parentNode doesn't exist
-  return el.scrollWidth > el.clientWidth + 3 || el.scrollHeight > el.clientHeight + 3;
+  return (
+    el.scrollWidth > el.clientWidth + 3 || el.scrollHeight > el.clientHeight + 3
+  )
 }
 
 document.addEventListener("mouseover", (e) => {
-  const target = e.target.closest("[data-tooltip]");
+  const target = e.target.closest("[data-tooltip]")
   if (target && target.dataset.tooltip) {
-    let isTruncated = false;
+    let isTruncated = false
 
-    
     // Explicitly check if it's a note preview to strictly apply truncation rule
     if (target.classList.contains("bookmark-note-preview")) {
-      const span = target.querySelector("span");
+      const span = target.querySelector("span")
       if (span) {
-        isTruncated = checkIsTruncated(span);
+        isTruncated = checkIsTruncated(span)
       }
     } else {
       // For other tooltips, we might want to check truncation or just show it depending on current logic
-      isTruncated = checkIsTruncated(target);
+      isTruncated = checkIsTruncated(target)
       if (!isTruncated) {
-        const children = target.querySelectorAll("*");
+        const children = target.querySelectorAll("*")
         for (let i = 0; i < children.length; i++) {
           if (checkIsTruncated(children[i])) {
-            isTruncated = true;
-            break;
+            isTruncated = true
+            break
           }
         }
       }
     }
 
     if (isTruncated) {
-      globalTooltip.textContent = target.dataset.tooltip;
-      const rect = target.getBoundingClientRect();
-      globalTooltip.style.left = e.clientX + "px";
-      globalTooltip.style.top = (rect.top - 8) + "px";
-      globalTooltip.style.visibility = "visible";
-      globalTooltip.style.opacity = "1";
+      globalTooltip.textContent = target.dataset.tooltip
+      const rect = target.getBoundingClientRect()
+      globalTooltip.style.left = e.clientX + "px"
+      globalTooltip.style.top = rect.top - 8 + "px"
+      globalTooltip.style.visibility = "visible"
+      globalTooltip.style.opacity = "1"
     }
   }
-});
+})
 
 document.addEventListener("mouseout", (e) => {
-  const target = e.target.closest("[data-tooltip]");
+  const target = e.target.closest("[data-tooltip]")
   if (target) {
-    const related = e.relatedTarget;
-    if (related && target.contains(related)) return;
-    globalTooltip.style.visibility = "hidden";
-    globalTooltip.style.opacity = "0";
+    const related = e.relatedTarget
+    if (related && target.contains(related)) return
+    globalTooltip.style.visibility = "hidden"
+    globalTooltip.style.opacity = "0"
   }
-});
+})
 
 // Hide tooltip on scroll to prevent detached tooltips floating around
-document.addEventListener("scroll", () => {
-  globalTooltip.style.visibility = "hidden";
-  globalTooltip.style.opacity = "0";
-}, true);
-
+document.addEventListener(
+  "scroll",
+  () => {
+    globalTooltip.style.visibility = "hidden"
+    globalTooltip.style.opacity = "0"
+  },
+  true,
+)
 
 function sortFoldersArray(foldersArr, type) {
   const sorted = [...foldersArr]
@@ -5262,432 +5511,485 @@ function sortFoldersArray(foldersArr, type) {
   return sorted
 }
 
-
 export function openBookmarkPropertiesModal(bookmark) {
-  const popup = document.getElementById("bookmark-detail-popup");
-  if (!popup) return;
+  const popup = document.getElementById("bookmark-detail-popup")
+  if (!popup) return
 
-  const titleEl = document.getElementById("detail-title");
-  const urlEl = document.getElementById("detail-url");
-  const dateEl = document.getElementById("detail-date-added");
-  const tagsEl = document.getElementById("detail-tags");
-  const thumbnailEl = document.getElementById("detail-thumbnail");
+  const titleEl = document.getElementById("detail-title")
+  const urlEl = document.getElementById("detail-url")
+  const dateEl = document.getElementById("detail-date-added")
+  const tagsEl = document.getElementById("detail-tags")
+  const thumbnailEl = document.getElementById("detail-thumbnail")
 
-  if (titleEl) titleEl.textContent = bookmark.title || '';
+  if (titleEl) titleEl.textContent = bookmark.title || ""
   if (urlEl) {
-    urlEl.innerHTML = '';
-    const link = document.createElement('a');
-    link.href = bookmark.url || '#';
-    link.textContent = bookmark.url || '';
-    link.target = '_blank';
-    urlEl.appendChild(link);
+    urlEl.innerHTML = ""
+    const link = document.createElement("a")
+    link.href = bookmark.url || "#"
+    link.textContent = bookmark.url || ""
+    link.target = "_blank"
+    urlEl.appendChild(link)
   }
   if (dateEl) {
-    dateEl.textContent = bookmark.dateAdded ? new Date(bookmark.dateAdded).toLocaleString() : '';
+    dateEl.textContent = bookmark.dateAdded
+      ? new Date(bookmark.dateAdded).toLocaleString()
+      : ""
   }
-  
+
   if (tagsEl) {
     if (bookmark.tags && bookmark.tags.length > 0) {
-      tagsEl.textContent = bookmark.tags.join(", ");
+      tagsEl.textContent = bookmark.tags.join(", ")
     } else {
-      tagsEl.textContent = "No tags";
+      tagsEl.textContent = "No tags"
     }
   }
 
   if (thumbnailEl) {
     if (bookmark.url) {
       try {
-        const domain = new URL(bookmark.url).hostname;
-        thumbnailEl.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+        const domain = new URL(bookmark.url).hostname
+        thumbnailEl.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
       } catch (e) {
-        thumbnailEl.src = '';
+        thumbnailEl.src = ""
       }
     } else {
-      thumbnailEl.src = '';
+      thumbnailEl.src = ""
     }
   }
 
   const closePopup = () => {
-    popup.classList.add("hidden");
-  };
+    popup.classList.add("hidden")
+  }
 
-  const closeBtn = popup.querySelector(".close-modal");
+  const closeBtn = popup.querySelector(".close-modal")
   if (closeBtn) {
-    closeBtn.onclick = closePopup;
+    closeBtn.onclick = closePopup
   }
 
   // Close when clicking outside the content
   popup.onclick = (e) => {
     if (e.target === popup) {
-      closePopup();
+      closePopup()
     }
-  };
+  }
 
-  popup.classList.remove("hidden");
+  popup.classList.remove("hidden")
 }
 
-
 // Helper function for Organize Folders Explorer view
-let currentOrganizeFolderId = "0"; // Root by default
+let currentOrganizeFolderId = "0" // Root by default
 
 function renderOrganizeExplorer(folderId, elements, container, t) {
-  currentOrganizeFolderId = folderId;
-  
+  currentOrganizeFolderId = folderId
+
   // Helper to get breadcrumb trail
   function getBreadcrumbs(id, callback, trail = []) {
-      if (!id || id === "0") {
-          callback(trail.reverse());
-          return;
+    if (!id || id === "0") {
+      callback(trail.reverse())
+      return
+    }
+    chrome.bookmarks.get(id, (results) => {
+      if (!results || !results.length) {
+        callback(trail.reverse())
+        return
       }
-      chrome.bookmarks.get(id, (results) => {
-          if (!results || !results.length) {
-              callback(trail.reverse());
-              return;
-          }
-          trail.push(results[0]);
-          getBreadcrumbs(results[0].parentId, callback, trail);
-      });
+      trail.push(results[0])
+      getBreadcrumbs(results[0].parentId, callback, trail)
+    })
   }
 
   getBreadcrumbs(folderId, (trail) => {
-      chrome.bookmarks.getSubTree(folderId, (results) => {
-        if (!results || !results.length) return;
-        const folder = results[0];
-        const children = folder.children || [];
-        
-        container.innerHTML = "";
-        
-        // Header for navigation (Breadcrumb)
-        const navHeader = document.createElement("div");
-        navHeader.style.display = "flex";
-        navHeader.style.alignItems = "center";
-        navHeader.style.gap = "8px";
-        navHeader.style.marginBottom = "16px";
-        navHeader.style.padding = "0 8px";
-        navHeader.style.flexWrap = "wrap";
-        
-        // Render Breadcrumb
-        const rootCrumb = document.createElement("button");
-        rootCrumb.className = "dropdown-btn"; rootCrumb.title = "Root";
-        rootCrumb.style.padding = "4px 8px";
-        rootCrumb.style.display = "flex";
-        rootCrumb.style.alignItems = "center";
-        rootCrumb.innerHTML = `<i class="fas fa-home"></i>`;
-        rootCrumb.onclick = () => renderOrganizeExplorer("0", elements, container, t);
-        
-        // Drag over breadcrumb to move items
-        rootCrumb.ondragover = (e) => { e.preventDefault(); rootCrumb.style.background = "var(--primary-color-transparent, rgba(0,0,0,0.1))"; };
-        rootCrumb.ondragleave = (e) => { rootCrumb.style.background = "transparent"; };
-        rootCrumb.ondrop = (e) => {
-             e.preventDefault();
-             rootCrumb.style.background = "transparent";
-             const draggedId = e.dataTransfer.getData("text/plain");
-             if (draggedId && draggedId !== "0") {
-                 chrome.bookmarks.move(draggedId, { parentId: "0" }, () => {
-                     renderOrganizeExplorer(folderId, elements, container, t);
-                     if(typeof refreshFolders === 'function' && elements.folderFilter) refreshFolders(elements);
-                 });
-             }
-        };
-        navHeader.appendChild(rootCrumb);
+    chrome.bookmarks.getSubTree(folderId, (results) => {
+      if (!results || !results.length) return
+      const folder = results[0]
+      const children = folder.children || []
 
-        trail.forEach((crumb, index) => {
-            const separator = document.createElement("span");
-            separator.innerHTML = `<i class="fas fa-chevron-right" style="font-size: 0.8rem; color: var(--text-secondary);"></i>`;
-            navHeader.appendChild(separator);
-            
-            const crumbBtn = document.createElement("button");
-            crumbBtn.className = "button";
-            crumbBtn.style.padding = "4px 8px";
-            crumbBtn.style.background = "transparent";
-            crumbBtn.style.border = "none";
-            crumbBtn.style.color = index === trail.length - 1 ? "var(--text-primary)" : "var(--text-secondary)";
-            crumbBtn.style.fontWeight = index === trail.length - 1 ? "600" : "normal";
-            crumbBtn.textContent = crumb.title || "Root";
-            crumbBtn.onclick = () => renderOrganizeExplorer(crumb.id, elements, container, t);
-            
-            // Allow drag dropping into breadcrumbs
-            crumbBtn.ondragover = (e) => { e.preventDefault(); crumbBtn.style.background = "var(--primary-color-transparent, rgba(0,0,0,0.1))"; crumbBtn.style.borderRadius = "4px"; };
-            crumbBtn.ondragleave = (e) => { crumbBtn.style.background = "transparent"; };
-            crumbBtn.ondrop = (e) => {
-                 e.preventDefault();
-                 crumbBtn.style.background = "transparent";
-                 const draggedId = e.dataTransfer.getData("text/plain");
-                 if (draggedId && draggedId !== crumb.id) {
-                     chrome.bookmarks.move(draggedId, { parentId: crumb.id }, () => {
-                         renderOrganizeExplorer(folderId, elements, container, t);
-                         if(typeof refreshFolders === 'function' && elements.folderFilter) refreshFolders(elements);
-                     });
-                 }
-            };
-            navHeader.appendChild(crumbBtn);
-        });
-        
-        container.appendChild(navHeader);
-        
-        // List container
-        const listContainer = document.createElement("div");
-        listContainer.className = "folder-list list-view";
-        listContainer.style.display = "flex";
-        listContainer.style.flexDirection = "column";
-        listContainer.style.gap = "8px";
-        listContainer.style.padding = "8px";
-        listContainer.style.maxHeight = "65vh";
-        listContainer.style.overflowY = "auto";
-        
-        // Sort: Folders first, then bookmarks
-        const sortedChildren = children.slice().sort((a, b) => {
-           const aIsFolder = !a.url;
-           const bIsFolder = !b.url;
-           if (aIsFolder && !bIsFolder) return -1;
-           if (!aIsFolder && bIsFolder) return 1;
-           return 0;
-        });
-        
-        if (sortedChildren.length === 0) {
-           const emptyMsg = document.createElement("div");
-           emptyMsg.style.textAlign = "center";
-           emptyMsg.style.padding = "32px";
-           emptyMsg.style.color = "var(--text-secondary)";
-           emptyMsg.textContent = "Empty folder";
-           listContainer.appendChild(emptyMsg);
+      container.innerHTML = ""
+
+      // Header for navigation (Breadcrumb)
+      const navHeader = document.createElement("div")
+      navHeader.style.display = "flex"
+      navHeader.style.alignItems = "center"
+      navHeader.style.gap = "8px"
+      navHeader.style.marginBottom = "16px"
+      navHeader.style.padding = "0 8px"
+      navHeader.style.flexWrap = "wrap"
+
+      // Render Breadcrumb
+      const rootCrumb = document.createElement("button")
+      rootCrumb.className = "dropdown-btn"
+      rootCrumb.title = "Root"
+      rootCrumb.style.padding = "4px 8px"
+      rootCrumb.style.display = "flex"
+      rootCrumb.style.alignItems = "center"
+      rootCrumb.innerHTML = `<i class="fas fa-home"></i>`
+      rootCrumb.onclick = () =>
+        renderOrganizeExplorer("0", elements, container, t)
+
+      // Drag over breadcrumb to move items
+      rootCrumb.ondragover = (e) => {
+        e.preventDefault()
+        rootCrumb.style.background =
+          "var(--primary-color-transparent, rgba(0,0,0,0.1))"
+      }
+      rootCrumb.ondragleave = (e) => {
+        rootCrumb.style.background = "transparent"
+      }
+      rootCrumb.ondrop = (e) => {
+        e.preventDefault()
+        rootCrumb.style.background = "transparent"
+        const draggedId = e.dataTransfer.getData("text/plain")
+        if (draggedId && draggedId !== "0") {
+          chrome.bookmarks.move(draggedId, { parentId: "0" }, () => {
+            renderOrganizeExplorer(folderId, elements, container, t)
+            if (typeof refreshFolders === "function" && elements.folderFilter)
+              refreshFolders(elements)
+          })
         }
-        
-        sortedChildren.forEach(item => {
-          const isFolder = !item.url;
-          const isRootFolder = item.id === "1" || item.id === "2" || item.id === "3";
-          
-          const itemRow = document.createElement("div");
-          itemRow.className = `list-bookmark-item ${isFolder ? "list-folder-item" : ""}`;
-          itemRow.style.cursor = isFolder ? "pointer" : "default";
-          itemRow.style.padding = "8px 12px";
-          itemRow.style.display = "flex";
-          itemRow.style.alignItems = "center";
-          itemRow.style.gap = "12px";
-          itemRow.style.border = "1px solid var(--border-color)";
-          itemRow.style.borderRadius = "8px";
-          itemRow.style.background = "var(--bg-secondary)";
-          itemRow.style.transition = "background 0.2s, border-color 0.2s, transform 0.2s";
-          itemRow.draggable = true;
-          
-          // Hover effect manual fallback
-          itemRow.onmouseenter = () => { itemRow.style.background = "var(--bg-tertiary)"; };
-          itemRow.onmouseleave = () => { itemRow.style.background = "var(--bg-secondary)"; };
-          
-          // Drag events
-          itemRow.ondragstart = (e) => {
-             e.dataTransfer.setData("text/plain", item.id);
-             itemRow.style.opacity = "0.5";
-             itemRow.style.transform = "scale(0.98)";
-          };
-          itemRow.ondragend = (e) => {
-             itemRow.style.opacity = "1";
-             itemRow.style.transform = "none";
-          };
-          
-          // Drop events for folders
-          if (isFolder) {
-             itemRow.ondragover = (e) => {
-                e.preventDefault(); 
-                itemRow.style.borderColor = "var(--primary-color)";
-                itemRow.style.background = "var(--bg-tertiary)";
-             };
-             itemRow.ondragleave = (e) => {
-                itemRow.style.borderColor = "var(--border-color)";
-                itemRow.style.background = "var(--bg-secondary)";
-             };
-             itemRow.ondrop = (e) => {
-                e.preventDefault();
-                itemRow.style.borderColor = "var(--border-color)";
-                itemRow.style.background = "var(--bg-secondary)";
-                const draggedId = e.dataTransfer.getData("text/plain");
-                
-                if (draggedId && draggedId !== item.id) {
-                    chrome.bookmarks.move(draggedId, { parentId: item.id }, () => {
-                        renderOrganizeExplorer(folderId, elements, container, t);
-                        if(typeof refreshFolders === 'function' && elements.folderFilter) refreshFolders(elements);
-                    });
-                }
-             };
+      }
+      navHeader.appendChild(rootCrumb)
+
+      trail.forEach((crumb, index) => {
+        const separator = document.createElement("span")
+        separator.innerHTML = `<i class="fas fa-chevron-right" style="font-size: 0.8rem; color: var(--text-secondary);"></i>`
+        navHeader.appendChild(separator)
+
+        const crumbBtn = document.createElement("button")
+        crumbBtn.className = "button"
+        crumbBtn.style.padding = "4px 8px"
+        crumbBtn.style.background = "transparent"
+        crumbBtn.style.border = "none"
+        crumbBtn.style.color =
+          index === trail.length - 1
+            ? "var(--text-primary)"
+            : "var(--text-secondary)"
+        crumbBtn.style.fontWeight =
+          index === trail.length - 1 ? "600" : "normal"
+        crumbBtn.textContent = crumb.title || "Root"
+        crumbBtn.onclick = () =>
+          renderOrganizeExplorer(crumb.id, elements, container, t)
+
+        // Allow drag dropping into breadcrumbs
+        crumbBtn.ondragover = (e) => {
+          e.preventDefault()
+          crumbBtn.style.background =
+            "var(--primary-color-transparent, rgba(0,0,0,0.1))"
+          crumbBtn.style.borderRadius = "4px"
+        }
+        crumbBtn.ondragleave = (e) => {
+          crumbBtn.style.background = "transparent"
+        }
+        crumbBtn.ondrop = (e) => {
+          e.preventDefault()
+          crumbBtn.style.background = "transparent"
+          const draggedId = e.dataTransfer.getData("text/plain")
+          if (draggedId && draggedId !== crumb.id) {
+            chrome.bookmarks.move(draggedId, { parentId: crumb.id }, () => {
+              renderOrganizeExplorer(folderId, elements, container, t)
+              if (typeof refreshFolders === "function" && elements.folderFilter)
+                refreshFolders(elements)
+            })
           }
-          
-          if (isFolder) {
-              itemRow.onclick = (e) => {
-                 if(e.target.closest("button")) return;
-                 renderOrganizeExplorer(item.id, elements, container, t);
-              };
+        }
+        navHeader.appendChild(crumbBtn)
+      })
+
+      container.appendChild(navHeader)
+
+      // List container
+      const listContainer = document.createElement("div")
+      listContainer.className = "folder-list list-view"
+      listContainer.style.display = "flex"
+      listContainer.style.flexDirection = "column"
+      listContainer.style.gap = "8px"
+      listContainer.style.padding = "8px"
+      listContainer.style.maxHeight = "65vh"
+      listContainer.style.overflowY = "auto"
+
+      // Sort: Folders first, then bookmarks
+      const sortedChildren = children.slice().sort((a, b) => {
+        const aIsFolder = !a.url
+        const bIsFolder = !b.url
+        if (aIsFolder && !bIsFolder) return -1
+        if (!aIsFolder && bIsFolder) return 1
+        return 0
+      })
+
+      if (sortedChildren.length === 0) {
+        const emptyMsg = document.createElement("div")
+        emptyMsg.style.textAlign = "center"
+        emptyMsg.style.padding = "32px"
+        emptyMsg.style.color = "var(--text-secondary)"
+        emptyMsg.textContent = "Empty folder"
+        listContainer.appendChild(emptyMsg)
+      }
+
+      sortedChildren.forEach((item) => {
+        const isFolder = !item.url
+        const isRootFolder =
+          item.id === "1" || item.id === "2" || item.id === "3"
+
+        const itemRow = document.createElement("div")
+        itemRow.className = `list-bookmark-item ${isFolder ? "list-folder-item" : ""}`
+        itemRow.style.cursor = isFolder ? "pointer" : "default"
+        itemRow.style.padding = "8px 12px"
+        itemRow.style.display = "flex"
+        itemRow.style.alignItems = "center"
+        itemRow.style.gap = "12px"
+        itemRow.style.border = "1px solid var(--border-color)"
+        itemRow.style.borderRadius = "8px"
+        itemRow.style.background = "var(--bg-secondary)"
+        itemRow.style.transition =
+          "background 0.2s, border-color 0.2s, transform 0.2s"
+        itemRow.draggable = true
+
+        // Hover effect manual fallback
+        itemRow.onmouseenter = () => {
+          itemRow.style.background = "var(--bg-tertiary)"
+        }
+        itemRow.onmouseleave = () => {
+          itemRow.style.background = "var(--bg-secondary)"
+        }
+
+        // Drag events
+        itemRow.ondragstart = (e) => {
+          e.dataTransfer.setData("text/plain", item.id)
+          itemRow.style.opacity = "0.5"
+          itemRow.style.transform = "scale(0.98)"
+        }
+        itemRow.ondragend = (e) => {
+          itemRow.style.opacity = "1"
+          itemRow.style.transform = "none"
+        }
+
+        // Drop events for folders
+        if (isFolder) {
+          itemRow.ondragover = (e) => {
+            e.preventDefault()
+            itemRow.style.borderColor = "var(--primary-color)"
+            itemRow.style.background = "var(--bg-tertiary)"
           }
-          
-          // Icon
-          const iconDiv = document.createElement("div");
-          iconDiv.className = "bookmark-favicon";
-          iconDiv.style.width = "28px";
-          iconDiv.style.height = "28px";
-          iconDiv.style.display = "flex";
-          iconDiv.style.alignItems = "center";
-          iconDiv.style.justifyContent = "center";
-          iconDiv.style.flexShrink = "0";
-          
-          if (isFolder) {
-              iconDiv.innerHTML = `<span style="font-size: 1.2rem;"><i class="fas fa-folder-open" style="color: var(--text-secondary);"></i></span>`;
-          } else {
-              const urlObj = new URL(item.url || "https://example.com");
-              iconDiv.innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32" alt="icon" style="width:20px;height:20px;border-radius:4px;">`;
+          itemRow.ondragleave = (e) => {
+            itemRow.style.borderColor = "var(--border-color)"
+            itemRow.style.background = "var(--bg-secondary)"
           }
-          
-          // Info
-          const infoDiv = document.createElement("div");
-          infoDiv.className = "list-info-main";
-          infoDiv.style.display = "flex";
-          infoDiv.style.flexDirection = "column";
-          infoDiv.style.gap = "4px";
-          infoDiv.style.flex = "1";
-          infoDiv.style.minWidth = "0";
-          
-          const titleLink = document.createElement("span");
-          titleLink.className = "list-bookmark-title-link";
-          titleLink.style.fontWeight = "600";
-          titleLink.style.fontSize = "1rem";
-          titleLink.style.color = "var(--text-primary)";
-          titleLink.style.whiteSpace = "nowrap";
-          titleLink.style.overflow = "hidden";
-          titleLink.style.textOverflow = "ellipsis";
-          titleLink.textContent = item.title || (isFolder ? "Folder" : "Bookmark");
-          
-          const subText = document.createElement("div");
-          subText.className = "list-bookmark-url-display";
-          subText.style.fontSize = "0.85rem";
-          subText.style.color = "var(--text-secondary)";
-          subText.style.whiteSpace = "nowrap";
-          subText.style.overflow = "hidden";
-          subText.style.textOverflow = "ellipsis";
-          
-          if (isFolder) {
-             const childCount = item.children ? item.children.length : 0;
-             subText.textContent = `${childCount} items`;
-          } else {
-             subText.textContent = item.url;
+          itemRow.ondrop = (e) => {
+            e.preventDefault()
+            itemRow.style.borderColor = "var(--border-color)"
+            itemRow.style.background = "var(--bg-secondary)"
+            const draggedId = e.dataTransfer.getData("text/plain")
+
+            if (draggedId && draggedId !== item.id) {
+              chrome.bookmarks.move(draggedId, { parentId: item.id }, () => {
+                renderOrganizeExplorer(folderId, elements, container, t)
+                if (
+                  typeof refreshFolders === "function" &&
+                  elements.folderFilter
+                )
+                  refreshFolders(elements)
+              })
+            }
           }
-          
-          infoDiv.appendChild(titleLink);
-          infoDiv.appendChild(subText);
-          
-          // Actions
-          const actionsDiv = document.createElement("div");
-          actionsDiv.className = "list-actions";
-          actionsDiv.style.display = "flex";
-          actionsDiv.style.gap = "4px";
-          actionsDiv.style.flexShrink = "0";
-          
-          const renameBtn = document.createElement("button");
-          // Use dropdown-btn class so it looks exactly like the extension's icon buttons
-          renameBtn.className = "dropdown-btn"; renameBtn.title = t.rename || "Rename";
-          renameBtn.style.padding = "6px";
-          renameBtn.style.width = "32px";
-          renameBtn.style.height = "32px";
-          renameBtn.style.display = "flex";
-          renameBtn.style.alignItems = "center";
-          renameBtn.style.justifyContent = "center";
-          renameBtn.innerHTML = `<i class="fas fa-edit" style="font-size: 0.9rem;"></i>`;
-          if(isRootFolder) renameBtn.disabled = true;
-          renameBtn.onclick = (e) => {
-             e.stopPropagation();
-             const popup = document.getElementById("custom-prompt-popup");
-             if (!popup) {
-                const newName = prompt(t.renamePrompt || "Enter new name:", item.title);
-                if (newName && newName !== item.title) {
-                    chrome.bookmarks.update(item.id, { title: newName }, () => {
-                        renderOrganizeExplorer(folderId, elements, container, t);
-                        if (elements && elements.folderFilter && typeof refreshFolders === "function") refreshFolders(elements);
-                    });
-                }
-                return;
-             }
-             
-             const titleEl = document.getElementById("custom-prompt-title");
-             const inputEl = document.getElementById("custom-prompt-input");
-             const saveBtn = document.getElementById("custom-prompt-save");
-             const cancelBtn = document.getElementById("custom-prompt-cancel");
-             
-             if(titleEl) titleEl.textContent = t.rename || "Rename";
-             if(inputEl) {
-                 inputEl.value = item.title;
-                 inputEl.style.width = "100%";
-                 inputEl.style.boxSizing = "border-box";
-             }
-             
-             const cleanup = () => {
-                popup.classList.add("hidden");
-                saveBtn.onclick = null;
-                cancelBtn.onclick = null;
-             };
-             
-             if(saveBtn) saveBtn.onclick = () => {
-                const newName = inputEl ? inputEl.value : "";
-                cleanup();
-                if (newName && newName !== item.title) {
-                    chrome.bookmarks.update(item.id, { title: newName }, () => {
-                        renderOrganizeExplorer(folderId, elements, container, t);
-                        if (elements && elements.folderFilter && typeof refreshFolders === "function") refreshFolders(elements);
-                    });
-                }
-             };
-             if(cancelBtn) cancelBtn.onclick = cleanup;
-             
-             popup.classList.remove("hidden");
-             if(inputEl) inputEl.focus();
-          };
-          
-          const deleteBtn = document.createElement("button");
-          // Use dropdown-btn class
-          deleteBtn.className = "dropdown-btn"; deleteBtn.title = t.delete || "Delete";
-          deleteBtn.style.padding = "6px";
-          deleteBtn.style.width = "32px";
-          deleteBtn.style.height = "32px";
-          deleteBtn.style.display = "flex";
-          deleteBtn.style.alignItems = "center";
-          deleteBtn.style.justifyContent = "center";
-          deleteBtn.style.color = "var(--error-color, #ef4444)"; // Override color for delete
-          deleteBtn.innerHTML = `<i class="fas fa-trash" style="font-size: 0.9rem;"></i>`;
-          if(isRootFolder) deleteBtn.disabled = true;
-          deleteBtn.onclick = (e) => {
-             e.stopPropagation();
-             
-             import('./utils/utils.js').then(({ showCustomPopup }) => {
-                if (showCustomPopup) {
-                    showCustomPopup(
-                        `Are you sure you want to delete '${item.title}'${isFolder ? ' and all its contents' : ''}?`,
-                        "warning",
-                        false,
-                        () => {
-                             if (isFolder) {
-                                chrome.bookmarks.removeTree(item.id, () => {
-                                    renderOrganizeExplorer(folderId, elements, container, t);
-                                    if (elements && elements.folderFilter && typeof refreshFolders === "function") refreshFolders(elements);
-                                });
-                             } else {
-                                chrome.bookmarks.remove(item.id, () => {
-                                    renderOrganizeExplorer(folderId, elements, container, t);
-                                });
-                             }
-                        },
-                        true
-                    );
-                }
-             });
-          };
-          
-          actionsDiv.appendChild(renameBtn);
-          actionsDiv.appendChild(deleteBtn);
-          
-          itemRow.appendChild(iconDiv);
-          itemRow.appendChild(infoDiv);
-          itemRow.appendChild(actionsDiv);
-          
-          listContainer.appendChild(itemRow);
-        });
-        
-        container.appendChild(listContainer);
-      });
-  });
+        }
+
+        if (isFolder) {
+          itemRow.onclick = (e) => {
+            if (e.target.closest("button")) return
+            renderOrganizeExplorer(item.id, elements, container, t)
+          }
+        }
+
+        // Icon
+        const iconDiv = document.createElement("div")
+        iconDiv.className = "bookmark-favicon"
+        iconDiv.style.width = "28px"
+        iconDiv.style.height = "28px"
+        iconDiv.style.display = "flex"
+        iconDiv.style.alignItems = "center"
+        iconDiv.style.justifyContent = "center"
+        iconDiv.style.flexShrink = "0"
+
+        if (isFolder) {
+          iconDiv.innerHTML = `<span style="font-size: 1.2rem;"><i class="fas fa-folder-open" style="color: var(--text-secondary);"></i></span>`
+        } else {
+          const urlObj = new URL(item.url || "https://example.com")
+          iconDiv.innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32" alt="icon" style="width:20px;height:20px;border-radius:4px;">`
+        }
+
+        // Info
+        const infoDiv = document.createElement("div")
+        infoDiv.className = "list-info-main"
+        infoDiv.style.display = "flex"
+        infoDiv.style.flexDirection = "column"
+        infoDiv.style.gap = "4px"
+        infoDiv.style.flex = "1"
+        infoDiv.style.minWidth = "0"
+
+        const titleLink = document.createElement("span")
+        titleLink.className = "list-bookmark-title-link"
+        titleLink.style.fontWeight = "600"
+        titleLink.style.fontSize = "1rem"
+        titleLink.style.color = "var(--text-primary)"
+        titleLink.style.whiteSpace = "nowrap"
+        titleLink.style.overflow = "hidden"
+        titleLink.style.textOverflow = "ellipsis"
+        titleLink.textContent = item.title || (isFolder ? "Folder" : "Bookmark")
+
+        const subText = document.createElement("div")
+        subText.className = "list-bookmark-url-display"
+        subText.style.fontSize = "0.85rem"
+        subText.style.color = "var(--text-secondary)"
+        subText.style.whiteSpace = "nowrap"
+        subText.style.overflow = "hidden"
+        subText.style.textOverflow = "ellipsis"
+
+        if (isFolder) {
+          const childCount = item.children ? item.children.length : 0
+          subText.textContent = `${childCount} items`
+        } else {
+          subText.textContent = item.url
+        }
+
+        infoDiv.appendChild(titleLink)
+        infoDiv.appendChild(subText)
+
+        // Actions
+        const actionsDiv = document.createElement("div")
+        actionsDiv.className = "list-actions"
+        actionsDiv.style.display = "flex"
+        actionsDiv.style.gap = "4px"
+        actionsDiv.style.flexShrink = "0"
+
+        const renameBtn = document.createElement("button")
+        // Use dropdown-btn class so it looks exactly like the extension's icon buttons
+        renameBtn.className = "dropdown-btn"
+        renameBtn.title = t.rename || "Rename"
+        renameBtn.style.padding = "6px"
+        renameBtn.style.width = "32px"
+        renameBtn.style.height = "32px"
+        renameBtn.style.display = "flex"
+        renameBtn.style.alignItems = "center"
+        renameBtn.style.justifyContent = "center"
+        renameBtn.innerHTML = `<i class="fas fa-edit" style="font-size: 0.9rem;"></i>`
+        if (isRootFolder) renameBtn.disabled = true
+        renameBtn.onclick = (e) => {
+          e.stopPropagation()
+          const popup = document.getElementById("custom-prompt-popup")
+          if (!popup) {
+            const newName = prompt(
+              t.renamePrompt || "Enter new name:",
+              item.title,
+            )
+            if (newName && newName !== item.title) {
+              chrome.bookmarks.update(item.id, { title: newName }, () => {
+                renderOrganizeExplorer(folderId, elements, container, t)
+                if (
+                  elements &&
+                  elements.folderFilter &&
+                  typeof refreshFolders === "function"
+                )
+                  refreshFolders(elements)
+              })
+            }
+            return
+          }
+
+          const titleEl = document.getElementById("custom-prompt-title")
+          const inputEl = document.getElementById("custom-prompt-input")
+          const saveBtn = document.getElementById("custom-prompt-save")
+          const cancelBtn = document.getElementById("custom-prompt-cancel")
+
+          if (titleEl) titleEl.textContent = t.rename || "Rename"
+          if (inputEl) {
+            inputEl.value = item.title
+            inputEl.style.width = "100%"
+            inputEl.style.boxSizing = "border-box"
+          }
+
+          const cleanup = () => {
+            popup.classList.add("hidden")
+            saveBtn.onclick = null
+            cancelBtn.onclick = null
+          }
+
+          if (saveBtn)
+            saveBtn.onclick = () => {
+              const newName = inputEl ? inputEl.value : ""
+              cleanup()
+              if (newName && newName !== item.title) {
+                chrome.bookmarks.update(item.id, { title: newName }, () => {
+                  renderOrganizeExplorer(folderId, elements, container, t)
+                  if (
+                    elements &&
+                    elements.folderFilter &&
+                    typeof refreshFolders === "function"
+                  )
+                    refreshFolders(elements)
+                })
+              }
+            }
+          if (cancelBtn) cancelBtn.onclick = cleanup
+
+          popup.classList.remove("hidden")
+          if (inputEl) inputEl.focus()
+        }
+
+        const deleteBtn = document.createElement("button")
+        // Use dropdown-btn class
+        deleteBtn.className = "dropdown-btn"
+        deleteBtn.title = t.delete || "Delete"
+        deleteBtn.style.padding = "6px"
+        deleteBtn.style.width = "32px"
+        deleteBtn.style.height = "32px"
+        deleteBtn.style.display = "flex"
+        deleteBtn.style.alignItems = "center"
+        deleteBtn.style.justifyContent = "center"
+        deleteBtn.style.color = "var(--error-color, #ef4444)" // Override color for delete
+        deleteBtn.innerHTML = `<i class="fas fa-trash" style="font-size: 0.9rem;"></i>`
+        if (isRootFolder) deleteBtn.disabled = true
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation()
+
+          import("./utils/utils.js").then(({ showCustomPopup }) => {
+            if (showCustomPopup) {
+              showCustomPopup(
+                `Are you sure you want to delete '${item.title}'${isFolder ? " and all its contents" : ""}?`,
+                "warning",
+                false,
+                () => {
+                  if (isFolder) {
+                    chrome.bookmarks.removeTree(item.id, () => {
+                      renderOrganizeExplorer(folderId, elements, container, t)
+                      if (
+                        elements &&
+                        elements.folderFilter &&
+                        typeof refreshFolders === "function"
+                      )
+                        refreshFolders(elements)
+                    })
+                  } else {
+                    chrome.bookmarks.remove(item.id, () => {
+                      renderOrganizeExplorer(folderId, elements, container, t)
+                    })
+                  }
+                },
+                true,
+              )
+            }
+          })
+        }
+
+        actionsDiv.appendChild(renameBtn)
+        actionsDiv.appendChild(deleteBtn)
+
+        itemRow.appendChild(iconDiv)
+        itemRow.appendChild(infoDiv)
+        itemRow.appendChild(actionsDiv)
+
+        listContainer.appendChild(itemRow)
+      })
+
+      container.appendChild(listContainer)
+    })
+  })
 }

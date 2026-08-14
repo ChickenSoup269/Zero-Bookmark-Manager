@@ -306,21 +306,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function extractJSON(text) {
     try {
-      const start = text.indexOf('{');
-      const end = text.lastIndexOf('}');
+      const start = text.indexOf("{")
+      const end = text.lastIndexOf("}")
       if (start !== -1 && end !== -1 && end >= start) {
-        return JSON.parse(text.substring(start, end + 1));
+        return JSON.parse(text.substring(start, end + 1))
       }
-      const arrStart = text.indexOf('[');
-      const arrEnd = text.lastIndexOf(']');
+      const arrStart = text.indexOf("[")
+      const arrEnd = text.lastIndexOf("]")
       if (arrStart !== -1 && arrEnd !== -1 && arrEnd >= arrStart) {
-        return JSON.parse(text.substring(arrStart, arrEnd + 1));
+        return JSON.parse(text.substring(arrStart, arrEnd + 1))
       }
     } catch (e) {
-      console.warn("Failed to extract JSON using strict bounds:", e);
+      console.warn("Failed to extract JSON using strict bounds:", e)
     }
     // Fallback to original method
-    return JSON.parse(text.replace(/```json\n?|\n?```/gi, "").trim());
+    return JSON.parse(text.replace(/```json\n?|\n?```/gi, "").trim())
   }
   // ===== END OF NEW HELPERS =====
 
@@ -444,15 +444,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (/^\/(group\s+domain|group_domain)/i.test(raw)) {
-      return { action: "group_domain" };
+      return { action: "group_domain" }
     }
-    
+
     if (/^\/(autotag|auto_tag)/i.test(raw)) {
-      return { action: "autotag_domain" };
+      return { action: "autotag_domain" }
     }
 
     if (/^\/autoorganize/i.test(raw)) {
-      return { action: "autoorganize" };
+      return { action: "autoorganize" }
     }
 
     if (/(goi y|suggest).*(website|web|site)/i.test(text)) {
@@ -464,9 +464,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return { action: "check_links" }
     }
 
-    if (/(change|switch|doi|chuyen).*(view|che do|layout).*(list|detail|card|tree)/i.test(text) || 
-        /(list|detail|card|tree).*(view|che do|layout)/i.test(text) ||
-        /^(list|detail|card|tree)$/i.test(text)) {
+    if (
+      /(change|switch|doi|chuyen).*(view|che do|layout).*(list|detail|card|tree)/i.test(
+        text,
+      ) ||
+      /(list|detail|card|tree).*(view|che do|layout)/i.test(text) ||
+      /^(list|detail|card|tree)$/i.test(text)
+    ) {
       const viewMatch = text.match(/(list|detail|card|tree)/i)
       return {
         action: "change_view",
@@ -477,7 +481,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (
       /(doi giao dien|theme|chu de|mau|change theme).*(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|nord|synthwave|gruvbox|catppuccin|nightowl|nord-light|gruvbox-light|catppuccin-light|nightowl-light|system)/i.test(
         text,
-      ) || /(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|nord|synthwave|gruvbox|catppuccin|nightowl|nord-light|gruvbox-light|catppuccin-light|nightowl-light|system).*(theme|giao dien|mau)/i.test(text)
+      ) ||
+      /(light|dark|dracula|onedark|tokyonight|monokai|winter|github|tet|nord|synthwave|gruvbox|catppuccin|nightowl|nord-light|gruvbox-light|catppuccin-light|nightowl-light|system).*(theme|giao dien|mau)/i.test(
+        text,
+      )
     ) {
       const themeMatch = text.match(
         /(light|dark|dracula|onedark|tokyonight|monokai|winter-is-coming|github-blue|github-light|tet|nord|synthwave|gruvbox|catppuccin|nightowl|nord-light|gruvbox-light|catppuccin-light|nightowl-light|system)/i,
@@ -488,7 +495,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    if (/(sort|sap xep).*(a-z|z-a|default|favorites|favorite|has-notes|has-tags|notes|tags|most-visited|old|new|last-opened|domain)/i.test(text)) {
+    if (
+      /(sort|sap xep).*(a-z|z-a|default|favorites|favorite|has-notes|has-tags|notes|tags|most-visited|old|new|last-opened|domain)/i.test(
+        text,
+      )
+    ) {
       const sortMap = {
         "a-z": "a-z",
         "z-a": "z-a",
@@ -502,7 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "most-visited": "most-visited",
         old: "old",
         new: "new",
-        "newest": "new",
+        newest: "new",
         "last-opened": "last-opened",
         domain: "domain",
       }
@@ -511,7 +522,11 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       return {
         action: "change_sort",
-        params: { sort_by: sortMatch ? sortMap[sortMatch[1].toLowerCase()] || "default" : "default" },
+        params: {
+          sort_by: sortMatch
+            ? sortMap[sortMatch[1].toLowerCase()] || "default"
+            : "default",
+        },
       }
     }
 
@@ -710,24 +725,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const checkLocalAiAvailability = async () => {
     try {
-      let factory = null;
+      let factory = null
       if (typeof window.ai !== "undefined" && window.ai.languageModel) {
-         factory = window.ai.languageModel;
+        factory = window.ai.languageModel
       } else if (typeof window.LanguageModel !== "undefined") {
-         factory = window.LanguageModel;
+        factory = window.LanguageModel
       } else if (typeof window.ai !== "undefined" && window.ai.assistant) {
-         factory = window.ai.assistant;
+        factory = window.ai.assistant
       }
 
       if (factory) {
-         if (typeof factory.availability === "function") {
-            const avail = await factory.availability();
-            return avail !== "no";
-         } else if (typeof factory.capabilities === "function") {
-            const cap = await factory.capabilities();
-            return cap.available !== "no";
-         }
-         return true; // Factory exists but no availability check, assume true
+        if (typeof factory.availability === "function") {
+          const avail = await factory.availability()
+          return avail !== "no"
+        } else if (typeof factory.capabilities === "function") {
+          const cap = await factory.capabilities()
+          return cap.available !== "no"
+        }
+        return true // Factory exists but no availability check, assume true
       }
 
       if (typeof window.ai !== "undefined" && window.ai.canCreateTextSession) {
@@ -908,7 +923,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           text = data.text || "{}"
         }
-        
+
         // Extract JSON robustly to handle extra text from local AI
         result = extractJSON(text)
       } catch (parseError) {
@@ -961,7 +976,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           text = data.text || "{}"
         }
-        
+
         // Extract JSON robustly to handle extra text from local AI
         result = extractJSON(text)
       } catch (parseError) {
@@ -1243,16 +1258,14 @@ document.addEventListener("DOMContentLoaded", () => {
                   "Here are the bookmarks in folder"
                 } '${params.folder}':<br>${bookmarks
 
-                  .map(
-                    (b, index) => {
-                      const bHostname = new URL(b.url).hostname
-                      return `<span class="bookmark-item">${
-                        index + 1
-                      }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" data-hostname="${bHostname}"> <a href="${
-                        b.url
-                      }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
-                    },
-                  )
+                  .map((b, index) => {
+                    const bHostname = new URL(b.url).hostname
+                    return `<span class="bookmark-item">${
+                      index + 1
+                    }. <img src="https://www.google.com/s2/favicons?domain=${bHostname}" class="favicon" alt="Favicon" data-hostname="${bHostname}"> <a href="${
+                      b.url
+                    }" target="_blank">${b.title}</a> (ID: ${b.id})</span>`
+                  })
 
                   .join("<br>")}`
               : `${
@@ -1954,7 +1967,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Add event listeners for bookmark buttons
         const lastBotMessageContainer = chatMessages.lastElementChild
         if (lastBotMessageContainer) {
-          const bookmarkButtons = lastBotMessageContainer.querySelectorAll(".bookmark-btn")
+          const bookmarkButtons =
+            lastBotMessageContainer.querySelectorAll(".bookmark-btn")
           bookmarkButtons.forEach((button) => {
             button.addEventListener("click", async () => {
               const url = button.getAttribute("data-url")
@@ -1966,7 +1980,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   showCustomPopup(
                     `${t("duplicateUrlError") || "A bookmark with this URL already exists"}: ${url}.`,
                     "error",
-                    true
+                    true,
                   )
                   return
                 }
@@ -1976,12 +1990,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     showCustomPopup(
                       `${t("addedBookmarkToFolder") || "I've added the bookmark"} ${title} ${t("toFolder") || "to the folder"} '${folder}' (ID: ${bookmark.id}).`,
                       "success",
-                      true
+                      true,
                     )
-                  }
+                  },
                 )
               } catch (error) {
-                showCustomPopup(`${t("errorTitle") || "Error"}: ${error.message}`, "error", true)
+                showCustomPopup(
+                  `${t("errorTitle") || "Error"}: ${error.message}`,
+                  "error",
+                  true,
+                )
               }
             })
           })
@@ -2033,8 +2051,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const validSorts = [
           "default",
           "favorites",
-          "has-notes",
-          "has-tags",
           "new",
           "newest",
           "most-visited",
@@ -2043,6 +2059,8 @@ document.addEventListener("DOMContentLoaded", () => {
           "a-z",
           "z-a",
           "domain",
+          "has-notes",
+          "has-tags",
         ]
         if (validSorts.includes(params.sort_by)) {
           uiState.sortType = params.sort_by
@@ -2071,14 +2089,23 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (action === "group_domain") {
         hideTypingIndicator()
         groupBookmarksByDomain()
-        appendBotMessage("Grouping bookmarks by domain...", "Grouping bookmarks by domain...")
+        appendBotMessage(
+          "Grouping bookmarks by domain...",
+          "Grouping bookmarks by domain...",
+        )
       } else if (action === "autotag_domain") {
         hideTypingIndicator()
         autoTagByDomain()
-        appendBotMessage("Auto-tagging bookmarks by domain...", "Auto-tagging bookmarks by domain...")
+        appendBotMessage(
+          "Auto-tagging bookmarks by domain...",
+          "Auto-tagging bookmarks by domain...",
+        )
       } else if (action === "autoorganize") {
         hideTypingIndicator()
-        appendBotMessage("Please specify how you'd like to organize (by meaning, by folder structure) so I can assist you with AI organization.", "Please specify how you'd like to organize.")
+        appendBotMessage(
+          "Please specify how you'd like to organize (by meaning, by folder structure) so I can assist you with AI organization.",
+          "Please specify how you'd like to organize.",
+        )
       } else {
         throw new Error(
           t("notSupported") ||
@@ -2123,47 +2150,58 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let session
-        let factory = null;
+        let factory = null
         if (typeof window.ai !== "undefined" && window.ai.languageModel) {
-           factory = window.ai.languageModel;
+          factory = window.ai.languageModel
         } else if (typeof window.LanguageModel !== "undefined") {
-           factory = window.LanguageModel;
+          factory = window.LanguageModel
         } else if (typeof window.ai !== "undefined" && window.ai.assistant) {
-           factory = window.ai.assistant;
+          factory = window.ai.assistant
         }
 
         if (factory) {
-          let isAfterDownload = false;
+          let isAfterDownload = false
           if (typeof factory.availability === "function") {
-             isAfterDownload = (await factory.availability()) === "after-download";
+            isAfterDownload =
+              (await factory.availability()) === "after-download"
           } else if (typeof factory.capabilities === "function") {
-             isAfterDownload = (await factory.capabilities()).available === "after-download";
+            isAfterDownload =
+              (await factory.capabilities()).available === "after-download"
           }
           if (isAfterDownload) {
-             console.log("Local AI model needs to be downloaded. Starting download...")
+            console.log(
+              "Local AI model needs to be downloaded. Starting download...",
+            )
           }
 
           session = await factory.create({
             systemPrompt: request.prompt,
             monitor(m) {
               m.addEventListener("downloadprogress", (e) => {
-                const percent = Math.round((e.loaded / e.total) * 100);
-                console.log(`Downloading local AI model: ${percent}% (${e.loaded}/${e.total} bytes)`);
+                const percent = Math.round((e.loaded / e.total) * 100)
+                console.log(
+                  `Downloading local AI model: ${percent}% (${e.loaded}/${e.total} bytes)`,
+                )
                 if (typeof updateDownloadProgress === "function") {
-                  updateDownloadProgress(percent);
+                  updateDownloadProgress(percent)
                 }
-              });
-            }
+              })
+            },
           })
           responseText = await session.prompt(request.message)
-        } else if (typeof window.ai !== "undefined" && window.ai.createTextSession) {
+        } else if (
+          typeof window.ai !== "undefined" &&
+          window.ai.createTextSession
+        ) {
           // Legacy Text Session API fallback
           session = await window.ai.createTextSession()
           responseText = await session.prompt(
             `${request.prompt}\n\nUser: ${request.message}`,
           )
         } else {
-           throw new Error("Local AI API is missing in this browser. Please update Chrome.")
+          throw new Error(
+            "Local AI API is missing in this browser. Please update Chrome.",
+          )
         }
         if (session && session.destroy) session.destroy()
       } else {
@@ -2251,10 +2289,12 @@ document.addEventListener("DOMContentLoaded", () => {
       // If we reach here, it's a "general" action - we need AI or Offline Check
       const config = await getAiConfig()
       console.log("AI Config Model:", config.model)
-      
+
       if (config.model === "none") {
         hideTypingIndicator()
-        const reply = t("localOnlyNotSupported") || "This command is not supported in Offline Mode. Please enable an AI provider for advanced tasks."
+        const reply =
+          t("localOnlyNotSupported") ||
+          "This command is not supported in Offline Mode. Please enable an AI provider for advanced tasks."
         appendBotMessage(reply, reply)
         return
       }
@@ -2263,7 +2303,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Unified AI Call: Always get JSON for intent and answer
         const responseText = await callAiApi(message, false)
         let aiResult
-        
+
         try {
           // Extract JSON robustly to handle extra text from local AI
           aiResult = extractJSON(responseText)
@@ -2278,14 +2318,20 @@ document.addEventListener("DOMContentLoaded", () => {
         if (aiResult.action && aiResult.action !== "general") {
           // It's a bookmark action
           console.log("AI executing action:", aiResult.action, aiResult.params)
-          // If the action is suggest_website but we don't have websites yet, 
+          // If the action is suggest_website but we don't have websites yet,
           // it means AI just returned the action. We need to handle this.
-          if (aiResult.action === "suggest_website" && !aiResult.params?.websites) {
+          if (
+            aiResult.action === "suggest_website" &&
+            !aiResult.params?.websites
+          ) {
             // Re-call AI specifically for websites or just treat as general
-            const answer = aiResult.answer || "Đang lấy gợi ý website cho bạn..."
+            const answer =
+              aiResult.answer || "Đang lấy gợi ý website cho bạn..."
             appendBotMessage(answer, answer, true)
             const webSuggestions = await suggestWebsites(message)
-            await handleBookmarkCommand("suggest_website", { websites: webSuggestions.websites })
+            await handleBookmarkCommand("suggest_website", {
+              websites: webSuggestions.websites,
+            })
           } else {
             await handleBookmarkCommand(aiResult.action, aiResult.params || {})
           }
@@ -2297,12 +2343,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (aiError) {
         hideTypingIndicator()
-        
+
         const errorMsg = aiError.message || ""
-        const isProviderError = errorMsg.includes("chrome://flags") || 
-                               errorMsg.includes("API Key") || 
-                               errorMsg.includes("model") ||
-                               errorMsg.includes("fetch")
+        const isProviderError =
+          errorMsg.includes("chrome://flags") ||
+          errorMsg.includes("API Key") ||
+          errorMsg.includes("model") ||
+          errorMsg.includes("fetch")
 
         if (isProviderError) {
           appendBotMessage(
@@ -2311,15 +2358,16 @@ document.addEventListener("DOMContentLoaded", () => {
               <p>${errorMsg}</p>
               ${errorMsg.includes("chrome://flags") ? `<button class="button info-btn" id="fix-ai-btn" style="margin-top:10px; font-size:0.8rem;">${t("learnHowToEnable") || "How to fix"}</button>` : ""}
             </div>`,
-            errorMsg
+            errorMsg,
           )
-          
+
           setTimeout(() => {
             const btn = document.getElementById("fix-ai-btn")
-            if (btn) btn.onclick = () => {
-              const steps = t("localAiGuideSteps") || "Instructions..."
-              showCustomPopup(steps, "info", false)
-            }
+            if (btn)
+              btn.onclick = () => {
+                const steps = t("localAiGuideSteps") || "Instructions..."
+                showCustomPopup(steps, "info", false)
+              }
           }, 100)
         } else {
           const reply =
@@ -2335,7 +2383,7 @@ document.addEventListener("DOMContentLoaded", () => {
       hideTypingIndicator()
       appendBotMessage(
         `<span class="error-text">${t("errorTitle") || "Oops"}: ${error.message}</span>`,
-        `${t("errorTitle") || "Oops"}: ${error.message}`
+        `${t("errorTitle") || "Oops"}: ${error.message}`,
       )
     }
   }
@@ -2542,10 +2590,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const renderAiProfiles = async () => {
     if (!aiProfileSelect) return
     const profiles = await getAiProfiles()
-    
+
     // Save current selection to restore if possible
     const currentVal = aiProfileSelect.value
-    
+
     aiProfileSelect.innerHTML = `<option value="">-- ${t("selectFolder") || "Chọn Profile"} --</option>`
 
     profiles.forEach((profile, index) => {
@@ -2573,7 +2621,11 @@ document.addEventListener("DOMContentLoaded", () => {
         aiApiKeyInput.value = profile.apiKey || ""
         aiModelNameInput.value = profile.modelName || ""
         aiProviderSelect.dispatchEvent(new Event("change"))
-        showCustomPopup(`${t("aiProfileApplySuccess") || "Đã áp dụng profile:"} ${profile.name}`, "success", true)
+        showCustomPopup(
+          `${t("aiProfileApplySuccess") || "Đã áp dụng profile:"} ${profile.name}`,
+          "success",
+          true,
+        )
       }
     })
   }
@@ -2593,20 +2645,31 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteAiProfileBtn.addEventListener("click", async () => {
       const index = aiProfileSelect.value
       if (index === "") {
-        showCustomPopup(t("aiProfileSelectToDelete") || "Vui lòng chọn Profile để xóa", "info", true)
+        showCustomPopup(
+          t("aiProfileSelectToDelete") || "Vui lòng chọn Profile để xóa",
+          "info",
+          true,
+        )
         return
       }
 
       const profiles = await getAiProfiles()
       const profileName = profiles[index]?.name || ""
-      
-      const confirmMsg = (t("aiProfileDeleteConfirm") || "Bạn có chắc chắn muốn xóa profile \"{0}\"?").replace("{0}", profileName)
+
+      const confirmMsg = (
+        t("aiProfileDeleteConfirm") ||
+        'Bạn có chắc chắn muốn xóa profile "{0}"?'
+      ).replace("{0}", profileName)
 
       showCustomConfirm(confirmMsg, async () => {
         profiles.splice(index, 1)
         await saveAiProfiles(profiles)
         await renderAiProfiles()
-        showCustomPopup(`${t("aiProfileDeleteSuccess") || "Đã xóa profile:"} ${profileName}`, "success", true)
+        showCustomPopup(
+          `${t("aiProfileDeleteSuccess") || "Đã xóa profile:"} ${profileName}`,
+          "success",
+          true,
+        )
       })
     })
   }
@@ -2620,19 +2683,23 @@ document.addEventListener("DOMContentLoaded", () => {
         name,
         model: aiProviderSelect.value,
         apiKey: aiApiKeyInput.value,
-        modelName: aiModelNameInput.value
+        modelName: aiModelNameInput.value,
       }
 
       const profiles = await getAiProfiles()
       profiles.push(newProfile)
       await saveAiProfiles(profiles)
       await renderAiProfiles()
-      
+
       // Select the newly added profile
       aiProfileSelect.value = profiles.length - 1
-      
+
       aiProfileNamePopup.classList.add("hidden")
-      showCustomPopup(t("aiProfileSaveSuccess") || "Đã lưu Profile thành công!", "success", true)
+      showCustomPopup(
+        t("aiProfileSaveSuccess") || "Đã lưu Profile thành công!",
+        "success",
+        true,
+      )
     })
   }
 
@@ -2658,7 +2725,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // Check local availability
       const isLocalAvailable = await checkLocalAiAvailability()
       if (aiLocalWarning) {
-        aiLocalWarning.classList.toggle("hidden", isLocalAvailable || aiProviderSelect.value !== "local")
+        aiLocalWarning.classList.toggle(
+          "hidden",
+          isLocalAvailable || aiProviderSelect.value !== "local",
+        )
       }
 
       // Handle experimental note visibility
@@ -2669,7 +2739,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Toggle API group based on provider
       if (aiApiGroup) {
-        aiApiGroup.classList.toggle("hidden", aiProviderSelect.value === "local" || aiProviderSelect.value === "none")
+        aiApiGroup.classList.toggle(
+          "hidden",
+          aiProviderSelect.value === "local" ||
+            aiProviderSelect.value === "none",
+        )
       }
 
       aiConfigPopup.classList.remove("hidden")
@@ -2679,37 +2753,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (aiProviderSelect) {
     aiProviderSelect.addEventListener("change", () => {
-      const isApiProvider = aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none"
+      const isApiProvider =
+        aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none"
       if (aiApiGroup) {
         aiApiGroup.classList.toggle("hidden", !isApiProvider)
       }
-      
+
       const expNote = document.getElementById("local-ai-experimental-note")
       if (expNote) {
         expNote.classList.toggle("hidden", aiProviderSelect.value !== "local")
       }
 
       if (aiLocalWarning) {
-        checkLocalAiAvailability().then(isAvailable => {
-          aiLocalWarning.classList.toggle("hidden", isAvailable || aiProviderSelect.value !== "local")
+        checkLocalAiAvailability().then((isAvailable) => {
+          aiLocalWarning.classList.toggle(
+            "hidden",
+            isAvailable || aiProviderSelect.value !== "local",
+          )
         })
       }
 
       renderModelSuggestions(aiProviderSelect.value)
 
       // Auto-save the choice immediately in case they don't click Save
-      const apiVisible = aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none"
+      const apiVisible =
+        aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none"
       saveAiConfig(
         aiProviderSelect.value,
         aiApiKeyInput.value,
         aiModelNameInput.value,
-        apiVisible
+        apiVisible,
       )
       updateAiStatusIndicator({
         model: aiProviderSelect.value,
         apiKey: aiApiKeyInput.value,
         modelName: aiModelNameInput.value,
-        apiVisible
+        apiVisible,
       })
     })
   }
@@ -2727,7 +2806,8 @@ document.addEventListener("DOMContentLoaded", () => {
         apiKey: aiApiKeyInput.value,
         modelName: aiModelNameInput.value,
         apiVisible:
-          aiProviderSelect.value !== "local" && aiProviderSelect.value !== "none",
+          aiProviderSelect.value !== "local" &&
+          aiProviderSelect.value !== "none",
       })
       aiConfigPopup.classList.add("hidden")
       showCustomPopup(
@@ -2738,13 +2818,16 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
-  const toggleApiKeyVisibilityBtn = document.getElementById("toggle-api-key-visibility")
+  const toggleApiKeyVisibilityBtn = document.getElementById(
+    "toggle-api-key-visibility",
+  )
   if (toggleApiKeyVisibilityBtn && aiApiKeyInput) {
     toggleApiKeyVisibilityBtn.addEventListener("click", (e) => {
       e.preventDefault()
-      const type = aiApiKeyInput.getAttribute("type") === "password" ? "text" : "password"
+      const type =
+        aiApiKeyInput.getAttribute("type") === "password" ? "text" : "password"
       aiApiKeyInput.setAttribute("type", type)
-      
+
       const icon = toggleApiKeyVisibilityBtn.querySelector("i")
       if (icon) {
         icon.className = type === "password" ? "fas fa-eye" : "fas fa-eye-slash"
