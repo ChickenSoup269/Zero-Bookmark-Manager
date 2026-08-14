@@ -97,6 +97,12 @@ const qsTranslations = {
     btnDone: "Done",
     phQuickNewFolder: "Or type new folder (Other Bookmarks)...",
     lblSuggestedTags: "Suggested:",
+    lblSaveMultipleTabs: "Save multiple tabs",
+    lblSelectTabsToSave: "Select tabs to save",
+    lblNoSavableTabs: "No savable tabs found.",
+    btnSaveMultipleBookmarks: "Save Tabs ({0})",
+    statusMultiSavedSuccess: "Saved {0} bookmarks successfully!",
+    defaultMultiSaveFolder: "Saved Tabs - {0}",
   },
   vi: {
     qsTitle: "Lưu Nhanh",
@@ -131,6 +137,12 @@ const qsTranslations = {
     btnDone: "Xong",
     phQuickNewFolder: "Hoặc tạo mới thư mục (vào Other Bookmarks)...",
     lblSuggestedTags: "Gợi ý:",
+    lblSaveMultipleTabs: "Lưu nhiều tab",
+    lblSelectTabsToSave: "Chọn các tab cần lưu",
+    lblNoSavableTabs: "Không tìm thấy tab nào hợp lệ để lưu.",
+    btnSaveMultipleBookmarks: "Lưu {0} Tab",
+    statusMultiSavedSuccess: "Đã lưu thành công {0} bookmark!",
+    defaultMultiSaveFolder: "Các tab đã lưu - {0}",
   },
 };
 
@@ -541,8 +553,11 @@ function renderMultiTabList() {
   if (!multiSaveTabList) return;
   multiSaveTabList.innerHTML = "";
   
+  const lang = localStorage.getItem("appLanguage") || "en";
+  const t = qsTranslations[lang] || qsTranslations.en;
+
   if (allOpenTabs.length === 0) {
-    multiSaveTabList.innerHTML = `<div style="padding: 8px; color: var(--text-secondary); text-align: center; font-size: 0.85rem;">No savable tabs found.</div>`;
+    multiSaveTabList.innerHTML = `<div style="padding: 8px; color: var(--text-secondary); text-align: center; font-size: 0.85rem;">${t.lblNoSavableTabs || "No savable tabs found."}</div>`;
     if (multiSaveCount) multiSaveCount.textContent = "0";
     return;
   }
@@ -598,6 +613,10 @@ function updateMultiSaveCount() {
   
   if (isMultiSaveMode) {
     saveButton.disabled = checked === 0;
+    const lang = localStorage.getItem("appLanguage") || "en";
+    const t = qsTranslations[lang] || qsTranslations.en;
+    const template = t.btnSaveMultipleBookmarks || "Save Tabs ({0})";
+    saveButton.textContent = template.replace("{0}", checked);
   }
 }
 
@@ -605,7 +624,9 @@ if (multiSaveToggle) {
   multiSaveToggle.addEventListener("change", (e) => {
     isMultiSaveMode = e.target.checked;
     const quickNewFolderInput = document.getElementById("quick-new-folder-input");
-    
+    const lang = localStorage.getItem("appLanguage") || "en";
+    const t = qsTranslations[lang] || qsTranslations.en;
+
     if (isMultiSaveMode) {
       singleSaveFields.classList.add("hidden");
       multiSaveFields.classList.remove("hidden");
@@ -619,14 +640,16 @@ if (multiSaveToggle) {
       if (quickNewFolderInput && !quickNewFolderInput.value.trim()) {
         const now = new Date();
         const dateStr = now.toLocaleDateString() + " " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        quickNewFolderInput.value = "Saved Tabs - " + dateStr;
+        const folderName = (t.defaultMultiSaveFolder || "Saved Tabs - {0}").replace("{0}", dateStr);
+        quickNewFolderInput.value = folderName;
       }
     } else {
       singleSaveFields.classList.remove("hidden");
       multiSaveFields.classList.add("hidden");
       saveButton.disabled = !currentTab || !currentTab.url;
+      saveButton.textContent = t.btnSaveBookmark || "Save Bookmark";
       
-      if (quickNewFolderInput && quickNewFolderInput.value.startsWith("Saved Tabs - ")) {
+      if (quickNewFolderInput && (quickNewFolderInput.value.startsWith("Saved Tabs - ") || quickNewFolderInput.value.startsWith("Các tab đã lưu - "))) {
         quickNewFolderInput.value = "";
       }
     }
@@ -715,7 +738,11 @@ function saveBookmark(event) {
       return;
     }
     
-    const text = isMultiSaveMode ? `Saved ${savedCount} bookmarks!` : tStatus(existingBookmark && !isMultiSaveMode ? "statusUpdatedSuccess" : "statusSavedSuccess", currentTags.length);
+    const lang = localStorage.getItem("appLanguage") || "en";
+    const t = qsTranslations[lang] || qsTranslations.en;
+    const text = isMultiSaveMode 
+      ? (t.statusMultiSavedSuccess || "Saved {0} bookmarks successfully!").replace("{0}", savedCount) 
+      : tStatus(existingBookmark && !isMultiSaveMode ? "statusUpdatedSuccess" : "statusSavedSuccess", currentTags.length);
     showStatus(text);
     saveButton.innerHTML = `<i class="fas fa-check"></i> ${text}`;
 
