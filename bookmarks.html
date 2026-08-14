@@ -88,9 +88,13 @@
                     <!-- <div class="sidebar-sort-divider"></div> -->
                     <select id="sort-filter" class="sidebar-select hidden" aria-label="Sort bookmarks">
                         <option value="default" data-i18n="sortDefault">Default</option>
+                        <option value="favorites" data-i18n="sortFavorites">Favorites</option>
+                        <option value="has-notes" data-i18n="sortHasNotes">Has Notes</option>
+                        <option value="has-tags" data-i18n="sortHasTags">Has Tags</option>
                         <option value="new" data-i18n="sortNew">Newest First</option>
                         <option value="old" data-i18n="sortOld">Oldest First</option>
                         <option value="last-opened" data-i18n="sortLastOpened">Last Opened</option>
+                        <option value="most-visited" data-i18n="sortMostVisited">Most Visited</option>
                         <option value="a-z" data-i18n="sortAZ">A → Z</option>
                         <option value="z-a" data-i18n="sortZA">Z → A</option>
                         <option value="domain" data-i18n="sortDomain">By Domain</option>
@@ -104,6 +108,14 @@
                             <i class="fas fa-star"></i>
                             <span data-i18n="sortFavorites">Favorites</span>
                             <span class="sidebar-badge" id="favorites-count">0</span>
+                        </li>
+                        <li class="sidebar-sort-item" data-sort="has-notes">
+                            <i class="fas fa-note-sticky"></i>
+                            <span data-i18n="sortHasNotes">Has Notes</span>
+                        </li>
+                        <li class="sidebar-sort-item" data-sort="has-tags">
+                            <i class="fas fa-tags"></i>
+                            <span data-i18n="sortHasTags">Has Tags</span>
                         </li>
                         <li class="sidebar-sort-item" data-sort="new">
                             <i class="fas fa-arrow-down-wide-short"></i>

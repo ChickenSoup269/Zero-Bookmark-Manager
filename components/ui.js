@@ -848,9 +848,11 @@ export function updateUILanguage(elements, language) {
 
   elements.sortFilter.innerHTML = `
     <option value="default">${t.sortDefault}</option>
+    <option value="favorites">${t.sortFavorites}</option>
+    <option value="has-notes">${t.sortHasNotes || "Has Notes"}</option>
+    <option value="has-tags">${t.sortHasTags || "Has Tags"}</option>
     <option value="new">${t.sortNew}</option>
     <option value="old">${t.sortOld}</option>
-    <option value="favorites">${t.sortFavorites}</option>
     <option value="most-visited">${t.sortMostVisited || "Most Visited"}</option>
     <option value="last-opened">${t.sortLastOpened}</option>
     <option value="a-z">${t.sortAZ}</option>
@@ -4833,6 +4835,20 @@ function sortBookmarks(list, type) {
     switch (type) {
       case "favorites":
         return (b.dateAdded || 0) - (a.dateAdded || 0)
+      case "has-notes": {
+        const noteA = uiState.bookmarkNotes?.[a.id]?.trim() || a.note?.trim() || ""
+        const noteB = uiState.bookmarkNotes?.[b.id]?.trim() || b.note?.trim() || ""
+        const hasA = Boolean(noteA)
+        const hasB = Boolean(noteB)
+        if (hasA !== hasB) return hasB ? 1 : -1
+        return (b.dateAdded || 0) - (a.dateAdded || 0)
+      }
+      case "has-tags": {
+        const hasA = Boolean(a.tags && a.tags.length > 0)
+        const hasB = Boolean(b.tags && b.tags.length > 0)
+        if (hasA !== hasB) return hasB ? 1 : -1
+        return (b.dateAdded || 0) - (a.dateAdded || 0)
+      }
       case "default":
         if (a.parentId !== b.parentId) {
           return (a.parentId || "").localeCompare(b.parentId || "")

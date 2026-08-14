@@ -10,6 +10,8 @@ export const en = {
   sortAZ: "A to Z",
   sortZA: "Z to A",
   sortFavorites: "Favorites",
+  sortHasNotes: "Has Notes",
+  sortHasTags: "Has Tags",
   sortMostVisited: "Most Visited",
   sortDomain: "By Domain",
   createFolder: "Create Folder",

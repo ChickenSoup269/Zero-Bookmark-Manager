@@ -10,6 +10,8 @@ export const vi = {
   sortAZ: "A đến Z",
   sortZA: "Z đến A",
   sortFavorites: "Yêu thích",
+  sortHasNotes: "Có Ghi chú",
+  sortHasTags: "Có Thẻ (Tags)",
   sortMostVisited: "Truy cập Nhiều nhất",
   sortDomain: "Theo tên miền",
   createFolder: "Tạo Thư mục",

@@ -488,13 +488,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    if (/(sort|sap xep).*(a-z|z-a|default|favorites|favorite|most-visited|old|new|last-opened|domain)/i.test(text)) {
+    if (/(sort|sap xep).*(a-z|z-a|default|favorites|favorite|has-notes|has-tags|notes|tags|most-visited|old|new|last-opened|domain)/i.test(text)) {
       const sortMap = {
         "a-z": "a-z",
         "z-a": "z-a",
         default: "default",
         favorites: "favorites",
         favorite: "favorites",
+        "has-notes": "has-notes",
+        notes: "has-notes",
+        "has-tags": "has-tags",
+        tags: "has-tags",
         "most-visited": "most-visited",
         old: "old",
         new: "new",
@@ -503,11 +507,11 @@ document.addEventListener("DOMContentLoaded", () => {
         domain: "domain",
       }
       const sortMatch = text.match(
-        /(a-z|z-a|default|favorites|favorite|most-visited|old|newest|new|last-opened|domain)/i,
+        /(a-z|z-a|default|favorites|favorite|has-notes|has-tags|notes|tags|most-visited|old|newest|new|last-opened|domain)/i,
       )
       return {
         action: "change_sort",
-        params: { sort_by: sortMatch ? sortMap[sortMatch[1]] || "default" : "default" },
+        params: { sort_by: sortMatch ? sortMap[sortMatch[1].toLowerCase()] || "default" : "default" },
       }
     }
 
@@ -2029,6 +2033,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const validSorts = [
           "default",
           "favorites",
+          "has-notes",
+          "has-tags",
+          "new",
+          "newest",
           "most-visited",
           "old",
           "last-opened",
