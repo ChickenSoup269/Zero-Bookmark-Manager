@@ -1019,24 +1019,28 @@ chrome.storage.onChanged.addListener((changes, area) => {
 function showSuggestions(query) {
   if (!customTagSuggestions) return;
   
-  let filtered = [];
-  if (!query) {
-    filtered = allAvailableTags.filter((t) => !currentTags.includes(t)).slice(0, 8);
-    if (filtered.length === 0) {
-      customTagSuggestions.classList.add("hidden");
-      return;
-    }
-  } else {
-    filtered = allAvailableTags.filter(
-      (t) =>
-        t.toLowerCase().includes(query.toLowerCase()) && !currentTags.includes(t),
-    );
+  if (!query || !query.trim()) {
+    customTagSuggestions.classList.add("hidden");
+    customTagSuggestions.innerHTML = "";
+    activeSuggestionIndex = -1;
+    return;
+  }
+
+  const cleanQuery = query.trim();
+  const filtered = allAvailableTags.filter(
+    (t) =>
+      t.toLowerCase().includes(cleanQuery.toLowerCase()) && !currentTags.includes(t),
+  );
+
+  if (filtered.length === 0 && !cleanQuery) {
+    customTagSuggestions.classList.add("hidden");
+    return;
   }
 
   customTagSuggestions.innerHTML = "";
 
   // If typing a new tag that doesn't exactly match any available tag, show create option
-  if (query && !filtered.some((t) => t.toLowerCase() === query.toLowerCase())) {
+  if (cleanQuery && !filtered.some((t) => t.toLowerCase() === cleanQuery.toLowerCase())) {
     const createItem = document.createElement("div");
     createItem.className = "suggestion-item";
     createItem.style.fontWeight = "600";
@@ -1047,14 +1051,14 @@ function showSuggestions(query) {
     icon.style.fontSize = "0.9rem";
     
     const text = document.createElement("span");
-    text.textContent = `Create tag "${query}"`;
+    text.textContent = `Create tag "${cleanQuery}"`;
     
     createItem.appendChild(icon);
     createItem.appendChild(text);
     
     createItem.addEventListener("mousedown", (e) => {
       e.preventDefault();
-      addTag(query);
+      addTag(cleanQuery);
     });
     
     customTagSuggestions.appendChild(createItem);
@@ -1253,6 +1257,7 @@ function renderTags() {
       e.preventDefault();
       currentTags.splice(index, 1);
       renderTags();
+      if (customTagSuggestions) customTagSuggestions.classList.add("hidden");
       tagsInput.focus();
     });
 
@@ -1282,6 +1287,7 @@ tagsContainer.addEventListener("click", (e) => {
     if (!isNaN(index) && index >= 0 && index < currentTags.length) {
       currentTags.splice(index, 1);
       renderTags();
+      if (customTagSuggestions) customTagSuggestions.classList.add("hidden");
       tagsInput.focus();
     }
   } else if (!e.target.closest(".tag-chip")) {
@@ -1294,7 +1300,12 @@ tagsInput.addEventListener("input", (e) => {
 });
 
 tagsInput.addEventListener("focus", (e) => {
-  showSuggestions(e.target.value.trim().replace(/,/g, ""));
+  const val = e.target.value.trim().replace(/,/g, "");
+  if (val) {
+    showSuggestions(val);
+  } else {
+    if (customTagSuggestions) customTagSuggestions.classList.add("hidden");
+  }
 });
 
 tagsInput.addEventListener("blur", () => {
