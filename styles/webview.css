@@ -4306,7 +4306,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   cursor: pointer;
   border-radius: 8px;
   border: 1px solid transparent;
-  background: color-mix(in srgb, var(--bg-primary) 28%, transparent);
+
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
