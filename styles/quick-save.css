@@ -333,6 +333,61 @@ option:hover {
   height: 24px;
 }
 
+/* Suggested Tags Row */
+.suggested-tags-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  animation: fadeIn 0.2s ease;
+}
+
+.suggested-tags-container.hidden {
+  display: none !important;
+}
+
+.suggested-tags-label {
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.suggested-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.suggested-tag-pill {
+  background: var(--bg-secondary, rgba(0, 0, 0, 0.04));
+  border: 1px dashed var(--border-color);
+  color: var(--text-primary);
+  padding: 2px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.suggested-tag-pill:hover {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;

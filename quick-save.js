@@ -96,6 +96,7 @@ const qsTranslations = {
     statusSavedSuccess: "Saved successfully! ({0} tags)",
     btnDone: "Done",
     phQuickNewFolder: "Or type new folder (Other Bookmarks)...",
+    lblSuggestedTags: "Suggested:",
   },
   vi: {
     qsTitle: "Lưu Nhanh",
@@ -129,6 +130,7 @@ const qsTranslations = {
     statusSavedSuccess: "Đã lưu thành công! ({0} thẻ)",
     btnDone: "Xong",
     phQuickNewFolder: "Hoặc tạo mới thư mục (vào Other Bookmarks)...",
+    lblSuggestedTags: "Gợi ý:",
   },
 };
 
@@ -419,6 +421,7 @@ function populateFromTab(tab) {
       fillExistingMetadata(existingBookmark.id);
       showStatus(tStatus("statusAlreadySaved"), "success");
     }
+    renderQuickSuggestedTags();
   });
 }
 
@@ -835,6 +838,131 @@ let allAvailableTags = [];
 let activeSuggestionIndex = -1;
 const customTagSuggestions = document.getElementById("custom-tag-suggestions");
 
+const COMMON_TECH_TAGS = [
+  "JavaScript", "TypeScript", "React", "Vue", "Angular", "Node.js", "Python",
+  "Go", "Rust", "Java", "Docker", "Kubernetes", "AWS", "GitHub", "Git",
+  "CSS", "HTML", "UI/UX", "Design", "Figma", "AI", "ChatGPT", "MachineLearning",
+  "Docs", "Tutorial", "Guide", "Tools", "News", "Blog", "Podcast", "Video",
+  "Music", "Movie", "Shopping", "Finance", "Crypto", "Game", "Social", "Work",
+  "Study", "Reference", "API", "Book", "Linux"
+];
+
+function extractSmartTagSuggestions(title = "", url = "") {
+  const suggestions = new Set();
+  
+  if (url) {
+    try {
+      const urlObj = new URL(url);
+      const host = urlObj.hostname.toLowerCase().replace(/^www\./, "");
+      const hostParts = host.split(".");
+      const mainDomain = hostParts.length >= 2 ? hostParts[hostParts.length - 2] : hostParts[0];
+
+      const domainMap = {
+        github: "GitHub",
+        gitlab: "GitLab",
+        stackoverflow: "Dev",
+        stackexchange: "Dev",
+        youtube: "Video",
+        youtu: "Video",
+        medium: "Blog",
+        dev: "Blog",
+        reddit: "Community",
+        figma: "Design",
+        dribbble: "Design",
+        behance: "Design",
+        twitter: "Social",
+        x: "Social",
+        linkedin: "Social",
+        facebook: "Social",
+        wikipedia: "Reference",
+        npm: "JavaScript",
+        pypi: "Python",
+        news: "News",
+        vimeo: "Video",
+        spotify: "Music",
+        chatgpt: "AI",
+        openai: "AI",
+        anthropic: "AI",
+        claude: "AI",
+        huggingface: "AI",
+        kaggle: "DataScience",
+        notion: "Productivity",
+        trello: "Productivity",
+      };
+
+      if (domainMap[mainDomain]) {
+        suggestions.add(domainMap[mainDomain]);
+      } else if (mainDomain && mainDomain.length > 2 && mainDomain.length <= 15) {
+        suggestions.add(mainDomain.charAt(0).toUpperCase() + mainDomain.slice(1));
+      }
+
+      if (host.includes("docs.") || url.includes("/docs") || url.includes("/documentation")) {
+        suggestions.add("Docs");
+      }
+      if (host.includes("blog.") || url.includes("/blog")) {
+        suggestions.add("Blog");
+      }
+      if (host.includes("api.") || url.includes("/api")) {
+        suggestions.add("API");
+      }
+    } catch (e) {}
+  }
+
+  if (title) {
+    COMMON_TECH_TAGS.forEach((tag) => {
+      const regex = new RegExp(`\\b${tag.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}\\b`, "i");
+      if (regex.test(title)) {
+        suggestions.add(tag);
+      }
+    });
+
+    allAvailableTags.forEach((tag) => {
+      if (tag && tag.length >= 2) {
+        const regex = new RegExp(`\\b${tag.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}\\b`, "i");
+        if (regex.test(title)) {
+          suggestions.add(tag);
+        }
+      }
+    });
+  }
+
+  return Array.from(suggestions).filter((t) => !currentTags.includes(t)).slice(0, 6);
+}
+
+function renderQuickSuggestedTags() {
+  const container = document.getElementById("suggested-tags-container");
+  const list = document.getElementById("suggested-tags-list");
+  if (!container || !list) return;
+
+  const currentUrl = urlInput ? urlInput.value : (currentTab?.url || "");
+  const currentTitle = titleInput ? titleInput.value : (currentTab?.title || "");
+
+  const suggestions = extractSmartTagSuggestions(currentTitle, currentUrl);
+  
+  if (suggestions.length === 0) {
+    container.classList.add("hidden");
+    list.innerHTML = "";
+    return;
+  }
+
+  list.innerHTML = "";
+  suggestions.forEach((tag) => {
+    const pill = document.createElement("button");
+    pill.type = "button";
+    pill.className = "suggested-tag-pill";
+    pill.innerHTML = `<i class="fas fa-plus" style="font-size: 0.65em;"></i> <span>${tag}</span>`;
+    pill.title = `Add tag: ${tag}`;
+    pill.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      addTag(tag);
+    });
+    list.appendChild(pill);
+  });
+
+  container.classList.remove("hidden");
+}
+
 function loadTags() {
   chrome.storage.local.get(
     ["bookmarkTags", "tagColors", "tagTextColors"],
@@ -847,6 +975,7 @@ function loadTags() {
         tags.forEach((tag) => allTags.add(tag));
       });
       allAvailableTags = Array.from(allTags).sort();
+      renderQuickSuggestedTags();
     },
   );
 }
@@ -862,20 +991,48 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
 function showSuggestions(query) {
   if (!customTagSuggestions) return;
+  
+  let filtered = [];
   if (!query) {
-    customTagSuggestions.classList.add("hidden");
-    return;
-  }
-  const filtered = allAvailableTags.filter(
-    (t) =>
-      t.toLowerCase().includes(query.toLowerCase()) && !currentTags.includes(t),
-  );
-  if (filtered.length === 0) {
-    customTagSuggestions.classList.add("hidden");
-    return;
+    filtered = allAvailableTags.filter((t) => !currentTags.includes(t)).slice(0, 8);
+    if (filtered.length === 0) {
+      customTagSuggestions.classList.add("hidden");
+      return;
+    }
+  } else {
+    filtered = allAvailableTags.filter(
+      (t) =>
+        t.toLowerCase().includes(query.toLowerCase()) && !currentTags.includes(t),
+    );
   }
 
   customTagSuggestions.innerHTML = "";
+
+  // If typing a new tag that doesn't exactly match any available tag, show create option
+  if (query && !filtered.some((t) => t.toLowerCase() === query.toLowerCase())) {
+    const createItem = document.createElement("div");
+    createItem.className = "suggestion-item";
+    createItem.style.fontWeight = "600";
+    
+    const icon = document.createElement("i");
+    icon.className = "fas fa-plus-circle";
+    icon.style.color = "var(--accent-color)";
+    icon.style.fontSize = "0.9rem";
+    
+    const text = document.createElement("span");
+    text.textContent = `Create tag "${query}"`;
+    
+    createItem.appendChild(icon);
+    createItem.appendChild(text);
+    
+    createItem.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      addTag(query);
+    });
+    
+    customTagSuggestions.appendChild(createItem);
+  }
+
   filtered.forEach((tag) => {
     const item = document.createElement("div");
     item.className = "suggestion-item";
@@ -905,17 +1062,20 @@ function showSuggestions(query) {
 let nextTagColor = "#3B82F6";
 
 function addTag(tag) {
-  if (tag && !currentTags.includes(tag)) {
-    currentTags.push(tag);
+  if (!tag) return;
+  const cleanTag = tag.trim().replace(/^#/, "");
+  if (cleanTag && !currentTags.includes(cleanTag)) {
+    currentTags.push(cleanTag);
 
     // Apply selected color if not already cached
-    if (!tagColorsCache[tag]) {
-      tagColorsCache[tag] = nextTagColor;
-      tagTextColorsCache[tag] = getContrastYIQ(nextTagColor);
+    if (!tagColorsCache[cleanTag]) {
+      tagColorsCache[cleanTag] = nextTagColor;
+      tagTextColorsCache[cleanTag] = getContrastYIQ(nextTagColor);
     }
 
     tagsInput.value = "";
     renderTags();
+    renderQuickSuggestedTags();
     if (customTagSuggestions) customTagSuggestions.classList.add("hidden");
   }
 }
@@ -1076,6 +1236,7 @@ function renderTags() {
     tagsContainer.insertBefore(chip, inputWrapper);
   });
   tagsHiddenInput.value = currentTags.join(",");
+  renderQuickSuggestedTags();
 }
 
 const nextTagColorBtn = document.getElementById("next-tag-color-btn");
@@ -1268,7 +1429,7 @@ if (suggestTagBtn) {
     if (suggestTagIcon) suggestTagIcon.className = "fas fa-spinner fa-spin";
     if (suggestTagText) suggestTagText.textContent = "...";
 
-    let suggestedTag = "";
+    let suggestedTags = [];
 
     try {
       const data = await new Promise((resolve) =>
@@ -1288,7 +1449,7 @@ if (suggestTagBtn) {
               {
                 parts: [
                   {
-                    text: `You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.\nTitle: "${currentTab.title}", URL: "${currentTab.url}"`,
+                    text: `You are a bookmark categorization assistant. Return 1 to 3 relevant, concise tags (max 2 words per tag) separated by comma for the bookmark.\nTitle: "${currentTab.title}", URL: "${currentTab.url}"`,
                   },
                 ],
               },
@@ -1302,10 +1463,8 @@ if (suggestTagBtn) {
             resData.candidates &&
             resData.candidates[0].content.parts[0].text
           ) {
-            suggestedTag = resData.candidates[0].content.parts[0].text
-              .trim()
-              .replace(/['"]/g, "")
-              .substring(0, 20);
+            const raw = resData.candidates[0].content.parts[0].text.trim();
+            suggestedTags = raw.split(/[,;\n]+/).map((t) => t.trim().replace(/^['"#]+|['"]+$/g, "")).filter(Boolean);
           }
         }
       } else if (
@@ -1315,32 +1474,31 @@ if (suggestTagBtn) {
       ) {
         const session = await self.ai.languageModel.create({
           systemPrompt:
-            "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.",
+            "You are a bookmark categorization assistant. Return 1 to 3 relevant, concise tags (max 2 words per tag) separated by comma for the bookmark.",
         });
         const result = await session.prompt(
           `Title: "${currentTab.title}", URL: "${currentTab.url}"`,
         );
         if (result) {
-          suggestedTag = result.trim().replace(/['"]/g, "").substring(0, 20);
+          suggestedTags = result.trim().split(/[,;\n]+/).map((t) => t.trim().replace(/^['"#]+|['"]+$/g, "")).filter(Boolean);
         }
       }
     } catch (e) {
       console.error("AI Categorize failed", e);
     }
 
-    if (!suggestedTag) {
-      try {
-        const urlObj = new URL(currentTab.url);
-        let hostname = urlObj.hostname.replace("www.", "");
-        suggestedTag = hostname.split(".")[0];
-      } catch (e) {}
+    if (suggestedTags.length === 0) {
+      const smartHeuristics = extractSmartTagSuggestions(currentTab.title, currentTab.url);
+      if (smartHeuristics.length > 0) {
+        suggestedTags = smartHeuristics.slice(0, 3);
+      }
     }
 
-    if (suggestedTag) {
-      suggestedTag =
-        suggestedTag.charAt(0).toUpperCase() +
-        suggestedTag.slice(1).toLowerCase();
-      addTag(suggestedTag);
+    if (suggestedTags.length > 0) {
+      suggestedTags.forEach((t) => {
+        const formatted = t.charAt(0).toUpperCase() + t.slice(1);
+        addTag(formatted);
+      });
     }
 
     suggestTagBtn.disabled = false;

@@ -93,6 +93,10 @@
             <button type="button" id="next-tag-color-btn" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border-color); background-color: #3B82F6; cursor: pointer; margin-left: 4px; flex-shrink: 0;" title="Choose color for new tag"></button>
           </div>
         </div>
+        <div id="suggested-tags-container" class="suggested-tags-container hidden">
+          <span class="suggested-tags-label"><i class="fas fa-sparkles" style="color: var(--accent-color);"></i> <span data-i18n="lblSuggestedTags">Suggested:</span></span>
+          <div id="suggested-tags-list" class="suggested-tags-list"></div>
+        </div>
         <div id="custom-tag-suggestions" class="custom-tag-suggestions hidden"></div>
         <input type="hidden" id="tags" value="">
       </label>
