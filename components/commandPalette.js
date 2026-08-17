@@ -76,7 +76,18 @@ function setFolder(folderId, elements) {
 function setView(viewMode, elements) {
   uiState.viewMode = viewMode
   localStorage.setItem("appView", viewMode)
-  if (elements.viewSwitcher) elements.viewSwitcher.value = viewMode
+  if (elements.viewSwitcher) {
+    if (elements.viewSwitcher.tagName === "SELECT") {
+      elements.viewSwitcher.value = viewMode
+    } else {
+      const swatches = elements.viewSwitcher.querySelectorAll(
+        ".theme-swatch, .view-swatch",
+      )
+      swatches.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.value === viewMode)
+      })
+    }
+  }
   renderFilteredBookmarks(uiState.bookmarkTree, elements)
   saveUIState()
 }
@@ -94,6 +105,9 @@ function buildStaticCommands(elements) {
     ["list", "fa-bars", "List"],
     ["tree", "fa-diagram-project", "Tree"],
     ["detail", "fa-circle-info", "Detail"],
+    ["bento", "fa-th", "Bento Box"],
+    ["kanban", "fa-columns", "Kanban Board"],
+    ["mockup", "fa-image", "Gallery"],
   ].map(([view, icon, label]) => ({
     type: "command",
     icon,

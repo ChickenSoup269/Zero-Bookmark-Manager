@@ -898,12 +898,19 @@ body.is-scrolled .sticky-search {
   padding: 4px 6px !important;
 }
 
-#folder-list:not(.tree-view):not(.list-view) .bookmark-item {
+#folder-list:not(.tree-view):not(.card-view):not(.detail-view):not(
+    .list-view
+  ):not(.bento-view):not(.kanban-view):not(.mockup-view)
+  .bookmark-item {
   flex-wrap: wrap;
   align-items: flex-start;
 }
 
-#folder-list:not(.tree-view):not(.list-view) .bookmark-item .link {
+#folder-list:not(.tree-view):not(.card-view):not(.detail-view):not(
+    .list-view
+  ):not(.bento-view):not(.kanban-view):not(.mockup-view)
+  .bookmark-item
+  .link {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;

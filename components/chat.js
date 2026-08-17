@@ -2005,13 +2005,37 @@ document.addEventListener("DOMContentLoaded", () => {
           })
         }
       } else if (action === "change_view" && params.view_mode) {
-        const validViews = ["list", "detail", "card", "tree"]
+        const validViews = [
+          "list",
+          "detail",
+          "card",
+          "tree",
+          "bento",
+          "kanban",
+          "mockup",
+          "flat",
+        ]
         if (validViews.includes(params.view_mode)) {
           uiState.viewMode = params.view_mode
           localStorage.setItem("appView", params.view_mode)
           saveUIState()
+          const elements = getUiElements()
+          if (elements.viewSwitcher) {
+            if (elements.viewSwitcher.tagName === "SELECT") {
+              elements.viewSwitcher.value = params.view_mode
+            } else {
+              const swatches = elements.viewSwitcher.querySelectorAll(
+                ".theme-swatch, .view-swatch",
+              )
+              swatches.forEach((btn) => {
+                btn.classList.toggle(
+                  "active",
+                  btn.dataset.value === params.view_mode,
+                )
+              })
+            }
+          }
           window.BookmarkCache.getTree((tree) => {
-            const elements = getUiElements()
             renderFilteredBookmarks(tree, elements)
           })
           hideTypingIndicator()

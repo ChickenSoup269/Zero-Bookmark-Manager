@@ -305,7 +305,16 @@ export async function customLoadUIState(callback) {
       elements.languageSwitcher.value = savedLanguage
     }
     if (elements.viewSwitcher) {
-      elements.viewSwitcher.value = uiState.viewMode
+      if (elements.viewSwitcher.tagName === "SELECT") {
+        elements.viewSwitcher.value = uiState.viewMode
+      } else {
+        const swatches = elements.viewSwitcher.querySelectorAll(
+          ".theme-swatch, .view-swatch",
+        )
+        swatches.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.value === uiState.viewMode)
+        })
+      }
     }
     if (elements.folderFilter) {
       if (elements.folderFilter) elements.folderFilter.value = uiState.selectedFolderId

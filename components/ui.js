@@ -1070,31 +1070,40 @@ function reRenderCurrentView(elements) {
       .map(({ bookmark }) => bookmark)
   }
 
-  elements.folderListDiv.style.display = ""
+  if (elements && elements.folderListDiv) {
+    elements.folderListDiv.style.display = ""
 
-  if (uiState.viewMode === "tree") {
-    // Tree view dùng bookmarkTreeNodes
-    const rootChildren = bookmarkTreeNodes[0]?.children || []
-    renderTreeView(rootChildren, elements)
-  } else if (uiState.viewMode === "detail") {
-    renderDetailView(filtered, elements)
-  } else if (uiState.viewMode === "bento") {
-    renderBentoView(bookmarkTreeNodes, filtered, elements)
-  } else if (uiState.viewMode === "split" || uiState.viewMode === "kanban") {
-    renderKanbanView(bookmarkTreeNodes, filtered, elements)
-  } else if (uiState.viewMode === "card") {
-    renderCardView(bookmarkTreeNodes, filtered, elements)
-  } else if (uiState.viewMode === "list") {
-    renderListView(filtered, elements)
-  } else if (uiState.viewMode === "mockup") {
-    renderMockupView(bookmarkTreeNodes, filtered, elements)
-  } else {
-    renderBookmarks(filtered, elements)
-  }
+    let currentViewMode = uiState.viewMode
+    if (
+      uiState.selectedFolderId &&
+      uiState.selectedFolderId.startsWith("__smart_")
+    ) {
+      if (["tree", "bento", "split", "kanban"].includes(currentViewMode)) {
+        currentViewMode = "card"
+      }
+    }
 
-  // Gắn lại listener
-  if (uiState.viewMode === "tree") {
-    attachTreeListeners(elements)
+    if (currentViewMode === "tree") {
+      const rootChildren = bookmarkTreeNodes[0]?.children || []
+      renderTreeView(rootChildren, elements)
+    } else if (currentViewMode === "bento") {
+      renderBentoView(bookmarkTreeNodes, filtered, elements)
+    } else if (
+      currentViewMode === "split" ||
+      currentViewMode === "kanban"
+    ) {
+      renderKanbanView(bookmarkTreeNodes, filtered, elements)
+    } else if (currentViewMode === "detail") {
+      renderDetailView(filtered, elements)
+    } else if (currentViewMode === "card") {
+      renderCardView(bookmarkTreeNodes, filtered, elements)
+    } else if (currentViewMode === "list") {
+      renderListView(filtered, elements)
+    } else if (currentViewMode === "mockup") {
+      renderMockupView(bookmarkTreeNodes, filtered, elements)
+    } else {
+      renderBookmarks(filtered, elements)
+    }
   }
 }
 
@@ -2386,7 +2395,40 @@ function moveFolderByCardDrop(
   })
 }
 
+const ALL_VIEW_CLASSES = [
+  "tree-view",
+  "card-view",
+  "detail-view",
+  "list-view",
+  "bento-view",
+  "kanban-view",
+  "mockup-view",
+  "compact-tree",
+  "is-folder-dragging",
+]
+
+function prepareViewContainer(container, targetViewClass = "") {
+  if (!container) return
+  container.innerHTML = ""
+  ALL_VIEW_CLASSES.forEach((cls) => container.classList.remove(cls))
+  container.classList.add("folder-list")
+  if (!uiState.folderListBg) {
+    container.classList.add("no-bg")
+  } else {
+    container.classList.remove("no-bg")
+  }
+  if (targetViewClass) {
+    container.classList.add(targetViewClass)
+  }
+  // Clear any inline styles left over from previous views
+  container.style.display = ""
+  container.style.gridTemplateColumns = ""
+  container.style.gap = ""
+  container.style.padding = ""
+}
+
 function renderDetailView(bookmarksList, elements) {
+  if (!elements || !elements.folderListDiv) return
   const fragment = document.createDocumentFragment()
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
   const language = localStorage.getItem("appLanguage") || "en"
@@ -2403,11 +2445,7 @@ function renderDetailView(bookmarksList, elements) {
     fragment.prepend(selectAllDiv)
   }
 
-  if (!elements || !elements.folderListDiv) return
-
-  elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.classList.remove("tree-view", "card-view", "list-view")
-  elements.folderListDiv.classList.add("detail-view")
+  prepareViewContainer(elements.folderListDiv, "detail-view")
 
   appendBookmarksLazily(
     elements.folderListDiv,
@@ -2425,13 +2463,7 @@ function renderListView(bookmarksList, elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   const t = translations[language] || translations.en
 
-  elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.classList.remove(
-    "tree-view",
-    "card-view",
-    "detail-view",
-  )
-  elements.folderListDiv.classList.add("list-view")
+  prepareViewContainer(elements.folderListDiv, "list-view")
 
   // Header Row
   const header = document.createElement("div")
@@ -2535,9 +2567,7 @@ function createListFolderElement(folder, elements) {
 
 function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
   if (!elements || !elements.folderListDiv) return
-  elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.className = `folder-list bento-view ${!uiState.folderListBg ? "no-bg" : ""}`
-  elements.folderListDiv.style.display = "block"
+  prepareViewContainer(elements.folderListDiv, "bento-view")
 
   const isPopup = window.innerWidth <= 800
 
@@ -2842,9 +2872,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
 
 function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   if (!elements || !elements.folderListDiv) return
-  elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.className = `folder-list kanban-view ${!uiState.folderListBg ? "no-bg" : ""}`
-  elements.folderListDiv.style.display = "block"
+  prepareViewContainer(elements.folderListDiv, "kanban-view")
 
   const isPopup = window.innerWidth <= 800
 
@@ -3144,13 +3172,7 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const language = localStorage.getItem("appLanguage") || "en"
   const folders = getFolders(bookmarkTreeNodes)
 
-  elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.classList.remove(
-    "detail-view",
-    "tree-view",
-    "list-view",
-  )
-  elements.folderListDiv.classList.add("card-view")
+  prepareViewContainer(elements.folderListDiv, "card-view")
 
   const isViewingSpecificFolder =
     uiState.selectedFolderId &&
@@ -3892,13 +3914,7 @@ function renderBookmarks(bookmarksList, elements) {
   const fragment = document.createDocumentFragment()
   const sortedBookmarks = sortBookmarks(bookmarksList, uiState.sortType)
 
-  elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.classList.remove(
-    "tree-view",
-    "card-view",
-    "detail-view",
-    "list-view",
-  )
+  prepareViewContainer(elements.folderListDiv, "")
 
   appendBookmarksLazily(
     elements.folderListDiv,
@@ -3925,13 +3941,7 @@ function renderTreeView(
   // Setup container lần đầu
   if (depth === 0) {
     if (!actualTargetElement) return
-    actualTargetElement.innerHTML = ""
-    actualTargetElement.classList.remove(
-      "card-view",
-      "detail-view",
-      "list-view",
-    )
-    actualTargetElement.classList.add("tree-view")
+    prepareViewContainer(actualTargetElement, "tree-view")
     if (options.onlyFolders) {
       actualTargetElement.classList.add("compact-tree")
     }
@@ -5363,12 +5373,7 @@ function renderMockupView(bookmarkTreeNodes, filteredBookmarks, elements) {
   const fragment = document.createDocumentFragment()
   const language = localStorage.getItem("appLanguage") || "en"
 
-  elements.folderListDiv.innerHTML = ""
-  elements.folderListDiv.className = `folder-list mockup-view ${!uiState.folderListBg ? "no-bg" : ""}`
-  elements.folderListDiv.style.display = "" // Reset inline display
-  elements.folderListDiv.style.gridTemplateColumns = ""
-  elements.folderListDiv.style.gap = ""
-  elements.folderListDiv.style.padding = ""
+  prepareViewContainer(elements.folderListDiv, "mockup-view")
 
   const sortedBookmarks = sortBookmarks(filteredBookmarks, uiState.sortType)
   sortedBookmarks.forEach((bookmark) => {

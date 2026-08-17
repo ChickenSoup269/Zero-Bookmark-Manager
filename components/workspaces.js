@@ -48,7 +48,18 @@ function applyWorkspaceState(snapshot, elements) {
   if (elements.searchInput) elements.searchInput.value = uiState.searchQuery
   if (elements.folderFilter) elements.folderFilter.value = uiState.selectedFolderId
   if (elements.sortFilter) elements.sortFilter.value = uiState.sortType
-  if (elements.viewSwitcher) elements.viewSwitcher.value = uiState.viewMode
+  if (elements.viewSwitcher) {
+    if (elements.viewSwitcher.tagName === "SELECT") {
+      elements.viewSwitcher.value = uiState.viewMode
+    } else {
+      const swatches = elements.viewSwitcher.querySelectorAll(
+        ".theme-swatch, .view-swatch",
+      )
+      swatches.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.value === uiState.viewMode)
+      })
+    }
+  }
   if (elements.healthSortFilter) elements.healthSortFilter.value = uiState.healthFilter
 
   renderFilteredBookmarks(uiState.bookmarkTree, elements)
