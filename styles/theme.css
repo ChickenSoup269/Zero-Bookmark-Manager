@@ -393,7 +393,7 @@ body.catppuccin-theme {
   --bg-secondary: #181825;
   --text-primary: #cdd6f4;
   --text-secondary: #bac2de;
-  --accent-color: #cba6f7;
+  --accent-color: #f8f7f8;
   --border-color: #313244;
   --danger-color: #f38ba8;
   --success-color: #a6e3a1;
@@ -408,7 +408,7 @@ body.nightowl-theme {
   --bg-secondary: #0b2942;
   --text-primary: #d6deeb;
   --text-secondary: #82aaff;
-  --accent-color: #c792ea;
+  --accent-color: #fefefe;
   --border-color: #1d3b53;
   --danger-color: #ef5350;
   --success-color: #22da6e;
