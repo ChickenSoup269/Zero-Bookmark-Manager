@@ -290,6 +290,8 @@ export const vi = {
   duplicateMergeFailed: "Không thể gộp bookmark trùng.",
   merging: "Đang gộp...",
   refresh: "Làm mới",
+  fullscreen: "Toàn màn hình",
+  exitFullscreen: "Thu nhỏ",
   bookmarkNotesPlaceholder: "Thêm ghi chú riêng cho bookmark này...",
   bookmarkNotesSaved: "Đã lưu ghi chú.",
   readLater: "Đọc sau",

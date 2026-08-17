@@ -289,6 +289,8 @@ export const en = {
   duplicateMergeFailed: "Duplicate merge failed.",
   merging: "Merging...",
   refresh: "Refresh",
+  fullscreen: "Fullscreen",
+  exitFullscreen: "Exit Fullscreen",
   bookmarkNotesPlaceholder: "Add private notes for this bookmark...",
   bookmarkNotesSaved: "Notes saved.",
   readLater: "Read Later",

@@ -78,13 +78,28 @@ function getBookmarksWithNotes() {
 
 function getTopDomains() {
   const domains = new Map()
-  ;(uiState.bookmarks || []).forEach((bookmark) => {
-    if (!bookmark.url) return
+  const bookmarks = uiState.bookmarks || []
+  for (let i = 0; i < bookmarks.length; i++) {
+    const url = bookmarks[i].url
+    if (!url || !url.startsWith("http")) continue
     try {
-      const hostname = new URL(bookmark.url).hostname.replace(/^www\./, "")
-      domains.set(hostname, (domains.get(hostname) || 0) + 1)
+      let host = ""
+      const slashIdx = url.indexOf("://")
+      if (slashIdx !== -1) {
+        const start = slashIdx + 3
+        const end = url.indexOf("/", start)
+        host = end !== -1 ? url.slice(start, end) : url.slice(start)
+        const colonIdx = host.indexOf(":")
+        if (colonIdx !== -1) host = host.slice(0, colonIdx)
+        if (host.startsWith("www.")) host = host.slice(4)
+      } else {
+        host = new URL(url).hostname.replace(/^www\./, "")
+      }
+      if (host) {
+        domains.set(host, (domains.get(host) || 0) + 1)
+      }
     } catch {}
-  })
+  }
   return [...domains.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 8)
@@ -505,6 +520,26 @@ export function initCleanupDashboard(elements) {
         ),
       }),
       domains: () => ({
+        topHtml:
+          topDomains.length > 0
+            ? `
+               <div class="smart-cleanup-guide" style="margin-bottom: 16px; padding: 16px; background: var(--bg-tertiary); border-radius: 8px; font-size: 0.9em; line-height: 1.4; border: 1px solid var(--border-color);">
+                 <strong style="color: var(--accent-color);"><i class="fas fa-lightbulb"></i> ${escapeHtml(t("guideTitle", "How to use:"))}</strong>
+                 <ul style="margin: 12px 0 16px 20px; padding: 0;">
+                   <li style="margin-bottom: 8px;"><strong>${escapeHtml(t("smartCleanupGroupDomain", "Group by Domain"))}:</strong> ${escapeHtml(t("guideGroupDomain", "Creates folders for domains with multiple bookmarks and moves them inside."))}</li>
+                   <li><strong>${escapeHtml(t("smartCleanupAutoTag", "Auto-Tag Domains"))}:</strong> ${escapeHtml(t("guideAutoTag", "Extracts the domain name and adds it as a tag to each bookmark."))}</li>
+                 </ul>
+                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                   <button type="button" class="button button-primary" data-cleanup-action="domains-group" style="flex: 1; min-width: 150px; justify-content: center; padding: 10px 16px;">
+                     <i class="fas fa-folder-plus"></i> ${escapeHtml(t("smartCleanupGroupDomain", "Group by Domain"))}
+                   </button>
+                   <button type="button" class="button button-secondary" data-cleanup-action="domains-tag" style="flex: 1; min-width: 150px; justify-content: center; padding: 10px 16px;">
+                     <i class="fas fa-tags"></i> ${escapeHtml(t("smartCleanupAutoTag", "Auto-Tag Domains"))}
+                   </button>
+                 </div>
+               </div>
+              `
+            : "",
         html: renderList(
           t("smartCleanupDomains", "Top domains"),
           topDomains,
@@ -517,6 +552,7 @@ export function initCleanupDashboard(elements) {
 
     const selectedDetail = detailMap[selectedKey]?.() || detailMap.duplicates()
     details.innerHTML = `
+      ${selectedDetail.topHtml || ""}
       ${selectedDetail.html}
       <div class="smart-cleanup-detail-actions">
         ${
@@ -545,27 +581,6 @@ export function initCleanupDashboard(elements) {
         ${
           selectedDetail.action === "untagged" && untaggedBookmarks.length > 0
             ? `<button type="button" class="button save" data-cleanup-action="untagged"><i class="fas fa-filter" aria-hidden="true"></i> ${escapeHtml(t("smartCleanupFilterUntagged", "Filter Untagged"))}</button>`
-            : ""
-        }
-        ${
-          selectedDetail.action === "domains" && topDomains.length > 0
-            ? `
-               <div class="smart-cleanup-guide" style="margin-top: 12px; padding: 16px; background: var(--bg-tertiary); border-radius: 8px; font-size: 0.9em; line-height: 1.4;">
-                 <strong style="color: var(--accent-color);"><i class="fas fa-lightbulb"></i> ${escapeHtml(t("guideTitle", "How to use:"))}</strong>
-                 <ul style="margin: 12px 0 20px 24px; padding: 0;">
-                   <li style="margin-bottom: 8px;"><strong>${escapeHtml(t("smartCleanupGroupDomain", "Group by Domain"))}:</strong> ${escapeHtml(t("guideGroupDomain", "Creates folders for domains with multiple bookmarks and moves them inside."))}</li>
-                   <li><strong>${escapeHtml(t("smartCleanupAutoTag", "Auto-Tag Domains"))}:</strong> ${escapeHtml(t("guideAutoTag", "Extracts the domain name and adds it as a tag to each bookmark."))}</li>
-                 </ul>
-                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                   <button type="button" class="button button-primary" data-cleanup-action="domains-group" style="flex: 1; min-width: 150px; justify-content: center; padding: 10px 16px;">
-                     <i class="fas fa-folder-plus"></i> ${escapeHtml(t("smartCleanupGroupDomain", "Group by Domain"))}
-                   </button>
-                   <button type="button" class="button button-secondary" data-cleanup-action="domains-tag" style="flex: 1; min-width: 150px; justify-content: center; padding: 10px 16px;">
-                     <i class="fas fa-tags"></i> ${escapeHtml(t("smartCleanupAutoTag", "Auto-Tag Domains"))}
-                   </button>
-                 </div>
-               </div>
-              `
             : ""
         }
       </div>
@@ -648,11 +663,39 @@ export function initCleanupDashboard(elements) {
     renderNext()
   }
 
+  const fullscreenBtn = popup.querySelector("#smart-cleanup-fullscreen-btn")
+  const popupContent = popup.querySelector(".smart-cleanup-popup-content")
+
+  const updateFullscreenBtnState = (isFullscreen) => {
+    if (!fullscreenBtn) return
+    const icon = fullscreenBtn.querySelector("i")
+    if (icon) {
+      icon.className = isFullscreen ? "fas fa-compress" : "fas fa-expand"
+    }
+    fullscreenBtn.title = isFullscreen
+      ? t("exitFullscreen", "Exit Fullscreen")
+      : t("fullscreen", "Fullscreen")
+    fullscreenBtn.setAttribute(
+      "aria-label",
+      fullscreenBtn.title,
+    )
+  }
+
+  if (fullscreenBtn && popupContent) {
+    fullscreenBtn.addEventListener("click", () => {
+      const isFullscreen = popupContent.classList.toggle("is-fullscreen")
+      updateFullscreenBtnState(isFullscreen)
+    })
+  }
+
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".dropdown-menu").forEach(m => m.classList.add("hidden"));
       render()
       popup.classList.remove("hidden")
+      if (popupContent) {
+        updateFullscreenBtnState(popupContent.classList.contains("is-fullscreen"))
+      }
     })
   })
   closeButton.addEventListener("click", close)
@@ -661,5 +704,10 @@ export function initCleanupDashboard(elements) {
   popup.addEventListener("click", (e) => {
     if (e.target === popup) close()
   })
-  window.addEventListener("languageChanged", () => render())
+  window.addEventListener("languageChanged", () => {
+    render()
+    if (popupContent) {
+      updateFullscreenBtnState(popupContent.classList.contains("is-fullscreen"))
+    }
+  })
 }
