@@ -167,22 +167,22 @@
                             <i class="fas fa-edit"></i>
                             <span data-i18n="renameTitle">Rename</span>
                         </button>
-                        <button id="add-to-folder" class="sidebar-admin-btn hidden" title="Move to Folder">
+                        <button id="add-to-folder" class="sidebar-admin-btn hidden" data-i18n-title="moveToFolder" title="Move to Folder">
                             <i class="fas fa-folder-open"></i>
-                            <span>Move</span>
+                            <span data-i18n="move">Move</span>
                         </button>
-                        <button id="delete-folder" class="sidebar-admin-btn delete hidden" title="Delete Folder">
+                        <button id="delete-folder" class="sidebar-admin-btn delete hidden" data-i18n-title="deleteFolder" title="Delete Folder">
                             <i class="far fa-minus-square"></i>
-                            <span>Delete Folder</span>
+                            <span data-i18n="deleteFolder">Delete Folder</span>
                         </button>
                         <button id="delete-bookmarks-button" class="sidebar-admin-btn delete hidden"
-                            title="Delete Selected">
+                            data-i18n-title="deleteBookmarks" title="Delete Selected">
                             <i class="fas fa-trash"></i>
-                            <span>Delete</span>
+                            <span data-i18n="deleteBookmarks">Delete</span>
                         </button>
-                        <button id="organize-folders-button" class="sidebar-admin-btn" title="Organize Folders">
+                        <button id="organize-folders-button" class="sidebar-admin-btn" data-i18n-title="organizeFolders" title="Organize Folders">
                             <i class="fas fa-sitemap"></i>
-                            <span>Organize</span>
+                            <span data-i18n="organizeFolders">Organize</span>
                         </button>
                         <button id="smart-cleanup-button" class="sidebar-admin-btn" title="Smart Cleanup"
                             data-i18n-title="smartCleanupTitle">
@@ -194,14 +194,14 @@
                             <i class="fas fa-chart-pie"></i>
                             <span data-i18n="analyticsTitle">Analytics</span>
                         </button>
-                        <button id="toggle-checkboxes" class="sidebar-admin-btn" title="Toggle Selection">
+                        <button id="toggle-checkboxes" class="sidebar-admin-btn" data-i18n-title="showCheckboxes" title="Toggle Selection">
                             <i class="fas fa-check-square"></i>
-                            <span>Select</span>
+                            <span data-i18n="showCheckboxes">Select</span>
                         </button>
                     </div>
                     <div class="sidebar-select-all hidden" id="select-all-container">
                         <input type="checkbox" id="select-all" aria-label="Select all bookmarks">
-                        <label for="select-all">Select All</label>
+                        <label for="select-all" data-i18n="selectAll">Select All</label>
                     </div>
                 </div>
             </div>
@@ -751,7 +751,16 @@
         <div id="organize-folders-popup" class="rename-popup hidden popup-animate" role="dialog"
             aria-labelledby="organize-folders-title">
             <div class="rename-popup-content organize-folders-popup-content">
-                <h3 id="organize-folders-title">Organize Folders</h3>
+                <div class="organize-folders-header">
+                    <h3 id="organize-folders-title">Organize Folders</h3>
+                    <div class="modal-header-actions">
+                        <button id="organize-folders-fullscreen-btn" class="modal-action-btn modal-fullscreen-btn"
+                            title="Fullscreen" aria-label="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button id="organize-folders-close-x" class="modal-close" title="Close">✕</button>
+                    </div>
+                </div>
                 <div class="organize-folders-tree-container">
                     <div id="organize-folders-tree-view"></div>
                 </div>
@@ -1486,48 +1495,29 @@
     </div>
 
     <div id="analytics-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="analytics-title">
-        <div class="rename-popup-content" style="width: min(800px, 94vw); max-width: 800px;">
-            <div class="smart-cleanup-header">
+        <div class="rename-popup-content analytics-popup-content">
+            <div class="organize-folders-header" style="margin-bottom: 12px;">
                 <div>
-                    <h3 id="analytics-title"><i class="fas fa-chart-pie" style="margin-right: 8px;"></i><span
-                            data-i18n="analyticsTitle">Analytics Dashboard</span></h3>
-                    <p id="analytics-subtitle" style="margin:0; font-size: 0.85rem; color:var(--text-secondary);"
-                        data-i18n="analyticsDesc">Your bookmarking habits at a glance.</p>
+                    <h3 id="analytics-title" style="font-size: 1.3rem; margin: 0;"><i class="fas fa-chart-pie" style="margin-right: 8px;"></i><span
+                            data-i18n="analyticsTitle">Analytics & Insights</span></h3>
+                    <p id="analytics-subtitle" style="margin: 4px 0 0 0; font-size: 0.85rem; color:var(--text-secondary);"
+                        data-i18n="analyticsDesc">Your bookmarking habits, trends, and organization health at a glance.</p>
                 </div>
-                <button id="analytics-close-x" class="modal-close" title="Close">✕</button>
-            </div>
-
-            <div class="analytics-body" style="display: grid; gap: 16px; margin: 16px 0;">
-                <!-- Quick Stats -->
-                <div class="smart-cleanup-summary" style="margin-bottom: 0;">
-                    <div>
-                        <strong id="stat-total-bookmarks">0</strong>
-                        <span data-i18n="analyticsTotalBookmarks">Total Bookmarks</span>
-                    </div>
-                    <div>
-                        <strong id="stat-total-folders">0</strong>
-                        <span data-i18n="analyticsTotalFolders">Total Folders</span>
-                    </div>
-                    <div>
-                        <strong id="stat-recent-bookmarks">0</strong>
-                        <span data-i18n="analyticsAddedThisWeek">Added This Week</span>
-                    </div>
-                </div>
-
-                <!-- Top Domains Bar Chart -->
-                <div
-                    style="padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: color-mix(in srgb, var(--bg-primary) 70%, transparent);">
-                    <h4 style="margin: 0 0 16px 0; color: var(--text-primary); font-size: 1rem;"><i class="fas fa-globe"
-                            style="margin-right: 6px; color: var(--accent-color);"></i><span
-                            data-i18n="analyticsTopDomains">Top Domains</span></h4>
-                    <div id="stat-top-domains" style="display: flex; flex-direction: column; gap: 12px;">
-                        <!-- Bars will be injected here -->
-                    </div>
+                <div class="modal-header-actions">
+                    <button id="analytics-fullscreen-btn" class="modal-action-btn modal-fullscreen-btn"
+                        title="Fullscreen" aria-label="Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button id="analytics-close-x" class="modal-close" title="Close">✕</button>
                 </div>
             </div>
 
-            <div class="rename-popup-buttons">
-                <button id="analytics-close" class="button cancel" style="width: 100px;">Close</button>
+            <div id="analytics-dashboard-container" style="flex: 1; min-height: 0; display: flex; flex-direction: column;">
+                <!-- Full dynamic analytics tabs & views rendered by analyticsDashboard.js -->
+            </div>
+
+            <div class="rename-popup-buttons" style="margin-top: 12px;">
+                <button id="analytics-close" class="button cancel" style="width: 100px;" data-i18n="close">Close</button>
             </div>
         </div>
     </div>

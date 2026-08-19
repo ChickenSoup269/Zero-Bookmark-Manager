@@ -1824,6 +1824,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   init()
+
+  // Handle deep-link modals (e.g. ?open=analytics or ?open=folderStudio)
+  const openParam = urlParams.get("open")
+  if (openParam) {
+    setTimeout(() => {
+      if (openParam === "analytics") {
+        document.getElementById("analytics-btn")?.click() || document.getElementById("analytics-btn-menu")?.click()
+      } else if (openParam === "folderStudio" || openParam === "organize") {
+        document.getElementById("organize-folders-btn")?.click() || document.getElementById("organize-folders-button")?.click()
+      } else if (openParam === "cleanup") {
+        document.getElementById("smart-cleanup-button")?.click() || document.getElementById("smart-cleanup-btn")?.click()
+      }
+    }, 400)
+  }
 })
 
 const configureShortcutsBtns = document.querySelectorAll("#configure-shortcuts-btn, #configure-shortcuts-btn-2");
