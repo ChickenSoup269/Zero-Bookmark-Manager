@@ -148,15 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
-  // Toggle checkboxes - show select all when active (Modern)
-  const toggleCheckboxes = document.getElementById("toggle-checkboxes")
-  const selectAllContainer = document.getElementById("select-all-container")
-  if (toggleCheckboxes && selectAllContainer) {
-    toggleCheckboxes.addEventListener("click", () => {
-      selectAllContainer.classList.toggle("hidden")
-    })
-  }
-
   // Scroll to Top Button Handler
   const scrollToTopBtn = document.getElementById("sidebar-scroll-to-top")
   if (scrollToTopBtn && sidebarModern) {

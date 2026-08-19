@@ -18,6 +18,7 @@ import { getAllTags } from "./tag.js"
 import { customSaveUIState } from "./option/option.js"
 import { checkBrokenLinks } from "./health/health.js"
 import { handleDeleteFolder } from "./controller/deleteFolder.js"
+import { openFolderStudio } from "./controller/folderStudio.js"
 
 // ==========================================
 // HELPER FUNCTIONS
@@ -2439,9 +2440,17 @@ function renderDetailView(bookmarksList, elements) {
     selectAllDiv.className = "select-all-container"
     selectAllDiv.style.cssText = `display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100;`
     selectAllDiv.innerHTML = `
-      <input type="checkbox" id="select-all" style="transform: scale(1.2);">
-      <label for="select-all" style="font-size: 14px; color: var(--text-primary); font-weight: 500; cursor: pointer;">${translations[language].selectAll}</label>
+      <input type="checkbox" class="select-all-detail-checkbox" style="width: 16px; height: 16px; min-width: 16px; min-height: 16px; cursor: pointer; accent-color: var(--accent-color, var(--focus-outline, #4a90e2)); margin: 0; vertical-align: middle;">
+      <label style="font-size: 14px; color: var(--text-primary); font-weight: 500; cursor: pointer; user-select: none;">${translations[language].selectAll}</label>
     `
+    const cb = selectAllDiv.querySelector("input")
+    const lbl = selectAllDiv.querySelector("label")
+    if (lbl && cb) {
+      lbl.onclick = () => {
+        cb.checked = !cb.checked
+        cb.dispatchEvent(new Event("change", { bubbles: true }))
+      }
+    }
     fragment.prepend(selectAllDiv)
   }
 
@@ -3945,11 +3954,6 @@ function renderTreeView(
     if (options.onlyFolders) {
       actualTargetElement.classList.add("compact-tree")
     }
-    if (uiState.checkboxesVisible) {
-      const selectAllDiv = document.createElement("div")
-      selectAllDiv.className = "select-all"
-      fragment.appendChild(selectAllDiv)
-    }
   }
 
   // Logic lọc nodes để render (giữ nguyên của bạn)
@@ -4388,6 +4392,7 @@ function commonPostRenderOps(elements) {
     elements.sortFilter.value = uiState.sortType || "default"
 
   attachSelectAllListener(elements)
+  updateSelectAllState(elements)
   attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
   runBookmarkViewTransition(elements)
@@ -4421,7 +4426,7 @@ function commonPostRenderOps(elements) {
       const bookmark = uiState.bookmarks.find((b) => b.id === id)
 
       // GỌI HÀM XEM THUỘC TÍNH (METADATA)
-      if (bookmark) openBookmarkPropertiesModal(bookmark)
+      if (bookmark) showBookmarkDetailModal(bookmark, elements)
 
       document
         .querySelectorAll(".dropdown-menu")
@@ -4465,35 +4470,124 @@ function commonPostRenderOps(elements) {
       if (dropdownMenu) dropdownMenu.classList.add("hidden")
     })
   })
+
+  // 3. EDIT IN NEW TAB Buttons
+  const editInNewTabButtons = elements.folderListDiv.querySelectorAll(
+    ".menu-item.edit-in-new-tab-btn",
+  )
+  editInNewTabButtons.forEach((btn) => {
+    if (btn.dataset.boundEditTabAction === "true") return
+    btn.dataset.boundEditTabAction = "true"
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation()
+      const bookmarkId = btn.dataset.id
+      const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
+      if (bookmark) {
+        handleOpenSidePanel(bookmark)
+      }
+      const dropdownMenu = btn.closest(".dropdown-menu")
+      if (dropdownMenu) dropdownMenu.classList.add("hidden")
+    })
+  })
 }
 
-function attachSelectAllListener(elements) {
-  const selectAllCheckbox = document.getElementById("select-all")
-  if (!selectAllCheckbox) return
+export function updateSelectAllState(elements) {
+  const selectAllInputs = document.querySelectorAll(
+    "#select-all, .select-all input[type='checkbox'], .sidebar-select-all input[type='checkbox'], .select-all-container input[type='checkbox'], .select-all-detail-checkbox",
+  )
+  const bookmarkCheckboxes = Array.from(
+    document.querySelectorAll(".bookmark-checkbox"),
+  )
 
-  selectAllCheckbox.removeEventListener("change", handleSelectAll)
-  selectAllCheckbox.addEventListener("change", handleSelectAll)
+  if (bookmarkCheckboxes.length === 0) {
+    selectAllInputs.forEach((cb) => {
+      cb.checked = false
+      cb.indeterminate = false
+    })
+  } else {
+    const checkedCount = bookmarkCheckboxes.filter((cb) => cb.checked).length
+    const allChecked = checkedCount === bookmarkCheckboxes.length
+    const someChecked = checkedCount > 0 && !allChecked
 
-  function handleSelectAll(e) {
+    selectAllInputs.forEach((cb) => {
+      cb.checked = allChecked
+      cb.indeterminate = someChecked
+    })
+  }
+
+  const addToFolderBtn =
+    elements?.addToFolderButton || document.getElementById("add-to-folder")
+  const deleteBookmarksBtn =
+    elements?.deleteBookmarksButton ||
+    document.getElementById("delete-bookmarks-button")
+
+  if (addToFolderBtn) {
+    addToFolderBtn.classList.toggle(
+      "hidden",
+      uiState.selectedBookmarks.size === 0,
+    )
+  }
+  if (deleteBookmarksBtn) {
+    deleteBookmarksBtn.classList.toggle(
+      "hidden",
+      uiState.selectedBookmarks.size === 0,
+    )
+  }
+}
+
+export function attachSelectAllListener(elements) {
+  const selectAllInputs = document.querySelectorAll(
+    "#select-all, .select-all input[type='checkbox'], .sidebar-select-all input[type='checkbox'], .select-all-container input[type='checkbox'], .select-all-detail-checkbox",
+  )
+  if (!selectAllInputs.length) return
+
+  const handleSelectAll = (e) => {
+    const isChecked = e.target.checked
     const checkboxes = document.querySelectorAll(".bookmark-checkbox")
-    if (e.target.checked) {
+    if (isChecked) {
       checkboxes.forEach((cb) => {
         cb.checked = true
-        uiState.selectedBookmarks.add(cb.dataset.id)
+        if (cb.dataset.id) {
+          uiState.selectedBookmarks.add(cb.dataset.id)
+        }
       })
     } else {
       checkboxes.forEach((cb) => (cb.checked = false))
       uiState.selectedBookmarks.clear()
     }
-    elements.addToFolderButton.classList.toggle(
-      "hidden",
-      uiState.selectedBookmarks.size === 0,
-    )
-    elements.deleteBookmarksButton.classList.toggle(
-      "hidden",
-      uiState.selectedBookmarks.size === 0,
-    )
+
+    selectAllInputs.forEach((cb) => {
+      cb.checked = isChecked
+      cb.indeterminate = false
+    })
+
+    const addToFolderBtn =
+      elements?.addToFolderButton || document.getElementById("add-to-folder")
+    const deleteBookmarksBtn =
+      elements?.deleteBookmarksButton ||
+      document.getElementById("delete-bookmarks-button")
+
+    if (addToFolderBtn) {
+      addToFolderBtn.classList.toggle(
+        "hidden",
+        uiState.selectedBookmarks.size === 0,
+      )
+    }
+    if (deleteBookmarksBtn) {
+      deleteBookmarksBtn.classList.toggle(
+        "hidden",
+        uiState.selectedBookmarks.size === 0,
+      )
+    }
   }
+
+  selectAllInputs.forEach((input) => {
+    if (input._selectAllHandler) {
+      input.removeEventListener("change", input._selectAllHandler)
+    }
+    input._selectAllHandler = handleSelectAll
+    input.addEventListener("change", handleSelectAll)
+  })
 }
 
 export function setupTagFilterListener(elements) {
@@ -5190,77 +5284,7 @@ document.querySelectorAll(".close-modal").forEach((btn) => {
 })
 
 export function openOrganizeFoldersModal(elements) {
-  const popup = document.getElementById("organize-folders-popup")
-  const treeViewContainer = document.getElementById(
-    "organize-folders-tree-view",
-  )
-  const closeButton = document.getElementById("organize-folders-close")
-  const language = localStorage.getItem("appLanguage") || "en"
-  const t = translations[language] || translations.en
-  const titleEl = document.getElementById("organize-folders-title")
-
-  if (!popup || !treeViewContainer || !closeButton || !titleEl) {
-    console.error("Organize folders popup elements missing.")
-    showCustomPopup(
-      t.errorUnexpected || "An unexpected error occurred",
-      "error",
-      true,
-    )
-    return
-  }
-
-  // Update title and close button text
-  titleEl.textContent = t.organizeFoldersTitle || "Organize Folders"
-  closeButton.textContent = t.cancel || "Close"
-
-  // Clear previous content
-  treeViewContainer.innerHTML = ""
-
-  let toolbar = popup.querySelector(".organize-folders-toolbar")
-  if (toolbar) {
-    toolbar.remove()
-  }
-
-  // Update bookmark tree state before rendering
-  window.BookmarkCache.getTree((tree) => {
-    uiState.bookmarkTree = tree
-    // Render the new explorer layout inside the popup, start at root
-    renderOrganizeExplorer("0", elements, treeViewContainer, t)
-  })
-
-  popup.classList.remove("hidden")
-
-  // Apply current theme
-  const currentTheme =
-    document.documentElement.getAttribute("data-theme") || "light"
-  const allThemes = ["light", "dark", "dracula", "onedark", "tet"]
-  allThemes.forEach((theme) => popup.classList.remove(`${theme}-theme`))
-  popup.classList.add(`${currentTheme}-theme`)
-
-  const closePopup = () => {
-    popup.classList.add("hidden")
-    document.removeEventListener("keydown", handleKeydown)
-    // Refresh the main view after closing
-    window.BookmarkCache.getTree((tree) => {
-      renderFilteredBookmarks(tree, elements)
-    })
-  }
-
-  closeButton.onclick = () => closePopup()
-
-  popup.onclick = (e) => {
-    if (e.target === popup) {
-      closePopup()
-    }
-  }
-
-  const handleKeydown = (e) => {
-    if (e.key === "Escape") {
-      closePopup()
-    }
-  }
-
-  document.addEventListener("keydown", handleKeydown)
+  openFolderStudio(elements)
 }
 
 export function togglePin(bookmarkId, elements) {

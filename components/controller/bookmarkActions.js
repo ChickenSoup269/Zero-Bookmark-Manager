@@ -6,7 +6,7 @@ import {
   showCustomConfirm,
 } from "../utils/utils.js"
 import { getBookmarkTree } from "../bookmarks.js"
-import { renderFilteredBookmarks } from "../ui.js"
+import { renderFilteredBookmarks, updateSelectAllState } from "../ui.js"
 import { uiState, setCurrentBookmarkId } from "../state.js"
 import { openAddToFolderPopup } from "./addToFolder.js"
 import { updateTag } from "../tag.js"
@@ -1201,8 +1201,14 @@ function handleBookmarkCheckbox(e, elements) {
     : uiState.selectedBookmarks.delete(id)
 
   const hasSelected = uiState.selectedBookmarks.size > 0
-  elements.addToFolderButton.classList.toggle("hidden", !hasSelected)
-  elements.deleteBookmarksButton.classList.toggle("hidden", !hasSelected)
+  if (elements?.addToFolderButton) {
+    elements.addToFolderButton.classList.toggle("hidden", !hasSelected)
+  }
+  if (elements?.deleteBookmarksButton) {
+    elements.deleteBookmarksButton.classList.toggle("hidden", !hasSelected)
+  }
+
+  updateSelectAllState(elements)
 }
 
 export function handleDeleteSelectedBookmarks(elements) {
@@ -1226,11 +1232,17 @@ export function handleDeleteSelectedBookmarks(elements) {
       ),
     ).then(() => {
       uiState.selectedBookmarks.clear()
-      elements.addToFolderButton.classList.add("hidden")
-      elements.deleteBookmarksButton.classList.add("hidden")
+      if (elements?.addToFolderButton) {
+        elements.addToFolderButton.classList.add("hidden")
+      }
+      if (elements?.deleteBookmarksButton) {
+        elements.deleteBookmarksButton.classList.add("hidden")
+      }
       document
         .querySelectorAll(".bookmark-checkbox")
         .forEach((cb) => (cb.checked = false))
+
+      updateSelectAllState(elements)
 
       getBookmarkTree((nodes) => {
         renderFilteredBookmarks(nodes, elements)

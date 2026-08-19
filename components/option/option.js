@@ -340,20 +340,35 @@ export async function customLoadUIState(callback) {
     }
 
     document
-      .querySelectorAll(".bookmark-checkbox, #select-all")
+      .querySelectorAll(".bookmark-checkbox")
       .forEach((checkbox) => {
         checkbox.style.display = uiState.checkboxesVisible
           ? "inline-block"
           : "none"
+        if (!uiState.checkboxesVisible) {
+          checkbox.classList.add("hidden")
+        } else {
+          checkbox.classList.remove("hidden")
+        }
       })
-    const selectAllContainer = document.querySelector(".select-all")
-    if (selectAllContainer) {
-      selectAllContainer.style.display = uiState.checkboxesVisible
-        ? "block"
-        : "none"
-    } else {
-      // suppressed
-    }
+    const selectAllContainers = document.querySelectorAll(
+      ".select-all, .sidebar-select-all, #select-all-container",
+    )
+    selectAllContainers.forEach((container) => {
+      if (uiState.checkboxesVisible) {
+        container.style.display = "flex"
+        container.classList.remove("hidden")
+      } else {
+        container.style.display = "none"
+        container.classList.add("hidden")
+      }
+    })
+    const selectAllInputs = document.querySelectorAll(
+      "#select-all, .select-all input[type='checkbox'], .sidebar-select-all input[type='checkbox'], .select-all-container input[type='checkbox']",
+    )
+    selectAllInputs.forEach((input) => {
+      input.style.display = uiState.checkboxesVisible ? "" : "none"
+    })
 
     const tagFilterDropdown = document.getElementById("tag-filter-dropdown")
     if (tagFilterDropdown) {

@@ -10,6 +10,8 @@ import {
   updateTheme,
   renderFilteredBookmarks,
   handleCheckHealth,
+  updateSelectAllState,
+  attachSelectAllListener,
 } from "../ui.js"
 import { uiState, saveUIState } from "../state.js"
 import { handleDeleteSelectedBookmarks } from "./bookmarkActions.js"
@@ -121,13 +123,17 @@ export function setupUIControlListeners(elements) {
     uiState.checkboxesVisible = !uiState.checkboxesVisible
     const language = localStorage.getItem("appLanguage") || "en"
     elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
-      ? translations[language].hideCheckboxes
-      : translations[language].showCheckboxes
+      ? translations[language]?.hideCheckboxes || "Hide Checkboxes"
+      : translations[language]?.showCheckboxes || "Show Checkboxes"
 
     // Toggle class hidden for bookmark-checkbox and select-all
     const bookmarkCheckboxes = document.querySelectorAll(".bookmark-checkbox")
-    const selectAllContainer = document.querySelector(".select-all")
-    const selectAllCheckbox = document.getElementById("select-all")
+    const selectAllContainers = document.querySelectorAll(
+      ".select-all, .sidebar-select-all, #select-all-container",
+    )
+    const selectAllCheckboxes = document.querySelectorAll(
+      "#select-all, .select-all input[type='checkbox'], .sidebar-select-all input[type='checkbox'], .select-all-container input[type='checkbox'], .select-all-detail-checkbox",
+    )
 
     if (uiState.checkboxesVisible) {
       // Show checkboxes and select-all
@@ -137,14 +143,17 @@ export function setupUIControlListeners(elements) {
           checkbox.classList.remove("hidden")
         }, 10)
       })
-      if (selectAllContainer) {
-        selectAllContainer.style.display = "flex"
+      selectAllCheckboxes.forEach((cb) => {
+        cb.style.display = ""
+      })
+      selectAllContainers.forEach((container) => {
+        container.style.display = "flex"
         setTimeout(() => {
-          selectAllContainer.classList.remove("hidden")
+          container.classList.remove("hidden")
         }, 10)
-      } else {
-        // suppressed
-      }
+      })
+      attachSelectAllListener(elements)
+      updateSelectAllState(elements)
     } else {
       // Hide checkboxes and select-all
       bookmarkCheckboxes.forEach((checkbox) => {
@@ -153,26 +162,28 @@ export function setupUIControlListeners(elements) {
           checkbox.style.display = "none"
         }, 150)
       })
-      if (selectAllContainer) {
-        selectAllContainer.classList.add("hidden")
+      selectAllContainers.forEach((container) => {
+        container.classList.add("hidden")
         setTimeout(() => {
-          selectAllContainer.style.display = "none"
+          container.style.display = "none"
         }, 150)
-      } else {
-        // suppressed
-      }
+      })
+      selectAllCheckboxes.forEach((cb) => {
+        cb.style.display = "none"
+        cb.checked = false
+        cb.indeterminate = false
+      })
       // Reset selection state
       uiState.selectedBookmarks.clear()
-      elements.addToFolderButton.classList.add("hidden")
-      elements.deleteBookmarksButton.classList.add("hidden")
+      if (elements.addToFolderButton) {
+        elements.addToFolderButton.classList.add("hidden")
+      }
+      if (elements.deleteBookmarksButton) {
+        elements.deleteBookmarksButton.classList.add("hidden")
+      }
       bookmarkCheckboxes.forEach((cb) => {
         cb.checked = false
       })
-      if (selectAllCheckbox) {
-        selectAllCheckbox.checked = false
-      } else {
-        console.warn("Select All checkbox (#select-all) not found")
-      }
     }
 
     updateControlButtons(elements)
