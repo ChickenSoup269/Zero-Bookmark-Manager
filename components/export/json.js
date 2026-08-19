@@ -20,6 +20,15 @@ const CHROME_STORAGE_BACKUP_KEYS = [
   "showBookmarkIds",
   "folderListBg",
   "checkboxesVisible",
+  "bookmarkNotes",
+  "bookmarkTags",
+  "favoriteBookmarks",
+  "pinnedBookmarks",
+  "readingQueue",
+  "tagColors",
+  "tagTextColors",
+  "tagGroupMap",
+  "bookmarkHealth",
   "exportFormat",
   "exportIncludeIconData",
   "exportIncludeCreationDates",
@@ -60,27 +69,38 @@ export async function generateJSONPayload(exportData) {
 
   // Get other data from storage
   const storageData = await chrome.storage.local.get([
+    "bookmarkNotes",
     "bookmarkTags",
     "favoriteBookmarks",
     "pinnedBookmarks",
+    "readingQueue",
     "tagColors",
     "tagTextColors",
+    "tagGroupMap",
+    "bookmarkHealth",
     ...CHROME_STORAGE_BACKUP_KEYS,
   ])
 
   const {
+    bookmarkNotes,
     bookmarkTags,
     favoriteBookmarks,
     pinnedBookmarks,
+    readingQueue,
     tagColors,
     tagTextColors,
+    tagGroupMap,
+    bookmarkHealth,
   } = storageData
 
+  const allNotes = bookmarkNotes || {}
   const allTags = bookmarkTags || {}
   const favorites = favoriteBookmarks || {}
   const pins = pinnedBookmarks || {}
+  const allReadingQueue = readingQueue || {}
   const allTagColors = tagColors || {}
   const allTagTextColors = tagTextColors || {}
+  const allHealth = bookmarkHealth || {}
 
   const treeCopy = JSON.parse(JSON.stringify(exportData))
 
@@ -101,6 +121,12 @@ export async function generateJSONPayload(exportData) {
         node.accessCount = visitCounts[node.id] || 0
         node.isFavorite = !!favorites[node.id]
         node.isPinned = !!pins[node.id]
+        node.notes = allNotes[node.id] || ""
+        node.note = allNotes[node.id] || ""
+        node.inReadingQueue = !!allReadingQueue[node.id]
+        if (allHealth[node.id]) {
+          node.health = allHealth[node.id]
+        }
       }
       if (node.children) {
         enrichNodes(node.children)
@@ -130,12 +156,20 @@ export async function generateJSONPayload(exportData) {
       includes: {
         bookmarks: true,
         metadata: true,
+        notes: true,
+        tags: true,
         appSettings: true,
       },
     },
+    bookmarkNotes: allNotes,
+    bookmarkTags: allTags,
+    favoriteBookmarks: favorites,
+    pinnedBookmarks: pins,
+    readingQueue: allReadingQueue,
     theme: {
       tagColors: allTagColors,
       tagTextColors: allTagTextColors,
+      tagGroupMap: tagGroupMap || {},
     },
     appSettings: {
       localStorage: getLocalStorageBackup(),

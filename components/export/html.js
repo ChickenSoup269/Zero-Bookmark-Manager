@@ -33,9 +33,16 @@ export async function exportToHTML(
   try {
     storageData = await new Promise((resolve) =>
       chrome.storage.local.get(
-        ["bookmarkTags", "favoriteBookmarks", "pinnedBookmarks", "tagColors", "tagTextColors"],
-        resolve
-      )
+        [
+          "bookmarkTags",
+          "favoriteBookmarks",
+          "pinnedBookmarks",
+          "bookmarkNotes",
+          "tagColors",
+          "tagTextColors",
+        ],
+        resolve,
+      ),
     )
   } catch (error) {
     console.error("Failed to fetch storage data:", error)
@@ -43,18 +50,19 @@ export async function exportToHTML(
   const bookmarkTags = storageData.bookmarkTags || {}
   const favoriteBookmarks = storageData.favoriteBookmarks || {}
   const pinnedBookmarks = storageData.pinnedBookmarks || {}
+  const bookmarkNotes = storageData.bookmarkNotes || {}
   const tagColors = storageData.tagColors || {}
   const tagTextColors = storageData.tagTextColors || {}
 
   if (includeIconData) {
     const bookmarksWithUrls = flattenBookmarks(bookmarkTreeNodes).filter(
-      (b) => b.url
+      (b) => b.url,
     )
     for (const bookmark of bookmarksWithUrls) {
       faviconMap[
         bookmark.url
       ] = `https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(
-        bookmark.url
+        bookmark.url,
       )}`
     }
   }
@@ -83,6 +91,7 @@ export async function exportToHTML(
     bookmarks: translations[language].bookmarks || "bookmarks",
     folders: translations[language].folders || "folders",
     tags: translations[language].tags || "Tags", // Added for tag labels
+    notes: translations[language].notes || "Notes",
     visits: translations[language].visits || "Visits",
   }
 
@@ -632,6 +641,7 @@ export async function exportToHTML(
           )};
           const faviconMap = ${JSON.stringify(faviconMap)};
           const bookmarkTags = ${JSON.stringify(bookmarkTags)};
+          const bookmarkNotes = ${JSON.stringify(bookmarkNotes)};
           const visitCounts = ${JSON.stringify(visitCounts)};
           const favoriteBookmarks = ${JSON.stringify(favoriteBookmarks)};
           const pinnedBookmarks = ${JSON.stringify(pinnedBookmarks)};
@@ -654,6 +664,11 @@ export async function exportToHTML(
           function formatDate(timestamp) {
             return timestamp ? new Date(timestamp).toLocaleString('${language}') : translations.notAvailable;
           }
+
+          function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+          }
           
           function countBookmarks(nodes) {
             nodes.forEach(node => {
@@ -674,6 +689,12 @@ export async function exportToHTML(
               const color = tagTextColors[tag] || 'var(--tag-text)';
               return \`<span class="tag" style="background-color: \${bgColor}; color: \${color};">\${tag}</span>\`;
             }).join('')}</span></div>\`;
+          }
+
+          function renderNotes(bookmarkId) {
+            const note = bookmarkNotes[bookmarkId];
+            if (!note) return '';
+            return \`<div class="notes-container" style="margin-top: 6px; font-size: 0.85rem; color: var(--text-secondary); background: var(--bg-tertiary); padding: 4px 8px; border-radius: 4px; border-left: 3px solid var(--accent-color, #4a90e2); word-break: break-word;"><i class="far fa-sticky-note" style="margin-right: 4px; opacity: 0.7;"></i>\${escapeHtml(note)}</div>\`;
           }
 
           function renderExtraMeta(node) {
@@ -712,6 +733,7 @@ export async function exportToHTML(
                 }
                 li.innerHTML += renderExtraMeta(node);
                 li.innerHTML += renderTags(node.id);
+                li.innerHTML += renderNotes(node.id);
                 parent.appendChild(li);
 
                 const gridItem = document.createElement("div");
@@ -726,6 +748,7 @@ export async function exportToHTML(
                 }
                 gridItem.innerHTML += renderExtraMeta(node);
                 gridItem.innerHTML += renderTags(node.id);
+                gridItem.innerHTML += renderNotes(node.id);
                 gridParent.appendChild(gridItem);
               }
             });
@@ -744,6 +767,7 @@ export async function exportToHTML(
                 }
                 treeItem.innerHTML += renderExtraMeta(node);
                 treeItem.innerHTML += renderTags(node.id);
+                treeItem.innerHTML += renderNotes(node.id);
               } else if (node.children) {
                 treeItem.className = "folder";
                 treeItem.textContent = node.title || translations.unnamedFolder;

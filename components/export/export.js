@@ -34,6 +34,15 @@ const RESTORABLE_CHROME_STORAGE_KEYS = [
   "showBookmarkIds",
   "folderListBg",
   "checkboxesVisible",
+  "bookmarkNotes",
+  "bookmarkTags",
+  "favoriteBookmarks",
+  "pinnedBookmarks",
+  "readingQueue",
+  "tagColors",
+  "tagTextColors",
+  "tagGroupMap",
+  "bookmarkHealth",
   "exportFormat",
   "exportIncludeIconData",
   "exportIncludeCreationDates",
@@ -1035,6 +1044,7 @@ export function setupExportImportListeners(elements) {
             themeData,
             elements,
             appSettings,
+            data,
           )
         } catch (e) {
           console.error("Failed to parse or import JSON file:", e)
@@ -1055,9 +1065,10 @@ export function setupExportImportListeners(elements) {
 
 export async function importNonDuplicateBookmarks(
   nodesToImport,
-  themeData,
+  themeData = {},
   elements,
   appSettings = {},
+  rawData = {},
 ) {
   const language = localStorage.getItem("appLanguage") || "en"
   const idMapping = {}
@@ -1163,16 +1174,21 @@ export async function importNonDuplicateBookmarks(
 
     // 2b. Lấy dữ liệu metadata hiện có từ Storage
     const storageData = await chrome.storage.local.get([
+      "bookmarkNotes",
       "bookmarkTags",
       "favoriteBookmarks",
       "pinnedBookmarks",
+      "readingQueue",
       "tagColors",
       "tagTextColors",
+      "tagGroupMap",
     ])
 
+    const bookmarkNotes = storageData.bookmarkNotes || {}
     const bookmarkTags = storageData.bookmarkTags || {}
     const favoriteBookmarks = storageData.favoriteBookmarks || {}
     const pinnedBookmarks = storageData.pinnedBookmarks || {}
+    const readingQueue = storageData.readingQueue || {}
     const tagColors = storageData.tagColors || {}
     const tagTextColors = storageData.tagTextColors || {}
 
@@ -1184,6 +1200,9 @@ export async function importNonDuplicateBookmarks(
       Object.assign(tagTextColors, themeData.tagTextColors)
     }
 
+    const rawNotes = rawData.bookmarkNotes || {}
+    const rawQueue = rawData.readingQueue || {}
+
     // 3. Hàm đệ quy để khôi phục Metadata
     function restoreMetadata(nodes) {
       nodes.forEach((node) => {
@@ -1191,6 +1210,14 @@ export async function importNonDuplicateBookmarks(
         if (newId) {
           if (node.isFavorite) favoriteBookmarks[newId] = true
           if (node.isPinned) pinnedBookmarks[newId] = true
+          if (node.inReadingQueue || rawQueue[node.id]) readingQueue[newId] = true
+
+          // Khôi phục Notes
+          const noteText =
+            node.notes || node.note || rawNotes[node.id] || ""
+          if (noteText) {
+            bookmarkNotes[newId] = noteText
+          }
 
           // KHÔI PHỤC TAGS: Đọc cả tên và màu sắc
           if (node.tags && node.tags.length > 0) {
@@ -1226,6 +1253,14 @@ export async function importNonDuplicateBookmarks(
 
     restoreMetadata(nodesToImport)
 
+    // Khôi phục notes trực tiếp từ object rawNotes nếu id khớp
+    Object.entries(rawNotes).forEach(([oldId, noteText]) => {
+      const newId = idMapping[oldId]
+      if (newId && noteText) {
+        bookmarkNotes[newId] = noteText
+      }
+    })
+
     // 4. Save visit counts back to background script
     await chrome.storage.local.set({ visitCounts: currentVisitCounts })
 
@@ -1234,14 +1269,18 @@ export async function importNonDuplicateBookmarks(
 
     // 6. Cập nhật uiState và lưu tất cả metadata đã hợp nhất vào Storage
     // Cập nhật uiState để UI phản hồi ngay lập tức
+    uiState.bookmarkNotes = bookmarkNotes
     uiState.bookmarkTags = bookmarkTags
     uiState.tagColors = tagColors
     uiState.tagTextColors = tagTextColors
+    uiState.readingQueue = readingQueue
 
     await chrome.storage.local.set({
+      bookmarkNotes,
       bookmarkTags,
       favoriteBookmarks,
       pinnedBookmarks,
+      readingQueue,
       tagColors,
       tagTextColors,
     })
