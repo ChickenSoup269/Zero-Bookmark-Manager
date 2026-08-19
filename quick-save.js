@@ -437,11 +437,80 @@ function populateFromTab(tab) {
   });
 }
 
-function loadCurrentTab() {
-  const tabId = getSourceTabId();
+const filterValidTabs = (tabs) => {
+  if (!tabs) return [];
+  return tabs.filter(
+    (t) =>
+      t.url &&
+      !/^(chrome|edge|about|chrome-extension):\/\//i.test(t.url),
+  );
+};
 
+async function fetchActiveTab() {
+  const tabId = getSourceTabId();
+  if (tabId && typeof chrome !== "undefined" && chrome.tabs) {
+    try {
+      const tab = await new Promise((resolve) => {
+        chrome.tabs.get(tabId, (t) => {
+          if (chrome.runtime.lastError || !t) resolve(null);
+          else resolve(t);
+        });
+      });
+      if (tab) return tab;
+    } catch (e) {}
+  }
+
+  if (typeof chrome === "undefined" || !chrome.tabs) return null;
+
+  // Strategy 1: query active tab with lastFocusedWindow
+  try {
+    const tabs = await new Promise((resolve) => {
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }, (res) => {
+        if (chrome.runtime.lastError || !res || !res.length) resolve([]);
+        else resolve(res);
+      });
+    });
+    const valid = filterValidTabs(tabs);
+    if (valid.length > 0) return valid[0];
+    if (tabs.length > 0) return tabs[0];
+  } catch (e) {}
+
+  // Strategy 2: query active tab in currentWindow
+  try {
+    const tabs = await new Promise((resolve) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (res) => {
+        if (chrome.runtime.lastError || !res || !res.length) resolve([]);
+        else resolve(res);
+      });
+    });
+    const valid = filterValidTabs(tabs);
+    if (valid.length > 0) return valid[0];
+    if (tabs.length > 0) return tabs[0];
+  } catch (e) {}
+
+  // Strategy 3: normal windows
+  try {
+    const wins = await new Promise((resolve) => {
+      chrome.windows.getAll({ populate: true, windowTypes: ["normal"] }, (w) => {
+        if (chrome.runtime.lastError || !w) resolve([]);
+        else resolve(w);
+      });
+    });
+    const focusedWin = wins.find((w) => w.focused) || wins[0];
+    if (focusedWin && focusedWin.tabs) {
+      const activeTab = focusedWin.tabs.find((t) => t.active);
+      if (activeTab) return activeTab;
+    }
+  } catch (e) {}
+
+  return null;
+}
+
+function loadCurrentTab() {
   // Real-time tab tracking for embedded views (Side Panel / Dashboard)
-  if (isEmbedded && chrome.tabs) {
+  if (isEmbedded && chrome.tabs && !window._quickSaveTabsTracked) {
+    window._quickSaveTabsTracked = true;
+
     const handleTabSwitch = (tab) => {
       if (
         tab &&
@@ -467,7 +536,10 @@ function loadCurrentTab() {
     });
 
     chrome.tabs.onUpdated.addListener((updatedTabId, changeInfo, tab) => {
-      if (tab.active && (changeInfo.status === "complete" || changeInfo.title || changeInfo.url)) {
+      if (
+        tab.active &&
+        (changeInfo.status === "complete" || changeInfo.title || changeInfo.url)
+      ) {
         handleTabSwitch(tab);
       }
       if (isMultiSaveMode) {
@@ -483,11 +555,6 @@ function loadCurrentTab() {
       if (isMultiSaveMode) fetchAllTabsBackground();
     });
   }
-
-  const filterValidTabs = (tabs) => {
-    if (!tabs) return [];
-    return tabs.filter(t => t.url && !/^(chrome|edge|about|chrome-extension):\/\//i.test(t.url));
-  };
 
   const fetchAllTabsBackground = () => {
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
@@ -516,38 +583,22 @@ function loadCurrentTab() {
     });
   };
 
-  if (tabId) {
-    chrome.tabs.get(tabId, populateFromTab);
+  fetchActiveTab().then((tab) => {
+    if (tab) {
+      populateFromTab(tab);
+    } else {
+      showStatus(tStatus("statusNoPage"), "error");
+      saveButton.disabled = true;
+    }
     setTimeout(fetchAllTabsBackground, 50);
-  } else {
-    // FAST PATH: Get active tab instantly for immediate UI rendering
-    chrome.tabs.query({ active: true, currentWindow: true }, (activeTabs) => {
-      if (activeTabs && activeTabs.length > 0) {
-        const validActiveTabs = filterValidTabs(activeTabs);
-        if (validActiveTabs.length > 0) {
-          populateFromTab(validActiveTabs[0]);
-        } else {
-          populateFromTab(activeTabs[0]); // will trigger invalid context logic
-        }
-      } else {
-        // Fallback to getLastFocused if popup opened from another window type
-        chrome.windows.getLastFocused({ windowTypes: ["normal"] }, function (win) {
-          if (win && win.id) {
-            chrome.tabs.query({ active: true, windowId: win.id }, (winTabs) => {
-               if (winTabs && winTabs.length > 0) {
-                 const validWinTabs = filterValidTabs(winTabs);
-                 populateFromTab(validWinTabs.length > 0 ? validWinTabs[0] : winTabs[0]);
-               }
-            });
-          }
-        });
-      }
-      
-      // Defer heavy fetching of all tabs and rendering to background
-      setTimeout(fetchAllTabsBackground, 50);
-    });
-  }
+  });
 }
+
+window.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "refreshCurrentTab") {
+    loadCurrentTab();
+  }
+});
 
 function renderMultiTabList() {
   if (!multiSaveTabList) return;
