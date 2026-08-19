@@ -362,12 +362,12 @@ body.synthwave-theme {
   --bg-primary: #2b213a;
   --bg-secondary: #1a1625;
   --text-primary: #fdfdfd;
-  --text-secondary: #b99de0;
-  --accent-color: #f92aad;
+  --text-secondary: rgb(247, 177, 212);
+  --accent-color: rgb(255, 193, 255);
   --border-color: #513e75;
   --danger-color: #ff3366;
   --success-color: #36f9f6;
-  --hover-bg: #41325c;
+  --hover-bg: rgb(247, 177, 212);
   --bg-tags-select: rgba(43, 33, 58, 0.95);
 }
 
