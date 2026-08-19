@@ -2702,20 +2702,42 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
+  padding: 8px 12px;
   margin-top: 8px;
   background: var(--bg-tertiary);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
   border-radius: 6px;
   font-size: 0.85rem;
   color: var(--text-primary);
+  transition: all var(--transition-fast, 0.2s ease);
+}
+
+.sidebar-select-all.hidden {
+  display: none !important;
+}
+
+.sidebar-select-all:hover {
+  background: var(--bg-secondary);
 }
 
 .sidebar-select-all input {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
   cursor: pointer;
+  accent-color: var(--accent-color, var(--focus-outline, #4a90e2));
+  margin: 0;
+  vertical-align: middle;
 }
 
 .sidebar-select-all label {
   cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Scroll to Top Button - Matching main scroll-to-top style */
@@ -5943,8 +5965,33 @@ body.is-scrolled .webview-search-wrapper {
 }
 
 .organize-folders-popup-content {
+  width: 92% !important;
+  max-width: 1050px !important;
+  height: 88vh !important;
+  max-height: 880px !important;
+}
+
+.organize-folders-popup-content.is-fullscreen {
+  width: 98vw !important;
+  max-width: 98vw !important;
+  height: 96vh !important;
+  max-height: 96vh !important;
+  border-radius: 12px;
+}
+
+.analytics-popup-content {
   width: 90% !important;
   max-width: 1000px !important;
+  height: 88vh !important;
+  max-height: 880px !important;
+}
+
+.analytics-popup-content.is-fullscreen {
+  width: 98vw !important;
+  max-width: 98vw !important;
+  height: 96vh !important;
+  max-height: 96vh !important;
+  border-radius: 12px;
 }
 
 .setting-pill-group {

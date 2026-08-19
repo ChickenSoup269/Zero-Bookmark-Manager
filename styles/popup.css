@@ -575,9 +575,40 @@ body.is-scrolled .sticky-search {
   padding-left: var(--spacing-sm);
 }
 
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 6px);
+}
+
+.select-all.hidden {
+  display: none !important;
+}
+
+.select-all input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  min-height: 15px;
+  cursor: pointer;
+  accent-color: var(--accent-color, var(--focus-outline, #4a90e2));
+  margin: 0;
+  vertical-align: middle;
+}
+
+.select-all label {
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+}
+
 .select-all label:hover {
   cursor: pointer;
-  color: var(--text-secondary);
+  color: var(--accent-color, var(--text-secondary));
 }
 
 #toggle-checkboxes {
@@ -2218,3 +2249,111 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 }
 
 /* Native Popup Mode Styles */
+.organize-folders-popup-content,
+.analytics-popup-content,
+.smart-cleanup-popup-content {
+  width: 96% !important;
+  max-width: 96vw !important;
+  height: 94vh !important;
+  max-height: 94vh !important;
+  padding: 12px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+/* Folder Studio Popup Adaptations */
+.studio-split-view {
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+}
+
+.studio-left-pane {
+  max-height: 220px !important;
+  border-right: none !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  padding-bottom: 10px !important;
+  padding-right: 0 !important;
+}
+
+.studio-right-pane {
+  padding-left: 0 !important;
+}
+
+.folder-studio-tabs,
+.analytics-hub-tabs {
+  gap: 4px !important;
+  padding-bottom: 8px !important;
+}
+
+.studio-tab-btn,
+.analytics-tab-btn {
+  padding: 6px 10px !important;
+  font-size: 0.78rem !important;
+  gap: 5px !important;
+}
+
+.studio-sort-grid,
+.analytics-grid-two,
+.analytics-folders-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.analytics-card {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.analytics-visited-list,
+.habit-bookmark-row,
+.habit-bm-info {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.habit-bm-title,
+.habit-bm-url {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.analytics-metrics-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.metric-card {
+  padding: 8px 10px !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.metric-icon {
+  width: 34px !important;
+  height: 34px !important;
+  font-size: 0.95rem !important;
+}
+
+.metric-value {
+  font-size: 1.15rem !important;
+}
+
+.metric-label {
+  font-size: 0.68rem !important;
+}
+
+.time-buckets-grid {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+}
