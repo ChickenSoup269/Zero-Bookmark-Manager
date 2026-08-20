@@ -2250,6 +2250,7 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 
 /* Native Popup Mode Styles */
 .organize-folders-popup-content,
+#analytics-popup .rename-popup-content,
 .analytics-popup-content,
 .smart-cleanup-popup-content {
   width: 96% !important;
@@ -2259,6 +2260,9 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   padding: 12px !important;
   border-radius: 10px !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
 }
 
 /* Folder Studio Popup Adaptations */
@@ -2292,6 +2296,21 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   padding: 6px 10px !important;
   font-size: 0.78rem !important;
   gap: 5px !important;
+}
+
+.studio-tab-btn.active,
+.analytics-tab-btn.active {
+  background: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+  border-color: var(--text-primary) !important;
+  font-weight: 700 !important;
+}
+
+.studio-tab-btn.active i,
+.studio-tab-btn.active span,
+.analytics-tab-btn.active i,
+.analytics-tab-btn.active span {
+  color: var(--bg-primary) !important;
 }
 
 .studio-sort-grid,
@@ -2337,6 +2356,34 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   padding: 8px 10px !important;
   gap: 8px !important;
   min-width: 0 !important;
+}
+
+.analytics-hub-container {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.analytics-hub-body {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.analytics-tab-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 6px 6px 80px 4px !important;
+  box-sizing: border-box !important;
 }
 
 .metric-icon {

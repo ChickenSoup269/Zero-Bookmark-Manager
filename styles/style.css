@@ -135,13 +135,13 @@ body {
   transition:
     background-color var(--transition-normal),
     color var(--transition-normal);
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
 }
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
 }
 
@@ -5879,20 +5879,34 @@ html {
 /* =========================================
    ANALYTICS & INSIGHTS HUB STYLES
    ========================================= */
+#analytics-popup .rename-popup-content,
 .analytics-popup-content {
-  width: 880px;
-  max-width: 95vw;
-  height: 86vh;
-  max-height: 860px;
+  width: min(960px, 95vw);
+  max-width: 960px;
+  height: min(720px, 86vh);
+  max-height: 86vh;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 20px 24px 16px !important;
+  overflow: hidden !important;
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(20px);
+  box-sizing: border-box;
+  text-align: left;
+}
+
+#analytics-popup .organize-folders-header {
+  flex-shrink: 0;
+  margin-bottom: 12px;
+}
+
+#analytics-popup .rename-popup-buttons {
+  display: none !important;
 }
 
 .analytics-popup-content.is-fullscreen {
@@ -5900,22 +5914,25 @@ html {
   max-width: 98vw !important;
   height: 96vh !important;
   max-height: 96vh !important;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 .analytics-hub-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  gap: 16px;
+  flex: 1 1 0;
+  min-height: 0;
+  gap: 12px;
+  overflow: hidden;
 }
 
 .analytics-hub-tabs {
   display: flex;
   gap: 8px;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 12px;
+  padding-bottom: 10px;
   overflow-x: auto;
+  flex-shrink: 0;
 }
 
 .analytics-tab-btn {
@@ -5923,11 +5940,11 @@ html {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border-radius: 10px;
+  border-radius: 9px;
   border: 1px solid var(--border-color);
   background: var(--bg-secondary);
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -5941,40 +5958,73 @@ html {
 }
 
 .analytics-tab-btn.active {
-  background: var(--accent-color);
-  color: var(--bg-primary);
-  border-color: var(--accent-color);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  background: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+  border-color: var(--text-primary) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  font-weight: 700 !important;
+}
+
+.analytics-tab-btn.active i,
+.analytics-tab-btn.active span {
+  color: var(--bg-primary) !important;
 }
 
 .analytics-hub-body {
-  flex: 1;
+  flex: 1 1 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .analytics-tab-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  height: 100%;
-  overflow-y: auto;
-  padding: 4px;
+  gap: 14px;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 8px 10px 100px 4px !important;
+  box-sizing: border-box;
+}
+
+.analytics-tab-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.analytics-tab-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.analytics-tab-content::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.analytics-tab-content::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
 }
 
 /* Metric Cards */
 .analytics-metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .analytics-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .analytics-card {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: var(--bg-secondary);
-  padding: 16px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -5984,8 +6034,8 @@ html {
 }
 
 .analytics-card h4 {
-  margin: 0 0 14px 0;
-  font-size: 1rem;
+  margin: 0 0 12px 0;
+  font-size: 0.92rem;
   color: var(--text-primary);
   display: flex;
   align-items: center;
@@ -5998,26 +6048,28 @@ html {
 .metric-card {
   flex-direction: row;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  padding: 12px 14px;
   transition: transform 0.2s, box-shadow 0.2s;
   min-width: 0;
 }
 
 .metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .metric-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  font-size: 1.15rem;
+  border-radius: 10px;
   background: rgba(59, 130, 246, 0.15);
   color: #3B82F6;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  font-size: 1.05rem;
   flex-shrink: 0;
 }
 
@@ -6035,25 +6087,25 @@ html {
 }
 
 .metric-label {
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   color: var(--text-secondary);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .metric-value {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--text-primary);
-  margin: 2px 0;
+  margin: 1px 0;
 }
 
 .metric-sub {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -6062,7 +6114,7 @@ html {
 
 /* Health Multi Progress */
 .health-summary-card {
-  padding: 16px;
+  padding: 10px 14px;
   min-width: 0;
 }
 
@@ -6070,26 +6122,27 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   min-width: 0;
 }
 
 .health-header h4 {
   margin: 0;
+  font-size: 0.88rem;
 }
 
 .health-badge {
-  font-size: 0.8rem;
-  padding: 4px 10px;
-  border-radius: 12px;
+  font-size: 0.74rem;
+  padding: 2px 8px;
+  border-radius: 10px;
   background: var(--bg-tertiary);
   color: var(--text-secondary);
   flex-shrink: 0;
 }
 
 .health-multi-progress {
-  height: 12px;
-  border-radius: 6px;
+  height: 8px;
+  border-radius: 4px;
   background: var(--bg-tertiary);
   display: flex;
   overflow: hidden;
@@ -6105,9 +6158,9 @@ html {
 .analytics-timeline-chart {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
-  height: 180px;
-  padding: 16px 8px 8px 8px;
+  gap: 8px;
+  height: 130px;
+  padding: 10px 6px 4px 6px;
   border-top: 1px dashed var(--border-color);
   overflow-x: auto;
   min-width: 0;
@@ -6120,22 +6173,22 @@ html {
   align-items: center;
   height: 100%;
   position: relative;
-  min-width: 44px;
+  min-width: 36px;
 }
 
 .bar-count-tooltip {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .timeline-bar-track {
   flex: 1;
   width: 100%;
-  max-width: 28px;
+  max-width: 22px;
   background: var(--bg-tertiary);
-  border-radius: 6px;
+  border-radius: 4px;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -6144,14 +6197,14 @@ html {
 .timeline-bar-fill {
   width: 100%;
   background: linear-gradient(to top, var(--accent-color), rgba(59, 130, 246, 0.6));
-  border-radius: 6px;
-  transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 4px;
+  transition: height 0.4s ease;
 }
 
 .timeline-bar-label {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-secondary);
-  margin-top: 8px;
+  margin-top: 6px;
   white-space: nowrap;
 }
 
@@ -6159,7 +6212,7 @@ html {
 .analytics-grid-two {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 16px;
+  gap: 12px;
   min-width: 0;
   max-width: 100%;
 }
@@ -6174,20 +6227,20 @@ html {
 .analytics-day-bars {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
 .day-bar-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
 .day-label {
-  width: 36px;
-  font-size: 0.82rem;
+  width: 28px;
+  font-size: 0.76rem;
   color: var(--text-secondary);
   font-weight: 600;
   flex-shrink: 0;
@@ -6195,9 +6248,9 @@ html {
 
 .day-bar-track {
   flex: 1;
-  height: 10px;
+  height: 8px;
   background: var(--bg-tertiary);
-  border-radius: 5px;
+  border-radius: 4px;
   overflow: hidden;
   min-width: 0;
 }
@@ -6205,14 +6258,14 @@ html {
 .day-bar-fill {
   height: 100%;
   background: var(--accent-color);
-  border-radius: 5px;
+  border-radius: 4px;
   transition: width 0.4s ease;
 }
 
 .day-count-val {
-  width: 24px;
+  width: 20px;
   text-align: right;
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   color: var(--text-primary);
   font-weight: 600;
   flex-shrink: 0;
@@ -6222,29 +6275,29 @@ html {
 .time-buckets-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 8px;
   min-width: 0;
 }
 
 .time-bucket-item {
   display: flex;
   flex-direction: column;
-  padding: 12px;
+  padding: 8px 10px;
   border-radius: 8px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
   overflow: hidden;
 }
 
 .time-bucket-item i {
-  font-size: 1.2rem;
+  font-size: 1rem;
   margin-bottom: 2px;
 }
 
 .time-bucket-item strong {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -6252,7 +6305,7 @@ html {
 }
 
 .time-bucket-item span {
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -6263,7 +6316,7 @@ html {
 .analytics-domain-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
@@ -6272,15 +6325,15 @@ html {
 .domain-item-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
 }
 
 .analytics-favicon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 4px;
   flex-shrink: 0;
 }
@@ -6296,8 +6349,8 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.82rem;
-  margin-bottom: 4px;
+  font-size: 0.78rem;
+  margin-bottom: 2px;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
@@ -6317,13 +6370,14 @@ html {
   color: var(--text-secondary);
   margin-left: 8px;
   font-weight: 600;
+  font-size: 0.72rem;
   flex-shrink: 0;
 }
 
 .domain-progress-track {
-  height: 8px;
+  height: 6px;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
   min-width: 0;
 }
@@ -6331,7 +6385,7 @@ html {
 .domain-progress-fill {
   height: 100%;
   background: var(--accent-color);
-  border-radius: 4px;
+  border-radius: 3px;
   transition: width 0.4s ease;
 }
 
@@ -6339,7 +6393,7 @@ html {
 .analytics-tags-cloud {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   align-content: flex-start;
   min-width: 0;
   max-width: 100%;
@@ -6348,12 +6402,12 @@ html {
 .analytics-tag-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 8px;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   max-width: 100%;
   overflow: hidden;
 }
@@ -6367,27 +6421,27 @@ html {
 }
 
 .tag-badge {
-  padding: 2px 6px;
-  border-radius: 8px;
+  padding: 1px 5px;
+  border-radius: 6px;
   background: var(--bg-tertiary);
   color: var(--text-secondary);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   flex-shrink: 0;
 }
 
 /* Folders Grid */
 .analytics-folders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
   min-width: 0;
 }
 
 .analytics-folder-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 8px 10px;
   border-radius: 8px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
@@ -6397,7 +6451,7 @@ html {
 
 .analytics-folder-item i {
   color: #F59E0B;
-  font-size: 1.1rem;
+  font-size: 1rem;
   flex-shrink: 0;
 }
 
@@ -6413,7 +6467,7 @@ html {
   display: block;
   width: 100%;
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -6423,16 +6477,16 @@ html {
   display: block;
   width: 100%;
   color: var(--text-secondary);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .folder-count-badge {
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 10px;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 8px;
   background: var(--bg-tertiary);
   color: var(--text-primary);
   font-weight: 700;
@@ -6443,7 +6497,7 @@ html {
 .analytics-visited-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
@@ -6452,8 +6506,8 @@ html {
 .habit-bookmark-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
+  gap: 8px;
+  padding: 6px 10px;
   border-radius: 8px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
@@ -6470,7 +6524,7 @@ html {
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   overflow: hidden;
 }
 
@@ -6479,7 +6533,7 @@ html {
   width: 100%;
   max-width: 100%;
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   text-decoration: none;
   overflow: hidden;
@@ -6497,7 +6551,7 @@ html {
   display: block;
   width: 100%;
   max-width: 100%;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -6507,9 +6561,9 @@ html {
 
 .visit-badge {
   flex-shrink: 0;
-  font-size: 0.75rem;
-  padding: 3px 8px;
-  border-radius: 8px;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 6px;
   background: rgba(239, 68, 68, 0.15);
   color: #EF4444;
   font-weight: 700;
@@ -6520,26 +6574,26 @@ html {
 .analytics-insights-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .insight-banner {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  border-radius: 10px;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
-  border-left: 4px solid var(--accent-color);
 }
 
 .insight-banner.danger-banner {
-  border-left-color: #EF4444;
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.05);
 }
 
 .insight-icon {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
 }
 
 .insight-text {
@@ -6549,13 +6603,13 @@ html {
 .insight-text strong {
   display: block;
   color: var(--text-primary);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
 }
 
 .insight-text p {
-  margin: 2px 0 0 0;
+  margin: 1px 0 0 0;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.74rem;
 }
 
 .insight-pristine-state {
@@ -6563,14 +6617,14 @@ html {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 30px;
   text-align: center;
   color: var(--text-secondary);
 }
 
 .analytics-empty {
-  padding: 24px;
+  padding: 16px;
   text-align: center;
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
