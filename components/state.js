@@ -11,7 +11,7 @@ export const uiState = {
   currentBookmarkId: null,
   showBookmarkIds: false,
   showNotesPreview: true,
-  showTagsInView: false,
+  showTagsInView: true,
   folderListBg: true,
   checkboxesVisible: false,
   bookmarkTags: {},
@@ -128,7 +128,7 @@ export function loadUIState(callback) {
         uiState.duplicateScope = result.uiState.duplicateScope || "folder"
         uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
         uiState.showNotesPreview = result.uiState.showNotesPreview ?? true
-        uiState.showTagsInView = result.uiState.showTagsInView ?? false
+        uiState.showTagsInView = result.uiState.showTagsInView ?? true
         uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
         uiState.bookmarkMenuBg = result.uiState.bookmarkMenuBg || "glass"
         uiState.showSmartFolders = result.uiState.showSmartFolders ?? true

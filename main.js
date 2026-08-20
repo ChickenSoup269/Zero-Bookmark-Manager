@@ -255,7 +255,7 @@ if (showNotesPreviewToggle) {
 const showTagsInViewToggle = document.getElementById("show-tags-in-view-toggle")
 if (showTagsInViewToggle) {
   chrome.storage.local.get(["uiState"], (data) => {
-    const savedValue = data.uiState?.showTagsInView ?? false
+    const savedValue = data.uiState?.showTagsInView ?? true
     uiState.showTagsInView = savedValue
     showTagsInViewToggle.checked = savedValue
     document.body.classList.toggle("show-tags-in-view", savedValue)
