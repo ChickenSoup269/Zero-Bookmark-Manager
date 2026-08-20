@@ -4,9 +4,11 @@ import {
   showCustomPopup,
   showCustomConfirm,
   showCustomPrompt,
+  escapeHtml,
 } from "../utils/utils.js"
 import { uiState } from "../state.js"
-import { renderFilteredBookmarks } from "../ui.js"
+import { renderFilteredBookmarks, showMoveFolderToFolderPopup } from "../ui.js"
+import { handleDeleteFolder } from "./deleteFolder.js"
 import { registerUndo, snapshotBookmarks, restoreDeletedBookmarks } from "../undo.js"
 
 let currentSelectedFolderId = null
@@ -356,7 +358,7 @@ function renderTreeNodes(container, elements) {
         ${hasChildrenFolders ? '<i class="fas fa-caret-down"></i>' : ""}
       </span>
       <i class="fas ${isCollapsed ? "fa-folder" : "fa-folder-open"} studio-folder-icon"></i>
-      <span class="studio-folder-name" title="${node.title || "Folder"}">${node.title || (node.id === "1" ? "Bookmarks Bar" : "Other Bookmarks")}</span>
+      <span class="studio-folder-name" data-tooltip="${escapeHtml(node.title || (node.id === "1" ? "Bookmarks Bar" : "Other Bookmarks"))}">${escapeHtml(node.title || (node.id === "1" ? "Bookmarks Bar" : "Other Bookmarks"))}</span>
       <span class="studio-count-badge" title="${directCount} direct, ${totalCount} total bookmarks">${directCount}</span>
     `
 
@@ -379,6 +381,10 @@ function renderTreeNodes(container, elements) {
         .querySelectorAll(".studio-tree-node")
         .forEach((el) => el.classList.toggle("selected", el === itemEl))
       renderInspector(document.getElementById("studio-inspector-pane"), elements)
+    })
+
+    itemEl.addEventListener("contextmenu", (e) => {
+      showStudioFolderContextMenu(e, node, elements)
     })
 
     // Drag & Drop
@@ -463,6 +469,148 @@ function renderTreeNodes(container, elements) {
   }
 
   rootNodes.forEach((root) => buildFolderTree(root, 0))
+}
+
+function showStudioFolderContextMenu(e, node, elements) {
+  e.preventDefault()
+  e.stopPropagation()
+
+  currentSelectedFolderId = node.id
+  document
+    .querySelectorAll(".studio-tree-node")
+    .forEach((el) => el.classList.toggle("selected", el.dataset.folderId === node.id))
+  renderInspector(document.getElementById("studio-inspector-pane"), elements)
+
+  const existingMenu = document.querySelector(".sidebar-folder-context-menu")
+  if (existingMenu) {
+    existingMenu.remove()
+  }
+
+  const contextMenu = document.createElement("div")
+  contextMenu.className = "sidebar-folder-context-menu"
+  contextMenu.style.zIndex = "35000"
+
+  const { t } = getLang()
+  const isDefaultFolder =
+    node.id === "1" || node.id === "2" || node.id === "3" || node.id === "0"
+
+  contextMenu.innerHTML = `
+    <div class="context-menu-item" data-action="new-subfolder">
+      <i class="fas fa-folder-plus"></i>
+      <span>${t.newSubfolder || "New Subfolder"}</span>
+    </div>
+    <div class="context-menu-item" data-action="move-to-folder">
+      <i class="fas fa-folder-open"></i>
+      <span>${t.moveToFolder || "Move to Folder"}</span>
+    </div>
+    ${
+      !isDefaultFolder
+        ? `
+    <div class="context-menu-item" data-action="rename-folder">
+      <i class="fas fa-edit"></i>
+      <span>${t.renameFolder || "Rename Folder"}</span>
+    </div>
+    <div class="context-menu-item delete" data-action="delete-folder" style="color: var(--danger-color, #e74c3c);">
+      <i class="fas fa-trash"></i>
+      <span>${t.deleteFolder || "Delete Folder"}</span>
+    </div>
+    `
+        : ""
+    }
+  `
+
+  contextMenu.style.position = "fixed"
+  let x = e.clientX
+  let y = e.clientY
+  contextMenu.style.left = `${x}px`
+  contextMenu.style.top = `${y}px`
+
+  document.body.appendChild(contextMenu)
+
+  const menuRect = contextMenu.getBoundingClientRect()
+  if (x + menuRect.width > window.innerWidth) {
+    contextMenu.style.left = `${Math.max(10, window.innerWidth - menuRect.width - 10)}px`
+  }
+  if (y + menuRect.height > window.innerHeight) {
+    contextMenu.style.top = `${Math.max(10, window.innerHeight - menuRect.height - 10)}px`
+  }
+
+  contextMenu.addEventListener("click", (menuEvent) => {
+    menuEvent.stopPropagation()
+    const action = menuEvent.target.closest(".context-menu-item")?.dataset.action
+
+    if (action === "new-subfolder") {
+      showCustomPrompt(
+        t.promptNewSubfolder || `Create new subfolder inside "${node.title || "Folder"}":`,
+        (name) => {
+          if (!name || !name.trim()) return
+          chrome.bookmarks.create(
+            { parentId: node.id, title: name.trim() },
+            (newFolder) => {
+              collapsedFolderIds.delete(node.id)
+              currentSelectedFolderId = newFolder.id
+              reloadTreeAndRefresh(elements)
+              showCustomPopup(
+                t.subfolderCreated || "Subfolder created successfully.",
+                "success",
+                true,
+              )
+            },
+          )
+        },
+      )
+    } else if (action === "rename-folder") {
+      showCustomPrompt(
+        t.renameFolder || "Rename Folder",
+        node.title || "",
+      ).then((newName) => {
+        if (newName && newName.trim() && newName.trim() !== node.title) {
+          chrome.bookmarks.update(
+            node.id,
+            { title: newName.trim() },
+            () => {
+              reloadTreeAndRefresh(elements)
+              showCustomPopup(
+                t.renameSuccess || "Folder renamed successfully!",
+                "success",
+                true,
+              )
+            },
+          )
+        }
+      })
+    } else if (action === "move-to-folder") {
+      const popupElements = {
+        addToFolderPopup: document.getElementById("add-to-folder-popup"),
+        addToFolderSelect: document.getElementById("add-to-folder-select"),
+        addToFolderSaveButton: document.getElementById("add-to-folder-save"),
+        addToFolderCancelButton: document.getElementById("add-to-folder-cancel"),
+      }
+      if (popupElements.addToFolderPopup) {
+        showMoveFolderToFolderPopup(popupElements, node.id)
+      } else {
+        showMoveFolderToFolderPopup(elements, node.id)
+      }
+    } else if (action === "delete-folder") {
+      handleDeleteFolder(node.id, elements)
+      setTimeout(() => reloadTreeAndRefresh(elements), 300)
+    }
+
+    contextMenu.remove()
+  })
+
+  const closeMenu = (event) => {
+    if (!contextMenu.contains(event.target)) {
+      contextMenu.remove()
+      document.removeEventListener("click", closeMenu)
+      document.removeEventListener("contextmenu", closeMenu)
+    }
+  }
+
+  setTimeout(() => {
+    document.addEventListener("click", closeMenu)
+    document.addEventListener("contextmenu", closeMenu)
+  }, 0)
 }
 
 function renderInspector(container, elements) {

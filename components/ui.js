@@ -3,6 +3,7 @@ import {
   showCustomPopup,
   calculateMatchScore,
   showCustomConfirm,
+  showCustomPrompt,
 } from "./utils/utils.js"
 import { appendBookmarksLazily } from "./utils/lazyRender.js"
 import {
@@ -1779,7 +1780,7 @@ function renderSidebarFolderTree(folders, elements) {
       ${treeLine}
       ${hasChildren ? `<i class="fas fa-chevron-${isCollapsed ? "right" : "down"} folder-toggle" data-folder-id="${folder.id}"></i>` : '<span class="folder-spacer"></span>'}
       <i class="fas fa-folder${isCollapsed && hasChildren ? "" : "-open"} folder-icon"></i>
-      <span class="folder-name">${folder.title}</span>
+      <span class="folder-name" data-tooltip="${escapeHtml(folder.title)}">${escapeHtml(folder.title)}</span>
       ${hasChildren ? `<span class="folder-child-count">${folder.children.length}</span>` : ""}
     `
 
@@ -1972,7 +1973,11 @@ function renderSidebarFolderTree(folders, elements) {
         ${
           !isDefaultFolder
             ? `
-        <div class="context-menu-item delete" data-action="delete-folder" style="color: var(--danger-color);">
+        <div class="context-menu-item" data-action="rename-folder">
+          <i class="fas fa-edit"></i>
+          <span>${t.renameFolder || "Rename Folder"}</span>
+        </div>
+        <div class="context-menu-item delete" data-action="delete-folder" style="color: var(--danger-color, #e74c3c);">
           <i class="fas fa-trash"></i>
           <span>${t.deleteFolder || "Delete Folder"}</span>
         </div>
@@ -2008,6 +2013,28 @@ function renderSidebarFolderTree(folders, elements) {
           if (popupElements.addToFolderPopup) {
             showMoveFolderToFolderPopup(popupElements, folder.id)
           }
+        } else if (action === "rename-folder") {
+          showCustomPrompt(
+            t.renameFolder || "Rename Folder",
+            folder.title || "",
+          ).then((newName) => {
+            if (newName && newName.trim() && newName.trim() !== folder.title) {
+              chrome.bookmarks.update(
+                folder.id,
+                { title: newName.trim() },
+                () => {
+                  window.BookmarkCache.getTree((tree) => {
+                    renderFilteredBookmarks(tree, elements)
+                    showCustomPopup(
+                      translations[language]?.renameSuccess || "Folder renamed successfully!",
+                      "success",
+                      true,
+                    )
+                  })
+                },
+              )
+            }
+          })
         } else if (action === "delete-folder") {
           handleDeleteFolder(folder.id, elements)
         }
@@ -3301,8 +3328,8 @@ function renderCardView(bookmarkTreeNodes, filteredBookmarks, elements) {
             <div class="folder-drop-zone folder-drop-zone-after" data-drop-position="after" aria-hidden="true"></div>
             <div class="folder-content" style="pointer-events: none;">
                 <span class="folder-icon"><i class="fas fa-folder-open" style="color: var(--text-secondary);"></i></span>
-                <span class="folder-title">${
-                  folder.title?.trim() || `Folder ${folder.id}`
+                <span class="folder-title" data-tooltip="${escapeHtml(folder.title?.trim() || `Folder ${folder.id}`)}">${
+                  escapeHtml(folder.title?.trim() || `Folder ${folder.id}`)
                 }</span>
                 <span class="folder-count">${folderBookmarks.length}</span>
             </div>
@@ -4013,7 +4040,7 @@ function renderTreeView(
       folderDiv.innerHTML = `
         <div class="folder-toggle">${isCollapsed ? "+" : "−"}</div>
         <span class="folder-icon">${isCollapsed ? '<i class="fas fa-folder" style="color: var(--text-secondary);"></i>' : '<i class="fas fa-folder-open" style="color: var(--text-secondary);"></i>'}</span>
-        <span class="folder-title">${node.title || `Folder ${node.id}`}</span>
+        <span class="folder-title" data-tooltip="${escapeHtml(node.title || `Folder ${node.id}`)}">${escapeHtml(node.title || `Folder ${node.id}`)}</span>
         <span class="folder-count">${countFolderItems(node)}</span>
         <button class="button delete-folder-tree-btn" data-id="${node.id}" style="background: none; border: none; color: var(--text-muted); cursor: pointer;" title="${translations[language].deleteFolder}">
             <i class="fas fa-trash"></i>
@@ -5496,8 +5523,28 @@ document.addEventListener("mouseover", (e) => {
     if (isTruncated) {
       globalTooltip.textContent = target.dataset.tooltip
       const rect = target.getBoundingClientRect()
-      globalTooltip.style.left = e.clientX + "px"
-      globalTooltip.style.top = rect.top - 8 + "px"
+
+      let left = e.clientX
+      let top = rect.top - 8
+
+      // If near top, flip below
+      if (top - 35 < 0) {
+        top = rect.bottom + 8
+        globalTooltip.style.transform = "translateX(-50%) translateY(0)"
+      } else {
+        globalTooltip.style.transform = "translateX(-50%) translateY(-100%)"
+      }
+
+      // Constrain horizontal position so it doesn't clip off left or right edge
+      const halfWidth = 150
+      if (left < halfWidth + 10) {
+        left = halfWidth + 10
+      } else if (left > window.innerWidth - halfWidth - 10) {
+        left = window.innerWidth - halfWidth - 10
+      }
+
+      globalTooltip.style.left = left + "px"
+      globalTooltip.style.top = top + "px"
       globalTooltip.style.visibility = "visible"
       globalTooltip.style.opacity = "1"
     }
