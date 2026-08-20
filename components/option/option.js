@@ -301,7 +301,7 @@ export async function customLoadUIState(callback) {
     uiState.bookmarkTags = result.bookmarkTags || {}
     uiState.tagColors = result.tagColors || {}
     uiState.tagTextColors = result.tagTextColors || {}
-    uiState.healthStatus = result.healthStatus || result.bookmarkHealth || uiState.healthStatus || {}
+    uiState.healthStatus = {}
 
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
     if (elements.languageSwitcher) {

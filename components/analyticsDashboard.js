@@ -224,7 +224,7 @@ function renderCurrentAnalyticsTab(elements, data) {
 // 1. TAB: OVERVIEW METRIC CARDS
 // ==========================================
 function renderOverviewTab(body, data) {
-  const { t } = getLang()
+  const { language, t } = getLang()
   const { tree, bookmarks, bookmarkTags, bookmarkNotes, favoriteBookmarks, pinnedBookmarks, bookmarkHealth } = data
 
   const totalBookmarks = bookmarks.length
@@ -330,8 +330,8 @@ function renderOverviewTab(body, data) {
         <div class="health-header" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <h4 style="margin: 0;"><i class="fas fa-heart-pulse"></i> ${t.analyticsLinkHealth || "Link Health Status"}</h4>
-            <button type="button" class="studio-btn small primary-btn btn-scan-health-now" style="padding: 3px 10px; font-size: 0.76rem; border-radius: 6px;" title="Scan link health">
-              <i class="fas fa-rotate"></i> Scan Now
+            <button type="button" class="studio-btn small primary-btn btn-scan-health-now" style="padding: 3px 10px; font-size: 0.76rem; border-radius: 6px;" title="${t.scanHealthTitle || "Scan link health"}">
+              <i class="fas fa-rotate"></i> ${t.scanNow || "Scan Now"}
             </button>
           </div>
           <span class="health-badge">${healthyCount} ${t.analyticsHealthHealthy || "Healthy"}, ${brokenCount} ${t.analyticsHealthBroken || "Broken"}, ${uncheckedCount} ${t.analyticsHealthUnchecked || "Unchecked"}</span>
@@ -355,21 +355,22 @@ function renderOverviewTab(body, data) {
 // 2. TAB: ACTIVITY & TRENDS (CHARTS)
 // ==========================================
 function renderActivityTab(body, data) {
-  const { t } = getLang()
+  const { language, t } = getLang()
   const { bookmarks, tree } = data
 
   // Monthly stats (last 12 months)
   const monthLabels = []
   const monthCounts = []
   const now = new Date()
+  const localeCode = language === "vi" ? "vi-VN" : "en-US"
 
   for (let i = 11; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const monthName = d.toLocaleString("default", { month: "short" })
+    const monthName = d.toLocaleString(localeCode, { month: "short" })
     monthLabels.push(`${monthName} ${d.getFullYear().toString().slice(2)}`)
 
-    const start = new Date(d.getFullYear(), d.getMonth(), 1).getTime()
-    const end = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59).getTime()
+    const start = new Date(d.getFullYear(), d.getMonth(), 1, 0, 0, 0, 0).getTime()
+    const end = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59, 999).getTime()
 
     const count = bookmarks.filter((b) => (b.dateAdded || 0) >= start && (b.dateAdded || 0) <= end).length
     monthCounts.push(count)
@@ -544,7 +545,7 @@ function renderActivityTab(body, data) {
 // 3. TAB: DOMAINS & TAGS DISTRIBUTION
 // ==========================================
 function renderDistributionTab(body, data) {
-  const { t } = getLang()
+  const { language, t } = getLang()
   const { tree, bookmarks, bookmarkTags, tagColors } = data
 
   // Domain breakdown
@@ -724,7 +725,7 @@ function renderDistributionTab(body, data) {
 // 4. TAB: HABITS & FORGOTTEN BOOKMARKS
 // ==========================================
 function renderHabitsTab(body, data) {
-  const { t } = getLang()
+  const { language, t } = getLang()
   const { bookmarks, visitCounts } = data
 
   // Most visited
@@ -849,7 +850,7 @@ function renderHabitsTab(body, data) {
                       } catch (e) {
                         cleanDomain = rawUrl
                       }
-                      const dateAddedStr = b.dateAdded ? new Date(b.dateAdded).toLocaleDateString() : "Unknown"
+                      const dateAddedStr = b.dateAdded ? new Date(b.dateAdded).toLocaleDateString(language === "vi" ? "vi-VN" : undefined) : "Unknown"
                       return `
                   <div class="habit-bookmark-row">
                     <div class="habit-bm-main">
@@ -879,7 +880,7 @@ function renderHabitsTab(body, data) {
 // 5. TAB: SMART INSIGHTS & RECOMMENDATIONS
 // ==========================================
 function renderInsightsTab(body, data, elements) {
-  const { t } = getLang()
+  const { language, t } = getLang()
   const { bookmarks, bookmarkTags, bookmarkHealth } = data
 
   const untagged = bookmarks.filter((b) => !(bookmarkTags[b.id] && bookmarkTags[b.id].length > 0))

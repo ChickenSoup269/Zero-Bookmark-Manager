@@ -256,9 +256,13 @@ export async function checkBrokenLinks(bookmarks, onProgress, onComplete) {
 
   await runPool()
   try {
+    const cleaned = { ...(uiState.healthStatus || {}) }
+    Object.keys(cleaned).forEach((k) => {
+      if (cleaned[k] === "checking") delete cleaned[k]
+    })
     chrome.storage.local.set({
-      healthStatus: uiState.healthStatus,
-      bookmarkHealth: uiState.healthStatus,
+      healthStatus: cleaned,
+      bookmarkHealth: cleaned,
     })
   } catch (err) {
     console.error("Error saving healthStatus to storage:", err)

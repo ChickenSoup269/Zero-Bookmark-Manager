@@ -735,5 +735,7 @@ export const vi = {
   insightFoldersDesc: "Gom các bookmark liên quan vào thư mục con giúp phân cấp gọn gàng.",
   insightHealthDesc: "Dọn dẹp liên kết chết giúp thư viện luôn mượt mà và an toàn.",
   recentActivityTimeline: "Bookmark mới thêm gần đây",
+  scanNow: "Quét ngay",
+  scanHealthTitle: "Quét tình trạng liên kết",
 }
 

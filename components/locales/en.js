@@ -729,5 +729,7 @@ export const en = {
   insightFoldersDesc: "Group related bookmarks into subfolders for a tidy hierarchy.",
   insightHealthDesc: "Clean dead links to keep your library healthy and fast.",
   recentActivityTimeline: "Recently Added Bookmarks",
+  scanNow: "Scan Now",
+  scanHealthTitle: "Scan link health",
 }
 
