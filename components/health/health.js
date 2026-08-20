@@ -255,5 +255,13 @@ export async function checkBrokenLinks(bookmarks, onProgress, onComplete) {
   }
 
   await runPool()
+  try {
+    chrome.storage.local.set({
+      healthStatus: uiState.healthStatus,
+      bookmarkHealth: uiState.healthStatus,
+    })
+  } catch (err) {
+    console.error("Error saving healthStatus to storage:", err)
+  }
   onComplete(brokenCount)
 }

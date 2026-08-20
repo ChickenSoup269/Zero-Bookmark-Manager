@@ -728,4 +728,6 @@ export const en = {
   insightTagsDesc: "Organizing with tags makes searching instant and flexible.",
   insightFoldersDesc: "Group related bookmarks into subfolders for a tidy hierarchy.",
   insightHealthDesc: "Clean dead links to keep your library healthy and fast.",
+  recentActivityTimeline: "Recently Added Bookmarks",
 }
+
