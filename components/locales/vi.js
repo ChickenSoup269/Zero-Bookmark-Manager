@@ -575,6 +575,10 @@ export const vi = {
   firstRunGuideStep2: "Chọn thư mục, sau đó bấm Done để lưu bookmark.",
   firstRunGuideStep3:
     "Mở Zero Bookmark để quản lý, tìm kiếm và sắp xếp bookmark đó.",
+  firstRunGuideStepOrganize:
+    "Folder Studio: Quản lý cây thư mục 2 cột trực quan, kéo thả, gộp thư mục trùng và dọn thư mục rỗng.",
+  firstRunGuideStepAnalytics:
+    "Analytics & Insights: Thống kê xu hướng, tần suất truy cập, phân bố thẻ và độ khỏe bookmark.",
   firstRunSave: "Bắt đầu sử dụng",
   firstRunTourSettingsTitle: "Mở Settings",
   firstRunTourSettingsMsg:
@@ -621,6 +625,24 @@ export const vi = {
   firstRunWebTourSmartCleanupTitle: "Dọn dẹp thông minh (Smart Cleanup)",
   firstRunWebTourSmartCleanupMsg:
     "Tự động gom nhóm tên miền, phát hiện link chết, gộp bookmark trùng và dọn dẹp thư mục rỗng.",
+  firstRunWebTourOrganizeTitle: "Quản lý Thư mục (Folder Studio)",
+  firstRunWebTourOrganizeMsg:
+    "Mở trung tâm quản lý cấu trúc thư mục chuyên sâu với nhiều công cụ tự động hóa.",
+  firstRunWebTourOrganizeHubTitle: "Giao diện Folder Studio",
+  firstRunWebTourOrganizeHubMsg:
+    "Giao diện 2 cột thông minh: Cây thư mục (hỗ trợ Kéo-thả & Menu chuột phải) bên trái và Chi tiết/Thao tác nhanh bên phải.",
+  firstRunWebTourOrganizeModesTitle: "4 Chế độ Studio chuyên sâu",
+  firstRunWebTourOrganizeModesMsg:
+    "Dễ dàng chuyển đổi giữa: Cây phân cấp (Hierarchy), Gộp thư mục trùng (Merge Duplicates), Tự động xếp A-Z (Auto Sort), và Dọn thư mục rỗng (Clean Empty).",
+  firstRunWebTourAnalyticsTitle: "Thống kê & Thông tin (Analytics)",
+  firstRunWebTourAnalyticsMsg:
+    "Theo dõi biểu đồ tăng trưởng, thói quen truy cập và tình trạng sức khỏe của toàn bộ bookmark.",
+  firstRunWebTourAnalyticsHubTitle: "Bảng Thống kê (Analytics Dashboard)",
+  firstRunWebTourAnalyticsHubMsg:
+    "Bức tranh toàn cảnh về kho bookmark: Tổng số link, thư mục, thẻ tags, và tỷ lệ link sống/chết theo thời gian thực.",
+  firstRunWebTourAnalyticsTabsTitle: "Phân tích đa chiều & Xu hướng",
+  firstRunWebTourAnalyticsTabsMsg:
+    "Khám phá các tab chuyên sâu: Hoạt động (Activity), Phân bố Tên miền & Thẻ (Domains & Tags), Thói quen truy cập (Habits), và Gợi ý thông minh (Smart Insights).",
   firstRunWebTourSettingsMsg:
     "Mở sidebar cài đặt bên phải để thay đổi ngôn ngữ, theme, chế độ xem, nhập/xuất, và các tùy chọn ứng dụng.",
   firstRunWebTourPanelMsg:

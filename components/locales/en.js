@@ -570,6 +570,10 @@ export const en = {
     "Use Ctrl + D on Windows/Linux or Command + D on macOS to bookmark the current page faster.",
   firstRunGuideStep2: "Choose a folder, then press Done to save the bookmark.",
   firstRunGuideStep3: "Open Zero Bookmark to manage, search, and organize it.",
+  firstRunGuideStepOrganize:
+    "Folder Studio: Visual 2-column workspace with drag & drop, duplicate merge, auto sort, and clean empty folders.",
+  firstRunGuideStepAnalytics:
+    "Analytics & Insights: Visual metrics on your bookmark trends, habits, health ratio, and smart recommendations.",
   firstRunSave: "Get Started",
   firstRunTourSettingsTitle: "Open Settings",
   firstRunTourSettingsMsg:
@@ -616,6 +620,24 @@ export const en = {
   firstRunWebTourSmartCleanupTitle: "Smart Cleanup",
   firstRunWebTourSmartCleanupMsg:
     "Automatically organize domains, find dead links, remove duplicates, and clean up empty folders.",
+  firstRunWebTourOrganizeTitle: "Folder Studio & Organizer",
+  firstRunWebTourOrganizeMsg:
+    "Open the advanced folder studio to reorganize, merge, and clean your folder tree.",
+  firstRunWebTourOrganizeHubTitle: "Folder Studio Split-View",
+  firstRunWebTourOrganizeHubMsg:
+    "Visual 2-column workspace: Tree navigation on the left with Drag & Drop & Right-click menu, Inspector & Quick Actions on the right.",
+  firstRunWebTourOrganizeModesTitle: "4 Powerful Studio Modes",
+  firstRunWebTourOrganizeModesMsg:
+    "Easily switch between: Hierarchy Studio (Tree), Merge Duplicates, A-Z Auto Sorting, and Clean Empty Folders.",
+  firstRunWebTourAnalyticsTitle: "Analytics & Insights",
+  firstRunWebTourAnalyticsMsg:
+    "Track your bookmarking habits, access trends, and library health at a glance.",
+  firstRunWebTourAnalyticsHubTitle: "Analytics Dashboard",
+  firstRunWebTourAnalyticsHubMsg:
+    "Comprehensive metrics: Total bookmarks, folders, tags, health ratio, and growth timeline charts.",
+  firstRunWebTourAnalyticsTabsTitle: "Deep Analytics & Insights",
+  firstRunWebTourAnalyticsTabsMsg:
+    "Explore Activity trends, Domain & Tag distribution, Access habits, and Smart AI/cleanup suggestions.",
   firstRunWebTourSettingsMsg:
     "Open the right settings sidebar for language, theme, view mode, export/import, health checks, and app settings.",
   firstRunWebTourPanelMsg:

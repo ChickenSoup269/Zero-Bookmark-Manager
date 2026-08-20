@@ -753,6 +753,46 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         dynamic: true,
       },
       {
+        selector: "#organize-folders-button",
+        title: t.firstRunWebTourOrganizeTitle,
+        message: t.firstRunWebTourOrganizeMsg,
+        ensureSidebarOpen: true,
+        openSection: "admin",
+      },
+      {
+        selector: "#organize-folders-popup .organize-folders-popup-content",
+        title: t.firstRunWebTourOrganizeHubTitle,
+        message: t.firstRunWebTourOrganizeHubMsg,
+        openFolderStudio: true,
+      },
+      {
+        selector: ".folder-studio-tabs",
+        title: t.firstRunWebTourOrganizeModesTitle,
+        message: t.firstRunWebTourOrganizeModesMsg,
+        openFolderStudio: true,
+        dynamic: true,
+      },
+      {
+        selector: "#analytics-btn",
+        title: t.firstRunWebTourAnalyticsTitle,
+        message: t.firstRunWebTourAnalyticsMsg,
+        ensureSidebarOpen: true,
+        openSection: "admin",
+      },
+      {
+        selector: "#analytics-popup .analytics-popup-content",
+        title: t.firstRunWebTourAnalyticsHubTitle,
+        message: t.firstRunWebTourAnalyticsHubMsg,
+        openAnalytics: true,
+      },
+      {
+        selector: ".analytics-hub-tabs",
+        title: t.firstRunWebTourAnalyticsTabsTitle,
+        message: t.firstRunWebTourAnalyticsTabsMsg,
+        openAnalytics: true,
+        dynamic: true,
+      },
+      {
         selector: ".bookmark-item .dropdown-btn",
         title: t.firstRunTourBookmarkMenuTitle,
         message: t.firstRunTourBookmarkMenuMsg,
@@ -1057,6 +1097,12 @@ function startFirstRunTour() {
   const finish = () => {
     tour.classList.add("hidden")
     setSettingsMenuOpen(false)
+    const cleanupPopup = document.getElementById("smart-cleanup-popup")
+    if (cleanupPopup && !cleanupPopup.classList.contains("hidden")) cleanupPopup.classList.add("hidden")
+    const organizePopup = document.getElementById("organize-folders-popup")
+    if (organizePopup && !organizePopup.classList.contains("hidden")) organizePopup.classList.add("hidden")
+    const analyticsPopup = document.getElementById("analytics-popup")
+    if (analyticsPopup && !analyticsPopup.classList.contains("hidden")) analyticsPopup.classList.add("hidden")
     localStorage.setItem(tourStorageKey, "true")
     window.removeEventListener("resize", renderStep)
     document.removeEventListener("keydown", handleKeydown)
@@ -1069,9 +1115,38 @@ function startFirstRunTour() {
     setSettingsMenuOpen(step.openSettings)
     
     if (step.openCleanup) {
-      document.getElementById("smart-cleanup-button")?.click()
+      const popup = document.getElementById("smart-cleanup-popup")
+      if (!popup || popup.classList.contains("hidden")) {
+        document.getElementById("smart-cleanup-button")?.click()
+      }
     } else {
       const popup = document.getElementById("smart-cleanup-popup")
+      if (popup && !popup.classList.contains("hidden")) {
+        popup.classList.add("hidden")
+      }
+    }
+
+    if (step.openFolderStudio) {
+      const popup = document.getElementById("organize-folders-popup")
+      if (!popup || popup.classList.contains("hidden")) {
+        const fsBtn = document.getElementById("organize-folders-button") || document.getElementById("organize-folders-btn")
+        fsBtn?.click()
+      }
+    } else {
+      const popup = document.getElementById("organize-folders-popup")
+      if (popup && !popup.classList.contains("hidden")) {
+        popup.classList.add("hidden")
+      }
+    }
+
+    if (step.openAnalytics) {
+      const popup = document.getElementById("analytics-popup")
+      if (!popup || popup.classList.contains("hidden")) {
+        const anBtn = document.getElementById("analytics-btn") || document.getElementById("analytics-btn-menu")
+        anBtn?.click()
+      }
+    } else {
+      const popup = document.getElementById("analytics-popup")
       if (popup && !popup.classList.contains("hidden")) {
         popup.classList.add("hidden")
       }
