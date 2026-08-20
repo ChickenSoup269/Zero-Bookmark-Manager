@@ -5956,12 +5956,13 @@ html {
   display: none !important;
 }
 
+#analytics-popup .rename-popup-content.is-fullscreen,
 .analytics-popup-content.is-fullscreen {
   width: 98vw !important;
   max-width: 98vw !important;
   height: 96vh !important;
   max-height: 96vh !important;
-  border-radius: 14px;
+  border-radius: 14px !important;
 }
 
 .analytics-hub-container {

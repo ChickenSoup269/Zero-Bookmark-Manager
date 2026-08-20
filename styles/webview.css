@@ -5967,12 +5967,13 @@ body.is-scrolled .webview-search-wrapper {
   background: var(--accent-color, #3b82f6) !important;
 }
 
+#analytics-popup .rename-popup-content.is-fullscreen,
 .analytics-popup-content.is-fullscreen {
   width: 98vw !important;
   max-width: 98vw !important;
   height: 96vh !important;
   max-height: 96vh !important;
-  border-radius: 12px;
+  border-radius: 12px !important;
 }
 
 .habit-bookmark-row {

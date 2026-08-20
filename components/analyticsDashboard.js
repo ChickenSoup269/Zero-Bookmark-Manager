@@ -51,23 +51,33 @@ export function initAnalyticsDashboard(elements) {
   if (closeX) closeX.addEventListener("click", closePopup)
   if (closeBtn) closeBtn.addEventListener("click", closePopup)
 
-  if (fullscreenBtn && popupContent) {
-    const isWebview = window.location.pathname.endsWith("/bookmarks.html")
+  const isWebview = window.location.pathname.endsWith("/bookmarks.html")
+  const updateFullscreenBtnState = (isFullscreen) => {
+    if (!fullscreenBtn) return
     const { t } = getLang()
-    fullscreenBtn.title = isWebview
-      ? t.fullscreen || "Fullscreen"
-      : t.openInFullTab || "Open in Full Tab"
+    const icon = fullscreenBtn.querySelector("i")
+    if (!isWebview) {
+      if (icon) icon.className = "fas fa-external-link-alt"
+      fullscreenBtn.title = t.openInFullTab || "Open in Full Tab"
+      fullscreenBtn.setAttribute("aria-label", fullscreenBtn.title)
+      return
+    }
+    if (icon) {
+      icon.className = isFullscreen ? "fas fa-compress" : "fas fa-expand"
+    }
+    fullscreenBtn.title = isFullscreen
+      ? t.exitFullscreen || "Exit Fullscreen"
+      : t.fullscreen || "Fullscreen"
+    fullscreenBtn.setAttribute("aria-label", fullscreenBtn.title)
+  }
+
+  if (fullscreenBtn && popupContent) {
+    updateFullscreenBtnState(popupContent.classList.contains("is-fullscreen"))
 
     fullscreenBtn.addEventListener("click", () => {
       if (isWebview) {
         const isFullscreen = popupContent.classList.toggle("is-fullscreen")
-        const icon = fullscreenBtn.querySelector("i")
-        if (icon) {
-          icon.className = isFullscreen ? "fas fa-compress" : "fas fa-expand"
-        }
-        fullscreenBtn.title = isFullscreen
-          ? t.exitFullscreen || "Exit Fullscreen"
-          : t.fullscreen || "Fullscreen"
+        updateFullscreenBtnState(isFullscreen)
       } else {
         chrome.tabs.create({
           url: chrome.runtime.getURL("bookmarks.html?open=analytics"),
@@ -88,6 +98,9 @@ export function initAnalyticsDashboard(elements) {
         .forEach((m) => m.classList.add("hidden"))
 
       popup.classList.remove("hidden")
+      if (fullscreenBtn && popupContent) {
+        updateFullscreenBtnState(popupContent.classList.contains("is-fullscreen"))
+      }
       renderAnalyticsDashboard(elements)
     })
   })
