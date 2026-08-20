@@ -111,6 +111,7 @@ async function renderAnalyticsDashboard(elements) {
     "favoriteBookmarks",
     "pinnedBookmarks",
     "bookmarkHealth",
+    "healthStatus",
     "visitCounts",
     "tagColors",
   ])
@@ -119,7 +120,11 @@ async function renderAnalyticsDashboard(elements) {
   const bookmarkNotes = tagsData.bookmarkNotes || {}
   const favoriteBookmarks = tagsData.favoriteBookmarks || {}
   const pinnedBookmarks = tagsData.pinnedBookmarks || {}
-  const bookmarkHealth = tagsData.bookmarkHealth || {}
+  const bookmarkHealth = {
+    ...(tagsData.bookmarkHealth || {}),
+    ...(tagsData.healthStatus || {}),
+    ...(uiState.healthStatus || {}),
+  }
   const visitCounts = tagsData.visitCounts || uiState.visitCounts || {}
   const tagColors = tagsData.tagColors || {}
 
@@ -248,9 +253,18 @@ function renderOverviewTab(body, data) {
   let uncheckedCount = 0
   bookmarks.forEach((b) => {
     const h = bookmarkHealth[b.id]
-    if (!h || h.status === "unchecked") uncheckedCount++
-    else if (h.status === "alive" || h.status === "ok") healthyCount++
-    else brokenCount++
+    if (!h) {
+      uncheckedCount++
+    } else {
+      const s = typeof h === "string" ? h : (h.status || "")
+      if (s === "dead" || s === "broken" || s === "error" || s === "alive_malware") {
+        brokenCount++
+      } else if (s === "alive_safe" || s === "alive" || s === "ok" || s === "alive_suspicious") {
+        healthyCount++
+      } else {
+        uncheckedCount++
+      }
+    }
   })
 
   body.innerHTML = `
@@ -313,11 +327,16 @@ function renderOverviewTab(body, data) {
 
       <!-- Link Health Bar -->
       <div class="analytics-card health-summary-card">
-        <div class="health-header">
-          <h4><i class="fas fa-heart-pulse"></i> ${t.analyticsLinkHealth || "Link Health Status"}</h4>
+        <div class="health-header" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h4 style="margin: 0;"><i class="fas fa-heart-pulse"></i> ${t.analyticsLinkHealth || "Link Health Status"}</h4>
+            <button type="button" class="studio-btn small primary-btn btn-scan-health-now" style="padding: 3px 10px; font-size: 0.76rem; border-radius: 6px;" title="Scan link health">
+              <i class="fas fa-rotate"></i> Scan Now
+            </button>
+          </div>
           <span class="health-badge">${healthyCount} ${t.analyticsHealthHealthy || "Healthy"}, ${brokenCount} ${t.analyticsHealthBroken || "Broken"}, ${uncheckedCount} ${t.analyticsHealthUnchecked || "Unchecked"}</span>
         </div>
-        <div class="health-multi-progress">
+        <div class="health-multi-progress" style="margin-top: 10px;">
           <div class="bar-healthy" style="width: ${totalBookmarks ? (healthyCount / totalBookmarks) * 100 : 0}%;" title="${t.analyticsHealthHealthy || "Healthy"}: ${healthyCount}"></div>
           <div class="bar-broken" style="width: ${totalBookmarks ? (brokenCount / totalBookmarks) * 100 : 0}%;" title="${t.analyticsHealthBroken || "Broken"}: ${brokenCount}"></div>
           <div class="bar-unchecked" style="width: ${totalBookmarks ? (uncheckedCount / totalBookmarks) * 100 : 100}%;" title="${t.analyticsHealthUnchecked || "Unchecked"}: ${uncheckedCount}"></div>
@@ -325,6 +344,11 @@ function renderOverviewTab(body, data) {
       </div>
     </div>
   `
+
+  body.querySelector(".btn-scan-health-now")?.addEventListener("click", () => {
+    document.getElementById("analytics-popup")?.classList.add("hidden")
+    document.getElementById("check-health-btn")?.click()
+  })
 }
 
 // ==========================================
@@ -332,7 +356,7 @@ function renderOverviewTab(body, data) {
 // ==========================================
 function renderActivityTab(body, data) {
   const { t } = getLang()
-  const { bookmarks } = data
+  const { bookmarks, tree } = data
 
   // Monthly stats (last 12 months)
   const monthLabels = []
@@ -383,11 +407,19 @@ function renderActivityTab(body, data) {
 
   const maxDayCount = Math.max(...dayCounts, 1)
 
+  // Recent 30 additions timeline
+  const recentBookmarks = [...bookmarks]
+    .filter((b) => Boolean(b.dateAdded))
+    .sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0))
+    .slice(0, 30)
+
   body.innerHTML = `
     <div class="analytics-tab-content">
       <!-- 12 Months Bar Chart -->
       <div class="analytics-card chart-card">
-        <h4><i class="fas fa-chart-simple"></i> ${t.analyticsMonthlyTimeline || "Monthly Additions (Past 12 Months)"}</h4>
+        <h4>
+          <span class="analytics-card-title-left"><i class="fas fa-chart-simple" style="color: #3B82F6;"></i> ${t.analyticsMonthlyTimeline || "Monthly Additions (Past 12 Months)"}</span>
+        </h4>
         <div class="analytics-timeline-chart">
           ${monthCounts
             .map((cnt, idx) => {
@@ -409,7 +441,9 @@ function renderActivityTab(body, data) {
       <!-- Activity by Day & Time -->
       <div class="analytics-grid-two">
         <div class="analytics-card">
-          <h4><i class="fas fa-calendar-week"></i> ${t.analyticsDayOfWeek || "Peak Activity by Day of Week"}</h4>
+          <h4>
+            <span class="analytics-card-title-left"><i class="fas fa-calendar-week" style="color: #10B981;"></i> ${t.analyticsDayOfWeek || "Peak Activity by Day of Week"}</span>
+          </h4>
           <div class="analytics-day-bars">
             ${daysOfWeek
               .map((dayName, idx) => {
@@ -430,7 +464,9 @@ function renderActivityTab(body, data) {
         </div>
 
         <div class="analytics-card">
-          <h4><i class="fas fa-clock"></i> ${t.analyticsTimeOfDay || "Time of Day Distribution"}</h4>
+          <h4>
+            <span class="analytics-card-title-left"><i class="fas fa-clock" style="color: #F59E0B;"></i> ${t.analyticsTimeOfDay || "Time of Day Distribution"}</span>
+          </h4>
           <div class="time-buckets-grid">
             <div class="time-bucket-item">
               <i class="fas fa-sun" style="color: #F59E0B;"></i>
@@ -455,6 +491,51 @@ function renderActivityTab(body, data) {
           </div>
         </div>
       </div>
+
+      <!-- Recent Additions Log -->
+      ${
+        recentBookmarks.length > 0
+          ? `
+        <div class="analytics-card">
+          <h4>
+            <span class="analytics-card-title-left"><i class="fas fa-clock-rotate-left" style="color: var(--accent-color, #3B82F6);"></i> ${t.recentActivityTimeline || "Recently Added Bookmarks"}</span>
+            <span class="analytics-count-badge">${recentBookmarks.length} ${t.items || "items"}</span>
+          </h4>
+          <div class="analytics-recent-activity-list">
+            ${recentBookmarks
+              .map((b) => {
+                const displayTitle = getBookmarkDisplayTitle(b)
+                const rawUrl = b.url || ""
+                const iconUrl = getFaviconUrl(rawUrl)
+                let cleanDomain = ""
+                try {
+                  cleanDomain = new URL(rawUrl).hostname.replace(/^www\./, "")
+                } catch (e) {
+                  cleanDomain = rawUrl
+                }
+                const dateAddedStr = b.dateAdded ? new Date(b.dateAdded).toLocaleDateString() : "Unknown"
+                return `
+                <div class="habit-bookmark-row">
+                  <div class="habit-bm-main">
+                    <img src="${iconUrl}" class="analytics-favicon" onerror="this.src='images/default-favicon.png'" />
+                    <div class="habit-bm-info">
+                      <a href="${rawUrl}" target="_blank" class="habit-bm-title" title="${displayTitle}">${displayTitle}</a>
+                      <span class="habit-bm-url" title="${rawUrl}">${cleanDomain}</span>
+                    </div>
+                  </div>
+                  <div class="date-badge">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>${dateAddedStr}</span>
+                  </div>
+                </div>
+              `
+              })
+              .join("")}
+          </div>
+        </div>
+      `
+          : ""
+      }
     </div>
   `
 }
@@ -478,7 +559,7 @@ function renderDistributionTab(body, data) {
 
   const topDomains = Object.entries(domains)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 6)
+    .slice(0, 100)
   const maxDomainCount = topDomains[0]?.[1] || 1
 
   // Tags breakdown
@@ -493,7 +574,7 @@ function renderDistributionTab(body, data) {
 
   const topTags = Object.entries(tagCounts)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 15)
+    .slice(0, 100)
 
   // Robust Folder breakdown
   const folderCounts = []
@@ -543,16 +624,17 @@ function renderDistributionTab(body, data) {
 
   const topFolders = folderCounts
     .sort((a, b) => b.count - a.count)
-    .slice(0, 6)
-
-  const maxFolderCount = topFolders[0]?.count || 1
+    .slice(0, 60)
 
   body.innerHTML = `
     <div class="analytics-tab-content">
       <div class="analytics-grid-two">
         <!-- Top Domains -->
         <div class="analytics-card">
-          <h4><i class="fas fa-globe"></i> ${t.analyticsTopDomains || "Top Domains"}</h4>
+          <h4>
+            <span class="analytics-card-title-left"><i class="fas fa-globe" style="color: #3B82F6;"></i> ${t.analyticsTopDomains || "Top Domains"}</span>
+            <span class="analytics-count-badge">${topDomains.length} ${t.items || "domains"}</span>
+          </h4>
           <div class="analytics-domain-list">
             ${
               topDomains.length === 0
@@ -583,7 +665,10 @@ function renderDistributionTab(body, data) {
 
         <!-- Top Tags -->
         <div class="analytics-card">
-          <h4><i class="fas fa-tags" style="color: #3B82F6;"></i> ${t.analyticsTopTags || "Top Used Tags"}</h4>
+          <h4>
+            <span class="analytics-card-title-left"><i class="fas fa-tags" style="color: #10B981;"></i> ${t.analyticsTopTags || "Top Used Tags"}</span>
+            <span class="analytics-count-badge">${topTags.length} ${t.items || "tags"}</span>
+          </h4>
           <div class="analytics-tags-cloud">
             ${
               topTags.length === 0
@@ -606,7 +691,10 @@ function renderDistributionTab(body, data) {
 
       <!-- Top Folders -->
       <div class="analytics-card">
-        <h4><i class="fas fa-folder-open" style="color: #F59E0B;"></i> ${t.analyticsLargestFolders || "Largest Folders by Items"}</h4>
+        <h4>
+          <span class="analytics-card-title-left"><i class="fas fa-folder-open" style="color: var(--accent-color);"></i> ${t.analyticsLargestFolders || "Largest Folders by Items"}</span>
+          <span class="analytics-count-badge">${topFolders.length} ${t.items || "folders"}</span>
+        </h4>
         <div class="analytics-folders-grid">
           ${
             topFolders.length === 0
@@ -644,24 +732,24 @@ function renderHabitsTab(body, data) {
     .map((b) => ({ ...b, visits: visitCounts[b.id] || b.accessCount || 0 }))
     .filter((b) => b.visits > 0)
     .sort((a, b) => b.visits - a.visits)
-    .slice(0, 6)
+    .slice(0, 50)
 
   // Fallback if no visit counts recorded yet: Show recent bookmarks with visit hint
   const recentBookmarksFallback = [...bookmarks]
     .sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0))
-    .slice(0, 6)
+    .slice(0, 30)
 
   // Stale / Forgotten (> 180 days ago)
   const sixMonthsAgo = Date.now() - 180 * 24 * 60 * 60 * 1000
   let staleBookmarks = bookmarks
     .filter((b) => (b.dateAdded || 0) < sixMonthsAgo && (visitCounts[b.id] || 0) === 0)
-    .slice(0, 6)
+    .slice(0, 50)
 
   if (staleBookmarks.length === 0 && bookmarks.length > 0) {
     // If no bookmarks > 6 months, pick oldest saved bookmarks
     staleBookmarks = [...bookmarks]
       .sort((a, b) => (a.dateAdded || 0) - (b.dateAdded || 0))
-      .slice(0, 6)
+      .slice(0, 30)
   }
 
   body.innerHTML = `
@@ -669,7 +757,10 @@ function renderHabitsTab(body, data) {
       <div class="analytics-grid-two">
         <!-- Most Visited -->
         <div class="analytics-card">
-          <h4><i class="fas fa-fire" style="color: #EF4444;"></i> ${t.analyticsMostVisited || "Most Visited Bookmarks"}</h4>
+          <h4>
+            <span class="analytics-card-title-left"><i class="fas fa-fire-flame-curved" style="color: var(--accent-color, #3B82F6);"></i> ${t.analyticsMostVisited || "Most Visited Bookmarks"}</span>
+            <span class="analytics-count-badge">${visitedList.length > 0 ? visitedList.length : recentBookmarksFallback.length} ${t.items || "items"}</span>
+          </h4>
           <div class="analytics-visited-list">
             ${
               visitedList.length === 0
@@ -679,16 +770,25 @@ function renderHabitsTab(body, data) {
                   ${t.visitTrackingHint || "Click open bookmarks to record visit counts. Recent bookmarks shown below:"}
                 </div>
                 ${recentBookmarksFallback
-                  .map((b) => {
+                  .map((b, idx) => {
                     const displayTitle = getBookmarkDisplayTitle(b)
                     const rawUrl = b.url || ""
                     const iconUrl = getFaviconUrl(rawUrl)
+                    let cleanDomain = ""
+                    try {
+                      cleanDomain = new URL(rawUrl).hostname.replace(/^www\./, "")
+                    } catch (e) {
+                      cleanDomain = rawUrl
+                    }
                     return `
                   <div class="habit-bookmark-row">
-                    <img src="${iconUrl}" class="analytics-favicon" onerror="this.src='images/default-favicon.png'" />
-                    <div class="habit-bm-info">
-                      <a href="${rawUrl}" target="_blank" class="habit-bm-title" title="${displayTitle}">${displayTitle}</a>
-                      <span class="habit-bm-url" title="${rawUrl}">${rawUrl}</span>
+                    <div class="habit-bm-main">
+                      <span class="habit-rank-badge rank-${idx + 1}">${idx + 1}</span>
+                      <img src="${iconUrl}" class="analytics-favicon" onerror="this.src='images/default-favicon.png'" />
+                      <div class="habit-bm-info">
+                        <a href="${rawUrl}" target="_blank" class="habit-bm-title" title="${displayTitle}">${displayTitle}</a>
+                        <span class="habit-bm-url" title="${rawUrl}">${cleanDomain}</span>
+                      </div>
                     </div>
                   </div>
                 `
@@ -696,18 +796,30 @@ function renderHabitsTab(body, data) {
                   .join("")}
               `
                 : visitedList
-                    .map((b) => {
+                    .map((b, idx) => {
                       const displayTitle = getBookmarkDisplayTitle(b)
                       const rawUrl = b.url || ""
                       const iconUrl = getFaviconUrl(rawUrl)
+                      let cleanDomain = ""
+                      try {
+                        cleanDomain = new URL(rawUrl).hostname.replace(/^www\./, "")
+                      } catch (e) {
+                        cleanDomain = rawUrl
+                      }
                       return `
                   <div class="habit-bookmark-row">
-                    <img src="${iconUrl}" class="analytics-favicon" onerror="this.src='images/default-favicon.png'" />
-                    <div class="habit-bm-info">
-                      <a href="${rawUrl}" target="_blank" class="habit-bm-title" title="${displayTitle}">${displayTitle}</a>
-                      <span class="habit-bm-url" title="${rawUrl}">${rawUrl}</span>
+                    <div class="habit-bm-main">
+                      <span class="habit-rank-badge rank-${idx + 1}">${idx + 1}</span>
+                      <img src="${iconUrl}" class="analytics-favicon" onerror="this.src='images/default-favicon.png'" />
+                      <div class="habit-bm-info">
+                        <a href="${rawUrl}" target="_blank" class="habit-bm-title" title="${displayTitle}">${displayTitle}</a>
+                        <span class="habit-bm-url" title="${rawUrl}">${cleanDomain}</span>
+                      </div>
                     </div>
-                    <span class="visit-badge">${b.visits} ${t.visits || "visits"}</span>
+                    <div class="visit-badge">
+                      <i class="fas fa-fire-flame-curved"></i>
+                      <span>${b.visits} ${t.visits || "views"}</span>
+                    </div>
                   </div>
                 `
                     })
@@ -718,7 +830,10 @@ function renderHabitsTab(body, data) {
 
         <!-- Forgotten Bookmarks -->
         <div class="analytics-card">
-          <h4><i class="fas fa-box-archive" style="color: #8B5CF6;"></i> ${t.analyticsStaleBookmarks || "Forgotten Bookmarks (> 6 months)"}</h4>
+          <h4>
+            <span class="analytics-card-title-left"><i class="fas fa-box-archive" style="color: #8B5CF6;"></i> ${t.analyticsStaleBookmarks || "Forgotten Bookmarks (> 6 months)"}</span>
+            <span class="analytics-count-badge">${staleBookmarks.length} ${t.items || "items"}</span>
+          </h4>
           <div class="analytics-visited-list">
             ${
               staleBookmarks.length === 0
@@ -728,13 +843,25 @@ function renderHabitsTab(body, data) {
                       const displayTitle = getBookmarkDisplayTitle(b)
                       const rawUrl = b.url || ""
                       const iconUrl = getFaviconUrl(rawUrl)
+                      let cleanDomain = ""
+                      try {
+                        cleanDomain = new URL(rawUrl).hostname.replace(/^www\./, "")
+                      } catch (e) {
+                        cleanDomain = rawUrl
+                      }
                       const dateAddedStr = b.dateAdded ? new Date(b.dateAdded).toLocaleDateString() : "Unknown"
                       return `
                   <div class="habit-bookmark-row">
-                    <img src="${iconUrl}" class="analytics-favicon" onerror="this.src='images/default-favicon.png'" />
-                    <div class="habit-bm-info">
-                      <a href="${rawUrl}" target="_blank" class="habit-bm-title" title="${displayTitle}">${displayTitle}</a>
-                      <span class="habit-bm-url" title="${rawUrl} (${t.savedOn || "Saved"}: ${dateAddedStr})">${t.savedOn || "Saved"}: ${dateAddedStr}</span>
+                    <div class="habit-bm-main">
+                      <img src="${iconUrl}" class="analytics-favicon" onerror="this.src='images/default-favicon.png'" />
+                      <div class="habit-bm-info">
+                        <a href="${rawUrl}" target="_blank" class="habit-bm-title" title="${displayTitle}">${displayTitle}</a>
+                        <span class="habit-bm-url" title="${rawUrl}">${cleanDomain}</span>
+                      </div>
+                    </div>
+                    <div class="stale-date-badge">
+                      <i class="fas fa-calendar-xmark"></i>
+                      <span>${t.savedOn || "Saved"}: ${dateAddedStr}</span>
                     </div>
                   </div>
                 `
@@ -761,8 +888,11 @@ function renderInsightsTab(body, data, elements) {
   let brokenCount = 0
   bookmarks.forEach((b) => {
     const h = bookmarkHealth[b.id]
-    if (h && (h.status === "broken" || h.status === "error" || h.status === "dead")) {
-      brokenCount++
+    if (h) {
+      const s = typeof h === "string" ? h : (h.status || "")
+      if (s === "dead" || s === "broken" || s === "error" || s === "alive_malware") {
+        brokenCount++
+      }
     }
   })
 

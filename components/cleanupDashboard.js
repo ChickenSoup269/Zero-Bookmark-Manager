@@ -61,9 +61,11 @@ function getUntaggedBookmarks() {
 }
 
 function getDeadBookmarks() {
-  return (uiState.bookmarks || []).filter(
-    (bookmark) => uiState.healthStatus?.[bookmark.id] === "dead",
-  )
+  return (uiState.bookmarks || []).filter((bookmark) => {
+    const s = uiState.healthStatus?.[bookmark.id]
+    const status = typeof s === "string" ? s : s?.status
+    return status === "dead" || status === "broken" || status === "error" || status === "alive_malware"
+  })
 }
 
 function getReadingQueueItems() {
@@ -109,14 +111,13 @@ function getTopDomains() {
 function renderList(title, items, getMeta, intro = "") {
   if (!items.length) {
     return `
-      <h4>${escapeHtml(title)}</h4>
+      <div class="smart-cleanup-detail-title">
+        <h4>${escapeHtml(title)}</h4>
+        <span>0</span>
+      </div>
       <p class="smart-cleanup-empty">${escapeHtml(t("smartCleanupNone", "Nothing to review here."))}</p>
     `
   }
-
-  const limit = 18;
-  const initialItems = items.slice(0, limit);
-  const hiddenItems = items.slice(limit);
 
   return `
     <div class="smart-cleanup-detail-title">
@@ -125,7 +126,7 @@ function renderList(title, items, getMeta, intro = "") {
     </div>
     ${intro ? `<p class="smart-cleanup-detail-intro">${escapeHtml(intro)}</p>` : ""}
     <ul class="smart-cleanup-list">
-      ${initialItems
+      ${items
         .map(
           (item) => `
             <li>
@@ -135,26 +136,7 @@ function renderList(title, items, getMeta, intro = "") {
           `,
         )
         .join("")}
-      ${hiddenItems.length ? `
-          <div class="smart-cleanup-hidden-items" style="display: none;">
-            ${hiddenItems
-              .map(
-                (item) => `
-                  <li>
-                    <strong>${escapeHtml(item.title || item.url || item.id)}</strong>
-                    <span>${escapeHtml(getMeta(item))}</span>
-                  </li>
-                `,
-              )
-              .join("")}
-          </div>
-      ` : ""}
     </ul>
-    ${
-      hiddenItems.length
-        ? `<button type="button" class="button smart-cleanup-more-btn" style="width: 100%; margin-top: 8px; background: transparent; color: var(--text-primary); border: 1px solid var(--border-color);">+${hiddenItems.length} ${escapeHtml(t("smartCleanupMore", "more"))}</button>`
-        : ""
-    }
   `
 }
 
@@ -358,18 +340,28 @@ export function initCleanupDashboard(elements) {
       untaggedBookmarks.length +
       deadBookmarks.length
 
-    title.textContent = t("smartCleanupTitle", "Smart Cleanup")
-    subtitle.textContent = t(
-      "smartCleanupSubtitle",
-      "Review bookmark cleanup opportunities before changing anything.",
-    )
-    buttons.forEach(btn => {
+    if (title) title.textContent = t("smartCleanupTitle", "Smart Cleanup")
+    if (subtitle) {
+      subtitle.textContent = t(
+        "smartCleanupSubtitle",
+        "Review bookmark cleanup opportunities before changing anything.",
+      )
+    }
+    buttons.forEach((btn) => {
       btn.title = t("smartCleanupTitle", "Smart Cleanup")
       const span = btn.querySelector("span")
       if (span) span.textContent = t("smartCleanupShort", "Cleanup")
     })
-    refreshButton.textContent = t("refresh", "Refresh")
-    closeButton.textContent = t("close", "Close")
+    if (refreshButton) {
+      refreshButton.title = t("refresh", "Refresh")
+      refreshButton.setAttribute("aria-label", t("refresh", "Refresh"))
+    }
+    if (closeButton) {
+      closeButton.textContent = t("close", "Close")
+    }
+    if (closeX) {
+      closeX.title = t("close", "Close")
+    }
 
     if (summary) {
       summary.innerHTML = `
@@ -698,9 +690,18 @@ export function initCleanupDashboard(elements) {
       }
     })
   })
-  closeButton.addEventListener("click", close)
-  closeX.addEventListener("click", close)
-  refreshButton.addEventListener("click", () => render())
+  if (closeButton) closeButton.addEventListener("click", close)
+  if (closeX) closeX.addEventListener("click", close)
+  if (refreshButton) {
+    refreshButton.addEventListener("click", () => {
+      const icon = refreshButton.querySelector("i")
+      if (icon) {
+        icon.classList.add("fa-spin")
+        setTimeout(() => icon.classList.remove("fa-spin"), 600)
+      }
+      render()
+    })
+  }
   popup.addEventListener("click", (e) => {
     if (e.target === popup) close()
   })
