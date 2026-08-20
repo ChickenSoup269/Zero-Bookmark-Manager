@@ -2251,18 +2251,65 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 /* Native Popup Mode Styles */
 .organize-folders-popup-content,
 #analytics-popup .rename-popup-content,
-.analytics-popup-content,
+.analytics-popup-content {
+  width: 96% !important;
+  max-width: 96vw !important;
+  height: 94vh !important;
+  max-height: 94vh !important;
+  padding: 10px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
 .smart-cleanup-popup-content {
   width: 96% !important;
   max-width: 96vw !important;
   height: 94vh !important;
   max-height: 94vh !important;
-  padding: 12px !important;
+  padding: 10px 10px 20px !important;
   border-radius: 10px !important;
   box-sizing: border-box !important;
-  overflow: hidden !important;
-  overflow-y: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
   overflow-x: hidden !important;
+}
+
+#organize-folders-popup .rename-popup-buttons,
+.smart-cleanup-popup-content > .rename-popup-buttons {
+  display: none !important;
+}
+
+.smart-cleanup-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  overflow: visible !important;
+  height: auto !important;
+}
+
+.smart-cleanup-details,
+.smart-cleanup-list {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+.organize-folders-tree-container {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  margin-bottom: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Folder Studio Popup Adaptations */
@@ -2288,14 +2335,14 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 .folder-studio-tabs,
 .analytics-hub-tabs {
   gap: 4px !important;
-  padding-bottom: 8px !important;
+  padding-bottom: 6px !important;
 }
 
 .studio-tab-btn,
 .analytics-tab-btn {
-  padding: 6px 10px !important;
-  font-size: 0.78rem !important;
-  gap: 5px !important;
+  padding: 5px 8px !important;
+  font-size: 0.76rem !important;
+  gap: 4px !important;
 }
 
 .studio-tab-btn.active,
@@ -2324,26 +2371,159 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 .analytics-card {
   min-width: 0 !important;
   max-width: 100% !important;
-  overflow: hidden !important;
+  box-sizing: border-box !important;
+  padding: 10px 12px !important;
+}
+
+.analytics-domain-list,
+.analytics-tags-cloud,
+.analytics-folders-grid,
+.analytics-visited-list,
+.analytics-recent-activity-list {
+  max-height: 220px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(140, 140, 140, 0.45) transparent !important;
+  padding-right: 4px !important;
+}
+
+.analytics-domain-list::-webkit-scrollbar,
+.analytics-tags-cloud::-webkit-scrollbar,
+.analytics-folders-grid::-webkit-scrollbar,
+.analytics-visited-list::-webkit-scrollbar,
+.analytics-recent-activity-list::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.analytics-domain-list::-webkit-scrollbar-thumb,
+.analytics-tags-cloud::-webkit-scrollbar-thumb,
+.analytics-folders-grid::-webkit-scrollbar-thumb,
+.analytics-visited-list::-webkit-scrollbar-thumb,
+.analytics-recent-activity-list::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 140, 0.45) !important;
+  border-radius: 3px !important;
+}
+
+.habit-bookmark-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 44px !important;
+  flex-shrink: 0 !important;
   box-sizing: border-box !important;
 }
 
-.analytics-visited-list,
-.habit-bookmark-row,
+.habit-bm-main {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
 .habit-bm-info {
+  flex: 1 1 auto !important;
   min-width: 0 !important;
   max-width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
   overflow: hidden !important;
 }
 
-.habit-bm-title,
+.habit-bm-title {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  color: var(--text-primary) !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
 .habit-bm-url {
   display: block !important;
   width: 100% !important;
   max-width: 100% !important;
-  white-space: nowrap !important;
+  font-size: 0.68rem !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.15 !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.habit-rank-badge {
+  width: 18px !important;
+  height: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px !important;
+  font-size: 0.65rem !important;
+  font-weight: 800 !important;
+  background: var(--bg-tertiary) !important;
+  color: var(--text-secondary) !important;
+  flex-shrink: 0 !important;
+}
+
+.habit-rank-badge.rank-1 {
+  background: rgba(245, 158, 11, 0.18) !important;
+  color: #F59E0B !important;
+}
+
+.habit-rank-badge.rank-2 {
+  background: rgba(156, 163, 175, 0.2) !important;
+  color: #9CA3AF !important;
+}
+
+.habit-rank-badge.rank-3 {
+  background: rgba(217, 119, 6, 0.18) !important;
+  color: #D97706 !important;
+}
+
+.visit-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-shrink: 0 !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  padding: 2px 6px !important;
+  border-radius: 12px !important;
+  background: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
+  color: var(--accent-color) !important;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent) !important;
+  white-space: nowrap !important;
+}
+
+.stale-date-badge,
+.date-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-shrink: 0 !important;
+  font-size: 0.66rem !important;
+  font-weight: 600 !important;
+  padding: 2px 6px !important;
+  border-radius: 12px !important;
+  background: var(--bg-tertiary) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  white-space: nowrap !important;
 }
 
 .analytics-metrics-grid {
@@ -2382,8 +2562,23 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   min-height: 0 !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
-  padding: 6px 6px 80px 4px !important;
+  padding: 4px 6px 14px 2px !important;
   box-sizing: border-box !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(140, 140, 140, 0.5) transparent !important;
+}
+
+.analytics-tab-content::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.analytics-tab-content::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.analytics-tab-content::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 140, 0.45) !important;
+  border-radius: 4px !important;
 }
 
 .metric-icon {
