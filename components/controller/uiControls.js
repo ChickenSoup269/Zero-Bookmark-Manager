@@ -306,7 +306,10 @@ export function setupUIControlListeners(elements) {
 
   const handleScroll = () => {
     const scrollY = window.scrollY;
-    elements.scrollToTopButton.classList.toggle("hidden", scrollY < 50);
+    document.body.classList.toggle("is-scrolled", scrollY > 10);
+    if (elements.scrollToTopButton) {
+      elements.scrollToTopButton.classList.toggle("hidden", scrollY < 50);
+    }
   };
 
   window.addEventListener("scroll", handleScroll);
