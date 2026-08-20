@@ -787,18 +787,32 @@ body {
 }
 
 .undo-toast {
+  position: relative;
   min-width: min(360px, calc(100vw - 32px));
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 11px 12px;
+  padding: 12px 14px 15px 14px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--bg-secondary);
   color: var(--text-primary);
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
   pointer-events: auto;
+  overflow: hidden;
+  animation: undoToastSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.undo-toast.undo-toast-closing {
+  animation: undoToastSlideOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.undo-toast-text {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 .undo-toast button {
@@ -806,9 +820,66 @@ body {
   border-radius: 7px;
   background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.14);
   color: var(--accent-color);
-  padding: 5px 10px;
+  padding: 5px 12px;
   cursor: pointer;
   font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.undo-toast button:hover {
+  background: var(--accent-color);
+  color: #fff;
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+.undo-toast button:active {
+  transform: translateY(0);
+}
+
+.undo-toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent-color, #70a146), var(--accent-color-hover, #8bc34a));
+  transform-origin: left center;
+  animation: undoToastCountdown var(--undo-duration, 9000ms) linear forwards;
+}
+
+@keyframes undoToastCountdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes undoToastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes undoToastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+  }
 }
 
 

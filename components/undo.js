@@ -124,15 +124,21 @@ export function registerUndo({ message, actionLabel, undo, elements }) {
   const host = ensureUndoHost()
   const toast = document.createElement("div")
   toast.className = "undo-toast"
+  toast.style.setProperty("--undo-duration", `${UNDO_TIMEOUT}ms`)
   toast.innerHTML = `
-    <span>${message}</span>
+    <span class="undo-toast-text">${message}</span>
     <button type="button">${actionLabel || t("undoAction", "Undo")}</button>
+    <div class="undo-toast-progress"></div>
   `
 
   let settled = false
   const close = () => {
+    if (settled) return
     settled = true
-    toast.remove()
+    toast.classList.add("undo-toast-closing")
+    setTimeout(() => {
+      toast.remove()
+    }, 200)
   }
 
   const timer = window.setTimeout(close, UNDO_TIMEOUT)
