@@ -206,6 +206,13 @@ function renderCurrentAnalyticsTab(elements, data) {
   } else if (currentAnalyticsTab === "insights") {
     renderInsightsTab(body, data, elements)
   }
+
+  const popup = document.getElementById("analytics-popup")
+  if (popup) popup.scrollTop = 0
+  const popupContent = popup?.querySelector(".analytics-popup-content")
+  if (popupContent) popupContent.scrollTop = 0
+  const tabContent = body.querySelector(".analytics-tab-content")
+  if (tabContent) tabContent.scrollTop = 0
 }
 
 // ==========================================
@@ -272,7 +279,7 @@ function renderOverviewTab(body, data) {
           <div class="metric-info">
             <span class="metric-label">${t.analyticsTaggedRate || "Tagged"}</span>
             <strong class="metric-value">${taggedPercent}%</strong>
-            <span class="metric-sub">${taggedCount} / ${totalBookmarks} items</span>
+            <span class="metric-sub">${taggedCount} / ${totalBookmarks} ${t.items || "items"}</span>
           </div>
         </div>
 
@@ -281,7 +288,7 @@ function renderOverviewTab(body, data) {
           <div class="metric-info">
             <span class="metric-label">${t.analyticsNotesRate || "With Notes"}</span>
             <strong class="metric-value">${notesPercent}%</strong>
-            <span class="metric-sub">${notesCount} items</span>
+            <span class="metric-sub">${notesCount} ${t.items || "items"}</span>
           </div>
         </div>
 
@@ -290,7 +297,7 @@ function renderOverviewTab(body, data) {
           <div class="metric-info">
             <span class="metric-label">${t.analyticsFavorites || "Favorites"} / ${t.analyticsPinned || "Pinned"}</span>
             <strong class="metric-value">${favoritesCount} / ${pinnedCount}</strong>
-            <span class="metric-sub">Quick access items</span>
+            <span class="metric-sub">${t.quickAccessItems || "Quick access items"}</span>
           </div>
         </div>
 
@@ -299,7 +306,7 @@ function renderOverviewTab(body, data) {
           <div class="metric-info">
             <span class="metric-label">${t.analyticsSecurityRate || "HTTPS Secure"}</span>
             <strong class="metric-value">${httpsPercent}%</strong>
-            <span class="metric-sub">${httpsCount} secure links</span>
+            <span class="metric-sub">${httpsCount} ${t.secureLinks || "secure links"}</span>
           </div>
         </div>
       </div>
@@ -308,12 +315,12 @@ function renderOverviewTab(body, data) {
       <div class="analytics-card health-summary-card">
         <div class="health-header">
           <h4><i class="fas fa-heart-pulse"></i> ${t.analyticsLinkHealth || "Link Health Status"}</h4>
-          <span class="health-badge">${healthyCount} Healthy, ${brokenCount} Broken, ${uncheckedCount} Unchecked</span>
+          <span class="health-badge">${healthyCount} ${t.analyticsHealthHealthy || "Healthy"}, ${brokenCount} ${t.analyticsHealthBroken || "Broken"}, ${uncheckedCount} ${t.analyticsHealthUnchecked || "Unchecked"}</span>
         </div>
         <div class="health-multi-progress">
-          <div class="bar-healthy" style="width: ${totalBookmarks ? (healthyCount / totalBookmarks) * 100 : 0}%;" title="Healthy: ${healthyCount}"></div>
-          <div class="bar-broken" style="width: ${totalBookmarks ? (brokenCount / totalBookmarks) * 100 : 0}%;" title="Broken: ${brokenCount}"></div>
-          <div class="bar-unchecked" style="width: ${totalBookmarks ? (uncheckedCount / totalBookmarks) * 100 : 100}%;" title="Unchecked: ${uncheckedCount}"></div>
+          <div class="bar-healthy" style="width: ${totalBookmarks ? (healthyCount / totalBookmarks) * 100 : 0}%;" title="${t.analyticsHealthHealthy || "Healthy"}: ${healthyCount}"></div>
+          <div class="bar-broken" style="width: ${totalBookmarks ? (brokenCount / totalBookmarks) * 100 : 0}%;" title="${t.analyticsHealthBroken || "Broken"}: ${brokenCount}"></div>
+          <div class="bar-unchecked" style="width: ${totalBookmarks ? (uncheckedCount / totalBookmarks) * 100 : 100}%;" title="${t.analyticsHealthUnchecked || "Unchecked"}: ${uncheckedCount}"></div>
         </div>
       </div>
     </div>
@@ -346,8 +353,16 @@ function renderActivityTab(body, data) {
 
   const maxMonthCount = Math.max(...monthCounts, 1)
 
-  // Day of week stats
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  // Day of week stats (i18n)
+  const daysOfWeek = [
+    t.daySun || "Sun",
+    t.dayMon || "Mon",
+    t.dayTue || "Tue",
+    t.dayWed || "Wed",
+    t.dayThu || "Thu",
+    t.dayFri || "Fri",
+    t.daySat || "Sat",
+  ]
   const dayCounts = [0, 0, 0, 0, 0, 0, 0]
 
   // Time of day stats
@@ -415,27 +430,27 @@ function renderActivityTab(body, data) {
         </div>
 
         <div class="analytics-card">
-          <h4><i class="fas fa-clock"></i> Time of Day Distribution</h4>
+          <h4><i class="fas fa-clock"></i> ${t.analyticsTimeOfDay || "Time of Day Distribution"}</h4>
           <div class="time-buckets-grid">
             <div class="time-bucket-item">
               <i class="fas fa-sun" style="color: #F59E0B;"></i>
-              <strong>Morning (6-12h)</strong>
-              <span>${timeBuckets.Morning} items</span>
+              <strong>${t.morning || "Morning"} (6-12h)</strong>
+              <span>${timeBuckets.Morning} ${t.items || "items"}</span>
             </div>
             <div class="time-bucket-item">
               <i class="fas fa-cloud-sun" style="color: #3B82F6;"></i>
-              <strong>Afternoon (12-18h)</strong>
-              <span>${timeBuckets.Afternoon} items</span>
+              <strong>${t.afternoon || "Afternoon"} (12-18h)</strong>
+              <span>${timeBuckets.Afternoon} ${t.items || "items"}</span>
             </div>
             <div class="time-bucket-item">
               <i class="fas fa-moon" style="color: #8B5CF6;"></i>
-              <strong>Evening (18-24h)</strong>
-              <span>${timeBuckets.Evening} items</span>
+              <strong>${t.evening || "Evening"} (18-24h)</strong>
+              <span>${timeBuckets.Evening} ${t.items || "items"}</span>
             </div>
             <div class="time-bucket-item">
               <i class="fas fa-star-and-crescent" style="color: #10B981;"></i>
-              <strong>Night (0-6h)</strong>
-              <span>${timeBuckets.Night} items</span>
+              <strong>${t.night || "Night"} (0-6h)</strong>
+              <span>${timeBuckets.Night} ${t.items || "items"}</span>
             </div>
           </div>
         </div>
@@ -463,7 +478,7 @@ function renderDistributionTab(body, data) {
 
   const topDomains = Object.entries(domains)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 8)
+    .slice(0, 6)
   const maxDomainCount = topDomains[0]?.[1] || 1
 
   // Tags breakdown
@@ -482,14 +497,23 @@ function renderDistributionTab(body, data) {
 
   // Robust Folder breakdown
   const folderCounts = []
+  function countFolderItems(node) {
+    let total = 0
+    if (!node || !node.children) return 0
+    for (const c of node.children) {
+      if (c.url) total++
+      if (c.children) total += countFolderItems(c)
+    }
+    return total
+  }
+
   function walkFolders(node, currentPath = "") {
     if (!node) return
     if (node.id === "0") {
-      (node.children || []).forEach((c) => walkFolders(c, ""))
+      ;(node.children || []).forEach((c) => walkFolders(c, ""))
       return
     }
     if (node.children) {
-      const directBms = node.children.filter((c) => c.url).length
       let folderTitle = node.title
       if (!folderTitle) {
         if (node.id === "1") folderTitle = "Bookmarks Bar"
@@ -498,12 +522,13 @@ function renderDistributionTab(body, data) {
         else folderTitle = "Folder"
       }
       const p = currentPath ? `${currentPath} / ${folderTitle}` : folderTitle
+      const totalCount = countFolderItems(node)
 
       folderCounts.push({
         id: node.id,
         name: folderTitle,
         path: p,
-        count: directBms,
+        count: totalCount,
       })
 
       node.children.forEach((c) => {
@@ -518,7 +543,9 @@ function renderDistributionTab(body, data) {
 
   const topFolders = folderCounts
     .sort((a, b) => b.count - a.count)
-    .slice(0, 8)
+    .slice(0, 6)
+
+  const maxFolderCount = topFolders[0]?.count || 1
 
   body.innerHTML = `
     <div class="analytics-tab-content">
@@ -529,7 +556,7 @@ function renderDistributionTab(body, data) {
           <div class="analytics-domain-list">
             ${
               topDomains.length === 0
-                ? '<div class="analytics-empty">No domain data yet</div>'
+                ? `<div class="analytics-empty">${t.noDomainData || "No domain data yet"}</div>`
                 : topDomains
                     .map(([domain, count]) => {
                       const pct = Math.max(6, Math.round((count / maxDomainCount) * 100))
@@ -556,18 +583,18 @@ function renderDistributionTab(body, data) {
 
         <!-- Top Tags -->
         <div class="analytics-card">
-          <h4><i class="fas fa-tags"></i> ${t.analyticsTopTags || "Top Used Tags"}</h4>
+          <h4><i class="fas fa-tags" style="color: #3B82F6;"></i> ${t.analyticsTopTags || "Top Used Tags"}</h4>
           <div class="analytics-tags-cloud">
             ${
               topTags.length === 0
-                ? '<div class="analytics-empty">No tags used yet</div>'
+                ? `<div class="analytics-empty">${t.noTagsUsed || "No tags used yet"}</div>`
                 : topTags
                     .map(([tag, count]) => {
                       const color = tagColors[tag] || "var(--accent-color)"
                       return `
-                  <div class="analytics-tag-pill" style="border-left: 4px solid ${color};">
-                    <span class="tag-name">#${tag}</span>
-                    <span class="tag-badge">${count}</span>
+                  <div class="analytics-tag-pill" style="border: 1px solid ${color};">
+                    <span class="tag-name" style="color: ${color};">#${tag}</span>
+                    <span class="tag-badge" style="background: ${color}; color: #ffffff;">${count}</span>
                   </div>
                 `
                     })
@@ -579,11 +606,11 @@ function renderDistributionTab(body, data) {
 
       <!-- Top Folders -->
       <div class="analytics-card">
-        <h4><i class="fas fa-folder-open"></i> ${t.analyticsLargestFolders || "Largest Folders by Items"}</h4>
+        <h4><i class="fas fa-folder-open" style="color: #F59E0B;"></i> ${t.analyticsLargestFolders || "Largest Folders by Items"}</h4>
         <div class="analytics-folders-grid">
           ${
             topFolders.length === 0
-              ? '<div class="analytics-empty">No folders found</div>'
+              ? `<div class="analytics-empty">${t.noFoldersFound || "No folders found"}</div>`
               : topFolders
                   .map(
                     (f) => `
@@ -593,7 +620,7 @@ function renderDistributionTab(body, data) {
                     <strong title="${f.name}">${f.name}</strong>
                     <span title="${f.path}">${f.path}</span>
                   </div>
-                  <span class="folder-count-badge">${f.count} items</span>
+                  <span class="folder-count-badge">${f.count} ${t.items || "items"}</span>
                 </div>
               `,
                   )
@@ -617,18 +644,18 @@ function renderHabitsTab(body, data) {
     .map((b) => ({ ...b, visits: visitCounts[b.id] || b.accessCount || 0 }))
     .filter((b) => b.visits > 0)
     .sort((a, b) => b.visits - a.visits)
-    .slice(0, 8)
+    .slice(0, 6)
 
   // Fallback if no visit counts recorded yet: Show recent bookmarks with visit hint
   const recentBookmarksFallback = [...bookmarks]
     .sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0))
-    .slice(0, 8)
+    .slice(0, 6)
 
   // Stale / Forgotten (> 180 days ago)
   const sixMonthsAgo = Date.now() - 180 * 24 * 60 * 60 * 1000
   let staleBookmarks = bookmarks
     .filter((b) => (b.dateAdded || 0) < sixMonthsAgo && (visitCounts[b.id] || 0) === 0)
-    .slice(0, 8)
+    .slice(0, 6)
 
   if (staleBookmarks.length === 0 && bookmarks.length > 0) {
     // If no bookmarks > 6 months, pick oldest saved bookmarks
@@ -647,7 +674,7 @@ function renderHabitsTab(body, data) {
             ${
               visitedList.length === 0
                 ? `
-                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">
+                <div style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 6px;">
                   <i class="fas fa-info-circle" style="color: var(--accent-color); margin-right: 4px;"></i>
                   ${t.visitTrackingHint || "Click open bookmarks to record visit counts. Recent bookmarks shown below:"}
                 </div>
@@ -680,7 +707,7 @@ function renderHabitsTab(body, data) {
                       <a href="${rawUrl}" target="_blank" class="habit-bm-title" title="${displayTitle}">${displayTitle}</a>
                       <span class="habit-bm-url" title="${rawUrl}">${rawUrl}</span>
                     </div>
-                    <span class="visit-badge">${b.visits} visits</span>
+                    <span class="visit-badge">${b.visits} ${t.visits || "visits"}</span>
                   </div>
                 `
                     })
@@ -695,7 +722,7 @@ function renderHabitsTab(body, data) {
           <div class="analytics-visited-list">
             ${
               staleBookmarks.length === 0
-                ? '<div class="analytics-empty">No forgotten bookmarks found!</div>'
+                ? `<div class="analytics-empty">${t.noForgottenBookmarks || "No forgotten bookmarks found!"}</div>`
                 : staleBookmarks
                     .map((b) => {
                       const displayTitle = getBookmarkDisplayTitle(b)
@@ -707,7 +734,7 @@ function renderHabitsTab(body, data) {
                     <img src="${iconUrl}" class="analytics-favicon" onerror="this.src='images/default-favicon.png'" />
                     <div class="habit-bm-info">
                       <a href="${rawUrl}" target="_blank" class="habit-bm-title" title="${displayTitle}">${displayTitle}</a>
-                      <span class="habit-bm-url" title="${rawUrl} (Saved on: ${dateAddedStr})">Saved: ${dateAddedStr}</span>
+                      <span class="habit-bm-url" title="${rawUrl} (${t.savedOn || "Saved"}: ${dateAddedStr})">${t.savedOn || "Saved"}: ${dateAddedStr}</span>
                     </div>
                   </div>
                 `
@@ -751,7 +778,7 @@ function renderInsightsTab(body, data, elements) {
             !hasIssues
               ? `
             <div class="insight-pristine-state">
-              <i class="fas fa-sparkles" style="font-size: 2.5rem; color: #10B981; margin-bottom: 12px;"></i>
+              <i class="fas fa-sparkles" style="font-size: 2.2rem; color: #10B981; margin-bottom: 10px;"></i>
               <p>${t.analyticsInsightGreatJob || "Your bookmark library is in pristine condition! No optimization needed."}</p>
             </div>
           `
@@ -763,7 +790,7 @@ function renderInsightsTab(body, data, elements) {
                 <div class="insight-icon"><i class="fas fa-tags" style="color: #F59E0B;"></i></div>
                 <div class="insight-text">
                   <strong>${untagged.length} ${t.analyticsInsightUntagged || "bookmarks have no tags assigned."}</strong>
-                  <p>Organizing with tags makes searching instant and flexible.</p>
+                  <p>${t.insightTagsDesc || "Organizing with tags makes searching instant and flexible."}</p>
                 </div>
                 <button type="button" class="studio-btn primary-btn small btn-action-suggest-tags">
                   ${t.analyticsInsightUntaggedAction || "Suggest Tags"}
@@ -780,7 +807,7 @@ function renderInsightsTab(body, data, elements) {
                 <div class="insight-icon"><i class="fas fa-folder-tree" style="color: #3B82F6;"></i></div>
                 <div class="insight-text">
                   <strong>${unsorted.length} ${t.analyticsInsightUnsorted || "bookmarks are sitting in root without a folder."}</strong>
-                  <p>Group related bookmarks into subfolders for a tidy hierarchy.</p>
+                  <p>${t.insightFoldersDesc || "Group related bookmarks into subfolders for a tidy hierarchy."}</p>
                 </div>
                 <button type="button" class="studio-btn primary-btn small btn-action-open-studio">
                   ${t.analyticsInsightUnsortedAction || "Organize Folders"}
@@ -797,7 +824,7 @@ function renderInsightsTab(body, data, elements) {
                 <div class="insight-icon"><i class="fas fa-link-slash" style="color: #EF4444;"></i></div>
                 <div class="insight-text">
                   <strong>${brokenCount} ${t.analyticsInsightBroken || "broken links detected."}</strong>
-                  <p>Clean dead links to keep your library healthy and fast.</p>
+                  <p>${t.insightHealthDesc || "Clean dead links to keep your library healthy and fast."}</p>
                 </div>
                 <button type="button" class="studio-btn danger-btn small btn-action-open-cleanup">
                   ${t.analyticsInsightBrokenAction || "Run Health Cleanup"}
