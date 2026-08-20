@@ -1569,9 +1569,31 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 
 .first-run-content {
   position: relative;
-  width: min(92vw, 380px);
+  width: min(92vw, 420px);
+  max-height: min(88vh, 560px);
   text-align: left;
-  overflow: hidden;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(140, 140, 140, 0.45) transparent;
+}
+
+.first-run-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.first-run-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.first-run-content::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 140, 0.45);
+  border-radius: 6px;
+}
+
+.first-run-content::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color, #3b82f6);
 }
 
 .first-run-language-content {
@@ -1657,6 +1679,24 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   border-radius: 8px;
   border: 1px solid var(--border-color);
   background: color-mix(in srgb, var(--bg-secondary) 74%, transparent);
+  max-height: 220px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(140, 140, 140, 0.45) transparent;
+}
+
+.first-run-guide::-webkit-scrollbar {
+  width: 5px;
+}
+
+.first-run-guide::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.first-run-guide::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 140, 0.45);
+  border-radius: 5px;
 }
 
 .first-run-guide-step {
