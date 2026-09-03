@@ -1247,14 +1247,32 @@ function startFirstRunTour() {
   renderStep()
 }
 
-// Global scroll listener for glassmorphism headers
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 10) {
+// Global scroll listener for sticky headers
+let mainScrollTicking = false;
+function updateMainStickySearchState() {
+    const scrollY = window.scrollY;
+    if (scrollY > 10) {
         document.body.classList.add('is-scrolled');
     } else {
         document.body.classList.remove('is-scrolled');
     }
+    const stickyEls = document.querySelectorAll(".sticky-search, .webview-search-wrapper");
+    stickyEls.forEach((el) => {
+        const isStuck = scrollY > 0 && el.getBoundingClientRect().top <= 1;
+        el.classList.toggle("is-stuck", isStuck);
+    });
+}
+
+window.addEventListener('scroll', () => {
+    if (!mainScrollTicking) {
+        window.requestAnimationFrame(() => {
+            updateMainStickySearchState();
+            mainScrollTicking = false;
+        });
+        mainScrollTicking = true;
+    }
 }, { passive: true });
+updateMainStickySearchState();
 
 function setupRestartGuideControl() {
   const button = document.getElementById("restart-guide-option")
@@ -1666,31 +1684,53 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       })
 
-    // Lấy dữ liệu bookmark
-    getBookmarkTree((bookmarkTreeNodes) => {
-      if (bookmarkTreeNodes) {
-        // Load visit counts from background script
-        loadVisitCounts(() => {
-          customLoadUIState(() => {
-            setupBookmarkMenuBgControl()
-            setupSmartFoldersControl()
-            setupSidebarWidthControl()
-            
-            const activeTab = localStorage.getItem("activeTab") || "dashboard"
-            if (activeTab === "quick-save") {
-              // Defer rendering so iframe can load without lag
-              setTimeout(() => {
-                renderFilteredBookmarks(bookmarkTreeNodes, elements)
-                setupBookmarkChangeListeners(elements)
-              }, 100)
-            } else {
-              renderFilteredBookmarks(bookmarkTreeNodes, elements)
-              setupBookmarkChangeListeners(elements)
-            }
-          })
-        })
+    // Fast & smooth boot pipeline: parallelize initial data fetching
+    let bookmarkTreeNodes = null
+    let uiStateLoaded = false
+    let hasRenderedInitial = false
+
+    const tryInitialRender = () => {
+      if (!bookmarkTreeNodes || !uiStateLoaded || hasRenderedInitial) return
+      hasRenderedInitial = true
+
+      setupBookmarkMenuBgControl()
+      setupSmartFoldersControl()
+      setupSidebarWidthControl()
+
+      const activeTab = localStorage.getItem("activeTab") || "dashboard"
+      if (activeTab === "quick-save") {
+        setTimeout(() => {
+          renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          setupBookmarkChangeListeners(elements)
+        }, 80)
       } else {
+        renderFilteredBookmarks(bookmarkTreeNodes, elements)
+        setupBookmarkChangeListeners(elements)
+      }
+    }
+
+    // Parallel 1: Get bookmark tree
+    getBookmarkTree((nodes) => {
+      if (nodes) {
+        bookmarkTreeNodes = nodes
+        tryInitialRender()
+      } else if (elements.folderListDiv) {
         elements.folderListDiv.innerHTML = `<p>${translations[savedLanguage].noBookmarks}</p>`
+      }
+    })
+
+    // Parallel 2: Load UI state
+    customLoadUIState(() => {
+      uiStateLoaded = true
+      tryInitialRender()
+    })
+
+    // Background: Load visit counts without blocking initial paint
+    loadVisitCounts(() => {
+      if (uiState.sortType === "most-visited" && bookmarkTreeNodes && hasRenderedInitial) {
+        requestAnimationFrame(() => {
+          renderFilteredBookmarks(bookmarkTreeNodes, elements)
+        })
       }
     })
 

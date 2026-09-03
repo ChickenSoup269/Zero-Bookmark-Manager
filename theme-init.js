@@ -15,8 +15,10 @@
   document.documentElement.setAttribute('data-theme', theme)
   
   var isNativePopup = window.location.search.indexOf('mode=native_popup') !== -1;
+  var font = localStorage.getItem('appFont') || 'gohu';
   function applyClasses() {
     document.body.classList.add(theme + '-theme');
+    document.body.classList.add('font-' + font);
     if (isNativePopup) {
       document.body.classList.add('native-popup');
     }
