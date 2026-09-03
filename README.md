@@ -221,6 +221,11 @@ Video Updating
 
  </p>
 
+## 💬 What Users Say
+
+> *"Finally, a bookmark manager that lets you change how each folder is sorted. I have added and removed so many extensions trying to find one to sort my bookmark by date, it's ridiculous. Not only can you sort each folder in different ways but you can customize the way it looks, how it opens, and it checks for duplicates. The whole extension so great. I only gave it 4 stars cause I just started using it."*  
+> — **User Review on Chrome Web Store** ⭐⭐⭐⭐☆
+
 ## Feedback
 
 If you have any feedback, please reach out to me at thientran01345@icloud.com

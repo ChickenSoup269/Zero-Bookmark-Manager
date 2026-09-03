@@ -157,6 +157,11 @@ Cài đặt Bookmark-Manager
 
 - (để tiết kiệm bạn hãy qua readme chính để xem, xin cảm ơn)
 
+## 💬 Đánh giá từ người dùng
+ 
+> *"Finally, a bookmark manager that lets you change how each folder is sorted. I have added and removed so many extensions trying to find one to sort my bookmark by date, it's ridiculous. Not only can you sort each folder in different ways but you can customize the way it looks, how it opens, and it checks for duplicates. The whole extension so great. I only gave it 4 stars cause I just started using it."*  
+> — **Đánh giá của người dùng trên Chrome Web Store** ⭐⭐⭐⭐☆
+
 ## Feedback
 
 Nếu bạn có bất kỳ phản hồi nào, vui lòng liên hệ với mình tại thientran01345@icloud.com.
