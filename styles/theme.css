@@ -1,504 +1,741 @@
 /* ====================================
-   Theme Variables
+   Theme Variables — Standardized Schema
+   19 Themes (13 Dark, 6 Light)
    ==================================== */
 
-/* Dark theme (default) */
-:root {
+/* 1. Dark theme (default) */
+:root,
+:root[data-theme="dark"],
+[data-theme="dark"],
+body.dark-theme {
+  color-scheme: dark;
   --bg-primary: #0d1117;
   --bg-secondary: #161b22;
   --bg-secondary-rgb: 22, 27, 34;
   --bg-tertiary: #21262d;
-  --bg-white-none: white;
-  --bg-side: #161b22;
-  --text-primary: #ffffff;
-  --text-secondary: #cccccc;
-  --text-muted: #999999;
-  --border-color: #333333;
-  --accent-color: #ffffff;
-  --accent-color-light: rgba(255, 255, 255, 0.1);
-  --danger-color: #e13939;
-  --danger-color-light: rgba(225, 57, 57, 0.1);
-  --danger-hover: #e13939;
-  --hover-bg: #151a25b2;
-  --focus-outline: #4a90e2;
-  --box-shadow: 0 6px 15px rgb(255, 255, 255, 0.753);
-  --tree-line-color: rgba(255, 255, 255, 0.5);
-  --folder-title-color: #ffffff;
+  --text-primary: #f0f6fc;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+  --border-color: #30363d;
+  --border-color-subtle: rgba(255, 255, 255, 0.08);
+  --accent-color: #58a6ff;
+  --accent-color-light: rgba(88, 166, 255, 0.12);
+  --accent-contrast: #ffffff;
+  --danger-color: #f85149;
+  --danger-color-light: rgba(248, 81, 73, 0.12);
+  --danger-hover: #ff6b6b;
+  --success-color: #3fb950;
+  --warning-color: #d29922;
+  --hover-bg: #1f242c;
+  --hover-bg-option: #21262d;
+  --focus-outline: #58a6ff;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --tree-line-color: rgba(88, 166, 255, 0.3);
+  --folder-title-color: #f0f6fc;
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(112, 161, 70, 0.1);
+  --folder-hover-bg: rgba(255, 255, 255, 0.04);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
-  --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
-  --health-icon-dead-color: #dc3545;
-  --text-option: white;
-  --shadow-hover-tree: rgba(255, 255, 255, 0.35) 0px 5px 15px;
-  --hover-bg-option: #2b2b2b;
-  --bg-tags-select: rgba(0, 0, 0, 0.9);
-  --hover-light-dazz: rgba(255, 255, 255, 0.4);
+  --bookmark-hover-bg: rgba(255, 255, 255, 0.06);
+  --bg-tags-select: rgba(13, 17, 23, 0.95);
   --font-family-monospace: "JetBrainsMonoNerdFont", "Consolas", monospace;
 }
 
-/* Light theme */
-[data-theme="light"] body.light-theme {
+/* 2. Light theme */
+:root[data-theme="light"],
+[data-theme="light"],
+body.light-theme {
+  color-scheme: light;
   --bg-primary: #ffffff;
   --bg-secondary: #f6f8fa;
   --bg-secondary-rgb: 246, 248, 250;
   --bg-tertiary: #eaeef2;
-  --bg-white-none: none;
-  --bg-side: #272727;
-  --text-primary: #000000;
-  --text-secondary: #000000;
-  --text-muted: #666666;
-  --border-color: #cccccc;
-  --accent-color: #000000;
-  --accent-color-light: rgba(0, 0, 0, 0.05);
-  --danger-color: #dc3545;
-  --danger-color-light: rgba(220, 53, 69, 0.1);
-  --hover-bg: #ffffffcd;
-  --focus-outline: #4a90e2;
-  --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.753);
-  --tree-line-color: rgba(0, 0, 0, 0.5);
-  --folder-title-color: #000000;
+  --text-primary: #1f2328;
+  --text-secondary: #59636e;
+  --text-muted: #8c959f;
+  --border-color: #d0d7de;
+  --border-color-subtle: rgba(0, 0, 0, 0.06);
+  --accent-color: #0969da;
+  --accent-color-light: rgba(9, 105, 218, 0.1);
+  --accent-contrast: #ffffff;
+  --danger-color: #cf222e;
+  --danger-color-light: rgba(207, 34, 46, 0.1);
+  --danger-hover: #a40e26;
+  --success-color: #1a7f37;
+  --warning-color: #9a6700;
+  --hover-bg: #eef1f5;
+  --hover-bg-option: #eaeef2;
+  --focus-outline: #0969da;
+  --box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.1);
+  --tree-line-color: rgba(9, 105, 218, 0.25);
+  --folder-title-color: #1f2328;
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(112, 161, 70, 0.15);
+  --folder-hover-bg: rgba(0, 0, 0, 0.03);
   --bookmark-bg: rgba(0, 0, 0, 0.02);
-  --bookmark-hover-bg: rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 1px 2px rgba(70, 70, 70, 0.1);
-  --shadow-md: 0 2px 4px rgba(51, 51, 51, 0.188);
-  --shadow-lg: 0 10px 15px rgba(255, 255, 255, 0.1);
-  --text-option: #308ef9;
-  --shadow-hover-tree: rgba(0, 0, 0, 0.35) px 5px 15px;
-  --hover-bg-option: #d7d7d7;
-  --bg-tags-select: rgba(37, 38, 38, 0.825);
-  --hover-light-dazz: rgba(61, 53, 53, 0.192);
+  --bookmark-hover-bg: rgba(0, 0, 0, 0.04);
+  --bg-tags-select: rgba(246, 248, 250, 0.95);
 }
 
-/* Dracula theme */
+/* 3. Dracula theme */
+:root[data-theme="dracula"],
 [data-theme="dracula"],
 body.dracula-theme {
+  color-scheme: dark;
   --bg-primary: #282a36;
-  --bg-secondary: #242424;
-  --bg-secondary-rgb: 36, 36, 36;
-  --bg-tertiary: #373844;
-  --text-primary: #ffffff;
-  --text-secondary: #50fa7b;
+  --bg-secondary: #21222c;
+  --bg-secondary-rgb: 33, 34, 44;
+  --bg-tertiary: #343746;
+  --text-primary: #f8f8f2;
+  --text-secondary: #bd93f9;
   --text-muted: #6272a4;
-  --accent-color: #ffffff;
-  --accent-color-light: rgba(255, 255, 255, 0.08);
-  --border-color: #6272a4;
+  --border-color: #44475a;
+  --border-color-subtle: rgba(98, 114, 164, 0.25);
+  --accent-color: #bd93f9;
+  --accent-color-light: rgba(189, 147, 249, 0.15);
+  --accent-contrast: #282a36;
   --danger-color: #ff5555;
-  --danger-color-light: rgba(255, 85, 85, 0.1);
-  --danger-hover: #ff4444;
-  --hover-bg: #3a3c4e;
-  --focus-outline: #ff79c6;
-  --box-shadow: 0 6px 15px rgba(189, 147, 249, 0.3);
-  --tree-line-color: rgba(189, 147, 249, 0.5);
-  --folder-title-color: #bd93f9;
+  --danger-color-light: rgba(255, 85, 85, 0.15);
+  --danger-hover: #ff6e6e;
+  --success-color: #50fa7b;
+  --warning-color: #f1fa8c;
+  --hover-bg: #3d4052;
+  --hover-bg-option: #343746;
+  --focus-outline: #bd93f9;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --tree-line-color: rgba(189, 147, 249, 0.35);
+  --folder-title-color: #f8f8f2;
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(80, 250, 123, 0.1);
+  --folder-hover-bg: rgba(189, 147, 249, 0.08);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
-  --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
-  --text-option: #ff79c6;
-  --hover-bg-option: #3a3c4e;
-  --bg-tags-select: rgba(40, 42, 54, 0.9);
+  --bookmark-hover-bg: rgba(189, 147, 249, 0.08);
+  --bg-tags-select: rgba(40, 42, 54, 0.95);
 }
 
-/* OneDark theme */
+/* 4. OneDark theme */
+:root[data-theme="onedark"],
 [data-theme="onedark"],
 body.onedark-theme {
+  color-scheme: dark;
   --bg-primary: #282c34;
   --bg-secondary: #21252b;
   --bg-secondary-rgb: 33, 37, 43;
   --bg-tertiary: #2c313c;
-  --text-primary: #ffffff;
-  --text-secondary: #c678dd;
+  --text-primary: #abb2bf;
+  --text-secondary: #61afef;
   --text-muted: #5c6370;
-  --accent-color: #ffffff;
-  --accent-color-light: rgba(255, 255, 255, 0.08);
   --border-color: #3e4451;
+  --border-color-subtle: rgba(255, 255, 255, 0.08);
+  --accent-color: #61afef;
+  --accent-color-light: rgba(97, 175, 239, 0.12);
+  --accent-contrast: #282c34;
   --danger-color: #e06c75;
-  --danger-color-light: rgba(224, 108, 117, 0.1);
+  --danger-color-light: rgba(224, 108, 117, 0.12);
   --danger-hover: #be5046;
-  --hover-bg: #323842;
-  --focus-outline: #98c379;
-  --box-shadow: 0 6px 15px rgba(97, 175, 239, 0.25);
-  --tree-line-color: rgba(255, 255, 255, 0.5);
-  --folder-title-color: #e5c07b;
+  --success-color: #98c379;
+  --warning-color: #e5c07b;
+  --hover-bg: #353b45;
+  --hover-bg-option: #2c313c;
+  --focus-outline: #61afef;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.4);
+  --tree-line-color: rgba(97, 175, 239, 0.3);
+  --folder-title-color: #abb2bf;
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(152, 195, 121, 0.1);
+  --folder-hover-bg: rgba(97, 175, 239, 0.08);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
-  --bookmark-hover-bg: rgba(255, 255, 255, 0.08);
-  --text-option: #98c379;
-  --hover-bg-option: #323842;
-  --bg-tags-select: rgba(40, 44, 52, 0.9);
+  --bookmark-hover-bg: rgba(97, 175, 239, 0.06);
+  --bg-tags-select: rgba(40, 44, 52, 0.95);
 }
 
-/* Tet theme */
-[data-theme="tet"],
-body.tet-theme {
-  --bg-primary: #5e0000;
-  --bg-secondary: #2a0505;
-  --bg-secondary-rgb: 211, 47, 47;
-  --bg-tertiary: #8b1a1a;
-  --text-primary: #f9e79f;
-  --text-secondary: #fef5e7;
-  --text-muted: #f8e295;
-  --accent-color: rgb(249, 231, 159);
-  --accent-color-light: rgba(249, 231, 159, 0.2);
-  --border-color: #a82525;
-  --danger-color: #ff6b6b;
-  --danger-color-light: rgba(255, 107, 107, 0.15);
-  --danger-hover: #ff5252;
-  --hover-bg: rgba(249, 231, 159, 0.18);
-  --focus-outline: #f4d03f;
-  --box-shadow: 0 4px 12px rgba(249, 231, 159, 0.3);
-  --tree-line-color: rgba(249, 231, 159, 0.45);
-  --folder-title-color: #fef5e7;
-  --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(249, 231, 159, 0.22);
-  --bookmark-bg: rgba(249, 231, 159, 0.08);
-  --bookmark-hover-bg: rgba(249, 231, 159, 0.15);
-  --health-icon-dead-color: #ffd54f;
-  --text-option: #fef5e7;
-  --hover-bg-option: rgba(249, 231, 159, 0.2);
-  --bg-tags-select: rgba(139, 26, 26, 0.85);
-  --hover-light-dazz: rgba(248, 227, 149, 0.6);
-}
-
-/* Tokyo Night theme */
+/* 5. Tokyo Night theme */
+:root[data-theme="tokyonight"],
 [data-theme="tokyonight"],
 body.tokyonight-theme {
+  color-scheme: dark;
   --bg-primary: #1a1b26;
   --bg-secondary: #16161e;
   --bg-secondary-rgb: 22, 22, 30;
   --bg-tertiary: #24283b;
-  --bg-white-none: white;
-  --bg-side: #16161e;
   --text-primary: #c0caf5;
   --text-secondary: #7aa2f7;
   --text-muted: #565f89;
   --border-color: #414868;
-  --accent-color: #c0caf5;
-  --accent-color-light: rgba(122, 162, 247, 0.1);
+  --border-color-subtle: rgba(65, 72, 104, 0.4);
+  --accent-color: #7aa2f7;
+  --accent-color-light: rgba(122, 162, 247, 0.12);
+  --accent-contrast: #15161e;
   --danger-color: #f7768e;
-  --danger-color-light: rgba(247, 118, 142, 0.1);
+  --danger-color-light: rgba(247, 118, 142, 0.12);
   --danger-hover: #ff7a93;
+  --success-color: #9ece6a;
+  --warning-color: #e0af68;
   --hover-bg: #292e42;
+  --hover-bg-option: #24283b;
   --focus-outline: #7aa2f7;
-  --box-shadow: 0 6px 15px rgba(122, 162, 247, 0.3);
-  --tree-line-color: rgba(122, 162, 247, 0.5);
-  --folder-title-color: #7dcfff;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --tree-line-color: rgba(122, 162, 247, 0.35);
+  --folder-title-color: #c0caf5;
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(158, 206, 106, 0.1);
+  --folder-hover-bg: rgba(122, 162, 247, 0.08);
   --bookmark-bg: rgba(192, 202, 245, 0.02);
-  --bookmark-hover-bg: rgba(192, 202, 245, 0.08);
-  --health-icon-dead-color: #f7768e;
-  --text-option: #bb9af7;
-  --shadow-hover-tree: rgba(122, 162, 247, 0.35) 0px 5px 15px;
-  --hover-bg-option: #292e42;
-  --bg-tags-select: rgba(26, 27, 38, 0.9);
-  --hover-light-dazz: rgba(122, 162, 247, 0.4);
+  --bookmark-hover-bg: rgba(122, 162, 247, 0.07);
+  --bg-tags-select: rgba(26, 27, 38, 0.95);
 }
 
-/* GitHub Dark Blue theme */
+/* 6. GitHub Dark Blue theme */
+:root[data-theme="github-blue"],
 [data-theme="github-blue"],
 body.github-blue-theme {
+  color-scheme: dark;
   --bg-primary: #0d1117;
   --bg-secondary: #161b22;
   --bg-secondary-rgb: 22, 27, 34;
   --bg-tertiary: #21262d;
-  --bg-white-none: white;
-  --bg-side: #161b22;
   --text-primary: #e6edf3;
   --text-secondary: #58a6ff;
   --text-muted: #7d8590;
   --border-color: #30363d;
-  --accent-color: #e6edf3;
-  --accent-color-light: rgba(88, 166, 255, 0.1);
+  --border-color-subtle: rgba(48, 54, 61, 0.6);
+  --accent-color: #58a6ff;
+  --accent-color-light: rgba(88, 166, 255, 0.12);
+  --accent-contrast: #0d1117;
   --danger-color: #f85149;
-  --danger-color-light: rgba(248, 81, 73, 0.1);
+  --danger-color-light: rgba(248, 81, 73, 0.12);
   --danger-hover: #ff6b6b;
+  --success-color: #3fb950;
+  --warning-color: #d29922;
   --hover-bg: #1c2128;
+  --hover-bg-option: #21262d;
   --focus-outline: #58a6ff;
-  --box-shadow: 0 6px 15px rgba(88, 166, 255, 0.25);
-  --tree-line-color: rgba(88, 166, 255, 0.5);
-  --folder-title-color: #58a6ff;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --tree-line-color: rgba(88, 166, 255, 0.3);
+  --folder-title-color: #e6edf3;
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(88, 166, 255, 0.1);
+  --folder-hover-bg: rgba(88, 166, 255, 0.08);
   --bookmark-bg: rgba(230, 237, 243, 0.02);
-  --bookmark-hover-bg: rgba(230, 237, 243, 0.08);
-  --health-icon-dead-color: #f85149;
-  --text-option: #58a6ff;
-  --shadow-hover-tree: rgba(88, 166, 255, 0.35) 0px 5px 15px;
-  --hover-bg-option: #1c2128;
-  --bg-tags-select: rgba(13, 17, 23, 0.9);
-  --hover-light-dazz: rgba(88, 166, 255, 0.4);
+  --bookmark-hover-bg: rgba(88, 166, 255, 0.07);
+  --bg-tags-select: rgba(13, 17, 23, 0.95);
 }
 
-/* GitHub Light theme */
+/* 7. GitHub Light theme */
+:root[data-theme="github-light"],
 [data-theme="github-light"],
 body.github-light-theme {
+  color-scheme: light;
   --bg-primary: #ffffff;
   --bg-secondary: #f6f8fa;
   --bg-secondary-rgb: 246, 248, 250;
   --bg-tertiary: #eaeef2;
-  --bg-white-none: none;
-  --bg-side: #272727;
-  --text-primary: #24292f;
+  --text-primary: #1f2328;
   --text-secondary: #0969da;
   --text-muted: #57606a;
   --border-color: #d0d7de;
-  --accent-color: #000000;
+  --border-color-subtle: rgba(208, 215, 222, 0.6);
+  --accent-color: #0969da;
   --accent-color-light: rgba(9, 105, 218, 0.1);
+  --accent-contrast: #ffffff;
   --danger-color: #cf222e;
   --danger-color-light: rgba(207, 34, 46, 0.1);
   --danger-hover: #a40e26;
-  --hover-bg: #f3f4f6;
-  --focus-outline: #0969da;
-  --box-shadow: 0 6px 15px rgba(9, 105, 218, 0.15);
-  --tree-line-color: rgba(9, 105, 218, 0.5);
-  --folder-title-color: #0969da;
-  --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(9, 105, 218, 0.08);
-  --bookmark-bg: rgba(36, 41, 47, 0.02);
-  --bookmark-hover-bg: rgba(36, 41, 47, 0.05);
-  --health-icon-dead-color: #cf222e;
-  --text-option: #0969da;
-  --shadow-hover-tree: rgba(9, 105, 218, 0.25) 0px 5px 15px;
+  --success-color: #1a7f37;
+  --warning-color: #9a6700;
+  --hover-bg: #eff2f5;
   --hover-bg-option: #eaeef2;
-  --bg-tags-select: rgba(37, 38, 38, 0.825);
-  --hover-light-dazz: rgba(9, 105, 218, 0.2);
+  --focus-outline: #0969da;
+  --box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.1);
+  --tree-line-color: rgba(9, 105, 218, 0.25);
+  --folder-title-color: #1f2328;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(9, 105, 218, 0.05);
+  --bookmark-bg: rgba(31, 35, 40, 0.02);
+  --bookmark-hover-bg: rgba(9, 105, 218, 0.04);
+  --bg-tags-select: rgba(246, 248, 250, 0.95);
 }
 
-/* Monokai theme */
+/* 8. Monokai theme */
+:root[data-theme="monokai"],
 [data-theme="monokai"],
 body.monokai-theme {
+  color-scheme: dark;
   --bg-primary: #272822;
   --bg-secondary: #1e1f1c;
   --bg-secondary-rgb: 30, 31, 28;
   --bg-tertiary: #3e3d32;
-  --bg-white-none: white;
-  --bg-side: #1e1f1c;
   --text-primary: #f8f8f2;
   --text-secondary: #a6e22e;
   --text-muted: #75715e;
   --border-color: #49483e;
-  --accent-color: #f8f8f2;
-  --accent-color-light: rgba(166, 226, 46, 0.1);
+  --border-color-subtle: rgba(73, 72, 62, 0.6);
+  --accent-color: #a6e22e;
+  --accent-color-light: rgba(166, 226, 46, 0.12);
+  --accent-contrast: #1e1f1c;
   --danger-color: #f92672;
-  --danger-color-light: rgba(249, 38, 114, 0.1);
+  --danger-color-light: rgba(249, 38, 114, 0.12);
   --danger-hover: #ff3d89;
-  --hover-bg: #3e3d32;
-  --focus-outline: #66d9ef;
-  --box-shadow: 0 6px 15px rgba(166, 226, 46, 0.25);
-  --tree-line-color: rgba(102, 217, 239, 0.5);
-  --folder-title-color: #66d9ef;
-  --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(166, 226, 46, 0.1);
-  --bookmark-bg: rgba(248, 248, 242, 0.02);
-  --bookmark-hover-bg: rgba(248, 248, 242, 0.08);
-  --health-icon-dead-color: #f92672;
-  --text-option: #e6db74;
-  --shadow-hover-tree: rgba(166, 226, 46, 0.35) 0px 5px 15px;
+  --success-color: #a6e22e;
+  --warning-color: #e6db74;
+  --hover-bg: #35362e;
   --hover-bg-option: #3e3d32;
-  --bg-tags-select: rgba(39, 40, 34, 0.9);
-  --hover-light-dazz: rgba(166, 226, 46, 0.4);
+  --focus-outline: #66d9ef;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --tree-line-color: rgba(102, 217, 239, 0.35);
+  --folder-title-color: #f8f8f2;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(166, 226, 46, 0.08);
+  --bookmark-bg: rgba(248, 248, 242, 0.02);
+  --bookmark-hover-bg: rgba(166, 226, 46, 0.06);
+  --bg-tags-select: rgba(39, 40, 34, 0.95);
 }
 
-/* Winter is Coming theme */
+/* 9. Winter is Coming theme */
+:root[data-theme="winter-is-coming"],
 [data-theme="winter-is-coming"],
 body.winter-is-coming-theme {
+  color-scheme: dark;
   --bg-primary: #011627;
   --bg-secondary: #001424;
   --bg-secondary-rgb: 0, 20, 36;
   --bg-tertiary: #1d3b53;
-  --bg-white-none: white;
-  --bg-side: #001424;
   --text-primary: #d6deeb;
   --text-secondary: #82aaff;
   --text-muted: #5f7e97;
   --border-color: #2c5375;
-  --accent-color: #d6deeb;
-  --accent-color-light: rgba(130, 170, 255, 0.1);
+  --border-color-subtle: rgba(44, 83, 117, 0.5);
+  --accent-color: #82aaff;
+  --accent-color-light: rgba(130, 170, 255, 0.12);
+  --accent-contrast: #011627;
   --danger-color: #ef5350;
-  --danger-color-light: rgba(239, 83, 80, 0.1);
+  --danger-color-light: rgba(239, 83, 80, 0.12);
   --danger-hover: #ff6e6e;
+  --success-color: #22da6e;
+  --warning-color: #ffcb6b;
   --hover-bg: #0b2942;
+  --hover-bg-option: #1d3b53;
   --focus-outline: #80cbc4;
-  --box-shadow: 0 6px 15px rgba(130, 170, 255, 0.25);
-  --tree-line-color: rgba(128, 203, 196, 0.8);
-  --folder-title-color: #7fdbca;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.5);
+  --tree-line-color: rgba(128, 203, 196, 0.35);
+  --folder-title-color: #d6deeb;
   --folder-bg: var(--bg-primary);
-  --folder-hover-bg: rgba(127, 219, 202, 0.1);
+  --folder-hover-bg: rgba(130, 170, 255, 0.08);
   --bookmark-bg: rgba(214, 222, 235, 0.02);
-  --bookmark-hover-bg: rgba(214, 222, 235, 0.08);
-  --health-icon-dead-color: #ef5350;
-  --text-option: #c792ea;
-  --shadow-hover-tree: rgba(127, 219, 202, 0.35) 0px 5px 15px;
-  --hover-bg-option: #0b2942;
-  --bg-tags-select: rgba(1, 22, 39, 0.9);
-  --hover-light-dazz: rgba(130, 170, 255, 0.4);
-  --scrollbar-thumb: rgba(130, 170, 255, 0.3);
-  --scrollbar-thumb-hover: rgba(130, 170, 255, 0.6);
+  --bookmark-hover-bg: rgba(130, 170, 255, 0.06);
+  --bg-tags-select: rgba(1, 22, 39, 0.95);
 }
 
-/* Nord Theme */
+/* 10. Nord Theme */
+:root[data-theme="nord"],
 [data-theme="nord"],
 body.nord-theme {
+  color-scheme: dark;
   --bg-primary: #2e3440;
   --bg-secondary: #3b4252;
-  --text-primary: #d8dee9;
-  --text-secondary: #e5e9f0;
-  --accent-color: #88c0d0;
+  --bg-secondary-rgb: 59, 66, 82;
+  --bg-tertiary: #434c5e;
+  --text-primary: #eceff4;
+  --text-secondary: #88c0d0;
+  --text-muted: #7e889b;
   --border-color: #4c566a;
+  --border-color-subtle: rgba(76, 86, 106, 0.6);
+  --accent-color: #88c0d0;
+  --accent-color-light: rgba(136, 192, 208, 0.12);
+  --accent-contrast: #2e3440;
   --danger-color: #bf616a;
+  --danger-color-light: rgba(191, 97, 106, 0.12);
+  --danger-hover: #d08770;
   --success-color: #a3be8c;
+  --warning-color: #ebcb8b;
   --hover-bg: #434c5e;
-  --bg-tags-select: rgba(46, 52, 64, 0.9);
+  --hover-bg-option: #3b4252;
+  --focus-outline: #88c0d0;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.4);
+  --tree-line-color: rgba(136, 192, 208, 0.35);
+  --folder-title-color: #eceff4;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(136, 192, 208, 0.08);
+  --bookmark-bg: rgba(236, 239, 244, 0.02);
+  --bookmark-hover-bg: rgba(136, 192, 208, 0.06);
+  --bg-tags-select: rgba(46, 52, 64, 0.95);
 }
 
-/* SynthWave '84 Theme */
+/* 11. SynthWave '84 Theme */
+:root[data-theme="synthwave"],
 [data-theme="synthwave"],
 body.synthwave-theme {
-  --bg-primary: #2b213a;
-  --bg-secondary: #1a1625;
+  color-scheme: dark;
+  --bg-primary: #261b35;
+  --bg-secondary: #1f142d;
+  --bg-secondary-rgb: 31, 20, 45;
+  --bg-tertiary: #342449;
   --text-primary: #fdfdfd;
-  --text-secondary: rgb(247, 177, 212);
-  --accent-color: rgb(255, 193, 255);
+  --text-secondary: #ff7edb;
+  --text-muted: #8c73a6;
   --border-color: #513e75;
+  --border-color-subtle: rgba(81, 62, 117, 0.5);
+  --accent-color: #ff7edb;
+  --accent-color-light: rgba(255, 126, 219, 0.15);
+  --accent-contrast: #261b35;
   --danger-color: #ff3366;
+  --danger-color-light: rgba(255, 51, 102, 0.12);
+  --danger-hover: #ff5277;
   --success-color: #36f9f6;
-  --hover-bg: rgb(247, 177, 212);
-  --bg-tags-select: rgba(43, 33, 58, 0.95);
+  --warning-color: #fede5d;
+  --hover-bg: #3f2a58;
+  --hover-bg-option: #342449;
+  --focus-outline: #36f9f6;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.5);
+  --tree-line-color: rgba(255, 126, 219, 0.35);
+  --folder-title-color: #fdfdfd;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(255, 126, 219, 0.08);
+  --bookmark-bg: rgba(253, 253, 253, 0.02);
+  --bookmark-hover-bg: rgba(255, 126, 219, 0.06);
+  --bg-tags-select: rgba(38, 27, 53, 0.95);
 }
 
-/* Gruvbox Theme */
+/* 12. Gruvbox (Dark) Theme */
+:root[data-theme="gruvbox"],
 [data-theme="gruvbox"],
 body.gruvbox-theme {
+  color-scheme: dark;
   --bg-primary: #282828;
-  --bg-secondary: #3c3836;
+  --bg-secondary: #1d2021;
+  --bg-secondary-rgb: 29, 32, 33;
+  --bg-tertiary: #3c3836;
   --text-primary: #ebdbb2;
-  --text-secondary: #d5c4a1;
-  --accent-color: #fabd2f;
+  --text-secondary: #fabd2f;
+  --text-muted: #928374;
   --border-color: #504945;
+  --border-color-subtle: rgba(80, 73, 69, 0.6);
+  --accent-color: #fabd2f;
+  --accent-color-light: rgba(250, 189, 47, 0.12);
+  --accent-contrast: #282828;
   --danger-color: #fb4934;
+  --danger-color-light: rgba(251, 73, 52, 0.12);
+  --danger-hover: #fe8019;
   --success-color: #b8bb26;
-  --hover-bg: #504945;
-  --bg-tags-select: rgba(40, 40, 40, 0.9);
+  --warning-color: #fe8019;
+  --hover-bg: #45403d;
+  --hover-bg-option: #3c3836;
+  --focus-outline: #fabd2f;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --tree-line-color: rgba(250, 189, 47, 0.3);
+  --folder-title-color: #ebdbb2;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(250, 189, 47, 0.08);
+  --bookmark-bg: rgba(235, 219, 178, 0.02);
+  --bookmark-hover-bg: rgba(250, 189, 47, 0.06);
+  --bg-tags-select: rgba(40, 40, 40, 0.95);
 }
 
-/* Catppuccin Theme */
+/* 13. Catppuccin (Mocha) Theme */
+:root[data-theme="catppuccin"],
 [data-theme="catppuccin"],
 body.catppuccin-theme {
+  color-scheme: dark;
   --bg-primary: #1e1e2e;
   --bg-secondary: #181825;
+  --bg-secondary-rgb: 24, 24, 37;
+  --bg-tertiary: #313244;
   --text-primary: #cdd6f4;
-  --text-secondary: #bac2de;
-  --accent-color: #f8f7f8;
-  --border-color: #313244;
+  --text-secondary: #89b4fa;
+  --text-muted: #6c7086;
+  --border-color: #45475a;
+  --border-color-subtle: rgba(69, 71, 90, 0.5);
+  --accent-color: #cba6f7;
+  --accent-color-light: rgba(203, 166, 247, 0.12);
+  --accent-contrast: #11111b;
   --danger-color: #f38ba8;
+  --danger-color-light: rgba(243, 139, 168, 0.12);
+  --danger-hover: #eba0ac;
   --success-color: #a6e3a1;
-  --hover-bg: #313244;
-  --bg-tags-select: rgba(30, 30, 46, 0.9);
+  --warning-color: #f9e2af;
+  --hover-bg: #363a4f;
+  --hover-bg-option: #313244;
+  --focus-outline: #cba6f7;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --tree-line-color: rgba(203, 166, 247, 0.3);
+  --folder-title-color: #cdd6f4;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(203, 166, 247, 0.08);
+  --bookmark-bg: rgba(205, 214, 244, 0.02);
+  --bookmark-hover-bg: rgba(203, 166, 247, 0.06);
+  --bg-tags-select: rgba(30, 30, 46, 0.95);
 }
 
-/* Night Owl Theme */
+/* 14. Night Owl Theme */
+:root[data-theme="nightowl"],
 [data-theme="nightowl"],
 body.nightowl-theme {
+  color-scheme: dark;
   --bg-primary: #011627;
   --bg-secondary: #0b2942;
+  --bg-secondary-rgb: 11, 41, 66;
+  --bg-tertiary: #1d3b53;
   --text-primary: #d6deeb;
   --text-secondary: #82aaff;
-  --accent-color: #fefefe;
+  --text-muted: #5f7e97;
   --border-color: #1d3b53;
+  --border-color-subtle: rgba(29, 59, 83, 0.6);
+  --accent-color: #7fdbca;
+  --accent-color-light: rgba(127, 219, 202, 0.12);
+  --accent-contrast: #011627;
   --danger-color: #ef5350;
+  --danger-color-light: rgba(239, 83, 80, 0.12);
+  --danger-hover: #ff6e6e;
   --success-color: #22da6e;
-  --hover-bg: #1d3b53;
-  --bg-tags-select: rgba(1, 22, 39, 0.9);
+  --warning-color: #ffcb6b;
+  --hover-bg: #153856;
+  --hover-bg-option: #1d3b53;
+  --focus-outline: #7fdbca;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.5);
+  --tree-line-color: rgba(127, 219, 202, 0.3);
+  --folder-title-color: #d6deeb;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(127, 219, 202, 0.08);
+  --bookmark-bg: rgba(214, 222, 235, 0.02);
+  --bookmark-hover-bg: rgba(127, 219, 202, 0.06);
+  --bg-tags-select: rgba(1, 22, 39, 0.95);
 }
 
-/* Nord Light Theme */
+/* 15. Tet theme */
+:root[data-theme="tet"],
+[data-theme="tet"],
+body.tet-theme {
+  color-scheme: dark;
+  --bg-primary: #4a0000;
+  --bg-secondary: #2a0303;
+  --bg-secondary-rgb: 42, 3, 3;
+  --bg-tertiary: #6b0c0c;
+  --text-primary: #fff2c4;
+  --text-secondary: #ffd700;
+  --text-muted: #d4a373;
+  --border-color: #8c1d1d;
+  --border-color-subtle: rgba(140, 29, 29, 0.6);
+  --accent-color: #ffd700;
+  --accent-color-light: rgba(255, 215, 0, 0.15);
+  --accent-contrast: #3a0000;
+  --danger-color: #ff6b6b;
+  --danger-color-light: rgba(255, 107, 107, 0.15);
+  --danger-hover: #ff5252;
+  --success-color: #48bb78;
+  --warning-color: #ecc94b;
+  --hover-bg: #5c0f0f;
+  --hover-bg-option: #6b0c0c;
+  --focus-outline: #ffd700;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55);
+  --tree-line-color: rgba(255, 215, 0, 0.35);
+  --folder-title-color: #fff2c4;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(255, 215, 0, 0.1);
+  --bookmark-bg: rgba(255, 242, 196, 0.03);
+  --bookmark-hover-bg: rgba(255, 215, 0, 0.08);
+  --bg-tags-select: rgba(74, 0, 0, 0.95);
+}
+
+/* 16. Nord Light Theme */
+:root[data-theme="nord-light"],
 [data-theme="nord-light"],
 body.nord-light-theme {
+  color-scheme: light;
   --bg-primary: #eceff4;
   --bg-secondary: #ffffff;
+  --bg-secondary-rgb: 255, 255, 255;
   --bg-tertiary: #e5e9f0;
   --text-primary: #2e3440;
   --text-secondary: #4c566a;
-  --accent-color: #2b405a;
+  --text-muted: #7b889b;
   --border-color: #d8dee9;
+  --border-color-subtle: rgba(216, 222, 233, 0.6);
+  --accent-color: #5e81ac;
+  --accent-color-light: rgba(94, 129, 172, 0.12);
+  --accent-contrast: #ffffff;
   --danger-color: #bf616a;
+  --danger-color-light: rgba(191, 97, 106, 0.12);
+  --danger-hover: #a84f58;
   --success-color: #8fbcbb;
-  --hover-bg: #e5e9f0;
-  --bg-tags-select: rgba(236, 239, 244, 0.95);
-}
-
-/* Gruvbox Light Theme */
-[data-theme="gruvbox-light"],
-body.gruvbox-light-theme {
-  --bg-primary: #ebdbb2;
-  --bg-secondary: #fbf1c7;
-  --bg-tertiary: #d5c4a1;
-  --text-primary: #282828;
-  --text-secondary: #504945;
-  --accent-color: #5b351b;
-  --border-color: #bdae93;
-  --danger-color: #cc241d;
-  --success-color: #79740e;
-  --hover-bg: #d5c4a1;
-  --bg-tags-select: rgba(251, 241, 199, 0.95);
-}
-
-/* Catppuccin Light Theme */
-[data-theme="catppuccin-light"],
-body.catppuccin-light-theme {
-  --bg-primary: #e6e9ef;
-  --bg-secondary: #eff1f5;
-  --bg-tertiary: #dce0e8;
-  --text-primary: #4c4f69;
-  --text-secondary: #5c5f77;
-  --accent-color: #381e59;
-  --border-color: #bcc0cc;
-  --danger-color: #d20f39;
-  --success-color: #40a02b;
-  --hover-bg: #ccd0da;
-  --bg-tags-select: rgba(239, 241, 245, 0.9);
-}
-
-/* Night Owl Light Theme */
-[data-theme="nightowl-light"],
-body.nightowl-light-theme {
-  --bg-primary: #e8ebf0;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #d2dbe2;
-  --text-primary: #403f53;
-  --text-secondary: #5f6c7a;
-  --accent-color: #123350;
-  --border-color: #c0cdd6;
-  --danger-color: #de3d3b;
-  --success-color: #08916a;
-  --hover-bg: #d2dbe2;
+  --warning-color: #d08770;
+  --hover-bg: #e2e6ed;
+  --hover-bg-option: #e5e9f0;
+  --focus-outline: #5e81ac;
+  --box-shadow: 0 6px 20px rgba(46, 52, 64, 0.08);
+  --shadow-sm: 0 1px 3px rgba(46, 52, 64, 0.05);
+  --shadow-md: 0 4px 10px rgba(46, 52, 64, 0.07);
+  --shadow-lg: 0 10px 24px rgba(46, 52, 64, 0.1);
+  --tree-line-color: rgba(94, 129, 172, 0.25);
+  --folder-title-color: #2e3440;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(94, 129, 172, 0.06);
+  --bookmark-bg: rgba(46, 52, 64, 0.02);
+  --bookmark-hover-bg: rgba(94, 129, 172, 0.05);
   --bg-tags-select: rgba(255, 255, 255, 0.95);
 }
 
-/* Fix tree-view bookmark items being too dark in certain light themes */
-[data-theme="nord-light"] .tree-view .bookmark-item,
-[data-theme="nord-light"] .tree-view .folder-item,
-[data-theme="gruvbox-light"] .tree-view .bookmark-item,
-[data-theme="gruvbox-light"] .tree-view .folder-item,
-[data-theme="catppuccin-light"] .tree-view .bookmark-item,
-[data-theme="catppuccin-light"] .tree-view .folder-item,
-[data-theme="nightowl-light"] .tree-view .bookmark-item,
-[data-theme="nightowl-light"] .tree-view .folder-item {
-  background: var(--bg-secondary) !important;
+/* 17. Gruvbox Light Theme */
+:root[data-theme="gruvbox-light"],
+[data-theme="gruvbox-light"],
+body.gruvbox-light-theme {
+  color-scheme: light;
+  --bg-primary: #fbf1c7;
+  --bg-secondary: #f2e5bc;
+  --bg-secondary-rgb: 242, 229, 188;
+  --bg-tertiary: #ebdbb2;
+  --text-primary: #282828;
+  --text-secondary: #504945;
+  --text-muted: #7c6f64;
+  --border-color: #d5c4a1;
+  --border-color-subtle: rgba(213, 196, 161, 0.6);
+  --accent-color: #af3a03;
+  --accent-color-light: rgba(175, 58, 3, 0.12);
+  --accent-contrast: #ffffff;
+  --danger-color: #cc241d;
+  --danger-color-light: rgba(204, 36, 29, 0.12);
+  --danger-hover: #9d0006;
+  --success-color: #79740e;
+  --warning-color: #b57614;
+  --hover-bg: #e6d5aa;
+  --hover-bg-option: #ebdbb2;
+  --focus-outline: #af3a03;
+  --box-shadow: 0 6px 20px rgba(40, 40, 40, 0.08);
+  --shadow-sm: 0 1px 3px rgba(40, 40, 40, 0.05);
+  --shadow-md: 0 4px 10px rgba(40, 40, 40, 0.07);
+  --shadow-lg: 0 10px 24px rgba(40, 40, 40, 0.1);
+  --tree-line-color: rgba(175, 58, 3, 0.25);
+  --folder-title-color: #282828;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(175, 58, 3, 0.06);
+  --bookmark-bg: rgba(40, 40, 40, 0.02);
+  --bookmark-hover-bg: rgba(175, 58, 3, 0.05);
+  --bg-tags-select: rgba(242, 229, 188, 0.95);
 }
 
-[data-theme="nord-light"] .tree-view .bookmark-item:hover,
-[data-theme="nord-light"] .tree-view .folder-item:hover,
-[data-theme="gruvbox-light"] .tree-view .bookmark-item:hover,
-[data-theme="gruvbox-light"] .tree-view .folder-item:hover,
-[data-theme="catppuccin-light"] .tree-view .bookmark-item:hover,
-[data-theme="catppuccin-light"] .tree-view .folder-item:hover,
-[data-theme="nightowl-light"] .tree-view .bookmark-item:hover,
-[data-theme="nightowl-light"] .tree-view .folder-item:hover {
-  background: var(--bg-primary) !important;
+/* 18. Catppuccin Light (Latte) Theme */
+:root[data-theme="catppuccin-light"],
+[data-theme="catppuccin-light"],
+body.catppuccin-light-theme {
+  color-scheme: light;
+  --bg-primary: #eff1f5;
+  --bg-secondary: #e6e9ef;
+  --bg-secondary-rgb: 230, 233, 239;
+  --bg-tertiary: #dce0e8;
+  --text-primary: #4c4f69;
+  --text-secondary: #6c6f85;
+  --text-muted: #8c8fa1;
+  --border-color: #ccd0da;
+  --border-color-subtle: rgba(204, 208, 218, 0.6);
+  --accent-color: #8839ef;
+  --accent-color-light: rgba(136, 57, 239, 0.12);
+  --accent-contrast: #ffffff;
+  --danger-color: #d20f39;
+  --danger-color-light: rgba(210, 15, 57, 0.12);
+  --danger-hover: #b50e31;
+  --success-color: #40a02b;
+  --warning-color: #df8e1d;
+  --hover-bg: #d6dae4;
+  --hover-bg-option: #dce0e8;
+  --focus-outline: #8839ef;
+  --box-shadow: 0 6px 20px rgba(76, 79, 105, 0.08);
+  --shadow-sm: 0 1px 3px rgba(76, 79, 105, 0.05);
+  --shadow-md: 0 4px 10px rgba(76, 79, 105, 0.07);
+  --shadow-lg: 0 10px 24px rgba(76, 79, 105, 0.1);
+  --tree-line-color: rgba(136, 57, 239, 0.25);
+  --folder-title-color: #4c4f69;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(136, 57, 239, 0.06);
+  --bookmark-bg: rgba(76, 79, 105, 0.02);
+  --bookmark-hover-bg: rgba(136, 57, 239, 0.05);
+  --bg-tags-select: rgba(230, 233, 239, 0.95);
+}
+
+/* 19. Night Owl Light Theme */
+:root[data-theme="nightowl-light"],
+[data-theme="nightowl-light"],
+body.nightowl-light-theme {
+  color-scheme: light;
+  --bg-primary: #f0f2f6;
+  --bg-secondary: #ffffff;
+  --bg-secondary-rgb: 255, 255, 255;
+  --bg-tertiary: #e1e6ed;
+  --text-primary: #403f53;
+  --text-secondary: #5f6c7a;
+  --text-muted: #7e8c9b;
+  --border-color: #d0d8e2;
+  --border-color-subtle: rgba(208, 216, 226, 0.6);
+  --accent-color: #0c6a85;
+  --accent-color-light: rgba(12, 106, 133, 0.12);
+  --accent-contrast: #ffffff;
+  --danger-color: #de3d3b;
+  --danger-color-light: rgba(222, 61, 59, 0.12);
+  --danger-hover: #c42927;
+  --success-color: #08916a;
+  --warning-color: #c97500;
+  --hover-bg: #e5eaf1;
+  --hover-bg-option: #e1e6ed;
+  --focus-outline: #0c6a85;
+  --box-shadow: 0 6px 20px rgba(64, 63, 83, 0.08);
+  --shadow-sm: 0 1px 3px rgba(64, 63, 83, 0.05);
+  --shadow-md: 0 4px 10px rgba(64, 63, 83, 0.07);
+  --shadow-lg: 0 10px 24px rgba(64, 63, 83, 0.1);
+  --tree-line-color: rgba(12, 106, 133, 0.25);
+  --folder-title-color: #403f53;
+  --folder-bg: var(--bg-primary);
+  --folder-hover-bg: rgba(12, 106, 133, 0.06);
+  --bookmark-bg: rgba(64, 63, 83, 0.02);
+  --bookmark-hover-bg: rgba(12, 106, 133, 0.05);
+  --bg-tags-select: rgba(255, 255, 255, 0.95);
+}
+
+/* Global Selection & Focus Polish */
+::selection {
+  background-color: var(--accent-color);
+  color: var(--accent-contrast, #ffffff);
+}
+
+/* Form controls contrast normalization */
+input,
+select,
+textarea {
+  color-scheme: inherit;
 }

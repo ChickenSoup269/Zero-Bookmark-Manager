@@ -9,10 +9,11 @@
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
 
-  /* Border radius */
-  --border-radius: 0.25rem;
-  --border-radius-md: 0.5rem;
-  --border-radius-lg: 8px;
+  /* Border radius (strictly 5px - 10px) */
+  --border-radius-sm: 5px;
+  --border-radius: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 10px;
 
   /* Transitions */
   --transition-fast: 0.3s ease;
@@ -23,4 +24,13 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* Semantic fallbacks */
+  --accent-contrast: #ffffff;
+  --success-color: #22c55e;
+  --warning-color: #eab308;
+  --danger-color: #ef4444;
+  --danger-color-light: rgba(239, 68, 68, 0.12);
+  --error-color: var(--danger-color);
+  --border-color-subtle: rgba(128, 128, 128, 0.15);
 }
