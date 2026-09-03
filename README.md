@@ -168,31 +168,31 @@ Install Bookmark-Manager
 
 ## Usage/Examples
 
-| Parameter            | Description                                                                                |
-| :------------------- | :----------------------------------------------------------------------------------------- |
-| `Display Views`      | Switch seamlessly between Flat, Tree, Detail, Card, List, Bento, Split/Kanban, and Mockup. |
-| `Search`             | Type keywords in the search box (Fuzzy match enabled).                                     |
-| `Filter folders`     | Select a folder from the sidebar or dropdown.                                              |
-| `Sort`               | Choose sorting: Date, A-Z, Favorites, Most Visited, or Domain.                             |
-| `Manage folders`     | Create, rename, or delete folders. Drag & Drop to move folders. Adjust sidebar width.      |
-| `Manage bookmarks`   | Click "⋮" to add to folder, rename, or delete. View Details to open Web Preview modal.     |
-| `Export/Import`      | Use Settings to export as JSON/HTML/CSV (full metadata) or import with duplicate check.    |
-| `CleanUp Duplicates` | Manually scan or auto-remove duplicate bookmarks.                                          |
-| `Workspaces`         | Switch context between Work, Learning, Design, or Personal setups.                         |
-| `Reading Queue`      | Save links to read later, keeping main folders clean.                                      |
-| `Customize`          | Adjust themes, custom fonts, or AI language packs in Settings.                             |
-| `Web Preview`        | Open sites in a modal within the extension (Details button).                               |
-| `Open Side Panel`    | Open bookmark in a side panel for quick viewing.                                           |
-| `Quick Open Action`  | Choose default action (Popup, Full Page, Side Panel) for the extension icon.               |
-| `Quick Save Multi-tab`| Save multiple currently open browser tabs simultaneously into a folder with a single click.|
-| `Tags`               | Filter by tags using sidebar or popup. Auto-categorize via AI.                             |
-| `Pin to top`         | Pin important bookmarks to the top of your list.                                           |
-| `Check Link & Archive`| Verify bookmark health (Alive, Dead, or Suspicious). Lookup dead links via Wayback Machine.|
-| `Visit Count`        | Track and display how many times a bookmark was opened.                                    |
-| `Chatbot`            | Control extension via natural language. Supports major AI providers.                       |
-| `Favicon Provider`   | Choose between Google, DuckDuckGo, or Auto for fetching icons.                             |
-| `Command Palette`    | Press `Ctrl + K` to search and run commands quickly.                                       |
-| `Notes`              | Add personal notes to bookmarks from the Detail view.                                      |
+| Parameter              | Description                                                                                 |
+| :--------------------- | :------------------------------------------------------------------------------------------ |
+| `Display Views`        | Switch seamlessly between Flat, Tree, Detail, Card, List, Bento, Split/Kanban, and Mockup.  |
+| `Search`               | Type keywords in the search box (Fuzzy match enabled).                                      |
+| `Filter folders`       | Select a folder from the sidebar or dropdown.                                               |
+| `Sort`                 | Choose sorting: Date, A-Z, Favorites, Most Visited, or Domain.                              |
+| `Manage folders`       | Create, rename, or delete folders. Drag & Drop to move folders. Adjust sidebar width.       |
+| `Manage bookmarks`     | Click "⋮" to add to folder, rename, or delete. View Details to open Web Preview modal.      |
+| `Export/Import`        | Use Settings to export as JSON/HTML/CSV (full metadata) or import with duplicate check.     |
+| `CleanUp Duplicates`   | Manually scan or auto-remove duplicate bookmarks.                                           |
+| `Workspaces`           | Switch context between Work, Learning, Design, or Personal setups.                          |
+| `Reading Queue`        | Save links to read later, keeping main folders clean.                                       |
+| `Customize`            | Adjust themes, custom fonts, or AI language packs in Settings.                              |
+| `Web Preview`          | Open sites in a modal within the extension (Details button).                                |
+| `Open Side Panel`      | Open bookmark in a side panel for quick viewing.                                            |
+| `Quick Open Action`    | Choose default action (Popup, Full Page, Side Panel) for the extension icon.                |
+| `Quick Save Multi-tab` | Save multiple currently open browser tabs simultaneously into a folder with a single click. |
+| `Tags`                 | Filter by tags using sidebar or popup. Auto-categorize via AI.                              |
+| `Pin to top`           | Pin important bookmarks to the top of your list.                                            |
+| `Check Link & Archive` | Verify bookmark health (Alive, Dead, or Suspicious). Lookup dead links via Wayback Machine. |
+| `Visit Count`          | Track and display how many times a bookmark was opened.                                     |
+| `Chatbot`              | Control extension via natural language. Supports major AI providers.                        |
+| `Favicon Provider`     | Choose between Google, DuckDuckGo, or Auto for fetching icons.                              |
+| `Command Palette`      | Press `Ctrl + K` to search and run commands quickly.                                        |
+| `Notes`                | Add personal notes to bookmarks from the Detail view.                                       |
 
 ## Video & screenshots
 
@@ -220,11 +220,6 @@ Video Updating
 <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_bookmarks/extension_bookmark_119/4.png?raw=true" alt="Screenshot" width=""/>
 
  </p>
-
-## 💬 What Users Say
-
-> *"Finally, a bookmark manager that lets you change how each folder is sorted. I have added and removed so many extensions trying to find one to sort my bookmark by date, it's ridiculous. Not only can you sort each folder in different ways but you can customize the way it looks, how it opens, and it checks for duplicates. The whole extension so great. I only gave it 4 stars cause I just started using it."*  
-> — **User Review on Chrome Web Store** ⭐⭐⭐⭐☆
 
 ## Feedback
 
