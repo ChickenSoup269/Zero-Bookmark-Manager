@@ -151,20 +151,24 @@ export function calculateMatchScore(text, query) {
     return Math.max(0.5, Math.min(0.8, subseqResult.score + 0.3))
   }
 
-  // Levenshtein distance for typo tolerance
-  const maxLen = Math.max(textLower.length, queryLower.length)
-  const distance = levenshteinDistance(textLower, queryLower)
-  const similarity = 1 - distance / maxLen
-
-  // Only consider if similarity is reasonable
-  if (similarity > 0.6) {
-    return similarity * 0.6
-  }
-
   // Check if any word in text starts with query
   for (const word of textWords) {
     if (word.startsWith(queryLower)) {
-      return 0.7
+      return 0.75
+    }
+  }
+
+  // Levenshtein distance for typo tolerance on individual words (only if query length >= 3)
+  if (queryLower.length >= 3) {
+    for (const word of textWords) {
+      if (Math.abs(word.length - queryLower.length) <= 2) {
+        const distance = levenshteinDistance(word, queryLower)
+        const maxLen = Math.max(word.length, queryLower.length)
+        const similarity = 1 - distance / maxLen
+        if (similarity >= 0.7) {
+          return similarity * 0.65
+        }
+      }
     }
   }
 
@@ -271,7 +275,7 @@ export function safeChromeBookmarksCall(method, args, callback) {
   }
 }
 
-export function debounce(func, wait) {
+export function debounce(func, wait = 200) {
   let timeout
   return function (...args) {
     clearTimeout(timeout)

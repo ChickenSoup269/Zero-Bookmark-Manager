@@ -304,15 +304,32 @@ export function setupUIControlListeners(elements) {
   const searchWrapper = document.querySelector('.webview-search-wrapper')
   const settingsContainer = document.querySelector('.settings-container')
 
-  const handleScroll = () => {
+  let scrollTicking = false;
+  const updateStickySearchState = () => {
     const scrollY = window.scrollY;
     document.body.classList.toggle("is-scrolled", scrollY > 10);
     if (elements.scrollToTopButton) {
       elements.scrollToTopButton.classList.toggle("hidden", scrollY < 50);
     }
+    const stickyEls = document.querySelectorAll(".sticky-search, .webview-search-wrapper");
+    stickyEls.forEach((el) => {
+      const isStuck = scrollY > 0 && el.getBoundingClientRect().top <= 1;
+      el.classList.toggle("is-stuck", isStuck);
+    });
   };
 
-  window.addEventListener("scroll", handleScroll);
+  const handleScroll = () => {
+    if (!scrollTicking) {
+      window.requestAnimationFrame(() => {
+        updateStickySearchState();
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  updateStickySearchState();
 
   elements.searchInput.addEventListener(
     "input",

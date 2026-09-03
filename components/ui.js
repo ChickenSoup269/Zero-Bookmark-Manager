@@ -261,23 +261,25 @@ function createTagsHTML(tags, styleOverride = "") {
   if (!tags || tags.length === 0) return ""
   return tags
     .map((tag) => {
-      const bg = uiState.tagColors[tag] || "#ccc"
-      const textColor =
-        (uiState.tagTextColors && uiState.tagTextColors[tag]) ||
-        getContrastColor(bg)
+      const customBg = uiState.tagColors ? uiState.tagColors[tag] : null
+      const bgStyle = customBg
+        ? `background-color: color-mix(in srgb, ${customBg} 16%, var(--bg-secondary)); border: 1px solid color-mix(in srgb, ${customBg} 30%, var(--border-color)); color: var(--text-primary);`
+        : `background-color: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-secondary);`
 
       return `
     <span class="bookmark-tag" style="
-      background-color: ${bg};
-      color: ${textColor};
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 10px;
+      ${bgStyle}
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
       margin-right: 4px;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      line-height: 1.3;
       ${styleOverride}
     ">
-      ${tag}
+      ${escapeHtml(tag)}
     </span>
   `
     })
@@ -376,7 +378,7 @@ function createDropdownHTML(bookmark, language) {
   const isFav = bookmark.isFavorite
   const isPinned = bookmark.isPinned
 
-  const iconStyle = "width: 14px; text-align: center; margin-right: 8px;"
+  const iconStyle = "width: 13px; font-size: 0.82em; text-align: center; margin-right: 6px;"
 
   return `
     <div class="dropdown-btn-group" style="position: relative;">
@@ -385,21 +387,21 @@ function createDropdownHTML(bookmark, language) {
       }" 
               data-id="${bookmark.id}" 
               aria-label="Bookmark options"
-              style="min-width: 24px; width: auto; height: 24px; padding: 0 4px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
+              style="min-width: 22px; width: auto; height: 22px; padding: 0 4px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
         ${
           isPinned
-            ? '<i class="fas fa-thumbtack" style="font-size: 10px; color: var(--accent-color); margin-right: 6px;"></i>'
+            ? '<i class="fas fa-thumbtack" style="font-size: 9px; color: var(--accent-color); margin-right: 4px;"></i>'
             : ""
         }
         ${
           isFav
-            ? '<i class="fas fa-star"></i>'
-            : '<i class="fas fa-ellipsis-v"></i>'
+            ? '<i class="fas fa-star" style="font-size: 11px;"></i>'
+            : '<i class="fas fa-ellipsis-v" style="font-size: 11px;"></i>'
         }
       </button>
       <div class="dropdown-menu bookmark-dropdown-menu hidden">
-        <div class="dropdown-menu-header" style="padding: 6px 12px; font-weight: 600; font-size: 0.85em; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); margin-bottom: 4px;" title="${escapeHtml(bookmark.title || bookmark.url)}">
-          <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
+        <div class="dropdown-menu-header" style="padding: 4px 8px; font-weight: 600; font-size: 0.78em; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); margin-bottom: 2px;" title="${escapeHtml(bookmark.title || bookmark.url)}">
+          <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">
             ${escapeHtml(bookmark.title || bookmark.url)}
           </div>
         </div>
@@ -411,7 +413,7 @@ function createDropdownHTML(bookmark, language) {
                 : t.pinToTop || "Pin to Top"
             }
         </button>
-        <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 4px 0;"/>
+        <hr style="border: none; border-top: 1px solid var(--border-color, #404040); margin: 2px 0;"/>
         <button class="menu-item add-to-folder" data-id="${
           bookmark.id
         }"><i class="fas fa-folder" style="${iconStyle}"></i>${
@@ -2617,17 +2619,6 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
   container.style.padding = isPopup ? "0" : "24px" // Fixed padding in popup
 
   const folders = getFolders(bookmarkTreeNodes)
-  const colors = [
-    "#FF2D55",
-    "#FF9500",
-    "#4CD964",
-    "#5AC8FA",
-    "#007AFF",
-    "#5856D6",
-    "#FF3B30",
-    "#34C759",
-    "#AF52DE",
-  ]
 
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
     if (folder.id === "0") return // Never render the root folder as a category
@@ -2643,26 +2634,22 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
       }
     }
 
-    const color = colors[index % colors.length]
-
     const widget = document.createElement("div")
     widget.style.position = "relative"
     widget.style.background = "var(--bg-secondary)"
-    widget.style.borderRadius = "24px"
-    widget.style.padding = "20px"
+    widget.style.borderRadius = "10px"
+    widget.style.padding = isPopup ? "14px" : "18px"
     widget.style.display = "flex"
     widget.style.flexDirection = "column"
     widget.style.minWidth = "0"
     widget.style.boxSizing = "border-box"
-    widget.style.gap = "12px"
-    widget.style.boxShadow =
-      "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)"
+    widget.style.gap = "10px"
+    widget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)"
     widget.style.border = "1px solid var(--border-color)"
     widget.style.height = "100%"
-    widget.style.minHeight = isPopup ? "220px" : "280px"
+    widget.style.minHeight = isPopup ? "200px" : "260px"
     widget.style.maxHeight = isPopup ? "320px" : "400px"
-    widget.style.transition =
-      "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease"
+    widget.style.transition = "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease"
 
     // Setup drag and drop for widget
     widget.dataset.folderId = folder.id
@@ -2686,15 +2673,14 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
         e.dataTransfer.dropEffect = "move"
       }
       widget.classList.add("drag-over")
-      widget.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 14px 40px rgba(0,0,0,0.12)`
+      widget.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 8px 24px rgba(0,0,0,0.1)`
       widget.style.background = `var(--hover-bg, rgba(0, 123, 255, 0.05))`
     })
     widget.addEventListener("dragleave", (e) => {
       e.stopPropagation()
       if (!widget.contains(e.relatedTarget)) {
         widget.classList.remove("drag-over")
-        widget.style.boxShadow =
-          "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)"
+        widget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)"
         widget.style.background = "var(--bg-secondary)"
       }
     })
@@ -2702,8 +2688,7 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
       e.preventDefault()
       e.stopPropagation()
       widget.classList.remove("drag-over")
-      widget.style.boxShadow =
-        "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)"
+      widget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)"
       widget.style.background = "var(--bg-secondary)"
       if (
         typeof currentDragType === "undefined" ||
@@ -2720,37 +2705,13 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     }
 
     widget.onmouseover = () => {
-      widget.style.transform = "translateY(-4px)"
-      widget.style.boxShadow = `0 14px 40px rgba(0,0,0,0.12), 0 0 0 1px ${color}40, inset 0 1px 0 rgba(255,255,255,0.2)`
+      widget.style.transform = "translateY(-2px)"
+      widget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.08)"
     }
     widget.onmouseout = () => {
       widget.style.transform = "translateY(0)"
-      widget.style.boxShadow =
-        "0 10px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1)"
+      widget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)"
     }
-
-    // Background glowing orb
-    const orbWrapper = document.createElement("div")
-    orbWrapper.style.position = "absolute"
-    orbWrapper.style.top = "0"
-    orbWrapper.style.left = "0"
-    orbWrapper.style.width = "100%"
-    orbWrapper.style.height = "100%"
-    orbWrapper.style.overflow = "hidden"
-    orbWrapper.style.borderRadius = "24px"
-    orbWrapper.style.pointerEvents = "none"
-    orbWrapper.style.zIndex = "0"
-
-    const orb = document.createElement("div")
-    orb.style.position = "absolute"
-    orb.style.top = "-50px"
-    orb.style.right = "-50px"
-    orb.style.width = "150px"
-    orb.style.height = "150px"
-    orb.style.background = `radial-gradient(circle, ${color}20 0%, transparent 70%)`
-    orb.style.borderRadius = "50%"
-    orbWrapper.appendChild(orb)
-    widget.appendChild(orbWrapper)
 
     const header = document.createElement("div")
     header.style.display = "flex"
@@ -2761,9 +2722,9 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
 
     const title = document.createElement("h3")
     title.style.margin = "0"
-    title.style.fontSize = "1rem" // Reduced from 1.3rem
-    title.style.fontWeight = "700"
-    title.style.color = "var(--text-color)"
+    title.style.fontSize = "0.95rem"
+    title.style.fontWeight = "600"
+    title.style.color = "var(--text-primary)"
     title.style.display = "flex"
     title.style.alignItems = "center"
     title.style.gap = "8px"
@@ -2772,17 +2733,18 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     title.style.textOverflow = "ellipsis"
     title.style.minWidth = "0"
     title.style.flex = "1"
-    title.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;border-radius:8px;background:${color}15;color:${color}"><i class="fas fa-folder"></i></div> <span style="overflow:hidden;text-overflow:ellipsis;min-width:0;">${folder.title}</span>`
+    title.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;border-radius:8px;background:var(--bg-tertiary);color:var(--accent-color);"><i class="fas fa-folder"></i></div> <span style="overflow:hidden;text-overflow:ellipsis;min-width:0;">${escapeHtml(folder.title)}</span>`
 
     const countBadge = document.createElement("span")
     countBadge.style.background = "var(--bg-tertiary)"
     countBadge.style.color = "var(--text-secondary)"
-    countBadge.style.padding = "4px 10px"
-    countBadge.style.borderRadius = "20px"
-    countBadge.style.fontSize = "0.75rem"
-    countBadge.style.fontWeight = "600"
+    countBadge.style.border = "1px solid var(--border-color)"
+    countBadge.style.padding = "2px 8px"
+    countBadge.style.borderRadius = "8px"
+    countBadge.style.fontSize = "0.72rem"
+    countBadge.style.fontWeight = "500"
     countBadge.style.flexShrink = "0"
-    countBadge.textContent = `${folderBookmarks.length} items`
+    countBadge.textContent = `${folderBookmarks.length}`
 
     header.appendChild(title)
     header.appendChild(countBadge)
@@ -2792,9 +2754,9 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
     listContainer.style.overflowY = "auto"
     listContainer.style.display = "flex"
     listContainer.style.flexDirection = "column"
-    listContainer.style.gap = "8px"
+    listContainer.style.gap = "6px"
     listContainer.style.paddingRight = "4px"
-    listContainer.style.marginTop = "8px"
+    listContainer.style.marginTop = "6px"
     listContainer.style.zIndex = "1"
     listContainer.style.flexGrow = "1"
 
@@ -2812,20 +2774,19 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
       }
       item.style.display = "flex"
       item.style.alignItems = "center"
-      item.style.gap = "12px"
+      item.style.gap = "10px"
       item.style.textDecoration = "none"
-      item.style.color = "var(--text-color)"
-      item.style.padding = "10px 12px"
-      item.style.borderRadius = "14px"
+      item.style.color = "var(--text-primary)"
+      item.style.padding = "8px 10px"
+      item.style.borderRadius = "8px"
       item.style.background = "var(--bg-primary)"
       item.style.border = "1px solid var(--border-color)"
-      item.style.transition = "all 0.25s ease"
+      item.style.transition = "transform 0.15s ease, background-color 0.15s ease"
       makeBookmarkDraggableAndDroppable(item, b, elements, language)
 
       item.onmouseover = () => {
-        item.style.background = `${color}10`
-        item.style.borderColor = `${color}40`
-        item.style.transform = "translateX(4px)"
+        item.style.background = "var(--hover-bg)"
+        item.style.transform = "translateX(2px)"
       }
       item.onmouseout = () => {
         item.style.background = "var(--bg-primary)"
@@ -2930,14 +2891,6 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
   container.classList.add("custom-scrollbar")
 
   const folders = getFolders(bookmarkTreeNodes)
-  const colors = [
-    "#FF2D55",
-    "#FF9500",
-    "#4CD964",
-    "#5AC8FA",
-    "#007AFF",
-    "#5856D6",
-  ]
 
   sortFoldersArray(folders, uiState.sortType).forEach((folder, index) => {
     if (folder.id === "0") return // Never render the root folder as a column
@@ -2953,14 +2906,10 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       }
     }
 
-    const accent = colors[index % colors.length]
-
     const column = document.createElement("div")
     column.style.background = "var(--bg-secondary)"
-    column.style.backdropFilter = "blur(12px)"
-    column.style.webkitBackdropFilter = "blur(12px)"
     column.style.border = "1px solid var(--border-color)"
-    column.style.borderRadius = "20px"
+    column.style.borderRadius = "10px"
     // For popup, use 100% width so it stacks vertically perfectly
     column.style.minWidth = isPopup ? "100%" : "280px"
     column.style.maxWidth = isPopup ? "100%" : "320px"
@@ -2968,13 +2917,11 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
     column.style.display = "flex"
     column.style.flexDirection = "column"
     column.style.maxHeight = isPopup ? "400px" : "65vh"
-    // Removed height: 100% to allow flex/grid stretch to work naturally
     column.style.padding = "12px 10px"
-    column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)"
+    column.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.04)"
     column.style.scrollSnapAlign = "start"
     column.style.position = "relative"
-    column.style.transition =
-      "transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)"
+    column.style.transition = "transform 0.2s ease, box-shadow 0.2s ease"
 
     // Setup drag and drop for column
     column.dataset.folderId = folder.id
@@ -2998,14 +2945,14 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
         e.dataTransfer.dropEffect = "move"
       }
       column.classList.add("drag-over")
-      column.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 14px 28px rgba(0, 0, 0, 0.1)`
+      column.style.boxShadow = `0 0 0 2px var(--accent-color, #007bff), 0 8px 20px rgba(0, 0, 0, 0.08)`
       column.style.background = `var(--hover-bg, rgba(0, 123, 255, 0.05))`
     })
     column.addEventListener("dragleave", (e) => {
       e.stopPropagation()
       if (!column.contains(e.relatedTarget)) {
         column.classList.remove("drag-over")
-        column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)"
+        column.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.04)"
         column.style.background = "var(--bg-secondary)"
       }
     })
@@ -3013,7 +2960,7 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       e.preventDefault()
       e.stopPropagation()
       column.classList.remove("drag-over")
-      column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)"
+      column.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.04)"
       column.style.background = "var(--bg-secondary)"
       if (
         typeof currentDragType === "undefined" ||
@@ -3025,43 +2972,42 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
 
     // Smooth hover effect
     column.onmouseover = () => {
-      column.style.transform = "translateY(-4px)"
-      column.style.boxShadow = "0 14px 28px rgba(0, 0, 0, 0.1)"
+      column.style.transform = "translateY(-2px)"
+      column.style.boxShadow = "0 6px 16px rgba(0, 0, 0, 0.08)"
     }
     column.onmouseout = () => {
       column.style.transform = "translateY(0)"
-      column.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.06)"
+      column.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.04)"
     }
 
     const header = document.createElement("div")
-    header.style.padding = "0 0 16px 0"
+    header.style.padding = "0 0 12px 0"
     header.style.display = "flex"
     header.style.alignItems = "center"
     header.style.justifyContent = "space-between"
-    header.style.marginBottom = "8px"
+    header.style.marginBottom = "6px"
 
     const titleWrap = document.createElement("div")
     titleWrap.style.display = "flex"
     titleWrap.style.alignItems = "center"
-    titleWrap.style.gap = "12px"
+    titleWrap.style.gap = "10px"
     titleWrap.style.overflow = "hidden"
 
     const iconSpan = document.createElement("div")
-    iconSpan.style.background = `${accent}20` // 20 hex opacity
-    iconSpan.style.color = accent
+    iconSpan.style.background = "var(--bg-tertiary)"
+    iconSpan.style.color = "var(--accent-color)"
     iconSpan.style.display = "flex"
     iconSpan.style.alignItems = "center"
     iconSpan.style.justifyContent = "center"
-    iconSpan.style.width = "36px"
-    iconSpan.style.height = "36px"
-    iconSpan.style.borderRadius = "10px"
-    iconSpan.style.boxShadow = `0 4px 10px ${accent}30`
-    iconSpan.innerHTML = `<i class="fas fa-folder" style="font-size: 1.1rem;"></i>`
+    iconSpan.style.width = "30px"
+    iconSpan.style.height = "30px"
+    iconSpan.style.borderRadius = "8px"
+    iconSpan.innerHTML = `<i class="fas fa-folder" style="font-size: 0.95rem;"></i>`
 
     const titleText = document.createElement("span")
     titleText.textContent = folder.title
-    titleText.style.fontWeight = "700"
-    titleText.style.fontSize = "1.05rem"
+    titleText.style.fontWeight = "600"
+    titleText.style.fontSize = "0.95rem"
     titleText.style.color = "var(--text-primary)"
     titleText.style.whiteSpace = "nowrap"
     titleText.style.overflow = "hidden"
@@ -3072,12 +3018,13 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
 
     const badge = document.createElement("span")
     badge.textContent = folderBookmarks.length
-    badge.style.background = `${accent}15`
-    badge.style.color = accent
-    badge.style.fontSize = "0.75rem"
-    badge.style.fontWeight = "700"
-    badge.style.padding = "4px 10px"
-    badge.style.borderRadius = "20px"
+    badge.style.background = "var(--bg-tertiary)"
+    badge.style.color = "var(--text-secondary)"
+    badge.style.border = "1px solid var(--border-color)"
+    badge.style.fontSize = "0.72rem"
+    badge.style.fontWeight = "500"
+    badge.style.padding = "2px 8px"
+    badge.style.borderRadius = "8px"
 
     header.appendChild(titleWrap)
     header.appendChild(badge)
@@ -3104,7 +3051,7 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       card.style.background = "var(--bg-primary)"
       card.style.border = "1px solid transparent" // Invisible border to prevent shift on hover
       card.style.padding = "8px 10px"
-      card.style.borderRadius = "12px"
+      card.style.borderRadius = "8px"
       card.style.display = "flex"
       card.style.alignItems = "center"
       card.style.gap = "12px"
