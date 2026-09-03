@@ -255,7 +255,7 @@ body {
     var(--accent-color-light),
     var(--bg-tertiary)
   );
-  border-radius: 12px;
+  border-radius: 8px;
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
@@ -311,8 +311,8 @@ body {
 .sidebar-total-count #bookmark-count-number {
   background: var(--text-primary);
   color: var(--bg-primary);
-  padding: 4px 10px;
-  border-radius: 16px;
+  padding: 3px 8px;
+  border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 700;
   min-width: 28px;
@@ -642,8 +642,8 @@ body {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  padding: 6px 14px;
-  border-radius: 20px;
+  padding: 5px 12px;
+  border-radius: 8px;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
@@ -1544,7 +1544,7 @@ body {
 }
 
 .sidebar-section-content {
-  padding: 0 12px 12px;
+  padding: 4px 10px 12px;
   max-height: 2000px;
   overflow: visible;
   transition:
@@ -1578,14 +1578,22 @@ body {
 /* Folder Select & Tree */
 .sidebar-folder-select {
   width: 100%;
-  padding: 8px 10px;
-  font-size: 0.85rem;
+  padding: 6px 10px;
+  font-size: 0.82rem;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
   margin-bottom: 8px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sidebar-folder-select:hover,
+.sidebar-folder-select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-color-light, rgba(0, 123, 255, 0.1));
+  outline: none;
 }
 
 /* Hide folder elements when sidebar collapsed */
@@ -1618,41 +1626,78 @@ body {
 .sidebar-folder-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 6px;
+  gap: 8px;
+  padding: 5px 8px;
   border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
   color: var(--text-primary);
-  font-size: 0.85rem;
-  transition:
-    all 0.15s ease,
-    background-color 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease;
+  font-size: 0.84rem;
+  transition: all 0.15s ease;
   position: relative;
   margin-left: 0;
+  margin-bottom: 2px;
 }
 
-/* Tree lines */
+/* Tree lines for child folders in sidebar-folder-tree */
 .sidebar-folder-item .tree-line {
-  display: none;
-  width: 0;
-  height: 0;
+  display: inline-flex;
+  position: relative;
+  width: 14px;
+  height: 26px;
   flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  margin-left: -2px;
   margin-right: 0;
 }
 
+/* Vertical guide line */
 .sidebar-folder-item .tree-line::before {
-  content: none;
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: -6px;
+  bottom: -6px;
+  width: 1.5px;
+  background-color: var(--tree-line-color, var(--border-color));
+  opacity: 0.55;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
 }
 
+/* For the last child, stop vertical line at the horizontal connector (50%) */
+.sidebar-folder-item.is-last > .tree-line::before,
+.sidebar-folder-item .tree-line.last::before {
+  bottom: 50%;
+  border-radius: 0 0 0 1px;
+}
+
+/* Horizontal connector branch (gạch nối ngang vào folder con) */
 .sidebar-folder-item .tree-line::after {
-  content: none;
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  width: 8px;
+  height: 1.5px;
+  background-color: var(--tree-line-color, var(--border-color));
+  opacity: 0.55;
+  transform: translateY(-50%);
+  border-radius: 0 1px 1px 0;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
 }
 
-.sidebar-folder-item.is-last .tree-line::before {
-  height: 20px;
+/* Highlight tree lines on hover or active */
+.sidebar-folder-item:hover .tree-line::before,
+.sidebar-folder-item:hover .tree-line::after {
+  background-color: var(--accent-color);
+  opacity: 1;
+}
+
+.sidebar-folder-item.active .tree-line::before,
+.sidebar-folder-item.active .tree-line::after {
+  background-color: var(--accent-color);
+  opacity: 1;
 }
 
 .sidebar-folder-item .folder-toggle {
@@ -1705,19 +1750,21 @@ body {
   font-size: 10px;
   flex-shrink: 0;
   margin-left: auto;
-  color: var(--bg-primary);
-  background: var(--text-primary);
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.15s ease;
 }
 
 .sidebar-folder-item:hover {
-  background: color-mix(in srgb, var(--accent-color) 12%, var(--bg-primary)) !important;
+  background: var(--hover-bg, rgba(255, 255, 255, 0.05)) !important;
   color: var(--text-primary) !important;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent) !important;
-  transform: translateX(3px);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent-color) 15%, transparent);
+  border: 1px solid var(--border-color) !important;
+  transform: translateX(2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .sidebar-folder-item:hover i {
@@ -1725,21 +1772,30 @@ body {
 }
 
 .sidebar-folder-item:hover .folder-name {
-  color: var(--accent-color) !important;
+  color: var(--text-primary) !important;
 }
 
 .sidebar-folder-item:hover .folder-child-count {
-  background: var(--accent-color);
-  color: var(--bg-primary);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 .sidebar-folder-item.active {
-  background: var(--accent-color);
-  color: var(--bg-primary);
+  background: var(--accent-color) !important;
+  color: var(--bg-primary) !important;
+  border-color: var(--accent-color) !important;
+  font-weight: 600;
 }
 
 .sidebar-folder-item.active i {
   color: var(--bg-primary) !important;
+}
+
+.sidebar-folder-item.active .folder-child-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--bg-primary);
+  border-color: transparent;
 }
 
 /* Sidebar folder drag states */
@@ -1818,8 +1874,16 @@ body {
   position: relative;
 }
 
-.folder-children::before {
-  content: none;
+/* Continuous vertical line passing along open folder children */
+.sidebar-folder-tree .sidebar-folder-item:not(.is-last) + .folder-children::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  bottom: -4px;
+  width: 1.5px;
+  background-color: var(--tree-line-color, var(--border-color));
+  opacity: 0.55;
 }
 
 .folder-children.collapsed {
@@ -1845,25 +1909,22 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px;
+  padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
   color: var(--text-primary);
-  font-size: 0.85rem;
-  transition:
-    all 0.15s ease,
-    background-color 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease;
+  font-size: 0.84rem;
+  margin-bottom: 2px;
+  transition: all 0.15s ease;
 }
 
 .sidebar-sort-item:hover {
-  background: var(--bg-tertiary) !important;
+  background: var(--hover-bg, rgba(255, 255, 255, 0.05)) !important;
   color: var(--text-primary) !important;
   border: 1px solid var(--border-color) !important;
-  transform: translateX(3px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transform: translateX(2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .sidebar-sort-item:hover i {
@@ -1873,7 +1934,12 @@ body {
 .sidebar-sort-item.active {
   color: var(--bg-primary) !important;
   background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
   font-weight: 600;
+}
+
+.sidebar-sort-item.active i {
+  color: var(--bg-primary) !important;
 }
 
 .sidebar-sort-item i {
@@ -2101,19 +2167,19 @@ body {
 .sidebar-tag-item {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 13px;
-  border-radius: 11px;
-  font-size: 0.84rem;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s ease;
   border: 1px solid var(--border-color);
   background: rgba(var(--bg-secondary-rgb), 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   user-select: none;
   color: var(--text-secondary);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   max-width: 100%;
 }
 
@@ -2128,9 +2194,9 @@ body {
   width: 100%;
   min-width: 0;
   justify-content: flex-start;
-  min-height: 38px;
-  padding: 9px 12px;
-  border-radius: 10px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 6px;
 }
 
 .sidebar-tag-list .sidebar-tag-item span:not(.sidebar-tag-count) {
@@ -2144,10 +2210,10 @@ body {
 
 .sidebar-tag-item:hover {
   transform: translateY(-1px);
-  background: var(--bg-tertiary) !important;
+  background: var(--hover-bg, var(--bg-tertiary)) !important;
   border-color: var(--accent-color) !important;
   color: var(--text-primary) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .sidebar-tag-item.active {
@@ -2186,34 +2252,18 @@ body {
   align-items: center;
   gap: 4px;
   opacity: 0;
-  transform: translateX(10px);
   transition: all 0.2s ease;
-  position: absolute;
-  right: 0;
-  height: 100%;
-  padding: 0 10px 0 5px;
-  background: inherit;
-}
-
-.tag-pill-actions::before {
-  content: "";
-  position: absolute;
-  left: -15px;
-  top: 0;
-  width: 15px;
-  height: 100%;
-  background: inherit;
-  -webkit-mask-image: linear-gradient(to right, transparent, black);
-  mask-image: linear-gradient(to right, transparent, black);
+  margin-left: 4px;
 }
 
 .sidebar-tag-item:hover .tag-pill-actions {
   opacity: 1;
-  transform: translateX(0);
 }
 
 .sidebar-tag-item:hover .sidebar-tag-count {
-  opacity: 0;
+  opacity: 1 !important;
+  background: var(--accent-color);
+  color: var(--accent-contrast, #ffffff);
 }
 
 .tag-edit-btn,
@@ -2335,20 +2385,31 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  min-width: 21px;
-  height: 21px;
-  border-radius: 50%;
-  padding: 0 4px;
-  background: rgba(0, 0, 0, 0.15);
-  color: inherit;
-  opacity: 0.8;
-  margin-left: 2px;
+  min-width: 20px;
+  height: 18px;
+  border-radius: 6px;
+  padding: 0 5px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+  color: var(--text-secondary);
+  opacity: 1;
+  margin-left: auto;
+  transition: all 0.2s ease;
+}
+
+.sidebar-tag-item:hover .sidebar-tag-count {
+  background: var(--accent-color);
+  color: var(--accent-contrast, #ffffff);
+  border-color: var(--accent-color);
+  opacity: 1 !important;
 }
 
 .sidebar-tag-item.active .sidebar-tag-count {
   background: rgba(255, 255, 255, 0.25);
+  color: inherit;
+  border-color: transparent;
   opacity: 1;
 }
 
@@ -2421,25 +2482,27 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color) !important;
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-primary);
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 500;
   transition: all 0.15s ease;
 }
 
 .sidebar-admin-btn i {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  transition: color 0.15s ease;
 }
 
 .sidebar-admin-btn:hover {
-  background: var(--bg-secondary) !important;
+  background: var(--hover-bg, var(--bg-secondary)) !important;
   color: var(--text-primary) !important;
   border-color: var(--accent-color) !important;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transform: translateY(-1px);
 }
 
@@ -2448,10 +2511,10 @@ body {
 }
 
 .sidebar-admin-btn.delete:hover {
-  background: rgba(239, 68, 68, 0.15) !important;
+  background: rgba(239, 68, 68, 0.12) !important;
   color: #ef4444 !important;
   border-color: #ef4444 !important;
-  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.25);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
 .sidebar-admin-btn.delete:hover i {
@@ -2983,13 +3046,11 @@ body.settings-panel-open .settings-container {
 @keyframes bookmarkViewItemIn {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.985);
-    filter: blur(2px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+    transform: translateY(0);
   }
 }
 
@@ -3278,20 +3339,21 @@ body.settings-panel-open .settings-container {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: -2px;
+  margin-top: 2px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  min-width: 240px;
-  padding: var(--spacing-sm);
-  box-shadow: var(--shadow-lg);
-  background-color: color-mix(in srgb, var(--bg-primary) 82%, transparent);
+  min-width: 150px;
+  max-width: 190px;
+  padding: 3px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background-color: color-mix(in srgb, var(--bg-primary) 92%, transparent);
   backdrop-filter: blur(14px);
   opacity: 1;
   pointer-events: auto;
   z-index: 1001;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 2px;
   transform: translateY(0);
   transition:
     opacity 0.2s ease,
@@ -3300,14 +3362,15 @@ body.settings-panel-open .settings-container {
 
 .dropdown-menu .menu-item {
   width: 100%;
-  min-height: 32px;
+  min-height: 24px;
   display: flex;
   align-items: center;
-  padding: 7px 9px;
+  padding: 4px 8px;
   border: 1px solid transparent;
-  border-radius: 7px;
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-primary);
+  font-size: 0.78rem;
   cursor: pointer;
   text-align: left;
   transition:
@@ -3365,10 +3428,33 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu {
     var(--accent-color)
   ) !important;
   box-shadow:
-    0 14px 34px rgba(0, 0, 0, 0.18),
+    0 8px 24px rgba(0, 0, 0, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  gap: 2px !important;
+  padding: 3px !important;
+}
+
+/* Compact bookmark-dropdown-menu in webview */
+.bookmark-dropdown-menu {
+  min-width: 150px !important;
+  max-width: 190px !important;
+  padding: 3px !important;
+  gap: 1px !important;
+  border-radius: 8px !important;
+}
+
+.bookmark-dropdown-menu .menu-item {
+  min-height: 24px !important;
+  padding: 4px 8px !important;
+  font-size: 0.76rem !important;
+  border-radius: 6px !important;
   gap: 6px !important;
-  padding: 7px !important;
+}
+
+.bookmark-dropdown-menu .dropdown-menu-header {
+  padding: 4px 8px !important;
+  font-size: 0.74rem !important;
+  margin-bottom: 2px !important;
 }
 
 body[data-bookmark-menu-bg="normal"] .dropdown-menu .menu-item:not(:hover) {
@@ -3491,11 +3577,12 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background-color: color-mix(in srgb, var(--bg-secondary) 78%, transparent);
-  padding: 6px;
-  border-radius: 10px;
-  margin-bottom: 8px;
+  background-color: var(--bg-secondary);
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
   border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
   overflow: visible;
   transition:
     max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -3696,7 +3783,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 
 .dropdown-menu-2 .menu-item:hover {
   background-color: var(--accent-color) !important;
-  color: var(--bg-primary) !important;
+  color: var(--accent-contrast, #ffffff) !important;
   border-color: var(--accent-color) !important;
 }
 
@@ -3805,31 +3892,37 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .theme-swatch.active {
-  transform: scale(1.1);
+  transform: none;
   box-shadow:
     0 0 0 2px var(--bg-primary),
-    0 0 0 4px var(--text-primary);
+    0 0 0 4px var(--accent-color);
 }
 
 .dropdown-menu-2 .theme-swatch:hover {
-  transform: scale(1.05);
+  transform: none;
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    0 0 0 3px var(--accent-color);
 }
 
 .dropdown-menu-2 .font-swatch.active,
 .dropdown-menu-2 .view-swatch.active,
 .dropdown-menu-2 .setting-swatch.active,
 .dropdown-menu-2 .language-swatch.active {
-  transform: scale(1.03);
-  box-shadow:
-    0 0 0 1px var(--bg-primary),
-    0 0 0 2px var(--text-primary);
+  transform: none;
+  background: var(--accent-color);
+  color: var(--accent-contrast, #ffffff);
+  border-color: var(--accent-color);
+  box-shadow: none;
 }
 
 .dropdown-menu-2 .font-swatch:hover,
 .dropdown-menu-2 .view-swatch:hover,
 .dropdown-menu-2 .setting-swatch:hover,
 .dropdown-menu-2 .language-swatch:hover {
-  transform: scale(1.02);
+  transform: none;
+  background: var(--hover-bg);
+  border-color: var(--accent-color);
 }
 
 .dropdown-menu-2 .theme-swatch[data-hint]::before {
@@ -5490,7 +5583,7 @@ textarea.error {
   min-height: 130px; /* Hỗ trợ tự mở rộng khi có notes/tags */
   height: auto;
   border: 1px solid rgba(128, 128, 128, 0.15);
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--bg-primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   cursor: pointer;
@@ -5510,7 +5603,7 @@ textarea.error {
   width: 130px; /* Kích thước vuông khớp với height */
   height: 100%;
   background: var(--bg-tertiary);
-  border-radius: 12px 0 0 12px; /* Chỉ bo góc bên trái */
+  border-radius: 8px 0 0 8px; /* Chỉ bo góc bên trái */
   overflow: hidden;
   position: relative;
   border-right: 1px solid rgba(128, 128, 128, 0.08); /* Border dọc phân cách */
@@ -5757,21 +5850,16 @@ textarea.error {
   position: sticky !important;
   top: 0 !important;
   z-index: 100 !important;
-  background-color: var(--bg-primary) !important;
+  background-color: transparent !important;
   padding: 14px 24px !important;
   margin: 0 !important;
-  transition: all 0.25s ease !important;
+  border-bottom: 1px solid transparent !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-body.is-scrolled .webview-search-wrapper {
-  background-color: color-mix(
-    in srgb,
-    var(--bg-primary) 85%,
-    transparent
-  ) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+.webview-search-wrapper.is-stuck {
+  background-color: var(--bg-primary) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
   border-bottom: 1px solid var(--border-color) !important;
 }
 
@@ -6130,8 +6218,8 @@ body.is-scrolled .webview-search-wrapper {
   flex-shrink: 0 !important;
   font-size: 0.72rem !important;
   font-weight: 700 !important;
-  padding: 4px 9px !important;
-  border-radius: 20px !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
   background: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
   color: var(--accent-color) !important;
   border: 1px solid color-mix(in srgb, var(--accent-color) 28%, transparent) !important;
@@ -6151,7 +6239,7 @@ body.is-scrolled .webview-search-wrapper {
   font-size: 0.7rem !important;
   font-weight: 600 !important;
   padding: 3px 8px !important;
-  border-radius: 20px !important;
+  border-radius: 6px !important;
   background: var(--bg-tertiary) !important;
   color: var(--text-secondary) !important;
   border: 1px solid var(--border-color) !important;
@@ -6171,7 +6259,7 @@ body.is-scrolled .webview-search-wrapper {
   font-size: 0.7rem !important;
   font-weight: 600 !important;
   padding: 3px 8px !important;
-  border-radius: 20px !important;
+  border-radius: 6px !important;
   background: var(--bg-tertiary) !important;
   color: var(--text-secondary) !important;
   border: 1px solid var(--border-color) !important;
@@ -6215,17 +6303,18 @@ body.is-scrolled .webview-search-wrapper {
 .dropdown-menu-2 .font-swatch.active,
 .dropdown-menu-2 .view-swatch.active,
 .dropdown-menu-2 .setting-swatch.active {
-  transform: none;
+  transform: none !important;
   background: var(--accent-color) !important;
-  color: var(--bg-primary) !important;
+  color: var(--accent-contrast, #ffffff) !important;
   border-color: var(--accent-color) !important;
   box-shadow: none;
 }
 .dropdown-menu-2 .font-swatch:hover,
 .dropdown-menu-2 .view-swatch:hover,
 .dropdown-menu-2 .setting-swatch:hover {
-  transform: translateY(-1px);
-  background: var(--hover-bg, #f0f0f0);
+  transform: none !important;
+  background: var(--hover-bg, #f0f0f0) !important;
+  border-color: var(--accent-color) !important;
 }
 .dropdown-menu-2 .font-swatch,
 .dropdown-menu-2 .view-swatch,
