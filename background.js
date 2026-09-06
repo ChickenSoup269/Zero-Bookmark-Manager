@@ -407,10 +407,20 @@ const handleAutoCategorizeBookmark = (id, newBookmark) => {
           self.ai.languageModel
         ) {
           // Chrome built in AI
-          const session = await self.ai.languageModel.create({
-            systemPrompt:
-              "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.",
-          })
+          let session
+          try {
+            session = await self.ai.languageModel.create({
+              expectedInputs: [{ type: "text" }],
+              expectedOutputs: [{ type: "text", languages: ["en"] }],
+              systemPrompt:
+                "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.",
+            })
+          } catch {
+            session = await self.ai.languageModel.create({
+              systemPrompt:
+                "You are a categorization assistant. Return exactly ONE short tag (max 2 words) for the bookmark.",
+            })
+          }
           const result = await session.prompt(
             `Title: "${newBookmark.title}", URL: "${newBookmark.url}"`,
           )

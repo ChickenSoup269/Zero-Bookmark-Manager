@@ -735,12 +735,31 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (factory) {
+        const lang = (localStorage.getItem("appLanguage") || "en").toLowerCase()
+        const standardLangs = ["en", "es", "ja", "de", "fr"]
+        const primary = standardLangs.includes(lang) ? lang : "en"
+        const lmOptions = {
+          expectedInputs: [{ type: "text" }],
+          expectedOutputs: [{ type: "text", languages: [primary] }],
+        }
+
         if (typeof factory.availability === "function") {
-          const avail = await factory.availability()
-          return avail !== "no"
+          let avail
+          try {
+            avail = await factory.availability(lmOptions)
+          } catch (err) {
+            try {
+              avail = await factory.availability({
+                expectedOutputs: [{ type: "text", languages: ["en"] }],
+              })
+            } catch {
+              avail = await factory.availability()
+            }
+          }
+          return avail !== "no" && avail !== "none"
         } else if (typeof factory.capabilities === "function") {
           const cap = await factory.capabilities()
-          return cap.available !== "no"
+          return cap.available !== "no" && cap.available !== "none"
         }
         return true // Factory exists but no availability check, assume true
       }
@@ -2184,10 +2203,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (factory) {
+          const lang = (localStorage.getItem("appLanguage") || "en").toLowerCase()
+          const standardLangs = ["en", "es", "ja", "de", "fr"]
+          const primary = standardLangs.includes(lang) ? lang : "en"
+          const lmOptions = {
+            expectedInputs: [{ type: "text" }],
+            expectedOutputs: [{ type: "text", languages: [primary] }],
+          }
+
           let isAfterDownload = false
           if (typeof factory.availability === "function") {
-            isAfterDownload =
-              (await factory.availability()) === "after-download"
+            try {
+              isAfterDownload =
+                (await factory.availability(lmOptions)) === "after-download"
+            } catch {
+              try {
+                isAfterDownload =
+                  (await factory.availability({
+                    expectedOutputs: [{ type: "text", languages: ["en"] }],
+                  })) === "after-download"
+              } catch {
+                isAfterDownload =
+                  (await factory.availability()) === "after-download"
+              }
+            }
           } else if (typeof factory.capabilities === "function") {
             isAfterDownload =
               (await factory.capabilities()).available === "after-download"
@@ -2198,20 +2237,38 @@ document.addEventListener("DOMContentLoaded", () => {
             )
           }
 
-          session = await factory.create({
-            systemPrompt: request.prompt,
-            monitor(m) {
-              m.addEventListener("downloadprogress", (e) => {
-                const percent = Math.round((e.loaded / e.total) * 100)
-                console.log(
-                  `Downloading local AI model: ${percent}% (${e.loaded}/${e.total} bytes)`,
-                )
-                if (typeof updateDownloadProgress === "function") {
-                  updateDownloadProgress(percent)
-                }
+          const monitorCallback = (m) => {
+            m.addEventListener("downloadprogress", (e) => {
+              const percent = Math.round((e.loaded / e.total) * 100)
+              console.log(
+                `Downloading local AI model: ${percent}% (${e.loaded}/${e.total} bytes)`,
+              )
+              if (typeof updateDownloadProgress === "function") {
+                updateDownloadProgress(percent)
+              }
+            })
+          }
+
+          try {
+            session = await factory.create({
+              ...lmOptions,
+              systemPrompt: request.prompt,
+              monitor: monitorCallback,
+            })
+          } catch (createErr) {
+            try {
+              session = await factory.create({
+                expectedOutputs: [{ type: "text", languages: ["en"] }],
+                systemPrompt: request.prompt,
+                monitor: monitorCallback,
               })
-            },
-          })
+            } catch {
+              session = await factory.create({
+                systemPrompt: request.prompt,
+                monitor: monitorCallback,
+              })
+            }
+          }
           responseText = await session.prompt(request.message)
         } else if (
           typeof window.ai !== "undefined" &&

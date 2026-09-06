@@ -1579,10 +1579,19 @@ if (suggestTagBtn) {
         typeof self.ai !== "undefined" &&
         self.ai.languageModel
       ) {
-        const session = await self.ai.languageModel.create({
-          systemPrompt:
-            "You are a bookmark categorization assistant. Return 1 to 3 relevant, concise tags (max 2 words per tag) separated by comma for the bookmark.",
-        });
+        try {
+          session = await self.ai.languageModel.create({
+            expectedInputs: [{ type: "text" }],
+            expectedOutputs: [{ type: "text", languages: ["en"] }],
+            systemPrompt:
+              "You are a bookmark categorization assistant. Return 1 to 3 relevant, concise tags (max 2 words per tag) separated by comma for the bookmark.",
+          });
+        } catch {
+          session = await self.ai.languageModel.create({
+            systemPrompt:
+              "You are a bookmark categorization assistant. Return 1 to 3 relevant, concise tags (max 2 words per tag) separated by comma for the bookmark.",
+          });
+        }
         const result = await session.prompt(
           `Title: "${targetTitle}", URL: "${targetUrl}"`,
         );
