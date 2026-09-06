@@ -11,6 +11,8 @@ import {
   getFolders,
   isInFolder,
   loadVisitCounts,
+  removeDuplicateBookmarks,
+  getBookmarkTree,
 } from "./bookmarks.js"
 import { uiState, setBookmarks, setFolders, setBookmarkTree } from "./state.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
@@ -18,6 +20,7 @@ import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
 import { getAllTags } from "./tag.js"
 import { customSaveUIState } from "./option/option.js"
 import { checkBrokenLinks } from "./health/health.js"
+import { openScopeSelectionModal } from "./utils/scopeModal.js"
 import { handleDeleteFolder } from "./controller/deleteFolder.js"
 import { openFolderStudio } from "./controller/folderStudio.js"
 
@@ -946,70 +949,123 @@ export function updateUILanguage(elements, language) {
   }
 }
 
-export function handleCheckHealth(elements) {
-  // Nếu chưa có mảng bookmarks thì lấy từ state
-  const bookmarksToCheck = uiState.bookmarks || []
+export function handleCheckHealth(elements = {}, options = {}) {
+  if (options.skipModal && options.bookmarks) {
+    executeLinkCheck(elements, options.bookmarks, options)
+    return
+  }
 
+  openScopeSelectionModal({
+    type: "health",
+    icon: "fa-stethoscope",
+    initialFolderId: options.folderId,
+    onConfirm: (targets, scopeInfo) => {
+      executeLinkCheck(elements, targets, scopeInfo)
+    },
+  })
+}
+
+function executeLinkCheck(elements = {}, bookmarksToCheck = [], scopeInfo = {}) {
   const language = localStorage.getItem("appLanguage") || "en"
   const t = translations[language] || translations.en
 
-  const checkHealthButton = elements.checkHealthButton
+  const checkHealthButton =
+    elements?.checkHealthButton || document.getElementById("check-health-btn")
+  const healthSortFilter =
+    elements?.healthSortFilter || document.getElementById("health-sort-filter")
   const checkHealthIcon = checkHealthButton?.querySelector("i")
   let originalIconClass = ""
 
   // Trạng thái loading cho nút Check Links (nếu có)
   if (checkHealthButton) {
     if (checkHealthIcon) {
-      originalIconClass = checkHealthIcon.className // Store original
-      checkHealthIcon.className = "fas fa-spinner fa-spin" // Set spinner
+      originalIconClass = checkHealthIcon.className
+      checkHealthIcon.className = "fas fa-spinner fa-spin"
     }
     checkHealthButton.classList.add("is-loading")
     checkHealthButton.disabled = true
   }
 
-  // Popup kiểu loading (không auto close)
-  showCustomPopup(
-    language === "vi"
-      ? "Đang kiểm tra tình trạng các liên kết... Vui lòng đợi."
-      : "Checking link health... Please wait.",
-    "loading",
-    false,
-  )
+  const progressTemplate =
+    t.checkHealthProgressCount ||
+    (language === "vi"
+      ? "Đang kiểm tra {0} liên kết... Vui lòng đợi."
+      : "Checking {0} links... Please wait.")
+  const progressMsg = progressTemplate.replace("{0}", bookmarksToCheck.length)
+
+  showCustomPopup(progressMsg, "loading", false)
 
   checkBrokenLinks(
     bookmarksToCheck,
     () => {
-      // Callback Progress: Re-render UI để hiện icon Loading/Dead
-      // Lưu ý: Re-render toàn bộ cây có thể nặng.
-      // Tốt nhất là chỉ update DOM, nhưng để đơn giản ta gọi render lại view hiện tại.
-
-      // Cách tối ưu: Chỉ tìm DOM element và update
-      // Tuy nhiên, để đảm bảo code ngắn gọn với cấu trúc hiện tại, ta gọi render lại view hiện tại
       reRenderCurrentView(elements)
     },
     (brokenCount) => {
-      // Callback Complete
-      const msg =
+      const template =
         brokenCount > 0
-          ? language === "vi"
-            ? `Hoàn tất! Phát hiện ${brokenCount} liên kết có vấn đề.`
-            : `Finished! Found ${brokenCount} broken links.`
-          : language === "vi"
-            ? "Hoàn tất! Tất cả liên kết có vẻ vẫn hoạt động."
-            : "Finished! All links appear healthy."
-      const type = brokenCount > 0 ? "warning" : "success"
-      showCustomPopup(msg, type, true)
-      elements.healthSortFilter.style.display = "block" // Show the filter
+          ? t.checkHealthCompletedIssues ||
+            (language === "vi"
+              ? "Hoàn tất! Đã kiểm tra {0} liên kết. Phát hiện {1} liên kết có vấn đề."
+              : "Finished! Checked {0} links. Found {1} broken or suspicious links.")
+          : t.checkHealthCompletedClean ||
+            (language === "vi"
+              ? "Hoàn tất! Đã kiểm tra {0} liên kết. Tất cả đều hoạt động tốt."
+              : "Finished! Checked {0} links. All appear healthy and safe.")
 
-      // Reset trạng thái nút
+      const msg = template
+        .replace("{0}", bookmarksToCheck.length)
+        .replace("{1}", brokenCount)
+      const type = brokenCount > 0 ? "warning" : "success"
+
+      showCustomPopup(msg, type, true)
+      if (healthSortFilter) healthSortFilter.style.display = "block"
+
       if (checkHealthButton) {
         checkHealthButton.classList.remove("is-loading")
         checkHealthButton.disabled = false
         if (checkHealthIcon) {
-          checkHealthIcon.className = originalIconClass // Restore original
+          checkHealthIcon.className = originalIconClass
         }
       }
       reRenderCurrentView(elements)
+    },
+  )
+}
+
+export function handleCheckDuplicates(elements = {}, options = {}) {
+  if (options.skipModal && options.bookmarks) {
+    executeDuplicateCheck(elements, options.bookmarks, options)
+    return
+  }
+
+  openScopeSelectionModal({
+    type: "duplicates",
+    icon: "fa-copy",
+    initialFolderId: options.folderId,
+    onConfirm: (targets, scopeInfo) => {
+      executeDuplicateCheck(elements, targets, scopeInfo)
+    },
+  })
+}
+
+function executeDuplicateCheck(
+  elements = {},
+  bookmarksToCheck = [],
+  scopeInfo = {},
+) {
+  removeDuplicateBookmarks(
+    (removedCount) => {
+      if (removedCount > 0) {
+        getBookmarkTree((bookmarkTreeNodes) => {
+          renderFilteredBookmarks(bookmarkTreeNodes, elements)
+        })
+      }
+    },
+    {
+      bookmarks: bookmarksToCheck,
+      folderId: scopeInfo.folderId,
+      folderTitle: scopeInfo.folderTitle,
+      scope: scopeInfo.scopeType,
     },
   )
 }
@@ -1076,6 +1132,25 @@ function reRenderCurrentView(elements) {
 
   if (elements && elements.folderListDiv) {
     elements.folderListDiv.style.display = ""
+
+    // Clean Empty State when search or tag filter produces no results
+    if (
+      filtered.length === 0 &&
+      (uiState.searchQuery || uiState.selectedTags.length > 0)
+    ) {
+      prepareViewContainer(elements.folderListDiv, "empty-state-container")
+      const language = localStorage.getItem("appLanguage") || "en"
+      const t = translations[language] || translations.en
+      const emptyDiv = document.createElement("div")
+      emptyDiv.className = "view-empty-state"
+      emptyDiv.innerHTML = `
+        <div class="empty-state-icon"><i class="fas fa-search"></i></div>
+        <div class="empty-state-title">${t.noBookmarksFound || "No bookmarks found"}</div>
+        <div class="empty-state-subtitle">${t.tryDifferentSearch || "Try a different search keyword or clear tag filters"}</div>
+      `
+      elements.folderListDiv.appendChild(emptyDiv)
+      return
+    }
 
     let currentViewMode = uiState.viewMode
     if (
@@ -1923,6 +1998,11 @@ function renderSidebarFolderTree(folders, elements) {
 
       if (!draggedId || !targetFolderId || draggedId === targetFolderId) return
 
+      if (currentDragType === "bookmark") {
+        handleFolderDrop(e, folder, li, uiState.bookmarkTree, language, elements)
+        return
+      }
+
       // Move folder to new parent
       chrome.bookmarks.move(draggedId, { parentId: targetFolderId }, () => {
         if (chrome.runtime.lastError) {
@@ -1968,6 +2048,14 @@ function renderSidebarFolderTree(folders, elements) {
         folder.id === "1" || folder.id === "2" || folder.id === "3"
 
       contextMenu.innerHTML = `
+        <div class="context-menu-item" data-action="check-health-folder">
+          <i class="fas fa-stethoscope"></i>
+          <span>${t.checkLinksInFolder || "Check Links in Folder"}</span>
+        </div>
+        <div class="context-menu-item" data-action="check-duplicates-folder">
+          <i class="fas fa-copy"></i>
+          <span>${t.checkDuplicatesInFolder || "Check Duplicates in Folder"}</span>
+        </div>
         <div class="context-menu-item" data-action="move-to-folder">
           <i class="fas fa-folder-open"></i>
           <span>${t.moveToFolder || "Move to Folder"}</span>
@@ -2002,7 +2090,15 @@ function renderSidebarFolderTree(folders, elements) {
         const action =
           menuEvent.target.closest(".context-menu-item")?.dataset.action
 
-        if (action === "move-to-folder") {
+        if (action === "check-health-folder") {
+          contextMenu.remove()
+          handleCheckHealth(elements, { folderId: folder.id })
+          return
+        } else if (action === "check-duplicates-folder") {
+          contextMenu.remove()
+          handleCheckDuplicates(elements, { folderId: folder.id })
+          return
+        } else if (action === "move-to-folder") {
           const popupElements = {
             addToFolderPopup: document.getElementById("add-to-folder-popup"),
             addToFolderSelect: document.getElementById("add-to-folder-select"),
@@ -3513,10 +3609,10 @@ function handleFolderDrop(
   e.preventDefault()
   e.stopPropagation()
 
-  folderCard.classList.remove("drag-over")
+  if (folderCard?.classList) folderCard.classList.remove("drag-over")
 
   const draggedId = getDragId(e)
-  const targetFolderId = folderCard.dataset.folderId
+  const targetFolderId = folderCard?.dataset?.folderId || folder?.id
 
   // Chỉ xử lý nếu đang kéo Bookmark
   if (currentDragType !== "bookmark") return
@@ -3551,6 +3647,17 @@ function handleFolderDrop(
         if (chrome.runtime.lastError) {
           showCustomPopup(translations[language].errorUnexpected, "error", true)
         } else {
+          // If autoRemoveDup is on, clean up duplicate in the target folder
+          if (uiState.autoRemoveDup && bookmark.url) {
+            chrome.bookmarks.getChildren(targetFolderId, (children) => {
+              const duplicates = (children || []).filter(
+                (c) => c.url === bookmark.url && c.id !== bookmark.id,
+              )
+              if (duplicates.length > 0) {
+                duplicates.forEach((d) => chrome.bookmarks.remove(d.id, () => {}))
+              }
+            })
+          }
           window.BookmarkCache.getTree((tree) =>
             renderFilteredBookmarks(tree, elements),
           )
@@ -3751,7 +3858,7 @@ function createSimpleBookmarkElement(bookmark, language, elements) {
   div.innerHTML = `
     <input type="checkbox" class="bookmark-checkbox" data-id="${
       bookmark.id
-    }" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(1.2);">
+    }" ${isChecked} style="display: ${checkboxDisplay}; width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-color); margin: 0; flex-shrink: 0;">
     <div class="bookmark-content" style="flex-direction: column; align-items: stretch; gap: 6px;">
       <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
         <div class="bookmark-favicon"><img src="${favicon}" alt="icon" data-hostname="${hostname}"></div>
@@ -3802,15 +3909,15 @@ function createDetailBookmarkElement(bookmark, language, elements) {
 
   div.innerHTML = `
     <div style="display:flex;align-items:center;gap:12px; min-width:0;">
-      <div class="bookmark-favicon" style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:white; display:flex;justify-content:center;align-items:center;">
-        <img src="${favicon}" style="width:20px;height:20px;object-fit:contain;" 
+      <div class="bookmark-favicon" style="width:28px;height:28px;border-radius:6px;overflow:hidden;background:var(--bg-tertiary);border:1px solid var(--border-color);display:flex;justify-content:center;align-items:center;flex-shrink:0;">
+        <img src="${favicon}" style="width:18px;height:18px;object-fit:contain;" 
           data-hostname="${hostname}"
         >
       </div>
       <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; overflow: hidden;">
         <a href="${
           bookmark.url
-        }" target="_blank" class="bookmark-title" style="display: block; width: 100%; color:var(--text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;">
+        }" target="_blank" class="bookmark-title" style="display: block; width: 100%; color:var(--text-primary);font-weight:600;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;">
           ${bookmark.title || bookmark.url}
         </a>
       </div>
@@ -3818,14 +3925,14 @@ function createDetailBookmarkElement(bookmark, language, elements) {
        ${visitCountBadge}
       ${createDropdownHTML(bookmark, language)}
     </div>
-    <div style="display: flex; flex-direction: column; gap: 4px; padding-left: 44px;">
-      <div class="bookmark_link" style="font-size:13px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px; min-width: 0;">
+    <div style="display: flex; flex-direction: column; gap: 4px; padding-left: 40px;">
+      <div class="bookmark_link" style="font-size:12px;color:var(--text-muted);opacity:0.85; display:flex; gap: 10px; min-width: 0;">
           <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 100%; display: block;">${extractDomain(bookmark.url)}</span>
       </div>
       ${createNotesPreviewHTML(bookmark, "detail-note-preview")}
       ${createTagsInViewHTML(bookmark.tags, "detail-view-tags")}
     </div>
-    <button class="view-detail-btn-action" style="background:var(--text-primary);color:var(--bg-primary);border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:600;margin-top:auto; width:100%;">
+    <button class="view-detail-btn-action" style="background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color);border-radius:6px;padding:6px 12px;cursor:pointer;font-weight:600;font-size:0.78rem;margin-top:auto;width:100%;transition:all 0.2s ease;">
       ${translations[language].viewDetail || "View Details"}
     </button>
   `
@@ -3860,7 +3967,7 @@ function createListBookmarkElement(bookmark, language, elements) {
 
   div.innerHTML = `
     <div class="list-col-check" style="width: ${uiState.checkboxesVisible ? "30px" : "0px"}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-      <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; transform: scale(0.9);">
+      <input type="checkbox" class="bookmark-checkbox" data-id="${bookmark.id}" ${isChecked} style="display: ${checkboxDisplay}; width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent-color); margin: 0;">
     </div>
     <div class="bookmark-favicon list-bookmark-favicon">
       <img src="${favicon}" data-hostname="${hostname}">

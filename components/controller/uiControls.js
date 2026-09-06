@@ -10,6 +10,7 @@ import {
   updateTheme,
   renderFilteredBookmarks,
   handleCheckHealth,
+  handleCheckDuplicates,
   updateSelectAllState,
   attachSelectAllListener,
 } from "../ui.js"
@@ -518,13 +519,7 @@ export function setupUIControlListeners(elements) {
   if (elements.checkDuplicatesButton) {
     elements.checkDuplicatesButton.addEventListener("click", (e) => {
       e.stopPropagation()
-      removeDuplicateBookmarks((removedCount) => {
-        if (removedCount > 0) {
-          getBookmarkTree((bookmarkTreeNodes) => {
-            renderFilteredBookmarks(bookmarkTreeNodes, elements)
-          })
-        }
-      })
+      handleCheckDuplicates(elements)
     })
   } else {
     console.warn("check-duplicates-btn element not found")

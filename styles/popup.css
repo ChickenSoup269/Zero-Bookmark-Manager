@@ -234,12 +234,18 @@ body {
 }
 
 /* Card View & Detail View Improvements */
-#folder-list.card-view,
-#folder-list.detail-view {
+#folder-list.card-view {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  padding: 8px 4px;
+}
+
+#folder-list.detail-view {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 4px;
 }
 
 /* Khi vào trong folder, cho title chiếm nhiều space hơn */
@@ -318,20 +324,20 @@ body {
   flex-direction: row;
   align-items: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: 6px 8px;
   height: auto;
   margin: 2px 0;
-  border-radius: var(--border-radius);
+  border-radius: 6px;
   background: var(--bg-secondary);
-  border: 1px solid transparent;
+  border: 1px solid var(--border-color);
 }
 
 .card-view .bookmark-item:hover,
 .detail-view .bookmark-item:hover {
-  background: var(--bg-tertiary);
-  border-color: var(--border-color);
-  transform: translateX(4px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--hover-bg);
+  border-color: var(--accent-color);
+  transform: none;
+  box-shadow: var(--shadow-sm);
 }
 
 .card-view .bookmark-item.dragging {

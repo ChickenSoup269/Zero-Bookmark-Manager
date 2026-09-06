@@ -271,11 +271,11 @@ export function moveBookmarksToFolder(
     })
 }
 
-export function removeDuplicateBookmarks(callback) {
-  const bookmarks = uiState.bookmarks
+export function removeDuplicateBookmarks(callback, options = {}) {
+  const bookmarks = options.bookmarks || uiState.bookmarks || []
   const groups = {}
   const duplicates = []
-  const scope = uiState.duplicateScope || "folder" // "folder" or "all"
+  const scope = options.scope || uiState.duplicateScope || "folder" // "folder" or "all"
 
   // Filter out separators before checking duplicates (e.g. titles with all dashes/equals)
   const isSeparator = (b) => {
@@ -285,8 +285,12 @@ export function removeDuplicateBookmarks(callback) {
   // Group bookmarks by URL (or URL + folder depending on scope)
   bookmarks.forEach((bookmark) => {
     if (bookmark.url && !isSeparator(bookmark)) {
+      // If checking a specific folder or all bookmarks across folders, key is URL
+      // If checking within same folder only across the whole tree, key is parentId|url
       const key =
-        scope === "all" ? `${bookmark.parentId}|${bookmark.url}` : bookmark.url
+        scope === "folder" && !options.folderId
+          ? `${bookmark.parentId}|${bookmark.url}`
+          : bookmark.url
       if (!groups[key]) {
         groups[key] = []
       }
@@ -301,7 +305,7 @@ export function removeDuplicateBookmarks(callback) {
       groups[key].sort((a, b) => {
         const titleDiff = (b.title || "").length - (a.title || "").length
         if (titleDiff !== 0) return titleDiff
-        return b.dateAdded - a.dateAdded // newest first
+        return (b.dateAdded || 0) - (a.dateAdded || 0) // newest first
       })
       // The first one is the best/newest, the rest are duplicates
       const toRemove = groups[key].slice(1)
@@ -320,10 +324,19 @@ export function removeDuplicateBookmarks(callback) {
     return
   }
 
-  const msgTemplate =
-    scope === "folder"
-      ? translations[language].dupConfirmMsgFolder
-      : translations[language].dupConfirmMsgAll
+  let msgTemplate = ""
+  if (options.folderTitle) {
+    msgTemplate =
+      language === "vi"
+        ? `Tìm thấy {0} bookmark trùng lặp trong "${options.folderTitle}". Bạn có muốn xóa chúng không?`
+        : `Found {0} duplicate bookmarks in "${options.folderTitle}". Do you want to remove them?`
+  } else {
+    msgTemplate =
+      scope === "folder"
+        ? translations[language].dupConfirmMsgFolder
+        : translations[language].dupConfirmMsgAll
+  }
+
   const msg = (msgTemplate || "Found {0} duplicates. Remove?").replace(
     "{0}",
     duplicates.length,

@@ -7,7 +7,12 @@ import {
   escapeHtml,
 } from "../utils/utils.js"
 import { uiState } from "../state.js"
-import { renderFilteredBookmarks, showMoveFolderToFolderPopup } from "../ui.js"
+import {
+  renderFilteredBookmarks,
+  showMoveFolderToFolderPopup,
+  handleCheckHealth,
+  handleCheckDuplicates,
+} from "../ui.js"
 import { handleDeleteFolder } from "./deleteFolder.js"
 import { registerUndo, snapshotBookmarks, restoreDeletedBookmarks } from "../undo.js"
 
@@ -495,6 +500,14 @@ function showStudioFolderContextMenu(e, node, elements) {
     node.id === "1" || node.id === "2" || node.id === "3" || node.id === "0"
 
   contextMenu.innerHTML = `
+    <div class="context-menu-item" data-action="check-health-folder">
+      <i class="fas fa-stethoscope"></i>
+      <span>${t.checkLinksInFolder || "Check Links in Folder"}</span>
+    </div>
+    <div class="context-menu-item" data-action="check-duplicates-folder">
+      <i class="fas fa-copy"></i>
+      <span>${t.checkDuplicatesInFolder || "Check Duplicates in Folder"}</span>
+    </div>
     <div class="context-menu-item" data-action="new-subfolder">
       <i class="fas fa-folder-plus"></i>
       <span>${t.newSubfolder || "New Subfolder"}</span>
@@ -538,6 +551,18 @@ function showStudioFolderContextMenu(e, node, elements) {
   contextMenu.addEventListener("click", (menuEvent) => {
     menuEvent.stopPropagation()
     const action = menuEvent.target.closest(".context-menu-item")?.dataset.action
+
+    if (action === "check-health-folder") {
+      contextMenu.remove()
+      handleCheckHealth(elements, { folderId: node.id })
+      return
+    }
+
+    if (action === "check-duplicates-folder") {
+      contextMenu.remove()
+      handleCheckDuplicates(elements, { folderId: node.id })
+      return
+    }
 
     if (action === "new-subfolder") {
       showCustomPrompt(
