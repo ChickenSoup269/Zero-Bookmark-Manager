@@ -292,14 +292,12 @@
             </div>
 
             <!-- Search moved to Webview -->
-            <div class="webview-search-wrapper"
-                style="display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; padding: 16px 24px; margin: 0; transition: all 0.3s ease; pointer-events: auto;">
-                <div class="sidebar-search"
-                    style="margin: 0; flex: 1; background-color: var(--bg-secondary); border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div class="webview-search-wrapper">
+                <div class="sidebar-search">
                     <i class="fas fa-search"></i>
                     <input type="text" id="search" placeholder="Search bookmarks, tags, notes..."
                         class="sidebar-search-input" aria-label="Search bookmarks"
-                        data-i18n-placeholder="searchPlaceholder" style="padding: 10px 0;">
+                        data-i18n-placeholder="searchPlaceholder">
                     <button id="clear-search" class="sidebar-search-clear hidden" aria-label="Clear search">
                         <i class="fas fa-times"></i>
                     </button>
