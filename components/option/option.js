@@ -244,55 +244,68 @@ export async function customLoadUIState(callback) {
     })
 
     const storageSettings = result.storageSettings || defaultStorageSettings
+    const savedUiState = result.uiState || {}
 
-    if (result.uiState) {
-      if (storageSettings.searchQuery) {
-        uiState.searchQuery = result.uiState.searchQuery || ""
-      } else {
-        uiState.searchQuery = ""
-      }
-      if (storageSettings.selectedFolderId) {
-        uiState.selectedFolderId = result.uiState.selectedFolderId || ""
-      } else {
-        uiState.selectedFolderId = ""
-      }
-      if (storageSettings.sortType) {
-        uiState.sortType = result.uiState.sortType || "default"
-      } else {
-        uiState.sortType = "default"
-      }
-      if (storageSettings.viewMode) {
-        uiState.viewMode = result.uiState.viewMode || "flat"
-      } else {
-        uiState.viewMode = "flat"
-      }
-      if (storageSettings.collapsedFolders) {
-        uiState.collapsedFolders = new Set(
-          result.uiState.collapsedFolders || []
-        )
-      } else {
-        uiState.collapsedFolders = new Set()
-      }
-      if (storageSettings.selectedTags) {
-        uiState.selectedTags = result.uiState.selectedTags || []
-      } else {
-        uiState.selectedTags = []
-      }
-      
-      uiState.faviconOption = result.uiState.faviconOption || "auto"
-      uiState.faviconSize = result.uiState.faviconSize || "32"
-      uiState.duplicateScope = result.uiState.duplicateScope || "folder"
-      uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
-        uiState.showNotesPreview = result.uiState.showNotesPreview ?? true
-        uiState.showTagsInView = result.uiState.showTagsInView ?? true
-      uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
-      uiState.bookmarkMenuBg = result.uiState.bookmarkMenuBg || "glass"
-      uiState.showSmartFolders = result.uiState.showSmartFolders ?? true
-      uiState.sidebarWidth = result.uiState.sidebarWidth || 260
-      document.body.setAttribute("data-header-line", uiState.headerLineStyle)
-      document.body.setAttribute("data-bookmark-menu-bg", uiState.bookmarkMenuBg)
-      document.documentElement.style.setProperty("--sidebar-width", `${uiState.sidebarWidth}px`)
+    if (storageSettings.searchQuery) {
+      uiState.searchQuery = savedUiState.searchQuery || ""
+    } else {
+      uiState.searchQuery = ""
     }
+    if (storageSettings.selectedFolderId) {
+      uiState.selectedFolderId = savedUiState.selectedFolderId || ""
+    } else {
+      uiState.selectedFolderId = ""
+    }
+    if (storageSettings.sortType) {
+      uiState.sortType = savedUiState.sortType || "default"
+    } else {
+      uiState.sortType = "default"
+    }
+    if (storageSettings.viewMode) {
+      uiState.viewMode =
+        savedUiState.viewMode || localStorage.getItem("appView") || "flat"
+    } else {
+      uiState.viewMode = "flat"
+    }
+    if (storageSettings.collapsedFolders) {
+      uiState.collapsedFolders = new Set(
+        savedUiState.collapsedFolders || []
+      )
+    } else {
+      uiState.collapsedFolders = new Set()
+    }
+    if (storageSettings.selectedTags) {
+      uiState.selectedTags = savedUiState.selectedTags || []
+    } else {
+      uiState.selectedTags = []
+    }
+    
+    uiState.faviconOption = savedUiState.faviconOption || "auto"
+    uiState.faviconSize = savedUiState.faviconSize || "32"
+    uiState.duplicateScope =
+      savedUiState.duplicateScope ||
+      localStorage.getItem("duplicateScope") ||
+      "folder"
+    uiState.autoRemoveDup =
+      savedUiState.autoRemoveDup ??
+      (localStorage.getItem("autoRemoveDup") === "true")
+    uiState.showNotesPreview = savedUiState.showNotesPreview ?? true
+    uiState.showTagsInView = savedUiState.showTagsInView ?? true
+    uiState.headerLineStyle =
+      savedUiState.headerLineStyle ||
+      localStorage.getItem("headerLineStyle") ||
+      "pattern"
+    uiState.bookmarkMenuBg =
+      savedUiState.bookmarkMenuBg ||
+      localStorage.getItem("bookmarkMenuBg") ||
+      "normal"
+    uiState.showSmartFolders = savedUiState.showSmartFolders ?? true
+    uiState.sidebarWidth = savedUiState.sidebarWidth || 260
+
+    document.body.setAttribute("data-header-line", uiState.headerLineStyle)
+    document.body.setAttribute("data-bookmark-menu-bg", uiState.bookmarkMenuBg)
+    document.documentElement.style.setProperty("--sidebar-width", `${uiState.sidebarWidth}px`)
+
     if (storageSettings.checkboxesVisible) {
       uiState.checkboxesVisible = result.checkboxesVisible || false
     } else {
@@ -301,6 +314,7 @@ export async function customLoadUIState(callback) {
     uiState.bookmarkTags = result.bookmarkTags || {}
     uiState.tagColors = result.tagColors || {}
     uiState.tagTextColors = result.tagTextColors || {}
+    // Clean health status on load so health icons don't show before user explicitly runs a check
     uiState.healthStatus = {}
 
     const savedLanguage = localStorage.getItem("appLanguage") || "en"
@@ -340,6 +354,57 @@ export async function customLoadUIState(callback) {
     const showTagsInViewToggle = document.getElementById("show-tags-in-view-toggle")
     if (showTagsInViewToggle) {
       showTagsInViewToggle.checked = uiState.showTagsInView
+    }
+
+    // Sync duplicate scope UI
+    const duplicateScopeSelect = document.getElementById("duplicate-scope-select")
+    if (duplicateScopeSelect) {
+      if (duplicateScopeSelect.tagName === "SELECT") {
+        duplicateScopeSelect.value = uiState.duplicateScope
+      } else {
+        const swatches = duplicateScopeSelect.querySelectorAll(".setting-swatch")
+        swatches.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.value === uiState.duplicateScope)
+        })
+      }
+    }
+
+    // Sync auto remove duplicates toggle
+    const autoRemoveDupToggle = document.getElementById("auto-remove-dup-toggle")
+    if (autoRemoveDupToggle) {
+      autoRemoveDupToggle.checked = !!uiState.autoRemoveDup
+    }
+
+    // Sync header line style
+    const headerLineSelect = document.getElementById("header-line-select")
+    if (headerLineSelect) {
+      if (headerLineSelect.tagName === "SELECT") {
+        headerLineSelect.value = uiState.headerLineStyle
+      } else {
+        const swatches = headerLineSelect.querySelectorAll(".setting-swatch")
+        swatches.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.value === uiState.headerLineStyle)
+        })
+      }
+    }
+
+    // Sync bookmark menu background
+    const bookmarkMenuBgSelect = document.getElementById("bookmark-menu-bg-select")
+    if (bookmarkMenuBgSelect) {
+      const swatches = bookmarkMenuBgSelect.querySelectorAll(".setting-swatch")
+      swatches.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.value === uiState.bookmarkMenuBg)
+      })
+    }
+
+    // Sync smart folders
+    const smartFoldersSelect = document.getElementById("smart-folders-select")
+    if (smartFoldersSelect) {
+      const expectedVal = uiState.showSmartFolders !== false ? "show" : "hide"
+      const swatches = smartFoldersSelect.querySelectorAll(".setting-swatch")
+      swatches.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.value === expectedVal)
+      })
     }
 
     document
