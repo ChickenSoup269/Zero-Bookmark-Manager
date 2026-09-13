@@ -353,7 +353,7 @@
                         <button class="theme-swatch" data-value="light" data-hint="Light"
                             style="background: #ffffff; color: #000000;"><i class="fas fa-sun"></i></button>
                         <button class="theme-swatch" data-value="dark" data-hint="Dark"
-                            style="background: #2b2b2b; color: #ffffff;"><i class="fas fa-moon"></i></button>
+                            style="background: #000000; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3);"><i class="fas fa-moon"></i></button>
                         <button class="theme-swatch" data-value="dracula" data-hint="Dracula"
                             style="background: #282a36; color: #f8f8f2;"><i class="fas fa-ghost"></i></button>
                         <button class="theme-swatch" data-value="onedark" data-hint="OneDark"
@@ -397,6 +397,8 @@
                             <i class="fas fa-chevron-down toggle-icon"></i>
                         </div>
                         <div class="theme-grid" id="font-switcher">
+                            <button class="theme-swatch font-swatch font-sans-serif" data-value="sans-serif"
+                                style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Ag <span>Sans-Serif</span></button>
                             <button class="theme-swatch font-swatch font-gohu" data-value="gohu"
                                 style="font-family: 'GohuFont';">Ag <span>Gohu</span></button>
                             <button class="theme-swatch font-swatch font-jetBrainsMonoNerdFont"
@@ -474,8 +476,8 @@
                         <i class="fas fa-file-import" aria-hidden="true"></i>
                         <span data-i18n="importBookmarks">Import Bookmarks</span>
                     </button>
-                    <button id="google-drive-sync-btn" class="menu-item">
-                        <i class="fab fa-google-drive" aria-hidden="true"></i>
+                    <button id="google-drive-sync-btn" class="menu-item" title="Cloud Sync">
+                        <i class="fas fa-cloud" aria-hidden="true"></i>
                         <span data-i18n="cloudSync">Cloud Sync</span>
                     </button>
                     <button id="show-bookmark-ids-option" class="menu-item">
@@ -685,11 +687,27 @@
                     </button>
                 </div>
 
-                <span class="dropdown-section-title">Support</span>
-                <div style="padding: 12px 16px; font-size: 0.85rem; color: var(--text-secondary); text-align: center;">
-                    Ủng hộ dự án tại <a href="https://ko-fi.com/chickensoup269" target="_blank"
-                        style="color: var(--accent-color); text-decoration: none;">Ko-fi</a> hoặc <span
-                        id="open-momo-qr-btn" style="cursor: pointer; color: var(--accent-color);">Momo</span>
+                <span class="dropdown-section-title" data-i18n="supportTitle">Support</span>
+                <div class="dropdown-donate-card">
+                    <div class="donate-card-header">
+                        <div class="donate-card-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="donate-card-info">
+                            <h4 class="donate-card-title" data-i18n="donateTitle">Support Project</h4>
+                            <p class="donate-card-desc" data-i18n="donateDesc">Help keep Zero Bookmark Manager free & updated!</p>
+                        </div>
+                    </div>
+                    <div class="donate-card-actions">
+                        <a href="https://ko-fi.com/chickensoup269" target="_blank" class="donate-action-btn kofi-btn" title="Ko-fi">
+                            <i class="fas fa-coffee"></i>
+                            <span>Ko-fi</span>
+                        </a>
+                        <button type="button" id="open-momo-qr-btn" class="donate-action-btn momo-btn" title="MoMo QR">
+                            <i class="fas fa-qrcode"></i>
+                            <span>MoMo</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1434,6 +1452,7 @@
                 </div>
                 <div class="rename-input-container">
                     <select id="first-run-font-select" class="select" style="width: 100%; margin-bottom: 10px;">
+                        <option value="sans-serif" data-i18n="fontSansSerif">Aa: Sans-Serif (Default)</option>
                         <option value="gohu" data-i18n="fontGohu">Aa: GohuFont (Pixel Style)</option>
                         <option value="jetBrainsMonoNerdFont" data-i18n="fontJetBrains">Aa: JetBrains Mono</option>
                         <option value="roboto" data-i18n="fontRoboto">Aa: Roboto (Google Font)</option>
@@ -1560,58 +1579,135 @@
             </div>
         </div>
     </div>
-    <!-- Cloud Sync Modal -->
+    <!-- Cloud Sync Modal (Multi-Provider: GitHub, GitLab, Google Drive) -->
     <div id="cloud-sync-popup" class="rename-popup hidden" role="dialog" aria-labelledby="cloud-sync-title">
-        <div class="rename-popup-content" style="max-width: 400px; text-align: center;">
-            <div style="font-size: 28px; color: var(--primary-color); margin-bottom: 8px;">
-                <i class="fab fa-google-drive"></i>
-            </div>
-            <h3 id="cloud-sync-title"
-                style="margin-top:0; font-size: 18px; font-weight: 600; color: var(--text-color);">
-                Google Drive Sync
-            </h3>
-            <p style="margin-bottom: 10px; font-size: 13px; color: var(--text-muted);">
-                Backup or restore your bookmarks securely.
-            </p>
-            <p data-i18n-html="cloudSyncTestWarning"
-                style="margin-bottom: 10px; font-size: 12px; color: var(--text-secondary); background-color: var(--bg-secondary); padding: 8px; border-radius: 6px; border: 1px dashed var(--border-color); text-align: left; line-height: 1.3;">
-                Note: This is currently in testing. If your login is denied and you want to try it, please send an email
-                via this <a
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog"
-                    target="_blank" style="color: var(--primary-color);">form link</a>.
-            </p>
-
-            <div style="margin-bottom: 10px; text-align: left;">
-                <label
-                    style="display: block; font-size: 12px; margin-bottom: 4px; color: var(--text-color); font-weight: 500;">Select
-                    or Enter File Name:</label>
-                <select id="sync-file-select" class="select"
-                    style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box; margin-bottom: 8px;">
-                    <option value="new">-- Create New File --</option>
-                </select>
-                <input type="text" id="sync-filename-input" value="zero_bookmark_manager_backup.json"
-                    class="input-field"
-                    style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-color); box-sizing: border-box;"
-                    placeholder="Enter JSON file name">
+        <div class="rename-popup-content cloud-sync-modal-content">
+            <div class="cloud-sync-header">
+                <div class="cloud-sync-header-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <h3 id="cloud-sync-title" class="cloud-sync-title" data-i18n="cloudSyncTitle">
+                    Cloud Sync & Backup
+                </h3>
+                <p class="cloud-sync-subtitle" data-i18n="cloudSyncSubtitle">
+                    Backup and restore your bookmarks securely across devices.
+                </p>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
-                <button id="btn-backup-drive" class="button"
-                    style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--focus-outline); border: 1px solid var(--focus-outline); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
-                    <i class="fas fa-cloud-upload-alt" style="margin-right: 8px;"></i> Backup to Drive (JSON)
+            <!-- Provider Selection Tabs -->
+            <div class="cloud-sync-tabs" id="cloud-sync-tabs" role="tablist">
+                <button type="button" class="cloud-sync-tab active" data-provider="github" id="tab-provider-github">
+                    <i class="fab fa-github"></i> <span>GitHub</span>
                 </button>
-                <button id="btn-restore-drive" class="button"
-                    style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background-color: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--text-secondary); cursor: pointer; transition: background-color 0.2s, color 0.2s;">
-                    <i class="fas fa-cloud-download-alt" style="margin-right: 8px;"></i> Restore from Drive (JSON)
+                <button type="button" class="cloud-sync-tab" data-provider="gitlab" id="tab-provider-gitlab">
+                    <i class="fab fa-gitlab"></i> <span>GitLab</span>
+                </button>
+                <button type="button" class="cloud-sync-tab" data-provider="gdrive" id="tab-provider-gdrive">
+                    <i class="fab fa-google-drive"></i> <span>Google Drive</span>
                 </button>
             </div>
 
-            <p id="sync-status-message" style="margin-top: 10px; font-size: 12px; font-weight: 500; min-height: 18px;">
-            </p>
+            <!-- Dynamic Guide Box -->
+            <div class="cloud-sync-guide-box" id="cloud-sync-guide">
+                <!-- Injected via sync.js based on selected provider -->
+            </div>
 
-            <div class="rename-popup-buttons" style="margin-top: 10px;">
-                <button id="cloud-sync-close" class="button cancel"
-                    style="width: 100%; justify-content: center;">Close</button>
+            <!-- GitHub Panel -->
+            <div class="cloud-sync-panel active" id="cloud-panel-github">
+                <div class="cloud-sync-field-group">
+                    <label class="cloud-sync-label">
+                        <span data-i18n="cloudSyncTokenLabel">Personal Access Token (PAT):</span>
+                        <a href="https://github.com/settings/tokens/new?scopes=gist&description=ZeroBookmarkManager" target="_blank" class="cloud-sync-guide-link" style="font-size: 0.72rem;">Generate Token &nearr;</a>
+                    </label>
+                    <div class="cloud-sync-input-wrap">
+                        <input type="password" id="github-token-input" class="cloud-sync-input" placeholder="ghp_xxxxxxxxxxxx..." autocomplete="off">
+                        <button type="button" class="cloud-sync-toggle-pwd" data-target="github-token-input" title="Show/Hide"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="cloud-sync-field-group">
+                    <label class="cloud-sync-label">
+                        <span data-i18n="cloudSyncGistIdLabel">Gist ID (optional):</span>
+                        <span id="github-gist-link-wrap" style="font-size: 0.72rem;"></span>
+                    </label>
+                    <input type="text" id="github-gist-id-input" class="cloud-sync-input" placeholder="Leave blank to auto-create new Secret Gist">
+                </div>
+                <div class="cloud-sync-actions">
+                    <button type="button" id="btn-backup-github" class="cloud-sync-btn backup">
+                        <i class="fas fa-cloud-arrow-up"></i> <span>Backup to Gist</span>
+                    </button>
+                    <button type="button" id="btn-restore-github" class="cloud-sync-btn restore">
+                        <i class="fas fa-cloud-arrow-down"></i> <span>Restore from Gist</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- GitLab Panel -->
+            <div class="cloud-sync-panel" id="cloud-panel-gitlab">
+                <div class="cloud-sync-field-group">
+                    <label class="cloud-sync-label">
+                        <span data-i18n="cloudSyncGitlabHostLabel">GitLab Instance URL:</span>
+                    </label>
+                    <input type="text" id="gitlab-host-input" class="cloud-sync-input" value="https://gitlab.com" placeholder="https://gitlab.com">
+                </div>
+                <div class="cloud-sync-field-group">
+                    <label class="cloud-sync-label">
+                        <span data-i18n="cloudSyncTokenLabel">Personal Access Token (PAT):</span>
+                        <a href="https://gitlab.com/-/user_settings/personal_access_tokens" target="_blank" class="cloud-sync-guide-link" id="gitlab-token-link" style="font-size: 0.72rem;">Generate Token &nearr;</a>
+                    </label>
+                    <div class="cloud-sync-input-wrap">
+                        <input type="password" id="gitlab-token-input" class="cloud-sync-input" placeholder="glpat-xxxxxxxxxxxx..." autocomplete="off">
+                        <button type="button" class="cloud-sync-toggle-pwd" data-target="gitlab-token-input" title="Show/Hide"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="cloud-sync-field-group">
+                    <label class="cloud-sync-label">
+                        <span data-i18n="cloudSyncGitlabSnippetLabel">Snippet ID (optional):</span>
+                        <span id="gitlab-snippet-link-wrap" style="font-size: 0.72rem;"></span>
+                    </label>
+                    <input type="text" id="gitlab-snippet-id-input" class="cloud-sync-input" placeholder="Leave blank to auto-create new Snippet">
+                </div>
+                <div class="cloud-sync-actions">
+                    <button type="button" id="btn-backup-gitlab" class="cloud-sync-btn backup">
+                        <i class="fas fa-cloud-arrow-up"></i> <span>Backup to Snippet</span>
+                    </button>
+                    <button type="button" id="btn-restore-gitlab" class="cloud-sync-btn restore">
+                        <i class="fas fa-cloud-arrow-down"></i> <span>Restore from Snippet</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Google Drive Panel -->
+            <div class="cloud-sync-panel" id="cloud-panel-gdrive">
+                <div class="cloud-sync-field-group">
+                    <label class="cloud-sync-label">Select or Enter File Name:</label>
+                    <select id="sync-file-select" class="select cloud-sync-input" style="margin-bottom: 6px;">
+                        <option value="new">-- Create New File --</option>
+                    </select>
+                    <input type="text" id="sync-filename-input" value="zero_bookmark_manager_backup.json"
+                        class="cloud-sync-input" placeholder="Enter JSON file name">
+                </div>
+                <div class="cloud-sync-actions">
+                    <button type="button" id="btn-backup-drive" class="cloud-sync-btn backup">
+                        <i class="fas fa-cloud-arrow-up"></i> <span>Backup to Drive</span>
+                    </button>
+                    <button type="button" id="btn-restore-drive" class="cloud-sync-btn restore">
+                        <i class="fas fa-cloud-arrow-down"></i> <span>Restore from Drive</span>
+                    </button>
+                </div>
+                <div class="cloud-sync-notice-box" data-i18n-html="cloudSyncTestWarning">
+                    Note: Google Drive Sync is in testing mode. If login is blocked, please <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog" target="_blank" style="color: var(--accent-color); text-decoration: underline; font-weight: 600;">submit your email via this form &nearr;</a>.
+                </div>
+            </div>
+
+            <!-- Status Message -->
+            <p id="sync-status-message" style="margin: 12px 0 0; font-size: 12px; font-weight: 500; min-height: 18px; text-align: center;"></p>
+
+            <div class="cloud-sync-security-note" data-i18n="cloudSyncTokenSecureNotice">
+                Tokens are stored locally in your browser storage and never transmitted elsewhere.
+            </div>
+
+            <div class="rename-popup-buttons" style="margin-top: 14px;">
+                <button type="button" id="cloud-sync-close" class="button cancel" style="width: 100%; justify-content: center;" data-i18n="close">Close</button>
             </div>
         </div>
     </div>
@@ -1626,13 +1722,52 @@
     <script src="main.js" type="module"></script>
     <script src="./components/sidebar.js" type="module"></script>
     <script src="./components/localization.js" type="module"></script>
-    <div id="momo-qr-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="momo-qr-title">
-        <div class="rename-popup-content" style="text-align: center; max-width: 300px; padding: 24px;">
-            <h3 id="momo-qr-title" style="margin-top: 0; margin-bottom: 16px;">Momo QR</h3>
-            <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_Startpage/qr_donation/momo_qr.png?raw=true"
-                alt="Momo QR" style="width: 100%; max-width: 200px; border-radius: 8px; margin-bottom: 16px;">
-            <div class="rename-popup-buttons" style="justify-content: center;">
-                <button id="close-momo-qr-btn" class="button cancel" style="width: 100%;">Close</button>
+    <div id="momo-qr-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="donate-modal-title" aria-modal="true">
+        <div class="rename-popup-content donate-modal-content">
+            <button type="button" class="donate-modal-close" id="close-momo-qr-btn" aria-label="Close">&times;</button>
+            
+            <div class="donate-modal-header">
+                <div class="donate-modal-badge">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3 id="donate-modal-title" class="donate-modal-title" data-i18n="donateModalTitle">Support Developer</h3>
+                <p class="donate-modal-subtitle" data-i18n="donateModalSubtitle">Every cup of coffee fuels new features and improvements!</p>
+            </div>
+
+            <div class="donate-tabs" id="donate-tabs-bookmarks">
+                <button type="button" class="donate-tab active" data-tab="momo" id="donate-tab-momo-bm">
+                    <i class="fas fa-qrcode"></i> MoMo QR
+                </button>
+                <button type="button" class="donate-tab" data-tab="kofi" id="donate-tab-kofi-bm">
+                    <i class="fas fa-coffee"></i> Ko-fi
+                </button>
+            </div>
+
+            <div class="donate-panel active" id="donate-panel-momo-bm">
+                <div class="donate-qr-wrapper">
+                    <img src="https://github.com/ChickenSoup269/imagesForRepo/blob/main/img_repo_extension_Startpage/qr_donation/momo_qr.png?raw=true"
+                        alt="Momo QR" class="donate-qr-img">
+                </div>
+                <div class="donate-qr-hint">
+                    <i class="fas fa-mobile-screen"></i>
+                    <span data-i18n="donateScanHint">Scan with MoMo or any Banking app</span>
+                </div>
+            </div>
+
+            <div class="donate-panel" id="donate-panel-kofi-bm">
+                <div class="donate-kofi-box">
+                    <div class="donate-kofi-cup">☕</div>
+                    <h4 class="donate-kofi-title" data-i18n="donateKofiTitle">Buy me a Coffee on Ko-fi</h4>
+                    <p class="donate-kofi-text" data-i18n="donateKofiDesc">Support quickly and securely via International Card or PayPal.</p>
+                    <a href="https://ko-fi.com/chickensoup269" target="_blank" class="donate-kofi-link-btn">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span data-i18n="donateOpenKofi">Open Ko-fi Page</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="donate-thank-you" data-i18n="donateThankYou">
+                💖 Thank you for using and supporting Zero Bookmark Manager!
             </div>
         </div>
     </div>

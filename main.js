@@ -1465,7 +1465,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     updateTheme(elements, savedTheme)
 
-    const savedFont = localStorage.getItem("appFont") || "gohu"
+    const savedFont = localStorage.getItem("appFont") || "sans-serif"
     document.body.classList.add(`font-${savedFont}`)
     if (elements.fontSwitcher.tagName === 'SELECT') {
       elements.fontSwitcher.value = savedFont
@@ -1964,12 +1964,56 @@ configureShortcutsBtns.forEach(btn => {
   }
 });
 
-const openMomoBtn = document.getElementById("open-momo-qr-btn");
+// Donate / Support Modal Controller
+const openMomoBtns = document.querySelectorAll("#open-momo-qr-btn, .open-donate-modal");
 const closeMomoBtn = document.getElementById("close-momo-qr-btn");
 const momoPopup = document.getElementById("momo-qr-popup");
-if (openMomoBtn && momoPopup) {
-  openMomoBtn.addEventListener("click", () => momoPopup.classList.remove("hidden"));
+
+if (openMomoBtns.length > 0 && momoPopup) {
+  openMomoBtns.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      momoPopup.classList.remove("hidden");
+    });
+  });
 }
+
 if (closeMomoBtn && momoPopup) {
   closeMomoBtn.addEventListener("click", () => momoPopup.classList.add("hidden"));
+}
+
+if (momoPopup) {
+  // Close on backdrop click
+  momoPopup.addEventListener("click", (e) => {
+    if (e.target === momoPopup) {
+      momoPopup.classList.add("hidden");
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !momoPopup.classList.contains("hidden")) {
+      momoPopup.classList.add("hidden");
+    }
+  });
+
+  // Tab switching for Donate Modal
+  const donateTabs = momoPopup.querySelectorAll(".donate-tab");
+  donateTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const targetTab = tab.getAttribute("data-tab");
+      donateTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      const panels = momoPopup.querySelectorAll(".donate-panel");
+      panels.forEach(p => {
+        if (p.id.includes(targetTab)) {
+          p.classList.add("active");
+        } else {
+          p.classList.remove("active");
+        }
+      });
+    });
+  });
 }
