@@ -7,11 +7,18 @@
 body {
   width: 100%;
   margin: 0;
-  font-family: "Arial", "JetBrainsMonoNerdFont", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color: var(--text-primary);
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+}
+
+/* View Transitions for smooth, zero-stutter theme switching */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.22s;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* ==========================================
@@ -215,7 +222,7 @@ body {
 
 .sidebar-title {
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-primary);
   white-space: nowrap;
 }
@@ -227,7 +234,11 @@ body {
   cursor: pointer;
   padding: 6px;
   border-radius: 6px;
-  transition: all 0.2s ease;
+  backface-visibility: hidden;
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease,
+    color 0.18s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -236,6 +247,7 @@ body {
 .sidebar-collapse-btn:hover {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+  transform: scale(1.05);
 }
 
 /* Sidebar Total Count */
@@ -249,7 +261,7 @@ body {
   min-height: 52px;
   color: var(--text-primary);
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 400;
   background: linear-gradient(
     135deg,
     var(--accent-color-light),
@@ -258,10 +270,16 @@ body {
   border-radius: 8px;
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .sidebar-total-count::before {
@@ -277,7 +295,7 @@ body {
     var(--hover-light-dazz),
     transparent
   );
-  transition: left 0.5s ease;
+  transition: left 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .sidebar-total-count:hover::before {
@@ -286,7 +304,7 @@ body {
 
 .sidebar-total-count:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   border-color: var(--accent-color);
 }
 
@@ -314,18 +332,19 @@ body {
   padding: 3px 8px;
   border-radius: 8px;
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 500;
   min-width: 28px;
   text-align: center;
   display: inline-block;
   margin-left: auto;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  backface-visibility: hidden;
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .sidebar-total-count:hover #bookmark-count-number {
   transform: scale(1.1);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
 }
 
 /* Hide completely when collapsed */
@@ -350,17 +369,23 @@ body {
   background: var(--bg-tertiary);
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  transition: all 0.2s ease;
+  transition: border-color 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.18s ease;
+}
+
+.sidebar-search:hover {
+  border-color: rgba(var(--accent-color-rgb, 88, 166, 255), 0.45);
 }
 
 .sidebar-search:focus-within {
   border-color: var(--accent-color);
   background: var(--bg-primary);
+  box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb, 88, 166, 255), 0.15);
 }
 
 .sidebar-search i {
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .sidebar-search-input {
@@ -1386,18 +1411,20 @@ body {
   padding: 10px 16px;
   cursor: pointer;
   color: var(--text-primary);
-  border-radius: 5px;
+  border-radius: 6px;
+  backface-visibility: hidden;
   transition:
-    all 0.15s ease,
-    background-color 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease;
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
   font-size: 0.9rem;
 }
 
 .sidebar-menu-item:hover {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+  transform: translateX(3px);
 }
 
 .sidebar-menu-item.active {
@@ -1408,7 +1435,7 @@ body {
     var(--accent-color) 42%,
     var(--border-color)
   );
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .sidebar-menu-item i {
@@ -1438,14 +1465,14 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 400;
   transition: all 0.2s ease;
 }
 
 .sidebar-menu-item.active .sidebar-badge {
   color: var(--bg-primary);
   background: var(--text-primary);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 /* Sidebar Sections */
@@ -1491,7 +1518,7 @@ body {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-weight: 600;
+  font-weight: 500;
   transition: color 0.15s ease;
 }
 
@@ -1742,7 +1769,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 500;
+  font-weight: 400;
   font-size: 0.8rem;
 }
 
@@ -1755,7 +1782,7 @@ body {
   border: 1px solid var(--border-color);
   padding: 1px 6px;
   border-radius: 6px;
-  font-weight: 500;
+  font-weight: 400;
   transition: all 0.15s ease;
 }
 
@@ -1785,7 +1812,7 @@ body {
   background: var(--accent-color) !important;
   color: var(--bg-primary) !important;
   border-color: var(--accent-color) !important;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .sidebar-folder-item.active i {
@@ -1935,7 +1962,7 @@ body {
   color: var(--bg-primary) !important;
   background-color: var(--accent-color) !important;
   border-color: var(--accent-color) !important;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .sidebar-sort-item.active i {
@@ -2490,19 +2517,25 @@ body {
   cursor: pointer;
   font-size: 0.76rem;
   font-weight: 500;
-  transition: all 0.15s ease;
+  backface-visibility: hidden;
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 }
 
 .sidebar-admin-btn i {
   font-size: 0.85rem;
-  transition: color 0.15s ease;
+  transition: color 0.18s ease;
 }
 
 .sidebar-admin-btn:hover {
   background: var(--hover-bg, var(--bg-secondary)) !important;
   color: var(--text-primary) !important;
   border-color: var(--accent-color) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transform: translateY(-1px);
 }
 
@@ -3107,13 +3140,15 @@ body.settings-panel-open .settings-container {
   margin-bottom: 6px;
   border-radius: var(--border-radius-md);
   background: var(--folder-bg);
-  transition:
-    background var(--transition-fast),
-    transform var(--transition-fast),
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease;
   box-shadow: var(--shadow-sm);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 }
 
 .folder-item:hover {
@@ -3218,27 +3253,28 @@ body.settings-panel-open .settings-container {
   border-radius: var(--border-radius-md);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-md);
-  transition:
-    all var(--transition-fast),
-    background-color 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
   position: relative;
-}
-
-.bookmark-item:hover,
-.folder-item:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  z-index: 100;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .bookmark-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
   background-color: var(--bg-secondary);
+  border-color: rgba(var(--accent-color-rgb, 88, 166, 255), 0.35);
+  z-index: 10;
 }
+
 .folder-item:hover {
   background-color: var(--bg-tertiary);
 }
@@ -3277,17 +3313,17 @@ body.settings-panel-open .settings-container {
 .bookmark-title {
   flex-grow: 1;
   font-size: 12px;
-  font-weight: 500;
-  color: var(--text-primary);
+  font-weight: 400;
+  color: var(--bookmark-title-color, var(--text-primary));
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .bookmark-title:hover {
-  color: var(--text-secondary) !important;
+  color: var(--accent-color) !important;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -5353,15 +5389,21 @@ textarea.error {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  transition: all 0.2s ease;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .list-bookmark-item:hover {
   background: var(--hover-bg);
   border-color: var(--accent-color);
-  transform: translateX(3px);
+  transform: translateX(4px);
   box-shadow: var(--shadow-md);
-  z-index: 100;
+  z-index: 10;
   position: relative;
 }
 
@@ -5396,18 +5438,21 @@ textarea.error {
 
 .list-bookmark-title-link {
   font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--accent-color) !important;
+  font-weight: 400;
+  color: var(--bookmark-title-color, var(--text-primary));
   text-decoration: none;
   word-break: break-word;
   white-space: normal;
   display: block;
   line-height: 1.4;
   cursor: pointer;
+  transition: color 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .list-bookmark-title-link:hover {
+  color: var(--accent-color);
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .list-bookmark-url-display {
@@ -5589,7 +5634,12 @@ textarea.error {
   box-shadow: var(--shadow-sm);
   cursor: pointer;
   position: relative;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.2s ease,
+    box-shadow 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
   overflow: hidden;
   max-width: 100%;
 }
@@ -5617,11 +5667,14 @@ textarea.error {
   object-fit: cover;
   object-position: center center;
   display: block;
-  transition: filter 0.2s ease;
+  transition:
+    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.22s ease;
 }
 
 .mockup-bookmark-item:hover .mockup-image {
-  filter: brightness(1.05);
+  filter: brightness(1.04);
+  transform: scale(1.03);
 }
 
 .mockup-overlay {
@@ -5670,9 +5723,9 @@ textarea.error {
 }
 
 .mockup-title {
-  font-weight: 500; /* Bớt đậm lại để dễ nhìn hơn */
-  font-size: 0.85rem; /* Giảm nhỏ font chữ tiêu đề */
-  color: var(--text-primary);
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--bookmark-title-color, var(--text-primary));
   text-decoration: none;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -5680,7 +5733,7 @@ textarea.error {
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.35;
-  transition: color 0.2s ease;
+  transition: color 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .mockup-bookmark-item:hover .mockup-title {
@@ -5882,7 +5935,12 @@ textarea.error {
   border-radius: 12px !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
   padding: 6px 14px !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+  transition: border-color 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.18s ease !important;
+}
+
+.webview-search-wrapper .sidebar-search:hover {
+  border-color: rgba(var(--accent-color-rgb, 88, 166, 255), 0.45) !important;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06) !important;
 }
 
 .webview-search-wrapper .sidebar-search:focus-within {
@@ -5898,7 +5956,12 @@ textarea.error {
 
 .webview-search-wrapper .settings-container .button.settings {
   border-radius: 10px !important;
-  transition: all 0.2s ease !important;
+  backface-visibility: hidden;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.18s ease, border-color 0.18s ease !important;
+}
+
+.webview-search-wrapper .settings-container .button.settings:hover {
+  transform: scale(1.08) !important;
 }
 
 .organize-folders-popup-content {
@@ -6367,4 +6430,110 @@ textarea.error {
 
 #sidebar-tags-list {
   padding-bottom: 30px;
+}
+
+/* ============================================================
+   Bookmark Title Color & Smooth Hover Polish for Webview
+   ============================================================ */
+
+/* Prioritize dark/black text for bookmark titles across all view modes */
+.card-bookmark-title,
+.bookmark-title,
+.list-bookmark-title-link,
+.mockup-title,
+.bento-bookmark-title,
+.kanban-bookmark-title,
+.bookmark-item .link,
+.bookmark-item a.link {
+  color: var(--bookmark-title-color, var(--text-primary));
+  font-weight: 400;
+  transition: color 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-bookmark-title:hover,
+.bookmark-title:hover,
+.list-bookmark-title-link:hover,
+.mockup-bookmark-item:hover .mockup-title,
+.bento-bookmark-item:hover .bento-bookmark-title,
+.kanban-bookmark-card:hover .kanban-bookmark-title,
+.bookmark-item .link:hover,
+.bookmark-item a.link:hover {
+  color: var(--accent-color) !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Bento View Bookmark Item Smooth Hover */
+.bento-bookmark-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-primary);
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.bento-bookmark-item:hover {
+  background: var(--hover-bg) !important;
+  border-color: var(--accent-color) !important;
+  transform: translateX(3px) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Kanban View Bookmark Card Smooth Hover */
+.kanban-bookmark-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--bg-primary);
+  border: 1px solid transparent;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.kanban-bookmark-card:hover {
+  background: var(--hover-bg, var(--bg-tertiary)) !important;
+  border-color: var(--border-color) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Detail View Bookmark Item Smooth Hover */
+.detail-bookmark-item {
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.detail-bookmark-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-color);
 }

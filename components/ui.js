@@ -1661,22 +1661,8 @@ export function updateTheme(elements, theme) {
     theme === "dark" ||
     (theme === "system" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches)
-  const elementsToUpdate = [
-    document.body,
-    elements.folderListDiv,
-    elements.bookmarkCountDiv,
-  ]
 
-  elementsToUpdate.forEach((element) => {
-    if (element) {
-      availableThemes.forEach((themeName) =>
-        element.classList.remove(`${themeName}-theme`),
-      )
-      element.classList.remove("light-theme", "dark-theme")
-    }
-  })
-
-  let activeTheme =
+  const activeTheme =
     theme === "system"
       ? isDarkMode
         ? "dark"
@@ -1685,63 +1671,117 @@ export function updateTheme(elements, theme) {
         ? theme
         : "light"
 
-  const logoSrcMap = {
-    light: "images/logo.png", // qua tết đổi lại ố kề
-    dark: "images/logo.png",
-    dracula: "images/logo_dracula.png",
-    onedark: "images/logo_onedark.png",
-    tokyonight: "images/logo_tokyo_night.png",
-    nord: "images/logo.png",
-    synthwave: "images/logo.png",
-    gruvbox: "images/logo.png",
-    catppuccin: "images/logo.png",
-    nightowl: "images/logo.png",
-    "nord-light": "images/logo.png",
-    "gruvbox-light": "images/logo.png",
-    "catppuccin-light": "images/logo.png",
-    "nightowl-light": "images/logo.png",
-    monokai: "images/logo_monokai.png",
-    "winter-is-coming": "images/logo.png",
-    "github-blue": "images/logo_github.png",
-    "github-light": "images/logo_github.png",
-    tet: "images/logo_tet.png",
-  }
+  const applyTheme = () => {
+    // 1. Update data-theme on root for instant CSS variable cascading
+    document.documentElement.setAttribute("data-theme", activeTheme)
 
-  const getAsset = (path) =>
-    typeof chrome !== "undefined" && chrome.runtime?.getURL
-      ? chrome.runtime.getURL(path)
-      : path
+    // 2. Update body classList cleanly without querying thousands of DOM nodes
+    if (document.body) {
+      const classesToRemove = []
+      document.body.classList.forEach((cls) => {
+        if (cls.endsWith("-theme")) classesToRemove.push(cls)
+      })
+      classesToRemove.forEach((cls) => document.body.classList.remove(cls))
+      document.body.classList.add(`${activeTheme}-theme`)
+    }
 
-  document.querySelectorAll(".logo").forEach((el) => {
-    const src = logoSrcMap[activeTheme] ?? logoSrcMap["light"]
-    el.src = getAsset(src)
-    if (!el.alt) el.alt = "App logo"
-  })
+    // 3. Update theme swatches active state if container exists
+    if (elements && elements.themeSwitcher) {
+      const swatches = elements.themeSwitcher.querySelectorAll(".theme-swatch")
+      swatches.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.value === theme)
+      })
+    }
 
-  elementsToUpdate.forEach((element) => {
-    if (element) element.classList.add(`${activeTheme}-theme`)
-  })
+    // 4. Update logo only if src actually changed to prevent image flicker
+    const logoSrcMap = {
+      light: "images/logo.png",
+      dark: "images/logo.png",
+      dracula: "images/logo_dracula.png",
+      onedark: "images/logo_onedark.png",
+      tokyonight: "images/logo_tokyo_night.png",
+      nord: "images/logo.png",
+      synthwave: "images/logo.png",
+      gruvbox: "images/logo.png",
+      catppuccin: "images/logo.png",
+      nightowl: "images/logo.png",
+      "nord-light": "images/logo.png",
+      "gruvbox-light": "images/logo.png",
+      "catppuccin-light": "images/logo.png",
+      "nightowl-light": "images/logo.png",
+      monokai: "images/logo_monokai.png",
+      "winter-is-coming": "images/logo.png",
+      "github-blue": "images/logo_github.png",
+      "github-light": "images/logo_github.png",
+      tet: "images/logo_tet.png",
+    }
 
-  document.documentElement.setAttribute("data-theme", activeTheme)
+    const getAsset = (path) =>
+      typeof chrome !== "undefined" && chrome.runtime?.getURL
+        ? chrome.runtime.getURL(path)
+        : path
 
-  document
-    .querySelectorAll(
-      ".input, .select, .button, .rename-popup, .folder-item, .folder-title, .custom-popup",
-    )
-    .forEach((el) => {
-      availableThemes.forEach((themeName) =>
-        el.classList.remove(`${themeName}-theme`),
-      )
-      el.classList.remove("light-theme", "dark-theme")
-      el.classList.add(`${activeTheme}-theme`)
+    const targetLogo = getAsset(logoSrcMap[activeTheme] ?? logoSrcMap["light"])
+    document.querySelectorAll(".logo").forEach((el) => {
+      if (el.getAttribute("src") !== targetLogo && el.src !== targetLogo) {
+        el.src = targetLogo
+      }
+      if (!el.alt) el.alt = "App logo"
     })
 
-  localStorage.setItem("selectedTheme", theme)
-  window.dispatchEvent(
-    new CustomEvent("themeChanged", {
-      detail: { theme: activeTheme, originalSelection: theme },
-    }),
-  )
+    localStorage.setItem("selectedTheme", theme)
+    localStorage.setItem("appTheme", theme)
+    window.dispatchEvent(
+      new CustomEvent("themeChanged", {
+        detail: { theme: activeTheme, originalSelection: theme },
+      }),
+    )
+  }
+
+  // Smooth theme application:
+  // Use View Transition if supported for a seamless cross-fade,
+  // with a temporary CSS transition guard to avoid mismatched sub-element lag.
+  const executeThemeChange = () => {
+    const css = document.createElement("style")
+    css.setAttribute("data-theme-transition-guard", "true")
+    css.textContent = `*, *::before, *::after {
+      -webkit-transition: none !important;
+      -moz-transition: none !important;
+      -o-transition: none !important;
+      -ms-transition: none !important;
+      transition: none !important;
+    }`
+    document.head.appendChild(css)
+
+    try {
+      applyTheme()
+      if (document.body) void window.getComputedStyle(document.body).opacity
+    } finally {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (css.parentNode) {
+            css.parentNode.removeChild(css)
+          }
+        })
+      })
+    }
+  }
+
+  if (
+    typeof document !== "undefined" &&
+    document.startViewTransition &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    try {
+      document.startViewTransition(() => {
+        executeThemeChange()
+      })
+    } catch (e) {
+      executeThemeChange()
+    }
+  } else {
+    executeThemeChange()
+  }
 }
 
 // Render folder tree in sidebar (Raindrop style)
@@ -2863,32 +2903,13 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
 
     folderBookmarks.forEach((b) => {
       const item = document.createElement("div")
+      item.className = "bento-bookmark-item"
       item.style.cursor = "pointer"
       item.onclick = (e) => {
         if (!e.target.closest(".dropdown-btn-group"))
           window.open(b.url, "_blank")
       }
-      item.style.display = "flex"
-      item.style.alignItems = "center"
-      item.style.gap = "10px"
-      item.style.textDecoration = "none"
-      item.style.color = "var(--text-primary)"
-      item.style.padding = "8px 10px"
-      item.style.borderRadius = "8px"
-      item.style.background = "var(--bg-primary)"
-      item.style.border = "1px solid var(--border-color)"
-      item.style.transition = "transform 0.15s ease, background-color 0.15s ease"
       makeBookmarkDraggableAndDroppable(item, b, elements, language)
-
-      item.onmouseover = () => {
-        item.style.background = "var(--hover-bg)"
-        item.style.transform = "translateX(2px)"
-      }
-      item.onmouseout = () => {
-        item.style.background = "var(--bg-primary)"
-        item.style.borderColor = "var(--border-color)"
-        item.style.transform = "translateX(0)"
-      }
 
       const icon = document.createElement("img")
       icon.src = getFaviconUrl(b.url)
@@ -2907,8 +2928,8 @@ function renderBentoView(bookmarkTreeNodes, filteredBookmarks, elements) {
       textWrap.style.flex = "1"
 
       const text = document.createElement("span")
+      text.className = "bento-bookmark-title"
       text.textContent = b.title
-      text.style.fontWeight = "500"
       text.style.fontSize = "0.95rem"
       text.style.whiteSpace = "nowrap"
       text.style.overflow = "hidden"
@@ -3138,38 +3159,13 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
 
     folderBookmarks.forEach((b) => {
       const card = document.createElement("div")
-      card.className = "kanban-bookmark-card" // Added class for z-index management
+      card.className = "kanban-bookmark-card" // Added class for z-index management & smooth CSS hover
       card.style.cursor = "pointer"
       card.onclick = (e) => {
         if (!e.target.closest(".dropdown-btn-group"))
           window.open(b.url, "_blank")
       }
-      card.style.background = "var(--bg-primary)"
-      card.style.border = "1px solid transparent" // Invisible border to prevent shift on hover
-      card.style.padding = "8px 10px"
-      card.style.borderRadius = "8px"
-      card.style.display = "flex"
-      card.style.alignItems = "center"
-      card.style.gap = "12px"
-      card.style.textDecoration = "none"
-      card.style.color = "var(--text-primary)"
-      card.style.transition = "all 0.2s ease"
-      card.style.position = "relative"
-      card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)"
       makeBookmarkDraggableAndDroppable(card, b, elements, language)
-
-      card.onmouseover = () => {
-        card.style.background = "var(--hover-bg, var(--bg-tertiary))"
-        card.style.borderColor = "var(--border-color)"
-        card.style.transform = "translateY(-2px)"
-        card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.06)"
-      }
-      card.onmouseout = () => {
-        card.style.background = "var(--bg-primary)"
-        card.style.borderColor = "transparent"
-        card.style.transform = "translateY(0)"
-        card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)"
-      }
 
       const icon = document.createElement("img")
       icon.src = getFaviconUrl(b.url)
@@ -3187,13 +3183,12 @@ function renderKanbanView(bookmarkTreeNodes, filteredBookmarks, elements) {
       titleWrapper.style.flex = "1"
 
       const title = document.createElement("div")
+      title.className = "kanban-bookmark-title"
       title.textContent = b.title
-      title.style.fontWeight = "500"
       title.style.fontSize = "0.9rem"
       title.style.whiteSpace = "nowrap"
       title.style.overflow = "hidden"
       title.style.textOverflow = "ellipsis"
-      title.style.color = "var(--text-primary)"
 
       const url = document.createElement("div")
       url.textContent = b.url
@@ -3917,7 +3912,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
       <div data-tooltip="${bookmark.title || bookmark.url}" style="min-width: 0; flex: 1; overflow: hidden;">
         <a href="${
           bookmark.url
-        }" target="_blank" class="bookmark-title" style="display: block; width: 100%; color:var(--text-primary);font-weight:600;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;">
+        }" target="_blank" class="bookmark-title" style="display: block; width: 100%; color:var(--bookmark-title-color, var(--text-primary));font-weight:400;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;transition:color 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);">
           ${bookmark.title || bookmark.url}
         </a>
       </div>
@@ -3932,7 +3927,7 @@ function createDetailBookmarkElement(bookmark, language, elements) {
       ${createNotesPreviewHTML(bookmark, "detail-note-preview")}
       ${createTagsInViewHTML(bookmark.tags, "detail-view-tags")}
     </div>
-    <button class="view-detail-btn-action" style="background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color);border-radius:6px;padding:6px 12px;cursor:pointer;font-weight:600;font-size:0.78rem;margin-top:auto;width:100%;transition:all 0.2s ease;">
+    <button class="view-detail-btn-action" style="background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color);border-radius:6px;padding:6px 12px;cursor:pointer;font-weight:600;font-size:0.78rem;margin-top:auto;width:100%;transition:transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.18s ease, border-color 0.18s ease;">
       ${translations[language].viewDetail || "View Details"}
     </button>
   `
@@ -4369,7 +4364,7 @@ function createEnhancedBookmarkElement(bookmark, depth = 0, elements) {
       <div class="bookmark-favicon" style="width: 22px; height: 22px; border-radius: 4px; overflow: hidden; background: white; display: flex; justify-content: center; align-items: center;">
         <img src="${favicon}" style="width: 90%; height: 90%; object-fit: cover;" data-hostname="${hostname}">
       </div>
-      <a href="${bookmark.url}" target="_blank" class="bookmark-title" style="flex: 1; color: var(--text-primary); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${bookmark.title}">
+      <a href="${bookmark.url}" target="_blank" class="bookmark-title" style="flex: 1; color: var(--bookmark-title-color, var(--text-primary)); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${bookmark.title}">
         ${bookmark.title || bookmark.url}
       </a>
       ${createNotesPreviewHTML(bookmark, "tree-note-preview")}

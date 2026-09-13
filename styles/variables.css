@@ -33,4 +33,7 @@
   --danger-color-light: rgba(239, 68, 68, 0.12);
   --error-color: var(--danger-color);
   --border-color-subtle: rgba(128, 128, 128, 0.15);
+  --bookmark-title-color: var(--text-primary);
+  --ease-smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 }
