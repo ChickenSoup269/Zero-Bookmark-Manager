@@ -290,7 +290,7 @@ body {
 
 .folder-card .folder-title {
   flex: 1;
-  font-weight: 500;
+  font-weight: 400;
   font-size: 0.8rem;
   color: var(--text-primary);
   white-space: nowrap;
@@ -357,7 +357,7 @@ body {
 .card-view .bookmark-title,
 .detail-view .bookmark-title {
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -712,7 +712,7 @@ body {
 
 .detail-bookmark-item .bookmark-title {
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--text-primary);
   text-decoration: none;
   overflow: hidden;

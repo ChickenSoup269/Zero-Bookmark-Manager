@@ -878,18 +878,19 @@ export function setupExportImportListeners(elements) {
       left: 2px;
       width: 12px;
       height: 12px;
-      background: white;
+      background: var(--text-muted, #737373);
       border-radius: 50%;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
     
     .toggle-input:checked + .toggle-label {
-      background: var(--focus-outline);
+      background: var(--accent-color, var(--focus-outline));
     }
     
     .toggle-input:checked + .toggle-label .toggle-slider {
       transform: translateX(16px);
+      background: var(--accent-contrast, #000000);
     }
     
     .setting-info h4 {

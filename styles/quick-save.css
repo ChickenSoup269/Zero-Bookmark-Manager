@@ -721,28 +721,32 @@ select#folder:focus {
 .toggle-knob {
   position: absolute;
   inset: 0;
-  background-color: var(--border-color);
+  background-color: var(--bg-tertiary, #171717);
+  border: 1.5px solid var(--border-color, #333333);
   border-radius: 999px;
-  transition: background-color 0.25s ease;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+  box-sizing: border-box;
 }
 
 .toggle-knob::before {
   content: "";
   position: absolute;
-  width: 14px;
-  height: 14px;
-  left: 3px;
-  bottom: 3px;
-  background: var(--bg-primary, #fff);
+  width: 12px;
+  height: 12px;
+  left: 2px;
+  top: 2px;
+  background: var(--text-muted, #737373);
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  transition: transform 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease;
 }
 
 .toggle-switch input:checked + .toggle-knob {
-  background: var(--accent-color, #007bff);
+  background: var(--accent-color, #ffffff);
+  border-color: var(--accent-color, #ffffff);
 }
 
 .toggle-switch input:checked + .toggle-knob::before {
   transform: translateX(16px);
+  background: var(--accent-contrast, #000000);
 }
