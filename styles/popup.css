@@ -1272,7 +1272,7 @@ body {
 
 .settings-panel-close {
   background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   color: var(--text-secondary);
   font-size: 0.85rem;
   cursor: pointer;
@@ -1282,13 +1282,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, color 0.2s ease;
 }
 
 .settings-panel-close:hover {
-  background: var(--hover-bg);
+  background: var(--bg-secondary);
   border-color: var(--accent-color);
-  color: var(--accent-color);
+  color: var(--text-primary);
+  transform: none;
 }
 
 .settings-panel-title {
@@ -1313,27 +1314,24 @@ body.settings-panel-open .button.settings {
   box-shadow: var(--shadow-md);
 }
 
-/* Select in dropdown - Hover effect */
 .dropdown-menu .select {
   width: 100%;
   padding: 0.6rem 0.8rem;
-  font-size: 0.9rem;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
+  font-size: 0.88rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
-  transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    transform 0.15s ease;
+  transition: border-color 0.2s ease;
 }
 
 .dropdown-menu .select:hover {
-  background-color: var(--accent-color);
-  color: var(--bg-primary);
+  background-color: var(--bg-primary);
   border-color: var(--accent-color);
-  transform: translateY(-1px);
+  color: var(--text-primary);
+  transform: none;
+  box-shadow: none;
 }
 
 /* Menu item - Button style */
@@ -1341,21 +1339,40 @@ body.settings-panel-open .button.settings {
   width: 100%;
   text-align: left;
   padding: 0.6rem 0.8rem;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   border: 1px solid transparent;
-  border-radius: var(--border-radius-md);
+  border-radius: 8px;
   color: var(--text-primary);
   cursor: pointer;
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    transform 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-menu .menu-item i {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  width: 18px;
+  text-align: center;
+  transition: color 0.2s ease;
 }
 
 .dropdown-menu .menu-item:hover {
-  background-color: var(--accent-color);
-  color: var(--accent-contrast, #ffffff);
+  background: transparent;
+  color: var(--text-primary);
   border-color: var(--accent-color);
+  transform: none;
+  box-shadow: none;
+}
+
+.dropdown-menu .menu-item:hover i {
+  color: inherit !important;
+  transform: none;
+}
+
+.dropdown-menu .menu-item:active {
   transform: none;
 }
 
@@ -1422,8 +1439,8 @@ body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu .menu-item {
 }
 
 body[data-bookmark-menu-bg="glass"] .bookmark-dropdown-menu .menu-item:hover {
-  background: var(--accent-color) !important;
-  color: var(--bg-primary) !important;
+  background: transparent !important;
+  color: var(--text-primary) !important;
   border-color: var(--accent-color) !important;
 }
 
@@ -1508,13 +1525,20 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0.5rem 0.8rem;
-  font-size: 0.9rem;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.88rem;
   color: var(--text-primary);
   cursor: pointer;
-  border-radius: var(--border-radius-md);
-  transition: background-color 0.25s ease;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
+}
+
+.toggle-row:hover {
+  background-color: transparent;
+  border-color: var(--accent-color);
+  transform: none;
 }
 
 .toggle-switch input:checked + .toggle-knob::before {
@@ -1571,9 +1595,15 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 }
 
 .context-menu .menu-item:hover {
-  background-color: var(--hover-bg);
-  border-color: var(--border-color);
-  transform: translateY(-1px);
+  background-color: transparent;
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+  transform: none;
+}
+
+.context-menu .menu-item:hover i {
+  color: inherit !important;
+  transform: none;
 }
 
 /* bookmark link view card */
@@ -1694,7 +1724,7 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 
 .first-run-language-option:hover {
   border-color: var(--accent-color);
-  background: var(--bg-tertiary);
+  background: transparent;
 }
 
 .first-run-language-option span {
@@ -2252,10 +2282,6 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   border-radius: 8px;
 }
 
-.segmented-control-item:has(input[type="radio"]:checked) {
-  background: var(--accent-color) !important;
-}
-
 .segmented-control-item input {
   position: absolute;
   opacity: 0;
@@ -2270,30 +2296,66 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 7px 5px;
+  padding: 8px 5px;
   text-align: center;
-  font-size: 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 500;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-secondary);
-  border: none;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
   white-space: normal;
-  line-height: 1.1;
+  line-height: 1.15;
   min-height: 42px;
   word-break: break-word;
   user-select: none;
   width: 100%;
   height: 100%;
-  border: 1px solid var(--border-color);
+  box-sizing: border-box;
 }
 
 .segmented-control-item .control-label i {
   flex: 0 0 auto;
-  font-size: 0.95rem; /* Icon hơi to ra tí để bù cho text nhỏ */
+  font-size: 0.95rem;
   line-height: 1;
   opacity: 0.85;
   margin-bottom: 2px;
   font-weight: 900 !important;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.segmented-control-item input[type="radio"]:not(:checked) + .control-label:hover {
+  background: transparent;
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+  transform: none;
+  box-shadow: none;
+}
+
+.segmented-control-item input[type="radio"]:not(:checked) + .control-label:hover i {
+  color: inherit;
+  opacity: 1;
+  transform: none;
+}
+
+.segmented-control-item input[type="radio"]:checked + .control-label {
+  background: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  color: var(--accent-contrast, #ffffff) !important;
+  font-weight: 600;
+  box-shadow: 0 3px 12px color-mix(in srgb, var(--accent-color) 40%, transparent);
+}
+
+.segmented-control-item input[type="radio"]:checked + .control-label i,
+.segmented-control-item input[type="radio"]:checked + .control-label span {
+  color: var(--accent-contrast, #ffffff) !important;
+  opacity: 1;
+}
+
+.segmented-control-item input[type="radio"]:checked + .control-label:hover {
+  filter: none;
+  transform: none;
 }
 
 .app-setting-action {
