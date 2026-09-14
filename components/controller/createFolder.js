@@ -10,7 +10,7 @@ import { uiState, saveUIState } from "../state.js"
 
 export function setupCreateFolderListeners(elements) {
   // Open Create Folder Popup
-  elements.createFolderBtn.addEventListener("click", () => {
+  const openCreateFolderPopup = () => {
     const language = localStorage.getItem("appLanguage") || "en"
     const createFolderTitle = document.getElementById("create-folder-title")
     if (createFolderTitle) {
@@ -26,7 +26,11 @@ export function setupCreateFolderListeners(elements) {
       translations[language].newFolderPlaceholder
     elements.createFolderPopup.classList.remove("hidden")
     elements.createFolderInput.focus()
-  })
+  }
+
+  if (elements.createFolderBtn) {
+    elements.createFolderBtn.addEventListener("click", openCreateFolderPopup)
+  }
 
   // Save button
   elements.createFolderSave.addEventListener("click", () => {

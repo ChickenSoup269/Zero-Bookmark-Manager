@@ -890,6 +890,15 @@ export function updateUILanguage(elements, language) {
   `
   const updateButtonText = (btnElem, text) => {
     if (!btnElem) return
+    if (
+      btnElem.classList.contains("sidebar-action-btn") ||
+      btnElem.classList.contains("icon-button") ||
+      (!btnElem.querySelector("span") && btnElem.querySelector("i"))
+    ) {
+      btnElem.title = text
+      btnElem.setAttribute("aria-label", text)
+      return
+    }
     const span = btnElem.querySelector("span")
     if (span) {
       span.textContent = text
@@ -1862,6 +1871,53 @@ function renderSidebarFolderTree(folders, elements) {
     JSON.parse(localStorage.getItem("collapsedSidebarFolders") || "[]"),
   )
 
+  // Pre-calculate bookmark count per folder from uiState.bookmarks / uiState.bookmarkTree
+  const folderBookmarkCounts = new Map()
+  const allValidBookmarks = (uiState.bookmarks || []).filter((b) => b.url)
+
+  function countAllBookmarks(node) {
+    let count = 0
+    if (node.url) count++
+    if (node.children) {
+      node.children.forEach((child) => {
+        count += countAllBookmarks(child)
+      })
+    }
+    folderBookmarkCounts.set(node.id, count)
+    return count
+  }
+
+  if (uiState.bookmarkTree && uiState.bookmarkTree.length > 0) {
+    uiState.bookmarkTree.forEach(countAllBookmarks)
+  }
+
+  if (folderBookmarkCounts.size === 0) {
+    allValidBookmarks.forEach((b) => {
+      if (b.parentId) {
+        folderBookmarkCounts.set(
+          b.parentId,
+          (folderBookmarkCounts.get(b.parentId) || 0) + 1,
+        )
+      }
+    })
+  }
+
+  folderBookmarkCounts.set("__all_bookmarks", allValidBookmarks.length)
+  if (uiState.showSmartFolders !== false) {
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
+    folderBookmarkCounts.set(
+      "__smart_recent",
+      allValidBookmarks.filter((b) => (b.dateAdded || 0) >= sevenDaysAgo).length,
+    )
+    const tagMap = uiState.bookmarkTags || {}
+    folderBookmarkCounts.set(
+      "__smart_untagged",
+      allValidBookmarks.filter(
+        (b) => !tagMap[b.id] || tagMap[b.id].length === 0,
+      ).length,
+    )
+  }
+
   // Render folder with nesting (tree view style)
   function renderFolder(
     folder,
@@ -1887,18 +1943,49 @@ function renderSidebarFolderTree(folders, elements) {
     const hasChildren = folder.children && folder.children.length > 0
     const isCollapsed = collapsedFolders.has(folder.id)
 
-    // Build tree lines
-    let treeLine = ""
-    if (level > 0) {
-      treeLine = `<span class="tree-line ${isLast ? "last" : ""}"></span>`
+    let folderIconClass = "fas fa-folder folder-icon"
+    if (folder.id === "__all_bookmarks") {
+      folderIconClass = "fas fa-layer-group folder-icon"
+    } else if (folder.id === "__smart_recent") {
+      folderIconClass = "fas fa-clock-rotate-left folder-icon"
+    } else if (folder.id === "__smart_untagged") {
+      folderIconClass = "fas fa-tag folder-icon"
+    } else if (folder.id === "1") {
+      folderIconClass = "fas fa-star folder-icon"
+    } else if (!isCollapsed && hasChildren) {
+      folderIconClass = "fas fa-folder-open folder-icon"
+    }
+
+    let countBadge = ""
+    const countMode = uiState.folderCountMode || "bookmarks"
+    if (countMode !== "off" && uiState.showFolderCount !== false) {
+      const bCount = folderBookmarkCounts.get(folder.id) ?? 0
+      const fCount = folder.children ? folder.children.length : 0
+
+      if (countMode === "both") {
+        if (bCount > 0 || fCount > 0) {
+          const badgeB = `<span class="badge-b" title="${bCount} bookmarks"><i class="fas fa-bookmark"></i>${bCount}</span>`
+          const badgeF = fCount > 0 ? `<span class="badge-f" title="${fCount} folders"><i class="fas fa-folder"></i>${fCount}</span>` : ""
+          countBadge = `<span class="folder-child-count both-counts" title="${bCount} bookmarks${fCount > 0 ? ` • ${fCount} folders` : ''}">${badgeB}${badgeF}</span>`
+        } else {
+          countBadge = `<span class="folder-child-count" title="0 bookmarks">0</span>`
+        }
+      } else if (countMode === "folders") {
+        if (fCount > 0) {
+          countBadge = `<span class="folder-child-count folder-badge" title="${fCount} folders"><i class="fas fa-folder"></i>${fCount}</span>`
+        } else {
+          countBadge = "" // Chỉ hiển thị icon/số lượng khi folder có chứa thư mục con
+        }
+      } else {
+        countBadge = `<span class="folder-child-count" title="${bCount} bookmarks">${bCount}</span>`
+      }
     }
 
     li.innerHTML = `
-      ${treeLine}
       ${hasChildren ? `<i class="fas fa-chevron-${isCollapsed ? "right" : "down"} folder-toggle" data-folder-id="${folder.id}"></i>` : '<span class="folder-spacer"></span>'}
-      <i class="fas fa-folder${isCollapsed && hasChildren ? "" : "-open"} folder-icon"></i>
+      <i class="${folderIconClass}"></i>
       <span class="folder-name" data-tooltip="${escapeHtml(folder.title)}">${escapeHtml(folder.title)}</span>
-      ${hasChildren ? `<span class="folder-child-count">${folder.children.length}</span>` : ""}
+      ${countBadge}
     `
 
     // Toggle handler
@@ -1907,13 +1994,20 @@ function renderSidebarFolderTree(folders, elements) {
       toggleIcon.addEventListener("click", (e) => {
         e.stopPropagation()
         const folderId = e.target.getAttribute("data-folder-id")
+        const folderIcon = li.querySelector(".folder-icon")
 
         if (collapsedFolders.has(folderId)) {
           collapsedFolders.delete(folderId)
           e.target.className = "fas fa-chevron-down folder-toggle"
+          if (folderIcon && !folder.isVirtual && folder.id !== "1") {
+            folderIcon.className = "fas fa-folder-open folder-icon"
+          }
         } else {
           collapsedFolders.add(folderId)
           e.target.className = "fas fa-chevron-right folder-toggle"
+          if (folderIcon && !folder.isVirtual && folder.id !== "1") {
+            folderIcon.className = "fas fa-folder folder-icon"
+          }
         }
 
         // Save state

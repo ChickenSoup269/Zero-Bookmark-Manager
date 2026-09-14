@@ -172,6 +172,8 @@ export function customSaveUIState() {
         autoRemoveDup: uiState.autoRemoveDup,
         showNotesPreview: uiState.showNotesPreview,
         showTagsInView: uiState.showTagsInView,
+        showFolderCount: uiState.showFolderCount,
+        folderCountMode: uiState.folderCountMode,
         headerLineStyle: uiState.headerLineStyle,
         bookmarkMenuBg: uiState.bookmarkMenuBg,
         showSmartFolders: uiState.showSmartFolders,
@@ -291,6 +293,11 @@ export async function customLoadUIState(callback) {
       (localStorage.getItem("autoRemoveDup") === "true")
     uiState.showNotesPreview = savedUiState.showNotesPreview ?? true
     uiState.showTagsInView = savedUiState.showTagsInView ?? true
+    uiState.showFolderCount = savedUiState.showFolderCount ?? true
+    uiState.folderCountMode =
+      savedUiState.folderCountMode ||
+      localStorage.getItem("folderCountMode") ||
+      "bookmarks"
     uiState.headerLineStyle =
       savedUiState.headerLineStyle ||
       localStorage.getItem("headerLineStyle") ||
@@ -354,6 +361,21 @@ export async function customLoadUIState(callback) {
     const showTagsInViewToggle = document.getElementById("show-tags-in-view-toggle")
     if (showTagsInViewToggle) {
       showTagsInViewToggle.checked = uiState.showTagsInView
+    }
+    const showFolderCountToggle = document.getElementById("show-folder-count-toggle")
+    if (showFolderCountToggle) {
+      showFolderCountToggle.checked = uiState.showFolderCount
+    }
+    const folderCountModeSelect = document.getElementById("folder-count-mode-select")
+    if (folderCountModeSelect) {
+      if (folderCountModeSelect.tagName === "SELECT") {
+        folderCountModeSelect.value = uiState.folderCountMode
+      } else {
+        const swatches = folderCountModeSelect.querySelectorAll(".setting-swatch")
+        swatches.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.value === uiState.folderCountMode)
+        })
+      }
     }
 
     // Sync duplicate scope UI

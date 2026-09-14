@@ -109,6 +109,45 @@ if (faviconSizeSelect) {
   }
 }
 
+// Cài đặt cho Folder Count Mode (bookmarks / folders / both / off)
+const folderCountModeSelect = document.getElementById("folder-count-mode-select")
+if (folderCountModeSelect) {
+  const savedFolderCountMode =
+    localStorage.getItem("folderCountMode") || uiState.folderCountMode || "bookmarks"
+  if (folderCountModeSelect.tagName === 'SELECT') {
+    folderCountModeSelect.value = savedFolderCountMode
+    folderCountModeSelect.addEventListener("change", (e) => updateFolderCountMode(e.target.value))
+  } else {
+    const swatches = folderCountModeSelect.querySelectorAll('.setting-swatch')
+    swatches.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.value === savedFolderCountMode)
+    })
+    folderCountModeSelect.addEventListener("click", (e) => {
+      const btn = e.target.closest('.setting-swatch')
+      if (!btn) return
+      swatches.forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      updateFolderCountMode(btn.dataset.value)
+    })
+  }
+
+  function updateFolderCountMode(val) {
+    uiState.folderCountMode = val
+    localStorage.setItem("folderCountMode", val)
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.folderCountMode = val
+      chrome.storage.local.set({ uiState: newUiState }, () => {
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          }
+        })
+      })
+    })
+  }
+}
+
 // Cài đặt cho Header Line
 const headerLineSelect = document.getElementById("header-line-select")
 if (headerLineSelect) {
@@ -267,6 +306,30 @@ if (showTagsInViewToggle) {
     chrome.storage.local.get(["uiState"], (data) => {
       const newUiState = data.uiState || {}
       newUiState.showTagsInView = uiState.showTagsInView
+      chrome.storage.local.set({ uiState: newUiState }, () => {
+        getBookmarkTree((bookmarkTreeNodes) => {
+          if (bookmarkTreeNodes) {
+            renderFilteredBookmarks(bookmarkTreeNodes, elements)
+          }
+        })
+      })
+    })
+  })
+}
+
+const showFolderCountToggle = document.getElementById("show-folder-count-toggle")
+if (showFolderCountToggle) {
+  chrome.storage.local.get(["uiState"], (data) => {
+    const savedValue = data.uiState?.showFolderCount ?? true
+    uiState.showFolderCount = savedValue
+    showFolderCountToggle.checked = savedValue
+  })
+
+  showFolderCountToggle.addEventListener("change", (e) => {
+    uiState.showFolderCount = e.target.checked
+    chrome.storage.local.get(["uiState"], (data) => {
+      const newUiState = data.uiState || {}
+      newUiState.showFolderCount = uiState.showFolderCount
       chrome.storage.local.set({ uiState: newUiState }, () => {
         getBookmarkTree((bookmarkTreeNodes) => {
           if (bookmarkTreeNodes) {
@@ -971,7 +1034,15 @@ function applyLanguageText(language) {
 
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const key = element.getAttribute("data-i18n")
-    if (key) element.textContent = translate(key)
+    if (!key) return
+    const span = element.querySelector("span")
+    if (span) {
+      span.textContent = translate(key)
+    } else if (element.querySelector("i")) {
+      element.title = translate(key)
+    } else {
+      element.textContent = translate(key)
+    }
   })
 
   document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {

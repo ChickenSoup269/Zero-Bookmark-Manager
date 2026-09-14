@@ -519,6 +519,12 @@ export const en = {
   quickOpenNativePopup: "Browser Popup",
   showNotesPreview: "Show Notes Preview",
   showTagsInView: "Show Tags in View",
+  showFolderCount: "Show Bookmark Count in Folders",
+  folderCountMode: "Folder Item Badge",
+  countModeBookmarks: "Bookmarks",
+  countModeFolders: "Folders",
+  countModeBoth: "Both",
+  countModeOff: "Off",
 
   checkHealthModalTitle: "Check Link Health",
   checkHealthModalDesc: "Choose scope to check for dead (404/500), malware, or risky links:",

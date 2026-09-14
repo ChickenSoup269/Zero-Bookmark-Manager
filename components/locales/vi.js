@@ -523,6 +523,12 @@ export const vi = {
   configureShortcuts: "Cài đặt Phím tắt",
   showNotesPreview: "Hiển thị xem trước ghi chú",
   showTagsInView: "Hiển thị tags trong view",
+  showFolderCount: "Hiện số lượng bookmark trong thư mục",
+  folderCountMode: "Hiển thị số lượng",
+  countModeBookmarks: "Bookmark",
+  countModeFolders: "Thư mục con",
+  countModeBoth: "Cả hai",
+  countModeOff: "Tắt",
 
   checkHealthModalTitle: "Kiểm tra tình trạng liên kết",
   checkHealthModalDesc: "Chọn phạm vi kiểm tra các liên kết hỏng, chết (404/500), mã độc hoặc nguy hiểm:",

@@ -12,6 +12,8 @@ export const uiState = {
   showBookmarkIds: false,
   showNotesPreview: true,
   showTagsInView: true,
+  showFolderCount: true,
+  folderCountMode: "bookmarks", // "bookmarks" | "folders" | "both" | "off"
   folderListBg: true,
   checkboxesVisible: false,
   bookmarkTags: {},
@@ -83,6 +85,8 @@ export function saveUIState() {
       autoRemoveDup: uiState.autoRemoveDup,
       showNotesPreview: uiState.showNotesPreview,
       showTagsInView: uiState.showTagsInView,
+      showFolderCount: uiState.showFolderCount,
+      folderCountMode: uiState.folderCountMode,
       headerLineStyle: uiState.headerLineStyle,
       bookmarkMenuBg: uiState.bookmarkMenuBg,
       showSmartFolders: uiState.showSmartFolders,
@@ -129,6 +133,8 @@ export function loadUIState(callback) {
         uiState.autoRemoveDup = result.uiState.autoRemoveDup || false
         uiState.showNotesPreview = result.uiState.showNotesPreview ?? true
         uiState.showTagsInView = result.uiState.showTagsInView ?? true
+        uiState.showFolderCount = result.uiState.showFolderCount ?? true
+        uiState.folderCountMode = result.uiState.folderCountMode || "bookmarks"
         uiState.headerLineStyle = result.uiState.headerLineStyle || "pattern"
         uiState.bookmarkMenuBg = result.uiState.bookmarkMenuBg || "glass"
         uiState.showSmartFolders = result.uiState.showSmartFolders ?? true

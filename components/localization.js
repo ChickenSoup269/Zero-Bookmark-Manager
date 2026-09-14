@@ -9,7 +9,13 @@ export function updateBookmarksPageText() {
   // Update elements with data-i18n attribute
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const key = element.getAttribute("data-i18n")
-    if (key) {
+    if (!key) return
+    const span = element.querySelector("span")
+    if (span) {
+      span.textContent = t(key)
+    } else if (element.querySelector("i")) {
+      element.title = t(key)
+    } else {
       element.textContent = t(key)
     }
   })
