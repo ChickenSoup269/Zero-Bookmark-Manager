@@ -57,17 +57,16 @@
                         <i class="fas fa-folder"></i>
                         <span data-i18n="sidebarFolders">Folders</span>
                     </div>
-                    <div class="sidebar-section-actions">
-                        <button id="create-folder" class="sidebar-action-btn" title="Create folder">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <i class="fas fa-chevron-down sidebar-section-toggle"></i>
-                    </div>
+                    <i class="fas fa-chevron-down sidebar-section-toggle"></i>
                 </div>
                 <div class="sidebar-section-content" id="folders-content">
-                    <select id="folder-filter" class="sidebar-folder-select" aria-label="Folder filter">
+                    <select id="folder-filter" class="sidebar-folder-select hidden" aria-label="Folder filter">
                         <option value="">All Folders</option>
                     </select>
+                    <button id="create-folder" class="sidebar-create-folder-btn" data-i18n-title="createFolder" title="Create folder">
+                        <i class="fas fa-plus"></i>
+                        <span data-i18n="createFolder">Create Folder</span>
+                    </button>
                     <ul class="sidebar-folder-tree" id="sidebar-folder-tree">
                         <!-- Folders will be rendered here dynamically -->
                     </ul>
@@ -600,6 +599,20 @@
                             <span class="toggle-knob"></span>
                         </span>
                     </label>
+
+                    <div class="app-setting-field">
+                        <label><i class="fas fa-list-ol"></i> <span data-i18n="folderCountMode">Folder Item Badge:</span></label>
+                        <div class="setting-pill-group" id="folder-count-mode-select">
+                            <button class="theme-swatch setting-swatch active" data-value="bookmarks"
+                                data-i18n="countModeBookmarks">Bookmarks</button>
+                            <button class="theme-swatch setting-swatch" data-value="folders"
+                                data-i18n="countModeFolders">Folders</button>
+                            <button class="theme-swatch setting-swatch" data-value="both"
+                                data-i18n="countModeBoth">Both</button>
+                            <button class="theme-swatch setting-swatch" data-value="off"
+                                data-i18n="countModeOff">Off</button>
+                        </div>
+                    </div>
 
                     <div class="app-setting-field">
                         <label><i class="fas fa-image"></i> <span data-i18n="faviconMode">Favicon Mode:</span></label>
