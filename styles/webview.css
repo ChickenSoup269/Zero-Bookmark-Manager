@@ -4065,13 +4065,6 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   border-radius: 10px;
   padding: 12px;
   margin-bottom: 8px;
-  transition: border-color 0.2s ease;
-}
-
-.dropdown-menu-2 .theme-selection-card:hover,
-.dropdown-menu-2 .font-selection-card:hover,
-.dropdown-menu-2 .view-selection-card:hover {
-  border-color: var(--accent-color);
 }
 
 .dropdown-menu-2 .settings-card-header {

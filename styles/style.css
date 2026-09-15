@@ -5342,11 +5342,6 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   padding: 10px 12px;
   margin: 8px 0;
   box-shadow: var(--shadow-sm);
-  transition: border-color 0.2s ease;
-}
-
-.settings-card:hover {
-  border-color: var(--accent-color);
 }
 
 .settings-card-header {
