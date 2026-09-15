@@ -587,6 +587,13 @@
   transform: translateX(calc(100% - 24px));
 }
 
+body.settings-panel-open .floating-container {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateX(120%) !important;
+}
+
 .floating-buttons {
   display: flex;
   flex-direction: column;

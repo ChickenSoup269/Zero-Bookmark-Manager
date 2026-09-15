@@ -3654,6 +3654,14 @@ body.settings-panel-open .container {
   user-select: none;
 }
 
+body.settings-panel-open .dropdown-menu-2,
+body.settings-panel-open #settings-menu,
+body.settings-panel-open .settings-scroll-top-btn {
+  pointer-events: auto !important;
+  user-select: auto !important;
+}
+
+body.settings-panel-open .floating-container,
 body.settings-panel-open #scroll-to-top,
 body.settings-panel-open .scroll-to-top,
 body.settings-panel-open #sidebar-scroll-to-top,
