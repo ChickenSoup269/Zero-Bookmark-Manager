@@ -339,7 +339,12 @@ export function updateSidebarCounts(bookmarks, favorites) {
 
   const favoritesTotal = bookmarks.filter((b) => b.isFavorite).length
 
-  if (totalCount) totalCount.textContent = bookmarks.length
+  const bookmarkCountNumber = document.getElementById("bookmark-count-number")
+  if (bookmarkCountNumber) {
+    bookmarkCountNumber.textContent = bookmarks.length
+  } else if (totalCount) {
+    totalCount.textContent = bookmarks.length
+  }
   if (favoritesCount) favoritesCount.textContent = favoritesTotal
   if (sidebarTotalCount)
     sidebarTotalCount.textContent = `${bookmarks.length} bookmarks`

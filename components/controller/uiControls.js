@@ -505,6 +505,40 @@ export function setupUIControlListeners(elements) {
   })
   // END ADD
 
+  // Settings Menu Scroll to Top Button
+  const settingsScrollTopBtn = document.getElementById("settings-scroll-to-top")
+  if (settingsScrollTopBtn && elements.settingsMenu) {
+    elements.settingsMenu.addEventListener("scroll", () => {
+      if (elements.settingsMenu.scrollTop > 180) {
+        settingsScrollTopBtn.classList.add("visible")
+      } else {
+        settingsScrollTopBtn.classList.remove("visible")
+      }
+    })
+
+    settingsScrollTopBtn.addEventListener("click", (e) => {
+      e.stopPropagation()
+      elements.settingsMenu.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      })
+    })
+  }
+
+  // Prevent background scroll bleed when settings panel is open
+  window.addEventListener(
+    "wheel",
+    (e) => {
+      if (document.body.classList.contains("settings-panel-open")) {
+        if (elements.settingsMenu && !elements.settingsMenu.contains(e.target)) {
+          elements.settingsMenu.scrollTop += e.deltaY
+          e.preventDefault()
+        }
+      }
+    },
+    { passive: false }
+  )
+
   // Nút kiểm tra tình trạng link (Check Links)
   if (elements.checkHealthButton) {
     elements.checkHealthButton.addEventListener("click", (e) => {
