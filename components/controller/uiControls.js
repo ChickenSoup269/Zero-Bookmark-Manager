@@ -508,13 +508,14 @@ export function setupUIControlListeners(elements) {
   // Settings Menu Scroll to Top Button
   const settingsScrollTopBtn = document.getElementById("settings-scroll-to-top")
   if (settingsScrollTopBtn && elements.settingsMenu) {
-    elements.settingsMenu.addEventListener("scroll", () => {
-      if (elements.settingsMenu.scrollTop > 180) {
+    const checkSettingsScroll = () => {
+      if (elements.settingsMenu.scrollTop > 80) {
         settingsScrollTopBtn.classList.add("visible")
       } else {
         settingsScrollTopBtn.classList.remove("visible")
       }
-    })
+    }
+    elements.settingsMenu.addEventListener("scroll", checkSettingsScroll, { passive: true })
 
     settingsScrollTopBtn.addEventListener("click", (e) => {
       e.stopPropagation()

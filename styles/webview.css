@@ -3656,51 +3656,49 @@ body.settings-panel-open .container {
 
 /* Settings Menu Scroll to Top Button */
 .settings-scroll-top-btn {
-  position: sticky;
-  bottom: 16px;
-  align-self: flex-end;
-  margin-top: auto;
-  margin-right: 6px;
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--accent-color);
-  color: var(--accent-contrast, #ffffff);
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 0.9rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: var(--accent-color) !important;
+  color: var(--accent-contrast, #ffffff) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
   transition:
     opacity 0.22s ease,
     visibility 0.22s ease,
     transform 0.2s ease,
-    background-color 0.2s ease;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  z-index: 100;
-  flex-shrink: 0;
+    background-color 0.2s ease !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  z-index: 20000 !important;
+  flex-shrink: 0 !important;
 }
 
 .settings-scroll-top-btn.visible {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .settings-scroll-top-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
-  filter: brightness(1.1);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28) !important;
+  filter: brightness(1.1) !important;
 }
 
 .settings-scroll-top-btn:active {
-  transform: translateY(0);
+  transform: translateY(0) !important;
 }
 
 /* Menu Group Container */
