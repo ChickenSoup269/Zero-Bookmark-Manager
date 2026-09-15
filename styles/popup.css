@@ -82,8 +82,9 @@ body {
     padding-right 0.2s cubic-bezier(0.2, 0, 0, 1);
 }
 
-.sticky-search.is-stuck {
-  background-color: var(--bg-primary);
+.sticky-search.is-stuck,
+body.is-scrolled .sticky-search {
+  background-color: var(--bg-primary) !important;
   padding-right: 48px; /* Smoothly shrinks to make room for fixed settings button at top */
   border-bottom: 1px solid var(--border-color);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
@@ -1308,10 +1309,58 @@ body {
   pointer-events: none;
 }
 
+body.settings-panel-open {
+  overflow: hidden !important;
+}
+
 body.settings-panel-open .button.settings {
   background-color: var(--accent-color);
   color: var(--bg-primary);
   box-shadow: var(--shadow-md);
+}
+
+/* Settings Menu Scroll to Top Button for Popup */
+.settings-scroll-top-btn {
+  position: sticky;
+  bottom: 12px;
+  align-self: flex-end;
+  margin-top: auto;
+  margin-right: 4px;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--accent-color);
+  color: var(--accent-contrast, #ffffff);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.82rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.settings-scroll-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.settings-scroll-top-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.settings-scroll-top-btn:active {
+  transform: translateY(0);
 }
 
 .dropdown-menu .select {
@@ -2211,6 +2260,72 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 .menu-group.hidden {
   display: flex !important; /* Override global .hidden */
   overflow: hidden;
+}
+
+/* Bookmark Actions Grid Layout (2 columns for popup) */
+.bookmark-actions-group {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  padding: 8px !important;
+}
+
+.bookmark-actions-group .menu-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 5px !important;
+  padding: 8px 4px !important;
+  min-height: 54px !important;
+  border-radius: 8px !important;
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.bookmark-actions-group .menu-item i {
+  font-size: 1.05rem !important;
+  color: var(--accent-color) !important;
+  width: auto !important;
+  text-align: center !important;
+  margin: 0 !important;
+  transition: transform 0.2s ease, color 0.2s ease !important;
+}
+
+.bookmark-actions-group .menu-item span {
+  font-size: 0.72rem !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  color: var(--text-primary) !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word !important;
+}
+
+.bookmark-actions-group .menu-item:hover {
+  background-color: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
+  border-color: var(--accent-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--accent-color) 18%, transparent) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+.bookmark-actions-group .menu-item:hover i {
+  color: var(--accent-color) !important;
+  transform: scale(1.08) !important;
+}
+
+.bookmark-actions-group .menu-item:active {
+  transform: translateY(0) !important;
 }
 
 .health-action-row {

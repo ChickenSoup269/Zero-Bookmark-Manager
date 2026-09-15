@@ -253,98 +253,70 @@ body {
 /* Sidebar Total Count */
 .sidebar-total-count {
   display: flex;
-  text-align: center;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  margin: 8px 12px;
-  min-height: 52px;
+  gap: 10px;
+  padding: 8px 12px;
+  margin: 6px 12px 10px 12px;
+  min-height: 38px;
   color: var(--text-primary);
-  font-size: 0.9rem;
-  font-weight: 400;
-  background: linear-gradient(
-    135deg,
-    var(--accent-color-light),
-    var(--bg-tertiary)
-  );
+  font-size: 0.84rem;
+  font-weight: 500;
+  background: var(--bg-secondary);
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  backface-visibility: hidden;
-  -webkit-font-smoothing: antialiased;
-  transition:
-    transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color 0.2s ease,
-    background-color 0.2s ease;
-}
-
-.sidebar-total-count::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--hover-light-dazz),
-    transparent
-  );
-  transition: left 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.sidebar-total-count:hover::before {
-  left: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  cursor: default;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .sidebar-total-count:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-  border-color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 5%, var(--bg-secondary));
+  border-color: color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .sidebar-total-count i {
-  font-size: 1.1rem;
+  font-size: 0.92rem;
   color: var(--accent-color);
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  animation: pulse 2s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
+.sidebar-total-count .sidebar-total-label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.sidebar-total-count:hover .sidebar-total-label {
+  color: var(--text-primary);
 }
 
 .sidebar-total-count #bookmark-count-number {
-  background: var(--text-primary);
-  color: var(--bg-primary);
-  padding: 3px 8px;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  min-width: 28px;
+  background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+  color: var(--accent-color);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  min-width: 24px;
   text-align: center;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-left: auto;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  backface-visibility: hidden;
-  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
+  transition: all 0.2s ease;
 }
 
 .sidebar-total-count:hover #bookmark-count-number {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+  background: var(--accent-color);
+  color: var(--accent-contrast, #ffffff);
+  border-color: var(--accent-color);
 }
 
 /* Hide completely when collapsed */
@@ -3672,6 +3644,65 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   pointer-events: none;
 }
 
+/* When settings panel is open, lock main window scroll completely */
+body.settings-panel-open {
+  overflow: hidden !important;
+}
+
+body.settings-panel-open .container {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Settings Menu Scroll to Top Button */
+.settings-scroll-top-btn {
+  position: sticky;
+  bottom: 16px;
+  align-self: flex-end;
+  margin-top: auto;
+  margin-right: 6px;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--accent-color);
+  color: var(--accent-contrast, #ffffff);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+  transition:
+    opacity 0.22s ease,
+    visibility 0.22s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.settings-scroll-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.settings-scroll-top-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+  filter: brightness(1.1);
+}
+
+.settings-scroll-top-btn:active {
+  transform: translateY(0);
+}
+
 /* Menu Group Container */
 .dropdown-menu-2 .menu-group {
   display: flex;
@@ -3919,6 +3950,86 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   transform: none;
 }
 
+/* Bookmark Actions Grid Layout (4 columns for webview) */
+.dropdown-menu-2 .bookmark-actions-group,
+.bookmark-actions-group {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  padding: 8px !important;
+}
+
+@media (max-width: 380px) {
+  .dropdown-menu-2 .bookmark-actions-group,
+  .bookmark-actions-group {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+.dropdown-menu-2 .bookmark-actions-group .menu-item,
+.bookmark-actions-group .menu-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 4px !important;
+  padding: 8px 3px !important;
+  min-height: 52px !important;
+  border-radius: 8px !important;
+  background-color: color-mix(in srgb, var(--bg-primary) 70%, var(--bg-secondary)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.dropdown-menu-2 .bookmark-actions-group .menu-item i,
+.bookmark-actions-group .menu-item i {
+  font-size: 1rem !important;
+  color: var(--accent-color) !important;
+  width: auto !important;
+  text-align: center !important;
+  margin: 0 !important;
+  transition: transform 0.2s ease, color 0.2s ease !important;
+}
+
+.dropdown-menu-2 .bookmark-actions-group .menu-item span,
+.bookmark-actions-group .menu-item span {
+  font-size: 0.69rem !important;
+  font-weight: 500 !important;
+  line-height: 1.18 !important;
+  color: var(--text-primary) !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word !important;
+}
+
+.dropdown-menu-2 .bookmark-actions-group .menu-item:hover,
+.bookmark-actions-group .menu-item:hover {
+  background-color: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
+  border-color: var(--accent-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--accent-color) 18%, transparent) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+.dropdown-menu-2 .bookmark-actions-group .menu-item:hover i,
+.bookmark-actions-group .menu-item:hover i {
+  color: var(--accent-color) !important;
+  transform: scale(1.08) !important;
+}
+
+.dropdown-menu-2 .bookmark-actions-group .menu-item:active,
+.bookmark-actions-group .menu-item:active {
+  transform: translateY(0) !important;
+}
+
 /* Theme Grid & Swatches in Webview */
 .dropdown-menu-2 .theme-selection-card,
 .dropdown-menu-2 .font-selection-card,
@@ -4040,13 +4151,13 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .theme-swatch:hover {
-  transform: scale(1.18) translateY(-2px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
   z-index: 5;
 }
 
 .dropdown-menu-2 .theme-swatch.active {
-  transform: scale(1.06);
+  transform: none;
   box-shadow:
     0 0 0 2.5px var(--bg-primary),
     0 0 0 4.5px var(--accent-color),
@@ -4054,7 +4165,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 }
 
 .dropdown-menu-2 .theme-swatch.active:hover {
-  transform: scale(1.2) translateY(-2px);
+  transform: translateY(-2px);
   box-shadow:
     0 0 0 2.5px var(--bg-primary),
     0 0 0 4.5px var(--accent-color),
@@ -4079,6 +4190,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transform: none;
 }
 
 .dropdown-menu-2 .font-swatch:not(.active):hover,
@@ -4088,7 +4200,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   background: transparent;
   border-color: var(--accent-color);
   color: var(--text-primary);
-  transform: none;
+  transform: none !important;
   box-shadow: none;
 }
 
@@ -4097,7 +4209,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 .dropdown-menu-2 .setting-swatch:not(.active):hover i,
 .dropdown-menu-2 .language-swatch:not(.active):hover i {
   color: inherit;
-  transform: none;
+  transform: none !important;
 }
 
 .dropdown-menu-2 .font-swatch.active,
@@ -4109,6 +4221,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   border-color: var(--accent-color) !important;
   font-weight: 600;
   box-shadow: 0 3px 10px color-mix(in srgb, var(--accent-color) 35%, transparent) !important;
+  transform: none !important;
 }
 
 .dropdown-menu-2 .font-swatch.active:hover,
@@ -4116,7 +4229,7 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
 .dropdown-menu-2 .setting-swatch.active:hover,
 .dropdown-menu-2 .language-swatch.active:hover {
   filter: none;
-  transform: none;
+  transform: none !important;
 }
 
 .dropdown-menu-2 .theme-swatch[data-hint]::before {
@@ -6090,11 +6203,11 @@ textarea.error {
   box-sizing: border-box !important;
 }
 
-.webview-search-wrapper.is-stuck {
+.webview-search-wrapper.is-stuck,
+body.is-scrolled .webview-search-wrapper {
   background-color: var(--bg-primary) !important;
-  background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
   border-bottom: 1px solid var(--border-color) !important;
   padding-top: 10px !important;

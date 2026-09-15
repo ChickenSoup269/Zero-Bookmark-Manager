@@ -4151,7 +4151,7 @@ html {
 
 .quick-open-settings input[type="radio"]:checked + .control-label i {
   opacity: 1;
-  transform: scale(1.05);
+  transform: none;
   color: var(--accent-contrast, #ffffff);
 }
 
@@ -4163,6 +4163,72 @@ html {
 .quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label:hover {
   filter: none;
   transform: none;
+}
+
+/* Bookmark Actions Grid Layout */
+.bookmark-actions-group {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  padding: 8px !important;
+}
+
+.bookmark-actions-group .menu-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 5px !important;
+  padding: 8px 4px !important;
+  min-height: 54px !important;
+  border-radius: 8px !important;
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.bookmark-actions-group .menu-item i {
+  font-size: 1.05rem !important;
+  color: var(--accent-color) !important;
+  width: auto !important;
+  text-align: center !important;
+  margin: 0 !important;
+  transition: transform 0.2s ease, color 0.2s ease !important;
+}
+
+.bookmark-actions-group .menu-item span {
+  font-size: 0.72rem !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  color: var(--text-primary) !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word !important;
+}
+
+.bookmark-actions-group .menu-item:hover {
+  background-color: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
+  border-color: var(--accent-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--accent-color) 18%, transparent) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+.bookmark-actions-group .menu-item:hover i {
+  color: var(--accent-color) !important;
+  transform: scale(1.08) !important;
+}
+
+.bookmark-actions-group .menu-item:active {
+  transform: translateY(0) !important;
 }
 
 /* UI chọn tag */
@@ -5142,13 +5208,13 @@ html {
 }
 
 .theme-swatch:hover {
-  transform: scale(1.18) translateY(-2px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
   z-index: 5;
 }
 
 .theme-swatch.active {
-  transform: scale(1.06);
+  transform: none;
   box-shadow:
     0 0 0 2.5px var(--bg-primary),
     0 0 0 4.5px var(--accent-color),
@@ -5156,7 +5222,7 @@ html {
 }
 
 .theme-swatch.active:hover {
-  transform: scale(1.2) translateY(-2px);
+  transform: translateY(-2px);
   box-shadow:
     0 0 0 2.5px var(--bg-primary),
     0 0 0 4.5px var(--accent-color),
@@ -5181,6 +5247,7 @@ html {
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transform: none;
 }
 
 .font-swatch:not(.active):hover,
@@ -5190,7 +5257,7 @@ html {
   background: transparent;
   border-color: var(--accent-color);
   color: var(--text-primary);
-  transform: none;
+  transform: none !important;
   box-shadow: none;
 }
 
@@ -5199,7 +5266,7 @@ html {
 .setting-swatch:not(.active):hover i,
 .language-swatch:not(.active):hover i {
   color: inherit;
-  transform: none;
+  transform: none !important;
 }
 
 .font-swatch.active,
@@ -5211,6 +5278,7 @@ html {
   border-color: var(--accent-color) !important;
   font-weight: 600;
   box-shadow: 0 3px 10px color-mix(in srgb, var(--accent-color) 35%, transparent) !important;
+  transform: none !important;
 }
 
 .font-swatch.active:hover,
@@ -5218,7 +5286,7 @@ html {
 .setting-swatch.active:hover,
 .language-swatch.active:hover {
   filter: none;
-  transform: none;
+  transform: none !important;
 }
 
 .language-settings-row #add-custom-language-option {
