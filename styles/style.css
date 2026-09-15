@@ -963,6 +963,16 @@ html {
   box-shadow: var(--shadow-lg);
 }
 
+body.settings-panel-open #scroll-to-top,
+body.settings-panel-open .scroll-to-top,
+body.settings-panel-open #sidebar-scroll-to-top,
+body.settings-panel-open .sidebar-scroll-top-btn {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(12px) scale(0.8) !important;
+}
+
 #theme-switcher {
   margin: 4px 0px 4px 0px;
 }

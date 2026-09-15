@@ -303,14 +303,13 @@ export function setupUIControlListeners(elements) {
 
   const header = document.querySelector('.header.flex-header')
   const searchWrapper = document.querySelector('.webview-search-wrapper')
-  const settingsContainer = document.querySelector('.settings-container')
-
   let scrollTicking = false;
   const updateStickySearchState = () => {
     const scrollY = window.scrollY;
     document.body.classList.toggle("is-scrolled", scrollY > 10);
     if (elements.scrollToTopButton) {
-      elements.scrollToTopButton.classList.toggle("hidden", scrollY < 50);
+      const isSettingsOpen = document.body.classList.contains("settings-panel-open");
+      elements.scrollToTopButton.classList.toggle("hidden", scrollY < 50 || isSettingsOpen);
     }
     const stickyEls = document.querySelectorAll(".sticky-search, .webview-search-wrapper");
     stickyEls.forEach((el) => {
@@ -459,19 +458,7 @@ export function setupUIControlListeners(elements) {
     closeSettingsMenu()
   })
 
-  const syncSettingsMenuState = () => {
-    const isClosed = elements.settingsMenu.classList.contains("hidden")
-    elements.settingsMenu.setAttribute("aria-hidden", String(isClosed))
-    elements.settingsButton.setAttribute("aria-expanded", String(!isClosed))
-    elements.settingsButton.innerHTML = isClosed ? "⋮" : "✖"
-    document.body.classList.toggle("settings-panel-open", !isClosed)
-  }
-  new MutationObserver(syncSettingsMenuState).observe(elements.settingsMenu, {
-    attributes: true,
-    attributeFilter: ["class"],
-  })
-
-  // ADD THIS
+  // Collapsible settings sections
   elements.settingsMenu.addEventListener("click", (e) => {
     const target = e.target
     if (target.classList.contains("dropdown-section-title")) {
@@ -488,7 +475,7 @@ export function setupUIControlListeners(elements) {
 
       // Save collapsed state to local storage
       let collapsedStates = JSON.parse(
-        localStorage.getItem("settingsSectionCollapsedStates") || "{}",
+        localStorage.getItem("settingsSectionCollapsedStates") || "{}"
       )
       const sectionId = target.dataset.i18n
 
@@ -499,17 +486,19 @@ export function setupUIControlListeners(elements) {
       }
       localStorage.setItem(
         "settingsSectionCollapsedStates",
-        JSON.stringify(collapsedStates),
+        JSON.stringify(collapsedStates)
       )
     }
   })
-  // END ADD
 
   // Settings Menu Scroll to Top Button
   const settingsScrollTopBtn = document.getElementById("settings-scroll-to-top")
   if (settingsScrollTopBtn && elements.settingsMenu) {
     const checkSettingsScroll = () => {
-      if (elements.settingsMenu.scrollTop > 80) {
+      if (
+        elements.settingsMenu.scrollTop > 80 &&
+        !elements.settingsMenu.classList.contains("hidden")
+      ) {
         settingsScrollTopBtn.classList.add("visible")
       } else {
         settingsScrollTopBtn.classList.remove("visible")
@@ -525,6 +514,33 @@ export function setupUIControlListeners(elements) {
       })
     })
   }
+
+  const syncSettingsMenuState = () => {
+    const isClosed = elements.settingsMenu.classList.contains("hidden")
+    elements.settingsMenu.setAttribute("aria-hidden", String(isClosed))
+    elements.settingsButton.setAttribute("aria-expanded", String(!isClosed))
+    elements.settingsButton.innerHTML = isClosed ? "⋮" : "✖"
+    document.body.classList.toggle("settings-panel-open", !isClosed)
+
+    if (elements.scrollToTopButton) {
+      elements.scrollToTopButton.classList.toggle(
+        "hidden",
+        !isClosed || window.scrollY < 50
+      )
+    }
+
+    if (settingsScrollTopBtn) {
+      if (isClosed || elements.settingsMenu.scrollTop <= 80) {
+        settingsScrollTopBtn.classList.remove("visible")
+      } else {
+        settingsScrollTopBtn.classList.add("visible")
+      }
+    }
+  }
+  new MutationObserver(syncSettingsMenuState).observe(elements.settingsMenu, {
+    attributes: true,
+    attributeFilter: ["class"],
+  })
 
   // Prevent background scroll bleed when settings panel is open
   window.addEventListener(
