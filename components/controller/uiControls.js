@@ -610,6 +610,8 @@ export function setupUIControlListeners(elements) {
     if (
       !e.target.closest("#settings-button") &&
       !e.target.closest("#settings-menu") &&
+      !e.target.closest("#settings-scroll-to-top") &&
+      !e.target.closest(".settings-scroll-top-btn") &&
       !e.target.closest(".dropdown-btn") &&
       !e.target.closest(".dropdown-menu")
     ) {

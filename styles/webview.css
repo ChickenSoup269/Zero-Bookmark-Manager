@@ -3672,17 +3672,20 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   transform: translateY(12px) scale(0.8) !important;
 }
 
+body:not(.settings-panel-open) .settings-scroll-top-btn,
+#settings-menu.hidden ~ .settings-scroll-top-btn,
 #settings-menu.hidden .settings-scroll-top-btn {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+  transform: translateY(12px) scale(0.8) !important;
 }
 
 /* Settings Menu Scroll to Top Button */
 .settings-scroll-top-btn {
   position: fixed !important;
-  bottom: 20px !important;
-  right: 20px !important;
+  bottom: 24px !important;
+  right: 24px !important;
   width: 36px !important;
   height: 36px !important;
   min-width: 36px !important;
@@ -3696,7 +3699,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   border-radius: 50% !important;
   cursor: pointer !important;
   font-size: 0.9rem !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
   transition:
     opacity 0.22s ease,
     visibility 0.22s ease,
@@ -3705,7 +3708,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  z-index: 20000 !important;
+  z-index: 25000 !important;
   flex-shrink: 0 !important;
 }
 
@@ -3713,11 +3716,12 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
+  transform: translateY(0) scale(1) !important;
 }
 
 .settings-scroll-top-btn:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;
   filter: brightness(1.1) !important;
 }
 

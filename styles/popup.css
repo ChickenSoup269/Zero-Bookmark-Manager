@@ -1331,10 +1331,13 @@ body.settings-panel-open .button.settings {
   box-shadow: var(--shadow-md);
 }
 
+body:not(.settings-panel-open) .settings-scroll-top-btn,
+#settings-menu.hidden ~ .settings-scroll-top-btn,
 #settings-menu.hidden .settings-scroll-top-btn {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+  transform: translateY(12px) scale(0.8) !important;
 }
 
 /* Settings Menu Scroll to Top Button for Popup */
@@ -1360,7 +1363,7 @@ body.settings-panel-open .button.settings {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  z-index: 20000 !important;
+  z-index: 25000 !important;
   flex-shrink: 0 !important;
 }
 
@@ -1368,6 +1371,7 @@ body.settings-panel-open .button.settings {
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
+  transform: translateY(0) scale(1) !important;
 }
 
 .settings-scroll-top-btn:hover {
