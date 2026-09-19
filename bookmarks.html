@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zero Bookmark Manager 1.7.0</title>
+    <title>Zero Bookmark Manager 1.8.0</title>
     <script src="./components/bookmarkCache.js"></script>
     <script src="./components/sidebar-preload.js"></script>
     <link rel="stylesheet" href="./styles/style.css?v=2">
@@ -64,7 +64,8 @@
                     <select id="folder-filter" class="sidebar-folder-select hidden" aria-label="Folder filter">
                         <option value="">All Folders</option>
                     </select>
-                    <button id="create-folder" class="sidebar-create-folder-btn" data-i18n-title="createFolder" title="Create folder">
+                    <button id="create-folder" class="sidebar-create-folder-btn" data-i18n-title="createFolder"
+                        title="Create folder">
                         <i class="fas fa-plus"></i>
                         <span data-i18n="createFolder">Create Folder</span>
                     </button>
@@ -167,11 +168,13 @@
                             <i class="fas fa-edit"></i>
                             <span data-i18n="renameTitle">Rename</span>
                         </button>
-                        <button id="add-to-folder" class="sidebar-admin-btn hidden" data-i18n-title="moveToFolder" title="Move to Folder">
+                        <button id="add-to-folder" class="sidebar-admin-btn hidden" data-i18n-title="moveToFolder"
+                            title="Move to Folder">
                             <i class="fas fa-folder-open"></i>
                             <span data-i18n="move">Move</span>
                         </button>
-                        <button id="delete-folder" class="sidebar-admin-btn delete hidden" data-i18n-title="deleteFolder" title="Delete Folder">
+                        <button id="delete-folder" class="sidebar-admin-btn delete hidden"
+                            data-i18n-title="deleteFolder" title="Delete Folder">
                             <i class="far fa-minus-square"></i>
                             <span data-i18n="deleteFolder">Delete Folder</span>
                         </button>
@@ -180,7 +183,8 @@
                             <i class="fas fa-trash"></i>
                             <span data-i18n="deleteBookmarks">Delete</span>
                         </button>
-                        <button id="organize-folders-button" class="sidebar-admin-btn" data-i18n-title="organizeFolders" title="Organize Folders">
+                        <button id="organize-folders-button" class="sidebar-admin-btn" data-i18n-title="organizeFolders"
+                            title="Organize Folders">
                             <i class="fas fa-sitemap"></i>
                             <span data-i18n="organizeFolders">Organize</span>
                         </button>
@@ -194,7 +198,8 @@
                             <i class="fas fa-chart-pie"></i>
                             <span data-i18n="analyticsTitle">Analytics</span>
                         </button>
-                        <button id="toggle-checkboxes" class="sidebar-admin-btn" data-i18n-title="showCheckboxes" title="Toggle Selection">
+                        <button id="toggle-checkboxes" class="sidebar-admin-btn" data-i18n-title="showCheckboxes"
+                            title="Toggle Selection">
                             <i class="fas fa-check-square"></i>
                             <span data-i18n="showCheckboxes">Select</span>
                         </button>
@@ -353,7 +358,8 @@
                         <button class="theme-swatch" data-value="light" data-hint="Light"
                             style="background: #ffffff; color: #000000;"><i class="fas fa-sun"></i></button>
                         <button class="theme-swatch" data-value="dark" data-hint="Dark"
-                            style="background: #000000; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3);"><i class="fas fa-moon"></i></button>
+                            style="background: #000000; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3);"><i
+                                class="fas fa-moon"></i></button>
                         <button class="theme-swatch" data-value="dracula" data-hint="Dracula"
                             style="background: #282a36; color: #f8f8f2;"><i class="fas fa-ghost"></i></button>
                         <button class="theme-swatch" data-value="onedark" data-hint="OneDark"
@@ -398,7 +404,8 @@
                         </div>
                         <div class="theme-grid" id="font-switcher">
                             <button class="theme-swatch font-swatch font-sans-serif" data-value="sans-serif"
-                                style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Ag <span>Sans-Serif</span></button>
+                                style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Ag
+                                <span>Sans-Serif</span></button>
                             <button class="theme-swatch font-swatch font-gohu" data-value="gohu"
                                 style="font-family: 'GohuFont';">Ag <span>Gohu</span></button>
                             <button class="theme-swatch font-swatch font-jetBrainsMonoNerdFont"
@@ -605,7 +612,8 @@
                     </label>
 
                     <div class="app-setting-field">
-                        <label><i class="fas fa-list-ol"></i> <span data-i18n="folderCountMode">Folder Item Badge:</span></label>
+                        <label><i class="fas fa-list-ol"></i> <span data-i18n="folderCountMode">Folder Item
+                                Badge:</span></label>
                         <div class="setting-pill-group" id="folder-count-mode-select">
                             <button class="theme-swatch setting-swatch active" data-value="bookmarks"
                                 data-i18n="countModeBookmarks">Bookmarks</button>
@@ -712,19 +720,24 @@
                         </div>
                         <div class="donate-card-info">
                             <h4 class="donate-card-title" data-i18n="donateTitle">Support Project</h4>
-                            <p class="donate-card-desc" data-i18n="donateDesc">Help keep Zero Bookmark Manager free & updated!</p>
+                            <p class="donate-card-desc" data-i18n="donateDesc">Help keep Zero Bookmark Manager free &
+                                updated!</p>
                         </div>
                     </div>
                     <div class="donate-card-actions">
-                        <a href="https://ko-fi.com/chickensoup269" target="_blank" class="donate-action-btn kofi-btn" title="Ko-fi">
+                        <a href="https://ko-fi.com/chickensoup269" target="_blank" class="donate-action-btn kofi-btn"
+                            title="Ko-fi">
                             <i class="fas fa-coffee"></i>
                             <span>Ko-fi</span>
                         </a>
-                        <button type="button" id="open-momo-qr-btn" class="donate-action-btn momo-btn open-donate-modal" data-target-tab="momo" title="MoMo QR">
+                        <button type="button" id="open-momo-qr-btn" class="donate-action-btn momo-btn open-donate-modal"
+                            data-target-tab="momo" title="MoMo QR">
                             <i class="fas fa-qrcode"></i>
                             <span>MoMo</span>
                         </button>
-                        <button type="button" id="open-bank-qr-btn-bm" class="donate-action-btn bank-btn open-donate-modal" data-target-tab="bank" title="Banking QR">
+                        <button type="button" id="open-bank-qr-btn-bm"
+                            class="donate-action-btn bank-btn open-donate-modal" data-target-tab="bank"
+                            title="Banking QR">
                             <i class="fas fa-building-columns"></i>
                             <span data-i18n="donateBank">Banking</span>
                         </button>
@@ -733,7 +746,8 @@
             </div>
 
             <!-- Settings Scroll to Top Button (Outside #settings-menu so position:fixed is true to viewport) -->
-            <button id="settings-scroll-to-top" class="settings-scroll-top-btn" title="Scroll to Top" aria-label="Scroll settings to top">
+            <button id="settings-scroll-to-top" class="settings-scroll-top-btn" title="Scroll to Top"
+                aria-label="Scroll settings to top">
                 <i class="fas fa-chevron-up"></i>
             </button>
 
@@ -827,8 +841,8 @@
                         </p>
                     </div>
                     <div class="smart-cleanup-header-actions">
-                        <button id="smart-cleanup-refresh" class="modal-action-btn"
-                            title="Refresh" aria-label="Refresh">
+                        <button id="smart-cleanup-refresh" class="modal-action-btn" title="Refresh"
+                            aria-label="Refresh">
                             <i class="fas fa-rotate"></i>
                         </button>
                         <button id="smart-cleanup-fullscreen-btn" class="modal-action-btn modal-fullscreen-btn"
@@ -1469,11 +1483,13 @@
                     </div>
                     <div class="first-run-guide-step">
                         <span class="first-run-step-icon"><i class="fas fa-folder-tree"></i></span>
-                        <span data-i18n="firstRunGuideStepOrganize">Folder Studio: Visual 2-column workspace with drag & drop, duplicate merge, auto sort, and clean empty folders.</span>
+                        <span data-i18n="firstRunGuideStepOrganize">Folder Studio: Visual 2-column workspace with drag &
+                            drop, duplicate merge, auto sort, and clean empty folders.</span>
                     </div>
                     <div class="first-run-guide-step">
                         <span class="first-run-step-icon"><i class="fas fa-chart-pie"></i></span>
-                        <span data-i18n="firstRunGuideStepAnalytics">Analytics & Insights: Visual metrics on your bookmark trends, habits, health ratio, and smart recommendations.</span>
+                        <span data-i18n="firstRunGuideStepAnalytics">Analytics & Insights: Visual metrics on your
+                            bookmark trends, habits, health ratio, and smart recommendations.</span>
                     </div>
                 </div>
                 <div class="rename-input-container">
@@ -1546,10 +1562,13 @@
         <div class="rename-popup-content analytics-popup-content">
             <div class="organize-folders-header" style="margin-bottom: 12px;">
                 <div>
-                    <h3 id="analytics-title" style="font-size: 1.3rem; margin: 0;"><i class="fas fa-chart-pie" style="margin-right: 8px;"></i><span
-                            data-i18n="analyticsTitle">Analytics & Insights</span></h3>
-                    <p id="analytics-subtitle" style="margin: 4px 0 0 0; font-size: 0.85rem; color:var(--text-secondary);"
-                        data-i18n="analyticsDesc">Your bookmarking habits, trends, and organization health at a glance.</p>
+                    <h3 id="analytics-title" style="font-size: 1.3rem; margin: 0;"><i class="fas fa-chart-pie"
+                            style="margin-right: 8px;"></i><span data-i18n="analyticsTitle">Analytics & Insights</span>
+                    </h3>
+                    <p id="analytics-subtitle"
+                        style="margin: 4px 0 0 0; font-size: 0.85rem; color:var(--text-secondary);"
+                        data-i18n="analyticsDesc">Your bookmarking habits, trends, and organization health at a glance.
+                    </p>
                 </div>
                 <div class="modal-header-actions">
                     <button id="analytics-fullscreen-btn" class="modal-action-btn modal-fullscreen-btn"
@@ -1560,7 +1579,8 @@
                 </div>
             </div>
 
-            <div id="analytics-dashboard-container" style="flex: 1; min-height: 0; display: flex; flex-direction: column;">
+            <div id="analytics-dashboard-container"
+                style="flex: 1; min-height: 0; display: flex; flex-direction: column;">
                 <!-- Full dynamic analytics tabs & views rendered by analyticsDashboard.js -->
             </div>
         </div>
@@ -1643,11 +1663,15 @@
                 <div class="cloud-sync-field-group">
                     <label class="cloud-sync-label">
                         <span data-i18n="cloudSyncTokenLabel">Personal Access Token (PAT):</span>
-                        <a href="https://github.com/settings/tokens/new?scopes=gist&description=ZeroBookmarkManager" target="_blank" class="cloud-sync-guide-link" style="font-size: 0.72rem;">Generate Token &nearr;</a>
+                        <a href="https://github.com/settings/tokens/new?scopes=gist&description=ZeroBookmarkManager"
+                            target="_blank" class="cloud-sync-guide-link" style="font-size: 0.72rem;">Generate Token
+                            &nearr;</a>
                     </label>
                     <div class="cloud-sync-input-wrap">
-                        <input type="password" id="github-token-input" class="cloud-sync-input" placeholder="ghp_xxxxxxxxxxxx..." autocomplete="off">
-                        <button type="button" class="cloud-sync-toggle-pwd" data-target="github-token-input" title="Show/Hide"><i class="fas fa-eye"></i></button>
+                        <input type="password" id="github-token-input" class="cloud-sync-input"
+                            placeholder="ghp_xxxxxxxxxxxx..." autocomplete="off">
+                        <button type="button" class="cloud-sync-toggle-pwd" data-target="github-token-input"
+                            title="Show/Hide"><i class="fas fa-eye"></i></button>
                     </div>
                 </div>
                 <div class="cloud-sync-field-group">
@@ -1655,7 +1679,8 @@
                         <span data-i18n="cloudSyncGistIdLabel">Gist ID (optional):</span>
                         <span id="github-gist-link-wrap" style="font-size: 0.72rem;"></span>
                     </label>
-                    <input type="text" id="github-gist-id-input" class="cloud-sync-input" placeholder="Leave blank to auto-create new Secret Gist">
+                    <input type="text" id="github-gist-id-input" class="cloud-sync-input"
+                        placeholder="Leave blank to auto-create new Secret Gist">
                 </div>
                 <div class="cloud-sync-actions">
                     <button type="button" id="btn-backup-github" class="cloud-sync-btn backup">
@@ -1673,16 +1698,21 @@
                     <label class="cloud-sync-label">
                         <span data-i18n="cloudSyncGitlabHostLabel">GitLab Instance URL:</span>
                     </label>
-                    <input type="text" id="gitlab-host-input" class="cloud-sync-input" value="https://gitlab.com" placeholder="https://gitlab.com">
+                    <input type="text" id="gitlab-host-input" class="cloud-sync-input" value="https://gitlab.com"
+                        placeholder="https://gitlab.com">
                 </div>
                 <div class="cloud-sync-field-group">
                     <label class="cloud-sync-label">
                         <span data-i18n="cloudSyncTokenLabel">Personal Access Token (PAT):</span>
-                        <a href="https://gitlab.com/-/user_settings/personal_access_tokens" target="_blank" class="cloud-sync-guide-link" id="gitlab-token-link" style="font-size: 0.72rem;">Generate Token &nearr;</a>
+                        <a href="https://gitlab.com/-/user_settings/personal_access_tokens" target="_blank"
+                            class="cloud-sync-guide-link" id="gitlab-token-link" style="font-size: 0.72rem;">Generate
+                            Token &nearr;</a>
                     </label>
                     <div class="cloud-sync-input-wrap">
-                        <input type="password" id="gitlab-token-input" class="cloud-sync-input" placeholder="glpat-xxxxxxxxxxxx..." autocomplete="off">
-                        <button type="button" class="cloud-sync-toggle-pwd" data-target="gitlab-token-input" title="Show/Hide"><i class="fas fa-eye"></i></button>
+                        <input type="password" id="gitlab-token-input" class="cloud-sync-input"
+                            placeholder="glpat-xxxxxxxxxxxx..." autocomplete="off">
+                        <button type="button" class="cloud-sync-toggle-pwd" data-target="gitlab-token-input"
+                            title="Show/Hide"><i class="fas fa-eye"></i></button>
                     </div>
                 </div>
                 <div class="cloud-sync-field-group">
@@ -1690,7 +1720,8 @@
                         <span data-i18n="cloudSyncGitlabSnippetLabel">Snippet ID (optional):</span>
                         <span id="gitlab-snippet-link-wrap" style="font-size: 0.72rem;"></span>
                     </label>
-                    <input type="text" id="gitlab-snippet-id-input" class="cloud-sync-input" placeholder="Leave blank to auto-create new Snippet">
+                    <input type="text" id="gitlab-snippet-id-input" class="cloud-sync-input"
+                        placeholder="Leave blank to auto-create new Snippet">
                 </div>
                 <div class="cloud-sync-actions">
                     <button type="button" id="btn-backup-gitlab" class="cloud-sync-btn backup">
@@ -1721,19 +1752,25 @@
                     </button>
                 </div>
                 <div class="cloud-sync-notice-box" data-i18n-html="cloudSyncTestWarning">
-                    Note: Google Drive Sync is in testing mode. If login is blocked, please <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog" target="_blank" style="color: var(--accent-color); text-decoration: underline; font-weight: 600;">submit your email via this form &nearr;</a>.
+                    Note: Google Drive Sync is in testing mode. If login is blocked, please <a
+                        href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog"
+                        target="_blank"
+                        style="color: var(--accent-color); text-decoration: underline; font-weight: 600;">submit your
+                        email via this form &nearr;</a>.
                 </div>
             </div>
 
             <!-- Status Message -->
-            <p id="sync-status-message" style="margin: 12px 0 0; font-size: 12px; font-weight: 500; min-height: 18px; text-align: center;"></p>
+            <p id="sync-status-message"
+                style="margin: 12px 0 0; font-size: 12px; font-weight: 500; min-height: 18px; text-align: center;"></p>
 
             <div class="cloud-sync-security-note" data-i18n="cloudSyncTokenSecureNotice">
                 Tokens are stored locally in your browser storage and never transmitted elsewhere.
             </div>
 
             <div class="rename-popup-buttons" style="margin-top: 14px;">
-                <button type="button" id="cloud-sync-close" class="button cancel" style="width: 100%; justify-content: center;" data-i18n="close">Close</button>
+                <button type="button" id="cloud-sync-close" class="button cancel"
+                    style="width: 100%; justify-content: center;" data-i18n="close">Close</button>
             </div>
         </div>
     </div>
@@ -1748,16 +1785,19 @@
     <script src="main.js" type="module"></script>
     <script src="./components/sidebar.js" type="module"></script>
     <script src="./components/localization.js" type="module"></script>
-    <div id="momo-qr-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="donate-modal-title" aria-modal="true">
+    <div id="momo-qr-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="donate-modal-title"
+        aria-modal="true">
         <div class="rename-popup-content donate-modal-content">
             <button type="button" class="donate-modal-close" id="close-momo-qr-btn" aria-label="Close">&times;</button>
-            
+
             <div class="donate-modal-header">
                 <div class="donate-modal-badge">
                     <i class="fas fa-heart"></i>
                 </div>
-                <h3 id="donate-modal-title" class="donate-modal-title" data-i18n="donateModalTitle">Support Developer</h3>
-                <p class="donate-modal-subtitle" data-i18n="donateModalSubtitle">Every cup of coffee fuels new features and improvements!</p>
+                <h3 id="donate-modal-title" class="donate-modal-title" data-i18n="donateModalTitle">Support Developer
+                </h3>
+                <p class="donate-modal-subtitle" data-i18n="donateModalSubtitle">Every cup of coffee fuels new features
+                    and improvements!</p>
             </div>
 
             <div class="donate-tabs" id="donate-tabs-bookmarks">
@@ -1785,8 +1825,7 @@
 
             <div class="donate-panel" id="donate-panel-bank-bm">
                 <div class="donate-qr-wrapper">
-                    <img src="qr_bank.png"
-                        alt="Banking QR" class="donate-qr-img">
+                    <img src="qr_bank.png" alt="Banking QR" class="donate-qr-img">
                 </div>
                 <div class="donate-qr-hint">
                     <i class="fas fa-building-columns"></i>
@@ -1798,7 +1837,8 @@
                 <div class="donate-kofi-box">
                     <div class="donate-kofi-cup">☕</div>
                     <h4 class="donate-kofi-title" data-i18n="donateKofiTitle">Buy me a Coffee on Ko-fi</h4>
-                    <p class="donate-kofi-text" data-i18n="donateKofiDesc">Support quickly and securely via International Card or PayPal.</p>
+                    <p class="donate-kofi-text" data-i18n="donateKofiDesc">Support quickly and securely via
+                        International Card or PayPal.</p>
                     <a href="https://ko-fi.com/chickensoup269" target="_blank" class="donate-kofi-link-btn">
                         <i class="fas fa-external-link-alt"></i>
                         <span data-i18n="donateOpenKofi">Open Ko-fi Page</span>
