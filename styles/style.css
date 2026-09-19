@@ -8342,6 +8342,11 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   color: #ffffff;
 }
 
+.donate-action-btn.bank-btn {
+  background: #0284c7;
+  color: #ffffff;
+}
+
 /* Donate Modal Popup */
 /* Donate Modal Popup */
 .donate-modal-content {
@@ -8529,6 +8534,11 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .donate-qr-hint i {
   color: #a50064;
+}
+
+#donate-panel-bank .donate-qr-hint i,
+#donate-panel-bank-bm .donate-qr-hint i {
+  color: #0284c7;
 }
 
 /* Ko-fi Box */

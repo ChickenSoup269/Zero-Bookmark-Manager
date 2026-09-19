@@ -429,9 +429,13 @@
                                 <i class="fas fa-coffee"></i>
                                 <span>Ko-fi</span>
                             </a>
-                            <button type="button" id="open-momo-qr-btn" class="donate-action-btn momo-btn" title="MoMo QR">
+                            <button type="button" id="open-momo-qr-btn" class="donate-action-btn momo-btn open-donate-modal" data-target-tab="momo" title="MoMo QR">
                                 <i class="fas fa-qrcode"></i>
                                 <span>MoMo</span>
+                            </button>
+                            <button type="button" id="open-bank-qr-btn" class="donate-action-btn bank-btn open-donate-modal" data-target-tab="bank" title="Banking QR">
+                                <i class="fas fa-building-columns"></i>
+                                <span data-i18n="donateBank">Banking</span>
                             </button>
                         </div>
                     </div>
@@ -1168,6 +1172,9 @@
                 <button type="button" class="donate-tab active" data-tab="momo" id="donate-tab-momo">
                     <i class="fas fa-qrcode"></i> MoMo QR
                 </button>
+                <button type="button" class="donate-tab" data-tab="bank" id="donate-tab-bank">
+                    <i class="fas fa-building-columns"></i> <span data-i18n="donateBank">Banking</span>
+                </button>
                 <button type="button" class="donate-tab" data-tab="kofi" id="donate-tab-kofi">
                     <i class="fas fa-coffee"></i> Ko-fi
                 </button>
@@ -1181,6 +1188,17 @@
                 <div class="donate-qr-hint">
                     <i class="fas fa-mobile-screen"></i>
                     <span data-i18n="donateScanHint">Scan with MoMo or any Banking app</span>
+                </div>
+            </div>
+
+            <div class="donate-panel" id="donate-panel-bank">
+                <div class="donate-qr-wrapper">
+                    <img src="qr_bank.png"
+                        alt="Banking QR" class="donate-qr-img">
+                </div>
+                <div class="donate-qr-hint">
+                    <i class="fas fa-building-columns"></i>
+                    <span data-i18n="donateScanBankHint">Scan with any Banking app</span>
                 </div>
             </div>
 

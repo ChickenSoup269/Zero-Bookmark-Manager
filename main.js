@@ -2036,15 +2036,39 @@ configureShortcutsBtns.forEach(btn => {
 });
 
 // Donate / Support Modal Controller
-const openMomoBtns = document.querySelectorAll("#open-momo-qr-btn, .open-donate-modal");
+const openMomoBtns = document.querySelectorAll("#open-momo-qr-btn, #open-bank-qr-btn, #open-bank-qr-btn-bm, .open-donate-modal");
 const closeMomoBtn = document.getElementById("close-momo-qr-btn");
 const momoPopup = document.getElementById("momo-qr-popup");
+
+function switchDonateTab(targetTab) {
+  if (!momoPopup) return;
+  const donateTabs = momoPopup.querySelectorAll(".donate-tab");
+  const panels = momoPopup.querySelectorAll(".donate-panel");
+
+  donateTabs.forEach(t => {
+    if (t.getAttribute("data-tab") === targetTab) {
+      t.classList.add("active");
+    } else {
+      t.classList.remove("active");
+    }
+  });
+
+  panels.forEach(p => {
+    if (p.id.includes(targetTab)) {
+      p.classList.add("active");
+    } else {
+      p.classList.remove("active");
+    }
+  });
+}
 
 if (openMomoBtns.length > 0 && momoPopup) {
   openMomoBtns.forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
+      const targetTab = btn.getAttribute("data-target-tab") || (btn.id.includes("bank") ? "bank" : "momo");
+      switchDonateTab(targetTab);
       momoPopup.classList.remove("hidden");
     });
   });
@@ -2074,17 +2098,7 @@ if (momoPopup) {
   donateTabs.forEach(tab => {
     tab.addEventListener("click", () => {
       const targetTab = tab.getAttribute("data-tab");
-      donateTabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-
-      const panels = momoPopup.querySelectorAll(".donate-panel");
-      panels.forEach(p => {
-        if (p.id.includes(targetTab)) {
-          p.classList.add("active");
-        } else {
-          p.classList.remove("active");
-        }
-      });
+      switchDonateTab(targetTab);
     });
   });
 }

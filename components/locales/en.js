@@ -730,6 +730,8 @@ export const en = {
   donateModalTitle: "Support Developer",
   donateModalSubtitle: "Every cup of coffee fuels new features and improvements!",
   donateScanHint: "Scan with MoMo or any Banking app",
+  donateBank: "Banking",
+  donateScanBankHint: "Scan with any Banking app",
   donateKofiTitle: "Buy me a Coffee on Ko-fi",
   donateKofiDesc: "Support quickly and securely via International Card or PayPal.",
   donateOpenKofi: "Open Ko-fi Page",

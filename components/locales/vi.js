@@ -735,6 +735,8 @@ export const vi = {
   donateModalTitle: "Ủng Hộ Tác Giả",
   donateModalSubtitle: "Mỗi đóng góp dù nhỏ nhất đều là nguồn động lực to lớn!",
   donateScanHint: "Quét mã bằng app MoMo hoặc ứng dụng Ngân hàng",
+  donateBank: "Ngân hàng",
+  donateScanBankHint: "Quét mã bằng bất kỳ ứng dụng Ngân hàng nào",
   donateKofiTitle: "Mời mình một ly cà phê qua Ko-fi",
   donateKofiDesc: "Ủng hộ nhanh chóng và an toàn qua thẻ quốc tế hoặc PayPal.",
   donateOpenKofi: "Mở trang Ko-fi",
