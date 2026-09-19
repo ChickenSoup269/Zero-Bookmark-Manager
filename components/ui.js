@@ -1972,7 +1972,7 @@ function renderSidebarFolderTree(folders, elements) {
         }
       } else if (countMode === "folders") {
         if (fCount > 0) {
-          countBadge = `<span class="folder-child-count folder-badge" title="${fCount} folders"><i class="fas fa-folder"></i>${fCount}</span>`
+          countBadge = `<span class="folder-child-count folder-badge badge-f" title="${fCount} folders"><i class="fas fa-folder"></i>${fCount}</span>`
         } else {
           countBadge = "" // Chỉ hiển thị icon/số lượng khi folder có chứa thư mục con
         }

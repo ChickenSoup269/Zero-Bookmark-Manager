@@ -4484,6 +4484,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   background: var(--accent-color);
   color: var(--bg-primary);
 }
+
+.sidebar-folder-item:hover .folder-child-count i {
+  color: var(--bg-primary) !important;
+}
 #tag-filter-options {
   min-height: 150px;
   align-content: start;

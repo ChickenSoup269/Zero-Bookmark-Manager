@@ -1707,33 +1707,37 @@ body {
   color: var(--text-muted);
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
-  padding: 0 6px;
-  min-width: 18px;
-  height: 18px;
-  border-radius: 9px;
+  padding: 0 7px;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
-  gap: 4px;
+  gap: 4.5px;
 }
 
 .sidebar-folder-item .folder-child-count.both-counts {
-  padding: 0 6px;
-  gap: 6px;
+  padding: 0 8px;
+  gap: 7px;
 }
 
 .sidebar-folder-item .folder-child-count .badge-b,
-.sidebar-folder-item .folder-child-count .badge-f {
+.sidebar-folder-item .folder-child-count .badge-f,
+.sidebar-folder-item .folder-child-count.folder-badge {
   display: inline-flex;
   align-items: center;
-  gap: 2.5px;
+  gap: 4px;
 }
 
+.sidebar-folder-item .folder-child-count i,
 .sidebar-folder-item .folder-child-count .badge-b i,
-.sidebar-folder-item .folder-child-count .badge-f i {
-  font-size: 0.55rem;
-  opacity: 0.8;
+.sidebar-folder-item .folder-child-count .badge-f i,
+.sidebar-folder-item .folder-child-count.folder-badge i {
+  font-size: 0.58rem;
+  opacity: 0.85;
+  color: inherit;
 }
 
 .sidebar-folder-item:hover {
@@ -1767,6 +1771,10 @@ body {
   border-color: var(--border-color);
 }
 
+.sidebar-folder-item:hover .folder-child-count i {
+  color: inherit !important;
+}
+
 .sidebar-folder-item.active {
   background: var(--accent-color) !important;
   color: var(--accent-contrast, #ffffff) !important;
@@ -1786,17 +1794,20 @@ body {
 
 .sidebar-folder-item.active .folder-toggle:hover {
   color: var(--accent-contrast, #ffffff) !important;
-  background: rgba(255, 255, 255, 0.25) !important;
+  background: color-mix(in srgb, var(--accent-contrast, #ffffff) 20%, transparent) !important;
 }
 
 .sidebar-folder-item.active .folder-child-count {
-  background: rgba(255, 255, 255, 0.25);
+  background: color-mix(in srgb, var(--accent-contrast, #ffffff) 25%, transparent) !important;
   color: var(--accent-contrast, #ffffff) !important;
-  border-color: transparent;
+  border-color: transparent !important;
 }
 
+.sidebar-folder-item.active i,
+.sidebar-folder-item.active .folder-child-count i,
 .sidebar-folder-item.active .folder-child-count .badge-b i,
-.sidebar-folder-item.active .folder-child-count .badge-f i {
+.sidebar-folder-item.active .folder-child-count .badge-f i,
+.sidebar-folder-item.active .folder-child-count.folder-badge i {
   color: var(--accent-contrast, #ffffff) !important;
   opacity: 0.95;
 }
