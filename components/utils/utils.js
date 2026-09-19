@@ -15,6 +15,32 @@ export function escapeHtml(value = "") {
     .replace(/'/g, "&#039;")
 }
 
+export function closeSettingsAndSidebar() {
+  const settingsMenu = document.getElementById("settings-menu")
+  if (settingsMenu) {
+    settingsMenu.classList.add("hidden")
+    settingsMenu.setAttribute("aria-hidden", "true")
+  }
+  const settingsBtn = document.getElementById("settings-button")
+  if (settingsBtn) {
+    settingsBtn.setAttribute("aria-expanded", "false")
+  }
+  document.body.classList.remove("settings-panel-open")
+
+  const sidebar = document.getElementById("sidebar")
+  if (sidebar) sidebar.classList.remove("mobile-open")
+  const sidebarClassic = document.getElementById("sidebar-classic")
+  if (sidebarClassic) sidebarClassic.classList.remove("mobile-open")
+
+  document.querySelectorAll(".dropdown-menu, .dropdown-menu-2").forEach((menu) => {
+    menu.classList.add("hidden")
+  })
+}
+
+if (typeof window !== "undefined") {
+  window.closeSettingsAndSidebar = closeSettingsAndSidebar
+}
+
 // ==========================================
 // FUZZY SEARCH FUNCTIONS
 // ==========================================

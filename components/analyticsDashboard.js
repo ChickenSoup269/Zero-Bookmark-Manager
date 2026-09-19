@@ -93,9 +93,13 @@ export function initAnalyticsDashboard(elements) {
   btns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation()
-      document
-        .querySelectorAll(".dropdown-menu")
-        .forEach((m) => m.classList.add("hidden"))
+      if (typeof window.closeSettingsAndSidebar === "function") {
+        window.closeSettingsAndSidebar()
+      } else {
+        document
+          .querySelectorAll(".dropdown-menu")
+          .forEach((m) => m.classList.add("hidden"))
+      }
 
       popup.classList.remove("hidden")
       if (fullscreenBtn && popupContent) {

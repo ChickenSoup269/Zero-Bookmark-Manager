@@ -117,6 +117,9 @@ async function restoreAppSettings(appSettings = {}) {
 
 export function setupExportImportListeners(elements) {
   elements.exportBookmarksOption.addEventListener("click", async () => {
+    if (typeof window.closeSettingsAndSidebar === "function") {
+      window.closeSettingsAndSidebar()
+    }
     const language = localStorage.getItem("appLanguage") || "en"
     let appTheme = localStorage.getItem("appTheme") || "dark"
     const currentTheme =
@@ -623,7 +626,7 @@ export function setupExportImportListeners(elements) {
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 2600;
+      z-index: 25000;
       animation: fadeIn 0.3s ease-out;
     }
     
@@ -1022,6 +1025,9 @@ export function setupExportImportListeners(elements) {
   })
 
   elements.importBookmarksOption.addEventListener("click", () => {
+    if (typeof window.closeSettingsAndSidebar === "function") {
+      window.closeSettingsAndSidebar()
+    }
     const input = document.createElement("input")
     input.type = "file"
     input.accept = "application/json"

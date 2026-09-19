@@ -2067,6 +2067,9 @@ if (openMomoBtns.length > 0 && momoPopup) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
+      if (typeof window.closeSettingsAndSidebar === "function") {
+        window.closeSettingsAndSidebar();
+      }
       const targetTab = btn.getAttribute("data-target-tab") || (btn.id.includes("bank") ? "bank" : "momo");
       switchDonateTab(targetTab);
       momoPopup.classList.remove("hidden");

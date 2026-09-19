@@ -173,6 +173,9 @@ export function initSync(elements) {
 
     function openSyncModal() {
         if (!syncPopup) return;
+        if (typeof window.closeSettingsAndSidebar === 'function') {
+            window.closeSettingsAndSidebar();
+        }
         syncPopup.classList.remove('hidden');
         clearStatus();
         loadConfig(() => {

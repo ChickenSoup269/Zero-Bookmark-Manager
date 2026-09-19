@@ -41,10 +41,15 @@ export function initSessionManager(elements) {
   })
 
   saveSessionBtn.addEventListener("click", () => {
-    // Close settings menu if open
-    const settingsMenu = document.getElementById("settings-menu")
-    if (settingsMenu && !settingsMenu.classList.contains("hidden")) {
-      settingsMenu.classList.add("hidden")
+    // Close settings menu and sidebar if open
+    if (typeof window.closeSettingsAndSidebar === "function") {
+      window.closeSettingsAndSidebar()
+    } else {
+      const settingsMenu = document.getElementById("settings-menu")
+      if (settingsMenu && !settingsMenu.classList.contains("hidden")) {
+        settingsMenu.classList.add("hidden")
+      }
+      document.body.classList.remove("settings-panel-open")
     }
     
     // Set default name
