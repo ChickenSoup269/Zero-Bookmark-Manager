@@ -3708,19 +3708,21 @@ body.settings-panel-open .container {
   user-select: none;
 }
 
-body[data-button-weight-sidebar="bold"] .sidebar button,
 body[data-button-weight-sidebar="bold"] .sidebar .sidebar-menu-item,
 body[data-button-weight-sidebar="bold"] .sidebar .sidebar-sort-item,
+body[data-button-weight-sidebar="bold"] .sidebar .sidebar-section-header,
+body[data-button-weight-sidebar="bold"] .sidebar .sidebar-collapse-btn,
+body[data-button-weight-sidebar="bold"] .sidebar .sidebar-create-folder-btn,
 body[data-button-weight-sidebar="bold"] .sidebar .sidebar-action-btn,
 body[data-button-weight-sidebar="bold"] .sidebar .sidebar-admin-btn,
 body[data-button-weight-sidebar="bold"] .sidebar-classic button,
 body[data-button-weight-sidebar="bold"] .sidebar-classic .menu-item {
-  font-weight: 700;
+  font-weight: 700 !important;
 }
 
 body[data-button-weight-settings="bold"] .dropdown-menu-2 button,
 body[data-button-weight-settings="bold"] .dropdown-menu-2 .menu-item {
-  font-weight: 700;
+  font-weight: 700 !important;
 }
 
 body.settings-panel-open .dropdown-menu-2,
@@ -4396,6 +4398,35 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   width: 16px;
   text-align: center;
   color: var(--text-secondary);
+}
+
+.app-setting-field.collapsible-setting {
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.app-setting-field.collapsible-setting > label {
+  cursor: pointer;
+  user-select: none;
+}
+
+.app-setting-field.collapsible-setting > label::after {
+  content: "\f078";
+  margin-left: auto;
+  font-family: "Font Awesome 6 Free";
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
+}
+
+.app-setting-field.collapsible-setting.collapsed > label::after {
+  transform: rotate(-90deg);
+}
+
+.app-setting-field.collapsible-setting.collapsed .setting-pill-group {
+  display: none;
 }
 
 .app-setting-action {

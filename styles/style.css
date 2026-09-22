@@ -5366,21 +5366,22 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   outline-offset: 1px;
 }
 
-body[data-button-weight-bookmarks="bold"] .folder-list button,
-body[data-button-weight-bookmarks="bold"] .folder-list .button,
-body[data-button-weight-bookmarks="bold"] .bookmark-item button,
 body[data-button-weight-bookmarks="bold"] .bookmark-actions .button,
-body[data-button-weight-bookmarks="bold"] .folder-item button,
-body[data-button-weight-bookmarks="bold"] .folder-card button,
-body[data-button-weight-bookmarks="bold"] .detail-view button,
-body[data-button-weight-bookmarks="bold"] .card-view button,
-body[data-button-weight-bookmarks="bold"] .list-view button {
-  font-weight: 700;
+body[data-button-weight-bookmarks="bold"] .bookmark-dropdown-menu .menu-item,
+body[data-button-weight-bookmarks="bold"] .bookmark-actions-group .menu-item,
+body[data-button-weight-bookmarks="bold"] .bookmark-item .dropdown-btn,
+body[data-button-weight-bookmarks="bold"] .list-actions button,
+body[data-button-weight-bookmarks="bold"] .view-detail-btn-action,
+body[data-button-weight-bookmarks="bold"]
+  .bookmark-actions-group
+  .menu-item
+  span {
+  font-weight: 700 !important;
 }
 
 body[data-button-weight-settings="bold"] #settings-menu button,
 body[data-button-weight-settings="bold"] #settings-menu .menu-item {
-  font-weight: 700;
+  font-weight: 700 !important;
 }
 
 .font-swatch.active:hover,
@@ -5575,6 +5576,36 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 .app-setting-field label i {
   color: var(--accent-color);
   font-size: 0.85rem;
+}
+
+.app-setting-field.collapsible-setting {
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.app-setting-field.collapsible-setting > label {
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+}
+
+.app-setting-field.collapsible-setting > label::after {
+  content: "\f078";
+  margin-left: auto;
+  font-family: "Font Awesome 6 Free";
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
+}
+
+.app-setting-field.collapsible-setting.collapsed > label::after {
+  transform: rotate(-90deg);
+}
+
+.app-setting-field.collapsible-setting.collapsed .setting-pill-group {
+  display: none;
 }
 
 /* App Tabs UI */

@@ -155,6 +155,44 @@ export function setupUIControlListeners(elements) {
     }
   })
 
+  const collapsedSettingFields = JSON.parse(
+    localStorage.getItem("collapsedSettingFields") || "{}",
+  )
+  document
+    .querySelectorAll(".app-setting-field:has(.setting-pill-group)")
+    .forEach((field) => {
+      const firstGroup = field.querySelector(".setting-pill-group")
+      const label = field.querySelector(":scope > label")
+      if (!firstGroup || !label) return
+
+      const fieldKey =
+        firstGroup.id || `setting-${field.dataset.settingKey || "field"}`
+      field.dataset.settingKey = fieldKey
+      field.classList.add("collapsible-setting")
+      label.setAttribute("role", "button")
+      label.setAttribute("tabindex", "0")
+
+      const setCollapsed = (collapsed) => {
+        field.classList.toggle("collapsed", collapsed)
+        label.setAttribute("aria-expanded", String(!collapsed))
+        collapsedSettingFields[fieldKey] = collapsed
+        localStorage.setItem(
+          "collapsedSettingFields",
+          JSON.stringify(collapsedSettingFields),
+        )
+      }
+
+      setCollapsed(Boolean(collapsedSettingFields[fieldKey]))
+      label.addEventListener("click", () => {
+        setCollapsed(!field.classList.contains("collapsed"))
+      })
+      label.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return
+        event.preventDefault()
+        setCollapsed(!field.classList.contains("collapsed"))
+      })
+    })
+
   const handleFontChange = (val) => {
     // Remove all possible font classes
     const fontClasses = Array.from(document.body.classList).filter((cls) =>
