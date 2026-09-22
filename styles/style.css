@@ -78,7 +78,15 @@ textarea.input {
 
 body.font-sans-serif,
 body.font-sansSerif {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
 }
 
 body.font-gohu {
@@ -135,7 +143,15 @@ body {
   color: var(--text-primary);
   margin: 0;
   padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   line-height: 1.5;
   transition:
     background-color var(--transition-normal),
@@ -1971,7 +1987,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   box-shadow: var(--shadow-sm);
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
-  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.2s ease, box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.2s ease,
+    box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
   z-index: 0;
 }
 
@@ -3161,7 +3180,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .modal-close:hover {
   background: rgba(239, 68, 68, 0.15);
-  color: #EF4444;
+  color: #ef4444;
   border-color: rgba(239, 68, 68, 0.4);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
@@ -3228,7 +3247,11 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   border-radius: 8px !important;
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease !important;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease !important;
   display: flex !important;
   align-items: center !important;
   margin: 2px 0 !important;
@@ -3564,7 +3587,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   user-select: none;
   font-size: 0.88rem;
   color: var(--text-primary);
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
   margin-bottom: 2px;
   border: 1px solid transparent;
 }
@@ -3756,13 +3781,13 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .studio-btn.danger-btn {
   background: rgba(239, 68, 68, 0.15);
-  color: #EF4444;
+  color: #ef4444;
   border-color: rgba(239, 68, 68, 0.3);
 }
 
 .studio-btn.danger-btn:hover {
-  background: #EF4444;
-  color: #FFFFFF;
+  background: #ef4444;
+  color: #ffffff;
 }
 
 .studio-inspector-content {
@@ -3863,7 +3888,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .studio-bm-delete-btn:hover {
   background: rgba(239, 68, 68, 0.15);
-  color: #EF4444;
+  color: #ef4444;
 }
 
 .studio-empty-list {
@@ -3941,7 +3966,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   padding: 2px 8px;
   border-radius: 10px;
   background: rgba(245, 158, 11, 0.15);
-  color: #F59E0B;
+  color: #f59e0b;
   font-weight: 600;
 }
 
@@ -4126,7 +4151,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   font-size: 1.15rem;
   font-weight: 900 !important;
   opacity: 0.85;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .quick-open-settings .control-label span {
@@ -4137,7 +4165,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 }
 
 /* Hover on unchecked item */
-.quick-open-settings .segmented-control-item input[type="radio"]:not(:checked) + .control-label:hover {
+.quick-open-settings
+  .segmented-control-item
+  input[type="radio"]:not(:checked)
+  + .control-label:hover {
   background: transparent;
   border-color: var(--accent-color);
   color: var(--text-primary);
@@ -4145,7 +4176,11 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   box-shadow: none;
 }
 
-.quick-open-settings .segmented-control-item input[type="radio"]:not(:checked) + .control-label:hover i {
+.quick-open-settings
+  .segmented-control-item
+  input[type="radio"]:not(:checked)
+  + .control-label:hover
+  i {
   color: inherit;
   opacity: 1;
   transform: none;
@@ -4156,7 +4191,8 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   background: var(--accent-color);
   border-color: var(--accent-color);
   color: var(--accent-contrast, #ffffff);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 40%, transparent);
+  box-shadow: 0 4px 14px
+    color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 
 .quick-open-settings input[type="radio"]:checked + .control-label i {
@@ -4170,7 +4206,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 }
 
 /* Checked state hover */
-.quick-open-settings .segmented-control-item input[type="radio"]:checked + .control-label:hover {
+.quick-open-settings
+  .segmented-control-item
+  input[type="radio"]:checked
+  + .control-label:hover {
   filter: none;
   transform: none;
 }
@@ -4208,7 +4247,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   width: auto !important;
   text-align: center !important;
   margin: 0 !important;
-  transition: transform 0.2s ease, color 0.2s ease !important;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease !important;
 }
 
 .bookmark-actions-group .menu-item span {
@@ -4225,7 +4266,11 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 }
 
 .bookmark-actions-group .menu-item:hover {
-  background-color: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--accent-color) 12%,
+    transparent
+  ) !important;
   border-color: var(--accent-color) !important;
   color: var(--text-primary) !important;
   box-shadow: 0 3px 8px color-mix(in srgb, var(--accent-color) 18%, transparent) !important;
@@ -4386,9 +4431,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   background-color: var(--bg-tertiary, #171717);
   border: 1.5px solid var(--border-color, #333333);
   border-radius: 999px;
-  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
 }
 
@@ -4402,9 +4448,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   background: var(--text-muted, #737373);
   border-radius: 50%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-              background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hover effects */
@@ -4439,7 +4486,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 }
 
 [data-theme="dark"] .toggle-switch input:not(:checked) + .toggle-knob::before,
-:root:not([data-theme]) .toggle-switch input:not(:checked) + .toggle-knob::before {
+:root:not([data-theme])
+  .toggle-switch
+  input:not(:checked)
+  + .toggle-knob::before {
   background-color: #737373;
 }
 
@@ -4465,7 +4515,11 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 }
 
 .sidebar-folder-item:hover {
-  background: color-mix(in srgb, var(--accent-color) 12%, var(--bg-primary)) !important;
+  background: color-mix(
+    in srgb,
+    var(--accent-color) 12%,
+    var(--bg-primary)
+  ) !important;
   color: var(--text-primary) !important;
   border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent) !important;
   transform: translateX(3px);
@@ -4906,7 +4960,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   box-shadow: var(--shadow-sm);
   cursor: pointer;
   position: relative;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   overflow: hidden;
   max-width: 100%;
 }
@@ -4934,7 +4991,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   object-fit: cover;
   object-position: center center;
   display: block;
-  transition: opacity 0.2s ease, filter 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    filter 0.2s ease;
 }
 
 .mockup-bookmark-item:hover .mockup-image {
@@ -5215,7 +5274,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, border-color 0.2s ease;
+  transition:
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease,
+    border-color 0.2s ease;
   font-size: 14px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
   position: relative;
@@ -5223,7 +5285,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .theme-swatch:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
   z-index: 5;
 }
 
@@ -5232,7 +5294,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   box-shadow:
     0 0 0 2.5px var(--bg-primary),
     0 0 0 4.5px var(--accent-color),
-    0 4px 12px rgba(0, 0, 0, 0.2);
+    0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .theme-swatch.active:hover {
@@ -5240,7 +5302,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   box-shadow:
     0 0 0 2.5px var(--bg-primary),
     0 0 0 4.5px var(--accent-color),
-    0 8px 18px rgba(0, 0, 0, 0.3);
+    0 4px 9px rgba(0, 0, 0, 0.16);
   z-index: 5;
 }
 
@@ -5291,8 +5353,34 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   color: var(--accent-contrast, #ffffff) !important;
   border-color: var(--accent-color) !important;
   font-weight: 600;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent-color) 35%, transparent) !important;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent-color) 16%, transparent) !important;
   transform: none !important;
+}
+
+.setting-swatch.active {
+  outline: none;
+}
+
+.setting-swatch.active:focus-visible {
+  outline: 1px solid var(--accent-color);
+  outline-offset: 1px;
+}
+
+body[data-button-weight-bookmarks="bold"] .folder-list button,
+body[data-button-weight-bookmarks="bold"] .folder-list .button,
+body[data-button-weight-bookmarks="bold"] .bookmark-item button,
+body[data-button-weight-bookmarks="bold"] .bookmark-actions .button,
+body[data-button-weight-bookmarks="bold"] .folder-item button,
+body[data-button-weight-bookmarks="bold"] .folder-card button,
+body[data-button-weight-bookmarks="bold"] .detail-view button,
+body[data-button-weight-bookmarks="bold"] .card-view button,
+body[data-button-weight-bookmarks="bold"] .list-view button {
+  font-weight: 700;
+}
+
+body[data-button-weight-settings="bold"] #settings-menu button,
+body[data-button-weight-settings="bold"] #settings-menu .menu-item {
+  font-weight: 700;
 }
 
 .font-swatch.active:hover,
@@ -5317,7 +5405,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .language-settings-row #add-custom-language-option:hover {
@@ -5704,7 +5794,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 #smart-cleanup-close-x:hover {
   background: rgba(239, 68, 68, 0.15);
-  color: #EF4444;
+  color: #ef4444;
   border-color: rgba(239, 68, 68, 0.4);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
@@ -6469,7 +6559,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   min-width: 0;
 }
 
@@ -6484,7 +6576,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   font-size: 1.15rem;
   border-radius: 10px;
   background: rgba(59, 130, 246, 0.15);
-  color: #3B82F6;
+  color: #3b82f6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6492,11 +6584,26 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   flex-shrink: 0;
 }
 
-.metric-icon.folder-icon { background: color-mix(in srgb, var(--accent-color) 15%, transparent); color: var(--accent-color); }
-.metric-icon.tag-icon { background: rgba(16, 185, 129, 0.15); color: #10B981; }
-.metric-icon.notes-icon { background: rgba(139, 92, 246, 0.15); color: #8B5CF6; }
-.metric-icon.fav-icon { background: rgba(236, 72, 153, 0.15); color: #EC4899; }
-.metric-icon.lock-icon { background: rgba(6, 182, 212, 0.15); color: #06B6D4; }
+.metric-icon.folder-icon {
+  background: color-mix(in srgb, var(--accent-color) 15%, transparent);
+  color: var(--accent-color);
+}
+.metric-icon.tag-icon {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+.metric-icon.notes-icon {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+}
+.metric-icon.fav-icon {
+  background: rgba(236, 72, 153, 0.15);
+  color: #ec4899;
+}
+.metric-icon.lock-icon {
+  background: rgba(6, 182, 212, 0.15);
+  color: #06b6d4;
+}
 
 .metric-info {
   display: flex;
@@ -6569,9 +6676,21 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   min-width: 0;
 }
 
-.bar-healthy { background: #10B981; height: 100%; transition: width 0.4s ease; }
-.bar-broken { background: #EF4444; height: 100%; transition: width 0.4s ease; }
-.bar-unchecked { background: #9CA3AF; height: 100%; transition: width 0.4s ease; }
+.bar-healthy {
+  background: #10b981;
+  height: 100%;
+  transition: width 0.4s ease;
+}
+.bar-broken {
+  background: #ef4444;
+  height: 100%;
+  transition: width 0.4s ease;
+}
+.bar-unchecked {
+  background: #9ca3af;
+  height: 100%;
+  transition: width 0.4s ease;
+}
 
 /* Timeline Chart */
 .analytics-timeline-chart {
@@ -6632,7 +6751,11 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .timeline-bar-fill {
   width: 100%;
-  background: linear-gradient(to top, var(--accent-color), rgba(59, 130, 246, 0.6));
+  background: linear-gradient(
+    to top,
+    var(--accent-color),
+    rgba(59, 130, 246, 0.6)
+  );
   border-radius: 4px;
   transition: height 0.4s ease;
 }
@@ -7055,7 +7178,11 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   min-height: 48px;
   flex-shrink: 0;
   box-sizing: border-box;
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
 }
 
 .habit-bookmark-row:hover {
@@ -7131,19 +7258,19 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .habit-rank-badge.rank-1 {
   background: rgba(245, 158, 11, 0.18);
-  color: #F59E0B;
+  color: #f59e0b;
   border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
 .habit-rank-badge.rank-2 {
   background: rgba(156, 163, 175, 0.2);
-  color: #9CA3AF;
+  color: #9ca3af;
   border: 1px solid rgba(156, 163, 175, 0.35);
 }
 
 .habit-rank-badge.rank-3 {
   background: rgba(217, 119, 6, 0.18);
-  color: #D97706;
+  color: #d97706;
   border: 1px solid rgba(217, 119, 6, 0.35);
 }
 
@@ -7186,7 +7313,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .stale-date-badge i {
   font-size: 0.7rem;
-  color: #8B5CF6;
+  color: #8b5cf6;
 }
 
 /* Date Badge */
@@ -7335,7 +7462,11 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(147, 51, 234, 0.15));
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.15),
+    rgba(147, 51, 234, 0.15)
+  );
   color: var(--accent-color, #3b82f6);
   display: flex;
   align-items: center;
@@ -7419,7 +7550,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   height: 8px;
   border-radius: 50%;
   background: transparent;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
   transform: scale(0.6);
 }
 
@@ -7573,7 +7706,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   color: var(--text-primary);
   font-size: 0.82rem;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   box-sizing: border-box;
 }
 
@@ -7771,7 +7906,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   background: var(--bg-tertiary, #171717);
   border: 1.5px solid var(--border-color, #333333);
   position: relative;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
   flex-shrink: 0;
   box-sizing: border-box;
 }
@@ -7791,7 +7928,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   height: 12px;
   border-radius: 50%;
   background: var(--text-muted, #737373);
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease;
+  transition:
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
@@ -7806,7 +7945,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 }
 
 [data-theme="dark"] .scope-switch-track:has(input:checked) .scope-switch-thumb,
-:root:not([data-theme]) .scope-switch-track:has(input:checked) .scope-switch-thumb {
+:root:not([data-theme])
+  .scope-switch-track:has(input:checked)
+  .scope-switch-thumb {
   background: #000000;
 }
 
@@ -8252,7 +8393,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   flex-direction: column;
   gap: 10px;
   box-shadow: var(--shadow-sm, 0 2px 6px rgba(0, 0, 0, 0.15));
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .dropdown-donate-card:hover {
@@ -8319,7 +8462,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   text-decoration: none;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
+  transition:
+    transform 0.16s ease,
+    filter 0.16s ease,
+    box-shadow 0.16s ease;
 }
 
 .donate-action-btn:hover {
@@ -8444,7 +8590,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   border: 1.5px solid transparent;
   border-radius: 7px;
   cursor: pointer;
-  transition: border-color 0.18s ease, color 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    color 0.18s ease;
 }
 
 .donate-tab:not(.active):hover {
@@ -8590,7 +8738,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   padding: 8px 18px;
   border-radius: 8px;
   margin-top: 6px;
-  transition: filter 0.16s ease, box-shadow 0.16s ease;
+  transition:
+    filter 0.16s ease,
+    box-shadow 0.16s ease;
   box-shadow: 0 4px 12px rgba(255, 94, 91, 0.3);
 }
 
@@ -8608,5 +8758,3 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   color: var(--text-muted);
   line-height: 1.4;
 }
-
-

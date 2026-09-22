@@ -2,31 +2,55 @@
 // This script runs synchronously before body renders
 ;(function () {
   var availableThemes = [
-    'light','dark','dracula','onedark','tokyonight','nord','synthwave',
-    'gruvbox','catppuccin','nightowl','nord-light','gruvbox-light',
-    'catppuccin-light','nightowl-light','monokai','winter-is-coming',
-    'github-blue','github-light','tet'
+    "light",
+    "dark",
+    "dracula",
+    "onedark",
+    "tokyonight",
+    "nord",
+    "synthwave",
+    "gruvbox",
+    "catppuccin",
+    "nightowl",
+    "nord-light",
+    "gruvbox-light",
+    "catppuccin-light",
+    "nightowl-light",
+    "monokai",
+    "winter-is-coming",
+    "github-blue",
+    "github-light",
+    "tet",
   ]
-  var theme = localStorage.getItem('appTheme') || 'dark'
-  if (theme === 'system') {
-    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  var theme = localStorage.getItem("appTheme") || "dark"
+  if (theme === "system") {
+    theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light"
   }
-  if (!availableThemes.includes(theme)) theme = 'dark'
-  document.documentElement.setAttribute('data-theme', theme)
-  
-  var isNativePopup = window.location.search.indexOf('mode=native_popup') !== -1;
-  var font = localStorage.getItem('appFont') || 'sans-serif';
+  if (!availableThemes.includes(theme)) theme = "dark"
+  document.documentElement.setAttribute("data-theme", theme)
+
+  var isNativePopup = window.location.search.indexOf("mode=native_popup") !== -1
+  var font = localStorage.getItem("appFont") || "sans-serif"
+  var buttonWeightScopes = ["bookmarks", "sidebar", "settings"]
   function applyClasses() {
-    document.body.classList.add(theme + '-theme');
-    document.body.classList.add('font-' + font);
+    document.body.classList.add(theme + "-theme")
+    document.body.classList.add("font-" + font)
+    buttonWeightScopes.forEach(function (scope) {
+      document.body.setAttribute(
+        "data-button-weight-" + scope,
+        localStorage.getItem("buttonWeight-" + scope) || "normal",
+      )
+    })
     if (isNativePopup) {
-      document.body.classList.add('native-popup');
+      document.body.classList.add("native-popup")
     }
   }
 
   if (document.body) {
-    applyClasses();
+    applyClasses()
   } else {
-    document.addEventListener('DOMContentLoaded', applyClasses);
+    document.addEventListener("DOMContentLoaded", applyClasses)
   }
 })()

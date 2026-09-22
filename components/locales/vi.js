@@ -75,7 +75,8 @@ export const vi = {
   openSidePanel: "Mở popup bên phải",
   deleteBookmarks: "Xóa đã chọn",
   deleteSelected: "Xóa đã chọn",
-  deleteBookmarksConfirm: "Bạn có chắc chắn muốn xóa các bookmark đã chọn không?",
+  deleteBookmarksConfirm:
+    "Bạn có chắc chắn muốn xóa các bookmark đã chọn không?",
   deleteBookmarksSuccess: "Đã xóa các bookmark đã chọn thành công!",
   move: "Di chuyển",
   edit: "Sửa",
@@ -115,19 +116,23 @@ export const vi = {
   safeDeletePrompt: "Chọn cách xóa thư mục này:",
   unnestBookmarksOption: "Chỉ xóa thư mục (chuyển bookmark ra thư mục cha)",
   deleteAllOption: "Xóa thư mục và toàn bộ nội dung bên trong",
-  mergeFoldersDesc: "Phát hiện và gộp các thư mục trùng tên ở các nhánh về một thư mục duy nhất.",
-  noDuplicateFoldersFound: "Không tìm thấy thư mục trùng tên nào! Cấu trúc thư mục của bạn rất gọn gàng.",
+  mergeFoldersDesc:
+    "Phát hiện và gộp các thư mục trùng tên ở các nhánh về một thư mục duy nhất.",
+  noDuplicateFoldersFound:
+    "Không tìm thấy thư mục trùng tên nào! Cấu trúc thư mục của bạn rất gọn gàng.",
   duplicateGroupFound: "thư mục trùng tên",
   mergeIntoThis: "Gộp tất cả vào thư mục này",
   mergeSuccess: "Gộp thư mục thành công!",
-  autoSortDesc: "Sắp xếp thư mục và bookmark theo thứ tự chữ cái hoặc theo số lượng.",
+  autoSortDesc:
+    "Sắp xếp thư mục và bookmark theo thứ tự chữ cái hoặc theo số lượng.",
   sortAlphabeticalAZ: "Sắp xếp A → Z (Bảng chữ cái)",
   sortAlphabeticalZA: "Sắp xếp Z → A (Ngược lại)",
   sortByItemCount: "Sắp xếp theo số lượng (Nhiều nhất trước)",
   sortScopeAll: "Áp dụng cho toàn bộ thư viện",
   sortScopeSelected: "Chỉ áp dụng cho thư mục đang chọn",
   sortSuccess: "Sắp xếp thư mục thành công!",
-  emptyFoldersDesc: "Quét nhanh và xóa tất cả các thư mục rỗng không chứa bookmark hoặc thư mục con.",
+  emptyFoldersDesc:
+    "Quét nhanh và xóa tất cả các thư mục rỗng không chứa bookmark hoặc thư mục con.",
   emptyFoldersFoundCount: "thư mục rỗng được tìm thấy.",
   cleanEmptySuccess: "Đã dọn dẹp các thư mục rỗng thành công!",
   cleanAllEmptyBtn: "Xóa tất cả thư mục rỗng",
@@ -529,9 +534,17 @@ export const vi = {
   countModeFolders: "Thư mục con",
   countModeBoth: "Cả hai",
   countModeOff: "Tắt",
+  buttonWeightTitle: "Độ đậm button",
+  buttonWeightAll: "Tất cả",
+  buttonWeightBookmarks: "Bookmark",
+  buttonWeightSidebar: "Sidebar",
+  buttonWeightSettings: "Sidebar settings",
+  buttonWeightNormal: "Bình thường",
+  buttonWeightBold: "Bold",
 
   checkHealthModalTitle: "Kiểm tra tình trạng liên kết",
-  checkHealthModalDesc: "Chọn phạm vi kiểm tra các liên kết hỏng, chết (404/500), mã độc hoặc nguy hiểm:",
+  checkHealthModalDesc:
+    "Chọn phạm vi kiểm tra các liên kết hỏng, chết (404/500), mã độc hoặc nguy hiểm:",
   checkDuplicatesModalTitle: "Kiểm tra bookmark trùng lặp",
   checkDuplicatesModalDesc: "Chọn phạm vi kiểm tra các bookmark bị trùng URL:",
   scopeAllBookmarks: "Toàn bộ dấu trang",
@@ -539,7 +552,8 @@ export const vi = {
   scopeByFolder: "Theo thư mục cụ thể",
   scopeByFolderDesc: "Chỉ quét các bookmark thuộc thư mục đã chọn",
   scopeIncludeSubfolders: "Bao gồm thư mục con",
-  scopeIncludeSubfoldersHint: "Quét cả các bookmark trong toàn bộ thư mục bên trong",
+  scopeIncludeSubfoldersHint:
+    "Quét cả các bookmark trong toàn bộ thư mục bên trong",
   scopeSearchFolderPlaceholder: "Tìm kiếm thư mục...",
   scopeQuickSelect: "Chọn nhanh:",
   scopeCurrentFolder: "Thư mục đang xem",
@@ -552,8 +566,10 @@ export const vi = {
   checkLinksInFolder: "Kiểm tra liên kết trong thư mục",
   checkDuplicatesInFolder: "Kiểm tra trùng lặp trong thư mục",
   checkHealthProgressCount: "Đang kiểm tra {0} liên kết... Vui lòng đợi.",
-  checkHealthCompletedIssues: "Hoàn tất! Đã kiểm tra {0} liên kết. Phát hiện {1} liên kết có vấn đề.",
-  checkHealthCompletedClean: "Hoàn tất! Đã kiểm tra {0} liên kết. Tất cả đều hoạt động tốt.",
+  checkHealthCompletedIssues:
+    "Hoàn tất! Đã kiểm tra {0} liên kết. Phát hiện {1} liên kết có vấn đề.",
+  checkHealthCompletedClean:
+    "Hoàn tất! Đã kiểm tra {0} liên kết. Tất cả đều hoạt động tốt.",
 
   addCustomLanguage: "Thêm ngôn ngữ tùy chỉnh",
   customLanguageTitle: "Thêm ngôn ngữ tùy chỉnh",
@@ -728,7 +744,8 @@ export const vi = {
   cloudSyncGitlabSnippetLabel: "Snippet ID (không bắt buộc):",
   cloudSyncGitlabSnippetPlaceholder: "Để trống để tự động tạo Snippet mới",
   cloudSyncGuideTitle: "Hướng Dẫn Cài Đặt Chi Tiết",
-  cloudSyncTokenSecureNotice: "Token chỉ được lưu cục bộ trong trình duyệt của bạn, tuyệt đối không gửi ra ngoài.",
+  cloudSyncTokenSecureNotice:
+    "Token chỉ được lưu cục bộ trong trình duyệt của bạn, tuyệt đối không gửi ra ngoài.",
   supportTitle: "Ủng hộ",
   donateTitle: "Ủng Hộ Dự Án",
   donateDesc: "Tiếp thêm động lực phát triển Zero Bookmark Manager!",
@@ -756,7 +773,8 @@ export const vi = {
   analyticsTitle: "Báo Cáo & Thống Kê",
   saveSession: "Lưu phiên làm việc (Tabs)",
   openInFullTab: "Mở Tab Toàn Màn Hình",
-  analyticsDesc: "Tổng quan thói quen lưu trữ, sức khỏe dữ liệu và xu hướng của bạn.",
+  analyticsDesc:
+    "Tổng quan thói quen lưu trữ, sức khỏe dữ liệu và xu hướng của bạn.",
   analyticsTabOverview: "Tổng quan",
   analyticsTabActivity: "Hoạt động & Xu hướng",
   analyticsTabDistribution: "Tên miền & Thẻ",
@@ -789,8 +807,10 @@ export const vi = {
   analyticsInsightUnsortedAction: "Sắp xếp thư mục",
   analyticsInsightBroken: "liên kết bị hỏng hoặc lỗi tải.",
   analyticsInsightBrokenAction: "Dọn dẹp liên kết",
-  analyticsInsightGreatJob: "Thư viện bookmark của bạn đang ở trạng thái tối ưu tuyệt vời!",
-  visitTrackingHint: "Hãy nhấp mở bookmark từ extension để ghi nhận số lượt xem. Dưới đây là các Bookmark mới nhất:",
+  analyticsInsightGreatJob:
+    "Thư viện bookmark của bạn đang ở trạng thái tối ưu tuyệt vời!",
+  visitTrackingHint:
+    "Hãy nhấp mở bookmark từ extension để ghi nhận số lượt xem. Dưới đây là các Bookmark mới nhất:",
   quickAccessItems: "Mục truy cập nhanh",
   items: "mục",
   secureLinks: "liên kết an toàn",
@@ -814,10 +834,11 @@ export const vi = {
   visits: "lượt xem",
   recent: "Mới lưu",
   insightTagsDesc: "Tổ chức bằng thẻ tag giúp tìm kiếm tức thì và linh hoạt.",
-  insightFoldersDesc: "Gom các bookmark liên quan vào thư mục con giúp phân cấp gọn gàng.",
-  insightHealthDesc: "Dọn dẹp liên kết chết giúp thư viện luôn mượt mà và an toàn.",
+  insightFoldersDesc:
+    "Gom các bookmark liên quan vào thư mục con giúp phân cấp gọn gàng.",
+  insightHealthDesc:
+    "Dọn dẹp liên kết chết giúp thư viện luôn mượt mà và an toàn.",
   recentActivityTimeline: "Bookmark mới thêm gần đây",
   scanNow: "Quét ngay",
   scanHealthTitle: "Quét tình trạng liên kết",
 }
-

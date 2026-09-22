@@ -71,7 +71,9 @@ body {
   background-color: transparent;
   z-index: 100;
   padding: 8px var(--spacing-md);
-  padding-right: var(--spacing-md); /* Full 100% width when sitting in normal flow */
+  padding-right: var(
+    --spacing-md
+  ); /* Full 100% width when sitting in normal flow */
   margin: 0 calc(var(--spacing-md) * -1) 6px;
   border-bottom: 1px solid transparent;
   box-sizing: border-box;
@@ -222,7 +224,10 @@ body.is-scrolled .sticky-search {
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
   border-radius: var(--border-radius-md);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease !important;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease !important;
   cursor: pointer;
 }
 
@@ -1227,7 +1232,7 @@ body.is-scrolled .sticky-search {
   width: 100%;
   height: 100vh;
   padding: 10px 12px 20px;
-  box-shadow: -12px 0 30px rgba(0, 0, 0, 0.25);
+  box-shadow: -8px 0 20px rgba(0, 0, 0, 0.12);
   opacity: 1;
   pointer-events: auto;
   z-index: 19001;
@@ -1283,7 +1288,9 @@ body.is-scrolled .sticky-search {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .settings-panel-close:hover {
@@ -1359,7 +1366,10 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   cursor: pointer !important;
   font-size: 0.85rem !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease !important;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -1417,7 +1427,9 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   align-items: center;
   gap: 10px;
   background: transparent;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .dropdown-menu .menu-item i {
@@ -2315,7 +2327,9 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   width: auto !important;
   text-align: center !important;
   margin: 0 !important;
-  transition: transform 0.2s ease, color 0.2s ease !important;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease !important;
 }
 
 .bookmark-actions-group .menu-item span {
@@ -2332,7 +2346,11 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 }
 
 .bookmark-actions-group .menu-item:hover {
-  background-color: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--accent-color) 12%,
+    transparent
+  ) !important;
   border-color: var(--accent-color) !important;
   color: var(--text-primary) !important;
   box-shadow: 0 3px 8px color-mix(in srgb, var(--accent-color) 18%, transparent) !important;
@@ -2457,10 +2475,14 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   opacity: 0.85;
   margin-bottom: 2px;
   font-weight: 900 !important;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
-.segmented-control-item input[type="radio"]:not(:checked) + .control-label:hover {
+.segmented-control-item
+  input[type="radio"]:not(:checked)
+  + .control-label:hover {
   background: transparent;
   border-color: var(--accent-color);
   color: var(--text-primary);
@@ -2468,7 +2490,10 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   box-shadow: none;
 }
 
-.segmented-control-item input[type="radio"]:not(:checked) + .control-label:hover i {
+.segmented-control-item
+  input[type="radio"]:not(:checked)
+  + .control-label:hover
+  i {
   color: inherit;
   opacity: 1;
   transform: none;
@@ -2479,7 +2504,8 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   border-color: var(--accent-color) !important;
   color: var(--accent-contrast, #ffffff) !important;
   font-weight: 600;
-  box-shadow: 0 3px 12px color-mix(in srgb, var(--accent-color) 40%, transparent);
+  box-shadow: 0 3px 12px
+    color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 
 .segmented-control-item input[type="radio"]:checked + .control-label i,
@@ -2783,17 +2809,17 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 
 .habit-rank-badge.rank-1 {
   background: rgba(245, 158, 11, 0.18) !important;
-  color: #F59E0B !important;
+  color: #f59e0b !important;
 }
 
 .habit-rank-badge.rank-2 {
   background: rgba(156, 163, 175, 0.2) !important;
-  color: #9CA3AF !important;
+  color: #9ca3af !important;
 }
 
 .habit-rank-badge.rank-3 {
   background: rgba(217, 119, 6, 0.18) !important;
-  color: #D97706 !important;
+  color: #d97706 !important;
 }
 
 .visit-badge {
@@ -2805,7 +2831,11 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   font-weight: 700 !important;
   padding: 2px 6px !important;
   border-radius: 6px !important;
-  background: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--accent-color) 12%,
+    transparent
+  ) !important;
   color: var(--accent-color) !important;
   border: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent) !important;
   white-space: nowrap !important;

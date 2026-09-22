@@ -22,102 +22,204 @@ export function setupUIControlListeners(elements) {
     updateUILanguage(elements, val)
     renderFilteredBookmarks(uiState.bookmarkTree, elements)
   }
-  
-  if (elements.languageSwitcher.tagName === 'SELECT') {
-    elements.languageSwitcher.addEventListener("change", (e) => handleLanguageChange(e.target.value))
+
+  const buttonWeightScopes = ["bookmarks", "sidebar", "settings"]
+  const applyButtonWeight = (scope, value) => {
+    const scopes = scope === "all" ? buttonWeightScopes : [scope]
+    scopes.forEach((target) => {
+      document.body.setAttribute(`data-button-weight-${target}`, value)
+      localStorage.setItem(`buttonWeight-${target}`, value)
+    })
+  }
+
+  const syncButtonWeightControls = (scope, value) => {
+    document
+      .querySelectorAll("#button-weight-scope-select .setting-swatch")
+      .forEach((button) => {
+        button.classList.toggle("active", button.dataset.value === scope)
+      })
+    document
+      .querySelectorAll("#button-weight-value-select .setting-swatch")
+      .forEach((button) => {
+        button.classList.toggle("active", button.dataset.value === value)
+      })
+  }
+
+  const buttonWeightScopeSelect = document.getElementById(
+    "button-weight-scope-select",
+  )
+  const buttonWeightValueSelect = document.getElementById(
+    "button-weight-value-select",
+  )
+  let selectedButtonWeightScope = "all"
+  let selectedButtonWeightValue = "normal"
+  const savedButtonWeights = Object.fromEntries(
+    buttonWeightScopes.map((scope) => [
+      scope,
+      localStorage.getItem(`buttonWeight-${scope}`) || "normal",
+    ]),
+  )
+  buttonWeightScopes.forEach((scope) => {
+    document.body.setAttribute(
+      `data-button-weight-${scope}`,
+      savedButtonWeights[scope],
+    )
+  })
+  selectedButtonWeightValue =
+    savedButtonWeights.bookmarks === "bold" &&
+    savedButtonWeights.sidebar === "bold" &&
+    savedButtonWeights.settings === "bold"
+      ? "bold"
+      : "normal"
+  syncButtonWeightControls(selectedButtonWeightScope, selectedButtonWeightValue)
+
+  buttonWeightScopeSelect?.addEventListener("click", (event) => {
+    const button = event.target.closest(".setting-swatch")
+    if (!button) return
+    selectedButtonWeightScope = button.dataset.value
+    const currentValue =
+      selectedButtonWeightScope === "all"
+        ? savedButtonWeights.bookmarks === "bold" &&
+          savedButtonWeights.sidebar === "bold" &&
+          savedButtonWeights.settings === "bold"
+          ? "bold"
+          : "normal"
+        : savedButtonWeights[selectedButtonWeightScope]
+    selectedButtonWeightValue = currentValue
+    syncButtonWeightControls(selectedButtonWeightScope, currentValue)
+  })
+
+  buttonWeightValueSelect?.addEventListener("click", (event) => {
+    const button = event.target.closest(".setting-swatch")
+    if (!button) return
+    selectedButtonWeightValue = button.dataset.value
+    applyButtonWeight(selectedButtonWeightScope, selectedButtonWeightValue)
+    buttonWeightScopes.forEach((scope) => {
+      savedButtonWeights[scope] =
+        localStorage.getItem(`buttonWeight-${scope}`) || "normal"
+    })
+    syncButtonWeightControls(
+      selectedButtonWeightScope,
+      selectedButtonWeightValue,
+    )
+  })
+
+  if (elements.languageSwitcher.tagName === "SELECT") {
+    elements.languageSwitcher.addEventListener("change", (e) =>
+      handleLanguageChange(e.target.value),
+    )
   } else {
     elements.languageSwitcher.addEventListener("click", (e) => {
-      const btn = e.target.closest('.setting-swatch')
+      const btn = e.target.closest(".setting-swatch")
       if (!btn) return
-      
-      const swatches = elements.languageSwitcher.querySelectorAll('.setting-swatch')
-      swatches.forEach(s => s.classList.remove('active'))
-      btn.classList.add('active')
-      
+
+      const swatches =
+        elements.languageSwitcher.querySelectorAll(".setting-swatch")
+      swatches.forEach((s) => s.classList.remove("active"))
+      btn.classList.add("active")
+
       handleLanguageChange(btn.dataset.value)
     })
   }
 
   elements.themeSwitcher.addEventListener("click", (e) => {
-    const btn = e.target.closest('.theme-swatch');
-    if (!btn) return;
-    const val = btn.dataset.value;
-    
+    const btn = e.target.closest(".theme-swatch")
+    if (!btn) return
+    const val = btn.dataset.value
+
     // Update active class
-    const swatches = elements.themeSwitcher.querySelectorAll('.theme-swatch');
-    swatches.forEach(s => s.classList.remove('active'));
-    btn.classList.add('active');
-    
-    localStorage.setItem("appTheme", val);
-    updateTheme(elements, val);
+    const swatches = elements.themeSwitcher.querySelectorAll(".theme-swatch")
+    swatches.forEach((s) => s.classList.remove("active"))
+    btn.classList.add("active")
+
+    localStorage.setItem("appTheme", val)
+    updateTheme(elements, val)
   })
 
   // Toggle theme selection card (using event delegation for reliability)
   document.addEventListener("click", (e) => {
-    const toggleHeader = e.target.closest(".theme-toggle-header");
+    const toggleHeader = e.target.closest(".theme-toggle-header")
     if (toggleHeader) {
-      const card = toggleHeader.closest(".theme-selection-card, .font-selection-card, .view-selection-card");
+      const card = toggleHeader.closest(
+        ".theme-selection-card, .font-selection-card, .view-selection-card",
+      )
       if (card) {
-        card.classList.toggle("collapsed");
-        const cardType = card.classList.contains("theme-selection-card") ? "themeCardCollapsed" :
-                         card.classList.contains("font-selection-card") ? "fontCardCollapsed" :
-                         "viewCardCollapsed";
-        localStorage.setItem(cardType, card.classList.contains("collapsed"));
+        card.classList.toggle("collapsed")
+        const cardType = card.classList.contains("theme-selection-card")
+          ? "themeCardCollapsed"
+          : card.classList.contains("font-selection-card")
+            ? "fontCardCollapsed"
+            : "viewCardCollapsed"
+        localStorage.setItem(cardType, card.classList.contains("collapsed"))
       }
     }
-  });
+  })
 
   const handleFontChange = (val) => {
     // Remove all possible font classes
-    const fontClasses = Array.from(document.body.classList).filter(cls => cls.startsWith('font-'));
-    fontClasses.forEach(cls => document.body.classList.remove(cls));
-    
+    const fontClasses = Array.from(document.body.classList).filter((cls) =>
+      cls.startsWith("font-"),
+    )
+    fontClasses.forEach((cls) => document.body.classList.remove(cls))
+
     document.body.classList.add(`font-${val}`)
     localStorage.setItem("appFont", val)
 
     // Update active class if it's a grid
-    const swatches = elements.fontSwitcher.querySelectorAll('.theme-swatch, .font-swatch');
+    const swatches = elements.fontSwitcher.querySelectorAll(
+      ".theme-swatch, .font-swatch",
+    )
     if (swatches.length > 0) {
-      swatches.forEach(s => s.classList.remove('active'));
-      const activeBtn = elements.fontSwitcher.querySelector(`[data-value="${val}"]`);
-      if (activeBtn) activeBtn.classList.add('active');
+      swatches.forEach((s) => s.classList.remove("active"))
+      const activeBtn = elements.fontSwitcher.querySelector(
+        `[data-value="${val}"]`,
+      )
+      if (activeBtn) activeBtn.classList.add("active")
     }
-  };
+  }
 
-  if (elements.fontSwitcher.tagName === 'SELECT') {
-    elements.fontSwitcher.addEventListener("change", (e) => handleFontChange(e.target.value))
+  if (elements.fontSwitcher.tagName === "SELECT") {
+    elements.fontSwitcher.addEventListener("change", (e) =>
+      handleFontChange(e.target.value),
+    )
   } else {
     elements.fontSwitcher.addEventListener("click", (e) => {
-      const btn = e.target.closest('.theme-swatch, .font-swatch');
-      if (!btn) return;
-      handleFontChange(btn.dataset.value);
-    });
+      const btn = e.target.closest(".theme-swatch, .font-swatch")
+      if (!btn) return
+      handleFontChange(btn.dataset.value)
+    })
   }
 
   const handleViewChange = (val) => {
-    uiState.viewMode = val;
-    localStorage.setItem("appView", val);
-    renderFilteredBookmarks(uiState.bookmarkTree, elements);
-    saveUIState();
+    uiState.viewMode = val
+    localStorage.setItem("appView", val)
+    renderFilteredBookmarks(uiState.bookmarkTree, elements)
+    saveUIState()
 
-    if (elements.viewSwitcher.tagName !== 'SELECT') {
-      const swatches = elements.viewSwitcher.querySelectorAll('.theme-swatch, .view-swatch');
+    if (elements.viewSwitcher.tagName !== "SELECT") {
+      const swatches = elements.viewSwitcher.querySelectorAll(
+        ".theme-swatch, .view-swatch",
+      )
       if (swatches.length > 0) {
-        swatches.forEach(s => s.classList.remove('active'));
-        const activeBtn = elements.viewSwitcher.querySelector(`[data-value="${val}"]`);
-        if (activeBtn) activeBtn.classList.add('active');
+        swatches.forEach((s) => s.classList.remove("active"))
+        const activeBtn = elements.viewSwitcher.querySelector(
+          `[data-value="${val}"]`,
+        )
+        if (activeBtn) activeBtn.classList.add("active")
       }
     }
-  };
+  }
 
-  if (elements.viewSwitcher.tagName === 'SELECT') {
-    elements.viewSwitcher.addEventListener("change", (e) => handleViewChange(e.target.value));
+  if (elements.viewSwitcher.tagName === "SELECT") {
+    elements.viewSwitcher.addEventListener("change", (e) =>
+      handleViewChange(e.target.value),
+    )
   } else {
     elements.viewSwitcher.addEventListener("click", (e) => {
-      const btn = e.target.closest('.theme-swatch, .view-swatch');
-      if (!btn) return;
-      handleViewChange(btn.dataset.value);
-    });
+      const btn = e.target.closest(".theme-swatch, .view-swatch")
+      if (!btn) return
+      handleViewChange(btn.dataset.value)
+    })
   }
 
   elements.toggleCheckboxesButton.addEventListener("click", () => {
@@ -220,10 +322,10 @@ export function setupUIControlListeners(elements) {
     elements.deleteFolderButton.classList.toggle("hidden", !hasSelectedFolder)
   }
 
-  const dashboardView = document.getElementById("dashboard-view");
+  const dashboardView = document.getElementById("dashboard-view")
 
   elements.scrollToTopButton.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" })
   })
 
   if (elements.reportBugButton) {
@@ -232,14 +334,14 @@ export function setupUIControlListeners(elements) {
         const language = localStorage.getItem("appLanguage") || "en"
         const t = translations[language] || translations.en
         const bugUrl = t.reportBugUrl
-        
+
         let version = "N/A"
         try {
           version = chrome.runtime.getManifest().version
         } catch (e) {
           console.warn("Could not get extension version", e)
         }
-        
+
         const userAgent = navigator.userAgent
 
         const message = `
@@ -266,23 +368,26 @@ export function setupUIControlListeners(elements) {
             () => {
               window.open(bugUrl, "_blank")
             },
-            () => {}
+            () => {},
           )
 
           // Add copy functionality to the mini buttons after the modal is shown
           setTimeout(() => {
-            document.querySelectorAll(".copy-btn-mini").forEach(btn => {
+            document.querySelectorAll(".copy-btn-mini").forEach((btn) => {
               btn.onclick = (e) => {
                 e.stopPropagation()
                 const targetId = btn.getAttribute("data-copy")
                 const targetEl = document.getElementById(targetId)
                 if (targetEl) {
                   const text = targetEl.textContent
-                  navigator.clipboard.writeText(text).then(() => {
-                    const originalIcon = btn.innerHTML
-                    btn.innerHTML = '<i class="fas fa-check"></i>'
-                    setTimeout(() => btn.innerHTML = originalIcon, 2000)
-                  }).catch(err => console.error("Copy failed", err))
+                  navigator.clipboard
+                    .writeText(text)
+                    .then(() => {
+                      const originalIcon = btn.innerHTML
+                      btn.innerHTML = '<i class="fas fa-check"></i>'
+                      setTimeout(() => (btn.innerHTML = originalIcon), 2000)
+                    })
+                    .catch((err) => console.error("Copy failed", err))
                 }
               }
             })
@@ -301,35 +406,42 @@ export function setupUIControlListeners(elements) {
     })
   }
 
-  const header = document.querySelector('.header.flex-header')
-  const searchWrapper = document.querySelector('.webview-search-wrapper')
-  let scrollTicking = false;
+  const header = document.querySelector(".header.flex-header")
+  const searchWrapper = document.querySelector(".webview-search-wrapper")
+  let scrollTicking = false
   const updateStickySearchState = () => {
-    const scrollY = window.scrollY;
-    document.body.classList.toggle("is-scrolled", scrollY > 10);
+    const scrollY = window.scrollY
+    document.body.classList.toggle("is-scrolled", scrollY > 10)
     if (elements.scrollToTopButton) {
-      const isSettingsOpen = document.body.classList.contains("settings-panel-open");
-      elements.scrollToTopButton.classList.toggle("hidden", scrollY < 50 || isSettingsOpen);
+      const isSettingsOpen = document.body.classList.contains(
+        "settings-panel-open",
+      )
+      elements.scrollToTopButton.classList.toggle(
+        "hidden",
+        scrollY < 50 || isSettingsOpen,
+      )
     }
-    const stickyEls = document.querySelectorAll(".sticky-search, .webview-search-wrapper");
+    const stickyEls = document.querySelectorAll(
+      ".sticky-search, .webview-search-wrapper",
+    )
     stickyEls.forEach((el) => {
-      const isStuck = scrollY > 0 && el.getBoundingClientRect().top <= 1;
-      el.classList.toggle("is-stuck", isStuck);
-    });
-  };
+      const isStuck = scrollY > 0 && el.getBoundingClientRect().top <= 1
+      el.classList.toggle("is-stuck", isStuck)
+    })
+  }
 
   const handleScroll = () => {
     if (!scrollTicking) {
       window.requestAnimationFrame(() => {
-        updateStickySearchState();
-        scrollTicking = false;
-      });
-      scrollTicking = true;
+        updateStickySearchState()
+        scrollTicking = false
+      })
+      scrollTicking = true
     }
-  };
+  }
 
-  window.addEventListener("scroll", handleScroll, { passive: true });
-  updateStickySearchState();
+  window.addEventListener("scroll", handleScroll, { passive: true })
+  updateStickySearchState()
 
   elements.searchInput.addEventListener(
     "input",
@@ -349,7 +461,9 @@ export function setupUIControlListeners(elements) {
           (bookmark) =>
             bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
             bookmark.url?.toLowerCase().includes(uiState.searchQuery) ||
-            uiState.bookmarkNotes?.[bookmark.id]?.toLowerCase().includes(uiState.searchQuery),
+            uiState.bookmarkNotes?.[bookmark.id]
+              ?.toLowerCase()
+              .includes(uiState.searchQuery),
         )
       }
       renderFilteredBookmarks(uiState.bookmarkTree, elements)
@@ -386,7 +500,9 @@ export function setupUIControlListeners(elements) {
         (bookmark) =>
           bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
           bookmark.url?.toLowerCase().includes(uiState.searchQuery) ||
-          uiState.bookmarkNotes?.[bookmark.id]?.toLowerCase().includes(uiState.searchQuery),
+          uiState.bookmarkNotes?.[bookmark.id]
+            ?.toLowerCase()
+            .includes(uiState.searchQuery),
       )
     }
     renderFilteredBookmarks(uiState.bookmarkTree, elements)
@@ -408,7 +524,9 @@ export function setupUIControlListeners(elements) {
         (bookmark) =>
           bookmark.title?.toLowerCase().includes(uiState.searchQuery) ||
           bookmark.url?.toLowerCase().includes(uiState.searchQuery) ||
-          uiState.bookmarkNotes?.[bookmark.id]?.toLowerCase().includes(uiState.searchQuery),
+          uiState.bookmarkNotes?.[bookmark.id]
+            ?.toLowerCase()
+            .includes(uiState.searchQuery),
       )
     }
     renderFilteredBookmarks(uiState.bookmarkTree, elements)
@@ -475,7 +593,7 @@ export function setupUIControlListeners(elements) {
 
       // Save collapsed state to local storage
       let collapsedStates = JSON.parse(
-        localStorage.getItem("settingsSectionCollapsedStates") || "{}"
+        localStorage.getItem("settingsSectionCollapsedStates") || "{}",
       )
       const sectionId = target.dataset.i18n
 
@@ -486,7 +604,7 @@ export function setupUIControlListeners(elements) {
       }
       localStorage.setItem(
         "settingsSectionCollapsedStates",
-        JSON.stringify(collapsedStates)
+        JSON.stringify(collapsedStates),
       )
     }
   })
@@ -504,7 +622,9 @@ export function setupUIControlListeners(elements) {
         settingsScrollTopBtn.classList.remove("visible")
       }
     }
-    elements.settingsMenu.addEventListener("scroll", checkSettingsScroll, { passive: true })
+    elements.settingsMenu.addEventListener("scroll", checkSettingsScroll, {
+      passive: true,
+    })
 
     settingsScrollTopBtn.addEventListener("click", (e) => {
       e.stopPropagation()
@@ -525,7 +645,7 @@ export function setupUIControlListeners(elements) {
     if (elements.scrollToTopButton) {
       elements.scrollToTopButton.classList.toggle(
         "hidden",
-        !isClosed || window.scrollY < 50
+        !isClosed || window.scrollY < 50,
       )
     }
 
@@ -547,13 +667,16 @@ export function setupUIControlListeners(elements) {
     "wheel",
     (e) => {
       if (document.body.classList.contains("settings-panel-open")) {
-        if (elements.settingsMenu && !elements.settingsMenu.contains(e.target)) {
+        if (
+          elements.settingsMenu &&
+          !elements.settingsMenu.contains(e.target)
+        ) {
           elements.settingsMenu.scrollTop += e.deltaY
           e.preventDefault()
         }
       }
     },
-    { passive: false }
+    { passive: false },
   )
 
   // Nút kiểm tra tình trạng link (Check Links)
@@ -623,7 +746,10 @@ export function setupUIControlListeners(elements) {
   })
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !elements.settingsMenu.classList.contains("hidden")) {
+    if (
+      e.key === "Escape" &&
+      !elements.settingsMenu.classList.contains("hidden")
+    ) {
       closeSettingsMenu()
     }
   })

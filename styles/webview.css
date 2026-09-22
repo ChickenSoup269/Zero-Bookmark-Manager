@@ -7,7 +7,15 @@
 body {
   width: 100%;
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   color: var(--text-primary);
   transition:
     background-color 0.3s ease,
@@ -266,12 +274,19 @@ body {
   border: 1px solid var(--border-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   cursor: default;
-  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .sidebar-total-count:hover {
   background: color-mix(in srgb, var(--accent-color) 5%, var(--bg-secondary));
-  border-color: color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
+  border-color: color-mix(
+    in srgb,
+    var(--accent-color) 40%,
+    var(--border-color)
+  );
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
@@ -341,7 +356,10 @@ body {
   background: var(--bg-tertiary);
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  transition: border-color 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.18s ease;
+  transition:
+    border-color 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease;
 }
 
 .sidebar-search:hover {
@@ -843,7 +861,11 @@ body {
   left: 0;
   height: 3px;
   width: 100%;
-  background: linear-gradient(90deg, var(--accent-color, #70a146), var(--accent-color-hover, #8bc34a));
+  background: linear-gradient(
+    90deg,
+    var(--accent-color, #70a146),
+    var(--accent-color-hover, #8bc34a)
+  );
   transform-origin: left center;
   animation: undoToastCountdown var(--undo-duration, 9000ms) linear forwards;
 }
@@ -878,8 +900,6 @@ body {
     transform: translateY(8px) scale(0.95);
   }
 }
-
-
 
 .duplicate-merge-content {
   width: min(980px, 96vw);
@@ -1548,7 +1568,9 @@ body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 .sidebar-section-content.collapsed
@@ -1637,7 +1659,9 @@ body {
   color: var(--text-primary);
   font-size: 0.83rem;
   font-weight: 500;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
   position: relative;
   margin-bottom: 2px;
   user-select: none;
@@ -1794,11 +1818,19 @@ body {
 
 .sidebar-folder-item.active .folder-toggle:hover {
   color: var(--accent-contrast, #ffffff) !important;
-  background: color-mix(in srgb, var(--accent-contrast, #ffffff) 20%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--accent-contrast, #ffffff) 20%,
+    transparent
+  ) !important;
 }
 
 .sidebar-folder-item.active .folder-child-count {
-  background: color-mix(in srgb, var(--accent-contrast, #ffffff) 25%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--accent-contrast, #ffffff) 25%,
+    transparent
+  ) !important;
   color: var(--accent-contrast, #ffffff) !important;
   border-color: transparent !important;
 }
@@ -1908,7 +1940,8 @@ body {
   padding: 8px 12px;
   margin: 4px 0 10px 0;
   background: var(--bg-secondary);
-  border: 1.5px dashed color-mix(in srgb, var(--accent-color) 35%, var(--border-color));
+  border: 1.5px dashed
+    color-mix(in srgb, var(--accent-color) 35%, var(--border-color));
   border-radius: 8px;
   color: var(--text-primary);
   font-size: 0.83rem;
@@ -1948,7 +1981,8 @@ body {
   background: var(--bg-tertiary);
   border-color: var(--accent-color);
   color: var(--text-primary);
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent-color) 20%, transparent);
+  box-shadow: 0 3px 10px
+    color-mix(in srgb, var(--accent-color) 20%, transparent);
   transform: translateY(-1px);
 }
 
@@ -3660,9 +3694,33 @@ body.settings-panel-open {
   overflow: hidden !important;
 }
 
+html:has(body.settings-panel-open) {
+  overflow: hidden !important;
+}
+
+body.settings-panel-open .sidebar,
+body.settings-panel-open .sidebar-classic {
+  overflow: hidden !important;
+}
+
 body.settings-panel-open .container {
   pointer-events: none;
   user-select: none;
+}
+
+body[data-button-weight-sidebar="bold"] .sidebar button,
+body[data-button-weight-sidebar="bold"] .sidebar .sidebar-menu-item,
+body[data-button-weight-sidebar="bold"] .sidebar .sidebar-sort-item,
+body[data-button-weight-sidebar="bold"] .sidebar .sidebar-action-btn,
+body[data-button-weight-sidebar="bold"] .sidebar .sidebar-admin-btn,
+body[data-button-weight-sidebar="bold"] .sidebar-classic button,
+body[data-button-weight-sidebar="bold"] .sidebar-classic .menu-item {
+  font-weight: 700;
+}
+
+body[data-button-weight-settings="bold"] .dropdown-menu-2 button,
+body[data-button-weight-settings="bold"] .dropdown-menu-2 .menu-item {
+  font-weight: 700;
 }
 
 body.settings-panel-open .dropdown-menu-2,
@@ -3820,7 +3878,9 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .language-settings-row #add-custom-language-option:hover {
@@ -3955,7 +4015,9 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   border: 1px solid transparent;
   color: var(--text-primary);
   cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -4014,7 +4076,11 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   padding: 8px 3px !important;
   min-height: 52px !important;
   border-radius: 8px !important;
-  background-color: color-mix(in srgb, var(--bg-primary) 70%, var(--bg-secondary)) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--bg-primary) 70%,
+    var(--bg-secondary)
+  ) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
   cursor: pointer;
@@ -4030,7 +4096,9 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   width: auto !important;
   text-align: center !important;
   margin: 0 !important;
-  transition: transform 0.2s ease, color 0.2s ease !important;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease !important;
 }
 
 .dropdown-menu-2 .bookmark-actions-group .menu-item span,
@@ -4049,7 +4117,11 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
 
 .dropdown-menu-2 .bookmark-actions-group .menu-item:hover,
 .bookmark-actions-group .menu-item:hover {
-  background-color: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--accent-color) 12%,
+    transparent
+  ) !important;
   border-color: var(--accent-color) !important;
   color: var(--text-primary) !important;
   box-shadow: 0 3px 8px color-mix(in srgb, var(--accent-color) 18%, transparent) !important;
@@ -4172,7 +4244,10 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, border-color 0.2s ease;
+  transition:
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease,
+    border-color 0.2s ease;
   font-size: 14px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
   position: relative;
@@ -4182,7 +4257,7 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
 
 .dropdown-menu-2 .theme-swatch:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
   z-index: 5;
 }
 
@@ -4191,7 +4266,7 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   box-shadow:
     0 0 0 2.5px var(--bg-primary),
     0 0 0 4.5px var(--accent-color),
-    0 4px 12px rgba(0, 0, 0, 0.2);
+    0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .dropdown-menu-2 .theme-swatch.active:hover {
@@ -4199,7 +4274,7 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   box-shadow:
     0 0 0 2.5px var(--bg-primary),
     0 0 0 4.5px var(--accent-color),
-    0 8px 18px rgba(0, 0, 0, 0.3);
+    0 4px 9px rgba(0, 0, 0, 0.16);
   z-index: 5;
 }
 
@@ -4250,8 +4325,17 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   color: var(--accent-contrast, #ffffff) !important;
   border-color: var(--accent-color) !important;
   font-weight: 600;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent-color) 35%, transparent) !important;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent-color) 16%, transparent) !important;
   transform: none !important;
+}
+
+.dropdown-menu-2 .setting-swatch.active {
+  outline: none;
+}
+
+.dropdown-menu-2 .setting-swatch.active:focus-visible {
+  outline: 1px solid var(--accent-color);
+  outline-offset: 1px;
 }
 
 .dropdown-menu-2 .font-swatch.active:hover,
@@ -4775,7 +4859,10 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   }
 }
 
-.dropdown-menu-2 .segmented-control-item input[type="radio"]:not(:checked) + .control-label:hover {
+.dropdown-menu-2
+  .segmented-control-item
+  input[type="radio"]:not(:checked)
+  + .control-label:hover {
   background: transparent !important;
   border-color: var(--accent-color) !important;
   color: var(--text-primary) !important;
@@ -4783,13 +4870,18 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   box-shadow: none;
 }
 
-.dropdown-menu-2 .segmented-control-item input[type="radio"]:not(:checked) + .control-label:hover i {
+.dropdown-menu-2
+  .segmented-control-item
+  input[type="radio"]:not(:checked)
+  + .control-label:hover
+  i {
   color: inherit !important;
   opacity: 1;
   transform: none;
 }
 
-.dropdown-menu-2 .quick-open-settings
+.dropdown-menu-2
+  .quick-open-settings
   .segmented-control-item
   input[type="radio"]:checked
   + .control-label {
@@ -4797,15 +4889,18 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   border-color: var(--accent-color) !important;
   color: var(--accent-contrast, #ffffff) !important;
   font-weight: 600;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 40%, transparent) !important;
+  box-shadow: 0 4px 14px
+    color-mix(in srgb, var(--accent-color) 40%, transparent) !important;
 }
 
-.dropdown-menu-2 .quick-open-settings
+.dropdown-menu-2
+  .quick-open-settings
   .segmented-control-item
   input[type="radio"]:checked
   + .control-label
   i,
-.dropdown-menu-2 .quick-open-settings
+.dropdown-menu-2
+  .quick-open-settings
   .segmented-control-item
   input[type="radio"]:checked
   + .control-label
@@ -4814,7 +4909,8 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   opacity: 1;
 }
 
-.dropdown-menu-2 .quick-open-settings
+.dropdown-menu-2
+  .quick-open-settings
   .segmented-control-item
   input[type="radio"]:checked
   + .control-label:hover {
@@ -6228,7 +6324,12 @@ textarea.error {
   margin: 0 calc(-1 * var(--spacing-md, 16px)) 8px !important;
   padding: 14px calc(24px + var(--spacing-md, 16px)) !important;
   border-bottom: 1px solid transparent !important;
-  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, backdrop-filter 0.25s ease, padding 0.2s ease !important;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    backdrop-filter 0.25s ease,
+    padding 0.2s ease !important;
   pointer-events: auto !important;
   box-sizing: border-box !important;
 }
@@ -6252,7 +6353,10 @@ body.is-scrolled .webview-search-wrapper {
   border-radius: 12px !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
   padding: 6px 14px !important;
-  transition: border-color 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.18s ease !important;
+  transition:
+    border-color 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease !important;
 }
 
 .webview-search-wrapper .sidebar-search:hover {
@@ -6262,7 +6366,9 @@ body.is-scrolled .webview-search-wrapper {
 
 .webview-search-wrapper .sidebar-search:focus-within {
   border-color: var(--accent-color) !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 2px 10px rgba(0, 0, 0, 0.06) !important;
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.15),
+    0 2px 10px rgba(0, 0, 0, 0.06) !important;
   background-color: var(--bg-primary) !important;
 }
 
@@ -6274,7 +6380,10 @@ body.is-scrolled .webview-search-wrapper {
 .webview-search-wrapper .settings-container .button.settings {
   border-radius: 10px !important;
   backface-visibility: hidden;
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.18s ease, border-color 0.18s ease !important;
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease !important;
 }
 
 .webview-search-wrapper .settings-container .button.settings:hover {
@@ -6537,12 +6646,20 @@ body.is-scrolled .webview-search-wrapper {
   min-height: 48px !important;
   flex-shrink: 0 !important;
   box-sizing: border-box !important;
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease !important;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease !important;
 }
 
 .habit-bookmark-row:hover {
   transform: translateY(-1px) !important;
-  border-color: color-mix(in srgb, var(--accent-color) 45%, transparent) !important;
+  border-color: color-mix(
+    in srgb,
+    var(--accent-color) 45%,
+    transparent
+  ) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
   background: var(--bg-secondary) !important;
 }
@@ -6613,19 +6730,19 @@ body.is-scrolled .webview-search-wrapper {
 
 .habit-rank-badge.rank-1 {
   background: rgba(245, 158, 11, 0.18) !important;
-  color: #F59E0B !important;
+  color: #f59e0b !important;
   border: 1px solid rgba(245, 158, 11, 0.35) !important;
 }
 
 .habit-rank-badge.rank-2 {
   background: rgba(156, 163, 175, 0.2) !important;
-  color: #9CA3AF !important;
+  color: #9ca3af !important;
   border: 1px solid rgba(156, 163, 175, 0.35) !important;
 }
 
 .habit-rank-badge.rank-3 {
   background: rgba(217, 119, 6, 0.18) !important;
-  color: #D97706 !important;
+  color: #d97706 !important;
   border: 1px solid rgba(217, 119, 6, 0.35) !important;
 }
 
@@ -6638,7 +6755,11 @@ body.is-scrolled .webview-search-wrapper {
   font-weight: 700 !important;
   padding: 3px 8px !important;
   border-radius: 6px !important;
-  background: color-mix(in srgb, var(--accent-color) 12%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--accent-color) 12%,
+    transparent
+  ) !important;
   color: var(--accent-color) !important;
   border: 1px solid color-mix(in srgb, var(--accent-color) 28%, transparent) !important;
   white-space: nowrap !important;
@@ -6666,7 +6787,7 @@ body.is-scrolled .webview-search-wrapper {
 
 .stale-date-badge i {
   font-size: 0.7rem !important;
-  color: #8B5CF6 !important;
+  color: #8b5cf6 !important;
 }
 
 .date-badge {
@@ -6717,8 +6838,6 @@ body.is-scrolled .webview-search-wrapper {
   color: var(--text-secondary, #666);
   font-size: 1.1rem;
 }
-
-
 
 #sidebar-tags-list {
   padding-bottom: 30px;

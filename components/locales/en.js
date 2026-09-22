@@ -76,7 +76,8 @@ export const en = {
   openSidePanel: "Open Side Panel",
   deleteBookmarks: "Delete Selected",
   deleteSelected: "Delete Selected",
-  deleteBookmarksConfirm: "Are you sure you want to delete the selected bookmarks?",
+  deleteBookmarksConfirm:
+    "Are you sure you want to delete the selected bookmarks?",
   deleteBookmarksSuccess: "Selected bookmarks deleted successfully!",
   move: "Move",
   edit: "Edit",
@@ -114,19 +115,23 @@ export const en = {
   safeDeletePrompt: "Choose how to delete this folder:",
   unnestBookmarksOption: "Delete folder only (move bookmarks to parent)",
   deleteAllOption: "Delete folder and all contents",
-  mergeFoldersDesc: "Find and merge duplicate folders across branches into one single folder.",
-  noDuplicateFoldersFound: "No duplicate folders found! Your folder structure is tidy.",
+  mergeFoldersDesc:
+    "Find and merge duplicate folders across branches into one single folder.",
+  noDuplicateFoldersFound:
+    "No duplicate folders found! Your folder structure is tidy.",
   duplicateGroupFound: "duplicate folders found with name",
   mergeIntoThis: "Merge into this folder",
   mergeSuccess: "Folders merged successfully!",
-  autoSortDesc: "Sort folders and bookmarks in alphabetical order or by items count.",
+  autoSortDesc:
+    "Sort folders and bookmarks in alphabetical order or by items count.",
   sortAlphabeticalAZ: "Sort A → Z (Alphabetical)",
   sortAlphabeticalZA: "Sort Z → A (Reverse)",
   sortByItemCount: "Sort by Item Count (Most items first)",
   sortScopeAll: "Apply to entire library",
   sortScopeSelected: "Apply to selected folder only",
   sortSuccess: "Folders sorted successfully!",
-  emptyFoldersDesc: "Quickly find and remove all empty folders that contain no bookmarks or subfolders.",
+  emptyFoldersDesc:
+    "Quickly find and remove all empty folders that contain no bookmarks or subfolders.",
   emptyFoldersFoundCount: "empty folders found.",
   cleanEmptySuccess: "Empty folders cleaned successfully!",
   cleanAllEmptyBtn: "Delete All Empty Folders",
@@ -525,11 +530,20 @@ export const en = {
   countModeFolders: "Folders",
   countModeBoth: "Both",
   countModeOff: "Off",
+  buttonWeightTitle: "Button weight",
+  buttonWeightAll: "All",
+  buttonWeightBookmarks: "Bookmarks",
+  buttonWeightSidebar: "Sidebar",
+  buttonWeightSettings: "Settings",
+  buttonWeightNormal: "Normal",
+  buttonWeightBold: "Bold",
 
   checkHealthModalTitle: "Check Link Health",
-  checkHealthModalDesc: "Choose scope to check for dead (404/500), malware, or risky links:",
+  checkHealthModalDesc:
+    "Choose scope to check for dead (404/500), malware, or risky links:",
   checkDuplicatesModalTitle: "Check Duplicate Bookmarks",
-  checkDuplicatesModalDesc: "Choose scope to check for duplicate bookmark URLs:",
+  checkDuplicatesModalDesc:
+    "Choose scope to check for duplicate bookmark URLs:",
   scopeAllBookmarks: "All Bookmarks",
   scopeAllBookmarksDesc: "Scan all bookmarks across the entire browser",
   scopeByFolder: "By Specific Folder",
@@ -548,8 +562,10 @@ export const en = {
   checkLinksInFolder: "Check Links in Folder",
   checkDuplicatesInFolder: "Check Duplicates in Folder",
   checkHealthProgressCount: "Checking {0} links... Please wait.",
-  checkHealthCompletedIssues: "Finished! Checked {0} links. Found {1} broken or suspicious links.",
-  checkHealthCompletedClean: "Finished! Checked {0} links. All appear healthy and safe.",
+  checkHealthCompletedIssues:
+    "Finished! Checked {0} links. Found {1} broken or suspicious links.",
+  checkHealthCompletedClean:
+    "Finished! Checked {0} links. All appear healthy and safe.",
 
   addCustomLanguage: "Add custom language",
   customLanguageTitle: "Add Custom Language",
@@ -709,7 +725,8 @@ export const en = {
   cloudSyncTestWarning:
     'Note: Google Drive Sync is currently in test mode (pending domain verification). If your login is blocked or restricted, please <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0MVV6-Z7sxb-4Zpv5wRyBcKPsl8EbOqRAnntgrdBc_gOXpQ/viewform?usp=dialog" target="_blank" style="color: var(--accent-color); text-decoration: underline; font-weight: 600;">submit your email via this form &nearr;</a> to be granted access.',
   cloudSyncTitle: "Cloud Sync & Backup",
-  cloudSyncSubtitle: "Backup and restore your bookmarks securely across devices.",
+  cloudSyncSubtitle:
+    "Backup and restore your bookmarks securely across devices.",
   cloudSyncProviderGithub: "GitHub",
   cloudSyncProviderGitlab: "GitLab",
   cloudSyncProviderGdrive: "Google Drive",
@@ -723,19 +740,23 @@ export const en = {
   cloudSyncGitlabSnippetLabel: "Snippet ID (optional):",
   cloudSyncGitlabSnippetPlaceholder: "Leave blank to auto-create new Snippet",
   cloudSyncGuideTitle: "Step-by-step Setup Guide",
-  cloudSyncTokenSecureNotice: "Tokens are stored locally in your browser storage and never transmitted elsewhere.",
+  cloudSyncTokenSecureNotice:
+    "Tokens are stored locally in your browser storage and never transmitted elsewhere.",
   supportTitle: "Support",
   donateTitle: "Support Project",
   donateDesc: "Help keep Zero Bookmark Manager free & updated!",
   donateModalTitle: "Support Developer",
-  donateModalSubtitle: "Every cup of coffee fuels new features and improvements!",
+  donateModalSubtitle:
+    "Every cup of coffee fuels new features and improvements!",
   donateScanHint: "Scan with MoMo or any Banking app",
   donateBank: "Banking",
   donateScanBankHint: "Scan with any Banking app",
   donateKofiTitle: "Buy me a Coffee on Ko-fi",
-  donateKofiDesc: "Support quickly and securely via International Card or PayPal.",
+  donateKofiDesc:
+    "Support quickly and securely via International Card or PayPal.",
   donateOpenKofi: "Open Ko-fi Page",
-  donateThankYou: "💖 Thank you for using and supporting Zero Bookmark Manager!",
+  donateThankYou:
+    "💖 Thank you for using and supporting Zero Bookmark Manager!",
   cpTabAll: "All",
   cpTabBookmarks: "Bookmarks",
   cpTabNotes: "Notes",
@@ -750,7 +771,8 @@ export const en = {
   analyticsTitle: "Analytics & Insights",
   saveSession: "Save Current Session (Tabs)",
   openInFullTab: "Open in Full Tab",
-  analyticsDesc: "Your bookmarking habits, trends, and organization health at a glance.",
+  analyticsDesc:
+    "Your bookmarking habits, trends, and organization health at a glance.",
   analyticsTabOverview: "Overview",
   analyticsTabActivity: "Activity & Trends",
   analyticsTabDistribution: "Domains & Tags",
@@ -783,8 +805,10 @@ export const en = {
   analyticsInsightUnsortedAction: "Organize Folders",
   analyticsInsightBroken: "broken or slow links detected.",
   analyticsInsightBrokenAction: "Run Health Cleanup",
-  analyticsInsightGreatJob: "Your bookmark library is in pristine condition! No optimization needed.",
-  visitTrackingHint: "Click open bookmarks to record visit counts. Recent bookmarks shown below:",
+  analyticsInsightGreatJob:
+    "Your bookmark library is in pristine condition! No optimization needed.",
+  visitTrackingHint:
+    "Click open bookmarks to record visit counts. Recent bookmarks shown below:",
   quickAccessItems: "Quick access items",
   items: "items",
   secureLinks: "secure links",
@@ -808,10 +832,10 @@ export const en = {
   visits: "visits",
   recent: "Recent",
   insightTagsDesc: "Organizing with tags makes searching instant and flexible.",
-  insightFoldersDesc: "Group related bookmarks into subfolders for a tidy hierarchy.",
+  insightFoldersDesc:
+    "Group related bookmarks into subfolders for a tidy hierarchy.",
   insightHealthDesc: "Clean dead links to keep your library healthy and fast.",
   recentActivityTimeline: "Recently Added Bookmarks",
   scanNow: "Scan Now",
   scanHealthTitle: "Scan link health",
 }
-
