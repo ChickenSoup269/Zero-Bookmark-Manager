@@ -687,8 +687,8 @@ export function initSync(elements) {
     // ==========================================
     async function getDriveAuthToken(interactive = true) {
         return new Promise((resolve, reject) => {
-            if (!chrome.identity) {
-                reject(new Error('chrome.identity API is not available. Please check manifest permissions.'));
+            if (!chrome.identity || typeof chrome.identity.getAuthToken !== 'function') {
+                reject(new Error('Google Drive sync requires the chrome.identity API, which is not available in this browser.'));
                 return;
             }
             chrome.identity.getAuthToken({ interactive }, function (token) {

@@ -492,10 +492,31 @@ function getQuickSaveUrl(tab) {
   return `quick-save.html${tabIdParam}`
 }
 
+// Firefox không có chrome.system.display — fallback sang màn hình chính
+function getWorkArea(callback) {
+  if (chrome.system?.display?.getInfo) {
+    chrome.system.display.getInfo((displays) => {
+      const display = Array.isArray(displays) ? displays[0] : null
+      if (display?.workArea) {
+        callback(display.workArea)
+      } else {
+        callback({
+          width: typeof screen !== "undefined" ? screen.availWidth : 1920,
+          height: typeof screen !== "undefined" ? screen.availHeight : 1080,
+        })
+      }
+    })
+  } else {
+    callback({
+      width: typeof screen !== "undefined" ? screen.availWidth : 1920,
+      height: typeof screen !== "undefined" ? screen.availHeight : 1080,
+    })
+  }
+}
+
 function createPopupWindow(tab) {
-  chrome.system.display.getInfo((displays) => {
-    const display = displays[0]
-    const screenWidth = display.workArea.width
+  getWorkArea((workArea) => {
+    const screenWidth = workArea.width
 
     const popupWidth = 380
     const popupHeight = 680
@@ -510,7 +531,7 @@ function createPopupWindow(tab) {
         width: popupWidth,
         height: popupHeight,
         left: screenWidth - popupWidth - padding,
-        top: display.workArea.height - popupHeight - padding,
+        top: workArea.height - popupHeight - padding,
       },
       (window) => {
         popupWindowId = window.id
@@ -520,9 +541,8 @@ function createPopupWindow(tab) {
 }
 
 function createQuickSaveWindow(tab) {
-  chrome.system.display.getInfo((displays) => {
-    const display = displays[0]
-    const screenWidth = display.workArea.width
+  getWorkArea((workArea) => {
+    const screenWidth = workArea.width
 
     const popupWidth = 420
     const popupHeight = 560
@@ -535,7 +555,7 @@ function createQuickSaveWindow(tab) {
         width: popupWidth,
         height: popupHeight,
         left: screenWidth - popupWidth - padding,
-        top: display.workArea.height - popupHeight - padding,
+        top: workArea.height - popupHeight - padding,
       },
       (window) => {
         quickSaveWindowId = window.id
@@ -582,7 +602,14 @@ chrome.action.onClicked.addListener((tab) => {
         }
       })
     } else if (action === "sidepanel") {
-      chrome.sidePanel.open({ windowId: tab.windowId })
+      // Chrome dùng sidePanel, Firefox dùng sidebarAction
+      if (chrome.sidePanel?.open) {
+        chrome.sidePanel.open({ windowId: tab.windowId })
+      } else if (chrome.sidebarAction?.toggle) {
+        chrome.sidebarAction.toggle()
+      } else {
+        chrome.tabs.create({ url: chrome.runtime.getURL("index.html") })
+      }
     } else if (action === "quickSave") {
       findExistingExtensionPopup("quick-save.html", (existingWindow) => {
         if (existingWindow) {
