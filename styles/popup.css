@@ -1267,11 +1267,13 @@ body.is-scrolled .sticky-search {
   align-items: center;
   justify-content: space-between;
   min-height: 38px;
-  padding: 2px 2px 8px 2px;
+  /* Extend across the menu so scrolled content does not leave gaps at the edges. */
+  margin: -10px -12px 6px;
+  padding: 10px 12px 8px;
   border-bottom: 1px solid var(--border-color);
-  margin-bottom: 4px;
+  box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.18);
   position: sticky;
-  top: -10px;
+  top: -10px; /* Align with the menu edge, including its 10px top padding. */
   background: var(--bg-primary);
   z-index: 10;
 }
@@ -1317,6 +1319,12 @@ body.is-scrolled .sticky-search {
 }
 
 body.settings-panel-open {
+  overflow: hidden !important;
+}
+
+/* html overflow-x: clip prevents body overflow from reaching the viewport, so the
+  viewport can still scroll and show a second scrollbar beside the settings menu. */
+html.settings-panel-open {
   overflow: hidden !important;
 }
 
@@ -2929,4 +2937,85 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 .time-buckets-grid {
   grid-template-columns: 1fr 1fr !important;
   gap: 8px !important;
+}
+
+/* ============================================
+  SIDEBAR SETTINGS POLISH (popup)
+  Consistent vertical rhythm, comfortable touch targets,
+  and softer hover states.
+  ============================================ */
+
+/* Let the flex gap control spacing consistently instead of individual margins. */
+#settings-menu {
+  gap: 10px;
+}
+
+#settings-menu > .dropdown-section-title,
+#settings-menu > .menu-group,
+#settings-menu > .settings-card,
+#settings-menu > .dropdown-donate-card {
+  margin: 0;
+}
+
+/* Section title: consistent height and softer corners. */
+#settings-menu > .dropdown-section-title {
+  padding: 8px 10px;
+  min-height: 32px;
+  border-radius: 8px;
+}
+
+/* Toggle row: larger target and more space between the label and switch. */
+#settings-menu .toggle-row {
+  min-height: 38px;
+  gap: 12px;
+  padding: 8px 10px;
+  font-size: 0.86rem;
+  border-radius: 8px;
+}
+
+#settings-menu .toggle-row:hover {
+  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  border-color: transparent;
+}
+
+#settings-menu .toggle-row span:last-of-type {
+  margin-left: auto;
+}
+
+/* Menu item (Configure Shortcuts, Local Storage, Show Guide...). */
+#settings-menu .menu-item {
+  min-height: 38px;
+  border-radius: 8px;
+}
+
+#settings-menu .menu-item:hover {
+  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  border-color: transparent;
+}
+
+#settings-menu .menu-item:hover i {
+  color: var(--accent-color);
+}
+
+/* Add-language button: match the language pill height. */
+#add-custom-language-option {
+  width: 32px;
+  height: 32px;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+/* Settings cards (Themes/Font/View) match the menu groups. */
+#settings-menu .settings-card {
+  border-radius: 8px;
+}
+
+/* Donation actions: three equal-width buttons on one row. */
+#settings-menu .donate-card-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+#settings-menu .donate-action-btn {
+  padding: 9px 6px;
+  font-size: 0.8rem;
 }

@@ -9,6 +9,7 @@ import {
   translations,
   showLocalStorageSettingsPopup,
   hideLocalStorageSettingsPopup,
+  closeSettingsAndSidebar,
 } from "../utils/utils.js"
 import {
   populateTagFilter,
@@ -548,6 +549,9 @@ function initializeEventListeners() {
 
   settingsButton.addEventListener("click", (e) => {
     e.stopPropagation()
+
+    // Close the settings sidebar so the modal has the user's full attention.
+    closeSettingsAndSidebar()
 
     loadStorageSettings()
     showLocalStorageSettingsPopup()

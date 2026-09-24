@@ -41,6 +41,22 @@ if (typeof window !== "undefined") {
   window.closeSettingsAndSidebar = closeSettingsAndSidebar
 }
 
+// Mirror settings-panel-open on <html> to lock the viewport scrollbar as well.
+// body { overflow: hidden } does not reach the viewport when html uses overflow-x: clip.
+if (typeof document !== "undefined" && document.body) {
+  const syncViewportScrollLock = () => {
+    document.documentElement.classList.toggle(
+      "settings-panel-open",
+      document.body.classList.contains("settings-panel-open")
+    )
+  }
+  new MutationObserver(syncViewportScrollLock).observe(document.body, {
+    attributes: true,
+    attributeFilter: ["class"],
+  })
+  syncViewportScrollLock()
+}
+
 // ==========================================
 // FUZZY SEARCH FUNCTIONS
 // ==========================================
