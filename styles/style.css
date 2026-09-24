@@ -487,7 +487,7 @@ html {
 }
 
 .button-warning:hover {
-  background: var(--text-option);
+  background: color-mix(in srgb, var(--text-primary) 82%, var(--accent-color));
   filter: brightness(1.05);
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
@@ -537,7 +537,7 @@ html {
 }
 
 .button-primary:hover {
-  background: var(--text-option);
+  background: color-mix(in srgb, var(--text-primary) 82%, var(--accent-color));
   filter: brightness(1.05);
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
@@ -1036,7 +1036,8 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 .rename-popup-content p {
   margin: 0 0 20px;
   font-size: 1em;
-  color: var(--text-color);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
 }
 
 .snooze-option {
@@ -1582,7 +1583,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 }
 
 .edit-tag-btn:hover {
-  color: var(--text-option);
+  color: var(--accent-color);
 }
 
 .edit-tag-input {
@@ -2405,19 +2406,19 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 /* Đang kiểm tra */
 .health-icon.checking {
-  color: #6c757d; /* xám */
+  color: var(--text-muted, #6c757d); /* xám */
 }
 
 /* Dead / lỗi */
 .health-icon.dead {
-  color: var(--health-icon-dead-color); /* đỏ */
+  color: var(--danger-color, #dc2626); /* đỏ */
 }
 
 /* Malware — nguy hiểm nghiêm trọng */
 .health-icon.malware {
-  color: #dc2626;
+  color: var(--danger-color, #dc2626);
   animation: malware-pulse 1.5s ease-in-out infinite;
-  filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6));
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--danger-color, #dc2626) 60%, transparent));
 }
 
 @keyframes malware-pulse {
@@ -2432,12 +2433,12 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 /* Nghi ngờ / nguy hiểm */
 .health-icon.suspicious {
-  color: #fd7e14; /* cam */
+  color: var(--warning-color, #fd7e14); /* cam */
 }
 
 /* An toàn */
 .health-icon.safe {
-  color: #28a745; /* xanh lá */
+  color: var(--success-color, #28a745); /* xanh lá */
 }
 
 .add-tag-container {
@@ -3153,7 +3154,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   color: var(--accent-color);
   border-color: var(--accent-color);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 25%, transparent);
 }
 
 .modal-action-btn:active,
@@ -3776,7 +3777,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .studio-btn.primary-btn:hover {
   filter: brightness(1.1);
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
 .studio-btn.danger-btn {
@@ -4029,7 +4030,7 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: rgba(59, 130, 246, 0.15);
+  background: color-mix(in srgb, var(--accent-color) 15%, transparent);
   color: var(--accent-color);
   display: flex;
   align-items: center;
@@ -5820,7 +5821,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   color: var(--accent-color);
   border-color: var(--accent-color);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 25%, transparent);
 }
 
 #smart-cleanup-close-x:hover {
@@ -6043,7 +6044,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   min-width: 28px;
   padding: 2px 8px;
   border-radius: 999px;
-  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.14);
+  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
   color: var(--accent-color);
   font-size: 0.76rem;
   font-weight: 700;
@@ -6175,7 +6176,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   height: 34px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
+  background: color-mix(in srgb, var(--text-primary) 5%, transparent);
   color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
@@ -6185,7 +6186,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 #duplicate-merge-close-x:hover {
   color: var(--text-primary);
   border-color: var(--accent-color);
-  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
+  background: color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
 .duplicate-merge-summary {
@@ -6235,7 +6236,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 }
 
 .duplicate-merge-list::-webkit-scrollbar-thumb {
-  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.45);
+  background: color-mix(in srgb, var(--accent-color) 45%, transparent);
   border-radius: 999px;
 }
 
@@ -6284,14 +6285,14 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   padding: 9px 10px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
+  background: color-mix(in srgb, var(--text-primary) 4%, transparent);
   cursor: pointer;
 }
 
 .duplicate-merge-option:hover,
 .duplicate-merge-option.selected {
   border-color: var(--accent-color);
-  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.1);
+  background: color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
 .duplicate-merge-option span {
@@ -6606,8 +6607,8 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   height: 42px;
   font-size: 1.15rem;
   border-radius: 10px;
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  background: color-mix(in srgb, var(--accent-color) 15%, transparent);
+  color: var(--accent-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6785,7 +6786,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   background: linear-gradient(
     to top,
     var(--accent-color),
-    rgba(59, 130, 246, 0.6)
+    color-mix(in srgb, var(--accent-color) 60%, transparent)
   );
   border-radius: 4px;
   transition: height 0.4s ease;
@@ -7490,14 +7491,10 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 }
 
 .scope-modal-header-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.15),
-    rgba(147, 51, 234, 0.15)
-  );
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent-color) 12%, transparent);
   color: var(--accent-color, #3b82f6);
   display: flex;
   align-items: center;
@@ -7550,13 +7547,13 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 
 .scope-radio-card:hover {
   border-color: var(--accent-color, #3b82f6);
-  background: rgba(59, 130, 246, 0.04);
+  background: color-mix(in srgb, var(--accent-color) 4%, transparent);
   transform: translateY(-1px);
 }
 
 .scope-radio-card.active {
   border-color: var(--accent-color, #3b82f6);
-  background: rgba(59, 130, 246, 0.09);
+  background: color-mix(in srgb, var(--accent-color) 9%, transparent);
   box-shadow: 0 0 0 1px var(--accent-color, #3b82f6);
 }
 
@@ -7608,7 +7605,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 
 .scope-radio-card.active .scope-card-icon {
   background: var(--accent-color, #3b82f6);
-  color: #ffffff;
+  color: var(--accent-contrast, #ffffff);
 }
 
 .scope-card-text {
@@ -7645,7 +7642,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 
 .scope-radio-card.active .scope-count-badge {
   background: var(--accent-color, #3b82f6);
-  color: #ffffff;
+  color: var(--accent-contrast, #ffffff); /* accent sáng (gruvbox/tet) cần chữ tối để số không bị chìm */
 }
 
 /* Folder Controls Section */
@@ -7701,7 +7698,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 .scope-chip:hover {
   border-color: var(--accent-color, #3b82f6);
   color: var(--accent-color, #3b82f6);
-  background: rgba(59, 130, 246, 0.05);
+  background: color-mix(in srgb, var(--accent-color) 5%, transparent);
 }
 
 .scope-chip.active {
@@ -7745,7 +7742,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 
 .scope-folder-search-input:focus {
   border-color: var(--accent-color, #3b82f6);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 15%, transparent);
 }
 
 .scope-search-clear {
@@ -7796,11 +7793,11 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 }
 
 .scope-folder-item:hover {
-  background: rgba(59, 130, 246, 0.05);
+  background: color-mix(in srgb, var(--accent-color) 5%, transparent);
 }
 
 .scope-folder-item.selected {
-  background: rgba(59, 130, 246, 0.12);
+  background: color-mix(in srgb, var(--accent-color) 12%, transparent);
 }
 
 .scope-folder-item-left {
@@ -7867,8 +7864,8 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 }
 
 .scope-folder-item.selected .scope-item-badge {
-  background: rgba(59, 130, 246, 0.2);
-  color: var(--accent-color, #3b82f6);
+  background: var(--accent-color, #3b82f6);
+  color: var(--accent-contrast, #ffffff); /* đồng bộ với badge của radio card */
   font-weight: 600;
 }
 
@@ -8008,7 +8005,7 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(59, 130, 246, 0.12);
+  background: color-mix(in srgb, var(--accent-color) 12%, transparent);
   color: var(--accent-color, #3b82f6);
   display: flex;
   align-items: center;
@@ -8098,12 +8095,12 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 }
 
 .scope-start-btn.ready {
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.28);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 28%, transparent);
 }
 
 .scope-start-btn.ready:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.36);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 36%, transparent);
 }
 
 .scope-modal-buttons .button-primary:disabled {
@@ -8788,4 +8785,63 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   font-size: 0.72rem;
   color: var(--text-muted);
   line-height: 1.4;
+}
+
+/* ============================================
+   CUSTOM POPUP STATUS COLORS (Check Links /
+   Check Duplicates results...) — dùng biến
+   theme để tương phản đúng trên mọi theme
+   ============================================ */
+#custom-popup .rename-popup-content {
+  border-top: 3px solid var(--accent-color);
+}
+
+#custom-popup.success .rename-popup-content {
+  border-top-color: var(--success-color);
+}
+
+#custom-popup.success .rename-popup-content h3 {
+  color: var(--success-color);
+}
+
+#custom-popup.error .rename-popup-content {
+  border-top-color: var(--danger-color);
+}
+
+#custom-popup.error .rename-popup-content h3 {
+  color: var(--danger-color);
+}
+
+#custom-popup.warning .rename-popup-content {
+  border-top-color: var(--warning-color);
+}
+
+#custom-popup.warning .rename-popup-content h3 {
+  color: var(--warning-color);
+}
+
+#custom-popup.info .rename-popup-content h3 {
+  color: var(--accent-color);
+}
+
+#custom-popup.loading .rename-popup-content h3 {
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   BUTTON WEIGHT — mở rộng phạm vi áp dụng bold
+   cho các bề mặt còn lại: tab, nút dashboard,
+   modal dùng chung, nút donate, nút scroll-top
+   ============================================ */
+body[data-button-weight-bookmarks="bold"] .control-buttons .button,
+body[data-button-weight-bookmarks="bold"] .app-tabs .app-tab-btn,
+body[data-button-weight-bookmarks="bold"] .rename-popup-buttons .button,
+body[data-button-weight-bookmarks="bold"] .scope-modal-buttons .button,
+body[data-button-weight-bookmarks="bold"] .modal-actions button,
+body[data-button-weight-bookmarks="bold"] .dropdown-donate-card .donate-action-btn,
+body[data-button-weight-settings="bold"] .rename-popup-buttons .button,
+body[data-button-weight-settings="bold"] .scope-modal-buttons .button,
+body[data-button-weight-settings="bold"] .dropdown-donate-card .donate-action-btn,
+body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
+  font-weight: 700 !important;
 }

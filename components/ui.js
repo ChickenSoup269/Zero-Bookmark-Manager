@@ -4,6 +4,7 @@ import {
   calculateMatchScore,
   showCustomConfirm,
   showCustomPrompt,
+  closeSettingsAndSidebar,
 } from "./utils/utils.js"
 import { appendBookmarksLazily } from "./utils/lazyRender.js"
 import {
@@ -964,9 +965,12 @@ export function handleCheckHealth(elements = {}, options = {}) {
     return
   }
 
+  // Đóng settings sidebar để scope modal hiển thị một mình
+  closeSettingsAndSidebar()
+
   openScopeSelectionModal({
     type: "health",
-    icon: "fa-stethoscope",
+    icon: "fa-link", // icon đơn giản, dễ hiểu hơn cho Check Links
     initialFolderId: options.folderId,
     onConfirm: (targets, scopeInfo) => {
       executeLinkCheck(elements, targets, scopeInfo)
@@ -1047,9 +1051,12 @@ export function handleCheckDuplicates(elements = {}, options = {}) {
     return
   }
 
+  // Đóng settings sidebar để scope modal hiển thị một mình
+  closeSettingsAndSidebar()
+
   openScopeSelectionModal({
     type: "duplicates",
-    icon: "fa-copy",
+    icon: "fa-clone", // 2 ô chồng nhau = trùng lặp, rõ hơn fa-copy
     initialFolderId: options.folderId,
     onConfirm: (targets, scopeInfo) => {
       executeDuplicateCheck(elements, targets, scopeInfo)
