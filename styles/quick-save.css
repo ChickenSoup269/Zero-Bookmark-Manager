@@ -750,3 +750,9 @@ select#folder:focus {
   transform: translateX(16px);
   background: var(--accent-contrast, #000000);
 }
+
+/* Button weight áp dụng cho trang Quick Save (theo scope "bookmarks") */
+body[data-button-weight-bookmarks="bold"] .quick-save-shell button,
+body[data-button-weight-bookmarks="bold"] .quick-save-shell .primary-button {
+  font-weight: 700 !important;
+}

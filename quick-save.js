@@ -1655,6 +1655,12 @@ function applyTranslations() {
 document.addEventListener("DOMContentLoaded", applyTranslations);
 applyTranslations(); // Run immediately in case DOM is already loaded
 
+// Áp dụng cài đặt độ đậm nút (button weight) cho trang Quick Save
+["bookmarks", "sidebar", "settings"].forEach((scope) => {
+  const weight = localStorage.getItem(`buttonWeight-${scope}`);
+  if (weight) document.body.setAttribute(`data-button-weight-${scope}`, weight);
+});
+
 function tStatus(key, ...args) {
   const lang = localStorage.getItem("appLanguage") || "en";
   const t = qsTranslations[lang] || qsTranslations.en;
