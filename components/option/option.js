@@ -41,11 +41,11 @@ function initializeStorageSettings() {
           if (chrome.runtime.lastError) {
             console.error(
               "Error initializing storageSettings:",
-              chrome.runtime.lastError
+              chrome.runtime.lastError,
             )
           } else {
           }
-        }
+        },
       )
     } else {
     }
@@ -134,7 +134,7 @@ function saveStorageSettings() {
       storageSettings[key] = element.checked
     } else {
       console.warn(
-        `Checkbox ${id} not found during save, using default: ${defaultStorageSettings[key]}`
+        `Checkbox ${id} not found during save, using default: ${defaultStorageSettings[key]}`,
       )
       storageSettings[key] = defaultStorageSettings[key]
     }
@@ -145,7 +145,7 @@ function saveStorageSettings() {
       if (chrome.runtime.lastError) {
         console.error(
           "Error saving storage settings:",
-          chrome.runtime.lastError
+          chrome.runtime.lastError,
         )
         showCustomPopup(translations[language].errorUnexpected, "error", true)
         reject(chrome.runtime.lastError)
@@ -242,7 +242,7 @@ export async function customLoadUIState(callback) {
           } else {
             resolve(data)
           }
-        }
+        },
       )
     })
 
@@ -271,9 +271,7 @@ export async function customLoadUIState(callback) {
       uiState.viewMode = "flat"
     }
     if (storageSettings.collapsedFolders) {
-      uiState.collapsedFolders = new Set(
-        savedUiState.collapsedFolders || []
-      )
+      uiState.collapsedFolders = new Set(savedUiState.collapsedFolders || [])
     } else {
       uiState.collapsedFolders = new Set()
     }
@@ -282,7 +280,7 @@ export async function customLoadUIState(callback) {
     } else {
       uiState.selectedTags = []
     }
-    
+
     uiState.faviconOption = savedUiState.faviconOption || "auto"
     uiState.faviconSize = savedUiState.faviconSize || "32"
     uiState.duplicateScope =
@@ -291,7 +289,7 @@ export async function customLoadUIState(callback) {
       "folder"
     uiState.autoRemoveDup =
       savedUiState.autoRemoveDup ??
-      (localStorage.getItem("autoRemoveDup") === "true")
+      localStorage.getItem("autoRemoveDup") === "true"
     uiState.showNotesPreview = savedUiState.showNotesPreview ?? true
     uiState.showTagsInView = savedUiState.showTagsInView ?? true
     uiState.showFolderCount = savedUiState.showFolderCount ?? true
@@ -312,7 +310,10 @@ export async function customLoadUIState(callback) {
 
     document.body.setAttribute("data-header-line", uiState.headerLineStyle)
     document.body.setAttribute("data-bookmark-menu-bg", uiState.bookmarkMenuBg)
-    document.documentElement.style.setProperty("--sidebar-width", `${uiState.sidebarWidth}px`)
+    document.documentElement.style.setProperty(
+      "--sidebar-width",
+      `${uiState.sidebarWidth}px`,
+    )
 
     if (storageSettings.checkboxesVisible) {
       uiState.checkboxesVisible = result.checkboxesVisible || false
@@ -342,7 +343,8 @@ export async function customLoadUIState(callback) {
       }
     }
     if (elements.folderFilter) {
-      if (elements.folderFilter) elements.folderFilter.value = uiState.selectedFolderId
+      if (elements.folderFilter)
+        elements.folderFilter.value = uiState.selectedFolderId
     }
     if (elements.sortFilter) {
       elements.sortFilter.value = uiState.sortType
@@ -355,45 +357,65 @@ export async function customLoadUIState(callback) {
         ? translations[savedLanguage].hideCheckboxes
         : translations[savedLanguage].showCheckboxes
     }
-    const showNotesPreviewToggle = document.getElementById("show-notes-preview-toggle")
+    const showNotesPreviewToggle = document.getElementById(
+      "show-notes-preview-toggle",
+    )
     if (showNotesPreviewToggle) {
       showNotesPreviewToggle.checked = uiState.showNotesPreview
     }
-    const showTagsInViewToggle = document.getElementById("show-tags-in-view-toggle")
+    const showTagsInViewToggle = document.getElementById(
+      "show-tags-in-view-toggle",
+    )
     if (showTagsInViewToggle) {
       showTagsInViewToggle.checked = uiState.showTagsInView
     }
-    const showFolderCountToggle = document.getElementById("show-folder-count-toggle")
+    const showFolderCountToggle = document.getElementById(
+      "show-folder-count-toggle",
+    )
     if (showFolderCountToggle) {
       showFolderCountToggle.checked = uiState.showFolderCount
     }
-    const folderCountModeSelect = document.getElementById("folder-count-mode-select")
+    const folderCountModeSelect = document.getElementById(
+      "folder-count-mode-select",
+    )
     if (folderCountModeSelect) {
       if (folderCountModeSelect.tagName === "SELECT") {
         folderCountModeSelect.value = uiState.folderCountMode
       } else {
-        const swatches = folderCountModeSelect.querySelectorAll(".setting-swatch")
+        const swatches =
+          folderCountModeSelect.querySelectorAll(".setting-swatch")
         swatches.forEach((btn) => {
-          btn.classList.toggle("active", btn.dataset.value === uiState.folderCountMode)
+          btn.classList.toggle(
+            "active",
+            btn.dataset.value === uiState.folderCountMode,
+          )
         })
       }
     }
 
     // Sync duplicate scope UI
-    const duplicateScopeSelect = document.getElementById("duplicate-scope-select")
+    const duplicateScopeSelect = document.getElementById(
+      "duplicate-scope-select",
+    )
     if (duplicateScopeSelect) {
       if (duplicateScopeSelect.tagName === "SELECT") {
         duplicateScopeSelect.value = uiState.duplicateScope
       } else {
-        const swatches = duplicateScopeSelect.querySelectorAll(".setting-swatch")
+        const swatches =
+          duplicateScopeSelect.querySelectorAll(".setting-swatch")
         swatches.forEach((btn) => {
-          btn.classList.toggle("active", btn.dataset.value === uiState.duplicateScope)
+          btn.classList.toggle(
+            "active",
+            btn.dataset.value === uiState.duplicateScope,
+          )
         })
       }
     }
 
     // Sync auto remove duplicates toggle
-    const autoRemoveDupToggle = document.getElementById("auto-remove-dup-toggle")
+    const autoRemoveDupToggle = document.getElementById(
+      "auto-remove-dup-toggle",
+    )
     if (autoRemoveDupToggle) {
       autoRemoveDupToggle.checked = !!uiState.autoRemoveDup
     }
@@ -406,17 +428,25 @@ export async function customLoadUIState(callback) {
       } else {
         const swatches = headerLineSelect.querySelectorAll(".setting-swatch")
         swatches.forEach((btn) => {
-          btn.classList.toggle("active", btn.dataset.value === uiState.headerLineStyle)
+          btn.classList.toggle(
+            "active",
+            btn.dataset.value === uiState.headerLineStyle,
+          )
         })
       }
     }
 
     // Sync bookmark menu background
-    const bookmarkMenuBgSelect = document.getElementById("bookmark-menu-bg-select")
+    const bookmarkMenuBgSelect = document.getElementById(
+      "bookmark-menu-bg-select",
+    )
     if (bookmarkMenuBgSelect) {
       const swatches = bookmarkMenuBgSelect.querySelectorAll(".setting-swatch")
       swatches.forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.value === uiState.bookmarkMenuBg)
+        btn.classList.toggle(
+          "active",
+          btn.dataset.value === uiState.bookmarkMenuBg,
+        )
       })
     }
 
@@ -430,18 +460,16 @@ export async function customLoadUIState(callback) {
       })
     }
 
-    document
-      .querySelectorAll(".bookmark-checkbox")
-      .forEach((checkbox) => {
-        checkbox.style.display = uiState.checkboxesVisible
-          ? "inline-block"
-          : "none"
-        if (!uiState.checkboxesVisible) {
-          checkbox.classList.add("hidden")
-        } else {
-          checkbox.classList.remove("hidden")
-        }
-      })
+    document.querySelectorAll(".bookmark-checkbox").forEach((checkbox) => {
+      checkbox.style.display = uiState.checkboxesVisible
+        ? "inline-block"
+        : "none"
+      if (!uiState.checkboxesVisible) {
+        checkbox.classList.add("hidden")
+      } else {
+        checkbox.classList.remove("hidden")
+      }
+    })
     const selectAllContainers = document.querySelectorAll(
       ".select-all, .sidebar-select-all, #select-all-container",
     )
@@ -464,7 +492,7 @@ export async function customLoadUIState(callback) {
     const tagFilterDropdown = document.getElementById("tag-filter-dropdown")
     if (tagFilterDropdown) {
       const checkboxes = tagFilterDropdown.querySelectorAll(
-        'input[type="checkbox"]'
+        'input[type="checkbox"]',
       )
       checkboxes.forEach((checkbox) => {
         checkbox.checked = uiState.selectedTags.includes(checkbox.value)
@@ -485,7 +513,7 @@ export async function customLoadUIState(callback) {
     showCustomPopup(
       translations[localStorage.getItem("appLanguage") || "en"].errorUnexpected,
       "error",
-      true
+      true,
     )
     if (callback) callback()
   }
@@ -503,14 +531,14 @@ export function loadUIState(callback) {
 
 function saveQuickOpenSetting() {
   const selectedAction = document.querySelector(
-    'input[name="quickOpenAction"]:checked'
+    'input[name="quickOpenAction"]:checked',
   )
   if (selectedAction) {
     chrome.storage.local.set({ quickOpenAction: selectedAction.value }, () => {
       if (chrome.runtime.lastError) {
         console.error(
           "Error saving Quick Open setting:",
-          chrome.runtime.lastError
+          chrome.runtime.lastError,
         )
       } else {
         console.log("Quick Open Action saved:", selectedAction.value)
@@ -572,11 +600,11 @@ function initializeEventListeners() {
           uiState.selectedTags = []
 
           const tagFilterDropdown = document.getElementById(
-            "tag-filter-dropdown"
+            "tag-filter-dropdown",
           )
           if (tagFilterDropdown) {
             const checkboxes = tagFilterDropdown.querySelectorAll(
-              'input[type="checkbox"]'
+              'input[type="checkbox"]',
             )
             checkboxes.forEach((checkbox) => {
               checkbox.checked = false
@@ -627,11 +655,11 @@ function initializeEventListeners() {
             uiState.selectedTags = []
 
             const tagFilterDropdown = document.getElementById(
-              "tag-filter-dropdown"
+              "tag-filter-dropdown",
             )
             if (tagFilterDropdown) {
               const checkboxes = tagFilterDropdown.querySelectorAll(
-                'input[type="checkbox"]'
+                'input[type="checkbox"]',
               )
               checkboxes.forEach((checkbox) => {
                 checkbox.checked = false
@@ -660,7 +688,7 @@ function initializeEventListeners() {
 
   // Quick Open Settings
   const quickOpenRadios = document.querySelectorAll(
-    'input[name="quickOpenAction"]'
+    'input[name="quickOpenAction"]',
   )
   quickOpenRadios.forEach((radio) => {
     radio.addEventListener("change", saveQuickOpenSetting)

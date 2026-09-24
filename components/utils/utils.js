@@ -1,10 +1,10 @@
-import { en } from '../locales/en.js';
-import { vi } from '../locales/vi.js';
+import { en } from "../locales/en.js"
+import { vi } from "../locales/vi.js"
 
 export const translations = {
   en,
-  vi
-};
+  vi,
+}
 
 export function escapeHtml(value = "") {
   return String(value)
@@ -32,9 +32,11 @@ export function closeSettingsAndSidebar() {
   const sidebarClassic = document.getElementById("sidebar-classic")
   if (sidebarClassic) sidebarClassic.classList.remove("mobile-open")
 
-  document.querySelectorAll(".dropdown-menu, .dropdown-menu-2").forEach((menu) => {
-    menu.classList.add("hidden")
-  })
+  document
+    .querySelectorAll(".dropdown-menu, .dropdown-menu-2")
+    .forEach((menu) => {
+      menu.classList.add("hidden")
+    })
 }
 
 if (typeof window !== "undefined") {
@@ -47,7 +49,7 @@ if (typeof document !== "undefined" && document.body) {
   const syncViewportScrollLock = () => {
     document.documentElement.classList.toggle(
       "settings-panel-open",
-      document.body.classList.contains("settings-panel-open")
+      document.body.classList.contains("settings-panel-open"),
     )
   }
   new MutationObserver(syncViewportScrollLock).observe(document.body, {
@@ -363,7 +365,11 @@ export function showCustomPopup(
       title.textContent = language === "vi" ? "Thông báo" : "Notification"
     }
 
-    if (typeof message === 'string' && message.includes("<") && message.includes(">")) {
+    if (
+      typeof message === "string" &&
+      message.includes("<") &&
+      message.includes(">")
+    ) {
       messageEl.innerHTML = message
     } else {
       messageEl.textContent = message
@@ -456,7 +462,11 @@ export function showCustomConfirm(message, onConfirm, onCancel) {
   try {
     title.textContent = translations[language].confirmTitle || "Confirm"
 
-    if (typeof message === 'string' && message.includes("<") && message.includes(">")) {
+    if (
+      typeof message === "string" &&
+      message.includes("<") &&
+      message.includes(">")
+    ) {
       messageEl.innerHTML = message
     } else {
       messageEl.textContent = message
@@ -531,7 +541,9 @@ export function showCustomPrompt(message, defaultValue = "") {
     const language = localStorage.getItem("appLanguage") || "en"
 
     if (!popup || !title || !input || !okBtn || !cancelBtn) {
-      console.warn("custom prompt elements not found, falling back to window.prompt")
+      console.warn(
+        "custom prompt elements not found, falling back to window.prompt",
+      )
       resolve(window.prompt(message, defaultValue))
       return
     }
@@ -586,7 +598,7 @@ export function showCustomPrompt(message, defaultValue = "") {
         closePopup()
       }
     }
-  });
+  })
 }
 
 export function showCustomGuide() {
