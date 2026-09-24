@@ -176,10 +176,48 @@ if (headerLineSelect) {
     })
   }
 
+  // Custom heading line: màu + độ dày tự chọn
+  const headerLineCustomOptions = document.getElementById("header-line-custom-options")
+  const headerLineColorInput = document.getElementById("header-line-color")
+  const headerLineHeightInput = document.getElementById("header-line-height")
+  const headerLineHeightValue = document.getElementById("header-line-height-value")
+
+  const applyHeaderLineCustom = () => {
+    let saved = {}
+    try { saved = JSON.parse(localStorage.getItem("headerLineCustom") || "{}") } catch (e) { }
+    const color = saved.color || "#888888"
+    const height = saved.height || 3
+    if (headerLineColorInput) headerLineColorInput.value = color
+    if (headerLineHeightInput) headerLineHeightInput.value = height
+    if (headerLineHeightValue) headerLineHeightValue.textContent = `${height}px`
+    document.body.style.setProperty("--header-line-color", color)
+    document.body.style.setProperty("--header-line-height", `${height}px`)
+  }
+
+  const syncHeaderLineCustomVisibility = (val) => {
+    if (headerLineCustomOptions) {
+      headerLineCustomOptions.style.display = val === "custom" ? "flex" : "none"
+    }
+  }
+
+  const saveHeaderLineCustom = () => {
+    const color = headerLineColorInput ? headerLineColorInput.value : "#888888"
+    const height = headerLineHeightInput ? Number(headerLineHeightInput.value) : 3
+    localStorage.setItem("headerLineCustom", JSON.stringify({ color, height }))
+    applyHeaderLineCustom()
+  }
+
+  applyHeaderLineCustom()
+  syncHeaderLineCustomVisibility(savedHeaderLine)
+  headerLineColorInput?.addEventListener("input", saveHeaderLineCustom)
+  headerLineHeightInput?.addEventListener("input", saveHeaderLineCustom)
+
   function updateHeaderLine(val) {
     if (window.uiState) window.uiState.headerLineStyle = val
     localStorage.setItem("headerLineStyle", val)
     document.body.setAttribute("data-header-line", val)
+    syncHeaderLineCustomVisibility(val)
+    if (val === "custom") applyHeaderLineCustom()
     chrome.storage.local.get(["uiState"], (data) => {
       const newUiState = data.uiState || {}
       newUiState.headerLineStyle = val

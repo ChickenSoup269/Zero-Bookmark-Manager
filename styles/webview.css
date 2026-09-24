@@ -3004,6 +3004,13 @@ body[data-header-line="hidden"] .header::after {
   display: none !important;
 }
 
+/* Option Custom: màu + độ dày tự chọn qua --header-line-color / --header-line-height */
+body[data-header-line="custom"] .header::after {
+  background-image: none !important;
+  background-color: var(--header-line-color, var(--accent-color, #888888));
+  height: var(--header-line-height, 3px);
+}
+
 /* Toggle sidebar button - Cải thiện hover từ [image:4] */
 .toggle-sidebar {
   background: transparent;
@@ -3818,7 +3825,7 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
     margin 0.3s ease,
     padding 0.3s ease,
     border-width 0.3s ease;
-  max-height: 1200px;
+  max-height: 6000px; /* đủ chứa nhóm Application Settings dài; 1200px cũ làm 2 nút cuối tràn ra ngoài nền */
   opacity: 1;
 }
 

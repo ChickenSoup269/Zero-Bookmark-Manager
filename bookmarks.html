@@ -658,8 +658,22 @@
                             <button class="theme-swatch setting-swatch" data-value="simple"
                                 data-i18n="lineSimple">Simple Line</button>
                             <button class="theme-swatch setting-swatch" data-value="hidden"
-                                data-i18n="lineHidden">Hidden</button>
-                        </div>
+                                                            data-i18n="lineHidden">Hidden</button>
+                                                            <button class="theme-swatch setting-swatch" data-value="custom"
+                                                                data-i18n="lineCustom">Custom</button>
+                                                        </div>
+                                                        <div id="header-line-custom-options" style="display: none; flex-direction: column; gap: 8px; margin-top: 4px;">
+                                                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-secondary);">
+                                                                <span data-i18n="headerLineColor">Color</span>
+                                                                <input type="color" id="header-line-color" value="#888888"
+                                                                    style="width: 38px; height: 26px; padding: 0; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); cursor: pointer;">
+                                                            </label>
+                                                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-secondary);">
+                                                                <span data-i18n="headerLineHeight">Thickness</span>
+                                                                <input type="range" id="header-line-height" min="1" max="14" value="3" style="flex: 1;">
+                                                                <span id="header-line-height-value" style="min-width: 32px; text-align: right;">3px</span>
+                                                            </label>
+                                                        </div>
                     </div>
 
                     <div class="app-setting-field">
