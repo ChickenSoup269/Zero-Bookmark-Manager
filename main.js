@@ -1714,19 +1714,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewCard = document.querySelector(".view-selection-card");
 
     if (themeCard) {
-      const isCollapsed = localStorage.getItem("themeCardCollapsed");
-      if (isCollapsed === "false") themeCard.classList.remove("collapsed");
-      else themeCard.classList.add("collapsed");
+      const isCollapsed = localStorage.getItem("themeCardCollapsed") === "true";
+      themeCard.classList.toggle("collapsed", isCollapsed);
     }
     if (fontCard) {
-      const isCollapsed = localStorage.getItem("fontCardCollapsed");
-      if (isCollapsed === "false") fontCard.classList.remove("collapsed");
-      else fontCard.classList.add("collapsed");
+      const isCollapsed = localStorage.getItem("fontCardCollapsed") === "true";
+      fontCard.classList.toggle("collapsed", isCollapsed);
     }
     if (viewCard) {
-      const isCollapsed = localStorage.getItem("viewCardCollapsed");
-      if (isCollapsed === "false") viewCard.classList.remove("collapsed");
-      else viewCard.classList.add("collapsed");
+      const isCollapsed = localStorage.getItem("viewCardCollapsed") === "true";
+      viewCard.classList.toggle("collapsed", isCollapsed);
     }
 
     // Khôi phục trạng thái showBookmarkIds
