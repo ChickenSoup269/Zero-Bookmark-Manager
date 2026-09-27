@@ -5083,27 +5083,6 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   gap: var(--spacing-xs);
 }
 
-/* Toggle checkboxes button */
-#toggle-checkboxes {
-  width: 100%;
-  font-size: 0.85rem;
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  font-weight: 500;
-  transition: all var(--transition-fast);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px;
-}
-
-#toggle-checkboxes:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
 /* Mobile Responsive - Full adjustments */
 @media (max-width: 400px) {
   body {
@@ -6989,10 +6968,10 @@ body.is-scrolled .webview-search-wrapper {
 
 /* ==================== Bulk Selection: toolbar select button ==================== */
 .webview-select-btn {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 7px;
   background: var(--bg-secondary);
   color: var(--text-secondary);
   display: inline-flex;
@@ -7000,7 +6979,7 @@ body.is-scrolled .webview-search-wrapper {
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   transition:
     all 0.2s ease;
 }
