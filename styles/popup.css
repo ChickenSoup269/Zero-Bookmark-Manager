@@ -3019,3 +3019,33 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   padding: 9px 6px;
   font-size: 0.8rem;
 }
+
+/* ==================== Floating bulk-selection action bar (popup) ==================== */
+body .bulk-action-bar {
+  bottom: 12px;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  max-width: calc(100% - 24px);
+}
+
+body .bulk-action-bar .bulk-bar-btn {
+  padding: 5px 9px;
+  font-size: 0.75rem;
+}
+
+body .bulk-action-bar .bulk-bar-count strong {
+  font-size: 0.88rem;
+}
+
+/* Select-all + Show Checkboxes toggle active state */
+body .button.toggle.small.active {
+  border-color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 18%, transparent);
+  color: var(--accent-color);
+}
+
+/* Giữ bar dưới các modal (add-to-folder 2300+) */
+body .bulk-action-bar {
+  z-index: 2200;
+}

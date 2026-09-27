@@ -550,6 +550,27 @@
                 <button id="toggle-checkboxes" class="button toggle small" data-i18n="showCheckboxes">Show
                     Checkboxes</button>
             </div>
+
+            <!-- Floating bulk-selection action bar (popup, compact) -->
+            <div id="bulk-action-bar" class="bulk-action-bar bulk-hidden" role="toolbar"
+                aria-label="Bulk selection actions">
+                <span class="bulk-bar-count"><strong id="bulk-selected-count">0</strong>&nbsp;<span
+                        data-i18n="bulkSelected">selected</span></span>
+                <button id="bulk-move-button" class="bulk-bar-btn" data-i18n-title="moveToFolder"
+                    title="Move to Folder">
+                    <i class="fas fa-folder-open"></i>
+                    <span data-i18n="move">Move</span>
+                </button>
+                <button id="bulk-delete-button" class="bulk-bar-btn bulk-bar-danger" data-i18n-title="deleteBookmarks"
+                    title="Delete Selected">
+                    <i class="fas fa-trash"></i>
+                    <span data-i18n="deleteBookmarks">Delete</span>
+                </button>
+                <button id="bulk-exit-button" class="bulk-bar-btn bulk-bar-exit" data-i18n-title="exitSelection"
+                    title="Exit selection" aria-label="Exit selection">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
             <div class="search-container sticky-search">
                 <div class="popup-search-inner"
                     style="display: flex; align-items: center; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 12px; gap: 8px; width: 100%; box-sizing: border-box; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
