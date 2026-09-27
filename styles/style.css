@@ -8976,3 +8976,81 @@ body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
 .bookmark-item:hover .list-col-check {
   width: 30px !important;
 }
+
+/* ==================== First-run: open-source banner + theme picker ==================== */
+.first-run-oss {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent-color) 8%, var(--bg-primary));
+  text-align: left;
+}
+
+.first-run-oss > i {
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.first-run-oss > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.first-run-oss strong {
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.first-run-oss > span > span {
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.first-run-oss-link {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-color);
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.first-run-oss-link:hover {
+  border-color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.12);
+}
+
+.first-run-section-label {
+  display: block;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.first-run-theme-grid {
+  max-height: 104px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 8px;
+  background: var(--bg-primary);
+}

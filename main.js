@@ -1600,6 +1600,41 @@ document.addEventListener("DOMContentLoaded", () => {
       if (firstRunPopup && firstRunSaveBtn) {
         firstRunPopup.classList.remove("hidden")
 
+        // Build the theme picker from the settings theme grid so first-run
+        // users can preview themes live before entering.
+        const firstRunThemeGrid = document.getElementById(
+          "first-run-theme-grid",
+        )
+        if (firstRunThemeGrid && elements.themeSwitcher) {
+          const currentTheme = localStorage.getItem("appTheme") || "system"
+          firstRunThemeGrid.innerHTML = ""
+          elements.themeSwitcher
+            .querySelectorAll(".theme-swatch")
+            .forEach((swatch) => {
+              const clone = swatch.cloneNode(true)
+              clone.classList.toggle(
+                "active",
+                clone.dataset.value === currentTheme,
+              )
+              clone.addEventListener("click", () => {
+                const value = clone.dataset.value || "system"
+                localStorage.setItem("appTheme", value)
+                updateTheme(elements, value)
+                elements.themeSwitcher
+                  .querySelectorAll(".theme-swatch")
+                  .forEach((b) =>
+                    b.classList.toggle("active", b.dataset.value === value),
+                  )
+                firstRunThemeGrid
+                  .querySelectorAll(".theme-swatch")
+                  .forEach((b) =>
+                    b.classList.toggle("active", b === clone),
+                  )
+              })
+              firstRunThemeGrid.appendChild(clone)
+            })
+        }
+
         firstRunSaveBtn.onclick = () => {
           const selectedFont = firstRunFontSelect.value
 

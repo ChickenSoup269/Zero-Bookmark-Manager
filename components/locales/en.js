@@ -612,7 +612,13 @@ export const en = {
   firstRunLanguageTitle: "Choose your language",
   firstRunLanguageSub: "Select the language you want to use first.",
   firstRunTitle: "Welcome to Zero Bookmark",
-  firstRunSub: "Add bookmarks like Chrome, then choose your default font:",
+  firstRunSub: "Add bookmarks like Chrome, then pick a theme & font to get started:",
+  firstRunOssTitle: "100% free & open source",
+  firstRunOssSub: "If you find it useful, give us a star on GitHub!",
+  firstRunPickTheme: "Pick your theme color:",
+  firstRunGuideStepBulk: "Bulk selection: tick multiple bookmarks to move or delete them all at once.",
+  firstRunPopupStepSync: "Saved bookmarks appear here instantly — search, sort, and open them right from the Dashboard.",
+  firstRunPopupStepFull: 'Need more power? Use "Edit in new tab" to open the full manager with Folder Studio, Analytics & Smart Cleanup.',
   firstRunGuideStep1:
     "Open any website and click the Chrome star in the address bar.",
   firstRunGuideStepShortcut:

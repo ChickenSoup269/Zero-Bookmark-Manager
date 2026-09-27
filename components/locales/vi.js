@@ -616,7 +616,13 @@ export const vi = {
   firstRunLanguageTitle: "Chọn ngôn ngữ",
   firstRunLanguageSub: "Chọn ngôn ngữ bạn muốn dùng trước.",
   firstRunTitle: "Chào mừng đến Zero Bookmark",
-  firstRunSub: "Thêm bookmark như Chrome thường, rồi chọn font mặc định:",
+  firstRunSub: "Thêm bookmark như Chrome thường, rồi chọn giao diện màu & font để bắt đầu:",
+  firstRunOssTitle: "100% miễn phí & mã nguồn mở",
+  firstRunOssSub: "Nếu thấy hữu ích, cho mình một Star trên GitHub nhé!",
+  firstRunPickTheme: "Chọn giao diện màu:",
+  firstRunGuideStepBulk: "Chọn nhiều bookmark cùng lúc để di chuyển hoặc xóa hàng loạt.",
+  firstRunPopupStepSync: "Bookmark đã lưu sẽ xuất hiện ngay tại đây — tìm kiếm, sắp xếp và mở ngay từ Dashboard.",
+  firstRunPopupStepFull: 'Cần hơn thế nữa? Dùng "Edit in new tab" để mở trình quản lý đầy đủ với Folder Studio, Analytics & Smart Cleanup.',
   firstRunGuideStep1:
     "Mở website bất kỳ và bấm biểu tượng ngôi sao trên thanh địa chỉ Chrome.",
   firstRunGuideStepShortcut:

@@ -4551,7 +4551,7 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   padding: 10px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-secondary) 74%, transparent);
+  background: var(--bg-primary);
   max-height: 220px;
   overflow-y: auto;
   overflow-x: hidden;

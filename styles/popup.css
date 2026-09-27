@@ -1859,7 +1859,7 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   padding: 10px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-secondary) 74%, transparent);
+  background: var(--bg-primary);
   max-height: 220px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -3048,4 +3048,18 @@ body .button.toggle.small.active {
 /* Giữ bar dưới các modal (add-to-folder 2300+) */
 body .bulk-action-bar {
   z-index: 2200;
+}
+
+/* First-run popup: gọn hơn cho viewport 360x600 của popup */
+.first-run-content {
+  max-height: min(94vh, 600px);
+}
+
+.first-run-content .first-run-guide {
+  max-height: 180px;
+}
+
+.first-run-content .first-run-oss {
+  padding: 8px 10px;
+  margin-bottom: 10px;
 }
