@@ -198,15 +198,6 @@
                             <i class="fas fa-chart-pie"></i>
                             <span data-i18n="analyticsTitle">Analytics</span>
                         </button>
-                        <button id="toggle-checkboxes" class="sidebar-admin-btn" data-i18n-title="showCheckboxes"
-                            title="Toggle Selection">
-                            <i class="fas fa-check-square"></i>
-                            <span data-i18n="showCheckboxes">Select</span>
-                        </button>
-                    </div>
-                    <div class="sidebar-select-all hidden" id="select-all-container">
-                        <input type="checkbox" id="select-all" aria-label="Select all bookmarks">
-                        <label for="select-all" data-i18n="selectAll">Select All</label>
                     </div>
                 </div>
             </div>
@@ -312,9 +303,38 @@
                     </button>
                 </div>
                 <div class="settings-container">
+                    <button id="toggle-checkboxes" class="webview-select-btn" data-i18n-title="showCheckboxes"
+                        title="Toggle Selection" aria-label="Toggle Selection">
+                        <i class="fas fa-check-square"></i>
+                    </button>
                     <button id="settings-button" class="button settings" title="Settings"
                         aria-label="Open settings">⋮</button>
                 </div>
+            </div>
+
+            <!-- Floating bulk-selection action bar -->
+            <div id="bulk-action-bar" class="bulk-action-bar bulk-hidden" role="toolbar"
+                aria-label="Bulk selection actions">
+                <div class="sidebar-select-all" id="select-all-container">
+                    <input type="checkbox" id="select-all" aria-label="Select all bookmarks">
+                    <label for="select-all" data-i18n="selectAll">Select All</label>
+                </div>
+                <span class="bulk-bar-divider" aria-hidden="true"></span>
+                <span class="bulk-bar-count"><strong id="bulk-selected-count">0</strong>&nbsp;<span
+                        data-i18n="bulkSelected">selected</span></span>
+                <button id="bulk-move-button" class="bulk-bar-btn" data-i18n-title="moveToFolder" title="Move to Folder">
+                    <i class="fas fa-folder-open"></i>
+                    <span data-i18n="move">Move</span>
+                </button>
+                <button id="bulk-delete-button" class="bulk-bar-btn bulk-bar-danger" data-i18n-title="deleteBookmarks"
+                    title="Delete Selected">
+                    <i class="fas fa-trash"></i>
+                    <span data-i18n="deleteBookmarks">Delete</span>
+                </button>
+                <button id="bulk-exit-button" class="bulk-bar-btn bulk-bar-exit" data-i18n-title="exitSelection"
+                    title="Exit selection" aria-label="Exit selection">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
             <!-- Settings Menu Moved outside to avoid backdrop-filter stacking context bug -->

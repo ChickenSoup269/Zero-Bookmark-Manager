@@ -6986,3 +6986,37 @@ body.is-scrolled .webview-search-wrapper {
   box-shadow: var(--shadow-md);
   border-color: var(--accent-color);
 }
+
+/* ==================== Bulk Selection: toolbar select button ==================== */
+.webview-select-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  transition:
+    all 0.2s ease;
+}
+
+.webview-select-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.12);
+}
+
+.webview-select-btn.active {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 18%, transparent);
+}
+
+.webview-search-wrapper .settings-container {
+  gap: 8px;
+}
