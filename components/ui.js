@@ -23,6 +23,7 @@ import { customSaveUIState } from "./option/option.js"
 import { checkBrokenLinks } from "./health/health.js"
 import { openScopeSelectionModal } from "./utils/scopeModal.js"
 import { handleDeleteFolder } from "./controller/deleteFolder.js"
+import { updateBulkActionBar, applySelectButtonState } from "./controller/bulkBar.js"
 import { openFolderStudio } from "./controller/folderStudio.js"
 
 // ==========================================
@@ -919,9 +920,7 @@ export function updateUILanguage(elements, language) {
   elements.importBookmarksOption.innerHTML = `<i class="fas fa-upload"></i> ${t.importBookmarks}`
   elements.editInNewTabOption.innerHTML = `<i class="fas fa-location-arrow"></i> ${t.editInNewTabOption}`
   elements.openSidePanelOption.innerHTML = `<i class="fas fa-arrow-circle-right"></i> ${t.openSidePanel}`
-  elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
-    ? t.hideCheckboxes
-    : t.showCheckboxes
+  applySelectButtonState(elements.toggleCheckboxesButton)
   if (elements.bookmarkCountDiv) {
     elements.bookmarkCountDiv.textContent = `${t.totalBookmarks}: ${
       elements.bookmarkCountDiv.textContent.match(/\d+$/)?.[0] || 0
@@ -4710,6 +4709,8 @@ export function updateSelectAllState(elements) {
       uiState.selectedBookmarks.size === 0,
     )
   }
+
+  updateBulkActionBar()
 }
 
 export function attachSelectAllListener(elements) {
@@ -4756,6 +4757,8 @@ export function attachSelectAllListener(elements) {
         uiState.selectedBookmarks.size === 0,
       )
     }
+
+    updateBulkActionBar()
   }
 
   selectAllInputs.forEach((input) => {

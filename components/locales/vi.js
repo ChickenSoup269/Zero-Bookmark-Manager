@@ -29,6 +29,8 @@ export const vi = {
   selectAll: "Chọn Tất cả",
   showCheckboxes: "Hiển thị CheckBox",
   hideCheckboxes: "Ẩn CheckBox",
+  bulkSelected: "đã chọn",
+  exitSelection: "Thoát chế độ chọn",
   searchPlaceholder: "Tìm bookmark, thẻ, ghi chú...",
   viewModeTitle: "Chế độ xem",
   viewFlat: "Dạng danh sách",

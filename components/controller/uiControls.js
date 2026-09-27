@@ -16,6 +16,7 @@ import {
 } from "../ui.js"
 import { uiState, saveUIState } from "../state.js"
 import { handleDeleteSelectedBookmarks } from "./bookmarkActions.js"
+import { updateBulkActionBar, applySelectButtonState } from "./bulkBar.js"
 
 export function setupUIControlListeners(elements) {
   const handleLanguageChange = (val) => {
@@ -262,10 +263,7 @@ export function setupUIControlListeners(elements) {
 
   elements.toggleCheckboxesButton.addEventListener("click", () => {
     uiState.checkboxesVisible = !uiState.checkboxesVisible
-    const language = localStorage.getItem("appLanguage") || "en"
-    elements.toggleCheckboxesButton.textContent = uiState.checkboxesVisible
-      ? translations[language]?.hideCheckboxes || "Hide Checkboxes"
-      : translations[language]?.showCheckboxes || "Show Checkboxes"
+    applySelectButtonState(elements.toggleCheckboxesButton)
 
     // Toggle class hidden for bookmark-checkbox and select-all
     const bookmarkCheckboxes = document.querySelectorAll(".bookmark-checkbox")
@@ -328,6 +326,7 @@ export function setupUIControlListeners(elements) {
     }
 
     updateControlButtons(elements)
+    updateBulkActionBar()
     saveUIState()
   })
 
@@ -358,6 +357,7 @@ export function setupUIControlListeners(elements) {
       !hasSelectedBookmarks,
     )
     elements.deleteFolderButton.classList.toggle("hidden", !hasSelectedFolder)
+    updateBulkActionBar()
   }
 
   const dashboardView = document.getElementById("dashboard-view")

@@ -8845,3 +8845,134 @@ body[data-button-weight-settings="bold"] .dropdown-donate-card .donate-action-bt
 body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
   font-weight: 700 !important;
 }
+
+
+/* ==================== Bulk Selection: shared (webview + popup) ==================== */
+/* ==================== Floating bulk-selection action bar ==================== */
+.bulk-action-bar {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--bg-secondary, #fff);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  z-index: 3000;
+  opacity: 1;
+  pointer-events: auto;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.bulk-action-bar.bulk-hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(16px);
+  pointer-events: none;
+}
+
+.bulk-action-bar .sidebar-select-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.bulk-action-bar .sidebar-select-all input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: var(--accent-color);
+  margin: 0;
+}
+
+.bulk-bar-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border-color);
+  flex-shrink: 0;
+}
+
+.bulk-bar-count {
+  display: none;
+  align-items: center;
+  font-size: 0.84rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.bulk-bar-count strong {
+  font-size: 0.95rem;
+  color: var(--accent-color);
+}
+
+.bulk-action-bar.has-selection .bulk-bar-count {
+  display: inline-flex;
+}
+
+.bulk-bar-btn {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.bulk-action-bar.has-selection .bulk-bar-btn {
+  display: inline-flex;
+}
+
+.bulk-bar-btn:hover {
+  border-color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.12);
+}
+
+.bulk-bar-btn.bulk-bar-danger:hover {
+  border-color: var(--danger-color);
+  background: var(--danger-color-light);
+  color: var(--danger-color);
+}
+
+.bulk-bar-btn.bulk-bar-exit {
+  display: inline-flex;
+  padding: 6px 8px;
+  color: var(--text-secondary);
+}
+
+.bulk-bar-btn.bulk-bar-exit:hover {
+  color: var(--text-primary);
+}
+
+/* ==================== Bulk Selection: hover reveal checkbox (shared) ==================== */
+/* Reveal the row checkbox on hover in normal mode (webview + popup) */
+.bookmark-item .bookmark-checkbox {
+  transition: opacity 0.15s ease;
+}
+
+.bookmark-item:hover .bookmark-checkbox,
+.bookmark-checkbox:checked {
+  display: inline-block !important;
+  opacity: 1;
+}
+
+.bookmark-item:hover .list-col-check {
+  width: 30px !important;
+}

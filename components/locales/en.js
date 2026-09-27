@@ -29,6 +29,8 @@ export const en = {
   selectAll: "Select All",
   showCheckboxes: "Show Checkboxes",
   hideCheckboxes: "Hide Checkboxes",
+  bulkSelected: "selected",
+  exitSelection: "Exit selection",
   searchPlaceholder: "Search bookmarks, tags, notes...",
   fontStyleTitle: "Font Style",
   viewModeTitle: "View Mode",

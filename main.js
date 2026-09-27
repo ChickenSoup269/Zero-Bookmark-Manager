@@ -20,6 +20,10 @@ import { initWorkspaces } from "./components/workspaces.js"
 import { initSync } from "./components/sync.js"
 import { initSessionManager } from "./components/sessionManager.js"
 import { setupHotkeys } from "./components/controller/hotkeys.js"
+import {
+  initBulkActionBar,
+  updateBulkActionBar,
+} from "./components/controller/bulkBar.js"
 import { initAnalyticsDashboard } from "./components/analyticsDashboard.js"
 
 // Check if we are running in the native popup
@@ -1831,6 +1835,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Parallel 2: Load UI state
     customLoadUIState(() => {
       uiStateLoaded = true
+      updateBulkActionBar()
       tryInitialRender()
     })
 
@@ -1845,6 +1850,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Thiết lập event listeners
     setupEventListeners(elements)
+    initBulkActionBar(elements)
     initCommandPalette(elements)
     initCleanupDashboard(elements)
     initWorkspaces(elements)

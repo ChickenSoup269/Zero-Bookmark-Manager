@@ -2,6 +2,7 @@ import { translations, showCustomPopup } from "../utils/utils.js"
 import { moveBookmarksToFolder } from "../bookmarks.js"
 import { saveUIState, selectedBookmarks } from "../state.js"
 import { renderFilteredBookmarks } from "../ui.js"
+import { updateBulkActionBar } from "./bulkBar.js"
 
 export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
   const language = localStorage.getItem("appLanguage") || "en"
@@ -140,6 +141,7 @@ export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
         elements.addToFolderButton.classList.add("hidden")
       if (elements.deleteBookmarksButton)
         elements.deleteBookmarksButton.classList.add("hidden")
+      updateBulkActionBar()
 
       // Thông báo thành công
       showCustomPopup(
