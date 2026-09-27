@@ -3063,3 +3063,12 @@ body .bulk-action-bar {
   padding: 8px 10px;
   margin-bottom: 10px;
 }
+
+/* Khi bulk bar hiển thị, thu các nút nổi (scroll-to-top, chat) để không đè lên bar */
+body.bulk-bar-visible .floating-container,
+body.bulk-bar-visible .scroll-to-top {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateX(120%) !important;
+}

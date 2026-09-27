@@ -45,6 +45,13 @@ export function updateBulkActionBar() {
 
   const countEl = document.getElementById("bulk-selected-count")
   if (countEl) countEl.textContent = String(count)
+
+  // Let page CSS move/hide floating widgets (scroll-to-top, chat) that
+  // would otherwise overlap the bar in the narrow popup viewport.
+  document.body.classList.toggle(
+    "bulk-bar-visible",
+    !bar.classList.contains("bulk-hidden"),
+  )
 }
 
 export function initBulkActionBar(elements) {
