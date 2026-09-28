@@ -943,6 +943,15 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         ensureSidebarOpen: true,
       },
       {
+        selector: "#toggle-checkboxes",
+        title: language === "vi" ? "Chọn nhiều bookmark" : "Bulk Select",
+        message:
+          language === "vi"
+            ? "Di chuột lên bookmark sẽ hiện ô check để chọn nhiều mục cùng lúc. Muốn danh sách gọn hơn? Tắt hover hiện ô check trong phần Cài đặt."
+            : "Hovering a bookmark reveals its checkbox so you can pick several at once. Prefer a cleaner list? Turn off hover reveal in Settings.",
+        ensureSidebarOpen: true,
+      },
+      {
         selector: "#settings-button",
         title: t.firstRunTourSettingsTitle,
         message: t.firstRunWebTourSettingsMsg,
@@ -958,7 +967,10 @@ function getFirstRunTourSteps(isWebviewPage = false) {
       {
         selector: ".language-settings-row",
         title: language === "vi" ? "Ngôn ngữ" : "Language",
-        message: language === "vi" ? "Thay đổi ngôn ngữ hiển thị của extension." : "Change the extension's display language.",
+        message:
+          language === "vi"
+            ? "Đổi ngôn ngữ hiển thị, hoặc nhấn 'Thêm ngôn ngữ' để thêm ngôn ngữ của riêng bạn với sự trợ giúp của AI."
+            : "Switch the display language, or click 'Add language' to add your own with AI assistance.",
         openSettings: true,
         ensureSidebarOpen: true,
       },
@@ -1008,6 +1020,16 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         selector: "#check-duplicates-btn",
         title: language === "vi" ? "Kiểm tra trùng lặp" : "Check Duplicates",
         message: language === "vi" ? "Tìm và dọn dẹp các bookmark trùng lặp." : "Find duplicate bookmarks and clean them up.",
+        openSettings: true,
+        ensureSidebarOpen: true,
+      },
+      {
+        selector: "#checkbox-reveal-select",
+        title: language === "vi" ? "Ô check khi hover" : "Checkbox Hover Reveal",
+        message:
+          language === "vi"
+            ? "Mặc định, di chuột lên bookmark sẽ hiện ô check. Đổi thành 'Ẩn đến khi chọn' nếu bạn muốn ô check chỉ xuất hiện khi bật chế độ chọn hàng loạt."
+            : "By default, hovering a bookmark reveals its checkbox. Switch to 'Hidden until select' if you only want checkboxes in bulk-select mode.",
         openSettings: true,
         ensureSidebarOpen: true,
       },
@@ -1090,6 +1112,15 @@ function getFirstRunTourSteps(isWebviewPage = false) {
       selector: ".bookmark-item .dropdown-btn",
       title: t.firstRunTourBookmarkMenuTitle,
       message: t.firstRunTourBookmarkMenuMsg,
+      openSettings: false,
+    },
+    {
+      selector: "#toggle-checkboxes",
+      title: language === "vi" ? "Chọn nhiều bookmark" : "Bulk Select",
+      message:
+        language === "vi"
+          ? "Di chuột lên bookmark sẽ hiện ô check để chọn nhiều mục cùng lúc. Muốn danh sách gọn hơn? Tắt hover hiện ô check trong phần Cài đặt."
+          : "Hovering a bookmark reveals its checkbox so you can pick several at once. Prefer a cleaner list? Turn off hover reveal in Settings.",
       openSettings: false,
     },
   ]
