@@ -22,6 +22,18 @@
       <button id="open-dashboard" class="icon-button" type="button" title="Open full dashboard" aria-label="Open full dashboard">↗</button>
     </header>
 
+    <section class="qs-language-row" aria-label="Language">
+      <i class="fas fa-globe qs-language-globe" aria-hidden="true"></i>
+      <div id="qs-language-switcher" class="qs-language-switcher" role="group" aria-label="Language">
+        <button type="button" class="qs-language-pill active" data-value="en">English</button>
+        <button type="button" class="qs-language-pill" data-value="vi">Tiếng Việt</button>
+      </div>
+      <button type="button" id="qs-add-language-btn" class="qs-add-language-btn" data-i18n-title="qsAddLanguage"
+        title="Add language" aria-label="Add language">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+      </button>
+    </section>
+
     <section id="status" class="status hidden" role="status"></section>
 
     <form id="quick-save-form" class="quick-save-form">
@@ -133,6 +145,58 @@
       </div>
     </div>
   </main>
+
+  <!-- Add-language dialog (for users whose language is not built in) -->
+  <div id="qs-language-popup" class="qs-modal-overlay hidden" role="dialog" aria-modal="true"
+    aria-labelledby="qs-language-popup-title">
+    <div class="qs-modal">
+      <div class="qs-modal-header">
+        <div class="qs-modal-heading">
+          <span class="qs-modal-icon" aria-hidden="true"><i class="fas fa-language"></i></span>
+          <h3 id="qs-language-popup-title" data-i18n="qsAddLanguageTitle">Add Language</h3>
+        </div>
+        <button type="button" id="qs-language-close" class="qs-modal-close" aria-label="Close">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <p class="qs-modal-hint">
+        <i class="fas fa-circle-info" aria-hidden="true"></i>
+        <span data-i18n="qsAddLanguageHint">Your language isn't listed? Copy the prompt below into ChatGPT or Gemini,
+          then paste the translated JSON here.</span>
+      </p>
+      <button type="button" id="qs-copy-ai-prompt" class="qs-btn qs-btn-primary qs-btn-block">
+        <i class="fas fa-copy" aria-hidden="true"></i>
+        <span data-i18n="qsCopyPrompt">Copy prompt &amp; template</span>
+      </button>
+      <div class="qs-ai-links">
+        <a href="https://chatgpt.com/" target="_blank" rel="noopener" class="qs-btn"><i class="fas fa-robot"
+            aria-hidden="true"></i> ChatGPT</a>
+        <a href="https://aistudio.google.com/" target="_blank" rel="noopener" class="qs-btn"><i class="fas fa-sparkles"
+            aria-hidden="true"></i> Gemini</a>
+      </div>
+      <div class="qs-presets-block">
+        <div class="qs-presets-title" data-i18n="qsPresetTitle">Start with a language</div>
+        <div class="qs-presets" id="qs-language-presets">
+          <button type="button" class="qs-preset" data-language-code="th" data-language-name="ไทย">ไทย</button>
+          <button type="button" class="qs-preset" data-language-code="ko" data-language-name="한국어">한국어</button>
+          <button type="button" class="qs-preset" data-language-code="ja" data-language-name="日本語">日本語</button>
+          <button type="button" class="qs-preset" data-language-code="zh-CN" data-language-name="简体中文">简体中文</button>
+          <button type="button" class="qs-preset" data-language-code="zh-TW" data-language-name="繁體中文">繁體中文</button>
+          <button type="button" class="qs-preset" data-language-code="id" data-language-name="Bahasa Indonesia">Indonesia</button>
+          <button type="button" class="qs-preset" data-language-code="ms" data-language-name="Bahasa Melayu">Melayu</button>
+          <button type="button" class="qs-preset" data-language-code="fr" data-language-name="Français">Français</button>
+          <button type="button" class="qs-preset" data-language-code="de" data-language-name="Deutsch">Deutsch</button>
+          <button type="button" class="qs-preset" data-language-code="es" data-language-name="Español">Español</button>
+        </div>
+      </div>
+      <textarea id="qs-language-json-input" class="qs-language-textarea" spellcheck="false"
+        placeholder='{"languageCode":"es","languageName":"Español","translations":{...}}'></textarea>
+      <div class="qs-modal-actions">
+        <button type="button" id="qs-language-cancel" class="qs-btn" data-i18n="qsCancel">Cancel</button>
+        <button type="button" id="qs-language-save" class="qs-btn qs-btn-primary" data-i18n="qsSave">Save</button>
+      </div>
+    </div>
+  </div>
 
   <script src="./quick-save.js"></script>
 </body>

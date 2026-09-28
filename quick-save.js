@@ -70,6 +70,7 @@ const qsTranslations = {
     qsAction: "Click Extension Action",
     btnQuickSave: "Quick Save",
     btnPopup: "Popup",
+    btnNativePopup: "Browser Popup",
     btnPanel: "Panel",
     btnFull: "Full",
     lblTitle: "Title",
@@ -103,6 +104,18 @@ const qsTranslations = {
     btnSaveMultipleBookmarks: "Save Tabs ({0})",
     statusMultiSavedSuccess: "Saved {0} bookmarks successfully!",
     defaultMultiSaveFolder: "Saved Tabs - {0}",
+    qsAddLanguage: "Add language",
+    qsAddLanguageTitle: "Add Language",
+    qsAddLanguageHint:
+      "Your language isn't listed? Copy the prompt below into ChatGPT or Gemini, then paste the translated JSON here.",
+    qsCopyPrompt: "Copy prompt & template",
+    qsPresetTitle: "Start with a language",
+    qsLanguageSaved: "Language added!",
+    qsLanguageInvalid:
+      "Invalid language JSON. Use languageCode, languageName, and translations.",
+    qsSave: "Save",
+    qsCancel: "Cancel",
+    qsCopied: "Copied!",
   },
   vi: {
     qsTitle: "Lưu Nhanh",
@@ -110,6 +123,7 @@ const qsTranslations = {
     qsAction: "Hành động mở Extension",
     btnQuickSave: "Lưu Nhanh",
     btnPopup: "Cửa sổ Popup",
+    btnNativePopup: "Popup trình duyệt",
     btnPanel: "Bảng bên",
     btnFull: "Toàn trang",
     lblTitle: "Tiêu đề",
@@ -143,6 +157,18 @@ const qsTranslations = {
     btnSaveMultipleBookmarks: "Lưu {0} Tab",
     statusMultiSavedSuccess: "Đã lưu thành công {0} bookmark!",
     defaultMultiSaveFolder: "Các tab đã lưu - {0}",
+    qsAddLanguage: "Thêm ngôn ngữ",
+    qsAddLanguageTitle: "Thêm ngôn ngữ",
+    qsAddLanguageHint:
+      "Ngôn ngữ của bạn chưa có? Sao chép lời nhắc bên dưới vào ChatGPT hoặc Gemini, rồi dán JSON đã dịch vào đây.",
+    qsCopyPrompt: "Sao chép prompt & mẫu",
+    qsPresetTitle: "Bắt đầu từ một ngôn ngữ",
+    qsLanguageSaved: "Đã thêm ngôn ngữ!",
+    qsLanguageInvalid:
+      "JSON ngôn ngữ không hợp lệ. Cần có languageCode, languageName và translations.",
+    qsSave: "Lưu",
+    qsCancel: "Hủy",
+    qsCopied: "Đã sao chép!",
   },
 };
 
@@ -1651,6 +1677,16 @@ function applyTranslations() {
       el.setAttribute("placeholder", t[key]);
     }
   });
+
+  document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-title");
+    if (t[key]) {
+      el.setAttribute("title", t[key]);
+      if (el.hasAttribute("aria-label")) {
+        el.setAttribute("aria-label", t[key]);
+      }
+    }
+  });
 }
 document.addEventListener("DOMContentLoaded", applyTranslations);
 applyTranslations(); // Run immediately in case DOM is already loaded
@@ -1670,3 +1706,232 @@ function tStatus(key, ...args) {
   });
   return text;
 }
+
+// ==== Language switcher & custom language packs (Quick Save popup) ====
+const QS_CUSTOM_LANGUAGES_KEY = "customLanguagePacks";
+const qsLanguageSwitcher = document.getElementById("qs-language-switcher");
+const qsAddLanguageBtn = document.getElementById("qs-add-language-btn");
+const qsLanguagePopup = document.getElementById("qs-language-popup");
+const qsLanguageCloseBtn = document.getElementById("qs-language-close");
+const qsLanguageCancelBtn = document.getElementById("qs-language-cancel");
+const qsLanguageSaveBtn = document.getElementById("qs-language-save");
+const qsCopyPromptBtn = document.getElementById("qs-copy-ai-prompt");
+const qsLanguageJsonInput = document.getElementById("qs-language-json-input");
+const qsPresetsContainer = document.getElementById("qs-language-presets");
+
+function qsReadLanguagePacks() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(QS_CUSTOM_LANGUAGES_KEY) || "{}",
+    );
+    return saved && typeof saved === "object" && !Array.isArray(saved)
+      ? saved
+      : {};
+  } catch (error) {
+    console.warn("Failed to read custom languages:", error);
+    return {};
+  }
+}
+
+function qsNormalizeLanguagePack(rawPack) {
+  if (!rawPack || typeof rawPack !== "object" || Array.isArray(rawPack)) {
+    throw new Error("Invalid language pack");
+  }
+  const translationsObject = rawPack.translations;
+  if (
+    !translationsObject ||
+    typeof translationsObject !== "object" ||
+    Array.isArray(translationsObject)
+  ) {
+    throw new Error("Missing translations object");
+  }
+  const rawCode = String(
+    rawPack.languageCode || rawPack.code || rawPack.locale || "",
+  )
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, "-");
+  if (!rawCode) throw new Error("Missing language code");
+  const code = ["en", "vi"].includes(rawCode) ? `custom-${rawCode}` : rawCode;
+  const name = String(
+    rawPack.languageName || rawPack.name || rawPack.label || code,
+  ).trim();
+  return {
+    languageCode: code,
+    languageName: name,
+    translations: { ...translationsObject },
+  };
+}
+
+function qsRegisterCustomLanguagePacks() {
+  Object.values(qsReadLanguagePacks()).forEach((pack) => {
+    try {
+      const normalized = qsNormalizeLanguagePack(pack);
+      qsTranslations[normalized.languageCode] = {
+        ...qsTranslations.en,
+        ...normalized.translations,
+      };
+    } catch (error) {
+      console.warn("Skipped invalid custom language pack:", error);
+    }
+  });
+}
+
+function qsRenderCustomLanguagePills() {
+  if (!qsLanguageSwitcher) return;
+  qsLanguageSwitcher
+    .querySelectorAll("[data-custom-language]")
+    .forEach((pill) => pill.remove());
+  Object.values(qsReadLanguagePacks()).forEach((pack) => {
+    const pill = document.createElement("button");
+    pill.type = "button";
+    pill.className = "qs-language-pill";
+    pill.dataset.value = pack.languageCode;
+    pill.dataset.customLanguage = "true";
+    // Native name from the pack so users always recognize their language
+    pill.textContent = pack.languageName;
+    qsLanguageSwitcher.appendChild(pill);
+  });
+}
+
+function qsSyncActivePill(lang) {
+  if (!qsLanguageSwitcher) return;
+  qsLanguageSwitcher.querySelectorAll(".qs-language-pill").forEach((pill) => {
+    pill.classList.toggle("active", pill.dataset.value === lang);
+  });
+}
+
+function qsApplyLanguage(lang) {
+  localStorage.setItem("appLanguage", lang);
+  try {
+    chrome.storage.local.set({ appLanguage: lang });
+  } catch (error) {
+    console.warn("Could not sync language via chrome.storage:", error);
+  }
+  applyTranslations();
+  qsSyncActivePill(lang);
+}
+
+function qsCloseLanguagePopup() {
+  if (!qsLanguagePopup) return;
+  qsLanguagePopup.classList.add("hidden");
+  if (qsLanguageJsonInput) qsLanguageJsonInput.value = "";
+}
+
+function qsBuildLanguageTemplate(preset = {}) {
+  return JSON.stringify(
+    {
+      languageCode: preset.languageCode || "my-language",
+      languageName: preset.languageName || "My Language",
+      translations: qsTranslations.en,
+    },
+    null,
+    2,
+  );
+}
+
+function qsShowLanguageStatus(message, type) {
+  showStatus(message, type);
+  setTimeout(() => {
+    statusBox.classList.add("hidden");
+  }, 2500);
+}
+
+function qsSetupLanguageControls() {
+  if (!qsLanguageSwitcher || !qsLanguagePopup) return;
+
+  qsLanguageSwitcher.addEventListener("click", (event) => {
+    const pill = event.target.closest(".qs-language-pill");
+    if (!pill) return;
+    qsApplyLanguage(pill.dataset.value);
+  });
+
+  qsAddLanguageBtn?.addEventListener("click", () => {
+    if (qsLanguageJsonInput) qsLanguageJsonInput.value = "";
+    qsLanguagePopup.classList.remove("hidden");
+    qsLanguageJsonInput?.focus();
+  });
+  qsLanguageCloseBtn?.addEventListener("click", qsCloseLanguagePopup);
+  qsLanguageCancelBtn?.addEventListener("click", qsCloseLanguagePopup);
+  qsLanguagePopup.addEventListener("click", (event) => {
+    if (event.target === qsLanguagePopup) qsCloseLanguagePopup();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (
+      event.key === "Escape" &&
+      !qsLanguagePopup.classList.contains("hidden")
+    ) {
+      qsCloseLanguagePopup();
+    }
+  });
+
+  qsPresetsContainer?.addEventListener("click", (event) => {
+    const preset = event.target.closest(".qs-preset");
+    if (!preset) return;
+    if (qsLanguageJsonInput) {
+      qsLanguageJsonInput.value = qsBuildLanguageTemplate({
+        languageCode: preset.dataset.languageCode,
+        languageName: preset.dataset.languageName,
+      });
+      qsLanguageJsonInput.focus();
+    }
+  });
+
+  qsCopyPromptBtn?.addEventListener("click", () => {
+    const lang = localStorage.getItem("appLanguage") || "en";
+    const t = qsTranslations[lang] || qsTranslations.en;
+    const prompt = `Translate the following JSON language file into {YOUR_LANGUAGE_HERE}. Keep the JSON keys and structure identical. Output ONLY the raw JSON format so I can copy it directly.\n\n${qsBuildLanguageTemplate()}`;
+    navigator.clipboard
+      .writeText(prompt)
+      .then(() => {
+        const label = qsCopyPromptBtn.querySelector("span");
+        if (label) {
+          const original = label.textContent;
+          label.textContent = t.qsCopied || "Copied!";
+          setTimeout(() => {
+            label.textContent = original;
+          }, 2000);
+        }
+      })
+      .catch((err) => console.error("Could not copy text: ", err));
+  });
+
+  qsLanguageSaveBtn?.addEventListener("click", () => {
+    const lang = localStorage.getItem("appLanguage") || "en";
+    const t = qsTranslations[lang] || qsTranslations.en;
+    try {
+      const normalized = qsNormalizeLanguagePack(
+        JSON.parse(qsLanguageJsonInput.value),
+      );
+      const packs = qsReadLanguagePacks();
+      packs[normalized.languageCode] = normalized;
+      localStorage.setItem(QS_CUSTOM_LANGUAGES_KEY, JSON.stringify(packs));
+
+      qsTranslations[normalized.languageCode] = {
+        ...qsTranslations.en,
+        ...normalized.translations,
+      };
+      qsRenderCustomLanguagePills();
+      qsApplyLanguage(normalized.languageCode);
+      qsCloseLanguagePopup();
+      qsShowLanguageStatus(t.qsLanguageSaved || "Language added!", "success");
+    } catch (error) {
+      console.warn("Invalid custom language JSON:", error);
+      qsShowLanguageStatus(
+        t.qsLanguageInvalid || "Invalid language JSON.",
+        "error",
+      );
+    }
+  });
+
+  // Initial state: register saved packs, then sync pills with stored language
+  qsRegisterCustomLanguagePacks();
+  qsRenderCustomLanguagePills();
+  const stored = localStorage.getItem("appLanguage") || "en";
+  const activeLanguage = qsTranslations[stored] ? stored : "en";
+  qsSyncActivePill(activeLanguage);
+  // Re-apply after registering packs so a custom language shows on first paint
+  if (activeLanguage !== "en") applyTranslations();
+}
+
+qsSetupLanguageControls();
