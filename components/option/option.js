@@ -305,11 +305,18 @@ export async function customLoadUIState(callback) {
       savedUiState.bookmarkMenuBg ||
       localStorage.getItem("bookmarkMenuBg") ||
       "normal"
+    uiState.checkboxHoverReveal =
+      savedUiState.checkboxHoverReveal ??
+      localStorage.getItem("checkboxHoverReveal") !== "off"
     uiState.showSmartFolders = savedUiState.showSmartFolders ?? true
     uiState.sidebarWidth = savedUiState.sidebarWidth || 260
 
     document.body.setAttribute("data-header-line", uiState.headerLineStyle)
     document.body.setAttribute("data-bookmark-menu-bg", uiState.bookmarkMenuBg)
+    document.body.setAttribute(
+      "data-checkbox-reveal",
+      uiState.checkboxHoverReveal === false ? "off" : "hover",
+    )
     document.documentElement.style.setProperty(
       "--sidebar-width",
       `${uiState.sidebarWidth}px`,

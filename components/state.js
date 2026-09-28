@@ -16,6 +16,7 @@ export const uiState = {
   folderCountMode: "bookmarks", // "bookmarks" | "folders" | "both" | "off"
   folderListBg: true,
   checkboxesVisible: false,
+  checkboxHoverReveal: true, // hover a bookmark to reveal its checkbox
   bookmarkTags: {},
   tagColors: {},
   tagTextColors: {},
@@ -89,6 +90,7 @@ export function saveUIState() {
       folderCountMode: uiState.folderCountMode,
       headerLineStyle: uiState.headerLineStyle,
       bookmarkMenuBg: uiState.bookmarkMenuBg,
+      checkboxHoverReveal: uiState.checkboxHoverReveal,
       showSmartFolders: uiState.showSmartFolders,
       sidebarWidth: uiState.sidebarWidth,
     },

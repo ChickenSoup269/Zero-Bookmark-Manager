@@ -575,6 +575,9 @@ export const vi = {
 
   addCustomLanguage: "Thêm ngôn ngữ tùy chỉnh",
   addLanguageShort: "Thêm ngôn ngữ",
+  checkboxRevealTitle: "Ô check bookmark:",
+  checkboxRevealHover: "Hiện khi hover",
+  checkboxRevealOff: "Ẩn đến khi chọn",
   customLanguageTitle: "Thêm ngôn ngữ tùy chỉnh",
   customLanguageHint:
     "Dán JSON từ ChatGPT hoặc Gemini AI Studio, hoặc import file ngôn ngữ .json.",

@@ -12,7 +12,7 @@ import {
   closeSettingsAndSidebar,
 } from "./components/utils/utils.js"
 import { setupEventListeners } from "./components/events.js"
-import { uiState } from "./components/state.js"
+import { uiState, saveUIState } from "./components/state.js"
 import { customLoadUIState } from "./components/option/option.js"
 import { initCopyButtons } from "./components/copy-code.js"
 import { initCommandPalette } from "./components/commandPalette.js"
@@ -234,6 +234,9 @@ if (headerLineSelect) {
 // Cài đặt nền dropdown menu của từng bookmark
 setupBookmarkMenuBgControl()
 
+// Cài đặt bật/tắt hover hiện ô check của bookmark
+setupCheckboxRevealControl()
+
 // Sự kiện cho Duplicate Scope
 const duplicateScopeSelect = document.getElementById("duplicate-scope-select")
 if (duplicateScopeSelect) {
@@ -454,6 +457,38 @@ function setupBookmarkMenuBgControl() {
       chrome.storage.local.set({ uiState: newUiState })
     })
   }
+}
+
+// Cài đặt bật/tắt hover hiện ô check của bookmark (bulk selection)
+function setupCheckboxRevealControl() {
+  const saved =
+    uiState.checkboxHoverReveal === false ||
+    localStorage.getItem("checkboxHoverReveal") === "off"
+      ? "off"
+      : "hover"
+  document.body.setAttribute("data-checkbox-reveal", saved)
+
+  const select = document.getElementById("checkbox-reveal-select")
+  if (!select) return
+
+  if (select.dataset.bound === "true") return
+  select.dataset.bound = "true"
+
+  const swatches = select.querySelectorAll(".setting-swatch")
+  swatches.forEach((btn) =>
+    btn.classList.toggle("active", btn.dataset.value === saved),
+  )
+  select.addEventListener("click", (e) => {
+    const btn = e.target.closest(".setting-swatch")
+    if (!btn) return
+    swatches.forEach((b) => b.classList.remove("active"))
+    btn.classList.add("active")
+    const val = btn.dataset.value === "off" ? "off" : "hover"
+    document.body.setAttribute("data-checkbox-reveal", val)
+    uiState.checkboxHoverReveal = val === "hover"
+    localStorage.setItem("checkboxHoverReveal", val)
+    saveUIState()
+  })
 }
 
 function setupSmartFoldersControl() {
@@ -1845,6 +1880,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setupBookmarkMenuBgControl()
       setupSmartFoldersControl()
       setupSidebarWidthControl()
+      setupCheckboxRevealControl()
 
       const activeTab = localStorage.getItem("activeTab") || "dashboard"
       if (activeTab === "quick-save") {

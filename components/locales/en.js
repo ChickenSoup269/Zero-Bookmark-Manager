@@ -571,6 +571,9 @@ export const en = {
 
   addCustomLanguage: "Add custom language",
   addLanguageShort: "Add language",
+  checkboxRevealTitle: "Bookmark checkboxes:",
+  checkboxRevealHover: "Show on hover",
+  checkboxRevealOff: "Hidden until select",
   customLanguageTitle: "Add Custom Language",
   customLanguageHint:
     "Paste JSON from ChatGPT or Gemini AI Studio, or import a .json language file.",
