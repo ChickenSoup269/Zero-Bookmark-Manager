@@ -3874,19 +3874,21 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
 }
 
 .language-settings-row #add-custom-language-option {
-  flex: 0 0 38px;
-  min-width: 38px;
+  flex: 0 0 auto;
   height: 34px;
-  padding: 0;
-  gap: 2px;
+  padding: 0 12px;
+  gap: 6px;
   border: 1.5px solid var(--border-color);
   border-radius: 8px;
   background: var(--bg-secondary);
   color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
   transition:
     border-color 0.2s ease,
     color 0.2s ease;
@@ -3905,113 +3907,7 @@ body:not(.settings-panel-open) .settings-scroll-top-btn,
   transform: none;
 }
 
-.language-settings-row #add-custom-language-option .fa-plus {
-  font-size: 0.58rem;
-  margin-left: -2px;
-  transform: translateY(4px);
-}
-
-.custom-language-popup-content {
-  max-width: 520px;
-  width: min(92vw, 520px);
-  text-align: left;
-  max-height: min(86vh, 720px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.custom-language-hint {
-  margin: 0 0 12px;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  line-height: 1.45;
-}
-
-.custom-language-json-input {
-  width: 100%;
-  height: 200px;
-  resize: vertical;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-tertiary, rgba(0, 0, 0, 0.2));
-  color: var(--text-primary);
-  font-family: monospace;
-  font-size: 0.85em;
-  margin-top: 12px;
-  margin-bottom: 20px;
-  box-sizing: border-box;
-}
-
-.custom-language-json-input:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb, 112, 161, 70), 0.2);
-}
-
-.custom-language-helper-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-  justify-content: space-between;
-}
-
-.custom-language-helper-row .button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.custom-language-presets {
-  margin: 12px 0;
-  padding: 8px 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-secondary);
-}
-
-.custom-language-presets-title {
-  margin-bottom: 6px;
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.custom-language-preset-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  max-height: 92px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 2px;
-  scrollbar-width: thin;
-}
-
-.custom-language-preset {
-  flex: 0 0 auto;
-  padding: 5px 9px;
-  border: 1px solid var(--border-color);
-  border-radius: 7px;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.8rem;
-}
-
-.custom-language-preset:hover {
-  border-color: var(--accent-color);
-  background: var(--bg-tertiary);
-}
-
-.custom-language-presets-hint {
-  margin: 6px 0 0;
-  color: var(--text-secondary);
-  font-size: 0.78rem;
-  line-height: 1.45;
-}
+/* Custom Language dialog styles live in style.css (shared with index.html). */
 
 /* Menu item - Button style */
 .dropdown-menu-2 .menu-item {

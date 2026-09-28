@@ -9,6 +9,7 @@ import {
   translations,
   debounce,
   showCustomPopup,
+  closeSettingsAndSidebar,
 } from "./components/utils/utils.js"
 import { setupEventListeners } from "./components/events.js"
 import { uiState } from "./components/state.js"
@@ -659,6 +660,9 @@ function setupCustomLanguageControls(elements) {
   }
 
   openButton.addEventListener("click", () => {
+    // The dialog renders over the whole page: close the settings sidebar so
+    // it does not stay open behind (or trap clicks around) the popup.
+    closeSettingsAndSidebar()
     textarea.value = ""
     popup.classList.remove("hidden")
     textarea.focus()

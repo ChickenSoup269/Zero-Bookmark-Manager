@@ -423,10 +423,10 @@ export const vi = {
   checkingLinks:
     "Đã bắt đầu kiểm tra các liên kết hỏng. Kết quả sẽ hiển thị trên giao diện.",
   customLangInstruction1:
-    "1. Nhấn 'Sao chép Câu lệnh & Mẫu' để lấy câu lệnh dịch cho AI.",
-  customLangInstruction2: "2. Dán vào ChatGPT hoặc Gemini AI Studio để dịch.",
+    "Nhấn 'Sao chép Câu lệnh & Mẫu' để lấy câu lệnh dịch cho AI.",
+  customLangInstruction2: "Dán vào ChatGPT hoặc Gemini AI Studio để dịch.",
   customLangInstruction3:
-    "3. Sao chép đoạn code JSON được trả về và dán lại vào khung bên dưới.",
+    "Sao chép đoạn code JSON được trả về và dán lại vào khung bên dưới.",
   copyPromptAndTemplate: "Sao chép Lệnh & Mẫu",
   importJsonFile: "Import JSON",
   insertLanguageTemplate: "Chèn mẫu",
@@ -574,6 +574,7 @@ export const vi = {
     "Hoàn tất! Đã kiểm tra {0} liên kết. Tất cả đều hoạt động tốt.",
 
   addCustomLanguage: "Thêm ngôn ngữ tùy chỉnh",
+  addLanguageShort: "Thêm ngôn ngữ",
   customLanguageTitle: "Thêm ngôn ngữ tùy chỉnh",
   customLanguageHint:
     "Dán JSON từ ChatGPT hoặc Gemini AI Studio, hoặc import file ngôn ngữ .json.",

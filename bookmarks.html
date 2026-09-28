@@ -356,11 +356,11 @@
                             <button class="theme-swatch setting-swatch language-swatch" data-value="vi"><span>Tiếng
                                     Việt</span></button>
                         </div>
-                        <button id="add-custom-language-option" class="button btn-action-icon"
+                        <button id="add-custom-language-option" class="button add-language-button"
                             data-i18n-title="addCustomLanguage" title="Add custom language"
                             aria-label="Add custom language">
-                            <i class="fas fa-language"></i>
-                            <i class="fas fa-plus"></i>
+                            <i class="fas fa-language" aria-hidden="true"></i>
+                            <span data-i18n="addLanguageShort">Add language</span>
                         </button>
                     </div>
                 </div>
@@ -1397,7 +1397,10 @@
         <div id="custom-language-popup" class="rename-popup hidden popup-animate" role="dialog"
             aria-labelledby="custom-language-title">
             <div class="rename-popup-content custom-language-popup-content">
-                <h3 id="custom-language-title" data-i18n="customLanguageTitle">Add Custom Language</h3>
+                <div class="custom-language-header">
+                    <span class="custom-language-icon" aria-hidden="true"><i class="fas fa-language"></i></span>
+                    <h3 id="custom-language-title" data-i18n="customLanguageTitle">Add Custom Language</h3>
+                </div>
                 <div class="custom-language-instructions">
                     <p data-i18n="customLangInstruction1">1. Copy the prompt and English JSON template by clicking the
                         button below.</p>

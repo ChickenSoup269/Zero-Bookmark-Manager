@@ -2999,9 +2999,10 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
 
 /* Add-language button: match the language pill height. */
 #add-custom-language-option {
-  width: 32px;
   height: 32px;
-  font-size: 0.85rem;
+  padding: 0 10px;
+  gap: 6px;
+  font-size: 0.78rem;
   border-radius: 8px;
 }
 

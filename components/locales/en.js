@@ -419,11 +419,11 @@ export const en = {
   checkingLinks:
     "Started checking for broken links. Results will appear in the UI.",
   customLangInstruction1:
-    "1. Click 'Copy Prompt & Template' to copy the instructions for AI.",
+    "Click 'Copy Prompt & Template' to copy the instructions for AI.",
   customLangInstruction2:
-    "2. Paste it into ChatGPT or Gemini AI Studio to translate.",
+    "Paste it into ChatGPT or Gemini AI Studio to translate.",
   customLangInstruction3:
-    "3. Copy the returned JSON code and paste it back into the textbox below.",
+    "Copy the returned JSON code and paste it back into the textbox below.",
   copyPromptAndTemplate: "Copy Prompt & Template",
   importJsonFile: "Import JSON",
   insertLanguageTemplate: "Insert Template",
@@ -570,6 +570,7 @@ export const en = {
     "Finished! Checked {0} links. All appear healthy and safe.",
 
   addCustomLanguage: "Add custom language",
+  addLanguageShort: "Add language",
   customLanguageTitle: "Add Custom Language",
   customLanguageHint:
     "Paste JSON from ChatGPT or Gemini AI Studio, or import a .json language file.",
