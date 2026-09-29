@@ -8949,43 +8949,71 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 
 /* ============================================
    CUSTOM POPUP STATUS COLORS (Check Links /
-   Check Duplicates results...) — dùng biến
-   theme để tương phản đúng trên mọi theme
+   Check Duplicates results...) — the whole
+   card is tinted with its status color and
+   shows a matching icon, instead of a dark
+   box with a lone colored stripe on top.
    ============================================ */
+#custom-popup.success {
+  --popup-status: var(--success-color);
+  --popup-icon: "\f058"; /* circle-check */
+}
+
+#custom-popup.error {
+  --popup-status: var(--danger-color);
+  --popup-icon: "\f06a"; /* circle-exclamation */
+}
+
+#custom-popup.warning {
+  --popup-status: var(--warning-color);
+  --popup-icon: "\f071"; /* triangle-exclamation */
+}
+
+#custom-popup.info {
+  --popup-status: var(--accent-color);
+  --popup-icon: "\f05a"; /* circle-info */
+}
+
+#custom-popup.loading {
+  --popup-status: var(--text-secondary);
+  --popup-icon: "\f1ce"; /* circle-notch */
+}
+
 #custom-popup .rename-popup-content {
-  border-top: 3px solid var(--accent-color);
+  border: 1px solid
+    color-mix(in srgb, var(--popup-status, var(--accent-color)) 35%, var(--border-color));
+  border-top: 3px solid var(--popup-status, var(--accent-color));
+  background: color-mix(
+    in srgb,
+    var(--popup-status, var(--accent-color)) 9%,
+    var(--bg-secondary)
+  );
+  border-radius: 12px;
 }
 
-#custom-popup.success .rename-popup-content {
-  border-top-color: var(--success-color);
+#custom-popup .rename-popup-content h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--popup-status, var(--accent-color));
 }
 
-#custom-popup.success .rename-popup-content h3 {
-  color: var(--success-color);
+#custom-popup .rename-popup-content h3::before {
+  content: var(--popup-icon, "\f05a");
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 1.1rem;
 }
 
-#custom-popup.error .rename-popup-content {
-  border-top-color: var(--danger-color);
+#custom-popup.loading .rename-popup-content h3::before {
+  animation: customPopupSpin 1s linear infinite;
 }
 
-#custom-popup.error .rename-popup-content h3 {
-  color: var(--danger-color);
-}
-
-#custom-popup.warning .rename-popup-content {
-  border-top-color: var(--warning-color);
-}
-
-#custom-popup.warning .rename-popup-content h3 {
-  color: var(--warning-color);
-}
-
-#custom-popup.info .rename-popup-content h3 {
-  color: var(--accent-color);
-}
-
-#custom-popup.loading .rename-popup-content h3 {
-  color: var(--text-secondary);
+@keyframes customPopupSpin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ============================================
