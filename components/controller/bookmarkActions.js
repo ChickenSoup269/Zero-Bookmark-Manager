@@ -159,7 +159,7 @@ export function setupBookmarkActionListeners(elements) {
       document.__bookmarkActionDelegationHandler,
     )
     document.removeEventListener(
-      "change",
+      "click",
       document.__bookmarkCheckboxDelegationHandler,
     )
   }
@@ -174,7 +174,7 @@ export function setupBookmarkActionListeners(elements) {
     }
   }
   document.addEventListener("click", document.__bookmarkActionDelegationHandler)
-  document.addEventListener("change", document.__bookmarkCheckboxDelegationHandler)
+  document.addEventListener("click", document.__bookmarkCheckboxDelegationHandler)
 }
 
 function handleMenuItemClick(e, elements, target = e.target.closest(".menu-item")) {
@@ -1197,14 +1197,54 @@ function handleFavoriteBookmark(id, elements) {
   })
 }
 
+let lastCheckedCheckbox = null
+
 function handleBookmarkCheckbox(e, elements) {
   e.stopPropagation()
-  const id = e.target.dataset.id
-  if (!id) return
+  const target = e.target
+  if (!target || !target.matches(".bookmark-checkbox")) return
 
-  e.target.checked
-    ? uiState.selectedBookmarks.add(id)
-    : uiState.selectedBookmarks.delete(id)
+  const isChecked = target.checked
+  const id = target.dataset.id
+
+  if (
+    e.shiftKey &&
+    lastCheckedCheckbox &&
+    lastCheckedCheckbox !== target &&
+    lastCheckedCheckbox.isConnected
+  ) {
+    const allCheckboxes = Array.from(
+      document.querySelectorAll(".bookmark-checkbox"),
+    )
+    const startIdx = allCheckboxes.indexOf(lastCheckedCheckbox)
+    const endIdx = allCheckboxes.indexOf(target)
+
+    if (startIdx !== -1 && endIdx !== -1) {
+      const [min, max] = [
+        Math.min(startIdx, endIdx),
+        Math.max(startIdx, endIdx),
+      ]
+      for (let i = min; i <= max; i++) {
+        const cb = allCheckboxes[i]
+        cb.checked = isChecked
+        if (cb.dataset.id) {
+          if (isChecked) {
+            uiState.selectedBookmarks.add(cb.dataset.id)
+          } else {
+            uiState.selectedBookmarks.delete(cb.dataset.id)
+          }
+        }
+      }
+    }
+  } else {
+    if (id) {
+      isChecked
+        ? uiState.selectedBookmarks.add(id)
+        : uiState.selectedBookmarks.delete(id)
+    }
+  }
+
+  lastCheckedCheckbox = target
 
   const hasSelected = uiState.selectedBookmarks.size > 0
   if (elements?.addToFolderButton) {
@@ -1252,10 +1292,19 @@ export function handleDeleteSelectedBookmarks(elements) {
 
       getBookmarkTree((nodes) => {
         renderFilteredBookmarks(nodes, elements)
-        showCustomPopup(getTranslation("deleteBookmarksSuccess"), "success")
+        const deleteCount = snapshots.length || ids.length
+        const isVi = getLang() === "vi"
+        const deleteMsg = isVi
+          ? `Đã xóa ${deleteCount} bookmark thành công!`
+          : `Deleted ${deleteCount} bookmark${deleteCount > 1 ? "s" : ""} successfully!`
+        const undoDeleteMsg = isVi
+          ? `Đã xóa ${deleteCount} bookmark.`
+          : `Deleted ${deleteCount} bookmark${deleteCount > 1 ? "s" : ""}.`
+
+        showCustomPopup(deleteMsg, "success")
         if (snapshots.length) {
           registerUndo({
-            message: getTranslation("undoBulkDeleteMessage", "Bookmarks deleted."),
+            message: undoDeleteMsg,
             actionLabel: getTranslation("undoAction", "Undo"),
             elements,
             undo: () => restoreDeletedBookmarks(snapshots),

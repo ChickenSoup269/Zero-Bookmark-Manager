@@ -228,10 +228,6 @@ export function moveBookmarksToFolder(
             selectedBookmarks.clear()
             elements.addToFolderButton.classList.add("hidden")
             elements.deleteBookmarksButton.classList.add("hidden")
-            showCustomPopup(
-              translations[language].addToFolderSuccess,
-              "success",
-            )
             callback() // Success: hide popup, save state
           } else if (attempts > 1) {
             console.warn(

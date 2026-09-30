@@ -159,19 +159,44 @@ export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
         elements.deleteBookmarksButton.classList.add("hidden")
       updateBulkActionBar()
 
-      // Thông báo thành công
-      showCustomPopup(
-        t.addToFolderSuccess || "Moved successfully!",
-        "success",
-        false
-      )
+      // Format detailed messages with count & folder name
+      const count = bookmarkIds.length
+      const selectedOption =
+        elements.addToFolderSelect.options[
+          elements.addToFolderSelect.selectedIndex
+        ]
+      const folderName = selectedOption
+        ? selectedOption.textContent.replace(/^[\s\u00A0└─-]+/, "").trim()
+        : ""
+
+      let successMsg = ""
+      let undoMsg = ""
+
+      if (language === "vi") {
+        successMsg = folderName
+          ? `Đã chuyển ${count} bookmark vào "${folderName}" thành công!`
+          : `Đã chuyển ${count} bookmark thành công!`
+        undoMsg = folderName
+          ? `Đã chuyển ${count} bookmark vào "${folderName}".`
+          : `Đã chuyển ${count} bookmark.`
+      } else {
+        successMsg = folderName
+          ? `Moved ${count} bookmark${count > 1 ? "s" : ""} to "${folderName}" successfully!`
+          : `Moved ${count} bookmark${count > 1 ? "s" : ""} successfully!`
+        undoMsg = folderName
+          ? `Moved ${count} bookmark${count > 1 ? "s" : ""} to "${folderName}".`
+          : `Moved ${count} bookmark${count > 1 ? "s" : ""}.`
+      }
+
+      // Thông báo thành công chi tiết
+      showCustomPopup(successMsg, "success", false)
       saveUIState()
 
       // Register Undo
       const validLocations = previousLocations.filter(Boolean)
       if (validLocations.length > 0) {
         registerUndo({
-          message: t.undoMoveMessage || "Bookmarks moved.",
+          message: undoMsg,
           actionLabel: t.undoAction || "Undo",
           elements,
           undo: async () => {
