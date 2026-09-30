@@ -149,22 +149,32 @@ export function setupBookmarkActionListeners(elements) {
     else console.warn(`Element for event '${evt}' not found`)
   })
 
-  // Menu items
-  document.querySelectorAll(".menu-item").forEach((button) => {
-    attachListener(button, "click", (e) => handleMenuItemClick(e, elements))
-  })
-
-  // Checkboxes
-  document.querySelectorAll(".bookmark-checkbox").forEach((checkbox) => {
-    attachListener(checkbox, "change", (e) =>
-      handleBookmarkCheckbox(e, elements),
+  if (document.__bookmarkActionDelegationHandler) {
+    document.removeEventListener(
+      "click",
+      document.__bookmarkActionDelegationHandler,
     )
-  })
+    document.removeEventListener(
+      "change",
+      document.__bookmarkCheckboxDelegationHandler,
+    )
+  }
+
+  document.__bookmarkActionDelegationHandler = (e) => {
+    const target = e.target.closest(".bookmark-dropdown-menu .menu-item")
+    if (target) handleMenuItemClick(e, elements, target)
+  }
+  document.__bookmarkCheckboxDelegationHandler = (e) => {
+    if (e.target.matches(".bookmark-checkbox")) {
+      handleBookmarkCheckbox(e, elements)
+    }
+  }
+  document.addEventListener("click", document.__bookmarkActionDelegationHandler)
+  document.addEventListener("change", document.__bookmarkCheckboxDelegationHandler)
 }
 
-function handleMenuItemClick(e, elements) {
+function handleMenuItemClick(e, elements, target = e.target.closest(".menu-item")) {
   e.stopPropagation()
-  const target = e.target.closest(".menu-item")
   if (!target) return
 
   const bookmarkId = target.dataset.id
@@ -183,10 +193,10 @@ function handleMenuItemClick(e, elements) {
 
   // Determine action
   const actions = {
-    "add-to-folder": () => handleAddToFolder(e, elements),
-    "delete-btn": () => handleDeleteBookmark(e, elements),
-    "rename-btn": () => handleRenameBookmark(e, elements),
-    "favorite-btn": () => handleFavoriteBookmark(e, elements),
+    "add-to-folder": () => handleAddToFolder(bookmarkId, elements),
+    "delete-btn": () => handleDeleteBookmark(bookmarkId, elements),
+    "rename-btn": () => handleRenameBookmark(bookmarkId, elements),
+    "favorite-btn": () => handleFavoriteBookmark(bookmarkId, elements),
     "view-detail-btn": () => openBookmarkDetailPopup(bookmarkId, elements),
     "manage-tags-btn": () => openManageTagsPopup(bookmarkId, elements),
     "snooze-btn": () => openSnoozePopup(bookmarkId, elements),
@@ -505,7 +515,7 @@ function setupThumbnailInteraction(thumbEl) {
 
 // --- MANAGE TAGS ---
 
-async function openManageTagsPopup(bookmarkId) {
+async function openManageTagsPopup(bookmarkId, elements) {
   const popup = document.getElementById("manage-tags-popup")
   const addTagForm = popup?.querySelector(".add-tag-form")
   if (!popup || !addTagForm)
@@ -637,24 +647,6 @@ async function openManageTagsPopup(bookmarkId) {
           </button>`
       })
       .join("")
-      
-    existingTagChips.querySelectorAll(".existing-tag-chip").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const tagToAdd = btn.dataset.existingTag
-        if (!tagToAdd) return
-
-        if (!uiState.bookmarkTags[bookmarkId]) {
-          uiState.bookmarkTags[bookmarkId] = []
-        }
-        if (!uiState.bookmarkTags[bookmarkId].includes(tagToAdd)) {
-          uiState.bookmarkTags[bookmarkId].push(tagToAdd)
-          saveTagData(() => {
-            renderTags()
-            renderExistingTagChips(tags, existingTagsSearchInput?.value)
-          })
-        }
-      })
-    })
   }
   
   if (existingTagsSearchInput) {
@@ -795,6 +787,7 @@ async function openManageTagsPopup(bookmarkId) {
           ].filter((t) => t !== tag)
           saveTagData(() => {
             renderTags()
+            updateDropdown()
             showCustomPopup(
               getTranslation("deleteTagSuccess", "Tag deleted successfully!"),
               "success",
@@ -819,7 +812,12 @@ async function openManageTagsPopup(bookmarkId) {
   renderTags()
   popup.classList.remove("hidden")
 
-  const close = () => popup.classList.add("hidden")
+  const close = () => {
+    popup.classList.add("hidden")
+    if (elements) {
+      getBookmarkTree((nodes) => renderFilteredBookmarks(nodes, elements))
+    }
+  }
   els.close.onclick = close
   popup.onclick = (e) => e.target === popup && close()
   const esc = (e) => {
@@ -1113,14 +1111,11 @@ function handleClearRename(e, elements) {
   elements.renameInput.focus()
 }
 
-function handleAddToFolder(e, elements) {
-  e.stopPropagation()
-  if (e.target.dataset.id) openAddToFolderPopup(elements, [e.target.dataset.id])
+function handleAddToFolder(bookmarkId, elements) {
+  if (bookmarkId) openAddToFolderPopup(elements, [bookmarkId])
 }
 
-function handleDeleteBookmark(e, elements) {
-  e.stopPropagation()
-  const id = e.target.dataset.id
+function handleDeleteBookmark(id, elements) {
   if (!id) return handleError("No ID", "errorUnexpected")
 
   showCustomConfirm(getTranslation("deleteConfirm"), async () => {
@@ -1147,9 +1142,7 @@ function handleDeleteBookmark(e, elements) {
   })
 }
 
-function handleFavoriteBookmark(e, elements) {
-  e.stopPropagation()
-  const id = e.target.dataset.id
+function handleFavoriteBookmark(id, elements) {
   if (!id) return handleError("No ID", "errorUnexpected")
 
   safeChromeBookmarksCall("get", [id], (res) => {
@@ -1260,9 +1253,7 @@ export function handleDeleteSelectedBookmarks(elements) {
   })
 }
 
-function handleRenameBookmark(e, elements) {
-  e.stopPropagation()
-  const id = e.target.dataset.id
+function handleRenameBookmark(id, elements) {
   if (!id) return handleError("No ID", "errorUnexpected")
 
   if (!elements.renamePopup || !elements.renameInput)

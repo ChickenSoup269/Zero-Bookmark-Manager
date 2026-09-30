@@ -2675,6 +2675,9 @@ const ALL_VIEW_CLASSES = [
 
 function prepareViewContainer(container, targetViewClass = "") {
   if (!container) return
+  document
+    .querySelectorAll("body > .bookmark-dropdown-menu")
+    .forEach((menu) => menu.remove())
   container.innerHTML = ""
   ALL_VIEW_CLASSES.forEach((cls) => container.classList.remove(cls))
   container.classList.add("folder-list")
@@ -4571,100 +4574,45 @@ function commonPostRenderOps(elements) {
   updateSelectAllState(elements)
   attachDropdownListeners(elements)
   setupBookmarkActionListeners(elements)
+  setupBookmarkMenuActionDelegation(elements)
   runBookmarkViewTransition(elements)
+}
 
-  // --- MANUAL EVENT HANDLERS (Since some are dynamic) ---
+function setupBookmarkMenuActionDelegation(elements) {
+  if (document.__bookmarkMenuActionDelegationHandler) {
+    document.removeEventListener(
+      "click",
+      document.__bookmarkMenuActionDelegationHandler,
+    )
+  }
 
-  // 1. PIN Buttons
-  const pinButtons = elements.folderListDiv.querySelectorAll(".pin-btn")
-  pinButtons.forEach((btn) => {
-    if (btn.dataset.boundPinAction === "true") return
-    btn.dataset.boundPinAction = "true"
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation()
-      const bookmarkId = btn.getAttribute("data-id")
-      togglePin(bookmarkId, elements)
-      const dropdownMenu = btn.closest(".dropdown-menu")
-      if (dropdownMenu) dropdownMenu.classList.add("hidden")
-    })
-  })
+  document.__bookmarkMenuActionDelegationHandler = (e) => {
+    const button = e.target.closest(
+      ".bookmark-dropdown-menu .pin-btn, .bookmark-dropdown-menu .qr-code-btn, .bookmark-dropdown-menu .open-side-panel-btn, .bookmark-dropdown-menu .edit-in-new-tab-btn",
+    )
+    if (!button) return
 
-  // 2. DETAIL Buttons (In Dropdown Menu)
-  const detailButtons = elements.folderListDiv.querySelectorAll(
-    ".menu-item.view-detail-btn",
-  )
-  detailButtons.forEach((btn) => {
-    if (btn.dataset.boundDetailAction === "true") return
-    btn.dataset.boundDetailAction = "true"
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation()
-      const id = btn.dataset.id
-      const bookmark = uiState.bookmarks.find((b) => b.id === id)
+    e.stopPropagation()
+    const bookmark = uiState.bookmarks.find((item) => item.id === button.dataset.id)
+    if (button.classList.contains("pin-btn")) {
+      togglePin(button.dataset.id, elements)
+    } else if (button.classList.contains("qr-code-btn") && bookmark) {
+      generateQRCodePopup(
+        bookmark.url,
+        bookmark.title,
+        getFaviconUrl(bookmark.url),
+      )
+    } else if (
+      (button.classList.contains("open-side-panel-btn") ||
+        button.classList.contains("edit-in-new-tab-btn")) &&
+      bookmark
+    ) {
+      handleOpenSidePanel(bookmark)
+    }
 
-      // GỌI HÀM XEM THUỘC TÍNH (METADATA)
-      if (bookmark) showBookmarkDetailModal(bookmark, elements)
-
-      document
-        .querySelectorAll(".dropdown-menu")
-        .forEach((m) => m.classList.add("hidden"))
-    })
-  })
-
-  // 3. QR Code Buttons
-  const qrCodeButtons = elements.folderListDiv.querySelectorAll(".qr-code-btn")
-  qrCodeButtons.forEach((btn) => {
-    if (btn.dataset.boundQrAction === "true") return
-    btn.dataset.boundQrAction = "true"
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation()
-      const bookmarkId = btn.getAttribute("data-id")
-      const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
-      if (bookmark) {
-        const faviconUrl = getFaviconUrl(bookmark.url)
-        generateQRCodePopup(bookmark.url, bookmark.title, faviconUrl)
-      }
-      const dropdownMenu = btn.closest(".dropdown-menu")
-      if (dropdownMenu) dropdownMenu.classList.add("hidden")
-    })
-  })
-
-  // 4. Open Side Panel Buttons
-  const openSidePanelButtons = elements.folderListDiv.querySelectorAll(
-    ".open-side-panel-btn",
-  )
-  openSidePanelButtons.forEach((btn) => {
-    if (btn.dataset.boundSidePanelAction === "true") return
-    btn.dataset.boundSidePanelAction = "true"
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation()
-      const bookmarkId = btn.getAttribute("data-id")
-      const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
-      if (bookmark) {
-        handleOpenSidePanel(bookmark)
-      }
-      const dropdownMenu = btn.closest(".dropdown-menu")
-      if (dropdownMenu) dropdownMenu.classList.add("hidden")
-    })
-  })
-
-  // 3. EDIT IN NEW TAB Buttons
-  const editInNewTabButtons = elements.folderListDiv.querySelectorAll(
-    ".menu-item.edit-in-new-tab-btn",
-  )
-  editInNewTabButtons.forEach((btn) => {
-    if (btn.dataset.boundEditTabAction === "true") return
-    btn.dataset.boundEditTabAction = "true"
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation()
-      const bookmarkId = btn.dataset.id
-      const bookmark = uiState.bookmarks.find((b) => b.id === bookmarkId)
-      if (bookmark) {
-        handleOpenSidePanel(bookmark)
-      }
-      const dropdownMenu = btn.closest(".dropdown-menu")
-      if (dropdownMenu) dropdownMenu.classList.add("hidden")
-    })
-  })
+    button.closest(".dropdown-menu")?.classList.add("hidden")
+  }
+  document.addEventListener("click", document.__bookmarkMenuActionDelegationHandler)
 }
 
 export function updateSelectAllState(elements) {
