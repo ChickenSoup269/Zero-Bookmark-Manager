@@ -691,7 +691,7 @@ function generateQRCodePopup(url, title, faviconUrl) {
   overlay.appendChild(popup)
 
   popup.innerHTML = `
-        <button class="modal-close" title="Close" style="position:absolute; top: 10px; right: 10px; background:transparent; border:none; font-size: 20px; cursor:pointer; color: var(--text-primary);">✕</button>
+        <button class="qr-code-popup-close" type="button" title="Close" aria-label="Close">✕</button>
         <h3 style="margin-top: 0; margin-bottom: 15px; color: var(--text-primary);">${title}</h3>
         <div id="qrcode-container" style="position: relative; margin-bottom: 15px; display: inline-block;"></div>
         <p style="font-size: 12px; color: var(--text-secondary); word-break: break-all;">${url}</p>
@@ -743,7 +743,7 @@ function generateQRCodePopup(url, title, faviconUrl) {
       overlay.remove()
     }
   }
-  popup.querySelector(".modal-close").onclick = () => overlay.remove()
+  popup.querySelector(".qr-code-popup-close").onclick = () => overlay.remove()
 }
 
 function handleOpenSidePanel(bookmark) {

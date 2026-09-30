@@ -5631,10 +5631,28 @@ textarea.error {
 #bookmark-detail-popup .bookmark-detail-content {
   width: min(860px, 94vw);
   max-width: 860px;
+  max-height: min(720px, 88vh);
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
   gap: 16px;
   align-items: flex-start;
+}
+
+/* Keep the overlay centered while the detail content is revealed. */
+#bookmark-detail-popup:not(.hidden) .bookmark-detail-content {
+  animation: bookmarkDetailContentIn 0.18s ease-out both;
+}
+
+@keyframes bookmarkDetailContentIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
 }
 
 #bookmark-detail-popup .bookmark-thumbnail {

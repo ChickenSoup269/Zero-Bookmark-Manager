@@ -3191,6 +3191,48 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   transform: translateY(0);
 }
 
+.qr-code-popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  box-shadow: none !important;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.qr-code-popup-close:hover {
+  background: color-mix(in srgb, var(--text-primary) 9%, transparent);
+  border-color: color-mix(in srgb, var(--text-primary) 12%, transparent);
+  color: var(--text-primary);
+  box-shadow: none !important;
+  transform: none;
+}
+
+.qr-code-popup-close:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.qr-code-popup-close:active {
+  background: color-mix(in srgb, var(--text-primary) 14%, transparent);
+  box-shadow: none !important;
+}
+
 #organize-folders-title {
   font-size: 1.3rem;
   font-weight: 800;
