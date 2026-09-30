@@ -6,7 +6,11 @@ import {
   showCustomConfirm,
 } from "../utils/utils.js"
 import { getBookmarkTree } from "../bookmarks.js"
-import { renderFilteredBookmarks, updateSelectAllState } from "../ui.js"
+import {
+  renderFilteredBookmarks,
+  updateSelectAllState,
+  updateBookmarkDOMTagsAndNotes,
+} from "../ui.js"
 import { uiState, setCurrentBookmarkId } from "../state.js"
 import { openAddToFolderPopup } from "./addToFolder.js"
 import { updateTag } from "../tag.js"
@@ -397,10 +401,18 @@ export function openBookmarkDetailPopup(bookmarkId, elements) {
       syncReadingButton()
 
       attachListener(els.saveMeta, "click", () => {
-        bookmarkNotes[bookmarkId] = els.notes?.value.trim() || ""
-        if (!bookmarkNotes[bookmarkId]) delete bookmarkNotes[bookmarkId]
+        const noteVal = els.notes?.value.trim() || ""
+        if (!uiState.bookmarkNotes) uiState.bookmarkNotes = {}
+        if (noteVal) {
+          bookmarkNotes[bookmarkId] = noteVal
+          uiState.bookmarkNotes[bookmarkId] = noteVal
+        } else {
+          delete bookmarkNotes[bookmarkId]
+          delete uiState.bookmarkNotes[bookmarkId]
+        }
         chrome.storage.local.set({ bookmarkNotes }, () => {
           showCustomPopup(getTranslation("bookmarkNotesSaved", "Notes saved."), "success", true)
+          updateBookmarkDOMTagsAndNotes(bookmarkId)
         })
       })
 
@@ -717,7 +729,10 @@ async function openManageTagsPopup(bookmarkId, elements) {
         tagColors: uiState.tagColors,
         tagTextColors: uiState.tagTextColors,
       },
-      cb,
+      () => {
+        updateBookmarkDOMTagsAndNotes(bookmarkId)
+        if (cb) cb()
+      },
     )
   }
 
@@ -814,9 +829,7 @@ async function openManageTagsPopup(bookmarkId, elements) {
 
   const close = () => {
     popup.classList.add("hidden")
-    if (elements) {
-      getBookmarkTree((nodes) => renderFilteredBookmarks(nodes, elements))
-    }
+    updateBookmarkDOMTagsAndNotes(bookmarkId)
   }
   els.close.onclick = close
   popup.onclick = (e) => e.target === popup && close()

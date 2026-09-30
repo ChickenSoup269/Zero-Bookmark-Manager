@@ -300,6 +300,110 @@ function createTagsInViewHTML(tags, containerClass = "view-tags-wrap") {
   return `<div class="${containerClass}">${inner}</div>`
 }
 
+export function updateBookmarkDOMTagsAndNotes(bookmarkId) {
+  if (!bookmarkId) return
+
+  const tags = uiState.bookmarkTags?.[bookmarkId] || []
+  const note = (uiState.bookmarkNotes?.[bookmarkId] || "").trim()
+
+  const bookmark = uiState.bookmarks?.find((b) => b.id === bookmarkId)
+  if (bookmark) {
+    bookmark.tags = tags
+    bookmark.note = note
+  }
+
+  const allItems = document.querySelectorAll(".bookmark-item")
+  allItems.forEach((itemEl) => {
+    const isTarget =
+      itemEl.dataset.id === bookmarkId ||
+      itemEl.querySelector(`[data-id="${bookmarkId}"]`) !== null
+    if (!isTarget) return
+
+    // 1. Update Notes Preview in-place
+    let notePreviewEl = itemEl.querySelector(".bookmark-note-preview")
+    if (note && uiState.showNotesPreview !== false) {
+      if (notePreviewEl) {
+        notePreviewEl.dataset.tooltip = note
+        const span = notePreviewEl.querySelector("span")
+        if (span) span.textContent = note
+      } else {
+        const metadataContainer =
+          itemEl.querySelector(".bookmark-metadata") ||
+          itemEl.querySelector(".bookmark-content") ||
+          itemEl.querySelector(".list-info-main") ||
+          itemEl.querySelector(".bento-bookmark-content") ||
+          itemEl.querySelector("div[style*='padding-left']")
+
+        let extraClass = "flat-note-preview"
+        if (itemEl.classList.contains("detail-bookmark-item"))
+          extraClass = "detail-note-preview"
+        else if (itemEl.classList.contains("list-bookmark-item"))
+          extraClass = "list-note-preview"
+        else if (itemEl.closest(".card-view")) extraClass = "card-note-preview"
+        else if (itemEl.closest(".tree-view")) extraClass = "tree-note-preview"
+        else if (itemEl.closest(".mockup-view"))
+          extraClass = "mockup-note-preview"
+
+        const tempDiv = document.createElement("div")
+        tempDiv.innerHTML = createNotesPreviewHTML(
+          { id: bookmarkId, note },
+          extraClass,
+        )
+        const newNoteEl = tempDiv.firstElementChild
+        if (newNoteEl) {
+          const tagsWrap = itemEl.querySelector(
+            "[class*='-view-tags'], .view-tags-wrap",
+          )
+          if (tagsWrap) {
+            tagsWrap.parentNode.insertBefore(newNoteEl, tagsWrap)
+          } else if (metadataContainer) {
+            metadataContainer.appendChild(newNoteEl)
+          }
+        }
+      }
+    } else if (notePreviewEl) {
+      notePreviewEl.remove()
+    }
+
+    // 2. Update Tags Preview in-place
+    let tagsContainer = itemEl.querySelector(
+      "[class*='-view-tags'], .view-tags-wrap",
+    )
+    if (uiState.showTagsInView !== false && tags.length > 0) {
+      const tagsHTML = createTagsHTML(tags)
+      if (tagsContainer) {
+        tagsContainer.innerHTML = tagsHTML
+      } else {
+        const metadataContainer =
+          itemEl.querySelector(".bookmark-metadata") ||
+          itemEl.querySelector(".bookmark-content") ||
+          itemEl.querySelector(".list-info-main") ||
+          itemEl.querySelector(".bento-bookmark-content") ||
+          itemEl.querySelector("div[style*='padding-left']")
+
+        let containerClass = "view-tags-wrap"
+        if (itemEl.classList.contains("detail-bookmark-item"))
+          containerClass = "detail-view-tags"
+        else if (itemEl.classList.contains("list-bookmark-item"))
+          containerClass = "list-view-tags"
+        else if (itemEl.closest(".card-view")) containerClass = "card-view-tags"
+        else if (itemEl.closest(".tree-view")) containerClass = "tree-view-tags"
+        else if (itemEl.closest(".mockup-view"))
+          containerClass = "mockup-view-tags"
+
+        const tempDiv = document.createElement("div")
+        tempDiv.innerHTML = `<div class="${containerClass}">${tagsHTML}</div>`
+        const newTagsEl = tempDiv.firstElementChild
+        if (newTagsEl && metadataContainer) {
+          metadataContainer.appendChild(newTagsEl)
+        }
+      }
+    } else if (tagsContainer) {
+      tagsContainer.innerHTML = ""
+    }
+  })
+}
+
 function renderHealthIcon(bookmarkId) {
   const status = uiState.healthStatus ? uiState.healthStatus[bookmarkId] : null
   if (!status) return ""
@@ -549,47 +653,6 @@ function attachDropdownToggle(element) {
       }
     }
   })
-
-  const btn = element.querySelector(".dropdown-btn")
-  const menu = element.querySelector(".dropdown-menu")
-
-  if (btn && menu) {
-    element.addEventListener("mouseenter", () => {
-      if (
-        element.classList.contains("detail-bookmark-item") ||
-        element.classList.contains("bookmark-item")
-      ) {
-        btn.style.opacity = "1"
-      }
-    })
-    element.addEventListener("mouseleave", () => {
-      // Find the menu wherever it is
-      const bookmarkId = btn.getAttribute("data-id")
-      let currentMenu = menu
-      if (
-        currentMenu.parentNode === null ||
-        currentMenu.parentNode === document.body
-      ) {
-        const bodyMenus = document.body.querySelectorAll(
-          ".bookmark-dropdown-menu",
-        )
-        bodyMenus.forEach((m) => {
-          if (m.querySelector(`[data-id="${bookmarkId}"]`)) {
-            currentMenu = m
-          }
-        })
-      }
-
-      if (
-        (element.classList.contains("detail-bookmark-item") ||
-          element.classList.contains("bookmark-item")) &&
-        currentMenu &&
-        currentMenu.classList.contains("hidden")
-      ) {
-        btn.style.opacity = "0"
-      }
-    })
-  }
 }
 
 // --- HELPER: Open Web Preview (Iframe) ---
