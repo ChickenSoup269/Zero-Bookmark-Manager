@@ -274,6 +274,7 @@ export const vi = {
   undoRenameMessage: "Đã đổi tên bookmark.",
   undoDeleteMessage: "Đã xóa bookmark.",
   undoBulkDeleteMessage: "Đã xóa bookmark.",
+  undoMoveMessage: "Đã di chuyển bookmark.",
   smartCleanupTitle: "Dọn dẹp thông minh",
   smartCleanupShort: "Dọn dẹp",
   smartCleanupSubtitle: "Xem các gợi ý dọn dẹp trước khi thay đổi dữ liệu.",

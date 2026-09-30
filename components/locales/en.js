@@ -272,6 +272,7 @@ export const en = {
   undoRenameMessage: "Bookmark renamed.",
   undoDeleteMessage: "Bookmark deleted.",
   undoBulkDeleteMessage: "Bookmarks deleted.",
+  undoMoveMessage: "Bookmarks moved.",
   smartCleanupTitle: "Smart Cleanup",
   smartCleanupShort: "Cleanup",
   smartCleanupSubtitle:

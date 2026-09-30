@@ -3,6 +3,7 @@ import { moveBookmarksToFolder } from "../bookmarks.js"
 import { saveUIState, selectedBookmarks } from "../state.js"
 import { renderFilteredBookmarks } from "../ui.js"
 import { updateBulkActionBar } from "./bulkBar.js"
+import { registerUndo } from "../undo.js"
 
 export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
   const language = localStorage.getItem("appLanguage") || "en"
@@ -112,7 +113,7 @@ export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
   elements.addToFolderPopup.addEventListener("click", handleClickOutside)
 
   // --- HANDLERS ---
-  function handleSave() {
+  async function handleSave() {
     const targetFolderId = elements.addToFolderSelect.value
     if (!targetFolderId) {
       elements.addToFolderSelect.classList.add("error")
@@ -130,6 +131,21 @@ export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
       handleCancel()
       return
     }
+
+    // Capture previous locations for Undo
+    const previousLocations = await Promise.all(
+      bookmarkIds.map((id) =>
+        new Promise((res) => {
+          chrome.bookmarks.get(id, (results) => {
+            if (results?.[0]) {
+              res({ id, parentId: results[0].parentId, index: results[0].index })
+            } else {
+              res(null)
+            }
+          })
+        })
+      )
+    )
 
     moveBookmarksToFolder(bookmarkIds, targetFolderId, elements, () => {
       // Đóng popup
@@ -150,6 +166,25 @@ export function openAddToFolderPopup(elements, bookmarkIds, onSuccess) {
         false
       )
       saveUIState()
+
+      // Register Undo
+      const validLocations = previousLocations.filter(Boolean)
+      if (validLocations.length > 0) {
+        registerUndo({
+          message: t.undoMoveMessage || "Bookmarks moved.",
+          actionLabel: t.undoAction || "Undo",
+          elements,
+          undo: async () => {
+            for (const loc of validLocations) {
+              await new Promise((res) => {
+                chrome.bookmarks.move(loc.id, { parentId: loc.parentId, index: loc.index }, () => {
+                  res()
+                })
+              })
+            }
+          },
+        })
+      }
 
       // QUAN TRỌNG: Cập nhật lại giao diện chính (reload list bookmark)
       window.BookmarkCache.getTree((tree) => {
