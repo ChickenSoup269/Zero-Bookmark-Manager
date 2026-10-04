@@ -25,6 +25,7 @@ import { openScopeSelectionModal } from "./utils/scopeModal.js"
 import { handleDeleteFolder } from "./controller/deleteFolder.js"
 import { updateBulkActionBar, applySelectButtonState } from "./controller/bulkBar.js"
 import { openFolderStudio } from "./controller/folderStudio.js"
+import { showQrPopup } from "./qrPopup.js"
 
 // ==========================================
 // HELPER FUNCTIONS
@@ -730,83 +731,9 @@ function openWebPreviewModal(bookmark) {
 }
 
 function generateQRCodePopup(url, title, faviconUrl) {
-  // Remove existing QR code popup
-  const existingPopup = document.querySelector(".qr-code-popup-overlay")
-  if (existingPopup) {
-    existingPopup.remove()
-  }
-
-  const overlay = document.createElement("div")
-  overlay.className = "qr-code-popup-overlay"
-  overlay.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 2000;
-      `
-
-  const popup = document.createElement("div")
-  popup.className = "qr-code-popup"
-  popup.style.cssText = `
-        background: var(--bg-primary, #fff); padding: 20px; border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center;
-        max-width: 300px; position: relative;
-      `
-
-  overlay.appendChild(popup)
-
-  popup.innerHTML = `
-        <button class="qr-code-popup-close" type="button" title="Close" aria-label="Close">✕</button>
-        <h3 style="margin-top: 0; margin-bottom: 15px; color: var(--text-primary);">${title}</h3>
-        <div id="qrcode-container" style="position: relative; margin-bottom: 15px; display: inline-block;"></div>
-        <p style="font-size: 12px; color: var(--text-secondary); word-break: break-all;">${url}</p>
-      `
-
-  document.body.appendChild(overlay)
-
-  // Generate QR Code
-  try {
-    const qrCodeContainer = document.getElementById("qrcode-container")
-    qrCodeContainer.innerHTML = "" // Clear previous content
-
-    // Use the new QRCode library API
-    new window.QRCode(qrCodeContainer, {
-      text: url,
-      width: 256,
-      height: 256,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: window.QRCode.CorrectLevel.H,
-    })
-
-    // Add favicon overlay - wait a bit for the QR code to render
-    setTimeout(() => {
-      const faviconImg = document.createElement("img")
-      faviconImg.src = faviconUrl
-      faviconImg.style.cssText = `
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 10%;
-                height: 10%;
-                padding: 2px;
-                border-radius: 8px;
-                background: var(--text-primary);
-            `
-      qrCodeContainer.style.position = "relative" // Ensure container has relative positioning
-      qrCodeContainer.appendChild(faviconImg)
-    }, 100)
-  } catch (e) {
-    console.error("Error generating QR code:", e)
-    const qrCodeContainer = document.getElementById("qrcode-container")
-    qrCodeContainer.textContent = "Could not generate QR code."
-  }
-
-  overlay.onclick = (evt) => {
-    if (evt.target === overlay) {
-      overlay.remove()
-    }
-  }
-  popup.querySelector(".qr-code-popup-close").onclick = () => overlay.remove()
+  // Shared popup (also used by the Bookmarks + QR view) — adds logo
+  // visibility/position/size customization and composite PNG export.
+  showQrPopup({ url, title, faviconUrl })
 }
 
 function handleOpenSidePanel(bookmark) {
