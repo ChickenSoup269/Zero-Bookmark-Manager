@@ -7,44 +7,44 @@
    - 10% Single Signature Accent Color
    ==================================== */
 
-/* 1. Dark theme (default - Pure Monochromatic High Contrast) */
+/* 1. Dark theme (default - Monochrome) */
 :root,
 :root[data-theme="dark"],
 [data-theme="dark"],
 body.dark-theme {
   color-scheme: dark;
-  --bg-primary: #000000;
-  --bg-secondary: #0d0d0d;
-  --bg-secondary-rgb: 13, 13, 13;
-  --bg-tertiary: #171717;
-  --text-primary: #ffffff;
-  --text-secondary: #a3a3a3;
-  --text-muted: #737373;
-  --border-color: #262626;
-  --border-color-subtle: rgba(255, 255, 255, 0.12);
+  --bg-primary: #111111;
+  --bg-secondary: #1a1a1a;
+  --bg-secondary-rgb: 26, 26, 26;
+  --bg-tertiary: #242424;
+  --text-primary: #f0f0f0;
+  --text-secondary: #b3b3b3;
+  --text-muted: #7a7a7a;
+  --border-color: #303030;
+  --border-color-subtle: rgba(255, 255, 255, 0.1);
   --accent-color: #ffffff;
-  --accent-color-light: rgba(255, 255, 255, 0.12);
-  --accent-contrast: #000000;
+  --accent-color-light: rgba(255, 255, 255, 0.14);
+  --accent-contrast: #111111;
   --danger-color: #ef4444;
   --danger-color-light: rgba(239, 68, 68, 0.15);
   --danger-hover: #f87171;
   --success-color: #22c55e;
   --warning-color: #eab308;
-  --hover-bg: rgba(255, 255, 255, 0.08);
-  --hover-bg-option: #212121;
+  --hover-bg: rgba(255, 255, 255, 0.07);
+  --hover-bg-option: #2a2a2a;
   --focus-outline: #ffffff;
-  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.55);
-  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.75);
-  --tree-line-color: rgba(255, 255, 255, 0.18);
-  --folder-title-color: #ffffff;
-  --bookmark-title-color: #ffffff;
-  --folder-bg: #0d0d0d;
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.48);
+  --tree-line-color: rgba(255, 255, 255, 0.2);
+  --folder-title-color: #f0f0f0;
+  --bookmark-title-color: #f0f0f0;
+  --folder-bg: #1a1a1a;
   --folder-hover-bg: rgba(255, 255, 255, 0.06);
   --bookmark-bg: rgba(255, 255, 255, 0.02);
   --bookmark-hover-bg: rgba(255, 255, 255, 0.06);
-  --bg-tags-select: rgba(13, 13, 13, 0.98);
+  --bg-tags-select: rgba(26, 26, 26, 0.98);
   --font-family-monospace: "JetBrainsMonoNerdFont", "Consolas", monospace;
 }
 

@@ -2418,7 +2418,9 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 .health-icon.malware {
   color: var(--danger-color, #dc2626);
   animation: malware-pulse 1.5s ease-in-out infinite;
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--danger-color, #dc2626) 60%, transparent));
+  filter: drop-shadow(
+    0 0 4px color-mix(in srgb, var(--danger-color, #dc2626) 60%, transparent)
+  );
 }
 
 @keyframes malware-pulse {
@@ -3154,7 +3156,8 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   color: var(--accent-color);
   border-color: var(--accent-color);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 25%, transparent);
+  box-shadow: 0 4px 12px
+    color-mix(in srgb, var(--accent-color) 25%, transparent);
 }
 
 .modal-action-btn:active,
@@ -3819,7 +3822,8 @@ body.settings-panel-open .sidebar-scroll-top-btn {
 
 .studio-btn.primary-btn:hover {
   filter: brightness(1.1);
-  box-shadow: 0 4px 10px color-mix(in srgb, var(--accent-color) 30%, transparent);
+  box-shadow: 0 4px 10px
+    color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
 .studio-btn.danger-btn {
@@ -4366,7 +4370,10 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   height: 34px;
   flex-shrink: 0;
   border-radius: 10px;
-  background: var(--accent-color-light, color-mix(in srgb, var(--accent-color) 14%, transparent));
+  background: var(
+    --accent-color-light,
+    color-mix(in srgb, var(--accent-color) 14%, transparent)
+  );
   color: var(--accent-color);
   font-size: 1rem;
 }
@@ -4479,7 +4486,8 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   background: color-mix(in srgb, var(--accent-color) 85%, transparent);
   border-color: color-mix(in srgb, var(--accent-color) 85%, transparent);
   color: var(--accent-contrast, #ffffff);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 28%, transparent);
+  box-shadow: 0 4px 14px
+    color-mix(in srgb, var(--accent-color) 28%, transparent);
 }
 
 .custom-language-presets {
@@ -6023,7 +6031,8 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   color: var(--accent-color);
   border-color: var(--accent-color);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 25%, transparent);
+  box-shadow: 0 4px 12px
+    color-mix(in srgb, var(--accent-color) 25%, transparent);
 }
 
 #smart-cleanup-close-x:hover {
@@ -7844,7 +7853,10 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 
 .scope-radio-card.active .scope-count-badge {
   background: var(--accent-color, #3b82f6);
-  color: var(--accent-contrast, #ffffff); /* accent sáng (gruvbox/tet) cần chữ tối để số không bị chìm */
+  color: var(
+    --accent-contrast,
+    #ffffff
+  ); /* accent sáng (gruvbox/tet) cần chữ tối để số không bị chìm */
 }
 
 /* Folder Controls Section */
@@ -8297,12 +8309,14 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 }
 
 .scope-start-btn.ready {
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 28%, transparent);
+  box-shadow: 0 4px 14px
+    color-mix(in srgb, var(--accent-color) 28%, transparent);
 }
 
 .scope-start-btn.ready:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 36%, transparent);
+  box-shadow: 0 6px 18px
+    color-mix(in srgb, var(--accent-color) 36%, transparent);
 }
 
 .scope-modal-buttons .button-primary:disabled {
@@ -8990,12 +9004,8 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 }
 
 /* ============================================
-   CUSTOM POPUP STATUS COLORS (Check Links /
-   Check Duplicates results...) — the whole
-   card is tinted with its status color and
-   shows a matching icon, instead of a dark
-   box with a lone colored stripe on top.
-   ============================================ */
+  CUSTOM POPUP STATUS ICONS
+  ============================================ */
 #custom-popup.success {
   --popup-status: var(--success-color);
   --popup-icon: "\f058"; /* circle-check */
@@ -9022,15 +9032,9 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
 }
 
 #custom-popup .rename-popup-content {
-  border: 1px solid
-    color-mix(in srgb, var(--popup-status, var(--accent-color)) 35%, var(--border-color));
-  border-top: 3px solid var(--popup-status, var(--accent-color));
-  background: color-mix(
-    in srgb,
-    var(--popup-status, var(--accent-color)) 9%,
-    var(--bg-secondary)
-  );
-  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  border-radius: 5px;
 }
 
 #custom-popup .rename-popup-content h3 {
@@ -9038,13 +9042,14 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: var(--popup-status, var(--accent-color));
+  color: var(--text-primary);
 }
 
 #custom-popup .rename-popup-content h3::before {
   content: var(--popup-icon, "\f05a");
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
+  color: var(--text-secondary);
   font-size: 1.1rem;
 }
 
@@ -9068,14 +9073,17 @@ body[data-button-weight-bookmarks="bold"] .app-tabs .app-tab-btn,
 body[data-button-weight-bookmarks="bold"] .rename-popup-buttons .button,
 body[data-button-weight-bookmarks="bold"] .scope-modal-buttons .button,
 body[data-button-weight-bookmarks="bold"] .modal-actions button,
-body[data-button-weight-bookmarks="bold"] .dropdown-donate-card .donate-action-btn,
+body[data-button-weight-bookmarks="bold"]
+  .dropdown-donate-card
+  .donate-action-btn,
 body[data-button-weight-settings="bold"] .rename-popup-buttons .button,
 body[data-button-weight-settings="bold"] .scope-modal-buttons .button,
-body[data-button-weight-settings="bold"] .dropdown-donate-card .donate-action-btn,
+body[data-button-weight-settings="bold"]
+  .dropdown-donate-card
+  .donate-action-btn,
 body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
   font-weight: 700 !important;
 }
-
 
 /* ==================== Bulk Selection: shared (webview + popup) ==================== */
 /* ==================== Floating bulk-selection action bar ==================== */
