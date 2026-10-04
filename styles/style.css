@@ -9120,11 +9120,11 @@ body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
   transform: translateX(-50%) translateY(0);
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 14px;
+  gap: 8px;
+  padding: 9px 14px;
   background: var(--bg-secondary, #fff);
   border: 1px solid var(--border-color);
-  border-radius: 999px;
+  border-radius: 16px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
   z-index: 3000;
   opacity: 1;
@@ -9168,13 +9168,16 @@ body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
 .bulk-bar-count {
   display: none;
   align-items: center;
-  font-size: 0.84rem;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-color, #70a146) 14%, transparent);
+  font-size: 0.82rem;
   color: var(--text-primary);
   white-space: nowrap;
 }
 
 .bulk-bar-count strong {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--accent-color);
 }
 
@@ -9185,13 +9188,16 @@ body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
 .bulk-bar-btn {
   display: none;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  justify-content: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 14px;
   border: 1px solid var(--border-color);
   border-radius: 999px;
   background: transparent;
   color: var(--text-primary);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition:
@@ -9200,13 +9206,17 @@ body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
     color 0.18s ease;
 }
 
+.bulk-bar-btn i {
+  font-size: 0.78rem;
+}
+
 .bulk-action-bar.has-selection .bulk-bar-btn {
   display: inline-flex;
 }
 
 .bulk-bar-btn:hover {
   border-color: var(--accent-color);
-  background: rgba(var(--accent-color-rgb, 112, 161, 70), 0.12);
+  background: color-mix(in srgb, var(--accent-color, #70a146) 12%, transparent);
 }
 
 .bulk-bar-btn.bulk-bar-danger:hover {
@@ -9217,7 +9227,8 @@ body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
 
 .bulk-bar-btn.bulk-bar-exit {
   display: inline-flex;
-  padding: 6px 8px;
+  height: 32px;
+  padding: 0 9px;
   color: var(--text-secondary);
 }
 
