@@ -117,6 +117,27 @@
   gap: 1px;
 }
 
+/* Notes + tags preview (gated by the Show Notes / Show Tags settings) */
+.bqr-info .bookmark-note-preview {
+  margin-top: 4px;
+  max-width: 100%;
+}
+
+.bqr-info .view-tags-wrap {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.bqr-info .view-tags-wrap .bookmark-tag {
+  margin-right: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .bqr-title {
   color: var(--text-primary, #222);
   text-decoration: none;

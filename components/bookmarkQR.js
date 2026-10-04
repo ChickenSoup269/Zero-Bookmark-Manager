@@ -6,7 +6,7 @@
 import { uiState } from "./state.js"
 import { translations } from "./utils/utils.js"
 import { showQrPopup } from "./qrPopup.js"
-import { createDropdownHTML, renderVisitCount } from "./ui.js"
+import { createDropdownHTML, renderVisitCount, createNotesPreviewHTML, createTagsInViewHTML } from "./ui.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
 
 let mounted = null // { root, listEl, searchEl, countEl, emptyEl }
@@ -169,6 +169,8 @@ function createRow(bookmark) {
       <a class="bqr-title" href="${safeUrl}" target="_blank" rel="noopener noreferrer"
           title="${safeTitle}">${safeTitle}</a>
       <span class="bqr-host">${safeHost}</span>
+      ${createNotesPreviewHTML(bookmark, "flat-note-preview")}
+      ${createTagsInViewHTML(bookmark.tags, "view-tags-wrap")}
     </div>
     ${renderVisitCount(bookmark.id)}
     ${createDropdownHTML(bookmark, lang)}

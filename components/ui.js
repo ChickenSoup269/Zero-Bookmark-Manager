@@ -52,7 +52,7 @@ function syncTagsInViewBodyClass() {
   document.body.classList.toggle("show-tags-in-view", !!uiState.showTagsInView)
 }
 
-function createNotesPreviewHTML(bookmark, extraClass = "") {
+export function createNotesPreviewHTML(bookmark, extraClass = "") {
   if (!uiState.showNotesPreview) return ""
   const note = (
     bookmark.note ||
@@ -294,7 +294,7 @@ function createTagsHTML(tags, styleOverride = "") {
 }
 
 // Helper: create tags HTML only when showTagsInView is enabled
-function createTagsInViewHTML(tags, containerClass = "view-tags-wrap") {
+export function createTagsInViewHTML(tags, containerClass = "view-tags-wrap") {
   if (!uiState.showTagsInView) return ""
   if (!tags || tags.length === 0) return ""
   const inner = createTagsHTML(tags)
