@@ -6267,7 +6267,7 @@ textarea.error {
 
 .webview-search-wrapper.is-stuck,
 body.is-scrolled .webview-search-wrapper {
-  background-color: var(--bg-primary) !important;
+  background-color: var(--bg-tertiary, var(--bg-secondary)) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
@@ -6894,8 +6894,7 @@ body.is-scrolled .webview-search-wrapper {
   cursor: pointer;
   flex-shrink: 0;
   font-size: 0.75rem;
-  transition:
-    all 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .webview-select-btn:hover {
