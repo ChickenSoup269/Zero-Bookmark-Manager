@@ -5791,6 +5791,32 @@ body[data-button-weight-settings="bold"] #settings-menu .menu-item {
   margin-top: 6px;
 }
 
+/* Keep settings pills/groups inside the panel border at narrow widths
+   (the popup's scrollbar squeezes the menu). */
+.menu-group,
+.app-setting-field,
+.setting-pill-group {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.setting-swatch,
+.view-swatch,
+.language-swatch {
+  white-space: nowrap;
+  flex: 0 1 auto;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toggle-row > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .app-setting-field {
   display: flex;
   flex-direction: column;

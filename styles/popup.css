@@ -2287,13 +2287,10 @@ body[data-bookmark-menu-bg="normal"] .bookmark-dropdown-menu hr {
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   overflow: visible;
-  transition:
-    max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.3s ease,
-    margin 0.3s ease,
-    padding 0.3s ease,
-    border-width 0.3s ease;
-  max-height: 1200px;
+  /* Popup collapse is display-based (#settings-menu > div.hidden), so the
+     max-height cap only clipped tall groups (Application Settings) — the
+     last items spilled outside the card border. */
+  max-height: none;
   opacity: 1;
 }
 
