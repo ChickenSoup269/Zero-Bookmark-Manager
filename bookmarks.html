@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./styles/style.css?v=2">
     <link rel="stylesheet" href="./styles/chat.css">
     <link rel="stylesheet" href="./styles/webview.css?v=3">
+    <link rel="stylesheet" href="./styles/bookmark-qr.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -197,6 +198,11 @@
                             data-i18n-title="analyticsTitle">
                             <i class="fas fa-chart-pie"></i>
                             <span data-i18n="analyticsTitle">Analytics</span>
+                        </button>
+                        <button id="open-bookmark-qr-btn" class="sidebar-admin-btn" title="Bookmarks + QR"
+                            data-i18n-title="bookmarkQrTitle">
+                            <i class="fas fa-qrcode"></i>
+                            <span data-i18n="bookmarkQrTitle">Bookmarks + QR</span>
                         </button>
                     </div>
                 </div>
@@ -471,6 +477,8 @@
                                 <span data-i18n="viewKanban">Kanban Board</span></button>
                             <button class="theme-swatch view-swatch" data-value="mockup"><i class="fas fa-image"></i>
                                 <span data-i18n="viewGallery">Gallery View</span></button>
+                            <button class="theme-swatch view-swatch" data-value="qr"><i class="fas fa-qrcode"></i>
+                                <span data-i18n="viewQr">Bookmarks + QR</span></button>
                         </div>
                     </div>
                 </div>
@@ -1873,6 +1881,7 @@
     <script src="./components/year.js" type="module"></script>
     <script src="main.js" type="module"></script>
     <script src="./components/sidebar.js" type="module"></script>
+    <script src="./components/bookmarkQR.js" type="module"></script>
     <script src="./components/localization.js" type="module"></script>
     <div id="momo-qr-popup" class="rename-popup hidden popup-animate" role="dialog" aria-labelledby="donate-modal-title"
         aria-modal="true">

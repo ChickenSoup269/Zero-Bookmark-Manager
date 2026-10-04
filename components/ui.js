@@ -26,6 +26,7 @@ import { handleDeleteFolder } from "./controller/deleteFolder.js"
 import { updateBulkActionBar, applySelectButtonState } from "./controller/bulkBar.js"
 import { openFolderStudio } from "./controller/folderStudio.js"
 import { showQrPopup } from "./qrPopup.js"
+import { mountBookmarkQRView } from "./bookmarkQR.js"
 
 // ==========================================
 // HELPER FUNCTIONS
@@ -466,7 +467,7 @@ function renderHealthIcon(bookmarkId) {
 }
 
 // Render visit count badge
-function renderVisitCount(bookmarkId) {
+export function renderVisitCount(bookmarkId) {
   if (uiState.sortType !== "most-visited") return ""
   const visitCount = uiState.visitCounts ? uiState.visitCounts[bookmarkId] : 0
   if (!visitCount || visitCount === 0) return ""
@@ -483,7 +484,7 @@ function renderVisitCount(bookmarkId) {
   </span>`
 }
 
-function createDropdownHTML(bookmark, language) {
+export function createDropdownHTML(bookmark, language) {
   const t = translations[language] || translations.en
   const isFav = bookmark.isFavorite
   const isPinned = bookmark.isPinned
@@ -1185,6 +1186,13 @@ function reRenderCurrentView(elements) {
       renderListView(filtered, elements)
     } else if (currentViewMode === "mockup") {
       renderMockupView(bookmarkTreeNodes, filtered, elements)
+    } else if (currentViewMode === "qr") {
+      prepareViewContainer(elements.folderListDiv)
+      mountBookmarkQRView(
+        elements.folderListDiv,
+        sortBookmarks(filtered, uiState.sortType),
+      )
+      commonPostRenderOps(elements)
     } else {
       renderBookmarks(filtered, elements)
     }
@@ -2553,6 +2561,13 @@ export function renderFilteredBookmarks(bookmarkTreeNodes, elements) {
           renderListView(filtered, elements)
         } else if (currentViewMode === "mockup") {
           renderMockupView(bookmarkTreeNodes, filtered, elements)
+        } else if (currentViewMode === "qr") {
+          prepareViewContainer(elements.folderListDiv)
+          mountBookmarkQRView(
+            elements.folderListDiv,
+            sortBookmarks(filtered, uiState.sortType),
+          )
+          commonPostRenderOps(elements)
         } else {
           renderBookmarks(filtered, elements)
         }
