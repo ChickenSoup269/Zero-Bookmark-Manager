@@ -3696,24 +3696,9 @@ body[data-bookmark-menu-bg="normal"] .dropdown-menu hr {
   pointer-events: none;
 }
 
-/* When settings panel is open, lock main window scroll completely */
-body.settings-panel-open {
-  overflow: hidden !important;
-}
-
-html:has(body.settings-panel-open) {
-  overflow: hidden !important;
-}
-
-body.settings-panel-open .sidebar,
-body.settings-panel-open .sidebar-classic {
-  overflow: hidden !important;
-}
-
-body.settings-panel-open .container {
-  pointer-events: none;
-  user-select: none;
-}
+/* When settings panel is open, the rest of the page (container, sidebar)
+   stays scrollable — only the panel itself scrolls internally. The hard
+   scroll lock only applies to the popup (see popup.css). */
 
 body[data-button-weight-sidebar="bold"] .sidebar .sidebar-menu-item,
 body[data-button-weight-sidebar="bold"] .sidebar .sidebar-sort-item,

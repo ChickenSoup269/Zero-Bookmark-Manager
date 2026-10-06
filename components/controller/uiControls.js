@@ -700,22 +700,26 @@ export function setupUIControlListeners(elements) {
     attributeFilter: ["class"],
   })
 
-  // Prevent background scroll bleed when settings panel is open
-  window.addEventListener(
-    "wheel",
-    (e) => {
-      if (document.body.classList.contains("settings-panel-open")) {
-        if (
-          elements.settingsMenu &&
-          !elements.settingsMenu.contains(e.target)
-        ) {
-          elements.settingsMenu.scrollTop += e.deltaY
-          e.preventDefault()
+  // Prevent background scroll bleed when settings panel is open.
+  // Popup only — the webview (bookmarks.html) keeps the page scrollable
+  // while the settings panel is open.
+  if (!window.location.pathname.endsWith("/bookmarks.html")) {
+    window.addEventListener(
+      "wheel",
+      (e) => {
+        if (document.body.classList.contains("settings-panel-open")) {
+          if (
+            elements.settingsMenu &&
+            !elements.settingsMenu.contains(e.target)
+          ) {
+            elements.settingsMenu.scrollTop += e.deltaY
+            e.preventDefault()
+          }
         }
-      }
-    },
-    { passive: false },
-  )
+      },
+      { passive: false },
+    )
+  }
 
   // Nút kiểm tra tình trạng link (Check Links)
   if (elements.checkHealthButton) {
