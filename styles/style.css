@@ -1124,6 +1124,20 @@ body.settings-panel-open .sidebar-scroll-top-btn {
   pointer-events: none;
 }
 
+/* When any modal is open, lock the document scroll so the page scrollbar
+   doesn't stay visible outside the dimmed overlay. Lock html too: html
+   { overflow-x: clip } blocks body→viewport overflow propagation, so locking
+   only body would leave the viewport scrollbar in place. */
+body:has(.rename-popup:not(.hidden)),
+body:has(.bqr-popup-overlay) {
+  overflow: hidden !important;
+}
+
+html:has(.rename-popup:not(.hidden)),
+html:has(.bqr-popup-overlay) {
+  overflow: hidden !important;
+}
+
 .rename-input-container {
   position: relative;
   display: flex;

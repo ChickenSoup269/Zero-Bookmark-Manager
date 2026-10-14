@@ -6,6 +6,7 @@ body {
   margin: 0;
   width: 360px;
   min-width: 360px;
+  max-width: 100%;
   min-height: 520px;
   background: var(--bg-primary);
   background-image: radial-gradient(
@@ -23,6 +24,39 @@ body {
     "Segoe UI",
     sans-serif;
   overflow-x: hidden;
+}
+
+/* Popup contexts (native popup bubble ~375px, popup window 420px): let the UI
+   fill the viewport so the document scrollbar hugs the content instead of
+   floating in an empty strip outside the popup. */
+@media (max-width: 440px) {
+  body:not(.embedded) {
+    width: 100%;
+  }
+}
+
+/* Themed scrollbar for the document, matching the app instead of the raw
+   Windows scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 8px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }
 
 body.embedded {
