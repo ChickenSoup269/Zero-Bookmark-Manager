@@ -307,7 +307,7 @@ export async function customLoadUIState(callback) {
       "normal"
     uiState.checkboxHoverReveal =
       savedUiState.checkboxHoverReveal ??
-      localStorage.getItem("checkboxHoverReveal") !== "off"
+      localStorage.getItem("checkboxHoverReveal") === "hover"
     uiState.showSmartFolders = savedUiState.showSmartFolders ?? true
     uiState.sidebarWidth = savedUiState.sidebarWidth || 260
 

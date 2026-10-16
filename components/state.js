@@ -16,7 +16,7 @@ export const uiState = {
   folderCountMode: "bookmarks", // "bookmarks" | "folders" | "both" | "off"
   folderListBg: true,
   checkboxesVisible: false,
-  checkboxHoverReveal: true, // hover a bookmark to reveal its checkbox
+  checkboxHoverReveal: false, // reveal a bookmark checkbox on hover
   bookmarkTags: {},
   tagColors: {},
   tagTextColors: {},

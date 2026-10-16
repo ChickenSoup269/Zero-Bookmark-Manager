@@ -9251,19 +9251,18 @@ body[data-button-weight-settings="bold"] .settings-scroll-top-btn {
 }
 
 /* ==================== Bulk Selection: hover reveal checkbox (shared) ==================== */
-/* Reveal the row checkbox on hover in normal mode (webview + popup).
-   Suppressed app-wide when the user sets data-checkbox-reveal="off". */
+/* Reveal the row checkbox on hover only when that setting is enabled. */
 .bookmark-item .bookmark-checkbox {
   transition: opacity 0.15s ease;
 }
 
-body:not([data-checkbox-reveal="off"]) .bookmark-item:hover .bookmark-checkbox,
+body[data-checkbox-reveal="hover"] .bookmark-item:hover .bookmark-checkbox,
 .bookmark-checkbox:checked {
   display: inline-block !important;
   opacity: 1;
 }
 
-body:not([data-checkbox-reveal="off"]) .bookmark-item:hover .list-col-check {
+body[data-checkbox-reveal="hover"] .bookmark-item:hover .list-col-check {
   width: 30px !important;
 }
 

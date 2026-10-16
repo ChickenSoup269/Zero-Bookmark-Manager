@@ -947,8 +947,8 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         title: language === "vi" ? "Chọn nhiều bookmark" : "Bulk Select",
         message:
           language === "vi"
-            ? "Di chuột lên bookmark sẽ hiện ô check để chọn nhiều mục cùng lúc. Muốn danh sách gọn hơn? Tắt hover hiện ô check trong phần Cài đặt."
-            : "Hovering a bookmark reveals its checkbox so you can pick several at once. Prefer a cleaner list? Turn off hover reveal in Settings.",
+            ? "Ô check được ẩn mặc định để danh sách gọn hơn. Bạn có thể bật 'Hiện khi hover' trong phần Cài đặt để chọn nhiều bookmark."
+            : "Checkboxes are hidden by default to keep the list clean. Enable 'Show on hover' in Settings when you want to select multiple bookmarks.",
         ensureSidebarOpen: true,
       },
       {
@@ -1028,8 +1028,8 @@ function getFirstRunTourSteps(isWebviewPage = false) {
         title: language === "vi" ? "Ô check khi hover" : "Checkbox Hover Reveal",
         message:
           language === "vi"
-            ? "Mặc định, di chuột lên bookmark sẽ hiện ô check. Đổi thành 'Ẩn đến khi chọn' nếu bạn muốn ô check chỉ xuất hiện khi bật chế độ chọn hàng loạt."
-            : "By default, hovering a bookmark reveals its checkbox. Switch to 'Hidden until select' if you only want checkboxes in bulk-select mode.",
+            ? "Mặc định, ô check được ẩn để danh sách gọn hơn. Chọn 'Hiện khi hover' nếu bạn muốn ô check xuất hiện khi di chuột lên bookmark."
+            : "Checkboxes are hidden by default to keep the list clean. Choose 'Show on hover' if you want them to appear when hovering a bookmark.",
         openSettings: true,
         ensureSidebarOpen: true,
       },
@@ -1119,8 +1119,8 @@ function getFirstRunTourSteps(isWebviewPage = false) {
       title: language === "vi" ? "Chọn nhiều bookmark" : "Bulk Select",
       message:
         language === "vi"
-          ? "Di chuột lên bookmark sẽ hiện ô check để chọn nhiều mục cùng lúc. Muốn danh sách gọn hơn? Tắt hover hiện ô check trong phần Cài đặt."
-          : "Hovering a bookmark reveals its checkbox so you can pick several at once. Prefer a cleaner list? Turn off hover reveal in Settings.",
+          ? "Ô check được ẩn mặc định để danh sách gọn hơn. Bạn có thể bật 'Hiện khi hover' trong phần Cài đặt để chọn nhiều bookmark."
+          : "Checkboxes are hidden by default to keep the list clean. Enable 'Show on hover' in Settings when you want to select multiple bookmarks.",
       openSettings: false,
     },
   ]
