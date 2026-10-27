@@ -1013,7 +1013,20 @@
             <div id="duplicate-merge-popup-container"></div>
             <script type="module" src="components/duplicateMerge.js"></script>
 
-            <div id="custom-prompt-popup" class="rename-popup hidden popup-animate" role="dialog"></div>
+            <div id="custom-prompt-popup" class="rename-popup hidden popup-animate" role="dialog"
+                aria-labelledby="custom-prompt-title">
+                <div class="rename-popup-content">
+                    <h3 id="custom-prompt-title">Prompt</h3>
+                    <div class="rename-input-container">
+                        <input type="text" id="custom-prompt-input" class="input" placeholder="Enter text..."
+                            autocomplete="off">
+                    </div>
+                    <div class="rename-popup-buttons">
+                        <button id="custom-prompt-ok" class="button save">OK</button>
+                        <button id="custom-prompt-cancel" class="button cancel" data-i18n="cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
 
             <div id="organize-folders-popup" class="rename-popup hidden popup-animate" role="dialog"
                 aria-labelledby="organize-folders-title">

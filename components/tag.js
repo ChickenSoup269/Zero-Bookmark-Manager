@@ -78,7 +78,15 @@ export function saveTags(
     dataToSave.tagTextColors = uiState.tagTextColors
   }
 
-  chrome.storage.local.set(dataToSave)
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set(dataToSave, () => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError)
+        return
+      }
+      resolve()
+    })
+  })
 }
 
 // Add tag to bookmark
@@ -110,7 +118,7 @@ export async function addTagToBookmark(bookmarkId, tag, color, textColor) {
     allTagColors[tag] = color || "#FFFFFF"
     allTagTextColors[tag] = textColor || "#000000"
 
-    saveTags(bookmarkTags, allTagColors, allTagTextColors)
+    await saveTags(bookmarkTags, allTagColors, allTagTextColors)
     refreshUI()
   }
 }
@@ -128,7 +136,7 @@ export async function removeTagFromBookmark(bookmarkId, tag) {
       delete bookmarkTags[bookmarkId]
     }
 
-    saveTags(bookmarkTags)
+    await saveTags(bookmarkTags)
     refreshUI()
   }
 }
@@ -139,7 +147,7 @@ export async function changeTagColor(tag, color) {
   const allColors = data.tagColors || {}
   allColors[tag] = color // Update the specific color
 
-  saveTags(null, allColors) // Save the entire updated object
+  await saveTags(null, allColors) // Save the entire updated object
   refreshUI()
 }
 
@@ -184,7 +192,7 @@ export async function updateTag(oldTag, newTag, newBgColor, newTextColor) {
   }
   storedTextColors[newTag] = newTextColor || "#000000"
 
-  saveTags(bookmarkTags, storedColors, storedTextColors)
+  await saveTags(bookmarkTags, storedColors, storedTextColors)
   refreshUI()
 }
 
@@ -227,7 +235,7 @@ export async function renameTagGlobal(oldTag, newTag) {
 
   // 4. Lưu và Render lại nếu có thay đổi
   if (hasChanges || storedColors[newTag]) {
-    saveTags(bookmarkTags, storedColors, storedTextColors)
+    await saveTags(bookmarkTags, storedColors, storedTextColors)
 
     // Cập nhật selectedTags trong uiState nếu người dùng đang lọc theo tag cũ
     if (uiState.selectedTags && uiState.selectedTags.includes(oldTag)) {
@@ -278,13 +286,7 @@ export async function deleteTagGlobal(tagToDelete) {
     uiState.selectedTags = uiState.selectedTags.filter((t) => t !== tagToDelete)
   }
 
-  saveTags(bookmarkTags, storedColors, storedTextColors) // Save colors object directly, pass null handled inside logic if needed, but here we pass full object logic
-  // Fix logic saveTags for direct object pass:
-  chrome.storage.local.set({
-    tagColors: storedColors,
-    tagTextColors: storedTextColors,
-  })
-
+  await saveTags(bookmarkTags, storedColors, storedTextColors)
   refreshUI()
 }
 

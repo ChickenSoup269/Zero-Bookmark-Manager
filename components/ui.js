@@ -18,7 +18,7 @@ import {
 import { uiState, setBookmarks, setFolders, setBookmarkTree } from "./state.js"
 import { attachDropdownListeners } from "./controller/dropdown.js"
 import { setupBookmarkActionListeners } from "./controller/bookmarkActions.js"
-import { getAllTags } from "./tag.js"
+import { deleteTagGlobal, getAllTags, renameTagGlobal } from "./tag.js"
 import { customSaveUIState } from "./option/option.js"
 import { checkBrokenLinks } from "./health/health.js"
 import { openScopeSelectionModal } from "./utils/scopeModal.js"
@@ -1253,16 +1253,30 @@ export async function populateTagFilter(elements) {
     tagClearAll.title = t.clearTagFilter || "Clear tag filter"
   }
 
-  const allTags = await getAllTags()
-  const usageCounts = buildTagUsageCounts()
+  let sorted = []
+  let usageCounts = {}
 
-  // Sort: active (selected) tags first, then alphabetical
-  const sorted = [...allTags].sort((a, b) => {
-    const aActive = uiState.selectedTags.includes(a) ? 0 : 1
-    const bActive = uiState.selectedTags.includes(b) ? 0 : 1
-    if (aActive !== bActive) return aActive - bActive
-    return a.localeCompare(b)
-  })
+  const refreshTagCatalog = async () => {
+    const allTags = await getAllTags()
+    const availableTags = new Set(allTags)
+    const selectedTags = uiState.selectedTags.filter((tag) =>
+      availableTags.has(tag),
+    )
+    if (selectedTags.length !== uiState.selectedTags.length) {
+      uiState.selectedTags = selectedTags
+      customSaveUIState()
+    }
+
+    usageCounts = buildTagUsageCounts()
+    sorted = [...allTags].sort((a, b) => {
+      const aActive = uiState.selectedTags.includes(a) ? 0 : 1
+      const bActive = uiState.selectedTags.includes(b) ? 0 : 1
+      if (aActive !== bActive) return aActive - bActive
+      return a.localeCompare(b)
+    })
+  }
+
+  await refreshTagCatalog()
 
   // --- Render function (called on init + search input) ---
   function renderTagPills(filterQuery = "") {
@@ -1387,8 +1401,11 @@ export async function populateTagFilter(elements) {
     }
   }
 
-  function renderBrowserPills(filterQuery = "") {
+  async function renderBrowserPills(filterQuery = "") {
     if (!tagsBrowserList) return
+    await refreshTagCatalog()
+    syncTagHeaderControls(elements.tagFilterContainer)
+    syncBrowserControls()
     tagsBrowserList.innerHTML = ""
     const query = filterQuery.trim().toLowerCase()
     let visibleCount = 0
@@ -1446,109 +1463,56 @@ export async function populateTagFilter(elements) {
       })
 
       const editBtn = pill.querySelector(".tag-edit-btn")
-      editBtn.addEventListener("click", (e) => {
+      editBtn.addEventListener("click", async (e) => {
         e.stopPropagation()
-        const newTag = prompt(`Rename tag "${tag}" to:`, tag)
-        if (newTag && newTag.trim() !== "" && newTag !== tag) {
-          const trimmedNewTag = newTag.trim()
-
-          // Update bookmarkTags
-          Object.keys(uiState.bookmarkTags).forEach((id) => {
-            const tagsArray = uiState.bookmarkTags[id]
-            const idx = tagsArray.indexOf(tag)
-            if (idx > -1) {
-              tagsArray[idx] = trimmedNewTag
-              // Remove duplicates if the new tag already existed
-              uiState.bookmarkTags[id] = [...new Set(tagsArray)]
-            }
-          })
-
-          // Update selectedTags filter
-          const selectedIdx = uiState.selectedTags.indexOf(tag)
-          if (selectedIdx > -1) {
-            uiState.selectedTags[selectedIdx] = trimmedNewTag
-          }
-
-          // Move colors
-          if (uiState.tagColors[tag]) {
-            uiState.tagColors[trimmedNewTag] = uiState.tagColors[tag]
-            delete uiState.tagColors[tag]
-          }
-          if (uiState.tagTextColors[tag]) {
-            uiState.tagTextColors[trimmedNewTag] = uiState.tagTextColors[tag]
-            delete uiState.tagTextColors[tag]
-          }
-
-          import("./tag.js").then(({ saveTags }) => {
-            saveTags(
-              uiState.bookmarkTags,
-              uiState.tagColors,
-              uiState.tagTextColors,
+        const newTag = await showCustomPrompt(
+          t.renameTagPrompt || "Rename tag:",
+          tag,
+        )
+        const trimmedNewTag = newTag?.trim()
+        if (trimmedNewTag && trimmedNewTag !== tag) {
+          try {
+            await renameTagGlobal(tag, trimmedNewTag)
+            await refreshTagCatalog()
+            renderBrowserPills(tagsBrowserSearch?.value || "")
+            renderTagPills(tagSearchInput?.value || "")
+            syncTagHeaderControls(elements.tagFilterContainer)
+            syncBrowserControls()
+          } catch (error) {
+            console.error("Failed to rename tag:", error)
+            showCustomPopup(
+              t.errorUnexpected || "Unable to rename the tag.",
+              "error",
+              true,
             )
-            setTimeout(() => {
-              renderBrowserPills(tagsBrowserSearch?.value || "")
-              renderTagPills(tagSearchInput?.value || "")
-              window.BookmarkCache.getTree((tree) => {
-                import("./ui.js").then(({ renderFilteredBookmarks }) => {
-                  renderFilteredBookmarks(tree, elements)
-                })
-              })
-            }, 100)
-          })
+          }
         }
       })
 
       const deleteBtn = pill.querySelector(".tag-delete-btn")
       deleteBtn.addEventListener("click", (e) => {
         e.stopPropagation()
-        import("./dialog.js").then(({ showConfirm }) => {
-          showConfirm({
-            title: "Delete Tag",
-            message: `Are you sure you want to permanently delete the tag "${tag}" from all bookmarks?`,
-            confirmText: "Delete",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              // Remove from all bookmarks
-              Object.keys(uiState.bookmarkTags).forEach((id) => {
-                const tagsArray = uiState.bookmarkTags[id]
-                const idx = tagsArray.indexOf(tag)
-                if (idx > -1) {
-                  tagsArray.splice(idx, 1)
-                  if (tagsArray.length === 0) {
-                    delete uiState.bookmarkTags[id]
-                  }
-                }
-              })
-
-              // Remove from selected filters
-              const selectedIdx = uiState.selectedTags.indexOf(tag)
-              if (selectedIdx > -1) {
-                uiState.selectedTags.splice(selectedIdx, 1)
-              }
-
-              // Remove colors
-              delete uiState.tagColors[tag]
-              delete uiState.tagTextColors[tag]
-
-              import("./tag.js").then(({ saveTags }) => {
-                saveTags(
-                  uiState.bookmarkTags,
-                  uiState.tagColors,
-                  uiState.tagTextColors,
-                )
-                setTimeout(() => {
-                  renderBrowserPills(tagsBrowserSearch?.value || "")
-                  renderTagPills(tagSearchInput?.value || "")
-                  window.BookmarkCache.getTree((tree) => {
-                    import("./ui.js").then(({ renderFilteredBookmarks }) => {
-                      renderFilteredBookmarks(tree, elements)
-                    })
-                  })
-                }, 100)
-              })
-            },
-          })
-        })
+        showCustomConfirm(
+          t.confirmDeleteTagGlobal ||
+            `Are you sure you want to permanently delete the tag "${tag}" from all bookmarks?`,
+          async () => {
+            try {
+              await deleteTagGlobal(tag)
+              await refreshTagCatalog()
+              renderBrowserPills(tagsBrowserSearch?.value || "")
+              renderTagPills(tagSearchInput?.value || "")
+              syncTagHeaderControls(elements.tagFilterContainer)
+              syncBrowserControls()
+            } catch (error) {
+              console.error("Failed to delete tag:", error)
+              showCustomPopup(
+                t.errorUnexpected || "Unable to delete the tag.",
+                "error",
+                true,
+              )
+            }
+          },
+        )
       })
 
       tagsBrowserList.appendChild(pill)

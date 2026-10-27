@@ -4368,6 +4368,51 @@ html:has(.bqr-popup-overlay) {
   overflow: hidden;
 }
 
+.tag-pill-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+  cursor: pointer;
+}
+
+.tag-pill-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.tag-pill-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.tag-pill-actions button:hover,
+.tag-pill-actions button:focus-visible {
+  outline: none;
+  background: var(--bg-tertiary);
+  color: var(--accent-color);
+}
+
+.tag-pill-actions .tag-delete-btn:hover,
+.tag-pill-actions .tag-delete-btn:focus-visible {
+  color: var(--danger-color, #ef4444);
+}
+
 /* Custom Language dialog */
 .custom-language-header {
   display: flex;

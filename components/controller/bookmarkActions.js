@@ -797,9 +797,23 @@ async function openManageTagsPopup(bookmarkId, elements) {
           "Are you sure you want to delete this tag from the bookmark?",
         ),
         () => {
-          uiState.bookmarkTags[bookmarkId] = uiState.bookmarkTags[
-            bookmarkId
-          ].filter((t) => t !== tag)
+          const currentTags = uiState.bookmarkTags[bookmarkId] || []
+          const remainingTags = currentTags.filter((t) => t !== tag)
+          if (remainingTags.length > 0) {
+            uiState.bookmarkTags[bookmarkId] = remainingTags
+          } else {
+            delete uiState.bookmarkTags[bookmarkId]
+          }
+
+          const tagStillUsed = Object.values(uiState.bookmarkTags).some(
+            (tags) => tags.includes(tag),
+          )
+          if (!tagStillUsed) {
+            uiState.selectedTags = uiState.selectedTags.filter(
+              (selectedTag) => selectedTag !== tag,
+            )
+          }
+
           saveTagData(() => {
             renderTags()
             updateDropdown()
@@ -807,6 +821,9 @@ async function openManageTagsPopup(bookmarkId, elements) {
               getTranslation("deleteTagSuccess", "Tag deleted successfully!"),
               "success",
             )
+            window.BookmarkCache.getTree((tree) => {
+              renderFilteredBookmarks(tree, elements)
+            })
           })
         },
       )
